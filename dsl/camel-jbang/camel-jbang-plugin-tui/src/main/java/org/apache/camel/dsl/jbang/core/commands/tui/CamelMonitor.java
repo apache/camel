@@ -48,6 +48,7 @@ import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
@@ -169,11 +170,17 @@ public class CamelMonitor extends CamelCommand {
     // Track last time a sparkline point was recorded
     private final Map<String, Long> previousExchangesTime = new ConcurrentHashMap<>();
 
-    // Endpoint in/out sliding window history per PID (one point per second, 20 points)
+    // Endpoint in/out sliding window history per PID — all endpoints
     private final Map<String, LinkedList<Long>> endpointInHistory = new ConcurrentHashMap<>();
     private final Map<String, LinkedList<Long>> endpointOutHistory = new ConcurrentHashMap<>();
     private final Map<String, LinkedList<long[]>> endpointSamples = new ConcurrentHashMap<>();
     private final Map<String, Long> previousEndpointTime = new ConcurrentHashMap<>();
+
+    // Endpoint in/out sliding window history per PID — remote endpoints only
+    private final Map<String, LinkedList<Long>> endpointRemoteInHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> endpointRemoteOutHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<long[]>> endpointRemoteSamples = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousEndpointRemoteTime = new ConcurrentHashMap<>();
 
     // Overview sort state
     private String overviewSort = "name";
@@ -1009,19 +1016,21 @@ public class CamelMonitor extends CamelCommand {
     private void render(Frame frame) {
         Rect area = frame.area();
 
-        // Layout: header (3 rows) + tabs (2 rows) + content (fill) + footer (1 row)
+        // Layout: header (1 row) + spacer (1 row) + tabs (2 rows) + content (fill) + footer (1 row)
         List<Rect> mainChunks = Layout.vertical()
                 .constraints(
-                        Constraint.length(3),
+                        Constraint.length(1),
+                        Constraint.length(1),
                         Constraint.length(2),
                         Constraint.fill(),
                         Constraint.length(1))
                 .split(area);
 
         renderHeader(frame, mainChunks.get(0));
-        renderTabs(frame, mainChunks.get(1));
-        renderContent(frame, mainChunks.get(2));
-        renderFooter(frame, mainChunks.get(3));
+        // mainChunks.get(1) is the empty spacer row
+        renderTabs(frame, mainChunks.get(2));
+        renderContent(frame, mainChunks.get(3));
+        renderFooter(frame, mainChunks.get(4));
     }
 
     private void renderHeader(Frame frame, Rect area) {
@@ -1030,7 +1039,7 @@ public class CamelMonitor extends CamelCommand {
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
 
         List<Span> titleSpans = new ArrayList<>();
-        titleSpans.add(Span.styled(" Camel Monitor", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()));
+        titleSpans.add(Span.styled(" Camel TUI", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()));
         titleSpans.add(Span.raw("  "));
         titleSpans.add(Span.styled(camelVersion != null ? "v" + camelVersion : "", Style.EMPTY.fg(Color.GREEN)));
         titleSpans.add(Span.raw("  "));
@@ -1041,13 +1050,8 @@ public class CamelMonitor extends CamelCommand {
         }
         Line titleLine = Line.from(titleSpans);
 
-        Block headerBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Apache Camel ")
-                .build();
-
         frame.renderWidget(
-                Paragraph.builder().text(Text.from(titleLine)).block(headerBlock).build(),
+                Paragraph.builder().text(Text.from(titleLine)).build(),
                 area);
     }
 
@@ -1290,26 +1294,26 @@ public class CamelMonitor extends CamelCommand {
                         Span.raw(" ["),
                         Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),
                         Span.raw(String.format("] Throughput: %d msg/s  ", curTp)),
-                        Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
                         Span.raw(String.format(" ok:%d  ", curOk)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
                         Span.raw(String.format(" fail:%d ", curFailed)));
             } else {
                 titleLine = Line.from(
                         Span.raw(String.format(" [All] Throughput: %d msg/s  ", curTp)),
-                        Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
+                        Span.styled("■", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
                         Span.raw(String.format(" ok:%d  ", curOk)),
                         Span.styled("■", Style.EMPTY.fg(Color.RED)),
                         Span.raw(String.format(" fail:%d ", curFailed)));
             }
 
-            // Build bar groups (ok=green, failed=red), no bar value labels
+            // Build bar groups (ok=bright green, failed=red), no bar value labels
             List<BarGroup> groups = new ArrayList<>();
             for (int i = 0; i < renderPoints; i++) {
                 long failed = Math.min(mergedFailed[i], mergedTotal[i]);
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
-                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN)).build(),
+                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))).build(),
                         Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
             }
 
@@ -2239,7 +2243,7 @@ public class CamelMonitor extends CamelCommand {
         }
         return switch (type) {
             case "from" -> Color.GREEN;
-            case "to", "toD", "wireTap", "enrich", "pollEnrich" -> Color.BLUE;
+            case "to", "toD", "wireTap", "enrich", "pollEnrich" -> Color.CYAN;
             case "choice", "when", "otherwise" -> Color.YELLOW;
             case "marshal", "unmarshal", "transform", "setBody", "setHeader", "setProperty",
                     "convertBodyTo", "removeHeader", "removeHeaders", "removeProperty", "removeProperties" ->
@@ -2918,8 +2922,8 @@ public class CamelMonitor extends CamelCommand {
         for (EndpointInfo ep : sortedEndpoints) {
             String dir = ep.direction != null ? ep.direction : "";
             Style dirStyle = switch (dir) {
-                case "in" -> Style.EMPTY.fg(Color.GREEN);
-                case "out" -> Style.EMPTY.fg(Color.BLUE);
+                case "in" -> Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
+                case "out" -> Style.EMPTY.fg(Color.CYAN);
                 default -> Style.EMPTY.fg(Color.YELLOW);
             };
             String arrow = switch (dir) {
@@ -2980,17 +2984,18 @@ public class CamelMonitor extends CamelCommand {
         frame.renderStatefulWidget(table, chunks.get(0), endpointTableState);
 
         long inTotal = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction))
+                .filter(ep -> "in".equals(ep.direction) && (!showOnlyRemote || ep.remote))
                 .mapToLong(ep -> ep.hits)
                 .sum();
         long outTotal = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction))
+                .filter(ep -> "out".equals(ep.direction) && (!showOnlyRemote || ep.remote))
                 .mapToLong(ep -> ep.hits)
                 .sum();
-        renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid);
+        renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid, showOnlyRemote);
     }
 
-    private void renderEndpointFlow(Frame frame, Rect area, long inTotal, long outTotal, String name, String pid) {
+    private void renderEndpointFlow(
+            Frame frame, Rect area, long inTotal, long outTotal, String name, String pid, boolean remoteOnly) {
         List<Rect> hSplit = Layout.horizontal()
                 .constraints(Constraint.length(38), Constraint.fill())
                 .split(area);
@@ -3016,8 +3021,14 @@ public class CamelMonitor extends CamelCommand {
         int centerGap = boxLen + 2;
         int outPad = Math.max(0, sideLen - outStr.length());
 
-        Style inStyle = Style.EMPTY.fg(Color.GREEN);
-        Style outStyle = Style.EMPTY.fg(Color.BLUE);
+        // Centre "in"/"out" labels within the fixed sideLen slot, independent of count width
+        int inLabelPad = (sideLen - 2) / 2;
+        int outLabelPad = (sideLen - 3) / 2;
+        String inLabelStr = " ".repeat(inLabelPad) + "in" + " ".repeat(sideLen - inLabelPad - 2);
+        String outLabelStr = " ".repeat(outLabelPad) + "out";
+
+        Style inStyle = Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
+        Style outStyle = Style.EMPTY.fg(Color.CYAN);
         Style dimStyle = Style.EMPTY.dim();
 
         List<Line> flowLines = new ArrayList<>();
@@ -3026,15 +3037,15 @@ public class CamelMonitor extends CamelCommand {
                 Span.raw(" ".repeat(centerGap)),
                 Span.styled(outStr + " ".repeat(outPad), outTotal > 0 ? outStyle : dimStyle)));
         flowLines.add(Line.from(
-                Span.styled(arrowStr, inTotal > 0 ? inStyle : dimStyle),
+                Span.styled(arrowStr, inStyle),
                 Span.raw(" "),
-                Span.styled(box, Style.EMPTY.fg(Color.CYAN).bold()),
+                Span.styled(box, Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(" "),
-                Span.styled(arrowStr, outTotal > 0 ? outStyle : dimStyle)));
+                Span.styled(arrowStr, outStyle)));
         flowLines.add(Line.from(
-                Span.styled(" ".repeat(inPad) + "in", inTotal > 0 ? inStyle.dim() : dimStyle),
+                Span.styled(inLabelStr, inStyle.dim()),
                 Span.raw(" ".repeat(centerGap)),
-                Span.styled("out" + " ".repeat(Math.max(0, outPad - 2)), outTotal > 0 ? outStyle.dim() : dimStyle)));
+                Span.styled(outLabelStr, outStyle.dim())));
 
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(flowLines))
@@ -3042,8 +3053,10 @@ public class CamelMonitor extends CamelCommand {
                 .build(), hSplit.get(0));
 
         // --- Right: 60-second sliding window chart (in=green up, out=blue down) ---
-        LinkedList<Long> inHist = endpointInHistory.getOrDefault(pid, new LinkedList<>());
-        LinkedList<Long> outHist = endpointOutHistory.getOrDefault(pid, new LinkedList<>());
+        LinkedList<Long> inHist = (remoteOnly ? endpointRemoteInHistory : endpointInHistory)
+                .getOrDefault(pid, new LinkedList<>());
+        LinkedList<Long> outHist = (remoteOnly ? endpointRemoteOutHistory : endpointOutHistory)
+                .getOrDefault(pid, new LinkedList<>());
 
         int renderPoints = MAX_ENDPOINT_CHART_POINTS;
         long[] inArr = new long[renderPoints];
@@ -3062,17 +3075,17 @@ public class CamelMonitor extends CamelCommand {
         long curOut = outArr[renderPoints - 1];
 
         Line chartTitle = Line.from(
-                Span.styled("▬", Style.EMPTY.fg(Color.GREEN)),
+                Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
                 Span.raw(String.format(" in:%-4d ", curIn)),
-                Span.styled("▬", Style.EMPTY.fg(Color.BLUE)),
+                Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
                 Span.raw(String.format(" out:%-4d msg/s", curOut)));
 
         Rect rightArea = hSplit.get(1);
         frame.renderWidget(MirroredSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
-                .topStyle(Style.EMPTY.fg(Color.GREEN))
-                .bottomStyle(Style.EMPTY.fg(Color.BLUE))
+                .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
+                .bottomStyle(Style.EMPTY.fg(Color.CYAN))
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED)
@@ -4123,6 +4136,10 @@ public class CamelMonitor extends CamelCommand {
                     endpointOutHistory.remove(entry.getKey());
                     endpointSamples.remove(entry.getKey());
                     previousEndpointTime.remove(entry.getKey());
+                    endpointRemoteInHistory.remove(entry.getKey());
+                    endpointRemoteOutHistory.remove(entry.getKey());
+                    endpointRemoteSamples.remove(entry.getKey());
+                    previousEndpointRemoteTime.remove(entry.getKey());
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
                     ghost.vanishing = true;
@@ -4213,38 +4230,50 @@ public class CamelMonitor extends CamelCommand {
     private void updateEndpointHistory(IntegrationInfo info) {
         long inTotal = info.endpoints.stream()
                 .filter(ep -> "in".equals(ep.direction))
-                .mapToLong(ep -> ep.hits)
-                .sum();
+                .mapToLong(ep -> ep.hits).sum();
         long outTotal = info.endpoints.stream()
                 .filter(ep -> "out".equals(ep.direction))
-                .mapToLong(ep -> ep.hits)
-                .sum();
+                .mapToLong(ep -> ep.hits).sum();
+        long inRemote = info.endpoints.stream()
+                .filter(ep -> "in".equals(ep.direction) && ep.remote)
+                .mapToLong(ep -> ep.hits).sum();
+        long outRemote = info.endpoints.stream()
+                .filter(ep -> "out".equals(ep.direction) && ep.remote)
+                .mapToLong(ep -> ep.hits).sum();
 
         long now = System.currentTimeMillis();
         String pid = info.pid;
-        LinkedList<long[]> samples = endpointSamples.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, inTotal, outTotal });
 
+        recordEndpointSample(pid, now, inTotal, outTotal,
+                endpointSamples, previousEndpointTime, endpointInHistory, endpointOutHistory);
+        recordEndpointSample(pid, now, inRemote, outRemote,
+                endpointRemoteSamples, previousEndpointRemoteTime, endpointRemoteInHistory, endpointRemoteOutHistory);
+    }
+
+    private void recordEndpointSample(
+            String pid, long now, long inTotal, long outTotal,
+            Map<String, LinkedList<long[]>> samplesMap, Map<String, Long> prevTimeMap,
+            Map<String, LinkedList<Long>> inHistMap, Map<String, LinkedList<Long>> outHistMap) {
+        LinkedList<long[]> samples = samplesMap.computeIfAbsent(pid, k -> new LinkedList<>());
+        samples.add(new long[] { now, inTotal, outTotal });
         while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
             samples.remove(0);
         }
-
         if (samples.size() >= 2) {
             long[] oldest = samples.get(0);
             long[] newest = samples.get(samples.size() - 1);
             long deltaMs = newest[0] - oldest[0];
             long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 / deltaMs : 0;
             long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 / deltaMs : 0;
-
-            Long lastTime = previousEndpointTime.get(pid);
+            Long lastTime = prevTimeMap.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
-                previousEndpointTime.put(pid, now);
-                LinkedList<Long> inHist = endpointInHistory.computeIfAbsent(pid, k -> new LinkedList<>());
+                prevTimeMap.put(pid, now);
+                LinkedList<Long> inHist = inHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
                 inHist.add(Math.max(0, inRate));
                 while (inHist.size() > MAX_ENDPOINT_CHART_POINTS) {
                     inHist.remove(0);
                 }
-                LinkedList<Long> outHist = endpointOutHistory.computeIfAbsent(pid, k -> new LinkedList<>());
+                LinkedList<Long> outHist = outHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
                 outHist.add(Math.max(0, outRate));
                 while (outHist.size() > MAX_ENDPOINT_CHART_POINTS) {
                     outHist.remove(0);
