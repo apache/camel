@@ -122,10 +122,10 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_ROUTES = 2;
     private static final int TAB_CONSUMERS = 3;
     private static final int TAB_ENDPOINTS = 4;
-    private static final int TAB_CIRCUIT_BREAKER = 5;
-    private static final int TAB_HEALTH = 6;
-    private static final int TAB_HISTORY = 7;
-    private static final int TAB_TRACE = 8;
+    private static final int TAB_HEALTH = 5;
+    private static final int TAB_HISTORY = 6;
+    private static final int TAB_TRACE = 7;
+    private static final int TAB_CIRCUIT_BREAKER = 8;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -403,16 +403,16 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_ENDPOINTS);
             }
             if (ke.isChar('6')) {
-                return handleTabKey(TAB_CIRCUIT_BREAKER);
-            }
-            if (ke.isChar('7')) {
                 return handleTabKey(TAB_HEALTH);
             }
-            if (ke.isChar('8')) {
+            if (ke.isChar('7')) {
                 return handleTabKey(TAB_HISTORY);
             }
-            if (ke.isChar('9')) {
+            if (ke.isChar('8')) {
                 return handleTabKey(TAB_TRACE);
+            }
+            if (ke.isChar('9')) {
+                return handleTabKey(TAB_CIRCUIT_BREAKER);
             }
 
             // Tab cycling
@@ -846,6 +846,11 @@ public class CamelMonitor extends CamelCommand {
         if (tab != TAB_OVERVIEW) {
             selectCurrentIntegration();
         }
+        if (tab == TAB_LOG) {
+            // Reset log state so the next tick tails from the correct file/position
+            logFilePos = -1;
+            logLineBuffer.setLength(0);
+        }
         if (tab == TAB_HISTORY && selectedPid != null) {
             refreshHistoryData(List.of(Long.parseLong(selectedPid)));
             if (!historyEntries.isEmpty()) {
@@ -886,13 +891,6 @@ public class CamelMonitor extends CamelCommand {
         } else if (infos.size() == 1) {
             selectedPid = infos.get(0).pid;
         }
-        if (selectedPid != null) {
-            List<Long> pids = List.of(Long.parseLong(selectedPid));
-            refreshHistoryData(pids);
-            traceFilePositions.clear();
-            traces.set(Collections.emptyList());
-            refreshTraceData(pids);
-        }
     }
 
     private void syncSelectedPidFromOverview() {
@@ -907,11 +905,6 @@ public class CamelMonitor extends CamelCommand {
         if (newPid != null && !newPid.equals(selectedPid)) {
             selectedPid = newPid;
             resetIntegrationTabState();
-            List<Long> pids = List.of(Long.parseLong(selectedPid));
-            refreshHistoryData(pids);
-            traceFilePositions.clear();
-            traces.set(Collections.emptyList());
-            refreshTraceData(pids);
         }
     }
 
@@ -1094,20 +1087,17 @@ public class CamelMonitor extends CamelCommand {
         Tabs tabs = Tabs.builder()
                 .titles(
                         badge(" 1 Overview ", activeCount),
-                        filteredLogEntries.isEmpty()
-                                ? Line.from(" 2 Log ")
-                                : Line.from(Span.raw(" 2 Log "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
-                                        Span.raw(" ")),
+                        Line.from(" 2 Log "),
                         badge(" 3 Routes ", routeCount),
                         badge(" 4 Consumers ", consumerCount),
                         badge(" 5 Endpoints ", endpointCount),
-                        badgeCb(" 6 Circuit Breaker ", cbCount, cbOpenCount),
-                        badgeHealth(" 7 Health ", healthCount, healthDownCount),
-                        badge(" 8 Last ", historyCount),
+                        badgeHealth(" 6 Health ", healthCount, healthDownCount),
+                        badge(" 7 Last ", historyCount),
                         hasTraces
-                                ? Line.from(Span.raw(" 9 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                                ? Line.from(Span.raw(" 8 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
                                         Span.raw(" "))
-                                : Line.from(" 9 Trace "))
+                                : Line.from(" 8 Trace "),
+                        badgeCb(" 9 Circuit Breaker ", cbCount, cbOpenCount))
                 .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
@@ -4194,33 +4184,37 @@ public class CamelMonitor extends CamelCommand {
 
             data.set(infos);
 
-            // Refresh log data for the selected integration (incremental tail)
-            IntegrationInfo selected = findSelectedIntegration();
-            if (selected != null) {
-                if (!selected.pid.equals(logFilePid)) {
-                    // Integration changed: reset all incremental log state
-                    mutableFilteredEntries.clear();
-                    logFilePos = -1;
-                    logTotalLinesRead = 0;
-                    logEvictedSeen = 0;
-                    logLineBuffer.setLength(0);
-                }
-                List<String> newRawLines = new ArrayList<>();
-                readNewLogLines(selected.pid, newRawLines);
-                if (!newRawLines.isEmpty()) {
-                    logTotalLinesRead += newRawLines.size();
-                    for (String line : newRawLines) {
-                        mutableFilteredEntries.add(parseLogLine(line));
+            // Refresh log data only when the Log tab is visible
+            if (tabsState.selected() == TAB_LOG) {
+                IntegrationInfo selected = findSelectedIntegration();
+                if (selected != null) {
+                    if (!selected.pid.equals(logFilePid)) {
+                        // Integration changed: reset all incremental log state
+                        mutableFilteredEntries.clear();
+                        logFilePos = -1;
+                        logTotalLinesRead = 0;
+                        logEvictedSeen = 0;
+                        logLineBuffer.setLength(0);
                     }
-                    if (mutableFilteredEntries.size() > MAX_LOG_LINES) {
-                        mutableFilteredEntries.subList(0, mutableFilteredEntries.size() - MAX_LOG_LINES).clear();
+                    List<String> newRawLines = new ArrayList<>();
+                    readNewLogLines(selected.pid, newRawLines);
+                    if (!newRawLines.isEmpty()) {
+                        logTotalLinesRead += newRawLines.size();
+                        for (String line : newRawLines) {
+                            mutableFilteredEntries.add(parseLogLine(line));
+                        }
+                        if (mutableFilteredEntries.size() > MAX_LOG_LINES) {
+                            mutableFilteredEntries.subList(0, mutableFilteredEntries.size() - MAX_LOG_LINES).clear();
+                        }
+                        filteredLogEntries = new ArrayList<>(mutableFilteredEntries);
                     }
-                    filteredLogEntries = new ArrayList<>(mutableFilteredEntries);
                 }
             }
 
-            // Refresh trace data
-            refreshTraceData(pids);
+            // Refresh trace data only when the Trace tab is visible
+            if (tabsState.selected() == TAB_TRACE) {
+                refreshTraceData(pids);
+            }
         } catch (Exception e) {
             // ignore refresh errors
         }
