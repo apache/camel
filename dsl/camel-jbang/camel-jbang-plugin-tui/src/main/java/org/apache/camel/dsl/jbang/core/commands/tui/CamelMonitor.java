@@ -108,7 +108,7 @@ public class CamelMonitor extends CamelCommand {
     private static final long VANISH_DURATION_MS = 6000;
     private static final long DEFAULT_REFRESH_MS = 100;
     private static final int MAX_SPARKLINE_POINTS = 60;
-    private static final int MAX_LOG_LINES = 5000;
+    private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 9;
 
@@ -198,6 +198,7 @@ public class CamelMonitor extends CamelCommand {
     private volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
     // Incremental log tail state — persisted across refresh cycles
     private long logFilePos = -1;
+    private long logTotalLinesRead;
     private String logFilePid;
     private final StringBuilder logLineBuffer = new StringBuilder();
     private final List<LogEntry> mutableFilteredEntries = new ArrayList<>();
@@ -207,6 +208,7 @@ public class CamelMonitor extends CamelCommand {
     private int cachedLogMaxWidth;
     private List<Line> cachedLogLines = Collections.emptyList();
     private int logScroll;
+    private long logEvictedSeen;
     private final ScrollbarState logScrollState = new ScrollbarState();
     private boolean logFollowMode = true;
     private boolean logWordWrap = true;
@@ -875,6 +877,8 @@ public class CamelMonitor extends CamelCommand {
         filteredLogEntries = Collections.emptyList();
         cachedLogEntries = null;
         logFilePos = -1;
+        logTotalLinesRead = 0;
+        logEvictedSeen = 0;
         logLineBuffer.setLength(0);
         // Trace (TAB_TRACE)
         traceDetailView = false;
@@ -2890,9 +2894,13 @@ public class CamelMonitor extends CamelCommand {
         List<LogEntry> entries = filteredLogEntries;
         int contentHeight = entries.size();
 
+        long totalRead = logTotalLinesRead;
+        String chunkSuffix = totalRead > entries.size()
+                ? " #" + (totalRead - entries.size() + 1) + "-" + totalRead
+                : "";
         String logTitle = info.rootLogLevel != null
-                ? " Log level:" + info.rootLogLevel + " "
-                : " Log ";
+                ? " Log level:" + info.rootLogLevel + chunkSuffix + " "
+                : " Log" + chunkSuffix + " ";
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(logTitle)
@@ -2901,6 +2909,15 @@ public class CamelMonitor extends CamelCommand {
 
         Rect inner = block.inner(area);
         int visibleHeight = Math.max(1, inner.height());
+
+        // Compensate for buffer evictions: when the ring buffer is full and new lines
+        // push old ones off the front, logScroll (an absolute index) would drift forward
+        // without this adjustment, making the view scroll even with follow mode off.
+        long evictedNow = Math.max(0L, logTotalLinesRead - entries.size());
+        if (!logFollowMode && evictedNow > logEvictedSeen) {
+            logScroll = (int) Math.max(0, logScroll - (evictedNow - logEvictedSeen));
+        }
+        logEvictedSeen = evictedNow;
 
         if (logFollowMode) {
             logScroll = Math.max(0, contentHeight - visibleHeight);
@@ -3916,11 +3933,14 @@ public class CamelMonitor extends CamelCommand {
                     // Integration changed: reset all incremental log state
                     mutableFilteredEntries.clear();
                     logFilePos = -1;
+                    logTotalLinesRead = 0;
+                    logEvictedSeen = 0;
                     logLineBuffer.setLength(0);
                 }
                 List<String> newRawLines = new ArrayList<>();
                 readNewLogLines(selected.pid, newRawLines);
                 if (!newRawLines.isEmpty()) {
+                    logTotalLinesRead += newRawLines.size();
                     for (String line : newRawLines) {
                         mutableFilteredEntries.add(parseLogLine(line));
                     }
