@@ -3954,12 +3954,10 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CONSUMERS) {
             hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_ENDPOINTS) {
             hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "r", "remote" + (showOnlyRemote ? " [on]" : " [off]"));
             hint(spans, "a", "chart " + (showEndpointChart ? "[all]" : "[off]"));
@@ -3971,7 +3969,6 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "d", "toggle DOWN");
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_LOG && showLogLevelPopup) {
