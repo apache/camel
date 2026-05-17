@@ -478,6 +478,15 @@ public class CamelMonitor extends CamelCommand {
                 chartAllIntegrations = !chartAllIntegrations;
                 return true;
             }
+            // Overview tab: start/stop all routes for selected integration
+            if (tab == TAB_OVERVIEW && ke.isChar('p') && selectedPid != null) {
+                IntegrationInfo selInfo = findSelectedIntegration();
+                if (selInfo != null) {
+                    String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
+                    sendRouteCommand(selectedPid, "*", cmd);
+                }
+                return true;
+            }
 
             // Consumers tab: sort
             if (tab == TAB_CONSUMERS && ke.isCharIgnoreCase('s')) {
@@ -539,6 +548,14 @@ public class CamelMonitor extends CamelCommand {
                 } else {
                     loadSourceForSelectedRoute();
                 }
+                return true;
+            }
+            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isChar('p')) {
+                toggleRouteStartStop();
+                return true;
+            }
+            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isChar('P')) {
+                toggleRouteSuspendResume();
                 return true;
             }
             if (tab == TAB_ROUTES && showSource) {
@@ -2190,6 +2207,68 @@ public class CamelMonitor extends CamelCommand {
         });
     }
 
+    private void toggleRouteStartStop() {
+        if (selectedPid == null) {
+            return;
+        }
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null || info.routes.isEmpty()) {
+            return;
+        }
+        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
+        sortedRoutes.sort(this::sortRoute);
+        Integer sel = routeTableState.selected();
+        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
+                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
+        // Started → stop; Stopped or Suspended → start
+        String command = "Started".equals(route.state) ? "stop" : "start";
+        sendRouteCommand(selectedPid, route.routeId, command);
+    }
+
+    private void toggleRouteSuspendResume() {
+        if (selectedPid == null) {
+            return;
+        }
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null || info.routes.isEmpty()) {
+            return;
+        }
+        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
+        sortedRoutes.sort(this::sortRoute);
+        Integer sel = routeTableState.selected();
+        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
+                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
+        // Started → suspend; Suspended → resume; Stopped → start
+        String command = switch (route.state != null ? route.state : "") {
+            case "Started" -> "suspend";
+            case "Suspended" -> "resume";
+            default -> "start";
+        };
+        sendRouteCommand(selectedPid, route.routeId, command);
+    }
+
+    private void sendRouteCommand(String pid, String routeId, String command) {
+        JsonObject root = new JsonObject();
+        root.put("action", "route");
+        root.put("id", routeId);
+        root.put("command", command);
+        Path actionFile = getActionFile(pid);
+        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
+    }
+
+    private String selectedRouteState() {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null || info.routes.isEmpty()) {
+            return null;
+        }
+        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
+        sortedRoutes.sort(this::sortRoute);
+        Integer sel = routeTableState.selected();
+        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
+                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
+        return route.state;
+    }
+
     private void loadSourceInBackground(String pid, String routeId) {
         Path outputFile = getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
@@ -3463,6 +3542,10 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "a", "chart " + (chartAllIntegrations ? "[all]" : "[single]"));
             hint(spans, "Enter", "details");
             if (selectedPid != null) {
+                IntegrationInfo selInfo = findSelectedIntegration();
+                if (selInfo != null) {
+                    hint(spans, "p", selInfo.routeStarted > 0 ? "stop" : "start");
+                }
                 hint(spans, "Esc", "unselect");
             }
             hint(spans, "1-9", "tabs");
@@ -3490,6 +3573,16 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "c", "source");
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
+            String routeState = selectedRouteState();
+            if ("Started".equals(routeState)) {
+                hint(spans, "p", "stop");
+                hint(spans, "P", "suspend");
+            } else if ("Suspended".equals(routeState)) {
+                hint(spans, "p", "start");
+                hint(spans, "P", "resume");
+            } else if (routeState != null) {
+                hint(spans, "p", "start");
+            }
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CONSUMERS) {
             hint(spans, "Esc", "back");
