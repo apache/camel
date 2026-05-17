@@ -184,9 +184,8 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LinkedList<long[]>> endpointRemoteSamples = new ConcurrentHashMap<>();
     private final Map<String, Long> previousEndpointRemoteTime = new ConcurrentHashMap<>();
 
-    // Load averages (EWMA) — CPU% and inflight exchanges, per PID
+    // Load averages (EWMA) — CPU%, per PID (inflight EWMA is read from the management JSON)
     private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
-    private final Map<String, LoadAvg> inflightLoadAvg = new ConcurrentHashMap<>();
     private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
 
     // Overview sort state
@@ -868,11 +867,19 @@ public class CamelMonitor extends CamelCommand {
         return true;
     }
 
+    // Returns integrations in the same order the overview table renders them.
+    // Must be used anywhere that translates a table row index to a PID.
+    private List<IntegrationInfo> sortedOverviewInfos() {
+        List<IntegrationInfo> infos = new ArrayList<>(data.get());
+        infos.sort(this::sortOverview);
+        return infos;
+    }
+
     private void selectCurrentIntegration() {
         if (selectedPid != null) {
             return;
         }
-        List<IntegrationInfo> infos = data.get().stream().filter(i -> !i.vanishing).toList();
+        List<IntegrationInfo> infos = sortedOverviewInfos();
         Integer sel = overviewTableState.selected();
         if (sel != null && sel >= 0 && sel < infos.size()) {
             selectedPid = infos.get(sel).pid;
@@ -889,7 +896,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void syncSelectedPidFromOverview() {
-        List<IntegrationInfo> infos = data.get().stream().filter(i -> !i.vanishing).toList();
+        List<IntegrationInfo> infos = sortedOverviewInfos();
         Integer sel = overviewTableState.selected();
         String newPid = null;
         if (sel != null && sel >= 0 && sel < infos.size()) {
@@ -977,7 +984,7 @@ public class CamelMonitor extends CamelCommand {
         List<IntegrationInfo> infos = data.get().stream().filter(i -> !i.vanishing).toList();
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> {
-                overviewTableState.selectNext(infos.size());
+                overviewTableState.selectNext(sortedOverviewInfos().size());
                 syncSelectedPidFromOverview();
             }
             case TAB_ROUTES -> {
@@ -1129,8 +1136,17 @@ public class CamelMonitor extends CamelCommand {
     // ---- Tab 1: Overview ----
 
     private void renderOverview(Frame frame, Rect area) {
-        List<IntegrationInfo> infos = new ArrayList<>(data.get());
-        infos.sort(this::sortOverview);
+        List<IntegrationInfo> infos = sortedOverviewInfos();
+
+        // Keep the table selection index tracking the same PID across sort changes and data refreshes
+        if (selectedPid != null) {
+            for (int i = 0; i < infos.size(); i++) {
+                if (selectedPid.equals(infos.get(i).pid)) {
+                    overviewTableState.select(i);
+                    break;
+                }
+            }
+        }
 
         // Split: table (fill) + chart (14 rows: 13 chart + 1 x-axis) if we have data
         boolean hasSparkline = !throughputHistory.isEmpty();
@@ -1464,8 +1480,8 @@ public class CamelMonitor extends CamelCommand {
                         Span.raw(sel.threadCount + " / " + sel.peakThreadCount)));
             }
             LoadAvg cpu = cpuLoadAvg.get(sel.pid);
-            LoadAvg infl = inflightLoadAvg.get(sel.pid);
-            if (cpu != null || infl != null) {
+            boolean hasInfl = sel.inflightLoad01 != null && !sel.inflightLoad01.isEmpty();
+            if (cpu != null || hasInfl) {
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(Span.styled("Load (1m/5m/15m):", dim)));
                 if (cpu != null) {
@@ -1473,10 +1489,10 @@ public class CamelMonitor extends CamelCommand {
                             Span.styled("CPU:  ", dim),
                             Span.raw(cpu.format("%.1f / %.1f / %.1f %%"))));
                 }
-                if (infl != null) {
+                if (hasInfl) {
                     lines.add(Line.from(
                             Span.styled("Infl: ", dim),
-                            Span.raw(infl.format("%.1f / %.1f / %.1f"))));
+                            Span.raw(sel.inflightLoad01 + " / " + sel.inflightLoad05 + " / " + sel.inflightLoad15)));
                 }
             }
         } else {
@@ -4165,7 +4181,6 @@ public class CamelMonitor extends CamelCommand {
                     endpointRemoteSamples.remove(entry.getKey());
                     previousEndpointRemoteTime.remove(entry.getKey());
                     cpuLoadAvg.remove(entry.getKey());
-                    inflightLoadAvg.remove(entry.getKey());
                     prevCpuSample.remove(entry.getKey());
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
@@ -4342,9 +4357,6 @@ public class CamelMonitor extends CamelCommand {
 
     private void updateLoadMetrics(ProcessHandle ph, IntegrationInfo info) {
         String pid = info.pid;
-
-        // Inflight EWMA — feed current inflight count directly
-        inflightLoadAvg.computeIfAbsent(pid, k -> new LoadAvg()).update(info.inflight);
 
         // CPU EWMA — compute % from ProcessHandle CPU duration delta
         Optional<Duration> durOpt = ph.info().totalCpuDuration();
@@ -4793,6 +4805,9 @@ public class CamelMonitor extends CamelCommand {
             info.exchangesTotal = objToLong(stats.get("exchangesTotal"));
             info.failed = objToLong(stats.get("exchangesFailed"));
             info.inflight = objToLong(stats.get("exchangesInflight"));
+            info.inflightLoad01 = objToString(stats.get("load01"));
+            info.inflightLoad05 = objToString(stats.get("load05"));
+            info.inflightLoad15 = objToString(stats.get("load15"));
             info.last = objToString(stats.get("lastProcessingTime"));
             info.delta = objToString(stats.get("deltaProcessingTime"));
             long tsStarted = objToLong(stats.get("lastCreatedExchangeTimestamp"));
@@ -5164,6 +5179,9 @@ public class CamelMonitor extends CamelCommand {
         long exchangesTotal;
         long failed;
         long inflight;
+        String inflightLoad01;
+        String inflightLoad05;
+        String inflightLoad15;
         String last;
         String delta;
         String sinceLastStarted;
