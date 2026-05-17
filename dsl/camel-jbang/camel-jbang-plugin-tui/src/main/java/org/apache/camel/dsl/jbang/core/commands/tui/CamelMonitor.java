@@ -1016,19 +1016,21 @@ public class CamelMonitor extends CamelCommand {
     private void render(Frame frame) {
         Rect area = frame.area();
 
-        // Layout: header (3 rows) + tabs (2 rows) + content (fill) + footer (1 row)
+        // Layout: header (1 row) + spacer (1 row) + tabs (2 rows) + content (fill) + footer (1 row)
         List<Rect> mainChunks = Layout.vertical()
                 .constraints(
-                        Constraint.length(3),
+                        Constraint.length(1),
+                        Constraint.length(1),
                         Constraint.length(2),
                         Constraint.fill(),
                         Constraint.length(1))
                 .split(area);
 
         renderHeader(frame, mainChunks.get(0));
-        renderTabs(frame, mainChunks.get(1));
-        renderContent(frame, mainChunks.get(2));
-        renderFooter(frame, mainChunks.get(3));
+        // mainChunks.get(1) is the empty spacer row
+        renderTabs(frame, mainChunks.get(2));
+        renderContent(frame, mainChunks.get(3));
+        renderFooter(frame, mainChunks.get(4));
     }
 
     private void renderHeader(Frame frame, Rect area) {
@@ -1037,7 +1039,7 @@ public class CamelMonitor extends CamelCommand {
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
 
         List<Span> titleSpans = new ArrayList<>();
-        titleSpans.add(Span.styled(" Camel Monitor", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()));
+        titleSpans.add(Span.styled(" Camel TUI", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()));
         titleSpans.add(Span.raw("  "));
         titleSpans.add(Span.styled(camelVersion != null ? "v" + camelVersion : "", Style.EMPTY.fg(Color.GREEN)));
         titleSpans.add(Span.raw("  "));
@@ -1048,13 +1050,8 @@ public class CamelMonitor extends CamelCommand {
         }
         Line titleLine = Line.from(titleSpans);
 
-        Block headerBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Apache Camel ")
-                .build();
-
         frame.renderWidget(
-                Paragraph.builder().text(Text.from(titleLine)).block(headerBlock).build(),
+                Paragraph.builder().text(Text.from(titleLine)).build(),
                 area);
     }
 
