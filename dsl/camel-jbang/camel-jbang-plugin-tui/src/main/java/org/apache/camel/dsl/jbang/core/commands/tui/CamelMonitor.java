@@ -210,6 +210,7 @@ public class CamelMonitor extends CamelCommand {
 
     // Endpoint filter state
     private boolean showOnlyRemote;
+    private boolean showEndpointChart = true;
 
     // Circuit breaker sort state (default: route = index 0)
     private String cbSort = "route";
@@ -274,7 +275,10 @@ public class CamelMonitor extends CamelCommand {
     private String selectedPid;
 
     // Diagram state
-    private boolean chartAllIntegrations = true;
+    private static final int CHART_ALL = 0;
+    private static final int CHART_SINGLE = 1;
+    private static final int CHART_OFF = 2;
+    private int chartMode = CHART_ALL;
     private boolean showDiagram;
     private boolean diagramTextMode;
     private boolean diagramMetrics = true;
@@ -532,9 +536,9 @@ public class CamelMonitor extends CamelCommand {
                 overviewSortReversed = !overviewSortReversed;
                 return true;
             }
-            // Overview tab: toggle chart between all integrations and selected only
+            // Overview tab: cycle chart between all integrations, selected only, and off
             if (tab == TAB_OVERVIEW && ke.isCharIgnoreCase('a')) {
-                chartAllIntegrations = !chartAllIntegrations;
+                chartMode = (chartMode + 1) % 3;
                 return true;
             }
             // Overview tab: start/stop all routes for selected integration
@@ -584,6 +588,10 @@ public class CamelMonitor extends CamelCommand {
             }
             if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('r')) {
                 showOnlyRemote = !showOnlyRemote;
+                return true;
+            }
+            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('a')) {
+                showEndpointChart = !showEndpointChart;
                 return true;
             }
 
@@ -950,9 +958,6 @@ public class CamelMonitor extends CamelCommand {
                 syncSelectedPidFromOverview();
             }
             case TAB_ROUTES -> routeTableState.selectPrevious();
-            case TAB_CONSUMERS -> consumerTableState.selectPrevious();
-            case TAB_HEALTH -> healthTableState.selectPrevious();
-            case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
             case TAB_CIRCUIT_BREAKER -> cbTableState.selectPrevious();
             case TAB_LOG -> {
                 logFollowMode = false;
@@ -983,18 +988,6 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ROUTES -> {
                 IntegrationInfo info = findSelectedIntegration();
                 routeTableState.selectNext(info != null ? info.routes.size() : 0);
-            }
-            case TAB_CONSUMERS -> {
-                IntegrationInfo info = findSelectedIntegration();
-                consumerTableState.selectNext(info != null ? info.consumers.size() : 0);
-            }
-            case TAB_HEALTH -> {
-                IntegrationInfo info = findSelectedIntegration();
-                healthTableState.selectNext(info != null ? getFilteredHealthChecks(info).size() : 0);
-            }
-            case TAB_ENDPOINTS -> {
-                IntegrationInfo info = findSelectedIntegration();
-                endpointTableState.selectNext(info != null ? info.endpoints.size() : 0);
             }
             case TAB_CIRCUIT_BREAKER -> {
                 IntegrationInfo info = findSelectedIntegration();
@@ -1138,8 +1131,8 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
-        // Split: table (fill) + chart (14 rows: 13 chart + 1 x-axis) if we have data
-        boolean hasSparkline = !throughputHistory.isEmpty();
+        // Split: table (fill) + chart (14 rows: 13 chart + 1 x-axis) if we have data and chart is on
+        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty();
         List<Rect> chunks;
         if (hasSparkline) {
             chunks = Layout.vertical()
@@ -1270,7 +1263,7 @@ public class CamelMonitor extends CamelCommand {
             // Merge throughput histories: all PIDs or selected only
             long[] mergedTotal = new long[renderPoints];
             long[] mergedFailed = new long[renderPoints];
-            String chartPid = (!chartAllIntegrations && selectedPid != null) ? selectedPid : null;
+            String chartPid = (chartMode == CHART_SINGLE && selectedPid != null) ? selectedPid : null;
             for (int i = 0; i < renderPoints; i++) {
                 for (Map.Entry<String, LinkedList<Long>> e : throughputHistory.entrySet()) {
                     if (chartPid == null || chartPid.equals(e.getKey())) {
@@ -1300,7 +1293,7 @@ public class CamelMonitor extends CamelCommand {
 
             // Styled legend in chart title
             Line titleLine;
-            if (!chartAllIntegrations && selectedPid != null) {
+            if (chartMode == CHART_SINGLE && selectedPid != null) {
                 IntegrationInfo chartSel = findSelectedIntegration();
                 String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12) : selectedPid;
                 titleLine = Line.from(
@@ -1852,8 +1845,6 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(10),
                         Constraint.length(22),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Consumers sort:" + consumerSort + " ").build())
                 .build();
@@ -2917,8 +2908,6 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(12),
                         Constraint.length(6),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
                 .build();
 
@@ -3000,27 +2989,27 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Endpoints sort:" + endpointSort + (showOnlyRemote ? " remote" : "") + " ").build())
                 .build();
 
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(12))
-                .split(area);
+        List<Rect> chunks = showEndpointChart
+                ? Layout.vertical().constraints(Constraint.fill(), Constraint.length(16)).split(area)
+                : List.of(area);
 
         frame.renderStatefulWidget(table, chunks.get(0), endpointTableState);
 
-        long inTotal = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction) && (!showOnlyRemote || ep.remote))
-                .mapToLong(ep -> ep.hits)
-                .sum();
-        long outTotal = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction) && (!showOnlyRemote || ep.remote))
-                .mapToLong(ep -> ep.hits)
-                .sum();
-        renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid, showOnlyRemote);
+        if (showEndpointChart) {
+            long inTotal = info.endpoints.stream()
+                    .filter(ep -> "in".equals(ep.direction) && (!showOnlyRemote || ep.remote))
+                    .mapToLong(ep -> ep.hits)
+                    .sum();
+            long outTotal = info.endpoints.stream()
+                    .filter(ep -> "out".equals(ep.direction) && (!showOnlyRemote || ep.remote))
+                    .mapToLong(ep -> ep.hits)
+                    .sum();
+            renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid, showOnlyRemote);
+        }
     }
 
     private void renderEndpointFlow(
@@ -3909,7 +3898,11 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "q", "quit");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
-            hint(spans, "a", "chart " + (chartAllIntegrations ? "[all]" : "[single]"));
+            hint(spans, "a", "chart " + switch (chartMode) {
+                case CHART_ALL -> "[all]";
+                case CHART_SINGLE -> "[single]";
+                default -> "[off]";
+            });
             hint(spans, "Enter", "details");
             if (selectedPid != null) {
                 IntegrationInfo selInfo = findSelectedIntegration();
@@ -3969,6 +3962,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "r", "remote" + (showOnlyRemote ? " [on]" : " [off]"));
+            hint(spans, "a", "chart " + (showEndpointChart ? "[all]" : "[off]"));
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CIRCUIT_BREAKER) {
             hint(spans, "Esc", "back");
