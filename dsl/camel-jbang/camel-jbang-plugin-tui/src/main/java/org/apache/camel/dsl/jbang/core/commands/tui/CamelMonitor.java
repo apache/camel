@@ -61,12 +61,17 @@ import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.TickEvent;
+import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.barchart.Bar;
 import dev.tamboui.widgets.barchart.BarChart;
 import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.list.ListItem;
+import dev.tamboui.widgets.list.ListState;
+import dev.tamboui.widgets.list.ListWidget;
+import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -190,8 +195,17 @@ public class CamelMonitor extends CamelCommand {
     private boolean showOnlyDown;
 
     // Log state
-    private List<String> logLines = new ArrayList<>();
     private volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
+    // Incremental log tail state — persisted across refresh cycles
+    private long logFilePos = -1;
+    private String logFilePid;
+    private final StringBuilder logLineBuffer = new StringBuilder();
+    private final List<LogEntry> mutableFilteredEntries = new ArrayList<>();
+    // Render-side Line cache — rebuilt only when entries or hSkip changes
+    private List<LogEntry> cachedLogEntries;
+    private int cachedLogHSkip = -1;
+    private int cachedLogMaxWidth;
+    private List<Line> cachedLogLines = Collections.emptyList();
     private int logScroll;
     private final ScrollbarState logScrollState = new ScrollbarState();
     private boolean logFollowMode = true;
@@ -263,6 +277,10 @@ public class CamelMonitor extends CamelCommand {
     private final ScrollbarState sourceHScrollState = new ScrollbarState();
     private final AtomicBoolean sourceLoading = new AtomicBoolean(false);
 
+    private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
+    private boolean showLogLevelPopup;
+    private final ListState logLevelListState = new ListState();
+
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private final AtomicBoolean diagramLoading = new AtomicBoolean(false);
     private TuiRunner runner;
@@ -305,6 +323,10 @@ public class CamelMonitor extends CamelCommand {
         if (event instanceof KeyEvent ke) {
             // Escape: navigate back
             if (ke.isCancel()) {
+                if (showLogLevelPopup) {
+                    showLogLevelPopup = false;
+                    return true;
+                }
                 if (showSource) {
                     showSource = false;
                     return true;
@@ -380,7 +402,9 @@ public class CamelMonitor extends CamelCommand {
 
             // Navigation (all tabs)
             if (ke.isUp()) {
-                if (showDiagram && tab == TAB_ROUTES) {
+                if (tab == TAB_LOG && showLogLevelPopup) {
+                    logLevelListState.selectPrevious();
+                } else if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 1);
                 } else {
                     navigateUp();
@@ -388,7 +412,9 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                if (showDiagram && tab == TAB_ROUTES) {
+                if (tab == TAB_LOG && showLogLevelPopup) {
+                    logLevelListState.selectNext(LOG_LEVELS.length);
+                } else if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll++;
                 } else {
                     navigateDown();
@@ -599,8 +625,26 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
+            // Log tab: log level popup — absorb all keys except Enter to confirm
+            if (tab == TAB_LOG && showLogLevelPopup) {
+                if (ke.isConfirm()) {
+                    Integer sel = logLevelListState.selected();
+                    if (sel != null && sel >= 0 && sel < LOG_LEVELS.length && selectedPid != null) {
+                        sendLoggerLevelAction(selectedPid, LOG_LEVELS[sel]);
+                    }
+                    showLogLevelPopup = false;
+                }
+                return true;
+            }
+
             // Log tab: follow mode, word wrap, horizontal scroll
             if (tab == TAB_LOG) {
+                if (ke.isChar('l')) {
+                    showLogLevelPopup = true;
+                    // pre-select INFO as a sensible default
+                    logLevelListState.select(2);
+                    return true;
+                }
                 if (ke.isCharIgnoreCase('f')) {
                     logFollowMode = !logFollowMode;
                     return true;
@@ -826,6 +870,12 @@ public class CamelMonitor extends CamelCommand {
         // Log (TAB_LOG)
         logScroll = 0;
         logFollowMode = true;
+        showLogLevelPopup = false;
+        mutableFilteredEntries.clear();
+        filteredLogEntries = Collections.emptyList();
+        cachedLogEntries = null;
+        logFilePos = -1;
+        logLineBuffer.setLength(0);
         // Trace (TAB_TRACE)
         traceDetailView = false;
         traceSelectedExchangeId = null;
@@ -2840,9 +2890,12 @@ public class CamelMonitor extends CamelCommand {
         List<LogEntry> entries = filteredLogEntries;
         int contentHeight = entries.size();
 
+        String logTitle = info.rootLogLevel != null
+                ? " Log level:" + info.rootLogLevel + " "
+                : " Log ";
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(" Log ")
+                .title(logTitle)
                 .build();
         frame.renderWidget(block, area);
 
@@ -2854,22 +2907,35 @@ public class CamelMonitor extends CamelCommand {
         }
         logScroll = Math.min(logScroll, Math.max(0, contentHeight - visibleHeight));
 
-        // Cap horizontal scroll at the longest line width minus visible width
-        if (!logWordWrap) {
-            int visibleWidth = Math.max(1, inner.width() - 1);
-            int maxLineWidth = 0;
+        int hSkip = logWordWrap ? 0 : logHScroll;
+
+        // Rebuild Line cache only when entries or horizontal offset changes
+        if (entries != cachedLogEntries || hSkip != cachedLogHSkip) {
+            cachedLogEntries = entries;
+            cachedLogHSkip = hSkip;
+            List<Line> built = new ArrayList<>(entries.size());
+            int maxW = 0;
             for (LogEntry entry : entries) {
-                String stripped = TuiHelper.stripAnsi(entry.raw != null ? entry.raw : "");
-                maxLineWidth = Math.max(maxLineWidth, CharWidth.of(stripped));
+                String raw = entry.raw != null ? entry.raw : "";
+                if (!logWordWrap) {
+                    maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
+                }
+                built.add(TuiHelper.ansiToLine(raw, hSkip));
             }
-            logHScroll = Math.min(logHScroll, Math.max(0, maxLineWidth - visibleWidth));
+            cachedLogMaxWidth = maxW;
+            cachedLogLines = built;
         }
 
-        int hSkip = logWordWrap ? 0 : logHScroll;
-        List<Line> lines = new ArrayList<>();
-        for (LogEntry entry : entries) {
-            lines.add(TuiHelper.ansiToLine(entry.raw != null ? entry.raw : "", hSkip));
+        // Cap horizontal scroll using cached max width
+        if (!logWordWrap) {
+            int visibleWidth = Math.max(1, inner.width() - 1);
+            logHScroll = Math.min(logHScroll, Math.max(0, cachedLogMaxWidth - visibleWidth));
         }
+
+        // Slice only the visible window so Paragraph doesn't iterate all entries every frame
+        List<Line> allLines = cachedLogLines;
+        int start = Math.min(logScroll, Math.max(0, allLines.size() - visibleHeight));
+        List<Line> visibleLines = allLines.subList(start, Math.min(allLines.size(), start + visibleHeight));
 
         List<Rect> hChunks = Layout.horizontal()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -2877,9 +2943,8 @@ public class CamelMonitor extends CamelCommand {
 
         Overflow overflow = logWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
         Paragraph para = Paragraph.builder()
-                .text(Text.from(lines))
+                .text(Text.from(visibleLines))
                 .overflow(overflow)
-                .scroll(logScroll)
                 .build();
         frame.renderWidget(para, hChunks.get(0));
 
@@ -2889,48 +2954,95 @@ public class CamelMonitor extends CamelCommand {
             logScrollState.position(logScroll);
             frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), logScrollState);
         }
+
+        if (showLogLevelPopup) {
+            renderLogLevelPopup(frame, area);
+        }
     }
 
-    private void readLogFile(String pid, List<String> target) {
-        target.clear();
+    private void renderLogLevelPopup(Frame frame, Rect area) {
+        int popupW = 24;
+        int popupH = 7; // 2 border rows + 5 level items
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        // Clear the popup area so log content doesn't bleed through the border
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        ListWidget list = ListWidget.builder()
+                .items(
+                        ListItem.from("  ERROR  ").style(Style.EMPTY.fg(Color.LIGHT_RED)),
+                        ListItem.from("  WARN   ").style(Style.EMPTY.fg(Color.YELLOW)),
+                        ListItem.from("  INFO   ").style(Style.EMPTY),
+                        ListItem.from("  DEBUG  ").style(Style.EMPTY.fg(Color.CYAN)),
+                        ListItem.from("  TRACE  ").style(Style.EMPTY.dim()))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(" Set Log Level ")
+                        .build())
+                .build();
+
+        frame.renderStatefulWidget(list, popup, logLevelListState);
+    }
+
+    private void sendLoggerLevelAction(String pid, String level) {
+        JsonObject root = new JsonObject();
+        root.put("action", "logger");
+        root.put("command", "set-logging-level");
+        root.put("logger-name", "root");
+        root.put("logging-level", level);
+        Path actionFile = getActionFile(pid);
+        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
+    }
+
+    private void readNewLogLines(String pid, List<String> newLines) {
         Path logFile = CommandLineHelper.getCamelDir().resolve(pid + ".log");
         if (!Files.exists(logFile)) {
+            logFilePid = pid;
+            logFilePos = -1;
             return;
         }
+        logFilePid = pid;
         try (RandomAccessFile raf = new RandomAccessFile(logFile.toFile(), "r")) {
             long length = raf.length();
-            // Read last ~64KB to get recent lines
-            long startPos = Math.max(0, length - 1024 * 1024);
-            raf.seek(startPos);
-            if (startPos > 0) {
-                raf.readLine(); // skip partial line
+            if (logFilePos < 0 || logFilePos > length) {
+                // First read or file truncated/rotated: start 1 MB from end
+                logFilePos = Math.max(0, length - 1024 * 1024);
+                logLineBuffer.setLength(0);
             }
-            // Read remaining bytes and split into lines using proper encoding
-            byte[] remaining = new byte[(int) (length - raf.getFilePointer())];
-            raf.readFully(remaining);
-            String content = new String(remaining, StandardCharsets.UTF_8);
-            String[] rawLines = content.split("\n", -1);
-            int start = Math.max(0, rawLines.length - MAX_LOG_LINES);
-            for (int i = start; i < rawLines.length; i++) {
+            if (logFilePos >= length) {
+                return; // nothing new
+            }
+            raf.seek(logFilePos);
+            byte[] buf = new byte[(int) Math.min(length - logFilePos, 4 * 1024 * 1024)];
+            raf.readFully(buf);
+            logFilePos += buf.length;
+
+            // Prepend any unfinished line from previous read, then process line by line
+            String chunk = logLineBuffer + new String(buf, StandardCharsets.UTF_8);
+            logLineBuffer.setLength(0);
+            int start = 0;
+            int end;
+            while ((end = chunk.indexOf('\n', start)) >= 0) {
                 // TODO: remove fixControlChars workaround once TamboUI ships a release that
                 // sanitises C0 control chars in Buffer.setString (fix contributed in PR #345).
-                // Until then, \t must be replaced locally or it corrupts the terminal render.
-                String line = TuiHelper.fixControlChars(rawLines[i]);
+                String line = TuiHelper.fixControlChars(chunk.substring(start, end));
                 if (!line.isEmpty()) {
-                    target.add(line);
+                    newLines.add(line);
                 }
+                start = end + 1;
+            }
+            // Save incomplete trailing line for next call
+            if (start < chunk.length()) {
+                logLineBuffer.append(chunk, start, chunk.length());
             }
         } catch (IOException e) {
             // ignore
         }
-    }
-
-    private List<LogEntry> applyLogFilters(List<String> lines) {
-        List<LogEntry> result = new ArrayList<>();
-        for (String line : lines) {
-            result.add(parseLogLine(line));
-        }
-        return result;
     }
 
     // Regex for Spring Boot / Camel log format:
@@ -3605,6 +3717,10 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "d", "toggle DOWN");
             hint(spans, "1-9", "tabs");
+        } else if (tab == TAB_LOG && showLogLevelPopup) {
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "Enter", "set level");
+            hintLast(spans, "Esc", "cancel");
         } else if (tab == TAB_LOG) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "scroll");
@@ -3614,6 +3730,7 @@ public class CamelMonitor extends CamelCommand {
             if (!logWordWrap) {
                 hint(spans, "\u2190\u2192", "h-scroll");
             }
+            hint(spans, "l", "level");
             hintLast(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
         } else if (tab == TAB_TRACE && traceDetailView) {
             hint(spans, "Esc", "back");
@@ -3792,14 +3909,26 @@ public class CamelMonitor extends CamelCommand {
 
             data.set(infos);
 
-            // Refresh log data for the selected integration
+            // Refresh log data for the selected integration (incremental tail)
             IntegrationInfo selected = findSelectedIntegration();
             if (selected != null) {
-                List<String> newLogLines = new ArrayList<>();
-                readLogFile(selected.pid, newLogLines);
-                List<LogEntry> newFilteredEntries = applyLogFilters(newLogLines);
-                logLines = newLogLines;
-                filteredLogEntries = newFilteredEntries;
+                if (!selected.pid.equals(logFilePid)) {
+                    // Integration changed: reset all incremental log state
+                    mutableFilteredEntries.clear();
+                    logFilePos = -1;
+                    logLineBuffer.setLength(0);
+                }
+                List<String> newRawLines = new ArrayList<>();
+                readNewLogLines(selected.pid, newRawLines);
+                if (!newRawLines.isEmpty()) {
+                    for (String line : newRawLines) {
+                        mutableFilteredEntries.add(parseLogLine(line));
+                    }
+                    if (mutableFilteredEntries.size() > MAX_LOG_LINES) {
+                        mutableFilteredEntries.subList(0, mutableFilteredEntries.size() - MAX_LOG_LINES).clear();
+                    }
+                    filteredLogEntries = new ArrayList<>(mutableFilteredEntries);
+                }
             }
 
             // Refresh trace data
@@ -4335,6 +4464,14 @@ public class CamelMonitor extends CamelCommand {
             info.peakThreadCount = threads.getIntegerOrDefault("peakThreadCount", 0);
         }
 
+        JsonObject logger = (JsonObject) root.get("logger");
+        if (logger != null) {
+            JsonObject levels = (JsonObject) logger.get("levels");
+            if (levels != null) {
+                info.rootLogLevel = levels.getString("root");
+            }
+        }
+
         // Parse routes
         JsonArray routes = (JsonArray) root.get("routes");
         if (routes != null) {
@@ -4647,6 +4784,7 @@ public class CamelMonitor extends CamelCommand {
         String sinceLastCompleted;
         String sinceLastFailed;
         String reloaded;
+        String rootLogLevel;
         int routeStarted;
         int routeTotal;
         long heapMemUsed;
