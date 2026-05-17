@@ -29,13 +29,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -401,33 +400,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return math;
         }
 
-        // attachments
-        if ("attachments".equals(function) || "clearAttachments".equals(function)
-                || ifStartsWithReturnRemainder("setAttachment", function) != null
-                || ifStartsWithReturnRemainder("attachment", function) != null) {
-            Expression exp = createSimpleAttachments(camelContext, function);
-            if (exp != null) {
-                return exp;
-            }
-        }
-        // base64
-        if ("base64Encode".equals(function) || "base64Decode".equals(function)
-                || ifStartsWithReturnRemainder("base64Encode", function) != null
-                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
-            Expression exp = createSimpleBase64(camelContext, function);
-            if (exp != null) {
-                return exp;
-            }
-        }
-        // html
-        if ("htmlClean".equals(function) || "htmlParse".equals(function) || "htmlDecode".equals(function)
-                || ifStartsWithReturnRemainder("htmlClean", function) != null
-                || ifStartsWithReturnRemainder("htmlParse", function) != null
-                || ifStartsWithReturnRemainder("htmlDecode", function) != null) {
-            Expression exp = createSimpleHtml(camelContext, function);
-            if (exp != null) {
-                return exp;
-            }
+        // functions from external components (attachments, base64, html, ...)
+        Expression external = SimpleFunctionDispatcher.tryCreate(camelContext, function, token.getIndex());
+        if (external != null) {
+            return external;
         }
 
         // it may be a custom function
@@ -450,33 +426,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else {
             return null;
         }
-    }
-
-    private Expression createSimpleAttachments(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
-                SimpleLanguageFunctionFactory.class,
-                "camel-attachments");
-        return factory.createFunction(camelContext, function, token.getIndex());
-    }
-
-    private Expression createSimpleBase64(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
-                SimpleLanguageFunctionFactory.class,
-                "camel-base64");
-        return factory.createFunction(camelContext, function, token.getIndex());
-    }
-
-    private Expression createSimpleHtml(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-jsoup",
-                SimpleLanguageFunctionFactory.class,
-                "camel-jsoup");
-        return factory.createFunction(camelContext, function, token.getIndex());
     }
 
     private Expression createSimpleExpressionMessage(CamelContext camelContext, String function, boolean strict) {
@@ -2163,23 +2112,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return math;
         }
 
-        // attachments
-        if ("attachments".equals(function) || "clearAttachments".equals(function)
-                || ifStartsWithReturnRemainder("setAttachment", function) != null
-                || ifStartsWithReturnRemainder("attachment", function) != null) {
-            String code = createCodeAttachments(camelContext, function);
-            if (code != null) {
-                return code;
-            }
-        }
-        // base64
-        if ("base64Encode".equals(function) || "base64Decode".equals(function)
-                || ifStartsWithReturnRemainder("base64Encode", function) != null
-                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
-            String code = createCodeBase64(camelContext, function);
-            if (code != null) {
-                return code;
-            }
+        // code from external components (attachments, base64, ...)
+        String external = SimpleFunctionDispatcher.tryCreateCode(camelContext, function, token.getIndex());
+        if (external != null) {
+            return external;
         }
 
         throw new SimpleParserException("Unknown function: " + function, token.getIndex());
@@ -2789,24 +2725,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "fileModified(message)";
         }
         throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
-    }
-
-    private String createCodeAttachments(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
-                SimpleLanguageFunctionFactory.class,
-                "camel-attachments");
-        return factory.createCode(camelContext, function, token.getIndex());
-    }
-
-    private String createCodeBase64(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
-                SimpleLanguageFunctionFactory.class,
-                "camel-base64");
-        return factory.createCode(camelContext, function, token.getIndex());
     }
 
     private String createCodeExpressionMisc(CamelContext camelContext, String function) {
