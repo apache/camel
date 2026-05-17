@@ -124,10 +124,10 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_TRACE = 8;
 
     // Overview sort columns
-    private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "status", "total", "fail" };
+    private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
 
     // Route sort columns
-    private static final String[] ROUTE_SORT_COLUMNS = { "name", "group", "status", "total", "failed" };
+    private static final String[] ROUTE_SORT_COLUMNS = { "name", "group", "from", "status", "total", "failed" };
 
     // Consumer sort columns (order matches table column order)
     private static final String[] CONSUMER_SORT_COLUMNS = { "id", "status", "type", "inflight", "total", "uri" };
@@ -171,18 +171,22 @@ public class CamelMonitor extends CamelCommand {
     // Overview sort state
     private String overviewSort = "name";
     private int overviewSortIndex = 1;
+    private boolean overviewSortReversed;
 
     // Route sort state
     private String routeSort = "name";
     private int routeSortIndex = 0;
+    private boolean routeSortReversed;
 
     // Consumer sort state (default: id = index 0)
     private String consumerSort = "id";
     private int consumerSortIndex = 0;
+    private boolean consumerSortReversed;
 
     // Endpoint sort state (default: route = index 1)
     private String endpointSort = "route";
     private int endpointSortIndex = 1;
+    private boolean endpointSortReversed;
 
     // Endpoint filter state
     private boolean showOnlyRemote;
@@ -190,6 +194,7 @@ public class CamelMonitor extends CamelCommand {
     // Circuit breaker sort state (default: route = index 0)
     private String cbSort = "route";
     private int cbSortIndex = 0;
+    private boolean cbSortReversed;
 
     // Health filter state
     private boolean showOnlyDown;
@@ -222,6 +227,7 @@ public class CamelMonitor extends CamelCommand {
     private static final String[] TRACE_SORT_COLUMNS = { "time", "route", "elapsed", "exchange" };
     private String traceSort = "time";
     private int traceSortIndex;
+    private boolean traceSortReversed;
     private boolean traceDetailView;
     private volatile List<String> traceSortedExchangeIds = Collections.emptyList();
     private String traceSelectedExchangeId;
@@ -496,9 +502,14 @@ public class CamelMonitor extends CamelCommand {
             }
 
             // Overview tab: sort
-            if (tab == TAB_OVERVIEW && ke.isCharIgnoreCase('s')) {
+            if (tab == TAB_OVERVIEW && ke.isChar('s')) {
                 overviewSortIndex = (overviewSortIndex + 1) % OVERVIEW_SORT_COLUMNS.length;
                 overviewSort = OVERVIEW_SORT_COLUMNS[overviewSortIndex];
+                overviewSortReversed = false;
+                return true;
+            }
+            if (tab == TAB_OVERVIEW && ke.isChar('S')) {
+                overviewSortReversed = !overviewSortReversed;
                 return true;
             }
             // Overview tab: toggle chart between all integrations and selected only
@@ -517,23 +528,38 @@ public class CamelMonitor extends CamelCommand {
             }
 
             // Consumers tab: sort
-            if (tab == TAB_CONSUMERS && ke.isCharIgnoreCase('s')) {
+            if (tab == TAB_CONSUMERS && ke.isChar('s')) {
                 consumerSortIndex = (consumerSortIndex + 1) % CONSUMER_SORT_COLUMNS.length;
                 consumerSort = CONSUMER_SORT_COLUMNS[consumerSortIndex];
+                consumerSortReversed = false;
+                return true;
+            }
+            if (tab == TAB_CONSUMERS && ke.isChar('S')) {
+                consumerSortReversed = !consumerSortReversed;
                 return true;
             }
 
             // Circuit breaker tab: sort
-            if (tab == TAB_CIRCUIT_BREAKER && ke.isCharIgnoreCase('s')) {
+            if (tab == TAB_CIRCUIT_BREAKER && ke.isChar('s')) {
                 cbSortIndex = (cbSortIndex + 1) % CB_SORT_COLUMNS.length;
                 cbSort = CB_SORT_COLUMNS[cbSortIndex];
+                cbSortReversed = false;
+                return true;
+            }
+            if (tab == TAB_CIRCUIT_BREAKER && ke.isChar('S')) {
+                cbSortReversed = !cbSortReversed;
                 return true;
             }
 
             // Endpoints tab: sort and filter
-            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('s')) {
+            if (tab == TAB_ENDPOINTS && ke.isChar('s')) {
                 endpointSortIndex = (endpointSortIndex + 1) % ENDPOINT_SORT_COLUMNS.length;
                 endpointSort = ENDPOINT_SORT_COLUMNS[endpointSortIndex];
+                endpointSortReversed = false;
+                return true;
+            }
+            if (tab == TAB_ENDPOINTS && ke.isChar('S')) {
+                endpointSortReversed = !endpointSortReversed;
                 return true;
             }
             if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('r')) {
@@ -542,9 +568,14 @@ public class CamelMonitor extends CamelCommand {
             }
 
             // Routes tab: sort and diagram
-            if (tab == TAB_ROUTES && ke.isCharIgnoreCase('s')) {
+            if (tab == TAB_ROUTES && ke.isChar('s')) {
                 routeSortIndex = (routeSortIndex + 1) % ROUTE_SORT_COLUMNS.length;
                 routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
+                routeSortReversed = false;
+                return true;
+            }
+            if (tab == TAB_ROUTES && ke.isChar('S')) {
+                routeSortReversed = !routeSortReversed;
                 return true;
             }
             if (tab == TAB_ROUTES && ke.isChar('d')) {
@@ -582,7 +613,7 @@ public class CamelMonitor extends CamelCommand {
                 toggleRouteStartStop();
                 return true;
             }
-            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isChar('P')) {
+            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isChar('P') && selectedRouteSupportsSuspension()) {
                 toggleRouteSuspendResume();
                 return true;
             }
@@ -712,9 +743,14 @@ public class CamelMonitor extends CamelCommand {
                         return true;
                     }
                 } else {
-                    if (ke.isCharIgnoreCase('s')) {
+                    if (ke.isChar('s')) {
                         traceSortIndex = (traceSortIndex + 1) % TRACE_SORT_COLUMNS.length;
                         traceSort = TRACE_SORT_COLUMNS[traceSortIndex];
+                        traceSortReversed = false;
+                        return true;
+                    }
+                    if (ke.isChar('S')) {
+                        traceSortReversed = !traceSortReversed;
                         return true;
                     }
                     if (ke.isConfirm()) {
@@ -1119,9 +1155,14 @@ public class CamelMonitor extends CamelCommand {
 
                 String sinceLastDisplay = formatSinceLast(info);
 
+                Line nameLine = info.devMode
+                        ? Line.from(
+                                Span.styled(info.name != null ? info.name : "", Style.EMPTY.fg(Color.CYAN)),
+                                Span.styled(" [dev]", Style.EMPTY.fg(Color.YELLOW).dim()))
+                        : Line.from(Span.styled(info.name != null ? info.name : "", Style.EMPTY.fg(Color.CYAN)));
                 rows.add(Row.from(
                         Cell.from(info.pid),
-                        Cell.from(Span.styled(info.name != null ? info.name : "", Style.EMPTY.fg(Color.CYAN))),
+                        Cell.from(nameLine),
                         Cell.from(info.camelVersion != null ? info.camelVersion : ""),
                         centerCell(info.ready != null ? info.ready : "", 5),
                         Cell.from(Span.styled(extractState(info.state), statusStyle)),
@@ -1138,7 +1179,7 @@ public class CamelMonitor extends CamelCommand {
         Row header = Row.from(
                 Cell.from(Span.styled(overviewSortLabel("PID", "pid"), overviewSortStyle("pid"))),
                 Cell.from(Span.styled(overviewSortLabel("NAME", "name"), overviewSortStyle("name"))),
-                Cell.from(Span.styled("VERSION", Style.EMPTY.bold())),
+                Cell.from(Span.styled(overviewSortLabel("VERSION", "version"), overviewSortStyle("version"))),
                 centerCell("READY", 5, Style.EMPTY.bold()),
                 Cell.from(Span.styled(overviewSortLabel("STATUS", "status"), overviewSortStyle("status"))),
                 Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
@@ -1349,6 +1390,21 @@ public class CamelMonitor extends CamelCommand {
                         Span.styled("Version: ", dim),
                         Span.raw(TuiHelper.truncate(sel.camelVersion, inner.width() - 9))));
             }
+            if (sel.profile != null || sel.reloaded > 0) {
+                List<Span> profileSpans = new ArrayList<>();
+                if (sel.profile != null) {
+                    profileSpans.add(Span.styled("Profile: ", dim));
+                    profileSpans.add(Span.raw(sel.profile));
+                }
+                if (sel.reloaded > 0) {
+                    if (!profileSpans.isEmpty()) {
+                        profileSpans.add(Span.raw("    "));
+                    }
+                    profileSpans.add(Span.styled("Reload: ", dim));
+                    profileSpans.add(Span.raw(String.valueOf(sel.reloaded)));
+                }
+                lines.add(Line.from(profileSpans));
+            }
             lines.add(Line.from(Span.raw("")));
             // Resources
             if (sel.javaVersion != null) {
@@ -1466,7 +1522,7 @@ public class CamelMonitor extends CamelCommand {
                 .header(Row.from(
                         Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
                         Cell.from(Span.styled(routeSortLabel("GROUP", "group"), routeSortStyle("group"))),
-                        Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
+                        Cell.from(Span.styled(routeSortLabel("FROM", "from"), routeSortStyle("from"))),
                         Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
                         Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
                         rightCell("COVER", 6, Style.EMPTY.bold()),
@@ -1522,7 +1578,7 @@ public class CamelMonitor extends CamelCommand {
         if (a.vanishing != b.vanishing) {
             return a.vanishing ? 1 : -1;
         }
-        return switch (overviewSort) {
+        int result = switch (overviewSort) {
             case "pid" -> {
                 String pa = a.pid != null ? a.pid : "";
                 String pb = b.pid != null ? b.pid : "";
@@ -1533,15 +1589,21 @@ public class CamelMonitor extends CamelCommand {
                 String nb = b.name != null ? b.name : "";
                 yield na.compareToIgnoreCase(nb);
             }
+            case "version" -> {
+                String va = a.camelVersion != null ? a.camelVersion : "";
+                String vb = b.camelVersion != null ? b.camelVersion : "";
+                yield va.compareToIgnoreCase(vb);
+            }
             case "status" -> Integer.compare(a.state, b.state);
             case "total" -> Long.compare(b.exchangesTotal, a.exchangesTotal);
             case "fail" -> Long.compare(b.failed, a.failed);
             default -> 0;
         };
+        return overviewSortReversed ? -result : result;
     }
 
     private String overviewSortLabel(String label, String column) {
-        return sortLabel(label, column, overviewSort);
+        return sortLabel(label, column, overviewSort, overviewSortReversed);
     }
 
     private Style overviewSortStyle(String column) {
@@ -1549,7 +1611,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private int sortRoute(RouteInfo a, RouteInfo b) {
-        return switch (routeSort) {
+        int result = switch (routeSort) {
             case "total" -> Long.compare(b.total, a.total);
             case "failed" -> Long.compare(b.failed, a.failed);
             case "name" -> {
@@ -1567,12 +1629,18 @@ public class CamelMonitor extends CamelCommand {
                 String gb = b.group != null ? b.group : "";
                 yield ga.compareToIgnoreCase(gb);
             }
+            case "from" -> {
+                String fa = a.from != null ? a.from : "";
+                String fb = b.from != null ? b.from : "";
+                yield fa.compareToIgnoreCase(fb);
+            }
             default -> 0;
         };
+        return routeSortReversed ? -result : result;
     }
 
     private String traceSortLabel(String label, String column) {
-        return sortLabel(label, column, traceSort);
+        return sortLabel(label, column, traceSort, traceSortReversed);
     }
 
     private Style traceSortStyle(String column) {
@@ -1580,7 +1648,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private String routeSortLabel(String label, String column) {
-        return sortLabel(label, column, routeSort);
+        return sortLabel(label, column, routeSort, routeSortReversed);
     }
 
     private Style routeSortStyle(String column) {
@@ -1588,7 +1656,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private String consumerSortLabel(String label, String column) {
-        return sortLabel(label, column, consumerSort);
+        return sortLabel(label, column, consumerSort, consumerSortReversed);
     }
 
     private Style consumerSortStyle(String column) {
@@ -1596,7 +1664,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private int sortConsumer(ConsumerInfo a, ConsumerInfo b) {
-        return switch (consumerSort) {
+        int result = switch (consumerSort) {
             case "status" -> {
                 String sa = consumerStatus(a);
                 String sb = consumerStatus(b);
@@ -1624,6 +1692,7 @@ public class CamelMonitor extends CamelCommand {
                 yield ia.compareToIgnoreCase(ib);
             }
         };
+        return consumerSortReversed ? -result : result;
     }
 
     private static String consumerStatus(ConsumerInfo ci) {
@@ -1723,7 +1792,7 @@ public class CamelMonitor extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(consumerSortLabel("ID", "id"), consumerSortStyle("id"))),
+                        Cell.from(Span.styled(consumerSortLabel("ROUTE", "id"), consumerSortStyle("id"))),
                         Cell.from(Span.styled(consumerSortLabel("STATUS", "status"), consumerSortStyle("status"))),
                         Cell.from(Span.styled(consumerSortLabel("TYPE", "type"), consumerSortStyle("type"))),
                         rightCell(consumerSortLabel("INFLIGHT", "inflight"), 8, consumerSortStyle("inflight")),
@@ -1750,7 +1819,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private String endpointSortLabel(String label, String column) {
-        return sortLabel(label, column, endpointSort);
+        return sortLabel(label, column, endpointSort, endpointSortReversed);
     }
 
     private Style endpointSortStyle(String column) {
@@ -1758,7 +1827,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private int sortEndpoint(EndpointInfo a, EndpointInfo b) {
-        return switch (endpointSort) {
+        int result = switch (endpointSort) {
             case "component" -> {
                 String ca = a.component != null ? a.component : "";
                 String cb = b.component != null ? b.component : "";
@@ -1781,10 +1850,11 @@ public class CamelMonitor extends CamelCommand {
                 yield ra.compareToIgnoreCase(rb);
             }
         };
+        return endpointSortReversed ? -result : result;
     }
 
-    private static String sortLabel(String label, String column, String currentSort) {
-        return currentSort.equals(column) ? label + "▼" : label;
+    private static String sortLabel(String label, String column, String currentSort, boolean reversed) {
+        return currentSort.equals(column) ? label + (reversed ? "▲" : "▼") : label;
     }
 
     private static Style sortStyle(String column, String currentSort) {
@@ -2323,6 +2393,19 @@ public class CamelMonitor extends CamelCommand {
         return route.state;
     }
 
+    private boolean selectedRouteSupportsSuspension() {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null || info.routes.isEmpty()) {
+            return false;
+        }
+        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
+        sortedRoutes.sort(this::sortRoute);
+        Integer sel = routeTableState.selected();
+        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
+                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
+        return route.supportsSuspension;
+    }
+
     private void loadSourceInBackground(String pid, String routeId) {
         Path outputFile = getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
@@ -2654,20 +2737,21 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private String cbSortLabel(String label, String column) {
-        return cbSort.equals(column) ? label + " ▴" : label;
+        return sortLabel(label, column, cbSort, cbSortReversed);
     }
 
     private Style cbSortStyle(String column) {
-        return cbSort.equals(column) ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.bold();
+        return sortStyle(column, cbSort);
     }
 
     private int sortCircuitBreaker(CircuitBreakerInfo a, CircuitBreakerInfo b) {
-        return switch (cbSort) {
+        int result = switch (cbSort) {
             case "id" -> compareStr(a.id, b.id);
             case "component" -> compareStr(a.component, b.component);
             case "state" -> compareStr(a.state, b.state);
             default -> compareStr(a.routeId, b.routeId); // "route"
         };
+        return cbSortReversed ? -result : result;
     }
 
     private static int compareStr(String a, String b) {
@@ -3158,18 +3242,19 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Sort
-        summaries.sort((a, b) -> switch (traceSort) {
-            case "time" -> Long.compare(b.epochMs, a.epochMs);
-            case "route" -> {
-                String ra = a.routeId != null ? a.routeId : "";
-                String rb = b.routeId != null ? b.routeId : "";
-                yield ra.compareToIgnoreCase(rb);
-            }
-            case "elapsed" -> Long.compare(b.elapsed, a.elapsed);
-            case "exchange" -> {
-                yield a.exchangeId.compareTo(b.exchangeId);
-            }
-            default -> 0;
+        summaries.sort((a, b) -> {
+            int result = switch (traceSort) {
+                case "time" -> Long.compare(b.epochMs, a.epochMs);
+                case "route" -> {
+                    String ra = a.routeId != null ? a.routeId : "";
+                    String rb = b.routeId != null ? b.routeId : "";
+                    yield ra.compareToIgnoreCase(rb);
+                }
+                case "elapsed" -> Long.compare(b.elapsed, a.elapsed);
+                case "exchange" -> a.exchangeId.compareTo(b.exchangeId);
+                default -> 0;
+            };
+            return traceSortReversed ? -result : result;
         });
 
         traceSortedExchangeIds = summaries.stream().map(ExchangeSummary::exchangeId).toList();
@@ -3703,12 +3788,17 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
             String routeState = selectedRouteState();
+            boolean supSus = selectedRouteSupportsSuspension();
             if ("Started".equals(routeState)) {
                 hint(spans, "p", "stop");
-                hint(spans, "P", "suspend");
+                if (supSus) {
+                    hint(spans, "P", "suspend");
+                }
             } else if ("Suspended".equals(routeState)) {
                 hint(spans, "p", "start");
-                hint(spans, "P", "resume");
+                if (supSus) {
+                    hint(spans, "P", "resume");
+                }
             } else if (routeState != null) {
                 hint(spans, "p", "start");
             }
@@ -4434,6 +4524,7 @@ public class CamelMonitor extends CamelCommand {
         info.state = context.getIntegerOrDefault("phase", 0);
         info.camelVersion = context.getString("version");
         info.profile = context.getString("profile");
+        info.devMode = context.getBooleanOrDefault("devMode", false);
 
         JsonObject runtime = (JsonObject) root.get("runtime");
         info.platform = runtime != null ? runtime.getString("platform") : null;
@@ -4465,9 +4556,9 @@ public class CamelMonitor extends CamelCommand {
             if (tsFailed > 0) {
                 info.sinceLastFailed = TimeUtils.printSince(tsFailed);
             }
-            Object reloaded = stats.get("reloaded");
-            if (reloaded != null) {
-                info.reloaded = reloaded.toString();
+            Map<String, ?> reloadStats = (Map<String, ?>) stats.get("reload");
+            if (reloadStats != null) {
+                info.reloaded = (int) objToLong(reloadStats.get("reloaded"));
             }
         }
 
@@ -4502,6 +4593,7 @@ public class CamelMonitor extends CamelCommand {
                 ri.group = rj.getString("group");
                 ri.from = rj.getString("from");
                 ri.state = rj.getString("state");
+                ri.supportsSuspension = rj.getBooleanOrDefault("supportsSuspension", false);
                 ri.uptime = rj.getString("uptime");
 
                 Map<String, ?> rs = rj.getMap("statistics");
@@ -4790,6 +4882,7 @@ public class CamelMonitor extends CamelCommand {
         String javaVendor;
         String javaVmName;
         String profile;
+        boolean devMode;
         String ready;
         int state;
         long uptime;
@@ -4803,7 +4896,7 @@ public class CamelMonitor extends CamelCommand {
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;
-        String reloaded;
+        int reloaded;
         String rootLogLevel;
         int routeStarted;
         int routeTotal;
@@ -4826,6 +4919,7 @@ public class CamelMonitor extends CamelCommand {
         String group;
         String from;
         String state;
+        boolean supportsSuspension;
         String uptime;
         String throughput;
         String coverage;
