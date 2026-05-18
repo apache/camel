@@ -28,7 +28,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
@@ -89,13 +88,21 @@ public class NatsConfiguration {
     @UriParam(label = "advanced")
     private boolean traceConnection;
     @UriParam(label = "advanced")
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new NatsHeaderFilterStrategy();
     @UriParam(label = "common", defaultValue = "false")
     private boolean jetstreamEnabled = false;
     @UriParam(label = "common")
     private String jetstreamName;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean jetstreamAsync = true;
+
+    public NatsConfiguration copy() {
+        try {
+            return (NatsConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
