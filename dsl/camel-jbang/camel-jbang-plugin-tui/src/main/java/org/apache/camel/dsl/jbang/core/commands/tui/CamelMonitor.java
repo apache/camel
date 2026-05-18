@@ -1022,12 +1022,13 @@ public class CamelMonitor extends CamelCommand {
     private void render(Frame frame) {
         Rect area = frame.area();
 
-        // Layout: header (1 row) + spacer (1 row) + tabs (2 rows) + content (fill) + footer (1 row)
+        // Layout: header (1 row) + spacer (1 row) + tabs (2 rows) + spacer (1 row) + content (fill) + footer (1 row)
         List<Rect> mainChunks = Layout.vertical()
                 .constraints(
                         Constraint.length(1),
                         Constraint.length(1),
                         Constraint.length(2),
+                        Constraint.length(1),
                         Constraint.fill(),
                         Constraint.length(1))
                 .split(area);
@@ -1035,8 +1036,9 @@ public class CamelMonitor extends CamelCommand {
         renderHeader(frame, mainChunks.get(0));
         // mainChunks.get(1) is the empty spacer row
         renderTabs(frame, mainChunks.get(2));
-        renderContent(frame, mainChunks.get(3));
-        renderFooter(frame, mainChunks.get(4));
+        // mainChunks.get(3) is the empty spacer row between tabs and content
+        renderContent(frame, mainChunks.get(4));
+        renderFooter(frame, mainChunks.get(5));
     }
 
     private void renderHeader(Frame frame, Rect area) {
