@@ -55,7 +55,12 @@ public class RestDevConsole extends AbstractDevConsole {
                 }
                 sb.append(String.format("%n    Url: %s", rs.getUrl()));
                 sb.append(String.format("%n    Method: %s", rs.getMethod()));
+                sb.append(String.format("%n    Contract First: %s", rs.isContractFirst()));
+                sb.append(String.format("%n    Specification: %s", rs.isSpecification()));
                 sb.append(String.format("%n    State: %s", rs.getState()));
+                if (rs.getRouteId() != null) {
+                    sb.append(String.format("%n    Route Id: %s", rs.getRouteId()));
+                }
                 if (rs.getConsumes() != null) {
                     sb.append(String.format("%n    Consumes: %s", rs.getConsumes()));
                 }
