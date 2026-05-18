@@ -55,6 +55,9 @@ public class RestDevConsole extends AbstractDevConsole {
                 if (rs.getOperationId() != null) {
                     sb.append(String.format("%n    Operation Id: %s", rs.getOperationId()));
                 }
+                if (rs.getSpecificationUri() != null) {
+                    sb.append(String.format("%n    Specification: %s", rs.getSpecificationUri()));
+                }
                 if (rs.getConsumes() != null) {
                     sb.append(String.format("%n    Consumes: %s", rs.getConsumes()));
                 }
@@ -98,6 +101,9 @@ public class RestDevConsole extends AbstractDevConsole {
                 }
                 if (rs.getOperationId() != null) {
                     jo.put("operationId", rs.getOperationId());
+                }
+                if (rs.getSpecificationUri() != null) {
+                    jo.put("specificationUri", rs.getSpecificationUri());
                 }
                 if (rs.getConsumes() != null) {
                     jo.put("consumes", rs.getConsumes());
