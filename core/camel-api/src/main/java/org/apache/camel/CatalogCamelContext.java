@@ -23,8 +23,15 @@ import org.apache.camel.spi.Language;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Catalog level interface for the {@link CamelContext}
+ * Catalog-level extension of {@link CamelContext} that exposes the JSON schema metadata Camel publishes for the
+ * {@link Component}s, {@link DataFormat}s, {@link Language}s and EIPs available at runtime.
+ * <p/>
+ * The catalog data is the same information surfaced by the
+ * <a href="https://camel.apache.org/manual/camel-catalog.html">Camel Catalog</a> tooling and is used by Camel JBang,
+ * IDE plugins, Karaf shell commands and the management/console layer to inspect what is loaded in a running
+ * application.
  *
+ * @see   CamelContext
  * @since 3.0
  */
 public interface CatalogCamelContext extends CamelContext {
@@ -32,7 +39,7 @@ public interface CatalogCamelContext extends CamelContext {
     /**
      * Returns the JSON schema representation of the component and endpoint parameters for the given component name.
      *
-     * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSON schema support
+     * @return the JSON or <tt>null</tt> if the component is <b>not</b> built with JSON schema support
      */
     @Nullable
     String getComponentParameterJsonSchema(String componentName) throws IOException;
@@ -40,7 +47,7 @@ public interface CatalogCamelContext extends CamelContext {
     /**
      * Returns the JSON schema representation of the {@link DataFormat} parameters for the given data format name.
      *
-     * @return the json or <tt>null</tt> if the data format does not exist
+     * @return the JSON or <tt>null</tt> if the data format does not exist
      */
     @Nullable
     String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException;
@@ -48,7 +55,7 @@ public interface CatalogCamelContext extends CamelContext {
     /**
      * Returns the JSON schema representation of the {@link Language} parameters for the given language name.
      *
-     * @return the json or <tt>null</tt> if the language does not exist
+     * @return the JSON or <tt>null</tt> if the language does not exist
      */
     @Nullable
     String getLanguageParameterJsonSchema(String languageName) throws IOException;
@@ -57,7 +64,7 @@ public interface CatalogCamelContext extends CamelContext {
      * Returns the JSON schema representation of the {@link org.apache.camel.spi.DataTypeTransformer} parameters for the
      * given transformer name.
      *
-     * @return the json or <tt>null</tt> if the transformer does not exist
+     * @return the JSON or <tt>null</tt> if the transformer does not exist
      */
     @Nullable
     String getTransformerParameterJsonSchema(String transformerName) throws IOException;
@@ -66,7 +73,7 @@ public interface CatalogCamelContext extends CamelContext {
      * Returns the JSON schema representation of the {@link org.apache.camel.spi.annotations.DevConsole} parameters for
      * the given dev-console name.
      *
-     * @return the json or <tt>null</tt> if the dev-console does not exist
+     * @return the JSON or <tt>null</tt> if the dev-console does not exist
      */
     @Nullable
     String getDevConsoleParameterJsonSchema(String devConsoleName) throws IOException;
@@ -74,7 +81,7 @@ public interface CatalogCamelContext extends CamelContext {
     /**
      * Returns the JSON schema representation of the EIP parameters for the given EIP name.
      *
-     * @return the json or <tt>null</tt> if the EIP does not exist
+     * @return the JSON or <tt>null</tt> if the EIP does not exist
      */
     @Nullable
     String getEipParameterJsonSchema(String eipName) throws IOException;
@@ -82,7 +89,7 @@ public interface CatalogCamelContext extends CamelContext {
     /**
      * Returns the JSON schema representation of the pojo bean parameters for the given bean name.
      *
-     * @return the json or <tt>null</tt> if the pojo bean does not exist
+     * @return the JSON or <tt>null</tt> if the pojo bean does not exist
      */
     @Nullable
     String getPojoBeanParameterJsonSchema(String name) throws IOException;

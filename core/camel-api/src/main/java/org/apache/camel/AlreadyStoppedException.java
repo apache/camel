@@ -17,7 +17,11 @@
 package org.apache.camel;
 
 /**
- * Exception thrown in situations when a {@link Service} has already been stopped.
+ * Thrown when an operation is attempted on a {@link Service} that has already been stopped and therefore cannot service
+ * the call.
+ * <p/>
+ * Typically raised when a producer or template is invoked after the owning {@link CamelContext} (or its parent route)
+ * has been shut down.
  */
 public class AlreadyStoppedException extends RuntimeCamelException {
 

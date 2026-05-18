@@ -60,15 +60,22 @@ import org.apache.camel.vault.VaultConfiguration;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Interface used to represent the CamelContext used to configure routes and the policies to use during message
- * exchanges between endpoints.
+ * The <a href="https://camel.apache.org/manual/camelcontext.html">CamelContext</a> is the runtime container of an
+ * Apache Camel application: it owns the registries of {@link Component}s, {@link Endpoint}s, {@link Route}s,
+ * {@link org.apache.camel.spi.TypeConverter}s, {@link org.apache.camel.spi.Language}s, {@link DataFormat}s and the
+ * configuration that governs how {@link Exchange}s flow between them.
+ * <p/>
+ * A {@link CamelContext} is created once per application (or per deployment unit) by the chosen runtime (Main, Spring
+ * Boot or Quarkus). Routes are added to the context using a {@link RoutesBuilder}, and the context is then started to
+ * begin processing message exchanges.
  * <p/>
  * The CamelContext offers the following methods {@link CamelContextLifecycle} to control the lifecycle:
  * <ul>
  * <li>{@link #start()} - to start</li>
- * <li>{@link #stop()} - to shutdown (will stop all routes/components/endpoints etc and clear internal state/cache)</li>
- * <li>{@link #suspend()} - to pause routing messages</li>
- * <li>{@link #resume()} - to resume after a suspend</li>
+ * <li>{@link #stop()} - to shut down (will stop all routes/components/endpoints etc. and clear internal
+ * state/cache)</li>
+ * <li>{@link #suspend()} - to pause message routing message</li>
+ * <li>{@link #resume()} - to resume after a suspended execution</li>
  * </ul>
  * <p/>
  * <b>Notice:</b> {@link #stop()} and {@link #suspend()} will gracefully stop/suspend routes ensuring any messages in
@@ -83,6 +90,10 @@ import org.jspecify.annotations.Nullable;
  * <p/>
  * You can use the {@link CamelContext#getCamelContextExtension()} to obtain the extension point for the
  * {@link CamelContext}. This extension point exposes internal APIs via {@link ExtendedCamelContext}.
+ *
+ * @see CamelContextLifecycle
+ * @see ExtendedCamelContext
+ * @see RoutesBuilder
  */
 public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 

@@ -21,7 +21,11 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Exception when failing to start a {@link Route}.
+ * Thrown when a previously built {@link Route} fails to start as part of the {@link CamelContext} startup or a
+ * {@link org.apache.camel.spi.RouteController} {@code startRoute} call.
+ * <p/>
+ * Carries the failing {@code routeId} and the source location (where available) so error messages can point at the
+ * offending DSL. For failures during route construction itself use {@link FailedToCreateRouteException}.
  */
 public class FailedToStartRouteException extends RuntimeCamelException {
 

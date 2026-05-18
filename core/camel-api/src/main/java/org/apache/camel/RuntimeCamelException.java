@@ -22,7 +22,15 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Base class for all Camel unchecked exceptions.
+ * Base class for all unchecked exceptions thrown by Camel itself.
+ * <p/>
+ * Used by Camel when it cannot propagate a checked {@link Exception} through an API that does not declare one (for
+ * example inside a {@link Processor} chain). The static {@link #wrapRuntimeCamelException(Throwable)} and
+ * {@link #wrapRuntimeException(Throwable)} helpers preserve the original cause unchanged when it is already unchecked,
+ * so wrapping a {@link Throwable} from a unit of work is idempotent.
+ *
+ * @see CamelException
+ * @see CamelExecutionException
  */
 public class RuntimeCamelException extends RuntimeException {
     private static final @Serial long serialVersionUID = 8046489554418284257L;
