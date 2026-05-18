@@ -177,7 +177,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected int responsePayloadStreamingThreshold = 8192;
     @Metadata(label = "advanced", description = "Disables automatic redirect handling")
     protected boolean redirectHandlingDisabled;
-    @Metadata(label = "advanced", description = "Disables automatic request recovery and re-execution")
+    @Metadata(label = "advanced",
+              description = "Disables automatic request recovery and re-execution."
+                            + " This is useful when a server responds with HTTP 429 (Too Many Requests) and includes a long Retry-After header,"
+                            + " which would otherwise cause the client to wait (and appear to hang) before retrying.")
     protected boolean automaticRetriesDisabled;
     @Metadata(label = "advanced", description = "Disables automatic content decompression")
     protected boolean contentCompressionDisabled;
