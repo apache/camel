@@ -144,15 +144,15 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
     @Override
     public void traceBeforeNode(NamedNode node, Exchange exchange) {
-        traceNode(node, exchange);
+        traceNode(node, exchange, true, false);
     }
 
     @Override
     public void traceAfterNode(NamedNode node, Exchange exchange) {
-        traceNode(node, exchange);
+        traceNode(node, exchange, false, true);
     }
 
-    private void traceNode(NamedNode node, Exchange exchange) {
+    private void traceNode(NamedNode node, Exchange exchange, boolean first, boolean last) {
         if (!shouldTrace(node, exchange)) {
             return;
         }
@@ -169,7 +169,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), isIncludeExchangeProperties(),
                 isIncludeExchangeVariables(), true, true, isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
         DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
-                camelContext, false, false, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
+                camelContext, first, last, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
                 toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
                 exchangeId, correlationExchangeId, false, false, data);
         traceEvent(event);
