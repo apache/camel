@@ -25,20 +25,24 @@ import org.apache.camel.NamedNode;
  * {@code CamelInternalProcessor} applies to every node in the route graph, so they must emit synthetic first/last trace
  * events manually to participate in message-history capture.
  * <p>
- * Callers should obtain a {@link BacklogTracer} from the context extension and check whether it also implements this
- * interface before invoking the synthetic tracing methods:
+ * Callers obtain a {@link SyntheticBacklogTracer} from the context plugin manager and guard on null before invoking
+ * the synthetic tracing methods:
  *
- * <pre>{@code
- * BacklogTracer bt = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
- * if (bt instanceof SyntheticBacklogTracer st && (st.isEnabled() || st.isStandby())) {
- *     st.traceFirstNode(node, exchange);
- *     try {
- *         // ... inline processing ...
- *     } finally {
- *         st.traceLastNode(node, exchange);
+ * <pre>
+ * <code>
+ * SyntheticBacklogTracer tracer = camelContext.getCamelContextExtension().getContextPlugin(SyntheticBacklogTracer.class);
+ * if (tracer != null &amp;&amp; (tracer.isEnabled() || tracer.isStandby())) {
+ *     tracer.traceFirstNode(node, exchange);
+ * }
+ * try {
+ *     // ... inline processing ...
+ * } finally {
+ *     if (tracer != null &amp;&amp; (tracer.isEnabled() || tracer.isStandby())) {
+ *         tracer.traceLastNode(node, exchange);
  *     }
  * }
- * }</pre>
+ * </code>
+ * </pre>
  *
  * @since 4.21
  */
