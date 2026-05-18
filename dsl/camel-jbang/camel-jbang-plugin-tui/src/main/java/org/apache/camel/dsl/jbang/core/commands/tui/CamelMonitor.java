@@ -1077,25 +1077,86 @@ public class CamelMonitor extends CamelCommand {
         int historyCount = hasSelection ? historyEntries.size() : 0;
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
 
+        // Row 0: label-only titles — fixed width so the tab bar never shifts when badges appear
+        Line[] labels = {
+                Line.from(" 1 Overview "),
+                Line.from(" 2 Log "),
+                Line.from(" 3 Routes "),
+                Line.from(" 4 Consumers "),
+                Line.from(" 5 Endpoints "),
+                Line.from(" 6 Health "),
+                Line.from(" 7 Last "),
+                Line.from(" 8 Trace "),
+                Line.from(" 9 Circuit Breaker "),
+        };
+
         Tabs tabs = Tabs.builder()
-                .titles(
-                        badge(" 1 Overview ", activeCount),
-                        Line.from(" 2 Log "),
-                        badge(" 3 Routes ", routeCount),
-                        badge(" 4 Consumers ", consumerCount),
-                        badge(" 5 Endpoints ", endpointCount),
-                        badgeHealth(" 6 Health ", healthCount, healthDownCount),
-                        badge(" 7 Last ", historyCount),
-                        hasTraces
-                                ? Line.from(Span.raw(" 8 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
-                                        Span.raw(" "))
-                                : Line.from(" 8 Trace "),
-                        badgeCb(" 9 Circuit Breaker ", cbCount, cbOpenCount))
+                .titles(labels)
                 .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
 
         frame.renderStatefulWidget(tabs, area, tabsState);
+
+        // Row 1: badge counters centered below each tab label
+        if (area.height() >= 2) {
+            int badgeY = area.y() + 1;
+            int dividerW = CharWidth.of(" | ");
+
+            String[] badgeTexts = { "", "", "", "", "", "", "", "", "" };
+            Style[] badgeStyles = new Style[labels.length];
+            Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
+            Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+            for (int j = 0; j < badgeStyles.length; j++) {
+                badgeStyles[j] = yellow;
+            }
+
+            if (activeCount > 0) {
+                badgeTexts[0] = "(" + activeCount + ")";
+            }
+            // tab 1 (Log) — no badge
+            if (routeCount > 0) {
+                badgeTexts[2] = "(" + routeCount + ")";
+            }
+            if (consumerCount > 0) {
+                badgeTexts[3] = "(" + consumerCount + ")";
+            }
+            if (endpointCount > 0) {
+                badgeTexts[4] = "(" + endpointCount + ")";
+            }
+            if (healthDownCount > 0) {
+                badgeTexts[5] = "(" + healthDownCount + " DOWN)";
+                badgeStyles[5] = red;
+            } else if (healthCount > 0) {
+                badgeTexts[5] = "(" + healthCount + ")";
+            }
+            if (historyCount > 0) {
+                badgeTexts[6] = "(" + historyCount + ")";
+            }
+            if (hasTraces) {
+                badgeTexts[7] = "(*)";
+            }
+            if (cbOpenCount > 0) {
+                badgeTexts[8] = "(" + cbOpenCount + " OPEN)";
+                badgeStyles[8] = red;
+            } else if (cbCount > 0) {
+                badgeTexts[8] = "(" + cbCount + ")";
+            }
+
+            int tabX = 0;
+            for (int i = 0; i < labels.length; i++) {
+                if (i > 0) {
+                    tabX += dividerW;
+                }
+                int tabW = labels[i].width();
+                if (!badgeTexts[i].isEmpty()) {
+                    int badgeW = CharWidth.of(badgeTexts[i]);
+                    int startX = area.x() + tabX + Math.max(0, (tabW - badgeW) / 2);
+                    frame.buffer().setString(startX, badgeY, badgeTexts[i], badgeStyles[i]);
+                }
+                tabX += tabW;
+            }
+        }
     }
 
     private void renderContent(Frame frame, Rect area) {
@@ -4052,36 +4113,6 @@ public class CamelMonitor extends CamelCommand {
         int padding = Math.max(0, width - len);
         int leftPad = padding / 2;
         return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
-    }
-
-    private static Line badgeCb(String label, long total, long open) {
-        if (open > 0) {
-            return Line.from(
-                    Span.raw(label),
-                    Span.styled("(" + open + " OPEN)", Style.EMPTY.fg(Color.LIGHT_RED).bold()),
-                    Span.raw(" "));
-        }
-        return badge(label, total);
-    }
-
-    private static Line badgeHealth(String label, long total, long down) {
-        if (down > 0) {
-            return Line.from(
-                    Span.raw(label),
-                    Span.styled("(" + down + " DOWN)", Style.EMPTY.fg(Color.LIGHT_RED).bold()),
-                    Span.raw(" "));
-        }
-        return badge(label, total);
-    }
-
-    private static Line badge(String label, long count) {
-        if (count > 0) {
-            return Line.from(
-                    Span.raw(label),
-                    Span.styled("(" + count + ")", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" "));
-        }
-        return Line.from(label);
     }
 
     private static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
