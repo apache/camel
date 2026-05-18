@@ -114,7 +114,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_ENDPOINT_CHART_POINTS = 60;
     private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 9;
+    private static final int NUM_TABS = 8;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
@@ -124,8 +124,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_ENDPOINTS = 4;
     private static final int TAB_HEALTH = 5;
     private static final int TAB_HISTORY = 6;
-    private static final int TAB_TRACE = 7;
-    private static final int TAB_CIRCUIT_BREAKER = 8;
+    private static final int TAB_CIRCUIT_BREAKER = 7;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -419,9 +418,6 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_HISTORY);
             }
             if (ke.isChar('8')) {
-                return handleTabKey(TAB_TRACE);
-            }
-            if (ke.isChar('9')) {
                 return handleTabKey(TAB_CIRCUIT_BREAKER);
             }
 
@@ -466,9 +462,11 @@ public class CamelMonitor extends CamelCommand {
                     logFollowMode = false;
                     logScroll = Math.max(0, logScroll - 20);
                 } else if (tab == TAB_HISTORY) {
-                    historyDetailScroll = Math.max(0, historyDetailScroll - 5);
-                } else if (tab == TAB_TRACE && traceDetailView) {
-                    traceDetailScroll = Math.max(0, traceDetailScroll - 5);
+                    if (!traces.get().isEmpty() && traceDetailView) {
+                        traceDetailScroll = Math.max(0, traceDetailScroll - 5);
+                    } else {
+                        historyDetailScroll = Math.max(0, historyDetailScroll - 5);
+                    }
                 }
                 return true;
             }
@@ -478,9 +476,11 @@ public class CamelMonitor extends CamelCommand {
                 } else if (tab == TAB_LOG) {
                     logScroll += 20;
                 } else if (tab == TAB_HISTORY) {
-                    historyDetailScroll += 5;
-                } else if (tab == TAB_TRACE && traceDetailView) {
-                    traceDetailScroll += 5;
+                    if (!traces.get().isEmpty() && traceDetailView) {
+                        traceDetailScroll += 5;
+                    } else {
+                        historyDetailScroll += 5;
+                    }
                 }
                 return true;
             }
@@ -488,24 +488,28 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScrollX = Math.max(0, diagramScrollX - 1);
                     return true;
-                } else if (tab == TAB_TRACE && traceDetailView && !traceWordWrap) {
-                    traceDetailHScroll = Math.max(0, traceDetailHScroll - 4);
-                    return true;
-                } else if (tab == TAB_HISTORY && !historyWordWrap) {
-                    historyDetailHScroll = Math.max(0, historyDetailHScroll - 4);
-                    return true;
+                } else if (tab == TAB_HISTORY) {
+                    if (!traces.get().isEmpty() && traceDetailView && !traceWordWrap) {
+                        traceDetailHScroll = Math.max(0, traceDetailHScroll - 4);
+                        return true;
+                    } else if (!historyWordWrap) {
+                        historyDetailHScroll = Math.max(0, historyDetailHScroll - 4);
+                        return true;
+                    }
                 }
             }
             if (ke.isRight()) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScrollX++;
                     return true;
-                } else if (tab == TAB_TRACE && traceDetailView && !traceWordWrap) {
-                    traceDetailHScroll += 4;
-                    return true;
-                } else if (tab == TAB_HISTORY && !historyWordWrap) {
-                    historyDetailHScroll += 4;
-                    return true;
+                } else if (tab == TAB_HISTORY) {
+                    if (!traces.get().isEmpty() && traceDetailView && !traceWordWrap) {
+                        traceDetailHScroll += 4;
+                        return true;
+                    } else if (!historyWordWrap) {
+                        historyDetailHScroll += 4;
+                        return true;
+                    }
                 }
             }
             if (ke.isHome()) {
@@ -745,9 +749,11 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
 
-            // Trace tab
-            if (tab == TAB_TRACE) {
-                if (traceDetailView) {
+            // Inspect tab (merged Last + Tracer)
+            if (tab == TAB_HISTORY) {
+                boolean tracerActive = !traces.get().isEmpty();
+                if (tracerActive && traceDetailView) {
+                    // Viewing a trace exchange's step detail
                     if (ke.isCancel()) {
                         traceDetailView = false;
                         traceSelectedExchangeId = null;
@@ -776,7 +782,8 @@ public class CamelMonitor extends CamelCommand {
                         traceDetailHScroll = 0;
                         return true;
                     }
-                } else {
+                } else if (tracerActive) {
+                    // Tracer ON: trace list view
                     if (ke.isChar('s')) {
                         traceSortIndex = (traceSortIndex + 1) % TRACE_SORT_COLUMNS.length;
                         traceSort = TRACE_SORT_COLUMNS[traceSortIndex];
@@ -805,38 +812,36 @@ public class CamelMonitor extends CamelCommand {
                         }
                         return true;
                     }
-                }
-            }
-
-            // History tab: properties/headers/body toggle and refresh
-            if (tab == TAB_HISTORY) {
-                if (ke.isCharIgnoreCase('p')) {
-                    showHistoryProperties = !showHistoryProperties;
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('v')) {
-                    showHistoryVariables = !showHistoryVariables;
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('h')) {
-                    showHistoryHeaders = !showHistoryHeaders;
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('b')) {
-                    showHistoryBody = !showHistoryBody;
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('w')) {
-                    historyWordWrap = !historyWordWrap;
-                    historyDetailScroll = 0;
-                    historyDetailHScroll = 0;
-                    return true;
-                }
-                if (ke.isKey(KeyCode.F5)) {
-                    if (selectedPid != null) {
-                        refreshHistoryData(List.of(Long.parseLong(selectedPid)));
+                } else {
+                    // Tracer OFF: history (Last) view
+                    if (ke.isCharIgnoreCase('p')) {
+                        showHistoryProperties = !showHistoryProperties;
+                        return true;
                     }
-                    return true;
+                    if (ke.isCharIgnoreCase('v')) {
+                        showHistoryVariables = !showHistoryVariables;
+                        return true;
+                    }
+                    if (ke.isCharIgnoreCase('h')) {
+                        showHistoryHeaders = !showHistoryHeaders;
+                        return true;
+                    }
+                    if (ke.isCharIgnoreCase('b')) {
+                        showHistoryBody = !showHistoryBody;
+                        return true;
+                    }
+                    if (ke.isCharIgnoreCase('w')) {
+                        historyWordWrap = !historyWordWrap;
+                        historyDetailScroll = 0;
+                        historyDetailHScroll = 0;
+                        return true;
+                    }
+                    if (ke.isKey(KeyCode.F5)) {
+                        if (selectedPid != null) {
+                            refreshHistoryData(List.of(Long.parseLong(selectedPid)));
+                        }
+                        return true;
+                    }
                 }
             }
         }
@@ -870,15 +875,14 @@ public class CamelMonitor extends CamelCommand {
             if (!historyEntries.isEmpty()) {
                 historyTableState.select(0);
             }
-        }
-        if (tab == TAB_TRACE && selectedPid != null) {
+            // Also refresh trace data if Tracer is enabled
             traceFilePositions.clear();
             traces.set(Collections.emptyList());
             refreshTraceData(List.of(Long.parseLong(selectedPid)));
             traceDetailView = false;
             traceSelectedExchangeId = null;
-            List<String> ids = getTraceExchangeIds();
-            if (!ids.isEmpty()) {
+            // Auto-select first (latest) trace so user can press Enter immediately
+            if (!traces.get().isEmpty()) {
                 traceTableState.select(0);
             }
         }
@@ -951,7 +955,7 @@ public class CamelMonitor extends CamelCommand {
         logTotalLinesRead = 0;
         logEvictedSeen = 0;
         logLineBuffer.setLength(0);
-        // Trace (TAB_TRACE)
+        // Trace (Inspect tab)
         traceDetailView = false;
         traceSelectedExchangeId = null;
         traceDetailScroll = 0;
@@ -969,17 +973,18 @@ public class CamelMonitor extends CamelCommand {
                 logFollowMode = false;
                 logScroll = Math.max(0, logScroll - 1);
             }
-            case TAB_TRACE -> {
-                if (traceDetailView) {
-                    traceStepTableState.selectPrevious();
-                    traceDetailScroll = 0;
-                } else {
-                    traceTableState.selectPrevious();
-                }
-            }
             case TAB_HISTORY -> {
-                historyTableState.selectPrevious();
-                historyDetailScroll = 0;
+                if (!traces.get().isEmpty()) {
+                    if (traceDetailView) {
+                        traceStepTableState.selectPrevious();
+                        traceDetailScroll = 0;
+                    } else {
+                        traceTableState.selectPrevious();
+                    }
+                } else {
+                    historyTableState.selectPrevious();
+                    historyDetailScroll = 0;
+                }
             }
         }
     }
@@ -1000,19 +1005,20 @@ public class CamelMonitor extends CamelCommand {
                 cbTableState.selectNext(info != null ? info.circuitBreakers.size() : 0);
             }
             case TAB_LOG -> logScroll++;
-            case TAB_TRACE -> {
-                if (traceDetailView) {
-                    List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
-                    traceStepTableState.selectNext(steps.size());
-                    traceDetailScroll = 0;
-                } else {
-                    List<String> exchangeIds = getTraceExchangeIds();
-                    traceTableState.selectNext(exchangeIds.size());
-                }
-            }
             case TAB_HISTORY -> {
-                historyTableState.selectNext(historyEntries.size());
-                historyDetailScroll = 0;
+                if (!traces.get().isEmpty()) {
+                    if (traceDetailView) {
+                        List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
+                        traceStepTableState.selectNext(steps.size());
+                        traceDetailScroll = 0;
+                    } else {
+                        List<String> exchangeIds = getTraceExchangeIds();
+                        traceTableState.selectNext(exchangeIds.size());
+                    }
+                } else {
+                    historyTableState.selectNext(historyEntries.size());
+                    historyDetailScroll = 0;
+                }
             }
         }
     }
@@ -1093,9 +1099,8 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(" 4 Consumers "),
                 Line.from(" 5 Endpoints "),
                 Line.from(" 6 Health "),
-                Line.from(" 7 Last "),
-                Line.from(" 8 Trace "),
-                Line.from(" 9 Circuit Breaker "),
+                Line.from(" 7 Inspect "),
+                Line.from(" 8 Circuit Breaker "),
         };
 
         Tabs tabs = Tabs.builder()
@@ -1115,9 +1120,10 @@ public class CamelMonitor extends CamelCommand {
             int badgeY = area.y();
             int dividerW = CharWidth.of(" | ");
 
-            String[] badgeTexts = { "", "", "", "", "", "", "", "", "" };
+            String[] badgeTexts = { "", "", "", "", "", "", "", "" };
             Style[] badgeStyles = new Style[labels.length];
             Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
+            Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
             Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
             for (int j = 0; j < badgeStyles.length; j++) {
                 badgeStyles[j] = yellow;
@@ -1142,17 +1148,18 @@ public class CamelMonitor extends CamelCommand {
             } else if (healthCount > 0) {
                 badgeTexts[5] = "(" + healthCount + ")";
             }
-            if (historyCount > 0) {
+            // Inspect tab (7): show tracer active (*) in cyan, or history count in yellow
+            if (hasTraces) {
+                badgeTexts[6] = "(*)";
+                badgeStyles[6] = cyan;
+            } else if (historyCount > 0) {
                 badgeTexts[6] = "(" + historyCount + ")";
             }
-            if (hasTraces) {
-                badgeTexts[7] = "(*)";
-            }
             if (cbOpenCount > 0) {
-                badgeTexts[8] = "(" + cbOpenCount + " OPEN)";
-                badgeStyles[8] = red;
+                badgeTexts[7] = "(" + cbOpenCount + " OPEN)";
+                badgeStyles[7] = red;
             } else if (cbCount > 0) {
-                badgeTexts[8] = "(" + cbCount + ")";
+                badgeTexts[7] = "(" + cbCount + ")";
             }
 
             int tabX = 0;
@@ -1184,8 +1191,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_CIRCUIT_BREAKER -> renderCircuitBreaker(frame, area);
             case TAB_HEALTH -> renderHealth(frame, area);
             case TAB_LOG -> renderLog(frame, area);
-            case TAB_TRACE -> renderTrace(frame, area);
-            case TAB_HISTORY -> renderHistory(frame, area);
+            case TAB_HISTORY -> renderInspect(frame, area);
         }
     }
 
@@ -3420,19 +3426,33 @@ public class CamelMonitor extends CamelCommand {
         return entry;
     }
 
-    // ---- Tab 6: Trace ----
+    // ---- Tab 7: Inspect (merged Last + Tracer) ----
 
-    private void renderTrace(Frame frame, Rect area) {
+    private void renderInspect(Frame frame, Rect area) {
         IntegrationInfo info = findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
             return;
         }
 
+        boolean tracerActive = !traces.get().isEmpty();
+        if (!tracerActive) {
+            // Tracer OFF: existing Last/History view
+            renderHistory(frame, area);
+            return;
+        }
+
+        // Tracer ON: trace exchange list at top, detail panel at bottom
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.length(12), Constraint.fill())
+                .split(area);
+
+        renderTraceExchangeList(frame, chunks.get(0));
+
         if (traceDetailView && traceSelectedExchangeId != null) {
-            renderTraceExchangeDetail(frame, area);
+            renderTraceExchangeDetail(frame, chunks.get(1));
         } else {
-            renderTraceExchangeList(frame, area);
+            renderHistoryDetail(frame, chunks.get(1), historyEntries);
         }
     }
 
@@ -3633,7 +3653,7 @@ public class CamelMonitor extends CamelCommand {
         return steps;
     }
 
-    // ---- Tab 7: History ----
+    // ---- History (Last) panel — used by renderInspect when Tracer is OFF ----
 
     private void renderHistory(Frame frame, Rect area) {
         IntegrationInfo info = findSelectedIntegration();
@@ -3999,7 +4019,7 @@ public class CamelMonitor extends CamelCommand {
                     hint(spans, "p", selInfo.routeStarted > 0 ? "stop" : "start");
                 }
             }
-            hint(spans, "1-9", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_ROUTES && showSource) {
             hint(spans, "c/Esc", "close");
             hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
@@ -4039,27 +4059,27 @@ public class CamelMonitor extends CamelCommand {
             } else if (routeState != null) {
                 hint(spans, "p", "start");
             }
-            hint(spans, "1-9", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_CONSUMERS) {
             hint(spans, "Esc", "back");
             hint(spans, "s", "sort");
-            hint(spans, "1-9", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_ENDPOINTS) {
             hint(spans, "Esc", "back");
             hint(spans, "s", "sort");
             String[] filterLabels = { "all", "remote", "remote+stub" };
             hint(spans, "f", "filter [" + filterLabels[endpointFilter] + "]");
             hint(spans, "a", "chart " + (showEndpointChart ? "[all]" : "[off]"));
-            hint(spans, "1-9", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_CIRCUIT_BREAKER) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
-            hint(spans, "1-9", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "d", "toggle DOWN");
-            hint(spans, "1-9", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_LOG && showLogLevelPopup) {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "Enter", "set level");
@@ -4075,41 +4095,44 @@ public class CamelMonitor extends CamelCommand {
             }
             hint(spans, "l", "level");
             hintLast(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
-        } else if (tab == TAB_TRACE && traceDetailView) {
-            hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "PgUp/PgDn", "scroll detail");
-            if (!traceWordWrap) {
-                hint(spans, "\u2190\u2192", "h-scroll");
-            }
-            hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
-            hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
-            hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
-            hint(spans, "b", "body" + (showTraceBody ? " [on]" : " [off]"));
-            hintLast(spans, "w", "wrap" + (traceWordWrap ? " [on]" : " [off]"));
-        } else if (tab == TAB_TRACE) {
-            hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "s", "sort");
-            hint(spans, "Enter", "details");
-            hintLast(spans, "F5", "refresh");
         } else if (tab == TAB_HISTORY) {
-            hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "PgUp/PgDn", "scroll detail");
-            if (!historyWordWrap) {
-                hint(spans, "\u2190\u2192", "h-scroll");
+            boolean tracerActive = !traces.get().isEmpty();
+            if (tracerActive && traceDetailView) {
+                hint(spans, "Esc", "back");
+                hint(spans, "\u2191\u2193", "navigate");
+                hint(spans, "PgUp/PgDn", "scroll detail");
+                if (!traceWordWrap) {
+                    hint(spans, "\u2190\u2192", "h-scroll");
+                }
+                hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
+                hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
+                hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
+                hint(spans, "b", "body" + (showTraceBody ? " [on]" : " [off]"));
+                hintLast(spans, "w", "wrap" + (traceWordWrap ? " [on]" : " [off]"));
+            } else if (tracerActive) {
+                hint(spans, "Esc", "back");
+                hint(spans, "\u2191\u2193", "navigate");
+                hint(spans, "s", "sort");
+                hint(spans, "Enter", "details");
+                hintLast(spans, "F5", "refresh");
+            } else {
+                hint(spans, "Esc", "back");
+                hint(spans, "\u2191\u2193", "navigate");
+                hint(spans, "PgUp/PgDn", "scroll detail");
+                if (!historyWordWrap) {
+                    hint(spans, "\u2190\u2192", "h-scroll");
+                }
+                hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
+                hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
+                hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
+                hint(spans, "b", "body" + (showHistoryBody ? " [on]" : " [off]"));
+                hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
+                hintLast(spans, "F5", "refresh");
             }
-            hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
-            hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
-            hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
-            hint(spans, "b", "body" + (showHistoryBody ? " [on]" : " [off]"));
-            hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
-            hintLast(spans, "F5", "refresh");
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "1-9", "tabs");
+            hint(spans, "1-8", "tabs");
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -4273,8 +4296,8 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
 
-            // Refresh trace data only when the Trace tab is visible
-            if (tabsState.selected() == TAB_TRACE) {
+            // Refresh trace data only when the Inspect tab is visible
+            if (tabsState.selected() == TAB_HISTORY) {
                 refreshTraceData(pids);
             }
         } catch (Exception e) {
