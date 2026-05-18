@@ -123,10 +123,10 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_ROUTES = 2;
     private static final int TAB_CONSUMERS = 3;
     private static final int TAB_ENDPOINTS = 4;
-    private static final int TAB_HEALTH = 5;
-    private static final int TAB_HISTORY = 6;
-    private static final int TAB_CIRCUIT_BREAKER = 7;
-    private static final int TAB_HTTP = 8;
+    private static final int TAB_HTTP = 5;
+    private static final int TAB_HEALTH = 6;
+    private static final int TAB_HISTORY = 7;
+    private static final int TAB_CIRCUIT_BREAKER = 8;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -426,16 +426,16 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_ENDPOINTS);
             }
             if (ke.isChar('6')) {
-                return handleTabKey(TAB_HEALTH);
+                return handleTabKey(TAB_HTTP);
             }
             if (ke.isChar('7')) {
-                return handleTabKey(TAB_HISTORY);
+                return handleTabKey(TAB_HEALTH);
             }
             if (ke.isChar('8')) {
-                return handleTabKey(TAB_CIRCUIT_BREAKER);
+                return handleTabKey(TAB_HISTORY);
             }
             if (ke.isChar('9')) {
-                return handleTabKey(TAB_HTTP);
+                return handleTabKey(TAB_CIRCUIT_BREAKER);
             }
 
             // Tab cycling
@@ -1138,13 +1138,13 @@ public class CamelMonitor extends CamelCommand {
         Line[] labels = {
                 Line.from(" 1 Overview "),
                 Line.from(" 2 Log "),
-                Line.from(" 3 Routes "),
-                Line.from(" 4 Consumers "),
-                Line.from(" 5 Endpoints "),
-                Line.from(" 6 Health "),
-                Line.from(" 7 Inspect "),
-                Line.from(" 8 Circuit Breaker "),
-                Line.from(" 9 HTTP "),
+                Line.from(" 3 Route "),
+                Line.from(" 4 Consumer "),
+                Line.from(" 5 Endpoint "),
+                Line.from(" 6 HTTP "),
+                Line.from(" 7 Health "),
+                Line.from(" 8 Inspect "),
+                Line.from(" 9 Circuit Breaker "),
         };
 
         Tabs tabs = Tabs.builder()
