@@ -260,9 +260,17 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             if (endpoint != null) {
                 String routeId = ece.getExchange().getFromRouteId();
                 String uri = endpoint.getEndpointUri();
-                // ensure the actual consumer URI is in inputs so getEndpointStatistics() can find it;
                 // some components (e.g. rest-openapi) delegate to an underlying consumer (e.g. platform-http)
-                // whose endpoint URI differs from the route's logical endpoint URI
+                // whose exchange may not carry a fromRouteId; fall back to scanning inputs by URI
+                if (routeId == null) {
+                    for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
+                        if (entry.getValue().contains(uri)) {
+                            routeId = entry.getKey();
+                            break;
+                        }
+                    }
+                }
+                // ensure the actual consumer URI is in inputs so getEndpointStatistics() can find it
                 Set<String> routeInputs = inputs.get(routeId);
                 if (routeInputs != null) {
                     routeInputs.add(uri);
