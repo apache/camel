@@ -1096,11 +1096,15 @@ public class CamelMonitor extends CamelCommand {
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
 
-        frame.renderStatefulWidget(tabs, area, tabsState);
+        // Row 1: labels (Tabs widget renders at the top of whatever rect it receives)
+        Rect labelsArea = area.height() >= 2
+                ? new Rect(area.x(), area.y() + 1, area.width(), 1)
+                : area;
+        frame.renderStatefulWidget(tabs, labelsArea, tabsState);
 
-        // Row 1: badge counters centered below each tab label
+        // Row 0: badge counters centered above each tab label
         if (area.height() >= 2) {
-            int badgeY = area.y() + 1;
+            int badgeY = area.y();
             int dividerW = CharWidth.of(" | ");
 
             String[] badgeTexts = { "", "", "", "", "", "", "", "", "" };
