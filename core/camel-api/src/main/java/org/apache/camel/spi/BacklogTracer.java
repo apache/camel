@@ -208,24 +208,7 @@ public interface BacklogTracer {
     boolean shouldTrace(NamedNode node, Exchange exchange);
 
     /**
-     * Trace a "before node" event for components that process exchanges inline and bypass the normal route pipeline
-     * (e.g. mock mode in rest-openapi consumer). The concrete implementation builds and stores the trace event.
-     *
-     * @since 4.21
-     */
-    void traceBeforeNode(NamedNode node, Exchange exchange);
-
-    /**
-     * Trace an "after node" event for components that process exchanges inline and bypass the normal route pipeline
-     * (e.g. mock mode in rest-openapi consumer). The concrete implementation builds and stores the trace event.
-     *
-     * @since 4.21
-     */
-    void traceAfterNode(NamedNode node, Exchange exchange);
-
-    /**
-     * Records a trace event. Used by components that handle processing inline (e.g. mock mode in rest-openapi consumer)
-     * and therefore bypass the normal route pipeline where tracing is applied automatically.
+     * Records a trace event. Used internally by the route pipeline advices to submit pre-built trace events.
      *
      * @since 4.21
      */

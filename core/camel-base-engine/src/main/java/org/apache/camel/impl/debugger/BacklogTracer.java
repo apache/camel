@@ -48,7 +48,7 @@ import org.apache.camel.util.json.Jsoner;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers is stored in a backlog queue
  * (FIFO based) which allows to pull the traced messages on demand.
  */
-public class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
+public class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.SyntheticBacklogTracer {
 
     // limit the tracer to a thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 1000;
@@ -143,12 +143,12 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     }
 
     @Override
-    public void traceBeforeNode(NamedNode node, Exchange exchange) {
+    public void traceFirstNode(NamedNode node, Exchange exchange) {
         traceNode(node, exchange, true, false);
     }
 
     @Override
-    public void traceAfterNode(NamedNode node, Exchange exchange) {
+    public void traceLastNode(NamedNode node, Exchange exchange) {
         traceNode(node, exchange, false, true);
     }
 

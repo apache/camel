@@ -45,6 +45,7 @@ import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.SyntheticBacklogTracer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
@@ -210,17 +211,18 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                         exchange.setRouteStop(true);
                     } else if ("mock".equalsIgnoreCase(missingOperation)) {
                         // no route then try to load mock data as the answer
-                        BacklogTracer backlogTracer
-                                = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
+                        BacklogTracer bt = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
+                        SyntheticBacklogTracer syntheticTracer
+                                = bt instanceof SyntheticBacklogTracer s ? s : null;
                         NamedNode mockNode = new MockOperationNode(verb, path, operation.getOperationId());
-                        if (backlogTracer != null && (backlogTracer.isEnabled() || backlogTracer.isStandby())) {
-                            backlogTracer.traceBeforeNode(mockNode, exchange);
+                        if (syntheticTracer != null && (syntheticTracer.isEnabled() || syntheticTracer.isStandby())) {
+                            syntheticTracer.traceFirstNode(mockNode, exchange);
                         }
                         try {
                             loadMockData(operation, verb, path, exchange);
                         } finally {
-                            if (backlogTracer != null && (backlogTracer.isEnabled() || backlogTracer.isStandby())) {
-                                backlogTracer.traceAfterNode(mockNode, exchange);
+                            if (syntheticTracer != null && (syntheticTracer.isEnabled() || syntheticTracer.isStandby())) {
+                                syntheticTracer.traceLastNode(mockNode, exchange);
                             }
                         }
                     }
