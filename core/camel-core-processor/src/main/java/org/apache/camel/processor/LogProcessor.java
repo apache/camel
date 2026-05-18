@@ -77,9 +77,7 @@ public class LogProcessor extends BaseProcessorSupport implements Traceable, IdA
                 if (listeners != null && !listeners.isEmpty()) {
                     msg = fireListeners(exchange, msg);
                 }
-                if (msg != null) {
-                    logger.doLog(msg);
-                }
+                logger.doLog(msg);
                 if (listeners != null && !listeners.isEmpty()) {
                     closeListeners(exchange, msg);
                 }
