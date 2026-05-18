@@ -728,6 +728,38 @@ public interface IggyEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedIggyEndpointConsumerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedIggyEndpointConsumerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     /**
@@ -1168,6 +1200,38 @@ public interface IggyEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedIggyEndpointProducerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedIggyEndpointProducerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     /**
@@ -1534,6 +1598,38 @@ public interface IggyEndpointBuilderFactory {
             return (IggyEndpointBuilder) this;
         }
 
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedIggyEndpointBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedIggyEndpointBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     public interface IggyBuilders {

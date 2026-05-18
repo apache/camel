@@ -36,6 +36,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.vertx.common.VertxHelper;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -52,12 +54,15 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
              syntax = "vertx-websocket:host:port/path", category = { Category.HTTP, Category.NETWORKING },
              headersClass = VertxWebsocketConstants.class, lenientProperties = true)
-public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointServiceLocation, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketEndpoint.class);
 
     @UriParam
     private VertxWebsocketConfiguration configuration;
+    @UriParam(label = "advanced",
+              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     private HttpClient client;
     private WebSocket webSocket;
@@ -122,6 +127,22 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
 
     public VertxWebsocketConfiguration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new VertxWebsocketHeaderFilterStrategy();
+        }
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     protected Vertx getVertx() {

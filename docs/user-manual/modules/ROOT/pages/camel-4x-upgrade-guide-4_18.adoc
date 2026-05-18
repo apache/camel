@@ -324,3 +324,32 @@ have been renamed accordingly:
 * `ccbTtl()` -> `couchbaseTtl()`
 * `ccbDdn()` -> `couchbaseDesignDocumentName()`
 * `ccbVn()` -> `couchbaseViewName()`
+
+=== camel-vertx-websocket
+
+The `vertx-websocket` consumer now applies a `HeaderFilterStrategy` to the WebSocket query and
+path parameters before mapping them into the Camel message headers. The new default
+`VertxWebsocketHeaderFilterStrategy` filters headers starting with `Camel` / `camel`
+(case-insensitive) in both the inbound and outbound directions, aligning the component with the
+rest of the Camel component catalog (`camel-coap`, `camel-kafka`, `camel-nats`, ...). A new
+`headerFilterStrategy` endpoint option is available; routes that relied on receiving
+`Camel`-prefixed header names from WebSocket query or path parameters can supply a custom
+`headerFilterStrategy` to restore the previous behaviour.
+
+=== camel-atmosphere-websocket
+
+The `atmosphere-websocket` consumer now applies the endpoint `HeaderFilterStrategy` to the
+WebSocket query parameters before mapping them into the Camel message headers. The inherited
+default `HttpHeaderFilterStrategy` filters headers starting with `Camel` / `camel`
+(case-insensitive). Routes that relied on receiving `Camel`-prefixed header names from WebSocket
+query parameters can supply a custom `headerFilterStrategy` to restore the previous behaviour.
+
+=== camel-iggy
+
+The `iggy` consumer now applies a `HeaderFilterStrategy` to the Iggy message user-headers before
+mapping them into the Camel message headers. The new default `IggyHeaderFilterStrategy` filters
+headers starting with `Camel` / `camel` (case-insensitive) in both the inbound and outbound
+directions, aligning the component with the rest of the Camel component catalog. A new
+`headerFilterStrategy` endpoint option is available; routes that relied on receiving
+`Camel`-prefixed user-header names from Iggy messages can supply a custom `headerFilterStrategy`
+to restore the previous behaviour.
