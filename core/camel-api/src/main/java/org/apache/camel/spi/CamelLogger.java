@@ -72,8 +72,7 @@ public class CamelLogger {
         return "Logger[" + log + "]";
     }
 
-    public void log(String message, LoggingLevel loggingLevel) {
-        Objects.requireNonNull(message, "message");
+    public void log(@Nullable String message, LoggingLevel loggingLevel) {
         Objects.requireNonNull(loggingLevel, "loggingLevel");
         LoggingLevel oldLogLevel = getLevel();
         setLevel(loggingLevel);
@@ -86,8 +85,7 @@ public class CamelLogger {
      *
      * @param message the message to log, if {@link #shouldLog()} returned <tt>true</tt>
      */
-    public void log(String message) {
-        Objects.requireNonNull(message, "message");
+    public void log(@Nullable String message) {
         if (shouldLog(log, level)) {
             if (marker != null) {
                 log(log, level, marker, message);
@@ -102,8 +100,7 @@ public class CamelLogger {
      *
      * @param message the message to log
      */
-    public void doLog(String message) {
-        Objects.requireNonNull(message, "message");
+    public void doLog(@Nullable String message) {
         if (marker != null) {
             log(log, level, marker, message);
         } else {
@@ -111,15 +108,13 @@ public class CamelLogger {
         }
     }
 
-    public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
-        Objects.requireNonNull(message, "message");
+    public void log(@Nullable String message, Throwable exception, LoggingLevel loggingLevel) {
         Objects.requireNonNull(exception, "exception");
         Objects.requireNonNull(loggingLevel, "loggingLevel");
         log(log, loggingLevel, marker, message, exception);
     }
 
-    public void log(String message, Throwable exception) {
-        Objects.requireNonNull(message, "message");
+    public void log(@Nullable String message, Throwable exception) {
         Objects.requireNonNull(exception, "exception");
         if (shouldLog(log, level)) {
             log(log, level, marker, message, exception);
@@ -167,10 +162,9 @@ public class CamelLogger {
         }
     }
 
-    public static void log(Logger log, LoggingLevel level, String message) {
+    public static void log(Logger log, LoggingLevel level, @Nullable String message) {
         Objects.requireNonNull(log, "log");
         Objects.requireNonNull(level, "level");
-        Objects.requireNonNull(message, "message");
         switch (level) {
             case DEBUG:
                 log.debug(message);
@@ -191,11 +185,10 @@ public class CamelLogger {
         }
     }
 
-    public static void log(Logger log, LoggingLevel level, Marker marker, String message) {
+    public static void log(Logger log, LoggingLevel level, Marker marker, @Nullable String message) {
         Objects.requireNonNull(log, "log");
         Objects.requireNonNull(level, "level");
         Objects.requireNonNull(marker, "marker");
-        Objects.requireNonNull(message, "message");
         switch (level) {
             case DEBUG:
                 log.debug(marker, message);
@@ -216,10 +209,9 @@ public class CamelLogger {
         }
     }
 
-    public static void log(Logger log, LoggingLevel level, String message, Throwable th) {
+    public static void log(Logger log, LoggingLevel level, @Nullable String message, Throwable th) {
         Objects.requireNonNull(log, "log");
         Objects.requireNonNull(level, "level");
-        Objects.requireNonNull(message, "message");
         Objects.requireNonNull(th, "th");
         switch (level) {
             case DEBUG:
@@ -241,10 +233,9 @@ public class CamelLogger {
         }
     }
 
-    public static void log(Logger log, LoggingLevel level, @Nullable Marker marker, String message, Throwable th) {
+    public static void log(Logger log, LoggingLevel level, @Nullable Marker marker, @Nullable String message, Throwable th) {
         Objects.requireNonNull(log, "log");
         Objects.requireNonNull(level, "level");
-        Objects.requireNonNull(message, "message");
         Objects.requireNonNull(th, "th");
         if (marker == null) {
             log(log, level, message, th);
