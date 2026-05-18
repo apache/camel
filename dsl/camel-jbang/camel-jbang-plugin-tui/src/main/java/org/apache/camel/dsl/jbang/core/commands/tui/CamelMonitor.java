@@ -3633,8 +3633,8 @@ public class CamelMonitor extends CamelCommand {
                 .widths(
                         Constraint.length(12),
                         Constraint.fill(),
-                        Constraint.length(30),
-                        Constraint.length(30),
+                        Constraint.length(35),
+                        Constraint.length(35),
                         Constraint.length(15),
                         Constraint.length(8))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
