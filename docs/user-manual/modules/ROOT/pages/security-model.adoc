@@ -392,6 +392,19 @@ be closed as `not a vulnerability`.
   `hostnameVerificationEnabled=false`, explicit selection of an
   `ObjectInputStream`-using data format - these are documented opt-ins and the
   operator has signed up for the consequences.
+* *Behaviour that is only present under the non-default `dev` or `test`
+  profile.* Camel defaults to the `prod` profile; the `dev` and `test`
+  profiles (set explicitly via `camel.main.profile`, or selected for you by
+  tooling such as Camel JBang) are development-only and deliberately less
+  guarded - they enable the developer console, debug and trace endpoints, the
+  backlog debugger and more verbose diagnostics, and relax the security policy
+  default from `fail` to `warn`. Camel may, by design, reveal configuration,
+  route and `Exchange` detail in these modes that it would not reveal under
+  `prod`. A report whose impact only manifests under `camel.main.profile = dev`
+  or `test` is out of scope as a non-default, development-only configuration;
+  the production posture against which findings are judged is the default
+  `prod` profile (see _Deployment hardening_ and the `proposals/security.adoc`
+  design document for the profile-aware policy defaults).
 * *Denial of service via resource exhaustion.* Unthrottled routes, unbounded
   aggregators, an HTTP consumer with no rate limit, a JMS consumer that
   accepts arbitrarily large messages - operators must apply `throttle`,
