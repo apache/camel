@@ -119,6 +119,7 @@ import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.SecurityUtils;
 import org.apache.camel.util.SecurityViolation;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.concurrent.ThreadType;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -795,6 +796,58 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    private void configureVirtualThreadsEarly(CamelContext camelContext) {
+        // Check programmatic configuration first (main.configure().withVirtualThreadsEnabled(true))
+        boolean enabled = mainConfigurationProperties.isVirtualThreadsEnabled();
+
+        if (!enabled && mainConfigurationProperties.isAutoConfigurationEnabled()) {
+            // Check initial properties (main.addInitialProperty / main.setInitialProperties)
+            if (initialProperties != null) {
+                String val = initialProperties.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
+                if (val != null) {
+                    enabled = Boolean.parseBoolean(val);
+                }
+            }
+
+            if (!enabled) {
+                // Load from PropertiesComponent (application.properties, etc.)
+                OrderedLocationProperties props = (OrderedLocationProperties) camelContext.getPropertiesComponent()
+                        .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
+                String val = props.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
+                if (val != null) {
+                    enabled = Boolean.parseBoolean(val);
+                }
+            }
+
+            if (!enabled && mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+                Properties envProps = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+                String val = envProps.getProperty(optionKey("camel.main.virtualThreadsEnabled"));
+                if (val != null) {
+                    enabled = Boolean.parseBoolean(val);
+                }
+            }
+
+            if (!enabled && mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+                Properties sysProps = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+                String val = sysProps.getProperty("camel.main.virtualThreadsEnabled");
+                if (val != null) {
+                    enabled = Boolean.parseBoolean(val);
+                }
+            }
+
+            if (enabled) {
+                mainConfigurationProperties.setVirtualThreadsEnabled(true);
+            }
+        }
+
+        if (enabled) {
+            System.setProperty("camel.threads.virtual.enabled", "true");
+            // Directly set the cached value so even if ThreadType.current() was already called
+            // and cached PLATFORM before this point, it is overridden to VIRTUAL
+            ThreadType.enable();
+        }
+    }
+
     protected void autoConfigurationStartupConditions(
             CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
@@ -958,6 +1011,8 @@ public abstract class BaseMainSupport extends BaseService {
         configureRoutesLoader(camelContext);
         // configure custom main listeners
         configureMainListener(camelContext);
+        // configure virtual threads early before build() to avoid ThreadType DCL race
+        configureVirtualThreadsEarly(camelContext);
 
         // ensure camel context is build
         camelContext.build();

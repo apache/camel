@@ -53,4 +53,17 @@ public enum ThreadType {
         }
         return type;
     }
+
+    /**
+     * Directly enables virtual threads by setting the cached type to {@code VIRTUAL}.
+     * <p>
+     * This must be called before any thread pools are created, ideally during early bootstrap, to ensure the cached
+     * value reflects the configured intent regardless of the order in which {@link #current()} was previously invoked.
+     */
+    public static void enable() {
+        synchronized (ThreadType.class) {
+            current = VIRTUAL;
+        }
+        LOG.info("The type of thread enabled is: {}", VIRTUAL);
+    }
 }
