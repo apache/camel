@@ -2905,6 +2905,14 @@ public class CamelMonitor extends CamelCommand {
         return sortStyle(column, cbSort);
     }
 
+    private String httpSortLabel(String label, String column) {
+        return sortLabel(label, column, httpSort, httpSortReversed);
+    }
+
+    private Style httpSortStyle(String column) {
+        return sortStyle(column, httpSort);
+    }
+
     private int sortCircuitBreaker(CircuitBreakerInfo a, CircuitBreakerInfo b) {
         int result = switch (cbSort) {
             case "id" -> compareStr(a.id, b.id);
@@ -3604,14 +3612,13 @@ public class CamelMonitor extends CamelCommand {
                             "Stopped".equals(state) ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
         }
 
-        String sortLabel = httpSort + (httpSortReversed ? " ↓" : " ↑");
-        String title = String.format(" HTTP Services [%d] sort:%s ", visible.size(), sortLabel);
+        String title = String.format(" HTTP Services [%d] sort:%s ", visible.size(), httpSort);
 
         Row header = Row.from(
-                Cell.from(Span.styled("METHOD", Style.EMPTY.bold())),
-                Cell.from(Span.styled("PATH", Style.EMPTY.bold())),
+                Cell.from(Span.styled(httpSortLabel("METHOD", "method"), httpSortStyle("method"))),
+                Cell.from(Span.styled(httpSortLabel("PATH", "path"), httpSortStyle("path"))),
                 Cell.from(Span.styled("PRODUCES", Style.EMPTY.bold())),
-                Cell.from(Span.styled("SOURCE", Style.EMPTY.bold())),
+                Cell.from(Span.styled(httpSortLabel("SOURCE", "source"), httpSortStyle("source"))),
                 Cell.from(Span.styled("STATE", Style.EMPTY.bold())));
 
         Table table = Table.builder()
