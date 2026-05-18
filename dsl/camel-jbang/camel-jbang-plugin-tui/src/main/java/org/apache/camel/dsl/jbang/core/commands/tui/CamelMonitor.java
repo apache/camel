@@ -3850,18 +3850,73 @@ public class CamelMonitor extends CamelCommand {
 
         List<String> lines = List.of(content.split("\n", -1));
 
-        // scroll to the line containing operationId
         int scrollTo = 0;
         if (operationId != null) {
+            // Find the line that declares this operationId
+            int opIdLine = -1;
             for (int i = 0; i < lines.size(); i++) {
-                if (lines.get(i).contains(operationId)) {
-                    scrollTo = Math.max(0, i - 2);
+                String line = lines.get(i);
+                // match both YAML (operationId: foo) and JSON ("operationId": "foo")
+                if (line.contains("operationId") && line.contains(operationId)) {
+                    opIdLine = i;
                     break;
                 }
+            }
+            if (opIdLine >= 0) {
+                scrollTo = findOperationDeclarationLine(lines, opIdLine);
             }
         }
 
         applySpecResult(specUri, lines, scrollTo);
+    }
+
+    private static final Set<String> OPENAPI_HTTP_VERBS
+            = Set.of("get", "post", "put", "delete", "patch", "options", "head", "trace");
+
+    /**
+     * Walk backwards from the operationId line to find where the HTTP verb declaration starts (e.g. "get:" in YAML or
+     * '"get":' in JSON). Returns the line index to scroll to.
+     */
+    private static int findOperationDeclarationLine(List<String> lines, int opIdLine) {
+        int opIdIndent = leadingSpaces(lines.get(opIdLine));
+        for (int i = opIdLine - 1; i >= 0; i--) {
+            String raw = lines.get(i);
+            String trimmed = raw.trim();
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+            int indent = leadingSpaces(raw);
+            if (indent >= opIdIndent) {
+                continue; // still inside the operation body
+            }
+            // Check if this line is an HTTP verb (YAML: "get:" / JSON: '"get":')
+            String lower = trimmed.toLowerCase(Locale.ENGLISH);
+            for (String verb : OPENAPI_HTTP_VERBS) {
+                if (lower.equals(verb + ":") || lower.startsWith(verb + ": ")
+                        || lower.equals("\"" + verb + "\":") || lower.startsWith("\"" + verb + "\": ")) {
+                    return Math.max(0, i - 1); // show one line of context above
+                }
+            }
+            // Hit something at a shallower indent that isn't a verb (e.g. a path key) — stop
+            break;
+        }
+        // Fallback: scroll to operationId line with a couple lines of context
+        return Math.max(0, opIdLine - 2);
+    }
+
+    private static int leadingSpaces(String line) {
+        int count = 0;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == ' ') {
+                count++;
+            } else if (c == '\t') {
+                count += 2;
+            } else {
+                break;
+            }
+        }
+        return count;
     }
 
     private void applySpecResult(String specUri, List<String> lines, int scrollTo) {
