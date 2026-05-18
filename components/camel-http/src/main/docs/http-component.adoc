@@ -95,6 +95,33 @@ The option, `throwExceptionOnFailure`, can be set to `false` to prevent
 the `HttpOperationFailedException` from being thrown for failed response
 codes. This allows you to get any response from the remote server.
 
+=== Handling HTTP 429 Too Many Requests
+
+When a server responds with HTTP 429 (Too Many Requests) and includes a
+`Retry-After` header, the underlying Apache HttpClient 5 will automatically
+wait for the specified duration before retrying the request. If the server
+returns a long retry delay (for example, `Retry-After: 3600` for one hour),
+the HTTP component will appear to hang for that duration.
+
+To avoid this, you can disable automatic retries on the component:
+
+[source,java]
+----
+HttpComponent httpComponent = context.getComponent("https", HttpComponent.class);
+httpComponent.setAutomaticRetriesDisabled(true);
+----
+
+Or as a URI option on the endpoint:
+
+[source,text]
+----
+https://myhost/mypath?automaticRetriesDisabled=true
+----
+
+With automatic retries disabled, a 429 response is treated as an error and
+a `HttpOperationFailedException` is thrown immediately (unless
+`throwExceptionOnFailure=false`).
+
 === Exceptions
 
 `HttpOperationFailedException` exception contains the following information:
