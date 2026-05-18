@@ -163,7 +163,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull(generatedKeys, "out body could not be converted to a List - was: " + out.getMessage().getBody());
 
-        // it seems not to work with Derby...
+        // it seems not to work with H2...
         assertEquals(4, generatedKeys.size());
 
         int id = 3;

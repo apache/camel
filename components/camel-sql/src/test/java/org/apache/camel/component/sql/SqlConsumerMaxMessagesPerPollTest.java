@@ -39,7 +39,7 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase4.sql")
                 .build();
 

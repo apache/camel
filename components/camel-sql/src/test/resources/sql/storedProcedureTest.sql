@@ -15,33 +15,11 @@
 -- limitations under the License.
 --
 
-CREATE PROCEDURE SUBNUMBERS(VALUE1 INTEGER, VALUE2 INTEGER,OUT RESULT INTEGER)
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.subnumbers';
+-- H2 stored procedures that return ResultSet instead of using OUT parameters
+-- These reference Java methods that have been adapted for H2
 
-CREATE PROCEDURE NILADIC()
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.niladic';
-
-CREATE PROCEDURE BATCHFN(VALUE1 CHAR(10))
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.batchfn';
-
-CREATE PROCEDURE INOUTDEMO(IN1 INTEGER, INOUT IN2 INTEGER, OUT OUT1 INTEGER)
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredProcedure.inoutdemo';
-
-CREATE FUNCTION SUBNUMBERS_FUNCTION(VALUE1 INTEGER, VALUE2 INTEGER)
- RETURNS INTEGER
- PARAMETER STYLE JAVA
- LANGUAGE JAVA
- EXTERNAL NAME
-'org.apache.camel.component.sql.stored.TestStoredFunction.subnumbers';
+CREATE ALIAS SUBNUMBERS FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.subnumbers';
+CREATE ALIAS NILADIC FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.niladic';
+CREATE ALIAS BATCHFN FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.batchfn';
+CREATE ALIAS INOUTDEMO FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.inoutdemo';
+CREATE ALIAS SUBNUMBERS_FUNCTION FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.subnumbersFunction';

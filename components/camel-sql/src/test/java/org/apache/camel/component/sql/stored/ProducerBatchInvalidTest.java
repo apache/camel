@@ -40,7 +40,7 @@ public class ProducerBatchInvalidTest extends CamelTestSupport {
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.HSQL)
                 .addScript("sql/storedProcedureTest.sql").build();
 
     }

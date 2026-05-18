@@ -15,7 +15,7 @@
 -- limitations under the License.
 --
 
-create table projects (id integer primary key GENERATED ALWAYS AS IDENTITY, project varchar(10), license varchar(5), description varchar(1000) default null, processed boolean);
+create table projects (id integer primary key AUTO_INCREMENT, project varchar(10), license varchar(5), description varchar(1000) default null, processed boolean);
 insert into projects (project, license, description, processed) values ('Camel', 'ASF', '', false);
 insert into projects (project, license, description, processed) values ('AMQ', 'ASF', '', false);
 insert into projects (project, license, description, processed) values ('Linux', 'XXX', '', false);

@@ -48,7 +48,20 @@
         </dependency>
 
         <!-- test dependencies -->
+        <!-- derby used for stored procedure tests -->
         <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.16.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>10.16.1.1</version>
+            <scope>test</scope>
+        </dependency>
+	<dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit6</artifactId>
             <scope>test</scope>
@@ -70,17 +83,11 @@
             <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- derby used for stored procedure tests -->
+        <!-- H2 used for stored procedure tests -->
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${derby-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>${derby-version}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -119,8 +126,15 @@
                         </goals>
                     </execution>
                 </executions>
+	    </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <hsqldb.method_class_names>org.apache.camel.component.sql.stored.*</hsqldb.method_class_names>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>

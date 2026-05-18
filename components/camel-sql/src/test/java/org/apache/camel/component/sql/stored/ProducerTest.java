@@ -36,13 +36,11 @@ public class ProducerTest extends CamelTestSupport {
     EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.HSQL)
                 .addScript("sql/storedProcedureTest.sql").build();
-
     }
 
     @Override
@@ -78,11 +76,47 @@ public class ProducerTest extends CamelTestSupport {
                 // required for the sql component
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
-                from("direct:query").to("sql-stored:SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers"
-                                        + ".num2},OUT INTEGER resultofsub)")
+                from("direct:query").to(
+                        "sql-stored:SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers" + ".num2},OUT INTEGER resultofsub)")
                         .to("mock:query");
             }
         };
     }
+
+    /*
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                // H2 doesn't support CallableStatement.registerOutParameter()
+                // Instead, we call the H2 alias directly as a query and extract the result
+                from("direct:query")
+                        .process(exchange -> {
+                            Integer num1 = exchange.getIn().getHeader("num1", Integer.class);
+                            Integer num2 = exchange.getIn().getHeader("num2", Integer.class);
+
+                            // Call H2 alias which returns a ResultSet
+                            String sql = "SELECT * FROM SUBNUMBERS(?, ?)";
+                            java.sql.Connection conn = db.getConnection();
+                            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+                                stmt.setInt(1, num1);
+                                stmt.setInt(2, num2);
+                                java.sql.ResultSet rs = stmt.executeQuery();
+
+                                java.util.Map<String, Object> result = new java.util.HashMap<>();
+                                if (rs.next()) {
+                                    result.put("resultofsub", rs.getInt("RESULTOFSUB"));
+                                }
+                                exchange.getIn().setBody(result);
+                                exchange.getIn().setHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, 0);
+                            } finally {
+                                conn.close();
+                            }
+                        })
+                        .to("mock:query");
+            }
+        };
+    }*/
 
 }

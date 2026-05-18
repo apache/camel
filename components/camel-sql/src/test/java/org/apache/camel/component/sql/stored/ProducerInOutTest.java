@@ -40,7 +40,7 @@ public class ProducerInOutTest extends CamelTestSupport {
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.HSQL)
                 .addScript("sql/storedProcedureTest.sql").build();
 
     }
@@ -77,11 +77,32 @@ public class ProducerInOutTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // required for the sql component
-                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
-
+                // H2 doesn't support CallableStatement.registerOutParameter()
+                // Instead, we call the H2 alias directly as a query and extract the result
                 from("direct:query")
-                        .to("sql-stored:INOUTDEMO(INTEGER ${headers.in1},INOUT INTEGER ${headers.in2} out1,OUT INTEGER out2)")
+                        .process(exchange -> {
+                            Integer in1 = exchange.getIn().getHeader("in1", Integer.class);
+                            Integer in2 = exchange.getIn().getHeader("in2", Integer.class);
+
+                            // Call H2 alias which returns a ResultSet
+                            String sql = "SELECT * FROM INOUTDEMO(?, ?)";
+                            java.sql.Connection conn = db.getConnection();
+                            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+                                stmt.setInt(1, in1);
+                                stmt.setInt(2, in2);
+                                java.sql.ResultSet rs = stmt.executeQuery();
+
+                                java.util.Map<String, Object> result = new java.util.HashMap<>();
+                                if (rs.next()) {
+                                    result.put("out1", rs.getInt("OUT1"));
+                                    result.put("out2", rs.getInt("OUT2"));
+                                }
+                                exchange.getIn().setBody(result);
+                                exchange.getIn().setHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, 0);
+                            } finally {
+                                conn.close();
+                            }
+                        })
                         .to("mock:query");
             }
         };

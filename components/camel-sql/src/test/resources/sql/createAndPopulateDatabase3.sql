@@ -16,12 +16,13 @@
 --
 
 -- START SNIPPET: e1
-create table projects (id integer primary key GENERATED ALWAYS AS IDENTITY, project varchar(10), license varchar(5), description varchar(1000) default null);
+create table projects (id integer primary key IDENTITY, project varchar(10), license varchar(5), description varchar(1000) default null);
 insert into projects (project, license, description) values ('Camel', 'ASF', '');
 insert into projects (project, license, description) values ('AMQ', 'ASF', '');
 insert into projects (project, license, description) values ('Linux', 'XXX', '');
 -- END SNIPPET: e1
 
 -- START SNIPPET: e2
-create table developers (id1 integer primary key GENERATED ALWAYS AS IDENTITY (START WITH 5), name varchar(20), position varchar(20), id2 integer GENERATED ALWAYS AS (id1+1));
+create table developers (id1 integer IDENTITY primary key, name varchar(20), position varchar(20), id2 integer GENERATED ALWAYS AS (id1+1));
+ALTER TABLE developers ALTER COLUMN id1 RESTART WITH 5;
 -- END SNIPPET: e2

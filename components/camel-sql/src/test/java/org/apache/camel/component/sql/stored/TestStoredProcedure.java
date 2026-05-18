@@ -35,6 +35,17 @@ public final class TestStoredProcedure {
         ret[0] = val1 - val2;
     }
 
+    public static void subnumbersHSQL(int val1, int val2, Integer[] ret) {
+        LOG.info("calling subnumbersHSQL:{} + {}", val1, val2);
+        ret[0] = val1 - val2;
+    }
+
+    public static int subnumbers2(int val1, int val2) {
+        LOG.info("calling subnumbers2:{} + {}", val1, val2);
+        System.out.println("calling subnumbers2: " + val1 + ", " + val2);
+        return val1 - val2;
+    }
+
     public static void batchfn(String val1) {
         LOG.info("calling batchfn:{}", val1);
         if (val1 == null) {
@@ -51,5 +62,17 @@ public final class TestStoredProcedure {
         LOG.info("calling inoutdemo: {}, {}", inout1[0], out1[0]);
         inout1[0] = 1;
         out1[0] = 2;
+    }
+
+    public static void inoutdemoHSQL(int in1, Integer[] inout1, Integer[] out1) {
+        LOG.info("calling inoutdemo: {}, {}", inout1[0], out1[0]);
+        inout1[0] = 1;
+        out1[0] = 2;
+    }
+
+    public static int inoutdemo2(int[] inout1, int in1) {
+        LOG.info("calling inoutdemo: {}, {}", inout1[0]);
+        inout1[0] = 1;
+        return 2;
     }
 }
