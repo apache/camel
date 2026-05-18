@@ -27,11 +27,15 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
+import org.apache.camel.Route;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
@@ -45,7 +49,7 @@ import org.apache.camel.util.json.Jsoner;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers is stored in a backlog queue
  * (FIFO based) which allows to pull the traced messages on demand.
  */
-public class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
+public class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.SyntheticBacklogTracer {
 
     // limit the tracer to a thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 1000;
@@ -98,6 +102,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
      * @param  exchange   the exchange
      * @return            <tt>true</tt> to trace, <tt>false</tt> to skip tracing
      */
+    @Override
     public boolean shouldTrace(NamedNode definition, Exchange exchange) {
         // special in standby mode we allow using tracer to capture latest tracing data for
         // enriched message history
@@ -138,7 +143,47 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         return false;
     }
 
-    public void traceEvent(DefaultBacklogTracerEventMessage event) {
+    @Override
+    public void traceFirstNode(NamedNode node, Exchange exchange) {
+        traceNode(node, exchange, true, false);
+    }
+
+    @Override
+    public void traceLastNode(NamedNode node, Exchange exchange) {
+        traceNode(node, exchange, false, true);
+    }
+
+    private void traceNode(NamedNode node, Exchange exchange, boolean first, boolean last) {
+        if (!shouldTrace(node, exchange)) {
+            return;
+        }
+        long timestamp = System.currentTimeMillis();
+        String toNode = node.getId();
+        String toNodeParentId = node.getParentId();
+        String toNodeShortName = node.getShortName();
+        String toNodeLabel = StringHelper.limitLength(node.getLabel(), 50);
+        String exchangeId = exchange.getExchangeId();
+        String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+        int level = node.getLevel();
+        String fromRouteId = exchange.getFromRouteId();
+        String source = LoggerHelper.getLineNumberLoggerName(node);
+        JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), isIncludeExchangeProperties(),
+                isIncludeExchangeVariables(), true, true, isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
+        DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
+                camelContext, first, last, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
+                toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
+                exchangeId, correlationExchangeId, false, false, data);
+        if ((first || last) && fromRouteId != null) {
+            Route route = camelContext.getRoute(fromRouteId);
+            if (route != null && route.getConsumer() != null) {
+                event.setEndpointUri(route.getConsumer().getEndpoint().getEndpointUri());
+            }
+        }
+        traceEvent(event);
+    }
+
+    @Override
+    public void traceEvent(BacklogTracerEventMessage event) {
         // special in standby mode we allow using tracer to capture latest tracing data for
         // enriched message history
         boolean history = (enabled || standby) && camelContext.isMessageHistory();
@@ -495,6 +540,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         provisionalHistoryQueue.clear();
     }
 
+    @Override
     public long incrementTraceCounter() {
         return traceCounter.incrementAndGet();
     }
