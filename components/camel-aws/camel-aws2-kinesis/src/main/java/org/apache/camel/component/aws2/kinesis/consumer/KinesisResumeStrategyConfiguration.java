@@ -60,7 +60,9 @@ public class KinesisResumeStrategyConfiguration extends ResumeStrategyConfigurat
         @Override
         public KinesisResumeStrategyConfiguration build() {
             KinesisResumeStrategyConfiguration result = new KinesisResumeStrategyConfiguration();
-            result.setResumeCache(resumeCache);
+            if (resumeCache != null) {
+                result.setResumeCache(resumeCache);
+            }
             result.setCacheFillPolicy(fillPolicy);
             return result;
         }
