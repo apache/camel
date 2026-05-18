@@ -144,7 +144,7 @@ public class CamelMonitor extends CamelCommand {
     private static final String[] CB_SORT_COLUMNS = { "route", "id", "component", "state" };
 
     // HTTP sort columns
-    private static final String[] HTTP_SORT_COLUMNS = { "method", "path", "source" };
+    private static final String[] HTTP_SORT_COLUMNS = { "method", "path", "source", "consumes", "produces" };
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -3516,17 +3516,11 @@ public class CamelMonitor extends CamelCommand {
         // Sort
         visible.sort((a, b) -> {
             int result = switch (httpSort) {
-                case "path" -> {
-                    String pa = a.path != null ? a.path : "";
-                    String pb = b.path != null ? b.path : "";
-                    yield pa.compareToIgnoreCase(pb);
-                }
+                case "path" -> compareStr(a.path, b.path);
                 case "source" -> Boolean.compare(b.fromRest, a.fromRest);
-                default -> { // method
-                    String ma = a.method != null ? a.method : "";
-                    String mb = b.method != null ? b.method : "";
-                    yield ma.compareToIgnoreCase(mb);
-                }
+                case "consumes" -> compareStr(a.consumes, b.consumes);
+                case "produces" -> compareStr(a.produces, b.produces);
+                default -> compareStr(a.method, b.method); // "method"
             };
             return httpSortReversed ? -result : result;
         });
@@ -3592,6 +3586,7 @@ public class CamelMonitor extends CamelCommand {
         for (HttpEndpointInfo ep : visible) {
             String method = ep.method != null ? ep.method : "";
             String path = ep.path != null ? ep.path : (ep.url != null ? ep.url : "");
+            String consumes = ep.consumes != null ? ep.consumes : "";
             String produces = ep.produces != null ? ep.produces : "";
             String source;
             if (ep.management) {
@@ -3605,6 +3600,7 @@ public class CamelMonitor extends CamelCommand {
             rows.add(Row.from(
                     Cell.from(Span.styled(method, methodStyle(method))),
                     Cell.from(path),
+                    Cell.from(consumes),
                     Cell.from(produces),
                     Cell.from(Span.styled(source,
                             ep.fromRest ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.CYAN))),
@@ -3617,7 +3613,8 @@ public class CamelMonitor extends CamelCommand {
         Row header = Row.from(
                 Cell.from(Span.styled(httpSortLabel("METHOD", "method"), httpSortStyle("method"))),
                 Cell.from(Span.styled(httpSortLabel("PATH", "path"), httpSortStyle("path"))),
-                Cell.from(Span.styled("PRODUCES", Style.EMPTY.bold())),
+                Cell.from(Span.styled(httpSortLabel("CONSUMES", "consumes"), httpSortStyle("consumes"))),
+                Cell.from(Span.styled(httpSortLabel("PRODUCES", "produces"), httpSortStyle("produces"))),
                 Cell.from(Span.styled(httpSortLabel("SOURCE", "source"), httpSortStyle("source"))),
                 Cell.from(Span.styled("STATE", Style.EMPTY.bold())));
 
@@ -3625,9 +3622,10 @@ public class CamelMonitor extends CamelCommand {
                 .rows(rows)
                 .header(header)
                 .widths(
-                        Constraint.length(14),
+                        Constraint.length(12),
                         Constraint.fill(),
-                        Constraint.length(24),
+                        Constraint.length(20),
+                        Constraint.length(20),
                         Constraint.length(15),
                         Constraint.length(8))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
