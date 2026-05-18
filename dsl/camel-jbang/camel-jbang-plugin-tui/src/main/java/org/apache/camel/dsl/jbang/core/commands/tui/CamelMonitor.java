@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -114,7 +115,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_ENDPOINT_CHART_POINTS = 60;
     private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 8;
+    private static final int NUM_TABS = 9;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
@@ -125,6 +126,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_HEALTH = 5;
     private static final int TAB_HISTORY = 6;
     private static final int TAB_CIRCUIT_BREAKER = 7;
+    private static final int TAB_HTTP = 8;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -140,6 +142,9 @@ public class CamelMonitor extends CamelCommand {
 
     // Circuit breaker sort columns (order matches table column order)
     private static final String[] CB_SORT_COLUMNS = { "route", "id", "component", "state" };
+
+    // HTTP sort columns
+    private static final String[] HTTP_SORT_COLUMNS = { "method", "path", "source" };
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -158,6 +163,7 @@ public class CamelMonitor extends CamelCommand {
     private final TableState healthTableState = new TableState();
     private final TableState endpointTableState = new TableState();
     private final TableState cbTableState = new TableState();
+    private final TableState httpTableState = new TableState();
     private final TableState processorTableState = new TableState();
     private final TableState routeHeaderTableState = new TableState();
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
@@ -221,6 +227,14 @@ public class CamelMonitor extends CamelCommand {
     private String cbSort = "route";
     private int cbSortIndex = 0;
     private boolean cbSortReversed;
+
+    // HTTP tab sort/filter state
+    private String httpSort = "method";
+    private int httpSortIndex = 0;
+    private boolean httpSortReversed;
+    // httpFilter: 0=all, 1=REST DSL only, 2=Platform-HTTP only
+    private int httpFilter;
+    private boolean httpShowManagement;
 
     // Health filter state
     private boolean showOnlyDown;
@@ -420,6 +434,9 @@ public class CamelMonitor extends CamelCommand {
             if (ke.isChar('8')) {
                 return handleTabKey(TAB_CIRCUIT_BREAKER);
             }
+            if (ke.isChar('9')) {
+                return handleTabKey(TAB_HTTP);
+            }
 
             // Tab cycling
             if (ke.isFocusNext()) {
@@ -582,6 +599,26 @@ public class CamelMonitor extends CamelCommand {
             }
             if (tab == TAB_CIRCUIT_BREAKER && ke.isChar('S')) {
                 cbSortReversed = !cbSortReversed;
+                return true;
+            }
+
+            // HTTP tab: sort, filter, management toggle
+            if (tab == TAB_HTTP && ke.isChar('s')) {
+                httpSortIndex = (httpSortIndex + 1) % HTTP_SORT_COLUMNS.length;
+                httpSort = HTTP_SORT_COLUMNS[httpSortIndex];
+                httpSortReversed = false;
+                return true;
+            }
+            if (tab == TAB_HTTP && ke.isChar('S')) {
+                httpSortReversed = !httpSortReversed;
+                return true;
+            }
+            if (tab == TAB_HTTP && ke.isCharIgnoreCase('f')) {
+                httpFilter = (httpFilter + 1) % 3;
+                return true;
+            }
+            if (tab == TAB_HTTP && ke.isCharIgnoreCase('m')) {
+                httpShowManagement = !httpShowManagement;
                 return true;
             }
 
@@ -969,6 +1006,7 @@ public class CamelMonitor extends CamelCommand {
             }
             case TAB_ROUTES -> routeTableState.selectPrevious();
             case TAB_CIRCUIT_BREAKER -> cbTableState.selectPrevious();
+            case TAB_HTTP -> httpTableState.selectPrevious();
             case TAB_LOG -> {
                 logFollowMode = false;
                 logScroll = Math.max(0, logScroll - 1);
@@ -1003,6 +1041,10 @@ public class CamelMonitor extends CamelCommand {
             case TAB_CIRCUIT_BREAKER -> {
                 IntegrationInfo info = findSelectedIntegration();
                 cbTableState.selectNext(info != null ? info.circuitBreakers.size() : 0);
+            }
+            case TAB_HTTP -> {
+                List<HttpEndpointInfo> visible = visibleHttpEndpoints(findSelectedIntegration());
+                httpTableState.selectNext(visible.size());
             }
             case TAB_LOG -> logScroll++;
             case TAB_HISTORY -> {
@@ -1090,6 +1132,7 @@ public class CamelMonitor extends CamelCommand {
                 ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
         int historyCount = hasSelection ? historyEntries.size() : 0;
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
+        int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
 
         // Row 0: label-only titles — fixed width so the tab bar never shifts when badges appear
         Line[] labels = {
@@ -1101,6 +1144,7 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(" 6 Health "),
                 Line.from(" 7 Inspect "),
                 Line.from(" 8 Circuit Breaker "),
+                Line.from(" 9 HTTP "),
         };
 
         Tabs tabs = Tabs.builder()
@@ -1120,7 +1164,7 @@ public class CamelMonitor extends CamelCommand {
             int badgeY = area.y();
             int dividerW = CharWidth.of(" | ");
 
-            String[] badgeTexts = { "", "", "", "", "", "", "", "" };
+            String[] badgeTexts = { "", "", "", "", "", "", "", "", "" };
             Style[] badgeStyles = new Style[labels.length];
             Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
             Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
@@ -1161,6 +1205,9 @@ public class CamelMonitor extends CamelCommand {
             } else if (cbCount > 0) {
                 badgeTexts[7] = "(" + cbCount + ")";
             }
+            if (httpCount > 0) {
+                badgeTexts[8] = "(" + httpCount + ")";
+            }
 
             int tabX = 0;
             for (int i = 0; i < labels.length; i++) {
@@ -1192,6 +1239,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_HEALTH -> renderHealth(frame, area);
             case TAB_LOG -> renderLog(frame, area);
             case TAB_HISTORY -> renderInspect(frame, area);
+            case TAB_HTTP -> renderHttp(frame, area);
         }
     }
 
@@ -3426,6 +3474,233 @@ public class CamelMonitor extends CamelCommand {
         return entry;
     }
 
+    // ---- Tab 9: HTTP Services ----
+
+    private List<HttpEndpointInfo> visibleHttpEndpoints(IntegrationInfo info) {
+        if (info == null) {
+            return Collections.emptyList();
+        }
+        List<HttpEndpointInfo> result = new ArrayList<>();
+        for (HttpEndpointInfo ep : info.httpEndpoints) {
+            if (ep.management && !httpShowManagement) {
+                continue;
+            }
+            if (httpFilter == 1 && !ep.fromRest) {
+                continue;
+            }
+            if (httpFilter == 2 && ep.fromRest) {
+                continue;
+            }
+            result.add(ep);
+        }
+        return result;
+    }
+
+    private void renderHttp(Frame frame, Rect area) {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        List<HttpEndpointInfo> visible = visibleHttpEndpoints(info);
+
+        // Sort
+        visible.sort((a, b) -> {
+            int result = switch (httpSort) {
+                case "path" -> {
+                    String pa = a.path != null ? a.path : "";
+                    String pb = b.path != null ? b.path : "";
+                    yield pa.compareToIgnoreCase(pb);
+                }
+                case "source" -> Boolean.compare(b.fromRest, a.fromRest);
+                default -> { // method
+                    String ma = a.method != null ? a.method : "";
+                    String mb = b.method != null ? b.method : "";
+                    yield ma.compareToIgnoreCase(mb);
+                }
+            };
+            return httpSortReversed ? -result : result;
+        });
+
+        // Layout: server info row (1) + table (fill) + detail (10)
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.length(1), Constraint.fill(), Constraint.length(10))
+                .split(area);
+
+        // Server info row
+        renderHttpServerInfo(frame, chunks.get(0), info, visible);
+
+        // Table
+        renderHttpTable(frame, chunks.get(1), visible);
+
+        // Detail panel
+        renderHttpDetail(frame, chunks.get(2), visible);
+    }
+
+    private void renderHttpServerInfo(Frame frame, Rect area, IntegrationInfo info, List<HttpEndpointInfo> visible) {
+        List<Span> spans = new ArrayList<>();
+        if (info.httpServer != null) {
+            spans.add(Span.styled(" Server: ", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.styled(info.httpServer, Style.EMPTY.fg(Color.CYAN)));
+            spans.add(Span.raw("    "));
+        }
+        long restCount = info.httpEndpoints.stream().filter(e -> e.fromRest).count();
+        long httpCount = info.httpEndpoints.stream().filter(e -> !e.fromRest && !e.management).count();
+        long mgmtCount = info.httpEndpoints.stream().filter(e -> e.management).count();
+        if (restCount > 0) {
+            spans.add(Span.styled("REST: ", Style.EMPTY.fg(Color.GREEN)));
+            spans.add(Span.raw(restCount + "  "));
+        }
+        if (httpCount > 0) {
+            spans.add(Span.styled("HTTP: ", Style.EMPTY.fg(Color.CYAN)));
+            spans.add(Span.raw(httpCount + "  "));
+        }
+        if (mgmtCount > 0) {
+            spans.add(Span.styled("Mgmt: ", Style.EMPTY.fg(Color.YELLOW).dim()));
+            spans.add(Span.raw(mgmtCount + ""));
+        }
+        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+    }
+
+    private static Style methodStyle(String method) {
+        if (method == null) {
+            return Style.EMPTY;
+        }
+        // Use first verb if comma-separated
+        String m = method.split(",")[0].trim().toUpperCase(Locale.ENGLISH);
+        return switch (m) {
+            case "GET" -> Style.EMPTY.fg(Color.GREEN);
+            case "POST" -> Style.EMPTY.fg(Color.YELLOW);
+            case "PUT" -> Style.EMPTY.fg(Color.CYAN);
+            case "DELETE" -> Style.EMPTY.fg(Color.LIGHT_RED);
+            case "PATCH" -> Style.EMPTY.fg(Color.rgb(0xFF, 0x80, 0x00));
+            default -> Style.EMPTY.dim();
+        };
+    }
+
+    private void renderHttpTable(Frame frame, Rect area, List<HttpEndpointInfo> visible) {
+        List<Row> rows = new ArrayList<>();
+        for (HttpEndpointInfo ep : visible) {
+            String method = ep.method != null ? ep.method : "";
+            String path = ep.path != null ? ep.path : (ep.url != null ? ep.url : "");
+            String produces = ep.produces != null ? ep.produces : "";
+            String source;
+            if (ep.management) {
+                source = "Mgmt";
+            } else if (ep.fromRest) {
+                source = ep.contractFirst ? "REST(contract)" : "REST(code)";
+            } else {
+                source = "HTTP";
+            }
+            String state = ep.state != null ? ep.state : "";
+            rows.add(Row.from(
+                    Cell.from(Span.styled(method, methodStyle(method))),
+                    Cell.from(path),
+                    Cell.from(produces),
+                    Cell.from(Span.styled(source,
+                            ep.fromRest ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(state,
+                            "Stopped".equals(state) ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
+        }
+
+        String sortLabel = httpSort + (httpSortReversed ? " ↓" : " ↑");
+        String title = String.format(" HTTP Services [%d] sort:%s ", visible.size(), sortLabel);
+
+        Row header = Row.from(
+                Cell.from(Span.styled("METHOD", Style.EMPTY.bold())),
+                Cell.from(Span.styled("PATH", Style.EMPTY.bold())),
+                Cell.from(Span.styled("PRODUCES", Style.EMPTY.bold())),
+                Cell.from(Span.styled("SOURCE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("STATE", Style.EMPTY.bold())));
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(header)
+                .widths(
+                        Constraint.length(14),
+                        Constraint.fill(),
+                        Constraint.length(24),
+                        Constraint.length(15),
+                        Constraint.length(8))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, httpTableState);
+    }
+
+    private void renderHttpDetail(Frame frame, Rect area, List<HttpEndpointInfo> visible) {
+        Integer sel = httpTableState.selected();
+        if (sel == null || sel < 0 || sel >= visible.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled(" Select an endpoint to view details",
+                                            Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        HttpEndpointInfo ep = visible.get(sel);
+        List<Span> titleSpans = new ArrayList<>();
+        if (ep.method != null) {
+            titleSpans.add(Span.raw(" "));
+            titleSpans.add(Span.styled(ep.method, methodStyle(ep.method).bold()));
+            titleSpans.add(Span.raw(" "));
+        }
+        if (ep.path != null) {
+            titleSpans.add(Span.raw(ep.path + " "));
+        }
+        Title detailTitle = Title.from(Line.from(titleSpans));
+
+        List<Line> lines = new ArrayList<>();
+        addDetailLine(lines, "URL", ep.url);
+        addDetailLine(lines, "Consumes", ep.consumes);
+        addDetailLine(lines, "Produces", ep.produces);
+        String sourceStr;
+        if (ep.management) {
+            sourceStr = "Platform-HTTP (management)";
+        } else if (ep.fromRest) {
+            sourceStr = "REST DSL (" + (ep.contractFirst ? "contract-first" : "code-first") + ")";
+        } else {
+            sourceStr = "Platform-HTTP";
+        }
+        addDetailLine(lines, "Source", sourceStr);
+        if (ep.state != null) {
+            addDetailLine(lines, "State", ep.state);
+        }
+        if (ep.inType != null) {
+            addDetailLine(lines, "In type", ep.inType);
+        }
+        if (ep.outType != null) {
+            addDetailLine(lines, "Out type", ep.outType);
+        }
+        if (ep.description != null) {
+            addDetailLine(lines, "Desc", ep.description);
+        }
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(lines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).title(detailTitle).build())
+                        .build(),
+                area);
+    }
+
+    private static void addDetailLine(List<Line> lines, String label, String value) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        lines.add(Line.from(
+                Span.styled(String.format("  %-10s ", label + ":"), Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(value)));
+    }
+
     // ---- Tab 7: Inspect (merged Last + Tracer) ----
 
     private void renderInspect(Frame frame, Rect area) {
@@ -4019,7 +4294,7 @@ public class CamelMonitor extends CamelCommand {
                     hint(spans, "p", selInfo.routeStarted > 0 ? "stop" : "start");
                 }
             }
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_ROUTES && showSource) {
             hint(spans, "c/Esc", "close");
             hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
@@ -4059,27 +4334,27 @@ public class CamelMonitor extends CamelCommand {
             } else if (routeState != null) {
                 hint(spans, "p", "start");
             }
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CONSUMERS) {
             hint(spans, "Esc", "back");
             hint(spans, "s", "sort");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_ENDPOINTS) {
             hint(spans, "Esc", "back");
             hint(spans, "s", "sort");
             String[] filterLabels = { "all", "remote", "remote+stub" };
             hint(spans, "f", "filter [" + filterLabels[endpointFilter] + "]");
             hint(spans, "a", "chart " + (showEndpointChart ? "[all]" : "[off]"));
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CIRCUIT_BREAKER) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "d", "toggle DOWN");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_LOG && showLogLevelPopup) {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "Enter", "set level");
@@ -4095,6 +4370,13 @@ public class CamelMonitor extends CamelCommand {
             }
             hint(spans, "l", "level");
             hintLast(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
+        } else if (tab == TAB_HTTP) {
+            hint(spans, "Esc", "back");
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "s", "sort");
+            String[] filterLabels = { "all", "rest", "http" };
+            hint(spans, "f", "filter [" + filterLabels[httpFilter] + "]");
+            hintLast(spans, "m", "management" + (httpShowManagement ? " [on]" : " [off]"));
         } else if (tab == TAB_HISTORY) {
             boolean tracerActive = !traces.get().isEmpty();
             if (tracerActive && traceDetailView) {
@@ -4132,7 +4414,7 @@ public class CamelMonitor extends CamelCommand {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -5098,7 +5380,76 @@ public class CamelMonitor extends CamelCommand {
         parseCbSection(root, "fault-tolerance", info);
         parseCbSection(root, "circuit-breaker", info);
 
+        // Parse REST DSL services
+        JsonObject restsObj = (JsonObject) root.get("rests");
+        if (restsObj != null) {
+            JsonArray restList = (JsonArray) restsObj.get("rests");
+            if (restList != null) {
+                for (Object r : restList) {
+                    JsonObject rj = (JsonObject) r;
+                    HttpEndpointInfo ep = new HttpEndpointInfo();
+                    ep.fromRest = true;
+                    ep.url = rj.getString("url");
+                    ep.method = rj.getString("method");
+                    if (ep.method != null) {
+                        ep.method = ep.method.toUpperCase(Locale.ENGLISH);
+                    }
+                    ep.consumes = rj.getString("consumes");
+                    ep.produces = rj.getString("produces");
+                    ep.description = rj.getString("description");
+                    ep.contractFirst = Boolean.TRUE.equals(rj.get("contractFirst"));
+                    ep.state = rj.getString("state");
+                    ep.inType = rj.getString("inType");
+                    ep.outType = rj.getString("outType");
+                    // derive path from url (strip scheme+host+port)
+                    ep.path = extractPath(ep.url);
+                    info.httpEndpoints.add(ep);
+                }
+            }
+        }
+
+        // Parse Platform-HTTP services
+        JsonObject phpObj = (JsonObject) root.get("platform-http");
+        if (phpObj != null) {
+            info.httpServer = phpObj.getString("server");
+            parseHttpEndpoints(phpObj, "endpoints", false, info);
+            parseHttpEndpoints(phpObj, "managementEndpoints", true, info);
+        }
+
         return info;
+    }
+
+    private static void parseHttpEndpoints(JsonObject phpObj, String key, boolean management, IntegrationInfo info) {
+        JsonArray arr = (JsonArray) phpObj.get(key);
+        if (arr == null) {
+            return;
+        }
+        for (Object e : arr) {
+            JsonObject ej = (JsonObject) e;
+            HttpEndpointInfo ep = new HttpEndpointInfo();
+            ep.fromRest = false;
+            ep.management = management;
+            ep.server = phpObj.getString("server");
+            ep.url = ej.getString("url");
+            ep.path = ej.getString("path");
+            ep.method = ej.getString("verbs");
+            ep.consumes = ej.getString("consumes");
+            ep.produces = ej.getString("produces");
+            info.httpEndpoints.add(ep);
+        }
+    }
+
+    private static String extractPath(String url) {
+        if (url == null) {
+            return null;
+        }
+        // strip scheme://host:port prefix — find third '/' or return url as-is
+        int idx = url.indexOf("://");
+        if (idx < 0) {
+            return url;
+        }
+        int slash = url.indexOf('/', idx + 3);
+        return slash >= 0 ? url.substring(slash) : "/";
     }
 
     private static void parseCbSection(JsonObject root, String key, IntegrationInfo info) {
@@ -5291,6 +5642,8 @@ public class CamelMonitor extends CamelCommand {
         final List<HealthCheckInfo> healthChecks = new ArrayList<>();
         final List<EndpointInfo> endpoints = new ArrayList<>();
         final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
+        final List<HttpEndpointInfo> httpEndpoints = new ArrayList<>();
+        String httpServer; // platform-http server binding, e.g. http://0.0.0.0:8080
     }
 
     static class RouteInfo {
@@ -5371,6 +5724,25 @@ public class CamelMonitor extends CamelCommand {
         long failedCalls;
         long notPermittedCalls;
         double failureRate; // -1 means not available
+    }
+
+    // HTTP endpoint from REST DSL or Platform-HTTP
+    static class HttpEndpointInfo {
+        String method;   // HTTP method(s), e.g. "GET" or "GET,POST"
+        String path;     // URI path, e.g. /api/orders
+        String url;      // full URL including server
+        String consumes;
+        String produces;
+        // REST DSL only
+        boolean fromRest;
+        boolean contractFirst;
+        String description;
+        String inType;
+        String outType;
+        String state;
+        // Platform-HTTP only
+        boolean management;
+        String server;   // e.g. http://0.0.0.0:8080
     }
 
     static class TraceEntry {
