@@ -2371,6 +2371,8 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.setBacklogTracingStandby(config.isStandby());
         camelContext.setBacklogTracingTemplates(config.isTraceTemplates());
         camelContext.setBacklogTracingRests(config.isTraceRests());
+        // message history is required for BacklogTracer to capture exchange history (last completed exchange)
+        camelContext.setMessageHistory(true);
 
         BacklogTracer tracer = org.apache.camel.impl.debugger.BacklogTracer.createTracer(camelContext);
         tracer.setEnabled(config.isEnabled());
