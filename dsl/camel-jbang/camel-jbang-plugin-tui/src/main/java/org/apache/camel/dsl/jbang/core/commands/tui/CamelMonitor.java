@@ -4891,7 +4891,11 @@ public class CamelMonitor extends CamelCommand {
         if (entry.first) {
             entry.direction = "-->";
             String uri = json.getString("endpointUri");
-            entry.processor = indent + "from[" + (uri != null ? uri : "") + "]";
+            if (uri != null) {
+                entry.processor = indent + "from[" + uri + "]";
+            } else {
+                entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
+            }
         } else if (entry.last) {
             entry.direction = "<--";
             entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
@@ -5003,7 +5007,11 @@ public class CamelMonitor extends CamelCommand {
         String indent = "  ".repeat(entry.nodeLevel);
         if (entry.first) {
             String uri = json.getString("endpointUri");
-            entry.processor = indent + "from[" + (uri != null ? uri : "") + "]";
+            if (uri != null) {
+                entry.processor = indent + "from[" + uri + "]";
+            } else {
+                entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
+            }
         } else {
             entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
         }
