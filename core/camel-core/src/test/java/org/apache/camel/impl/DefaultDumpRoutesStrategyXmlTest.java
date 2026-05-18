@@ -25,9 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultDumpRoutesStrategyXmlTest extends ContextTestSupport {
 
@@ -50,7 +48,7 @@ public class DefaultDumpRoutesStrategyXmlTest extends ContextTestSupport {
     public void testDumpXmlHasCorrectStructure() throws Exception {
         File dir = testDirectory().toFile();
         File[] files = dir.listFiles();
-        assertNotNull(files, "Expected dump files in " + dir);
+        assertThat(files).as("Expected dump files in %s", dir).isNotNull().isNotEmpty();
 
         StringBuilder all = new StringBuilder();
         for (File f : files) {
@@ -61,18 +59,20 @@ public class DefaultDumpRoutesStrategyXmlTest extends ContextTestSupport {
         String xml = all.toString();
 
         // the dump wraps output in <camel> and strips the outer container elements
-        assertTrue(xml.contains("<camel>"), "Expected <camel> root wrapper");
-        assertTrue(xml.contains("</camel>"), "Expected </camel> root wrapper closing tag");
+        assertThat(xml).as("Expected <camel> root wrapper\nActual xml:\n%s", xml)
+                .contains("<camel>", "</camel>");
 
         // outer container tags must be stripped entirely (both opening and closing) - CAMEL-23521
-        assertFalse(xml.contains("<routes"), "Outer <routes> wrapper must be stripped");
-        assertFalse(xml.contains("<routeTemplates"), "Outer <routeTemplates> wrapper must be stripped");
+        assertThat(xml).as("Outer <routes> wrapper must be stripped\nActual xml:\n%s", xml)
+                .doesNotContain("<routes");
+        assertThat(xml).as("Outer <routeTemplates> wrapper must be stripped\nActual xml:\n%s", xml)
+                .doesNotContain("<routeTemplates");
 
         // individual route elements must be present and properly closed
-        assertTrue(xml.contains("<route "), "Expected individual <route> elements");
-        assertTrue(xml.contains("</route>"), "Expected </route> closing tag");
-        assertTrue(xml.contains("<routeTemplate "), "Expected individual <routeTemplate> elements");
-        assertTrue(xml.contains("</routeTemplate>"), "Expected </routeTemplate> closing tag");
+        assertThat(xml).as("Expected individual <route> elements\nActual xml:\n%s", xml)
+                .contains("<route ", "</route>");
+        assertThat(xml).as("Expected individual <routeTemplate> elements\nActual xml:\n%s", xml)
+                .contains("<routeTemplate ", "</routeTemplate>");
     }
 
     @Override
