@@ -123,6 +123,12 @@ public class DefaultPropertiesFunctionResolver extends ServiceSupport
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        ServiceHelper.buildService(functions.values());
+    }
+
+    @Override
     protected void doInit() throws Exception {
         functions.values().forEach(f -> CamelContextAware.trySetCamelContext(f, camelContext));
         ServiceHelper.initService(functions.values());
