@@ -62,7 +62,7 @@ public abstract class ResumeStrategyConfiguration {
         return resumeCache;
     }
 
-    public void setResumeCache(ResumeCache<?> resumeCache) {
-        this.resumeCache = Objects.requireNonNull(resumeCache, "resumeCache");
+    public void setResumeCache(@Nullable ResumeCache<?> resumeCache) {
+        this.resumeCache = resumeCache;
     }
 }
