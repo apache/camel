@@ -144,30 +144,15 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
     @Override
     public void traceBeforeNode(NamedNode node, Exchange exchange) {
-        if (!shouldTrace(node, exchange)) {
-            return;
-        }
-        long timestamp = System.currentTimeMillis();
-        String toNode = node.getId();
-        String toNodeParentId = node.getParentId();
-        String toNodeShortName = node.getShortName();
-        String toNodeLabel = StringHelper.limitLength(node.getLabel(), 50);
-        String exchangeId = exchange.getExchangeId();
-        String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
-        int level = node.getLevel();
-        String fromRouteId = exchange.getFromRouteId();
-        String source = LoggerHelper.getLineNumberLoggerName(node);
-        JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), isIncludeExchangeProperties(),
-                isIncludeExchangeVariables(), true, true, isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
-        DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
-                camelContext, false, false, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
-                toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
-                exchangeId, correlationExchangeId, false, false, data);
-        traceEvent(event);
+        traceNode(node, exchange);
     }
 
     @Override
     public void traceAfterNode(NamedNode node, Exchange exchange) {
+        traceNode(node, exchange);
+    }
+
+    private void traceNode(NamedNode node, Exchange exchange) {
         if (!shouldTrace(node, exchange)) {
             return;
         }
