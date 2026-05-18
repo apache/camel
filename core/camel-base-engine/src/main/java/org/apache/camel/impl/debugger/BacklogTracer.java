@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
+import org.apache.camel.Route;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
@@ -172,6 +173,12 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                 camelContext, first, last, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
                 toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
                 exchangeId, correlationExchangeId, false, false, data);
+        if ((first || last) && fromRouteId != null) {
+            Route route = camelContext.getRoute(fromRouteId);
+            if (route != null && route.getConsumer() != null) {
+                event.setEndpointUri(route.getConsumer().getEndpoint().getEndpointUri());
+            }
+        }
         traceEvent(event);
     }
 
