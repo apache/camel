@@ -153,6 +153,67 @@ the concrete impact demonstrated. A finding that needs an unusual non-default
 configuration, or whose impact is limited, may score lower than the tier
 suggests; one that chains into full host compromise may score higher.
 
+=== Core router-engine invariants
+
+The table above is the cross-component _impact_ view: each property is broken
+when some component mishandles untrusted input on its way into a route. This
+subsection states the companion _engine_ view - what `camel-core` itself (the
+routing engine, the `Exchange` / `Message` model, the EIP processors, the
+expression, language and property-placeholder resolution, and the
+type-converter and data-format registries) upholds independently of any one
+component. It exists so that a candidate located in a `core/camel-*` module,
+rather than in a component, can be routed to a property and a disposition
+without re-deriving the trust model.
+
+These are not new commitments. Each invariant is the engine-layer projection
+of an _In-scope vulnerability class_ below, or of the trust boundary in _Trust
+model_; it is restated here because a finding against the core is reported
+against core code, and the triager needs the core-side statement to judge it.
+
+[cols="3,3,1",options="header"]
+|===
+| Invariant the router engine upholds on its own (no component-specific configuration)
+| What a violation looks like
+| Indicative severity
+
+| The engine never evaluates an `Exchange` body, header or property as a `simple`, OGNL, bean or scripting expression unless a route author placed an expression or predicate at that point in the route
+| A core processor or language resolves untrusted message content as an expression with no route-author-authored expression referencing it
+| Critical (CVSS 9.0-9.8)
+
+| Untrusted `Exchange` content does not, by the engine's own action, select the endpoint, bean, method or command dispatched to; the dynamic targets of `toD`, `recipientList`, `routingSlip`, the dynamic router and bean-method resolution are computed from the route-author expression and the documented dispatch headers only
+| A value the engine itself promoted from a body or attachment into a dispatch header (`CamelBeanMethodName`, `CamelHttpUri`, `CamelJmsDestinationName`, ...) or into a dynamic-target expression input
+| Critical (CVSS 9.0-9.8)
+
+| The core type-converter registry does not instantiate or deserialise attacker-chosen Java types when a route merely declares a target type (`convertBodyTo`, a typed body, expression coercion); a converter that reads external entities or runs an `ObjectInputStream` is the converting component's responsibility, not an automatic core behaviour
+| A registered core converter instantiating or deserialising arbitrary types from an untrusted body during automatic conversion (historic instance: CVE-2015-0263, the `camel-core` XML converter)
+| Critical when gadget-reachable (9.0-9.8); High otherwise (7.0-8.6)
+
+| Property-placeholder and bean-reference resolution (`{{...}}`, `#bean:`, `#class:`, `#type:`, `#property:`) operates on route and configuration text supplied by the route author or operator, never on `Exchange` content
+| Message body or header content reaches placeholder or `#class:` / `#bean:` resolution and is resolved or instantiated
+| Critical (CVSS 9.0-9.8)
+
+| The engine and the `Exchange` / `Message` model never promote a body field, attachment or transport metadata into the internal `Camel*` / `org.apache.camel.*` header namespace; populating that namespace from untrusted wire input is a _consumer_ responsibility governed by the inbound `HeaderFilterStrategy` (the CVE-2025-27636 family), not an engine action
+| Core machinery, rather than a specific consumer, copies an untrusted-origin value into the internal header namespace
+| Critical (CVSS 9.0-9.8)
+
+| Error handling, dead-letter routing, redelivery and the in-band trace / debug processors do not, on the in-band route path, evaluate untrusted content as code or expose one `Exchange`'s body, headers or secrets to an unprivileged in-band party
+| An `onException`, dead-letter or `BacklogTracer` in-band path turns untrusted content into evaluation or cross-`Exchange` disclosure. Exposure or expression evaluation reached through a _management connection_ (JMX, Jolokia, the developer console) is governed by the management-surface item under _Out of scope_, not by this invariant
+| Medium to Critical, depending on what is reached
+
+| The engine makes no unbounded-resource guarantee
+| Unthrottled routing, unbounded aggregation or recursion under attacker-influenced volume. This is an availability concern the operator bounds (`throttle`, `circuitBreaker`, `resilience4j`, JVM limits); see _Out of scope_. A core finding whose only effect is resource consumption is closed as `not a vulnerability`
+| Out of scope (no engine guarantee)
+|===
+
+A candidate located in a `core/camel-*` module is judged against these
+invariants first. If the engine upheld the invariant and the violation arises
+only because a route author authored an expression or route over untrusted
+input, or wired an untrusted source straight through without
+`removeHeaders("Camel*")`, the disposition is the route-author position in
+_Out of scope_, not a framework vulnerability - the same line the rest of this
+model draws between the route plus its configuration and the data flowing
+through it.
+
 === In-scope vulnerability classes
 
 The classes below are grounded in advisories the Apache Camel PMC has accepted
