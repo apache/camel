@@ -32,7 +32,7 @@ public class CamelExchangeException extends CamelException {
      * @param message  the detail message
      * @param exchange the exchange that caused the error
      */
-    public CamelExchangeException(String message, @Nullable Exchange exchange) {
+    public CamelExchangeException(@Nullable String message, @Nullable Exchange exchange) {
         super(CamelExchangeException.createExceptionMessage(message, exchange, null));
         this.exchange = exchange;
     }
@@ -42,7 +42,7 @@ public class CamelExchangeException extends CamelException {
      * @param exchange the exchange that caused the error
      * @param cause    the cause of the failure
      */
-    public CamelExchangeException(String message, @Nullable Exchange exchange, Throwable cause) {
+    public CamelExchangeException(@Nullable String message, @Nullable Exchange exchange, Throwable cause) {
         super(CamelExchangeException.createExceptionMessage(message, exchange,
                 cause),
               cause);
