@@ -71,7 +71,7 @@ public class ProtobufSchemaResolver implements SchemaResolver, Processor {
                 String decodedSchema = URLDecoder.decode(schema, StandardCharsets.UTF_8);
                 this.schema = ProtobufSchemaLoader.std.parse(decodedSchema);
             } catch (IOException e) {
-                throw new RuntimeCamelException("Failed tp parse Protobuf schema", e);
+                throw new RuntimeCamelException("Failed to parse Protobuf schema", e);
             }
         } else {
             this.schema = null;
