@@ -3547,12 +3547,17 @@ public class CamelMonitor extends CamelCommand {
             spans.add(Span.styled(info.httpServer, Style.EMPTY.fg(Color.CYAN)));
             spans.add(Span.raw("    "));
         }
-        long restCount = info.httpEndpoints.stream().filter(e -> e.fromRest).count();
+        long restCount = info.httpEndpoints.stream().filter(e -> e.fromRest && !e.specification).count();
+        long specCount = info.httpEndpoints.stream().filter(e -> e.specification).count();
         long httpCount = info.httpEndpoints.stream().filter(e -> !e.fromRest && !e.management).count();
         long mgmtCount = info.httpEndpoints.stream().filter(e -> e.management).count();
         if (restCount > 0) {
             spans.add(Span.styled("REST: ", Style.EMPTY.fg(Color.GREEN)));
             spans.add(Span.raw(restCount + "  "));
+        }
+        if (specCount > 0) {
+            spans.add(Span.styled("Spec: ", Style.EMPTY.fg(Color.MAGENTA)));
+            spans.add(Span.raw(specCount + "  "));
         }
         if (httpCount > 0) {
             spans.add(Span.styled("HTTP: ", Style.EMPTY.fg(Color.CYAN)));
@@ -3591,6 +3596,8 @@ public class CamelMonitor extends CamelCommand {
             String source;
             if (ep.management) {
                 source = "Mgmt";
+            } else if (ep.specification) {
+                source = "API Spec";
             } else if (ep.fromRest) {
                 source = ep.contractFirst ? "REST(contract)" : "REST(code)";
             } else {
@@ -3603,7 +3610,9 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(consumes),
                     Cell.from(produces),
                     Cell.from(Span.styled(source,
-                            ep.fromRest ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.CYAN))),
+                            ep.specification ? Style.EMPTY.fg(Color.MAGENTA)
+                                    : ep.fromRest ? Style.EMPTY.fg(Color.GREEN)
+                                    : Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(state,
                             "Stopped".equals(state) ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
         }
@@ -3670,12 +3679,17 @@ public class CamelMonitor extends CamelCommand {
         String sourceStr;
         if (ep.management) {
             sourceStr = "Platform-HTTP (management)";
+        } else if (ep.specification) {
+            sourceStr = "REST DSL (API specification - " + (ep.contractFirst ? "contract-first" : "code-first") + ")";
         } else if (ep.fromRest) {
             sourceStr = "REST DSL (" + (ep.contractFirst ? "contract-first" : "code-first") + ")";
         } else {
             sourceStr = "Platform-HTTP";
         }
         addDetailLine(lines, "Source", sourceStr);
+        if (ep.routeId != null) {
+            addDetailLine(lines, "Route", ep.routeId);
+        }
         if (ep.state != null) {
             addDetailLine(lines, "State", ep.state);
         }
@@ -5403,6 +5417,8 @@ public class CamelMonitor extends CamelCommand {
                     ep.produces = rj.getString("produces");
                     ep.description = rj.getString("description");
                     ep.contractFirst = Boolean.TRUE.equals(rj.get("contractFirst"));
+                    ep.specification = Boolean.TRUE.equals(rj.get("specification"));
+                    ep.routeId = rj.getString("routeId");
                     ep.state = rj.getString("state");
                     ep.inType = rj.getString("inType");
                     ep.outType = rj.getString("outType");
@@ -5741,6 +5757,8 @@ public class CamelMonitor extends CamelCommand {
         // REST DSL only
         boolean fromRest;
         boolean contractFirst;
+        boolean specification; // true = OpenAPI/Swagger spec endpoint
+        String routeId;
         String description;
         String inType;
         String outType;

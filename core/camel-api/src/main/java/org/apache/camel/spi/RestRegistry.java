@@ -54,6 +54,14 @@ public interface RestRegistry extends StaticService {
         String getState();
 
         /**
+         * Gets the route id that this REST service is using
+         *
+         * @since 4.21
+         */
+        @Nullable
+        String getRouteId();
+
+        /**
          * Gets the absolute url to the REST service (baseUrl + uriTemplate)
          */
         String getUrl();

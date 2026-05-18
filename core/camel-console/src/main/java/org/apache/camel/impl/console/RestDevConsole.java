@@ -91,7 +91,11 @@ public class RestDevConsole extends AbstractDevConsole {
                 jo.put("url", rs.getUrl());
                 jo.put("method", rs.getMethod());
                 jo.put("contractFirst", rs.isContractFirst());
+                jo.put("specification", rs.isSpecification());
                 jo.put("state", rs.getState());
+                if (rs.getRouteId() != null) {
+                    jo.put("routeId", rs.getRouteId());
+                }
                 if (rs.getConsumes() != null) {
                     jo.put("consumes", rs.getConsumes());
                 }
