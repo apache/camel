@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -182,6 +184,13 @@ public interface BacklogTracer {
     long getTraceCounter();
 
     /**
+     * Increments and returns the trace counter.
+     *
+     * @since 4.21
+     */
+    long incrementTraceCounter();
+
+    /**
      * Number of traced messages in the backlog
      */
     long getQueueSize();
@@ -190,6 +199,37 @@ public interface BacklogTracer {
      * Reset the tracing counter
      */
     void resetTraceCounter();
+
+    /**
+     * Whether the tracer should trace the given node and exchange (taking into account patterns and filters).
+     *
+     * @since 4.21
+     */
+    boolean shouldTrace(NamedNode node, Exchange exchange);
+
+    /**
+     * Trace a "before node" event for components that process exchanges inline and bypass the normal route pipeline
+     * (e.g. mock mode in rest-openapi consumer). The concrete implementation builds and stores the trace event.
+     *
+     * @since 4.21
+     */
+    void traceBeforeNode(NamedNode node, Exchange exchange);
+
+    /**
+     * Trace an "after node" event for components that process exchanges inline and bypass the normal route pipeline
+     * (e.g. mock mode in rest-openapi consumer). The concrete implementation builds and stores the trace event.
+     *
+     * @since 4.21
+     */
+    void traceAfterNode(NamedNode node, Exchange exchange);
+
+    /**
+     * Records a trace event. Used by components that handle processing inline (e.g. mock mode in rest-openapi consumer)
+     * and therefore bypass the normal route pipeline where tracing is applied automatically.
+     *
+     * @since 4.21
+     */
+    void traceEvent(BacklogTracerEventMessage event);
 
     /**
      * Get all tracing data (without removing)
