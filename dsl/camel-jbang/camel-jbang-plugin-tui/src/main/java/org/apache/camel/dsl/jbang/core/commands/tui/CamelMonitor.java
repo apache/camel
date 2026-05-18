@@ -144,7 +144,7 @@ public class CamelMonitor extends CamelCommand {
     private static final String[] CB_SORT_COLUMNS = { "route", "id", "component", "state" };
 
     // HTTP sort columns
-    private static final String[] HTTP_SORT_COLUMNS = { "method", "path", "source", "consumes", "produces" };
+    private static final String[] HTTP_SORT_COLUMNS = { "method", "path", "consumes", "produces", "source" };
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
