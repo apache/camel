@@ -160,7 +160,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), isIncludeExchangeProperties(),
                 isIncludeExchangeVariables(), true, true, isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
         DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
-                camelContext, false, false, incrementTraceCounter(), timestamp, source, fromRouteId, null, toNode,
+                camelContext, false, false, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
                 toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
                 exchangeId, correlationExchangeId, false, false, data);
         traceEvent(event);
@@ -184,7 +184,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), isIncludeExchangeProperties(),
                 isIncludeExchangeVariables(), true, true, isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
         DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
-                camelContext, false, true, incrementTraceCounter(), timestamp, source, fromRouteId, null, toNode,
+                camelContext, false, false, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
                 toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
                 exchangeId, correlationExchangeId, false, false, data);
         traceEvent(event);
