@@ -208,8 +208,8 @@ public class CamelMonitor extends CamelCommand {
     private int endpointSortIndex = 1;
     private boolean endpointSortReversed;
 
-    // Endpoint filter state
-    private boolean showOnlyRemote;
+    // Endpoint filter state: 0=all, 1=remote, 2=remote+stub
+    private int endpointFilter;
     private boolean showEndpointChart = true;
 
     // Circuit breaker sort state (default: route = index 0)
@@ -587,7 +587,7 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('r')) {
-                showOnlyRemote = !showOnlyRemote;
+                endpointFilter = (endpointFilter + 1) % 3;
                 return true;
             }
             if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('a')) {
@@ -2996,8 +2996,10 @@ public class CamelMonitor extends CamelCommand {
         }
 
         List<EndpointInfo> sortedEndpoints = new ArrayList<>(info.endpoints);
-        if (showOnlyRemote) {
+        if (endpointFilter == 1) {
             sortedEndpoints.removeIf(ep -> !ep.remote);
+        } else if (endpointFilter == 2) {
+            sortedEndpoints.removeIf(ep -> !ep.remote && !ep.stub);
         }
         sortedEndpoints.sort(this::sortEndpoint);
 
@@ -3055,7 +3057,10 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8),
                         Constraint.fill())
                 .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Endpoints sort:" + endpointSort + (showOnlyRemote ? " remote" : "") + " ").build())
+                        .title(" Endpoints sort:" + endpointSort
+                               + (endpointFilter == 1 ? " filter:remote" : endpointFilter == 2 ? " filter:remote+stub" : "")
+                               + " ")
+                        .build())
                 .build();
 
         List<Rect> chunks = showEndpointChart
@@ -3066,19 +3071,19 @@ public class CamelMonitor extends CamelCommand {
 
         if (showEndpointChart) {
             long inTotal = info.endpoints.stream()
-                    .filter(ep -> "in".equals(ep.direction) && (!showOnlyRemote || ep.remote))
+                    .filter(ep -> "in".equals(ep.direction) && endpointMatchesFilter(ep))
                     .mapToLong(ep -> ep.hits)
                     .sum();
             long outTotal = info.endpoints.stream()
-                    .filter(ep -> "out".equals(ep.direction) && (!showOnlyRemote || ep.remote))
+                    .filter(ep -> "out".equals(ep.direction) && endpointMatchesFilter(ep))
                     .mapToLong(ep -> ep.hits)
                     .sum();
-            renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid, showOnlyRemote);
+            renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid, endpointFilter);
         }
     }
 
     private void renderEndpointFlow(
-            Frame frame, Rect area, long inTotal, long outTotal, String name, String pid, boolean remoteOnly) {
+            Frame frame, Rect area, long inTotal, long outTotal, String name, String pid, int filter) {
         List<Rect> hSplit = Layout.horizontal()
                 .constraints(Constraint.length(38), Constraint.fill())
                 .split(area);
@@ -3136,9 +3141,9 @@ public class CamelMonitor extends CamelCommand {
                 .build(), hSplit.get(0));
 
         // --- Right: 60-second sliding window chart (in=green up, out=blue down) ---
-        LinkedList<Long> inHist = (remoteOnly ? endpointRemoteInHistory : endpointInHistory)
+        LinkedList<Long> inHist = (filter == 1 ? endpointRemoteInHistory : endpointInHistory)
                 .getOrDefault(pid, new LinkedList<>());
-        LinkedList<Long> outHist = (remoteOnly ? endpointRemoteOutHistory : endpointOutHistory)
+        LinkedList<Long> outHist = (filter == 1 ? endpointRemoteOutHistory : endpointOutHistory)
                 .getOrDefault(pid, new LinkedList<>());
 
         int renderPoints = MAX_ENDPOINT_CHART_POINTS;
@@ -4026,7 +4031,8 @@ public class CamelMonitor extends CamelCommand {
         } else if (tab == TAB_ENDPOINTS) {
             hint(spans, "Esc", "back");
             hint(spans, "s", "sort");
-            hint(spans, "r", "remote" + (showOnlyRemote ? " [on]" : " [off]"));
+            String[] filterLabels = { "all", "remote", "remote+stub" };
+            hint(spans, "r", "filter [" + filterLabels[endpointFilter] + "]");
             hint(spans, "a", "chart " + (showEndpointChart ? "[all]" : "[off]"));
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CIRCUIT_BREAKER) {
@@ -4117,6 +4123,14 @@ public class CamelMonitor extends CamelCommand {
         int padding = Math.max(0, width - len);
         int leftPad = padding / 2;
         return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
+    }
+
+    private boolean endpointMatchesFilter(EndpointInfo ep) {
+        return switch (endpointFilter) {
+            case 1 -> ep.remote;
+            case 2 -> ep.remote || ep.stub;
+            default -> true;
+        };
     }
 
     private static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
