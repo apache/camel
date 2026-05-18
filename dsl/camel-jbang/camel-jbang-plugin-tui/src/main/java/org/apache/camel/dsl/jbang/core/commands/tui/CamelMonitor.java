@@ -235,6 +235,12 @@ public class CamelMonitor extends CamelCommand {
     // httpFilter: 0=all, 1=REST DSL only, 2=Platform-HTTP only
     private int httpFilter;
     private boolean httpShowManagement;
+    // HTTP spec viewer state
+    private boolean showHttpSpec;
+    private List<String> httpSpecLines = Collections.emptyList();
+    private String httpSpecTitle;
+    private int httpSpecScroll;
+    private final AtomicBoolean specLoading = new AtomicBoolean(false);
 
     // Health filter state
     private boolean showOnlyDown;
@@ -380,6 +386,10 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (showSource) {
                     showSource = false;
+                    return true;
+                }
+                if (showHttpSpec) {
+                    showHttpSpec = false;
                     return true;
                 }
                 if (showDiagram) {
@@ -619,6 +629,30 @@ public class CamelMonitor extends CamelCommand {
             }
             if (tab == TAB_HTTP && ke.isCharIgnoreCase('m')) {
                 httpShowManagement = !httpShowManagement;
+                return true;
+            }
+            if (tab == TAB_HTTP && !showHttpSpec && ke.isChar('c')) {
+                loadSpecForSelectedHttpEndpoint();
+                return true;
+            }
+            if (tab == TAB_HTTP && showHttpSpec) {
+                if (ke.isChar('c')) {
+                    showHttpSpec = false;
+                } else if (ke.isUp()) {
+                    httpSpecScroll = Math.max(0, httpSpecScroll - 1);
+                } else if (ke.isDown()) {
+                    httpSpecScroll++;
+                } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                    httpSpecScroll = Math.max(0, httpSpecScroll - 20);
+                } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                    httpSpecScroll += 20;
+                } else if (ke.isHome()) {
+                    httpSpecScroll = 0;
+                } else if (ke.isEnd()) {
+                    httpSpecScroll = Integer.MAX_VALUE;
+                } else {
+                    return false;
+                }
                 return true;
             }
 
@@ -972,6 +1006,11 @@ public class CamelMonitor extends CamelCommand {
         sourceTitle = null;
         sourceScroll = 0;
         sourceScrollX = 0;
+        // Spec viewer (TAB_HTTP)
+        showHttpSpec = false;
+        httpSpecLines = Collections.emptyList();
+        httpSpecTitle = null;
+        httpSpecScroll = 0;
         // Diagram (TAB_ROUTES)
         showDiagram = false;
         diagramImageData = null;
@@ -3511,6 +3550,11 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        if (showHttpSpec) {
+            renderHttpSpec(frame, area);
+            return;
+        }
+
         List<HttpEndpointInfo> visible = visibleHttpEndpoints(info);
 
         // Sort
@@ -3724,6 +3768,127 @@ public class CamelMonitor extends CamelCommand {
         lines.add(Line.from(
                 Span.styled(String.format("  %-10s ", label + ":"), Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(value)));
+    }
+
+    private void loadSpecForSelectedHttpEndpoint() {
+        if (selectedPid == null || runner == null) {
+            return;
+        }
+        List<HttpEndpointInfo> visible = visibleHttpEndpoints(findSelectedIntegration());
+        Integer sel = httpTableState.selected();
+        if (sel == null || sel < 0 || sel >= visible.size()) {
+            return;
+        }
+        HttpEndpointInfo ep = visible.get(sel);
+        if (ep.specificationUri == null) {
+            return;
+        }
+        if (!specLoading.compareAndSet(false, true)) {
+            return;
+        }
+
+        httpSpecLines = List.of("(Loading spec...)");
+        httpSpecTitle = ep.specificationUri;
+        httpSpecScroll = 0;
+        showHttpSpec = true;
+
+        String pid = selectedPid;
+        String specUri = ep.specificationUri;
+        String operationId = ep.operationId;
+
+        runner.scheduler().execute(() -> {
+            try {
+                loadSpecInBackground(pid, specUri, operationId);
+            } finally {
+                specLoading.set(false);
+            }
+        });
+    }
+
+    private void loadSpecInBackground(String pid, String specUri, String operationId) {
+        Path outputFile = getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "rest-spec");
+        root.put("filter", specUri);
+
+        Path actionFile = getActionFile(pid);
+        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 5000);
+        PathUtils.deleteFile(outputFile);
+
+        if (jo == null) {
+            applySpecResult(specUri, List.of("(No response from integration)"), 0);
+            return;
+        }
+
+        JsonArray specs = (JsonArray) jo.get("specs");
+        if (specs == null || specs.isEmpty()) {
+            applySpecResult(specUri, List.of("(No spec content available for: " + specUri + ")"), 0);
+            return;
+        }
+
+        JsonObject specObj = (JsonObject) specs.get(0);
+        String content = specObj.getString("content");
+        if (content == null || content.isBlank()) {
+            applySpecResult(specUri, List.of("(Empty spec content for: " + specUri + ")"), 0);
+            return;
+        }
+
+        List<String> lines = List.of(content.split("\n", -1));
+
+        // scroll to the line containing operationId
+        int scrollTo = 0;
+        if (operationId != null) {
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).contains(operationId)) {
+                    scrollTo = Math.max(0, i - 2);
+                    break;
+                }
+            }
+        }
+
+        applySpecResult(specUri, lines, scrollTo);
+    }
+
+    private void applySpecResult(String specUri, List<String> lines, int scrollTo) {
+        if (runner == null) {
+            return;
+        }
+        runner.runOnRenderThread(() -> {
+            if (!showHttpSpec) {
+                return;
+            }
+            httpSpecTitle = specUri;
+            httpSpecLines = lines;
+            httpSpecScroll = scrollTo;
+        });
+    }
+
+    private void renderHttpSpec(Frame frame, Rect area) {
+        String title = " Spec [" + (httpSpecTitle != null ? httpSpecTitle : "") + "] ";
+
+        int visibleLines = area.height() - 2; // border top+bottom
+        if (visibleLines < 1) {
+            visibleLines = 1;
+        }
+        int maxScroll = Math.max(0, httpSpecLines.size() - visibleLines);
+        httpSpecScroll = Math.min(httpSpecScroll, maxScroll);
+
+        int end = Math.min(httpSpecScroll + visibleLines, httpSpecLines.size());
+        List<Line> visible = new ArrayList<>();
+        for (int i = httpSpecScroll; i < end; i++) {
+            visible.add(Line.from(Span.raw(httpSpecLines.get(i))));
+        }
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(visible))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                        .build(),
+                area);
     }
 
     // ---- Tab 7: Inspect (merged Last + Tracer) ----
@@ -4395,13 +4560,25 @@ public class CamelMonitor extends CamelCommand {
             }
             hint(spans, "l", "level");
             hintLast(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
+        } else if (tab == TAB_HTTP && showHttpSpec) {
+            hint(spans, "c/Esc", "close");
+            hint(spans, "↑↓", "scroll");
+            hintLast(spans, "PgUp/PgDn", "page");
         } else if (tab == TAB_HTTP) {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
             hint(spans, "s", "sort");
             String[] filterLabels = { "all", "rest", "http" };
             hint(spans, "f", "filter [" + filterLabels[httpFilter] + "]");
-            hintLast(spans, "m", "management" + (httpShowManagement ? " [on]" : " [off]"));
+            hint(spans, "m", "management" + (httpShowManagement ? " [on]" : " [off]"));
+            // show spec key only when selected row has a spec
+            List<HttpEndpointInfo> hVisible = visibleHttpEndpoints(findSelectedIntegration());
+            Integer hSel = httpTableState.selected();
+            if (hSel != null && hSel >= 0 && hSel < hVisible.size() && hVisible.get(hSel).specificationUri != null) {
+                hintLast(spans, "c", "spec");
+            } else {
+                hintLast(spans, "1-9", "tabs");
+            }
         } else if (tab == TAB_HISTORY) {
             boolean tracerActive = !traces.get().isEmpty();
             if (tracerActive && traceDetailView) {

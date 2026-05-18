@@ -308,6 +308,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionTopProcessorsTask();
             } else if ("source".equals(action)) {
                 doActionSourceTask(root);
+            } else if ("rest-spec".equals(action)) {
+                doActionRestSpecTask(root);
             } else if ("route-dump".equals(action)) {
                 doActionRouteDumpTask(root);
             } else if ("route-structure".equals(action)) {
@@ -700,6 +702,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (dc != null) {
             String filter = root.getString("filter");
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionRestSpecTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("rest-spec");
+        if (dc != null) {
+            String filter = root.getString("filter");
+            Map<String, Object> options = filter != null ? Map.of("filter", filter) : Map.of();
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, options);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
