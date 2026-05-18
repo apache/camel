@@ -62,6 +62,14 @@ public interface RestRegistry extends StaticService {
         String getRouteId();
 
         /**
+         * Gets the operationId from the OpenAPI contract (contract-first routes only)
+         *
+         * @since 4.21
+         */
+        @Nullable
+        String getOperationId();
+
+        /**
          * Gets the absolute url to the REST service (baseUrl + uriTemplate)
          */
         String getUrl();
@@ -138,13 +146,14 @@ public interface RestRegistry extends StaticService {
      * @param inType        optional detail input binding to a FQN class name
      * @param outType       optional detail output binding to a FQN class name
      * @param routeId       the id of the route this rest service will be using
+     * @param operationId   optional operationId from the OpenAPI contract
      * @param description   optional description about the service
      */
     void addRestService(
             Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath,
             @Nullable String uriTemplate, String method,
             @Nullable String consumes, @Nullable String produces, @Nullable String inType, @Nullable String outType,
-            String routeId, @Nullable String description);
+            String routeId, @Nullable String operationId, @Nullable String description);
 
     /**
      * Removes the REST service from the registry

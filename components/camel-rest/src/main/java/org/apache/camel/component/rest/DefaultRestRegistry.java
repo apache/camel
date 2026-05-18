@@ -50,10 +50,11 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
     public void addRestService(
             Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate,
             String method,
-            String consumes, String produces, String inType, String outType, String routeId, String description) {
+            String consumes, String produces, String inType, String outType, String routeId, String operationId,
+            String description) {
         RestServiceEntry entry = new RestServiceEntry(
                 consumer, false, contractFirst, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType,
-                outType, routeId, description);
+                outType, routeId, operationId, description);
         List<RestService> list = registry.computeIfAbsent(consumer, c -> new ArrayList<>());
         list.add(entry);
     }
@@ -64,7 +65,7 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
             String produces, String description) {
         RestServiceEntry entry = new RestServiceEntry(
                 consumer, true, contractFirst, url, baseUrl, basePath, null, method, null, produces, null, null, null,
-                description);
+                null, description);
         List<RestService> list = specs.computeIfAbsent(consumer, c -> new ArrayList<>());
         list.add(entry);
     }
@@ -203,12 +204,13 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
         private final String inType;
         private final String outType;
         private final String routeId;
+        private final String operationId;
         private final String description;
 
         private RestServiceEntry(Consumer consumer, boolean specification, boolean contractFirst, String url, String baseUrl,
                                  String basePath,
                                  String uriTemplate, String method, String consumes, String produces,
-                                 String inType, String outType, String routeId, String description) {
+                                 String inType, String outType, String routeId, String operationId, String description) {
             this.consumer = consumer;
             this.specification = specification;
             this.contractFirst = contractFirst;
@@ -222,6 +224,7 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
             this.inType = inType;
             this.outType = outType;
             this.routeId = routeId;
+            this.operationId = operationId;
             this.description = description;
         }
 
@@ -302,6 +305,11 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
         @Override
         public String getRouteId() {
             return routeId;
+        }
+
+        @Override
+        public String getOperationId() {
+            return operationId;
         }
 
         @Override

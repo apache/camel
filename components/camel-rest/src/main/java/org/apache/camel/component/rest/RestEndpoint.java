@@ -489,7 +489,7 @@ public class RestEndpoint extends DefaultEndpoint {
         // add to rest registry, so we can keep track of them
         RestRegistry registry = PluginHelper.getRestRegistry(getCamelContext());
         registry.addRestService(consumer, false, url, baseUrl, getPath(), getUriTemplate(),
-                getMethod(), getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), getDescription());
+                getMethod(), getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), null, getDescription());
         return consumer;
     }
 

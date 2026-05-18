@@ -3690,6 +3690,9 @@ public class CamelMonitor extends CamelCommand {
         if (ep.routeId != null) {
             addDetailLine(lines, "Route", ep.routeId);
         }
+        if (ep.operationId != null) {
+            addDetailLine(lines, "Operation", ep.operationId);
+        }
         if (ep.state != null) {
             addDetailLine(lines, "State", ep.state);
         }
@@ -5427,6 +5430,7 @@ public class CamelMonitor extends CamelCommand {
                     ep.contractFirst = Boolean.TRUE.equals(rj.get("contractFirst"));
                     ep.specification = Boolean.TRUE.equals(rj.get("specification"));
                     ep.routeId = rj.getString("routeId");
+                    ep.operationId = rj.getString("operationId");
                     ep.state = rj.getString("state");
                     ep.inType = rj.getString("inType");
                     ep.outType = rj.getString("outType");
@@ -5767,6 +5771,7 @@ public class CamelMonitor extends CamelCommand {
         boolean contractFirst;
         boolean specification; // true = OpenAPI/Swagger spec endpoint
         String routeId;
+        String operationId;
         String description;
         String inType;
         String outType;

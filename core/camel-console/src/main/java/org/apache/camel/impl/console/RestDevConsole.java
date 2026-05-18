@@ -32,22 +32,13 @@ public class RestDevConsole extends AbstractDevConsole {
         super("camel", "rest", "Rest", "Rest DSL Registry information");
     }
 
-    private RestRegistry rr;
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-
-        // camel-rest is optional
-        if (getCamelContext().getCamelContextExtension().isContextPluginInUse(RestRegistry.class)) {
-            rr = PluginHelper.getRestRegistry(getCamelContext());
-        }
-    }
-
     @Override
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
+        // camel-rest is optional; look up lazily so rest-openapi routes (which register
+        // after route warm-up via afterPropertiesConfigured) are visible on first call
+        RestRegistry rr = PluginHelper.getRestRegistry(getCamelContext());
         if (rr != null) {
             for (RestRegistry.RestService rs : rr.listAllRestServices()) {
                 if (!sb.isEmpty()) {
@@ -60,6 +51,9 @@ public class RestDevConsole extends AbstractDevConsole {
                 sb.append(String.format("%n    State: %s", rs.getState()));
                 if (rs.getRouteId() != null) {
                     sb.append(String.format("%n    Route Id: %s", rs.getRouteId()));
+                }
+                if (rs.getOperationId() != null) {
+                    sb.append(String.format("%n    Operation Id: %s", rs.getOperationId()));
                 }
                 if (rs.getConsumes() != null) {
                     sb.append(String.format("%n    Consumes: %s", rs.getConsumes()));
@@ -87,6 +81,7 @@ public class RestDevConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
+        RestRegistry rr = PluginHelper.getRestRegistry(getCamelContext());
         if (rr != null) {
             JsonArray list = new JsonArray();
             root.put("rests", list);
@@ -100,6 +95,9 @@ public class RestDevConsole extends AbstractDevConsole {
                 jo.put("state", rs.getState());
                 if (rs.getRouteId() != null) {
                     jo.put("routeId", rs.getRouteId());
+                }
+                if (rs.getOperationId() != null) {
+                    jo.put("operationId", rs.getOperationId());
                 }
                 if (rs.getConsumes() != null) {
                     jo.put("consumes", rs.getConsumes());

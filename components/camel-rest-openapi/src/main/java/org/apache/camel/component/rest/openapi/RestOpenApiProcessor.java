@@ -167,13 +167,14 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
                 if (desc != null && desc.isBlank()) {
                     desc = null;
                 }
+                String operationId = o.getValue().getOperationId();
                 String routeId = null;
                 if (consumer instanceof RouteAware ra) {
                     routeId = ra.getRoute().getRouteId();
                 }
                 RestRegistry restRegistry = PluginHelper.getRestRegistry(camelContext);
                 restRegistry.addRestService(consumer, true, url, path, basePath, null, v, bc.getConsumes(),
-                        bc.getProduces(), bc.getType(), bc.getOutType(), routeId, desc);
+                        bc.getProduces(), bc.getType(), bc.getOutType(), routeId, operationId, desc);
 
                 try {
                     RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);
