@@ -17,7 +17,6 @@
 package org.apache.camel;
 
 import java.io.Serial;
-import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -34,8 +33,7 @@ public class CamelExchangeException extends CamelException {
      * @param exchange the exchange that caused the error
      */
     public CamelExchangeException(String message, @Nullable Exchange exchange) {
-        super(CamelExchangeException.createExceptionMessage(
-                Objects.requireNonNull(message, "message"), exchange, null));
+        super(CamelExchangeException.createExceptionMessage(message, exchange, null));
         this.exchange = exchange;
     }
 
@@ -45,9 +43,8 @@ public class CamelExchangeException extends CamelException {
      * @param cause    the cause of the failure
      */
     public CamelExchangeException(String message, @Nullable Exchange exchange, Throwable cause) {
-        super(CamelExchangeException.createExceptionMessage(
-                Objects.requireNonNull(message, "message"), exchange,
-                Objects.requireNonNull(cause, "cause")),
+        super(CamelExchangeException.createExceptionMessage(message, exchange,
+                cause),
               cause);
         this.exchange = exchange;
     }
