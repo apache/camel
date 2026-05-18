@@ -184,6 +184,12 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LinkedList<long[]>> endpointRemoteSamples = new ConcurrentHashMap<>();
     private final Map<String, Long> previousEndpointRemoteTime = new ConcurrentHashMap<>();
 
+    // Endpoint in/out sliding window history per PID — remote+stub endpoints
+    private final Map<String, LinkedList<Long>> endpointRemoteStubInHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> endpointRemoteStubOutHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<long[]>> endpointRemoteStubSamples = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousEndpointRemoteStubTime = new ConcurrentHashMap<>();
+
     // Load averages (EWMA) — CPU%, per PID (inflight EWMA is read from the management JSON)
     private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
     private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
@@ -586,7 +592,7 @@ public class CamelMonitor extends CamelCommand {
                 endpointSortReversed = !endpointSortReversed;
                 return true;
             }
-            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('r')) {
+            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('f')) {
                 endpointFilter = (endpointFilter + 1) % 3;
                 return true;
             }
@@ -3141,10 +3147,18 @@ public class CamelMonitor extends CamelCommand {
                 .build(), hSplit.get(0));
 
         // --- Right: 60-second sliding window chart (in=green up, out=blue down) ---
-        LinkedList<Long> inHist = (filter == 1 ? endpointRemoteInHistory : endpointInHistory)
-                .getOrDefault(pid, new LinkedList<>());
-        LinkedList<Long> outHist = (filter == 1 ? endpointRemoteOutHistory : endpointOutHistory)
-                .getOrDefault(pid, new LinkedList<>());
+        Map<String, LinkedList<Long>> inHistMap = switch (filter) {
+            case 1 -> endpointRemoteInHistory;
+            case 2 -> endpointRemoteStubInHistory;
+            default -> endpointInHistory;
+        };
+        Map<String, LinkedList<Long>> outHistMap = switch (filter) {
+            case 1 -> endpointRemoteOutHistory;
+            case 2 -> endpointRemoteStubOutHistory;
+            default -> endpointOutHistory;
+        };
+        LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
+        LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
 
         int renderPoints = MAX_ENDPOINT_CHART_POINTS;
         long[] inArr = new long[renderPoints];
@@ -4032,7 +4046,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "s", "sort");
             String[] filterLabels = { "all", "remote", "remote+stub" };
-            hint(spans, "r", "filter [" + filterLabels[endpointFilter] + "]");
+            hint(spans, "f", "filter [" + filterLabels[endpointFilter] + "]");
             hint(spans, "a", "chart " + (showEndpointChart ? "[all]" : "[off]"));
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CIRCUIT_BREAKER) {
@@ -4212,6 +4226,10 @@ public class CamelMonitor extends CamelCommand {
                     endpointRemoteOutHistory.remove(entry.getKey());
                     endpointRemoteSamples.remove(entry.getKey());
                     previousEndpointRemoteTime.remove(entry.getKey());
+                    endpointRemoteStubInHistory.remove(entry.getKey());
+                    endpointRemoteStubOutHistory.remove(entry.getKey());
+                    endpointRemoteStubSamples.remove(entry.getKey());
+                    previousEndpointRemoteStubTime.remove(entry.getKey());
                     cpuLoadAvg.remove(entry.getKey());
                     prevCpuSample.remove(entry.getKey());
                 } else if (!livePids.contains(entry.getKey())) {
@@ -4318,6 +4336,12 @@ public class CamelMonitor extends CamelCommand {
         long outRemote = info.endpoints.stream()
                 .filter(ep -> "out".equals(ep.direction) && ep.remote)
                 .mapToLong(ep -> ep.hits).sum();
+        long inRemoteStub = info.endpoints.stream()
+                .filter(ep -> "in".equals(ep.direction) && (ep.remote || ep.stub))
+                .mapToLong(ep -> ep.hits).sum();
+        long outRemoteStub = info.endpoints.stream()
+                .filter(ep -> "out".equals(ep.direction) && (ep.remote || ep.stub))
+                .mapToLong(ep -> ep.hits).sum();
 
         long now = System.currentTimeMillis();
         String pid = info.pid;
@@ -4326,6 +4350,9 @@ public class CamelMonitor extends CamelCommand {
                 endpointSamples, previousEndpointTime, endpointInHistory, endpointOutHistory);
         recordEndpointSample(pid, now, inRemote, outRemote,
                 endpointRemoteSamples, previousEndpointRemoteTime, endpointRemoteInHistory, endpointRemoteOutHistory);
+        recordEndpointSample(pid, now, inRemoteStub, outRemoteStub,
+                endpointRemoteStubSamples, previousEndpointRemoteStubTime,
+                endpointRemoteStubInHistory, endpointRemoteStubOutHistory);
     }
 
     private void recordEndpointSample(
