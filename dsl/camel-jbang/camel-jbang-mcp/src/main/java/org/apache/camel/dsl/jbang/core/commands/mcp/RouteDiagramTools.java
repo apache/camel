@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -30,25 +31,32 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteDiagramAction;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 
 /**
- * MCP Tool for generating a visual PNG diagram of Camel routes from a source file (non-running integration). Wraps the
- * {@code camel route-diagram} jbang command.
+ * MCP Tool for generating a visual diagram of Camel routes from a source file (non-running integration). Wraps the
+ * {@code camel route-diagram} jbang command. Supports both PNG image output and plain-text ASCII/Unicode output.
  */
 @ApplicationScoped
 public class RouteDiagramTools {
 
+    private static final Set<String> TEXT_THEMES = Set.of("ascii", "unicode");
+
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
-          description = "Generate a visual PNG diagram of Camel routes from a route source file (YAML, XML, Java, ...). "
-                        + "The source file is parsed without running it. The resulting PNG is written to disk and the "
-                        + "absolute path is returned so it can be displayed or shared. Useful to visualize a route "
-                        + "structure for review, documentation, or troubleshooting.")
+          description = "Generate a diagram of Camel routes from a route source file (YAML, XML, Java, ...). "
+                        + "The source file is parsed without running it. "
+                        + "For image themes (dark, light, transparent) the PNG is written to disk and the absolute path "
+                        + "is returned. For text themes (ascii, unicode) the diagram is returned directly as text so "
+                        + "it can be read and understood by the caller. "
+                        + "Useful to visualize a route structure for review, documentation, or troubleshooting.")
     public RouteDiagramResult camel_render_route_diagram(
             @ToolArg(description = "Absolute or relative path to the Camel route source file (YAML, XML, Java, ...)") String sourceFile,
-            @ToolArg(description = "Optional output PNG file path. If not specified, a temporary file is created.") String outputFile,
-            @ToolArg(description = "Color theme: 'dark' (default), 'light', 'transparent', or a custom spec like "
-                                   + "'bg=#1e1e1e:from=#2e7d32:to=#1565c0'") String theme,
+            @ToolArg(description = "Optional output file path. For image themes a PNG is written; for text themes a .txt "
+                                   + "file is written. If not specified, a temporary file is created.") String outputFile,
+            @ToolArg(description = "Color theme: 'dark' (default), 'light', 'transparent', 'ascii' (plain ASCII art), "
+                                   + "'unicode' (box-drawing characters), or a custom spec like "
+                                   + "'bg=#1e1e1e:from=#2e7d32:to=#1565c0'. "
+                                   + "Use 'ascii' or 'unicode' to get a text diagram that can be read directly.") String theme,
             @ToolArg(description = "Optional filter to limit the diagram to routes whose route id or source filename "
                                    + "matches the given pattern (supports wildcards)") String filter,
-            @ToolArg(description = "Image width in pixels; 0 (or unset) = auto") Integer width,
+            @ToolArg(description = "Image width in pixels; 0 (or unset) = auto (only used for image themes)") Integer width,
             @ToolArg(description = "Font size in logical pixels for node text (default 12)") Integer fontSize,
             @ToolArg(description = "Node box width in logical pixels (default 180)") Integer boxWidth,
             @ToolArg(description = "What text to display in diagram nodes: 'code' (default), 'description' (prefer "
@@ -64,10 +72,13 @@ public class RouteDiagramTools {
             throw new ToolCallException("Source file does not exist: " + sourceFile, null);
         }
 
+        boolean textMode = theme != null && TEXT_THEMES.contains(theme.toLowerCase());
+
         String resolvedOutput;
         try {
             if (outputFile == null || outputFile.isBlank()) {
-                Path tmp = Files.createTempFile("camel-route-diagram-", ".png");
+                String suffix = textMode ? ".txt" : ".png";
+                Path tmp = Files.createTempFile("camel-route-diagram-", suffix);
                 resolvedOutput = tmp.toAbsolutePath().toString();
             } else {
                 resolvedOutput = new File(outputFile).getAbsolutePath();
@@ -97,17 +108,28 @@ public class RouteDiagramTools {
             boolean success = exit == 0 && out.isFile() && out.length() > 0;
             long size = out.exists() ? out.length() : 0L;
 
+            if (textMode) {
+                String asciiContent = success ? Files.readString(out.toPath()) : null;
+                String message = success
+                        ? "ASCII diagram generated (" + size + " bytes)"
+                        : "Failed to render diagram (exit code " + exit + ")";
+                return new RouteDiagramResult(success, resolvedOutput, size, message, asciiContent);
+            }
+
             String message = success
                     ? "Diagram saved to: " + resolvedOutput
                     : "Failed to render diagram (exit code " + exit + ")";
-
-            return new RouteDiagramResult(success, resolvedOutput, size, message);
+            return new RouteDiagramResult(success, resolvedOutput, size, message, null);
         } catch (Throwable e) {
             throw new ToolCallException(
                     "Failed to render route diagram (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
-    public record RouteDiagramResult(boolean success, String outputFile, long sizeBytes, String message) {
+    /**
+     * @param asciiDiagram plain-text diagram content for ascii/unicode themes; null for image themes
+     */
+    public record RouteDiagramResult(boolean success, String outputFile, long sizeBytes, String message,
+            String asciiDiagram) {
     }
 }
