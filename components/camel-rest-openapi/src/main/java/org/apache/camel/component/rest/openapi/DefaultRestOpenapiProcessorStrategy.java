@@ -41,7 +41,6 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
-import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Resource;
@@ -211,9 +210,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                         exchange.setRouteStop(true);
                     } else if ("mock".equalsIgnoreCase(missingOperation)) {
                         // no route then try to load mock data as the answer
-                        BacklogTracer bt = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
                         SyntheticBacklogTracer syntheticTracer
-                                = bt instanceof SyntheticBacklogTracer s ? s : null;
+                                = camelContext.getCamelContextExtension().getContextPlugin(SyntheticBacklogTracer.class);
                         NamedNode mockNode = new MockOperationNode(verb, path, operation.getOperationId());
                         if (syntheticTracer != null && (syntheticTracer.isEnabled() || syntheticTracer.isStandby())) {
                             syntheticTracer.traceFirstNode(mockNode, exchange);
