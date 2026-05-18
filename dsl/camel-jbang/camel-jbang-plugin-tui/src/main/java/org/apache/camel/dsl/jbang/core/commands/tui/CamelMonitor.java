@@ -463,7 +463,9 @@ public class CamelMonitor extends CamelCommand {
 
             // Navigation (all tabs)
             if (ke.isUp()) {
-                if (tab == TAB_LOG && showLogLevelPopup) {
+                if (tab == TAB_HTTP && showHttpSpec) {
+                    httpSpecScroll = Math.max(0, httpSpecScroll - 1);
+                } else if (tab == TAB_LOG && showLogLevelPopup) {
                     logLevelListState.selectPrevious();
                 } else if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 1);
@@ -473,7 +475,9 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                if (tab == TAB_LOG && showLogLevelPopup) {
+                if (tab == TAB_HTTP && showHttpSpec) {
+                    httpSpecScroll++;
+                } else if (tab == TAB_LOG && showLogLevelPopup) {
                     logLevelListState.selectNext(LOG_LEVELS.length);
                 } else if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll++;
@@ -483,7 +487,9 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                if (showDiagram && tab == TAB_ROUTES) {
+                if (tab == TAB_HTTP && showHttpSpec) {
+                    httpSpecScroll = Math.max(0, httpSpecScroll - 20);
+                } else if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 20);
                 } else if (tab == TAB_LOG) {
                     logFollowMode = false;
@@ -498,7 +504,9 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (showDiagram && tab == TAB_ROUTES) {
+                if (tab == TAB_HTTP && showHttpSpec) {
+                    httpSpecScroll += 20;
+                } else if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll += 20;
                 } else if (tab == TAB_LOG) {
                     logScroll += 20;
