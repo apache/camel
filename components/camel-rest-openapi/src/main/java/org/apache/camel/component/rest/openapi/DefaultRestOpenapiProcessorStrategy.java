@@ -213,13 +213,13 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                         BacklogTracer backlogTracer
                                 = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
                         NamedNode mockNode = new MockOperationNode(verb, path, operation.getOperationId());
-                        if (backlogTracer != null && backlogTracer.isEnabled()) {
+                        if (backlogTracer != null && (backlogTracer.isEnabled() || backlogTracer.isStandby())) {
                             backlogTracer.traceBeforeNode(mockNode, exchange);
                         }
                         try {
                             loadMockData(operation, verb, path, exchange);
                         } finally {
-                            if (backlogTracer != null && backlogTracer.isEnabled()) {
+                            if (backlogTracer != null && (backlogTracer.isEnabled() || backlogTracer.isStandby())) {
                                 backlogTracer.traceAfterNode(mockNode, exchange);
                             }
                         }
