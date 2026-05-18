@@ -1082,7 +1082,7 @@ public class CamelMonitor extends CamelCommand {
                 cbTableState.selectNext(info != null ? info.circuitBreakers.size() : 0);
             }
             case TAB_HTTP -> {
-                List<HttpEndpointInfo> visible = visibleHttpEndpoints(findSelectedIntegration());
+                List<HttpEndpointInfo> visible = sortedVisibleHttpEndpoints(findSelectedIntegration());
                 httpTableState.selectNext(visible.size());
             }
             case TAB_LOG -> logScroll++;
@@ -3543,6 +3543,21 @@ public class CamelMonitor extends CamelCommand {
         return result;
     }
 
+    private List<HttpEndpointInfo> sortedVisibleHttpEndpoints(IntegrationInfo info) {
+        List<HttpEndpointInfo> visible = visibleHttpEndpoints(info);
+        visible.sort((a, b) -> {
+            int result = switch (httpSort) {
+                case "path" -> compareStr(a.path, b.path);
+                case "source" -> Boolean.compare(b.fromRest, a.fromRest);
+                case "consumes" -> compareStr(a.consumes, b.consumes);
+                case "produces" -> compareStr(a.produces, b.produces);
+                default -> compareStr(a.method, b.method); // "method"
+            };
+            return httpSortReversed ? -result : result;
+        });
+        return visible;
+    }
+
     private void renderHttp(Frame frame, Rect area) {
         IntegrationInfo info = findSelectedIntegration();
         if (info == null) {
@@ -3555,19 +3570,7 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        List<HttpEndpointInfo> visible = visibleHttpEndpoints(info);
-
-        // Sort
-        visible.sort((a, b) -> {
-            int result = switch (httpSort) {
-                case "path" -> compareStr(a.path, b.path);
-                case "source" -> Boolean.compare(b.fromRest, a.fromRest);
-                case "consumes" -> compareStr(a.consumes, b.consumes);
-                case "produces" -> compareStr(a.produces, b.produces);
-                default -> compareStr(a.method, b.method); // "method"
-            };
-            return httpSortReversed ? -result : result;
-        });
+        List<HttpEndpointInfo> visible = sortedVisibleHttpEndpoints(info);
 
         // Layout: server info row (1) + table (fill) + detail (10)
         List<Rect> chunks = Layout.vertical()
@@ -3774,7 +3777,7 @@ public class CamelMonitor extends CamelCommand {
         if (selectedPid == null || runner == null) {
             return;
         }
-        List<HttpEndpointInfo> visible = visibleHttpEndpoints(findSelectedIntegration());
+        List<HttpEndpointInfo> visible = sortedVisibleHttpEndpoints(findSelectedIntegration());
         Integer sel = httpTableState.selected();
         if (sel == null || sel < 0 || sel >= visible.size()) {
             return;
@@ -4572,7 +4575,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "f", "filter [" + filterLabels[httpFilter] + "]");
             hint(spans, "m", "management" + (httpShowManagement ? " [on]" : " [off]"));
             // show spec key only when selected row has a spec
-            List<HttpEndpointInfo> hVisible = visibleHttpEndpoints(findSelectedIntegration());
+            List<HttpEndpointInfo> hVisible = sortedVisibleHttpEndpoints(findSelectedIntegration());
             Integer hSel = httpTableState.selected();
             if (hSel != null && hSel >= 0 && hSel < hVisible.size() && hVisible.get(hSel).specificationUri != null) {
                 hintLast(spans, "c", "spec");
