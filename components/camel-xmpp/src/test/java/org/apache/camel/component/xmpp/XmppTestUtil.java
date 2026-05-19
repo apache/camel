@@ -27,6 +27,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.util.SslContextFactory;
 import org.jxmpp.jid.impl.JidCreate;
 
 public final class XmppTestUtil {
@@ -41,14 +42,20 @@ public final class XmppTestUtil {
         keyStore.load(ObjectHelper.loadResourceAsStream("bogus_mina_tls.cer"), "boguspw".toCharArray());
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init(keyStore);
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+        SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
         sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
 
         ConnectionConfiguration connectionConfig = XMPPTCPConnectionConfiguration.builder()
                 .setXmppDomain(JidCreate.domainBareFrom("apache.camel"))
                 .setHostAddress(InetAddress.getByName(hostAddress))
                 .setPort(port)
-                .setCustomSSLContext(sslContext)
+                .setSslContextFactory(new SslContextFactory() {
+
+                    @Override
+                    public SSLContext createSslContext() {
+                        return sslContext;
+                    }
+                })
                 .setHostnameVerifier((hostname, session) -> true)
                 .build();
 
