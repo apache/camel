@@ -208,6 +208,20 @@ public abstract class AbstractReifier implements BeanRepository {
         if (EndpointHelper.isReferenceParameter(name)) {
             answer = EndpointHelper.resolveReferenceParameter(camelContext, name, type, false);
         }
+        if (answer == null && route != null) {
+            // check local bean repository from route template context first
+            org.apache.camel.NamedNode routeNode = route.getRoute();
+            if (routeNode instanceof org.apache.camel.model.RouteDefinition) {
+                org.apache.camel.model.RouteDefinition routeDef = (org.apache.camel.model.RouteDefinition) routeNode;
+                org.apache.camel.RouteTemplateContext rtc = routeDef.getRouteTemplateContext();
+                if (rtc != null) {
+                    BeanRepository localRepo = rtc.getLocalBeanRepository();
+                    if (localRepo != null) {
+                        answer = localRepo.lookupByNameAndType(name, type);
+                    }
+                }
+            }
+        }
         if (answer == null) {
             // fallback to use registry which allows tooling to influence reifier that uses beans or classes
             answer = getRegistry().lookupByNameAndType(name, type);
