@@ -4196,6 +4196,11 @@
 
         <profile>
             <id>rewrite</id>
+            <activation>
+                <file>
+                    <exists>.rewrite-enabled</exists>
+                </file>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
