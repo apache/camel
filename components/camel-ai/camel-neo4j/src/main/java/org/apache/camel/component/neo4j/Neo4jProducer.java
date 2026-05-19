@@ -19,6 +19,7 @@ package org.apache.camel.component.neo4j;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -55,6 +56,10 @@ public class Neo4jProducer extends DefaultProducer {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
     };
+
+    // Only property values are passed as bound parameters; the property name is spliced into the
+    // Cypher query text, so it must be restricted to a safe identifier pattern.
+    private static final Pattern VALID_PROPERTY_NAME = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*$");
 
     private Driver driver;
 
@@ -134,6 +139,19 @@ public class Neo4jProducer extends DefaultProducer {
         executeWriteQuery(exchange, query, properties, databaseName, Neo4Operation.CREATE_NODE);
     }
 
+    /**
+     * Validates a Neo4j property name before it is spliced into a Cypher query. Property values are passed as bound
+     * parameters, but the property name is inserted into the query text, so it must be a safe identifier. Names that do
+     * not match are rejected with a clear error instead of producing a malformed or unintended query.
+     */
+    static void validatePropertyName(String name) {
+        if (name == null || !VALID_PROPERTY_NAME.matcher(name).matches()) {
+            throw new IllegalArgumentException(
+                    "Invalid Neo4j property name: '" + name + "'. Property names must match "
+                                               + VALID_PROPERTY_NAME.pattern());
+        }
+    }
+
     private void retrieveNodes(Exchange exchange) throws NoSuchHeaderException {
         final String label = getEndpoint().getConfiguration().getLabel();
         ObjectHelper.notNull(label, "label");
@@ -165,6 +183,7 @@ public class Neo4jProducer extends DefaultProducer {
                         if (paramIndex > 0) {
                             whereClause.append(" AND ");
                         }
+                        validatePropertyName(entry.getKey());
                         String paramName = "param" + paramIndex;
                         whereClause.append(alias).append(".").append(entry.getKey())
                                 .append(" = $").append(paramName);
@@ -178,6 +197,9 @@ public class Neo4jProducer extends DefaultProducer {
                     // Empty map, match all nodes
                     query = String.format("MATCH (%s:%s) RETURN %s", alias, label, alias);
                 }
+            } catch (IllegalArgumentException iae) {
+                exchange.setException(new Neo4jOperationException(RETRIEVE_NODES, iae));
+                return;
             } catch (Exception e) {
                 exchange.setException(
                         new Neo4jOperationException(
@@ -263,6 +285,7 @@ public class Neo4jProducer extends DefaultProducer {
                         if (paramIndex > 0) {
                             whereClause.append(" AND ");
                         }
+                        validatePropertyName(entry.getKey());
                         String paramName = "param" + paramIndex;
                         whereClause.append(alias).append(".").append(entry.getKey())
                                 .append(" = $").append(paramName);
@@ -276,6 +299,9 @@ public class Neo4jProducer extends DefaultProducer {
                     // Empty map, delete all nodes of this label
                     query = String.format("MATCH (%s:%s) %s DELETE %s", alias, label, detached, alias);
                 }
+            } catch (IllegalArgumentException iae) {
+                exchange.setException(new Neo4jOperationException(Neo4Operation.DELETE_NODE, iae));
+                return;
             } catch (Exception e) {
                 exchange.setException(
                         new Neo4jOperationException(
