@@ -1221,39 +1221,37 @@ public class CamelMonitor extends CamelCommand {
             }
 
             if (activeCount > 0) {
-                badgeTexts[0] = "(" + activeCount + ")";
+                badgeTexts[TAB_OVERVIEW] = "(" + activeCount + ")";
             }
-            // tab 1 (Log) — no badge
             if (routeCount > 0) {
-                badgeTexts[2] = "(" + routeCount + ")";
+                badgeTexts[TAB_ROUTES] = "(" + routeCount + ")";
             }
             if (consumerCount > 0) {
-                badgeTexts[3] = "(" + consumerCount + ")";
+                badgeTexts[TAB_CONSUMERS] = "(" + consumerCount + ")";
             }
             if (endpointCount > 0) {
-                badgeTexts[4] = "(" + endpointCount + ")";
-            }
-            if (healthDownCount > 0) {
-                badgeTexts[5] = "(" + healthDownCount + " DOWN)";
-                badgeStyles[5] = red;
-            } else if (healthCount > 0) {
-                badgeTexts[5] = "(" + healthCount + ")";
-            }
-            // Inspect tab (7): show tracer active (*) in cyan, or history count in yellow
-            if (hasTraces) {
-                badgeTexts[6] = "(*)";
-                badgeStyles[6] = cyan;
-            } else if (historyCount > 0) {
-                badgeTexts[6] = "(" + historyCount + ")";
-            }
-            if (cbOpenCount > 0) {
-                badgeTexts[7] = "(" + cbOpenCount + " OPEN)";
-                badgeStyles[7] = red;
-            } else if (cbCount > 0) {
-                badgeTexts[7] = "(" + cbCount + ")";
+                badgeTexts[TAB_ENDPOINTS] = "(" + endpointCount + ")";
             }
             if (httpCount > 0) {
-                badgeTexts[8] = "(" + httpCount + ")";
+                badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
+            }
+            if (healthDownCount > 0) {
+                badgeTexts[TAB_HEALTH] = "(" + healthDownCount + " DOWN)";
+                badgeStyles[TAB_HEALTH] = red;
+            } else if (healthCount > 0) {
+                badgeTexts[TAB_HEALTH] = "(" + healthCount + ")";
+            }
+            if (hasTraces) {
+                badgeTexts[TAB_HISTORY] = "(*)";
+                badgeStyles[TAB_HISTORY] = cyan;
+            } else if (historyCount > 0) {
+                badgeTexts[TAB_HISTORY] = "(" + historyCount + ")";
+            }
+            if (cbOpenCount > 0) {
+                badgeTexts[TAB_CIRCUIT_BREAKER] = "(" + cbOpenCount + " OPEN)";
+                badgeStyles[TAB_CIRCUIT_BREAKER] = red;
+            } else if (cbCount > 0) {
+                badgeTexts[TAB_CIRCUIT_BREAKER] = "(" + cbCount + ")";
             }
 
             int tabX = 0;
