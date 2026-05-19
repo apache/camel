@@ -75,7 +75,7 @@ public class LangChain4jAgentMcpAndCamelToolsIT extends CamelTestSupport {
     static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @RegisterExtension
-    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createService();
+    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {

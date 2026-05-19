@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 @DisabledOnOs(value = OS.AIX, disabledReason = "has problem with all the new reconnection stuff and whatnot")
 public class XmppBaseIT extends CamelTestSupport {
     @RegisterExtension
-    static XmppService service = XmppServiceFactory.createService();
+    static XmppService service = XmppServiceFactory.createSingletonService();
 
     static {
         try (InputStream is = XmppBaseIT.class.getClassLoader().getResourceAsStream("logging.properties")) {

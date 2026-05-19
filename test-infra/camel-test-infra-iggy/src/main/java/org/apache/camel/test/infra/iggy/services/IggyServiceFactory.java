@@ -17,8 +17,36 @@
 package org.apache.camel.test.infra.iggy.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class IggyServiceFactory {
+
+    private static class SingletonIggyService extends SingletonService<IggyService> implements IggyService {
+        public SingletonIggyService(IggyService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String username() {
+            return getService().username();
+        }
+
+        @Override
+        public String password() {
+            return getService().password();
+        }
+    }
+
     private IggyServiceFactory() {
 
     }
@@ -32,6 +60,21 @@ public final class IggyServiceFactory {
                 .addLocalMapping(IggyLocalContainerService::new)
                 .addRemoteMapping(IggyRemoteService::new)
                 .build();
+    }
+
+    public static IggyService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final IggyService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<IggyService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonIggyService(new IggyLocalContainerService(), "iggy"))
+                    .addRemoteMapping(IggyRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class IggyRemoteService extends IggyRemoteInfraService implements IggyService {

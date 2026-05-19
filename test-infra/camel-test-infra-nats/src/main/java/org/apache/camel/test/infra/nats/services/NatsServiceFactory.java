@@ -17,8 +17,21 @@
 package org.apache.camel.test.infra.nats.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class NatsServiceFactory {
+
+    private static class SingletonNatsService extends SingletonService<NatsService> implements NatsService {
+        public SingletonNatsService(NatsService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getServiceAddress() {
+            return getService().getServiceAddress();
+        }
+    }
+
     private NatsServiceFactory() {
 
     }
@@ -31,6 +44,21 @@ public final class NatsServiceFactory {
         return builder().addLocalMapping(NatsLocalContainerService::new)
                 .addRemoteMapping(NatsRemoteService::new)
                 .build();
+    }
+
+    public static NatsService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final NatsService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<NatsService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonNatsService(new NatsLocalContainerService(), "nats"))
+                    .addRemoteMapping(NatsRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class NatsRemoteService extends NatsRemoteInfraService implements NatsService {

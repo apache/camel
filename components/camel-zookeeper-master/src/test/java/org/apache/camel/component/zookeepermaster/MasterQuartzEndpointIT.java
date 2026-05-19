@@ -31,7 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class MasterQuartzEndpointIT {
     @RegisterExtension
-    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
+    static ZooKeeperService service = ZooKeeperServiceFactory.createSingletonService();
 
     @Autowired
     protected CamelContext camelContext;
