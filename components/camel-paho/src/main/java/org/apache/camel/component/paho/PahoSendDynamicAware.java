@@ -31,6 +31,7 @@ import org.apache.camel.util.StringHelper;
  * endpoint and its producer to service dynamic requests.
  */
 @SendDynamic("paho")
+@Deprecated(since = "4.21")
 public class PahoSendDynamicAware extends ServiceSupport implements SendDynamicAware {
 
     private CamelContext camelContext;

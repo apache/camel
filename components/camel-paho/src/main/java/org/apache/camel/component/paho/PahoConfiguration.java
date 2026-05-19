@@ -27,6 +27,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
+@Deprecated(since = "4.21")
 public class PahoConfiguration implements Cloneable {
 
     @UriParam

@@ -28,6 +28,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.21")
 public class PahoProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PahoProducer.class);

@@ -18,7 +18,7 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The library used for Camel Grok component has been migrated from no more maintained `io.krakens:java-grok` to its fork `io.github.whatap:java-grok`.
 It implies small differences listed https://github.com/whatap/java-grok#what-is-different-from-iokrakensjava-grok[here].
 
-=== camel-core
+=== camel-coreand camel-paho-mqtt5 are
 
 The `camel-api` module now has an optional dependency on `org.jspecify:jspecify` for null safety annotations
 (`@NullMarked`, `@Nullable`). The dependency is `<optional>true</optional>`, so it is not pulled transitively
@@ -546,3 +546,8 @@ The component camel-irc is deprecated. The library used had no stable release si
 === Deprecation of camel-iec-60870
 
 The component camel-iec-60870 is deprecated. The library used to implement it NeoScada is no more maintained since 2021. There are no alternatives in Java with compatible license.
+
+=== Deprecation of camel-paho
+
+The components camel-paho is deprecated. There were no new release since 2020 of the Java client, last non-regulatory commit was in 2022.
+

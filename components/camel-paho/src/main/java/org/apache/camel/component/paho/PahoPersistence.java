@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.paho;
 
+@Deprecated(since = "4.21")
 public enum PahoPersistence {
 
     FILE,
