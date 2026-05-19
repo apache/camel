@@ -754,6 +754,27 @@ main() {
   echo "============================================================"
   echo ""
 
+  # ── Step 4b: Aggregated core coverage report ──
+  # When coverage is enabled and core modules were tested, generate the
+  # aggregated JaCoCo report via the coverage module.  This is needed because
+  # camel-core tests exercise classes from camel-core-model, camel-core-processor,
+  # etc., so per-module reports alone miss cross-module coverage.
+  if [[ "${MVND_OPTS:-}" == *"-Dcoverage"* ]]; then
+    local core_tested=false
+    for w in $(echo "$final_pl" | tr ',' '\n'); do
+      if [[ "$w" == core/* ]]; then
+        core_tested=true
+        break
+      fi
+    done
+    if [[ "$core_tested" == true ]]; then
+      echo ""
+      echo "Core modules affected — generating aggregated coverage report..."
+      $mavenBinary verify -B -Dcoverage -pl coverage -am -DskipTests \
+        || echo "WARNING: Coverage aggregation failed (non-fatal)"
+    fi
+  fi
+
   # ── Step 5: Write comment and summary ──
   local comment_file="incremental-test-comment.md"
   writeComment "$comment_file" "$pl" "$dep_module_ids" "$all_changed_props" "$testedDependents" "$extraModules" "$scalpel_managed_deps" "$scalpel_managed_plugins"
