@@ -31,9 +31,8 @@ import org.apache.camel.support.ResolverHelper;
 import static org.apache.camel.language.simple.ast.SimpleFunctionExpression.ifStartsWithReturnRemainder;
 
 /**
- * Resolves {@link SimpleLanguageFunctionFactory} implementations shipped by external Camel components (currently
- * camel-attachments, camel-base64, camel-jsoup) and delegates Simple/CSimple function lookup to whichever one claims
- * the function string.
+ * Dispatches Simple/CSimple function lookup to built-in function factories and to {@link SimpleLanguageFunctionFactory}
+ * implementations shipped by external Camel components (currently camel-attachments, camel-base64, camel-jsoup).
  * <p>
  * Each entry carries a gate that decides whether its factory is consulted for a given function string; gates mirror the
  * inline checks that previously lived in {@code SimpleFunctionExpression}, so a function belonging to a missing
@@ -71,12 +70,24 @@ public final class SimpleFunctionDispatcher {
     }
 
     public static Expression tryCreate(CamelContext camelContext, String function, int index) {
+        Expression answer = tryCreateBuiltIn(camelContext, function, index);
+        if (answer != null) {
+            return answer;
+        }
+        return tryCreateExternal(camelContext, function, index);
+    }
+
+    public static Expression tryCreateBuiltIn(CamelContext camelContext, String function, int index) {
         for (SimpleLanguageFunctionFactory factory : BUILT_INS) {
             Expression answer = factory.createFunction(camelContext, function, index);
             if (answer != null) {
                 return answer;
             }
         }
+        return null;
+    }
+
+    public static Expression tryCreateExternal(CamelContext camelContext, String function, int index) {
         for (Entry entry : EXPRESSION_ENTRIES) {
             if (!entry.claims.test(function)) {
                 continue;
@@ -91,6 +102,14 @@ public final class SimpleFunctionDispatcher {
     }
 
     public static String tryCreateCode(CamelContext camelContext, String function, int index) {
+        String code = tryCreateCodeBuiltIn(camelContext, function, index);
+        if (code != null) {
+            return code;
+        }
+        return tryCreateCodeExternal(camelContext, function, index);
+    }
+
+    public static String tryCreateCodeBuiltIn(CamelContext camelContext, String function, int index) {
         for (SimpleLanguageFunctionFactory factory : BUILT_INS) {
             @SuppressWarnings("deprecation")
             String code = factory.createCode(camelContext, function, index);
@@ -98,6 +117,10 @@ public final class SimpleFunctionDispatcher {
                 return code;
             }
         }
+        return null;
+    }
+
+    public static String tryCreateCodeExternal(CamelContext camelContext, String function, int index) {
         for (Entry entry : CODE_ENTRIES) {
             if (!entry.claims.test(function)) {
                 continue;
@@ -143,6 +166,14 @@ public final class SimpleFunctionDispatcher {
                 || ifStartsWithReturnRemainder("htmlDecode", function) != null;
     }
 
-    private record Entry(String jarName, Predicate<String> claims) {
+    private static final class Entry {
+
+        private final String jarName;
+        private final Predicate<String> claims;
+
+        private Entry(String jarName, Predicate<String> claims) {
+            this.jarName = jarName;
+            this.claims = claims;
+        }
     }
 }

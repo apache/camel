@@ -37,7 +37,7 @@ public final class SkipFunctionFactory implements SimpleLanguageFunctionFactory 
         if (remainder == null) {
             return null;
         }
-        String values = StringHelper.before(remainder, ")");
+        String values = StringHelper.beforeLast(remainder, ")");
         if (values == null || ObjectHelper.isEmpty(values)) {
             throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, index);
         }

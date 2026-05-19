@@ -390,6 +390,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // miscellaneous functions
+        Expression builtIn = SimpleFunctionDispatcher.tryCreateBuiltIn(camelContext, function, token.getIndex());
+        if (builtIn != null) {
+            return builtIn;
+        }
         Expression misc = createSimpleExpressionMisc(function);
         if (misc != null) {
             return misc;
@@ -401,7 +405,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // functions from external components (attachments, base64, html, ...)
-        Expression external = SimpleFunctionDispatcher.tryCreate(camelContext, function, token.getIndex());
+        Expression external = SimpleFunctionDispatcher.tryCreateExternal(camelContext, function, token.getIndex());
         if (external != null) {
             return external;
         }
@@ -2035,6 +2039,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // miscellaneous functions
+        String builtIn = SimpleFunctionDispatcher.tryCreateCodeBuiltIn(camelContext, function, token.getIndex());
+        if (builtIn != null) {
+            return builtIn;
+        }
         String misc = createCodeExpressionMisc(camelContext, function);
         if (misc != null) {
             return misc;
@@ -2046,7 +2054,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // code from external components (attachments, base64, ...)
-        String external = SimpleFunctionDispatcher.tryCreateCode(camelContext, function, token.getIndex());
+        String external = SimpleFunctionDispatcher.tryCreateCodeExternal(camelContext, function, token.getIndex());
         if (external != null) {
             return external;
         }

@@ -19,7 +19,7 @@ package org.apache.camel.language.simple.functions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
-import org.apache.camel.language.simple.ast.SimpleFunctionExpression;
+import org.apache.camel.language.simple.SimpleFunctionHelper;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -75,7 +75,7 @@ public final class JoinFunctionFactory implements SimpleLanguageFunctionFactory 
         String prefix = null;
         String exp = "body";
         if (ObjectHelper.isNotEmpty(values)) {
-            String[] tokens = SimpleFunctionExpression.codeSplitSafe(values, ',', true, true);
+            String[] tokens = SimpleFunctionHelper.codeSplitSafe(values, ',', true, true);
             if (tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${join(separator,prefix,expression)} was: " + function, index);
