@@ -1989,7 +1989,7 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(Span.styled(ci.id != null ? ci.id : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
-                    rightCell(ci.inflight > 0 ? String.valueOf(ci.inflight) : "", 8),
+                    rightCell(String.valueOf(ci.inflight), 8),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     rightCell(period, 10),
                     Cell.from(sinceLast),
@@ -2087,7 +2087,7 @@ public class CamelMonitor extends CamelCommand {
                 rightCell(String.valueOf(route.total), 8),
                 rightCell(String.valueOf(route.failed), 6,
                         route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                Cell.from(""),
+                rightCell(String.valueOf(route.inflight), 8),
                 rightCell(route.total > 0
                         ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
                         : "", 14),
@@ -2104,7 +2104,7 @@ public class CamelMonitor extends CamelCommand {
                     rightCell(String.valueOf(proc.total), 8),
                     rightCell(String.valueOf(proc.failed), 6,
                             proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                    Cell.from(""),
+                    rightCell(String.valueOf(proc.inflight), 8),
                     rightCell(proc.total > 0
                             ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime
                             : "", 14),
@@ -2119,7 +2119,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                         rightCell("TOTAL", 8, Style.EMPTY.bold()),
                         rightCell("FAIL", 6, Style.EMPTY.bold()),
-                        Cell.from(""),
+                        rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                         rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
                         Cell.from("")))
                 .widths(
@@ -2898,6 +2898,8 @@ public class CamelMonitor extends CamelCommand {
             String failed = cb.failedCalls > 0 ? String.valueOf(cb.failedCalls) : "";
             String reject = cb.notPermittedCalls > 0 ? String.valueOf(cb.notPermittedCalls) : "";
             String rate = cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "";
+            String inflight = String.valueOf(cb.inflight);
+            String sinceLast = formatSinceLast(cb.sinceLastStarted, cb.sinceLastSuccess, cb.sinceLastFail);
 
             rows.add(Row.from(
                     Cell.from(Span.styled(cb.routeId != null ? cb.routeId : "", Style.EMPTY.fg(Color.CYAN))),
@@ -2905,17 +2907,20 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(cb.component != null ? cb.component : ""),
                     Cell.from(Span.styled(state, stateStyle)),
                     rightCell(pending, 8),
+                    rightCell(inflight, 8),
                     rightCell(success, 8),
                     rightCell(failed, 8),
                     rightCell(rate, 6),
-                    rightCell(reject, 8)));
+                    rightCell(reject, 8),
+                    Cell.from(sinceLast)));
         }
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
                     Cell.from(Span.styled("No circuit breakers", Style.EMPTY.dim())),
                     Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
+                    Cell.from(""), Cell.from("")));
         }
 
         // Split area: table on top, state diagram below for the selected entry
@@ -2927,7 +2932,7 @@ public class CamelMonitor extends CamelCommand {
         boolean showDiagram = selectedCb != null;
         List<Rect> chunks = showDiagram
                 ? Layout.vertical()
-                        .constraints(Constraint.fill(), Constraint.length(15))
+                        .constraints(Constraint.fill(), Constraint.length(25))
                         .split(area)
                 : List.of(area);
 
@@ -2938,11 +2943,13 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled(cbSortLabel("ID", "id"), cbSortStyle("id"))),
                         Cell.from(Span.styled(cbSortLabel("COMPONENT", "component"), cbSortStyle("component"))),
                         Cell.from(Span.styled(cbSortLabel("STATE", "state"), cbSortStyle("state"))),
-                        rightCell("PENDING", 8, Style.EMPTY.bold()),
+                        rightCell("WINDOW", 8, Style.EMPTY.bold()),
+                        rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                         rightCell("SUCCESS", 8, Style.EMPTY.bold()),
                         rightCell("FAIL", 8, Style.EMPTY.bold()),
                         rightCell("RATE%", 6, Style.EMPTY.bold()),
-                        rightCell("REJECT", 8, Style.EMPTY.bold())))
+                        rightCell("REJECT", 8, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(20),
                         Constraint.length(20),
@@ -2951,7 +2958,9 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(8),
+                        Constraint.length(8),
                         Constraint.length(6),
+                        Constraint.length(8),
                         Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
@@ -2986,6 +2995,7 @@ public class CamelMonitor extends CamelCommand {
         Style lbl = Style.EMPTY.dim();
 
         List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.raw("")));
         // ┌──────────────┐              ┌──────────────┐
         lines.add(Line.from(
                 Span.raw("   "),
@@ -3002,9 +3012,9 @@ public class CamelMonitor extends CamelCommand {
         // │  (flowing)   │ failure rate │  (blocked)   │  │
         lines.add(Line.from(
                 Span.raw("   "),
-                Span.styled("│  (flowing)   │", closedBox),
+                Span.styled("│  (allowed)   │", closedBox),
                 Span.styled(" failure rate ", lbl),
-                Span.styled("│  (blocked)   │", openBox),
+                Span.styled("│  (rejected)  │", openBox),
                 Span.raw("  │")));
         // └──────▲───────┘              └───────┬──────┘  │
         lines.add(Line.from(
@@ -3069,9 +3079,9 @@ public class CamelMonitor extends CamelCommand {
     private void renderCbChart(Frame frame, Rect area, CircuitBreakerInfo cb, String pid) {
         String key = pid + "/" + cb.id;
 
-        // Split vertically: failure rate bar (3 rows), sparkline (fill), metrics (4 rows)
+        // Split vertically: failure rate bar (3 rows), sparkline (fill), metrics (6 rows)
         List<Rect> vSplit = Layout.vertical()
-                .constraints(Constraint.length(3), Constraint.fill(), Constraint.length(4))
+                .constraints(Constraint.length(3), Constraint.fill(), Constraint.length(6))
                 .split(area);
 
         // Top: Failure rate bar (fixed width matching sparkline data points)
@@ -3140,16 +3150,25 @@ public class CamelMonitor extends CamelCommand {
 
         // Bottom: Metrics summary
         Style dim = Style.EMPTY.dim();
-        Line metricsLine = Line.from(
+        Line metricsLine1 = Line.from(
                 Span.raw(" "),
                 Span.styled("total:", dim), Span.raw(cb.total + " "),
                 Span.styled("fail:", dim), Span.raw(cb.totalFailed + " "),
+                Span.styled("inflight:", dim), Span.raw(cb.inflight + " "),
                 Span.styled("reject:", dim), Span.raw(cb.notPermittedCalls + " "),
                 Span.styled("mean:", dim), Span.raw(cb.meanTime + "ms "),
                 Span.styled("min:", dim), Span.raw(cb.minTime + "ms "),
                 Span.styled("max:", dim), Span.raw(cb.maxTime + "ms"));
+        String lastSuccess = cb.sinceLastSuccess != null ? cb.sinceLastSuccess : "-";
+        String lastFail = cb.sinceLastFail != null ? cb.sinceLastFail : "-";
+        Line metricsLine2 = Line.from(
+                Span.raw(" "),
+                Span.styled("since last", dim),
+                Span.raw(" "),
+                Span.styled("success:", dim), Span.raw(" " + lastSuccess + " "),
+                Span.styled("fail:", dim), Span.raw(" " + lastFail));
         frame.renderWidget(Paragraph.builder()
-                .text(Text.from(Line.from(Span.raw("")), metricsLine))
+                .text(Text.from(Line.from(Span.raw("")), metricsLine1, metricsLine2))
                 .block(Block.builder().borderType(BorderType.ROUNDED).build())
                 .build(), vSplit.get(2));
     }
@@ -3447,6 +3466,8 @@ public class CamelMonitor extends CamelCommand {
         Style dimStyle = Style.EMPTY.dim();
 
         List<Line> flowLines = new ArrayList<>();
+        flowLines.add(Line.from(Span.raw("")));
+        flowLines.add(Line.from(Span.raw("")));
         flowLines.add(Line.from(
                 Span.styled(" ".repeat(inPad) + inStr, inTotal > 0 ? inStyle : dimStyle),
                 Span.raw(" ".repeat(centerGap)),
@@ -5825,6 +5846,19 @@ public class CamelMonitor extends CamelCommand {
                             pi.minTime = Math.max(0, objToLong(ps.get("minProcessingTime")));
                             pi.maxTime = Math.max(0, objToLong(ps.get("maxProcessingTime")));
                             pi.lastTime = objToLong(ps.get("lastProcessingTime"));
+                            pi.inflight = objToLong(ps.get("exchangesInflight"));
+                            long tsStarted = objToLong(ps.get("lastCreatedExchangeTimestamp"));
+                            if (tsStarted > 0) {
+                                pi.sinceLastStarted = TimeUtils.printSince(tsStarted);
+                            }
+                            long tsCompleted = objToLong(ps.get("lastCompletedExchangeTimestamp"));
+                            if (tsCompleted > 0) {
+                                pi.sinceLastCompleted = TimeUtils.printSince(tsCompleted);
+                            }
+                            long tsFailed = objToLong(ps.get("lastFailedExchangeTimestamp"));
+                            if (tsFailed > 0) {
+                                pi.sinceLastFailed = TimeUtils.printSince(tsFailed);
+                            }
                         }
 
                         ri.processors.add(pi);
@@ -5942,6 +5976,10 @@ public class CamelMonitor extends CamelCommand {
                             cb.meanTime = pi.meanTime;
                             cb.minTime = pi.minTime;
                             cb.maxTime = pi.maxTime;
+                            cb.inflight = pi.inflight;
+                            cb.sinceLastStarted = pi.sinceLastStarted;
+                            cb.sinceLastSuccess = pi.sinceLastCompleted;
+                            cb.sinceLastFail = pi.sinceLastFailed;
                             break;
                         }
                     }
@@ -6254,6 +6292,10 @@ public class CamelMonitor extends CamelCommand {
         long minTime;
         long maxTime;
         long lastTime;
+        long inflight;
+        String sinceLastStarted;
+        String sinceLastCompleted;
+        String sinceLastFailed;
     }
 
     static class HealthCheckInfo {
@@ -6307,6 +6349,10 @@ public class CamelMonitor extends CamelCommand {
         long meanTime;
         long minTime;
         long maxTime;
+        long inflight;
+        String sinceLastStarted;
+        String sinceLastSuccess;
+        String sinceLastFail;
     }
 
     // HTTP endpoint from REST DSL or Platform-HTTP
