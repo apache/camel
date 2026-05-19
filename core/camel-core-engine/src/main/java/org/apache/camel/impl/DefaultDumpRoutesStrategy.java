@@ -741,12 +741,10 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             ModelToXMLDumper dumper, String replace, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
             String xml = dumper.dumpModelAsXml(camelContext, def, resolvePlaceholders, generatedIds, false);
-            // remove spring schema xmlns that camel-jaxb dumper includes
-            xml = StringHelper.replaceFirst(xml, " xmlns=\"http://camel.apache.org/schema/spring\">", ">");
             xml = xml.replace("</" + replace + ">", "</" + replace + ">\n");
-            // remove outer tag (routes, rests, etc)
+            // remove outer tag (routes, rests, etc) including any xmlns attributes
             replace = replace + "s";
-            xml = StringHelper.replaceFirst(xml, "<" + replace + ">", "");
+            xml = xml.replaceFirst("<" + replace + "(?:\\s[^>]*)?>", "");
             xml = StringHelper.replaceFirst(xml, "</" + replace + ">", "");
 
             sbLocal.append(xml);
