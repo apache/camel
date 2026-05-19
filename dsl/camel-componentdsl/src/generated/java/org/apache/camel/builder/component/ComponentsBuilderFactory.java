@@ -46,6 +46,19 @@ import org.apache.camel.builder.component.dsl.*;
 public interface ComponentsBuilderFactory {
 
     /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * @return the dsl builder
+     */
+    static A2aComponentBuilderFactory.A2aComponentBuilder a2a() {
+        return A2aComponentBuilderFactory.a2a();
+    }
+    /**
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.

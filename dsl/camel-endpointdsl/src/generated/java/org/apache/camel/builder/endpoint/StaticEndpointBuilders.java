@@ -27,6 +27,48 @@ import org.apache.camel.builder.endpoint.dsl.*;
 public class StaticEndpointBuilders {
 
     /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * Syntax: <code>a2a:agentCardSource</code>
+     * 
+     * Path parameter: agentCardSource (required)
+     * The agent card source (classpath:, file:, http://, https://, or plain
+     * name)
+     * 
+     * @param path agentCardSource
+     * @return the dsl builder
+     */
+    public static A2AEndpointBuilderFactory.A2AEndpointBuilder a2a(String path) {
+        return a2a("a2a", path);
+    }
+    /**
+     * A2A (camel-a2a)
+     * A2A endpoint for agent-to-agent communication.
+     * 
+     * Category: ai
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-a2a
+     * 
+     * Syntax: <code>a2a:agentCardSource</code>
+     * 
+     * Path parameter: agentCardSource (required)
+     * The agent card source (classpath:, file:, http://, https://, or plain
+     * name)
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path agentCardSource
+     * @return the dsl builder
+     */
+    public static A2AEndpointBuilderFactory.A2AEndpointBuilder a2a(String componentName, String path) {
+        return A2AEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.

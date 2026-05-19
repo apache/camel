@@ -49,7 +49,8 @@ import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWith
 
 /**
  * Dispatches Simple/CSimple function lookup to built-in function factories and to {@link SimpleLanguageFunctionFactory}
- * implementations shipped by external Camel components (currently camel-attachments, camel-base64, camel-jsoup).
+ * implementations shipped by external Camel components (currently camel-a2a, camel-attachments, camel-base64,
+ * camel-jsoup).
  * <p>
  * Each entry carries a gate that decides whether its factory is consulted for a given function string; gates mirror the
  * inline checks that previously lived in {@code SimpleFunctionExpression}, so a function belonging to a missing
@@ -89,6 +90,7 @@ public final class SimpleFunctionDispatcher {
 
     private static final List<Entry> EXPRESSION_ENTRIES = List.of(
             new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),
+            new Entry("camel-a2a", SimpleFunctionDispatcher::isA2aFunction),
             new Entry("camel-base64", SimpleFunctionDispatcher::isBase64Function),
             new Entry("camel-jsoup", SimpleFunctionDispatcher::isHtmlFunction));
 
@@ -166,6 +168,10 @@ public final class SimpleFunctionDispatcher {
                 || "clearAttachments".equals(function)
                 || ifStartsWithReturnRemainder("setAttachment", function) != null
                 || ifStartsWithReturnRemainder("attachment", function) != null;
+    }
+
+    private static boolean isA2aFunction(String function) {
+        return ifStartsWithReturnRemainder("a2a:", function) != null;
     }
 
     private static boolean isBase64Function(String function) {

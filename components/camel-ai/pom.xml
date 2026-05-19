@@ -34,6 +34,7 @@
     <description>Camel AI parent</description>
 
     <modules>
+        <module>camel-a2a</module>
         <module>camel-chatscript</module>
         <module>camel-djl</module>
         <module>camel-docling</module>

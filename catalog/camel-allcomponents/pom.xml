@@ -54,6 +54,11 @@
         <!-- CODEGEN DEPENDENCIES START -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-a2a</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-activemq</artifactId>
             <version>${project.version}</version>
         </dependency>

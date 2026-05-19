@@ -1,0 +1,16 @@
+{
+  "name": "Skills Test Agent",
+  "version": "1.0.0",
+  "skills": [
+    {
+      "id": "weather",
+      "name": "Weather Forecast",
+      "description": "Provides weather forecasts for any location"
+    },
+    {
+      "id": "translate",
+      "name": "Translation",
+      "description": "Translates text between languages"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "protocolVersion": "1.0",
+  "name": "PushAgent",
+  "description": "Agent with push notification support",
+  "url": "http://localhost:8080",
+  "version": "1.0.0",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "extendedAgentCard": false
+  },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "skills": [
+    {
+      "id": "push-echo",
+      "name": "Push Echo",
+      "description": "Returns a response and accepts push notification configuration",
+      "tags": ["test"],
+      "inputModes": ["text/plain"],
+      "outputModes": ["text/plain"]
+    }
+  ],
+  "supportedInterfaces": [
+    {
+      "url": "http://localhost:8080",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ]
+}

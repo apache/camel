@@ -346,6 +346,18 @@ the canonical form. This encourages adopting the canonical style which is more t
 The warning is logged once per resource file. To disable this warning, set
 `camel.main.yamlDslCompactNotationWarn = false` in `application.properties`.
 
+=== camel-a2a (new, preview)
+
+A new `camel-a2a` component has been added providing support for the Agent-to-Agent (A2A) protocol.
+The component scheme is `a2a`. As a consumer, it exposes Camel routes as A2A-compliant agents;
+as a producer, it calls remote A2A agents. This component has **Preview** support level.
+
+Consumer routes require an HTTP server component on the classpath. Use `camel-platform-http-vertx` for JSON-RPC agents, or use `camel-undertow` / `camel-jetty` when serving REST custom-method routes such as `/message:send` or real-time SSE streaming. The default Vert.x/platform-http transport treats colons as path-parameter delimiters and buffers `InputStream` streaming responses.
+
+For A2A consumers, `validateAuth` defaults to `true`. The well-known agent card endpoint remains public, but A2A
+operation endpoints fail closed unless the resolved agent card declares a security scheme that Camel can validate.
+Set `validateAuth=false` explicitly only when intentionally serving unauthenticated A2A operations. Network-exposed agents should declare `securitySchemes` and `securityRequirements` in the agent card and configure `apiKey`, `bearerToken`, or `oauthProfile` on the endpoint.
+
 === camel-kafka / Spring Boot
 
 When using `camel-kafka-starter` with Spring Boot, the standard `spring.kafka.*` properties are now automatically
