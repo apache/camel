@@ -371,6 +371,20 @@ Routes that set the header by its literal string value (for example
 `setHeader("operationName", ...)`) must be updated to use the new value
 (`setHeader("CamelCxfOperationName", ...)`).
 
+In particular, the documented `cxfrs` `SimpleConsumer` dispatch idiom that routes
+on the operation name by its literal header name must be updated:
+
+[source,java]
+----
+// before
+from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+    .recipientList(simple("direct:${header.operationName}"));
+
+// after
+from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+    .recipientList(simple("direct:${header.CamelCxfOperationName}"));
+----
+
 === camel-aws2-s3
 
 The `listObjects` operation now uses the `ListObjectsV2` AWS API instead of the deprecated `ListObjects` API.

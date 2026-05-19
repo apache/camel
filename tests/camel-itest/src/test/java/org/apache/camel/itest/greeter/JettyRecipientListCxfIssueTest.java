@@ -61,7 +61,7 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
 
         // send a message to jetty
         Exchange out = template.request("http://0.0.0.0:{{RecipientListCxfTest.port3}}/myapp", exchange -> {
-            exchange.getIn().setHeader("operationName", "greetMe");
+            exchange.getIn().setHeader("CamelCxfOperationName", "greetMe");
             exchange.getIn().setBody(request);
         });
 
