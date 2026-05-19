@@ -3657,9 +3657,11 @@ public class CamelMonitor extends CamelCommand {
                 source = "HTTP";
             }
             String state = ep.state != null ? ep.state : "";
+            String hitsStr = ep.hits > 0 ? String.valueOf(ep.hits) : "";
             rows.add(Row.from(
                     Cell.from(Span.styled(method, methodStyle(method))),
                     Cell.from(path),
+                    rightCell(hitsStr, 8),
                     Cell.from(consumes),
                     Cell.from(produces),
                     Cell.from(Span.styled(source,
@@ -3675,6 +3677,7 @@ public class CamelMonitor extends CamelCommand {
         Row header = Row.from(
                 Cell.from(Span.styled(httpSortLabel("METHOD", "method"), httpSortStyle("method"))),
                 Cell.from(Span.styled(httpSortLabel("PATH", "path"), httpSortStyle("path"))),
+                rightCell("TOTAL", 8, Style.EMPTY.bold()),
                 Cell.from(Span.styled(httpSortLabel("CONSUMES", "consumes"), httpSortStyle("consumes"))),
                 Cell.from(Span.styled(httpSortLabel("PRODUCES", "produces"), httpSortStyle("produces"))),
                 Cell.from(Span.styled(httpSortLabel("SOURCE", "source"), httpSortStyle("source"))),
@@ -3686,8 +3689,9 @@ public class CamelMonitor extends CamelCommand {
                 .widths(
                         Constraint.length(12),
                         Constraint.fill(),
-                        Constraint.length(35),
-                        Constraint.length(35),
+                        Constraint.length(8),
+                        Constraint.length(30),
+                        Constraint.length(30),
                         Constraint.length(15),
                         Constraint.length(8))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
@@ -5679,6 +5683,10 @@ public class CamelMonitor extends CamelCommand {
                     ep.state = rj.getString("state");
                     ep.inType = rj.getString("inType");
                     ep.outType = rj.getString("outType");
+                    Long h = rj.getLong("hits");
+                    if (h != null) {
+                        ep.hits = h;
+                    }
                     // derive path from url (strip scheme+host+port)
                     ep.path = extractPath(ep.url);
                     info.httpEndpoints.add(ep);
@@ -6011,6 +6019,7 @@ public class CamelMonitor extends CamelCommand {
         String url;      // full URL including server
         String consumes;
         String produces;
+        long hits;       // per-operation request count
         // REST DSL only
         boolean fromRest;
         boolean contractFirst;

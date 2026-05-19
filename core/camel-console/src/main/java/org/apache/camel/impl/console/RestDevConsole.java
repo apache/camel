@@ -120,6 +120,10 @@ public class RestDevConsole extends AbstractDevConsole {
                 if (rs.getDescription() != null) {
                     jo.put("description", rs.getDescription());
                 }
+                long hits = rs.getHits();
+                if (hits > 0) {
+                    jo.put("hits", hits);
+                }
                 list.add(jo);
             }
         }

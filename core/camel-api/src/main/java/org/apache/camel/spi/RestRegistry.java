@@ -138,6 +138,13 @@ public interface RestRegistry extends StaticService {
         @Nullable
         String getSpecificationUri();
 
+        /**
+         * Number of requests processed by this REST service.
+         *
+         * @since 4.21
+         */
+        long getHits();
+
     }
 
     /**
@@ -165,6 +172,16 @@ public interface RestRegistry extends StaticService {
             @Nullable String consumes, @Nullable String produces, @Nullable String inType, @Nullable String outType,
             String routeId, @Nullable String operationId, @Nullable String specificationUri,
             @Nullable String description);
+
+    /**
+     * Records a hit on the REST service matching the given HTTP method and path.
+     *
+     * @param method   the HTTP method (GET, POST, etc.)
+     * @param basePath the base path
+     * @param path     the URI path or template (e.g. /users/{id})
+     * @since          4.21
+     */
+    void hit(String method, String basePath, String path);
 
     /**
      * Removes the REST service from the registry
