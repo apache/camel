@@ -38,7 +38,7 @@ public class ValidationException extends CamelExchangeException {
      * @param exchange the exchange that failed validation
      * @param cause    the cause of the failure
      */
-    public ValidationException(@Nullable String message, @Nullable Exchange exchange, Throwable cause) {
+    public ValidationException(@Nullable String message, @Nullable Exchange exchange, @Nullable Throwable cause) {
         super(message, exchange, cause);
     }
 }
