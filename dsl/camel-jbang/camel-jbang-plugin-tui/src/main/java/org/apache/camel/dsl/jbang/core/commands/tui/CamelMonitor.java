@@ -4305,11 +4305,18 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 typeLabel = String.format("%-21s", "");
             }
+            String val = entry.getValue() != null ? entry.getValue().toString() : "null";
+            try {
+                val = Jsoner.unescape(val);
+            } catch (Exception e) {
+                // ignore
+            }
+            val = stripControlChars(val);
             lines.add(Line.from(
                     Span.styled("   " + typeLabel, Style.EMPTY.dim()),
                     Span.styled(entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
                     Span.raw(" = "),
-                    Span.raw(entry.getValue() != null ? entry.getValue().toString() : "null")));
+                    Span.raw(val)));
         }
         lines.add(Line.from(Span.raw("")));
     }
@@ -4323,14 +4330,48 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
             }
+            try {
+                body = Jsoner.unescape(body);
+            } catch (Exception e) {
+                // ignore
+            }
             String[] bodyParts = body.split("\n");
             for (String bl : bodyParts) {
-                lines.add(Line.from(Span.raw("   " + bl)));
+                lines.add(Line.from(Span.raw("   " + stripControlChars(bl))));
             }
         } else {
             lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
         }
         lines.add(Line.from(Span.raw("")));
+    }
+
+    private static String stripControlChars(String s) {
+        if (s == null) {
+            return s;
+        }
+        boolean needsStrip = false;
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch < 0x20 || (ch >= 0x7F && ch <= 0x9F)) {
+                needsStrip = true;
+                break;
+            }
+        }
+        if (!needsStrip) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == '\t') {
+                sb.append("    ");
+            } else if (ch < 0x20 || (ch >= 0x7F && ch <= 0x9F)) {
+                // skip C0 and C1 control chars
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 
     private static void addExceptionLines(List<Line> lines, String exception) {
