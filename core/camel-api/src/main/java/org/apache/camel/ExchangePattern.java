@@ -20,7 +20,16 @@ import jakarta.xml.bind.annotation.XmlEnum;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
- * Represents the kind of message exchange pattern
+ * The message exchange pattern of an {@link Exchange}, indicating whether the caller expects a reply.
+ * <p/>
+ * {@link #InOnly} is used for fire-and-forget messaging: the caller sends a message and does not wait for a response.
+ * {@link #InOut} is used for request-reply messaging: the caller sends a message and blocks until a response is
+ * received.
+ * <p/>
+ * The pattern is set on the {@link Exchange} and is checked by the Camel routing engine and endpoints to determine how
+ * to handle the interaction.
+ *
+ * @see Exchange
  */
 @XmlType
 @XmlEnum

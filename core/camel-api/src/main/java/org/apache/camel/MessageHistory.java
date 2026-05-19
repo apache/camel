@@ -19,7 +19,15 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Represents the history of a Camel {@link Message} how it was routed by the Camel routing engine.
+ * A breadcrumb record that captures the route id and processing node an {@link Exchange} visited at a given point in
+ * time, together with the elapsed processing time at that node.
+ * <p/>
+ * History entries are accumulated in the exchange property {@link Exchange#MESSAGE_HISTORY} when message history is
+ * enabled on the {@link CamelContext}. They are primarily used for debugging, tracing, and performance analysis, and
+ * are surfaced via the Camel debugger and management or monitoring APIs.
+ *
+ * @see Exchange
+ * @see NamedNode
  */
 public interface MessageHistory {
 

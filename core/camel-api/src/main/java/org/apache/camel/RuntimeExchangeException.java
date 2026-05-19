@@ -21,7 +21,13 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A runtime exception caused by a specific message {@link Exchange}
+ * Unchecked base exception carrying the {@link Exchange} whose processing triggered the failure.
+ * <p/>
+ * This is the unchecked counterpart of {@link CamelExchangeException} and is the base for exceptions such as
+ * {@link InvalidPayloadRuntimeException} that are thrown in contexts where a checked exception is not permitted.
+ *
+ * @see CamelExchangeException
+ * @see Exchange
  */
 public class RuntimeExchangeException extends RuntimeCamelException {
     private final transient @Nullable Exchange exchange;

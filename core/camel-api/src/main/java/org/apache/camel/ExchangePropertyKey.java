@@ -20,8 +20,13 @@ import org.apache.camel.spi.CircuitBreakerConstants;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An enum of common and known keys for exchange properties used by camel-core.
+ * Typed enum of the well-known {@link Exchange} property keys used by camel-core.
+ * <p/>
+ * Each constant wraps the corresponding {@link Exchange} string constant and provides a type-safe alternative for
+ * reading and writing internal exchange properties via {@link Exchange#getProperty(ExchangePropertyKey)} and
+ * {@link Exchange#setProperty(ExchangePropertyKey, Object)}.
  *
+ * @see   Exchange
  * @since 3.9
  */
 public enum ExchangePropertyKey {

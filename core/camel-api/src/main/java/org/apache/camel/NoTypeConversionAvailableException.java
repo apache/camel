@@ -21,7 +21,13 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An exception thrown if a value could not be converted to the required type
+ * Thrown when the Camel type-converter registry cannot find a converter capable of transforming a given value to the
+ * requested target type.
+ * <p/>
+ * This is the checked variant; for the unchecked exception raised when a converter is found but fails during execution,
+ * see {@link TypeConversionException}.
+ *
+ * @see TypeConversionException
  */
 public class NoTypeConversionAvailableException extends CamelException {
 
