@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.iggy.client.IggyClientConnectionPool;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -175,7 +176,13 @@ public class IggyFetchRecords implements Runnable {
                     hv -> hv.getValue().value() // TODO this way `HeaderKind kind` will be lost
             ));
 
-            exchange.getIn().setHeaders(stringUserHeaders);
+            HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+            for (Map.Entry<String, Object> entry : stringUserHeaders.entrySet()) {
+                if (headerFilterStrategy == null
+                        || !headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                    exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                }
+            }
         });
 
         return exchange;

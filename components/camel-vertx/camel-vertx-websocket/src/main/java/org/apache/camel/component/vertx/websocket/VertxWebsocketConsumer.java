@@ -25,6 +25,7 @@ import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 
 /**
@@ -106,10 +107,21 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         message.setHeader(VertxWebsocketConstants.REMOTE_ADDRESS, remote);
         message.setHeader(VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
         message.setHeader(VertxWebsocketConstants.EVENT, event);
+        HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         routingContext.queryParams()
-                .forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
+                .forEach((name, value) -> {
+                    if (headerFilterStrategy == null
+                            || !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                        VertxWebsocketHelper.appendHeader(headers, name, value);
+                    }
+                });
         routingContext.pathParams()
-                .forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
+                .forEach((name, value) -> {
+                    if (headerFilterStrategy == null
+                            || !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                        VertxWebsocketHelper.appendHeader(headers, name, value);
+                    }
+                });
     }
 
     protected void processExchange(Exchange exchange, RoutingContext routingContext) {
