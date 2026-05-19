@@ -706,7 +706,7 @@ public class RestConfiguration {
     /**
      * Sets the client request validation levels when using camel-openapi-validator.
      */
-    public void setValidationLevels(Map<String, String> validationLevels) {
+    public void setValidationLevels(@Nullable Map<String, String> validationLevels) {
         this.validationLevels = validationLevels;
     }
 }

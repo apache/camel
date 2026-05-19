@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * The base class for any validation exception, such as
  * {@link org.apache.camel.support.processor.validation.SchemaValidationException} so that it is easy to treat all
@@ -27,7 +29,7 @@ public class ValidationException extends CamelExchangeException {
      * @param exchange the exchange that failed validation
      * @param message  the detail message
      */
-    public ValidationException(Exchange exchange, String message) {
+    public ValidationException(@Nullable Exchange exchange, @Nullable String message) {
         super(message, exchange);
     }
 
@@ -36,7 +38,7 @@ public class ValidationException extends CamelExchangeException {
      * @param exchange the exchange that failed validation
      * @param cause    the cause of the failure
      */
-    public ValidationException(String message, Exchange exchange, Throwable cause) {
+    public ValidationException(@Nullable String message, @Nullable Exchange exchange, @Nullable Throwable cause) {
         super(message, exchange, cause);
     }
 }
