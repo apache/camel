@@ -26,7 +26,6 @@ camel sbom [options]
 | `--cyclonedx-plugin-version` | The CycloneDX Maven Plugin version | 2.9.1 | String
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--dir,--directory` | Directory where the project will be exported | . | String
-| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--dry-run` | Preview export without writing files | false | boolean
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
@@ -58,12 +57,8 @@ camel sbom [options]
 | `--port` | Embeds a local HTTP server on this port |  | int
 | `--profile` | Profile to export (dev, test, prod). |  | String
 | `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String
-| `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
-| `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
 | `--quarkus-package-type` | Quarkus package type (uber-jar or fast-jar) | fast-jar | String
-| `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--sbom-format` | The SBOM format, possible values are cyclonedx or spdx | CYCLONEDX_FORMAT | String
 | `--sbom-output-format` | The SBOM output format, possible values are json or xml | SBOM_JSON_FORMAT | String

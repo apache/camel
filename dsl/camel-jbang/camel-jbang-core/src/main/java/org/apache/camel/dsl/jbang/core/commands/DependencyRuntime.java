@@ -21,8 +21,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
-import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.model.DependencyRuntimeDTO;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -38,13 +38,8 @@ public class DependencyRuntime extends CamelCommand {
     @CommandLine.Parameters(description = "The pom.xml to analyze", arity = "1", paramLabel = "<pom.xml>")
     Path pomXml;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    String repositories;
-
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
-    boolean download = true;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
     boolean jsonOutput;
@@ -73,13 +68,9 @@ public class DependencyRuntime extends CamelCommand {
 
         String camelVersion = null;
         String camelSpringBootVersion = null;
-        String camelQuarkusVersion = null;
         String springBootVersion = null;
         String quarkusVersion = null;
         String quarkusBomGroupId = null;
-        String quarkusBomArtifactId = null;
-        String camelQuarkusBomGroupId = null;
-        String camelQuarkusBomArtifactId = null;
         String camelSpringBootBomGroupId = null;
         String camelSpringBootBomArtifactId = null;
 
@@ -91,23 +82,12 @@ public class DependencyRuntime extends CamelCommand {
             if (camelSpringBootVersion == null && "org.apache.camel.springboot".equals(gav.getGroupId())) {
                 camelSpringBootVersion = gav.getVersion();
             }
-            if (camelQuarkusVersion == null && "org.apache.camel.quarkus".equals(gav.getGroupId())) {
-                camelQuarkusVersion = gav.getVersion();
-            }
             if (springBootVersion == null && "org.springframework.boot".equals(gav.getGroupId())) {
                 springBootVersion = gav.getVersion();
             }
-            if (quarkusVersion == null && "io.quarkus".equals(gav.getGroupId())) {
-                quarkusVersion = gav.getVersion();
-            }
-            if (quarkusBomGroupId == null && "quarkus-bom".equals(gav.getArtifactId())) {
+            if (quarkusVersion == null && ("quarkus-camel-bom".equals(gav.getArtifactId()))) {
                 quarkusBomGroupId = gav.getGroupId();
-                quarkusBomArtifactId = gav.getArtifactId();
                 quarkusVersion = gav.getVersion();
-            }
-            if (camelQuarkusBomGroupId == null && "quarkus-camel-bom".equals(gav.getArtifactId())) {
-                camelQuarkusBomGroupId = gav.getGroupId();
-                camelQuarkusBomArtifactId = gav.getArtifactId();
             }
             if (camelSpringBootBomGroupId == null && "camel-spring-boot-bom".equals(gav.getArtifactId())) {
                 camelSpringBootBomGroupId = gav.getGroupId();
@@ -116,22 +96,20 @@ public class DependencyRuntime extends CamelCommand {
         }
 
         if (springBootVersion == null && camelSpringBootVersion != null) {
-            springBootVersion = CatalogLoader.resolveSpringBootVersionFromCamelSpringBoot(mavenRepos(model, repositories),
-                    camelSpringBootVersion, download);
+            springBootVersion = CatalogLoader.resolveSpringBootVersionFromCamelSpringBoot(
+                    mavenRepos(model, mavenResolver.repos()),
+                    camelSpringBootVersion,
+                    mavenResolver.download());
         }
         if (camelSpringBootVersion != null && camelVersion == null) {
-            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(mavenRepos(model, repositories),
-                    camelSpringBootVersion, download);
+            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(mavenRepos(model, mavenResolver.repos()),
+                    camelSpringBootVersion, mavenResolver.download());
         }
         if (quarkusVersion != null && camelVersion == null) {
-            String repos = mavenRepos(model, repositories);
-            CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusBomGroupId, download);
-            if (catalog != null) {
-                // find out the camel quarkus version via the constant language that are built-in camel-core
-                camelQuarkusVersion = catalog.languageModel("constant").getVersion();
-                // okay so the camel version is also hard to resolve from quarkus
-                camelVersion = CatalogLoader.resolveCamelVersionFromQuarkus(repos, camelQuarkusVersion, download);
-            }
+            MavenGav camelQuarkusBom
+                    = MavenGav.fromCoordinates(quarkusBomGroupId, "quarkus-camel-bom", quarkusVersion, "pom", null);
+            camelVersion = QuarkusHelper.resolveCamelVersionFromQuarkusCamelBom(camelQuarkusBom,
+                    mavenResolver.downloader()::resolveArtifact);
         }
 
         String runtime = RuntimeType.main.runtime();
@@ -143,9 +121,14 @@ public class DependencyRuntime extends CamelCommand {
 
         if (jsonOutput) {
             DependencyRuntimeDTO dto = new DependencyRuntimeDTO(
-                    runtime, camelVersion, camelSpringBootVersion, camelQuarkusVersion, springBootVersion, quarkusVersion,
-                    camelSpringBootBomGroupId, camelSpringBootBomArtifactId, quarkusBomGroupId, quarkusBomArtifactId,
-                    camelQuarkusBomGroupId, camelQuarkusBomArtifactId);
+                    runtime,
+                    camelVersion,
+                    camelSpringBootVersion,
+                    springBootVersion,
+                    quarkusVersion,
+                    camelSpringBootBomGroupId,
+                    camelSpringBootBomArtifactId,
+                    quarkusBomGroupId);
             printer().println(Jsoner.serialize(dto.toMap()));
         } else {
             printer().println("Runtime: " + runtime);
@@ -154,9 +137,6 @@ public class DependencyRuntime extends CamelCommand {
             }
             if (camelSpringBootVersion != null) {
                 printer().println("Camel Spring Boot Version: " + camelSpringBootVersion);
-            }
-            if (camelQuarkusVersion != null) {
-                printer().println("Camel Quarkus Version: " + camelQuarkusVersion);
             }
             if (springBootVersion != null) {
                 printer().println("Spring Boot Version: " + springBootVersion);

@@ -43,12 +43,15 @@ import io.vertx.core.file.FileSystemOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.MountTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -184,10 +187,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String registryMirror;
 
     // Export base options
-
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    String repositories;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
                         split = ",")
@@ -205,10 +206,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
-
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
-    boolean download = true;
 
     @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
                         description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
@@ -257,17 +254,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
     String camelSpringBootVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
-    String quarkusGroupId = "io.quarkus.platform";
-
-    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
-                        defaultValue = "quarkus-bom")
-    String quarkusArtifactId = "quarkus-bom";
-
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    String quarkusVersion = RuntimeType.QUARKUS_VERSION;
+    @CommandLine.Mixin
+    protected QuarkusPlatformMixin quarkusPlatform;
 
     @CommandLine.Option(names = { "--package-name" },
                         description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
@@ -438,14 +426,23 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private KubernetesExport configureExport(String workingDir, Path baseDir) {
         detectCluster();
+
+        final QuarkusPlatformBom quarkusPlatformBoms;
+        if (runtime == RuntimeType.quarkus) {
+            quarkusPlatformBoms = quarkusPlatform.resolve(camelVersion, mavenResolver.downloader()::resolveArtifact);
+        } else {
+            quarkusPlatformBoms
+                    = new QuarkusPlatformBom(null, null, camelVersion, quarkusPlatform.quarkusExtensioRegistryBaseUri());
+        }
+
         KubernetesExport.ExportConfigurer configurer = new KubernetesExport.ExportConfigurer(
                 runtime,
                 baseDir,
-                quarkusVersion,
+                quarkusPlatformBoms.quarkusBom().getVersion(),
                 files,
                 name,
                 gav,
-                repositories,
+                mavenResolver.repos(),
                 dependencies,
                 excludes,
                 mavenSettings,
@@ -459,8 +456,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 localKameletDir,
                 springBootVersion,
                 camelSpringBootVersion,
-                quarkusGroupId,
-                quarkusArtifactId,
+                quarkusPlatformBoms.quarkusBom().getGroupId(),
+                quarkusPlatformBoms.quarkusBom().getArtifactId(),
+                quarkusPlatformBoms.quarkusExtensioRegistryBaseUri(),
                 openApi,
                 workingDir,
                 packageName,
@@ -470,13 +468,16 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 true,
                 true,
                 false,
-                download,
+                mavenResolver.download(),
                 packageScanJars,
                 (quiet || output != null),
                 true,
                 "info",
                 verbose,
-                skipPlugins);
+                skipPlugins,
+                quarkusPlatformBoms.quarkusCamelBom().getGroupId(),
+                quarkusPlatformBoms.quarkusCamelBom().getArtifactId(),
+                quarkusPlatformBoms.quarkusCamelBom().getVersion());
         KubernetesExport export = new KubernetesExport(getMain(), configurer);
 
         export.image = image;

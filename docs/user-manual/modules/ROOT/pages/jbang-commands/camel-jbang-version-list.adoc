@@ -21,7 +21,6 @@ camel version list [options]
 | Option | Description | Default | Type
 | `--date-format` | The format to show the date (such as dd-MM-yyyy) | DEFAULT_DATE_FORMAT | String
 | `--days` | Whether to include days since release | true | boolean
-| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--eol` | Include releases that are end-of-life | true | boolean
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--from-date` | Filter by release date (inclusive) |  | String
@@ -30,7 +29,6 @@ camel version list [options]
 | `--lts` | Only show LTS supported releases | false | boolean
 | `--patch` | Whether to include patch releases (x.y.z) | true | boolean
 | `--rc` | Include also milestone or RC releases | false | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
 | `--sort` | Sort by (version, date, or days) | version | String
 | `--tail` | The number of lines from the end of the table to show. |  | int

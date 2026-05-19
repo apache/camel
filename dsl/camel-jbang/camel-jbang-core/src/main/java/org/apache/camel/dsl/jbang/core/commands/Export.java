@@ -51,10 +51,6 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_S
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS_SECURITY;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_WRAPPER;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.OPEN_API;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_ARTIFACT_ID;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_GROUP_ID;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_VERSION;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.REPOS;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.SPRING_BOOT_VERSION;
 
 @Command(name = "export",
@@ -184,16 +180,14 @@ public class Export extends ExportBaseCommand {
             this.camelVersion = props.getProperty(CAMEL_VERSION, this.camelVersion);
             this.kameletsVersion = props.getProperty(KAMELETS_VERSION, this.kameletsVersion);
             this.localKameletDir = props.getProperty(LOCAL_KAMELET_DIR, this.localKameletDir);
-            this.quarkusGroupId = props.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
-            this.quarkusArtifactId = props.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
-            this.quarkusVersion = props.getProperty(QUARKUS_VERSION, this.quarkusVersion);
+            this.quarkusPlatform = QuarkusPlatformMixin.of(props, this.quarkusPlatform);
             this.camelSpringBootVersion = props.getProperty(CAMEL_SPRING_BOOT_VERSION, this.camelSpringBootVersion);
             this.springBootVersion = props.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
             this.mavenWrapper
                     = "true".equals(props.getProperty(MAVEN_WRAPPER, this.mavenWrapper ? "true" : "false"));
             this.exportDir = props.getProperty(EXPORT_DIR, this.exportDir);
             this.openapi = props.getProperty(OPEN_API, this.openapi);
-            this.repositories = props.getProperty(REPOS, this.repositories);
+            this.mavenResolver = MavenResolverMixin.of(props, this.mavenResolver);
             this.mavenSettings = props.getProperty(MAVEN_SETTINGS, this.mavenSettings);
             this.mavenSettingsSecurity = props.getProperty(MAVEN_SETTINGS_SECURITY, this.mavenSettingsSecurity);
             this.mavenCentralEnabled = "true"
@@ -208,9 +202,7 @@ public class Export extends ExportBaseCommand {
      * For supported fields prefer the values from system properties if they are defined.
      */
     private void overrideFromSystemProperties() {
-        this.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
-        this.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
-        this.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
+        this.quarkusPlatform = QuarkusPlatformMixin.of(System.getProperties(), this.quarkusPlatform);
         this.camelSpringBootVersion
                 = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> this.camelSpringBootVersion);
     }
@@ -219,7 +211,7 @@ public class Export extends ExportBaseCommand {
         // copy properties from this to cmd
         cmd.exportBaseDir = exportBaseDir;
         cmd.files = this.files;
-        cmd.repositories = this.repositories;
+        cmd.mavenResolver = this.mavenResolver;
         cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
         cmd.name = this.name;
@@ -235,7 +227,6 @@ public class Export extends ExportBaseCommand {
         cmd.cleanExportDir = this.cleanExportDir;
         cmd.yes = this.yes;
         cmd.fresh = this.fresh;
-        cmd.download = this.download;
         cmd.skipPlugins = this.skipPlugins;
         cmd.packageScanJars = this.packageScanJars;
         cmd.javaVersion = this.javaVersion;
@@ -247,9 +238,7 @@ public class Export extends ExportBaseCommand {
         cmd.loggingLevel = this.loggingLevel;
         cmd.mainClassname = this.mainClassname;
         cmd.camelSpringBootVersion = this.camelSpringBootVersion;
-        cmd.quarkusGroupId = this.quarkusGroupId;
-        cmd.quarkusArtifactId = this.quarkusArtifactId;
-        cmd.quarkusVersion = this.quarkusVersion;
+        cmd.quarkusPlatform = this.quarkusPlatform;
         cmd.quarkusPackageType = this.quarkusPackageType;
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;

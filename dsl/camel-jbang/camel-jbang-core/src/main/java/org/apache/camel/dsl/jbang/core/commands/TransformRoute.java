@@ -82,6 +82,9 @@ public class TransformRoute extends CamelCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
+
     public TransformRoute(CamelJBangMain main) {
         super(main);
     }
@@ -125,6 +128,7 @@ public class TransformRoute extends CamelCommand {
         };
         run.files = files;
         run.executionLimitOptions.maxSeconds = 1;
+        run.mavenResolver = mavenResolver;
         Integer exit = run.runTransform(ignoreLoadingError);
         if (exit != null && exit != 0) {
             return exit;

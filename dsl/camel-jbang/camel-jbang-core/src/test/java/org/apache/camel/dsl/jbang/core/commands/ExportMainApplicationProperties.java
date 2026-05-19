@@ -94,7 +94,8 @@ class ExportMainApplicationProperties {
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
-                "--runtime=%s".formatted(rt.runtime()));
+                "--runtime=%s".formatted(rt.runtime()),
+                CamelCommandBaseTestSupport.quarkusExtRegistry());
         if (args != null) {
             CommandLine.populateCommand(command, args);
         }

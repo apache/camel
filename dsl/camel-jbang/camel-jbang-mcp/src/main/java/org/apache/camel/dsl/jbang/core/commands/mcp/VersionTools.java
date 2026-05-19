@@ -60,7 +60,6 @@ public class VersionTools {
             versionList.lts = lts != null && lts;
             versionList.fromVersion = fromVersion != null ? fromVersion : "4.0";
             versionList.sort = "-version"; // newest first
-            versionList.download = true;
             versionList.fresh = false;
 
             int exitCode = versionList.doCall();

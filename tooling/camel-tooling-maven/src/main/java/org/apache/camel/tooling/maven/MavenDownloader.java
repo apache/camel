@@ -27,6 +27,25 @@ import org.apache.camel.Service;
 public interface MavenDownloader extends Service {
 
     /**
+     * A single non-transitive artifact resolution - a shorthand for
+     * {@code resolveArtifacts(List.of(gav), null, false, false)}.
+     *
+     * @param  gav              the Maven artifact to resolve
+     * @throws RuntimeException if there are any resolution problems
+     */
+    default MavenArtifact resolveArtifact(MavenGav gav) {
+        try {
+            List<MavenArtifact> artifacts = resolveArtifacts(List.of(gav.toMavenResolverString()), null, false, false);
+            if (artifacts.size() != 1) {
+                throw new IllegalStateException("Could not resolve " + gav);
+            }
+            return artifacts.get(0);
+        } catch (MavenResolutionException e) {
+            throw new RuntimeException("Could not resolve " + gav, e);
+        }
+    }
+
+    /**
      * Main resolution method. Using Maven Resolver, a list of maven coordinates (in the form of
      * {@code groupId:artifactId[:packaging[:classifier]]:version}) is used to download artifacts from configured Maven
      * repositories.

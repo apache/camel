@@ -26,7 +26,6 @@ camel dependency update [options]
 | `--clean-dir` | If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care) | false | boolean
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--dir,--directory` | Directory where the project will be exported | . | String
-| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--dry-run` | Preview export without writing files | false | boolean
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
@@ -57,12 +56,8 @@ camel dependency update [options]
 | `--port` | Embeds a local HTTP server on this port |  | int
 | `--profile` | Profile to export (dev, test, prod). |  | String
 | `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String
-| `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
-| `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
 | `--quarkus-package-type` | Quarkus package type (uber-jar or fast-jar) | fast-jar | String
-| `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--scan-routes` | Sync dependencies from route definitions. Only manages org.apache.camel dependencies, preserving non-Camel dependencies. Removes unused Camel dependencies. |  | boolean
 | `--skip-plugins` | Skip plugins during export | false | boolean

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.tooling.maven.MavenGav;
 
 public final class CamelQuarkusUpdate implements Update {
 
@@ -45,7 +46,7 @@ public final class CamelQuarkusUpdate implements Update {
         List<String[]> qVersions
                 = downloader.resolveAvailableVersions("org.apache.camel.quarkus", QUARKUS_UPDATE_ARTIFACTID,
                         updateMixin.version,
-                        updateMixin.repos);
+                        updateMixin.mavenResolver.repos());
         String streamVersion = null;
         for (String[] qVersion : qVersions) {
             if (qVersion[0].equals(updateMixin.version)) {
@@ -80,8 +81,12 @@ public final class CamelQuarkusUpdate implements Update {
     public List<String> command() throws CamelUpdateException {
         commands.add(mvnProgramCall());
         commands.add(debug());
-        commands.add(String.format("%s:quarkus-maven-plugin:%s:update", updateMixin.quarkusMavenPluginGroupId,
-                updateMixin.quarkusMavenPluginVersion));
+        MavenGav gav = updateMixin.resolveQuarkusMavenPlugin();
+        commands.add(String.format(
+                "%s:%s:%s:update",
+                gav.getGroupId(),
+                gav.getArtifactId(),
+                gav.getVersion()));
         commands.add("-Dstream=" + getQuarkusStream());
         commands.add(runMode());
 

@@ -47,6 +47,7 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -474,11 +475,14 @@ public class Debug extends Run {
             Build b = new Build();
             mp.setBuild(b);
 
+            MavenGav quarkusMavenPlugin = quarkusPlatform
+                    .resolve(camelVersion, mavenResolver.downloader()::resolveArtifact)
+                    .quarkusMavenPlugin();
             Plugin pi = new Plugin();
             b.addPlugin(pi);
-            pi.setGroupId(quarkusGroupId);
-            pi.setArtifactId("quarkus-maven-plugin");
-            pi.setVersion(quarkusVersion);
+            pi.setGroupId(quarkusMavenPlugin.getGroupId());
+            pi.setArtifactId(quarkusMavenPlugin.getArtifactId());
+            pi.setVersion(quarkusMavenPlugin.getVersion());
             PluginExecution pe = new PluginExecution();
             pe.addGoal("build");
             pi.addExecution(pe);
