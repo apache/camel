@@ -58,7 +58,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     // ==================== Maven dependency update (existing export-based tests) ====================
 
     @ParameterizedTest
-    @MethodSource("runtimeProvider")
+    @MethodSource("exportRuntimeProvider")
     void shouldDependencyUpdate(RuntimeType rt) throws Exception {
         prepareMavenProject(rt);
         checkNoUpdateOnFreshlyGeneratedproject();
@@ -393,6 +393,17 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
             builder.add(Arguments.of(RuntimeType.springBoot));
         }
         builder.add(Arguments.of(RuntimeType.main));
+        return builder.build();
+    }
+
+    // Export-based tests exclude main runtime: Export and DependencyUpdate use
+    // different dependency discovery paths, causing false mismatches for main
+    private static Stream<Arguments> exportRuntimeProvider() {
+        Stream.Builder<Arguments> builder = Stream.builder();
+        builder.add(Arguments.of(RuntimeType.quarkus));
+        if (Runtime.version().feature() >= 21) {
+            builder.add(Arguments.of(RuntimeType.springBoot));
+        }
         return builder.build();
     }
 

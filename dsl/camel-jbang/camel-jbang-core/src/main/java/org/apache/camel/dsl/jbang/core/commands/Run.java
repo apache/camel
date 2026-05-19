@@ -822,6 +822,13 @@ public class Run extends CamelCommand {
             addDependencies(pomDependencies.toArray(new String[0]));
         }
 
+        // auto-detect application.properties and include it
+        if (!empty && sourceDir == null) {
+            String appProps = baseDir.resolve("application.properties").toString();
+            if (Files.exists(Paths.get(appProps)) && !files.contains(appProps)) {
+                files.add(appProps);
+            }
+        }
         if (profile != null) {
             // need to include profile application properties if exists
             String name = baseDir + "/application-" + profile + ".properties";
