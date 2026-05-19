@@ -1,4 +1,5 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
+// keep in sync with src/main/jbang/main/CamelJBang.java
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
