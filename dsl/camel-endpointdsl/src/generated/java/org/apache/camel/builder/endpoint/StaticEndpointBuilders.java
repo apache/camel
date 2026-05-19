@@ -15914,6 +15914,46 @@ public class StaticEndpointBuilders {
         return SshEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * Syntax: <code>state-store:storeName</code>
+     * 
+     * Path parameter: storeName (required)
+     * The name of the state store
+     * 
+     * @param path storeName
+     * @return the dsl builder
+     */
+    public static StateStoreEndpointBuilderFactory.StateStoreEndpointBuilder stateStore(String path) {
+        return stateStore("state-store", path);
+    }
+    /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * Syntax: <code>state-store:storeName</code>
+     * 
+     * Path parameter: storeName (required)
+     * The name of the state store
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path storeName
+     * @return the dsl builder
+     */
+    public static StateStoreEndpointBuilderFactory.StateStoreEndpointBuilder stateStore(String componentName, String path) {
+        return StateStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
      * 
