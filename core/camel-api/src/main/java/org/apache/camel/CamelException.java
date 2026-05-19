@@ -19,7 +19,13 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Base class for all Camel checked exceptions typically thrown by a {@link Processor}
+ * Base class for all Camel <i>checked</i> exceptions, typically thrown from a {@link Processor} or other lifecycle step
+ * that already declares {@code throws Exception}.
+ * <p/>
+ * Prefer {@link RuntimeCamelException} (or one of its subclasses such as {@link CamelExchangeException}) for failures
+ * raised across API boundaries that do not declare a checked throws clause.
+ *
+ * @see RuntimeCamelException
  */
 public class CamelException extends Exception {
 

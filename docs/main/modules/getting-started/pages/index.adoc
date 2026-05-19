@@ -11,7 +11,7 @@ Books about design patterns document the existing best practices within a partic
 
 A famous book about design patterns is the http://www.amazon.com/Enterprise-Integration-Patterns-Designing-Deploying/dp/0321200683[_Enterprise
 Integration Patterns: Designing, Building, and Deploying Messaging
-Solutions_] written by Gregor Hohpe and Bobby Wolf. The E.I.P. book, as it is known, describes 65 design patterns for asynchronous messaging systems. The book gives each of them a name and an image - intended to be used in architectural diagrams.
+Solutions_] written by Gregor Hohpe and Bobby Woolf. The E.I.P. book, as it is known, describes 65 design patterns for asynchronous messaging systems. The book gives each of them a name and an image - intended to be used in architectural diagrams.
 
 [[BookGettingStarted-TheCamelProject]]
 === The Apache Camel Core project
@@ -48,11 +48,11 @@ The Javadoc API that are the most relevant for Camel end users are in the follow
 [[BookGettingStarted-CreatingYourFirstProject]]
 == Creating your first project
 
-We'll start this guide by creating a simple integration. You need to have https://maven.apache.org/[Apache Maven] and a https://adoptium.net/temurin/[JDK] version 11 or greater installed on your system.
+We'll start this guide by creating a simple integration. You need to have https://maven.apache.org/[Apache Maven] 3.9.6 or greater and a https://adoptium.net/temurin/[JDK] version 17 or greater installed on your system.
 
 [NOTE]
 ====
-We strongly recommend you use an LTS version of Java (i.e., 11 or 17). We regularly test Camel in our continuous integration (CI) environment using Java's LTS versions.
+We strongly recommend you use an LTS version of Java (i.e., 17 or 21). We regularly test Camel in our continuous integration (CI) environment using Java's LTS versions.
 ====
 
 === Generating the project
@@ -63,13 +63,13 @@ Run this command to create your first Camel Core project:
 
 [source,bash]
 ----
-mvn archetype:generate -B -DarchetypeGroupId=org.apache.camel.archetypes -DarchetypeArtifactId=camel-archetype-java -DarchetypeVersion=3.18.4 -Dpackage=org.apache.camel.learn -DgroupId=org.apache.camel.learn -DartifactId=first-camel-integration -Dversion=1.0.0-SNAPSHOT
+mvn archetype:generate -B -DarchetypeGroupId=org.apache.camel.archetypes -DarchetypeArtifactId=camel-archetype-java -DarchetypeVersion=4.20.0 -Dpackage=org.apache.camel.learn -DgroupId=org.apache.camel.learn -DartifactId=first-camel-integration -Dversion=1.0.0-SNAPSHOT
 ----
 
 If you have never used archetypes before, the command looks lengthy. We'll explain the relevant arguments:
 
 * `-DarchetypeArtifactId`: this is the ID of the archetype to use (i.e., which of the templates from Camel Core to use - `camel-archetype-java` in this case)
-* `-DarchetypeVersion`: this is the version of the archetype to use. It is also the same version of Camel to use for the example. We are using `3.18.4` in this example.
+* `-DarchetypeVersion`: this is the version of the archetype to use. It is also the same version of Camel to use for the example. We are using `4.20.0` in this example. Check https://camel.apache.org/download/[the Camel download page] for the latest released version.
 * `-Dpackage`: the package name for the project you are creating. We'll use `org.apache.camel.learn` in all this guide.
 * `-DgroupId`: the group ID for the project you are creating. We'll use `org.apache.camel.learn` in all this guide.
 * `-DartifactId`: the artifact name for the project you are creating.
@@ -101,15 +101,15 @@ After you run the command above, you should have the following messages:
 [source,bash]
 ----
 ...
-[che.camel.learn.MainApp.main()] MainSupport                    INFO  Apache Camel (Main) 3.18.4 is starting
+[che.camel.learn.MainApp.main()] MainSupport                    INFO  Apache Camel (Main) 4.20.0 is starting
 [che.camel.learn.MainApp.main()] BaseMainSupport                INFO  Auto-configuration summary
 [che.camel.learn.MainApp.main()] XPathBuilder                   INFO  Created default XPathFactory com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl@33cc7a16
 [che.camel.learn.MainApp.main()] FileEndpoint                   INFO  Endpoint is configured with noop=true so forcing endpoint to be idempotent as well
 [che.camel.learn.MainApp.main()] FileEndpoint                   INFO  Using default memory based idempotent repository with cache max size: 1000
-[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) is starting
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Apache Camel 4.20.0 (camel-1) is starting
 [che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Routes startup (started:1)
 [che.camel.learn.MainApp.main()] AbstractCamelContext           INFO      Started route1 (file://src/data)
-[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) started in 89ms (build:12ms init:68ms start:9ms JVM-uptime:1s)
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Apache Camel 4.20.0 (camel-1) started in 89ms (build:12ms init:68ms start:9ms JVM-uptime:1s)
 [che.camel.learn.MainApp.main()] MainSupport                    INFO  Waiting until complete: Duration max 2 messages processed
 [1) thread #1 - file://src/data] route1                         INFO  Other message
 [1) thread #1 - file://src/data] route1                         INFO  UK message
@@ -117,7 +117,7 @@ After you run the command above, you should have the following messages:
 
 If you can see an output like that on your terminal, it means the integration has run well.
 
-The integration you have just run consumed two files and copied them to a directory based on their contents. You can check it out yourself but looking at the `target/messages` directory within the project:
+The integration you have just run consumed two files and copied them to a directory based on their contents. You can check it out yourself by looking at the `target/messages` directory within the project:
 
 [NOTE]
 ====
@@ -141,12 +141,12 @@ target/messages/uk/message1.xml
 
 [NOTE]
 ====
-Use the Windows Explorer or the Windows equivalent of the `find` command available on Linux, macOS or *BSDs.
+The `find` command is available on Linux, macOS and *BSDs. On Windows, use Windows Explorer or the equivalent shell command (such as `dir /s /b`).
 ====
 
 == Understanding the project
 
-The integration you created implements a pattern (E.I.P.) called xref:components:eips:choice-eip.adoc[Content Based Router]. The Camel implementation of this pattern allows you to implement logic that route messages based on their content.
+The integration you created implements a pattern (E.I.P.) called xref:components:eips:choice-eip.adoc[Content Based Router]. The Camel implementation of this pattern allows you to implement logic that routes messages based on their content.
 
 More specifically, this integration looks at the content of the XML files in the `src/data` directory. If the content of the element `city` is London, then it moves the file to the directory `target/messages/uk`. Otherwise, it moves the file to the directory `target/messages/others`.
 
@@ -239,7 +239,7 @@ Camel makes extensive use of xref:manual::uris.adoc[URIs] to allow you to refer 
 
 Some Camel methods take a parameter that is a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier[URI] string. People usually know that a URI is "something like a https://en.wikipedia.org/wiki/URL[URL]" but do not always understand the relationship between URI and an URL or its relationship with other acronyms such as https://en.wikipedia.org/wiki/Internationalized_Resource_Identifier[IRI] and https://en.wikipedia.org/wiki/Uniform_Resource_Name[URN].
 
-Most people are familiar with _URLs_ (uniform resource locators), such as `\http://...`, `\ftp://...`, `\mailto:...:`. A URL specifies the _location_ of a resource.
+Most people are familiar with _URLs_ (uniform resource locators), such as `\http://...`, `\ftp://...`, `\mailto:...`. A URL specifies the _location_ of a resource.
 
 A URN is a wrapper for different "unique identifier" schemes. The syntax of a URN is `urn:<scheme-name>:<unique-identifier>`. A URN uniquely identifies a _resource_ (i.e.:, a book, person, or piece of equipment). By itself, a URN does not specify the _location_ of the resource.
 
@@ -344,7 +344,7 @@ our documentation contains an in-depth overview of the xref:manual::camelcontext
 [[BookGettingStarted-Components]]
 === Components
 
-Components are another fundamental building block of Apache Camel and are used to connect routes to a wide variety of external systems and services. Camel comes with a large number of built-in components that provide connectivity to a wide range of technologies and protocols, such as HTTP, JMS, file, and many others. You can also create a custom components if the built-in components do not meet your needs.
+Components are another fundamental building block of Apache Camel and are used to connect routes to a wide variety of external systems and services. Camel comes with a large number of built-in components that provide connectivity to a wide range of technologies and protocols, such as HTTP, JMS, file, and many others. You can also create custom components if the built-in components do not meet your needs.
 
 Typically, Camel-based applications shouldn't need to interact directly with a component. However, there are some circumstances where manipulating the component may be beneficial for the performance, operation, or scalability of the application. Our documentation contains an in-depth overview of the xref:manual::component.adoc[Component] if you want to learn more about it, including important details necessary to write your own.
 
@@ -375,13 +375,13 @@ When writing routes, you may use processors to execute more complex logic on the
 ----
 public void process(Exchange exchange) {
     final String body = exchange.getMessage().getBody(String.class);
-    System.out.println(“Updated body: “ + body.replace(“city”, “county”));
+    System.out.println("Updated body: " + body.replace("city", "county"));
 
     // ... more code here
 }
 
 public void configure() {
-    from(“file:src/data?noop=true”)
+    from("file:src/data?noop=true")
         .process(this::process);
 }
 ----

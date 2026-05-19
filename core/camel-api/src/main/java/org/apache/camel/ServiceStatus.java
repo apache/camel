@@ -19,7 +19,14 @@ package org.apache.camel;
 import java.io.Serializable;
 
 /**
- * Represents the status of a {@link Service} instance
+ * The current lifecycle state of a {@link Service} (or {@link StatefulService}) as it transitions between Initializing,
+ * Started, Suspended and Stopped.
+ * <p/>
+ * Returned by {@link StatefulService#getStatus()} and used throughout Camel for state-dependent checks (e.g.
+ * {@link #isStartable()}, {@link #isStoppable()}, {@link #isSuspendable()}).
+ *
+ * @see Service
+ * @see StatefulService
  */
 public enum ServiceStatus implements Serializable {
     /** The service is being initialized. */

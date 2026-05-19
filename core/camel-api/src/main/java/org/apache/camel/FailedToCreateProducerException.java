@@ -21,7 +21,10 @@ import java.util.Objects;
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
- * Thrown if Camel failed to create a producer for a given endpoint.
+ * Thrown when an {@link Endpoint} cannot produce a {@link Producer}, for example because the endpoint URI is not
+ * producer-capable, required options are missing, or an underlying client connection cannot be opened.
+ * <p/>
+ * The originating endpoint URI is sanitized (credentials removed) before being included in the message.
  */
 public class FailedToCreateProducerException extends RuntimeCamelException {
 

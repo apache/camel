@@ -21,7 +21,13 @@ import java.io.Serial;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An exception caused by a specific message {@link Exchange}
+ * A {@link CamelException} that carries the {@link Exchange} whose processing triggered the failure.
+ * <p/>
+ * Used by Camel routing internals to attach exchange context to a failure so error handlers, the dead-letter channel
+ * and onException clauses can inspect headers, properties and the in-flight {@link Message}. The reference is
+ * {@code transient} because exchanges are not guaranteed to be serializable.
+ *
+ * @see Exchange
  */
 public class CamelExchangeException extends CamelException {
     private static final @Serial long serialVersionUID = -8721487431101572630L;

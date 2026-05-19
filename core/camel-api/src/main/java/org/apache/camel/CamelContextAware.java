@@ -19,7 +19,17 @@ package org.apache.camel;
 import org.apache.camel.spi.HasCamelContext;
 
 /**
- * An interface to represent an object which wishes to be injected with the {@link CamelContext}
+ * Marker for objects that wish to receive the owning {@link CamelContext}.
+ * <p/>
+ * Camel inspects objects added to the context (components, processors, beans registered in the
+ * {@link org.apache.camel.spi.Registry}, route policies, ...) and, when they implement this interface,
+ * {@link #setCamelContext(CamelContext)} is called so they can keep a reference to their context. This is the standard
+ * way for SPI implementations and user beans to reach into Camel APIs from inside a route.
+ * <p/>
+ * The static {@link #trySetCamelContext(Object, CamelContext)} helper is convenient for code paths that wire up
+ * arbitrary objects without first knowing whether they need the context.
+ *
+ * @see CamelContext
  */
 public interface CamelContextAware extends HasCamelContext {
 

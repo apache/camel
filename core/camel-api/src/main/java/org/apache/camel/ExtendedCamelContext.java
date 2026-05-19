@@ -46,9 +46,14 @@ import org.apache.camel.spi.StartupStepRecorder;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
- * but for SPI, custom components, or more advanced used-cases with Camel.
+ * Internal extension surface of {@link CamelContext}: methods and SPI hooks that custom components, data formats,
+ * languages, route policies and tooling may need, but that are <b>not</b> part of the end-user facing API.
+ * <p/>
+ * Obtained via {@link CamelContext#getCamelContextExtension()}. End-user route code should depend only on
+ * {@link CamelContext}; everything in this interface should be considered an internal contract that may change between
+ * minor releases.
  *
+ * @see   CamelContext#getCamelContextExtension()
  * @since 3.0
  */
 public interface ExtendedCamelContext {

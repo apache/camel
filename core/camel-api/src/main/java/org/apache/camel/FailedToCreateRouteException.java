@@ -22,7 +22,11 @@ import org.apache.camel.util.URISupport;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Exception when failing to create a {@link org.apache.camel.Route}.
+ * Thrown when Camel cannot build a {@link Route} from a {@link RoutesBuilder} or route model, for example because an
+ * {@link Endpoint} cannot be resolved, a referenced bean or processor is missing, or DSL validation fails.
+ * <p/>
+ * Distinct from {@link FailedToStartRouteException}, which signals that a successfully built route failed during the
+ * start phase of the {@link CamelContext} lifecycle.
  */
 public class FailedToCreateRouteException extends RuntimeCamelException {
 

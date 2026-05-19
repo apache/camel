@@ -17,8 +17,17 @@
 package org.apache.camel;
 
 /**
- * Lifecycle API for {@link CamelContext}.
+ * Lifecycle API for {@link CamelContext}: the methods used to start, stop, suspend and resume a Camel runtime.
+ * <p/>
+ * Extracted from {@link CamelContext} so the lifecycle surface can be referenced independently of the rest of the
+ * context configuration API. See <a href="https://camel.apache.org/manual/lifecycle.html">Camel lifecycle</a> for the
+ * full description of states and transitions.
+ * <p/>
+ * As an {@link AutoCloseable}, a {@link CamelContext} can be used with try-with-resources to ensure {@link #close()} is
+ * invoked on exit.
  *
+ * @see   CamelContext
+ * @see   ServiceStatus
  * @since 3.2
  */
 public interface CamelContextLifecycle extends AutoCloseable {
@@ -27,7 +36,7 @@ public interface CamelContextLifecycle extends AutoCloseable {
      * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details in the
      * {@link Main} documentation for running Camel Standalone).
      * <p/>
-     * See more details at the class-level javadoc at {@link CamelContext}.
+     * See more details at the class-level Javadoc at {@link CamelContext}.
      *
      * @throws RuntimeCamelException is thrown if starting failed
      */
@@ -37,7 +46,7 @@ public interface CamelContextLifecycle extends AutoCloseable {
      * Stop and shutdown the {@link CamelContext} (will stop all routes/components/endpoints etc and clear internal
      * state/cache).
      * <p/>
-     * See more details at the class-level javadoc at {@link CamelContext}.
+     * See more details at the class-level Javadoc at {@link CamelContext}.
      *
      * @throws RuntimeCamelException is thrown if stopping failed
      */
@@ -95,7 +104,7 @@ public interface CamelContextLifecycle extends AutoCloseable {
 
     /**
      * Builds the CamelContext.
-     *
+     * <p/>
      * This phase is intended for frameworks or runtimes that are capable of performing build-time optimizations such as
      * with camel-quarkus.
      */
@@ -119,7 +128,7 @@ public interface CamelContextLifecycle extends AutoCloseable {
     /**
      * Shutdown the CamelContext, which means it cannot be started again.
      * <p/>
-     * See more details at the class-level javadoc at {@link CamelContext}.
+     * See more details at the class-level Javadoc at {@link CamelContext}.
      */
     void shutdown();
 

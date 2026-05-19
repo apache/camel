@@ -19,7 +19,10 @@ package org.apache.camel;
 import java.util.Objects;
 
 /**
- * Exception when failing to start a {@link Component}.
+ * Thrown when a {@link Component} fails to start as part of the {@link CamelContext} startup sequence.
+ * <p/>
+ * Carries the component name so the error message points at the offending component (typically the URI scheme used in
+ * route DSL, e.g. {@code kafka}, {@code http}).
  *
  * @since 3.9
  */
