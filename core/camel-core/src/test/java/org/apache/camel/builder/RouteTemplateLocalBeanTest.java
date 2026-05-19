@@ -70,6 +70,80 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     }
 
     @Test
+    public void testLocalBeanFoundByReifier() throws Exception {
+        // Test that AbstractReifier can find a local bean (kamelet scenario)
+        // Local bean is defined via templateBean, NOT in global registry
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myLocalBean",
+                                (Processor) ex -> ex.getMessage().setBody("LocalOnly " + ex.getMessage().getBody()))
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myLocalBean")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        // AbstractReifier should find the local bean and use it
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("LocalOnly World", out);
+
+        // Bean should NOT be in global registry (kamelet local beans are scoped to route template)
+        assertNull(context.getRegistry().lookupByName("myLocalBean"));
+
+        context.stop();
+    }
+
+    @Test
+    public void testLocalBeanOverridesGlobalBean() throws Exception {
+        // Test that local bean takes precedence when both local and global beans exist with same name
+        // This ensures AbstractReifier checks local repository BEFORE global registry
+
+        // Register a global bean with the same name
+        context.getRegistry().bind("myBar", (Processor) ex -> ex.getMessage().setBody("Global " + ex.getMessage().getBody()));
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        // Create route with local bean that has the same name as global bean
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .bean("myBar", (Processor) ex -> ex.getMessage().setBody("Local " + ex.getMessage().getBody()))
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        // The local bean should take precedence over the global bean
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("Local World", out);
+
+        // Global bean should still exist in registry
+        assertNotNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
     public void testLocalBeanInBuilder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
