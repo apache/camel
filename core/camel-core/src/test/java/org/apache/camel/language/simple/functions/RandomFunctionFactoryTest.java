@@ -58,12 +58,12 @@ public class RandomFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         Exception e1 = assertThrows(Exception.class,
                 () -> evaluate("random(10,21,30)", Object.class),
                 "Should have thrown exception");
-        assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random(10,21,30)", e1.getMessage());
+        assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random(10,21,30)", e1.getCause().getMessage());
 
         Exception e2 = assertThrows(Exception.class,
                 () -> evaluate("random()", Object.class),
                 "Should have thrown exception");
-        assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e2.getMessage());
+        assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e2.getCause().getMessage());
 
         exchange.getIn().setHeader("max", 20);
         int num = evaluate("random(10,${header.max})", Integer.class);

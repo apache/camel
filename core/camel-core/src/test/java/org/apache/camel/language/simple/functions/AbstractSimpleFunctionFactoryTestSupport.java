@@ -31,8 +31,7 @@ public abstract class AbstractSimpleFunctionFactoryTestSupport extends ExchangeT
     }
 
     protected <T> T evaluate(String function, Class<T> type) {
-        Expression expression = createFactory().createFunction(context, function, 0);
-        assertNotNull(expression, "No Expression could be created for function: " + function);
+        Expression expression = context.resolveLanguage("simple").createExpression("${" + function + "}");
         expression.init(context);
         return expression.evaluate(exchange, type);
     }
