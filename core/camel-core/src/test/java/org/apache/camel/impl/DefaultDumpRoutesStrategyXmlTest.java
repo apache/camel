@@ -58,21 +58,14 @@ public class DefaultDumpRoutesStrategyXmlTest extends ContextTestSupport {
         }
         String xml = all.toString();
 
-        // the dump wraps output in <camel> and strips the outer container elements
-        assertThat(xml).as("Expected <camel> root wrapper\nActual xml:\n%s", xml)
-                .contains("<camel>", "</camel>");
-
-        // outer container tags must be stripped entirely (both opening and closing) - CAMEL-23521
-        assertThat(xml).as("Outer <routes> wrapper must be stripped\nActual xml:\n%s", xml)
-                .doesNotContain("<routes");
-        assertThat(xml).as("Outer <routeTemplates> wrapper must be stripped\nActual xml:\n%s", xml)
-                .doesNotContain("<routeTemplates");
-
-        // individual route elements must be present and properly closed
-        assertThat(xml).as("Expected individual <route> elements\nActual xml:\n%s", xml)
-                .contains("<route ", "</route>");
-        assertThat(xml).as("Expected individual <routeTemplate> elements\nActual xml:\n%s", xml)
-                .contains("<routeTemplate ", "</routeTemplate>");
+        assertThat(xml)
+                .as("XML dump structure check.\nActual xml:\n%s", xml)
+                // the dump wraps output in <camel> and strips the outer container elements
+                .contains("<camel>", "</camel>")
+                // outer container tags must be stripped entirely (both opening and closing) - CAMEL-23521
+                .doesNotContain("<routes", "<routeTemplates")
+                // individual route elements must be present and properly closed
+                .contains("<route ", "</route>", "<routeTemplate ", "</routeTemplate>");
     }
 
     @Override
