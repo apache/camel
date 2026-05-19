@@ -62,7 +62,7 @@ class DefaultRestRegistryTest {
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
                 "application/json", "application/json", "User", "User",
-                "route1", "Get all users");
+                "route1", null, null, "Get all users");
 
         assertThat(registry.size()).isEqualTo(1);
     }
@@ -72,12 +72,12 @@ class DefaultRestRegistryTest {
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
                 "application/json", "application/json", null, null,
-                "route1", "Get all users");
+                "route1", null, null, "Get all users");
 
         registry.addRestService(consumer2, false, "http://localhost:8080/api/orders",
                 "http://localhost:8080", "/api", "/orders", "POST",
                 "application/json", "application/json", "Order", "Order",
-                "route2", "Create order");
+                "route2", null, null, "Create order");
 
         assertThat(registry.size()).isEqualTo(2);
     }
@@ -86,11 +86,11 @@ class DefaultRestRegistryTest {
     void testAddMultipleServicesToSameConsumer() {
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
-                null, null, null, null, "route1", "Get users");
+                null, null, null, null, "route1", null, null, "Get users");
 
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users/{id}",
                 "http://localhost:8080", "/api", "/users/{id}", "GET",
-                null, null, null, null, "route2", "Get user by id");
+                null, null, null, null, "route2", null, null, "Get user by id");
 
         assertThat(registry.size()).isEqualTo(2);
     }
@@ -99,7 +99,7 @@ class DefaultRestRegistryTest {
     void testRemoveRestService() {
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
-                null, null, null, null, "route1", "Get users");
+                null, null, null, null, "route1", null, null, "Get users");
 
         assertThat(registry.size()).isEqualTo(1);
 
@@ -112,7 +112,7 @@ class DefaultRestRegistryTest {
     void testRemoveNonExistentService() {
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
-                null, null, null, null, "route1", "Get users");
+                null, null, null, null, "route1", null, null, "Get users");
 
         registry.removeRestService(consumer2);
 
@@ -124,7 +124,7 @@ class DefaultRestRegistryTest {
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
                 "application/json", "application/json", "User", "UserResponse",
-                "route1", "Get all users");
+                "route1", null, null, "Get all users");
 
         List<RestRegistry.RestService> services = registry.listAllRestServices();
 
@@ -149,7 +149,7 @@ class DefaultRestRegistryTest {
     void testContractFirstService() {
         registry.addRestService(consumer1, true, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
-                null, null, null, null, "route1", "Get users");
+                null, null, null, null, "route1", null, null, "Get users");
 
         List<RestRegistry.RestService> services = registry.listAllRestServices();
         assertThat(services.get(0).isContractFirst()).isTrue();
@@ -170,7 +170,7 @@ class DefaultRestRegistryTest {
     void testServiceState() {
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
-                null, null, null, null, "route1", "Get users");
+                null, null, null, null, "route1", null, null, "Get users");
 
         List<RestRegistry.RestService> services = registry.listAllRestServices();
         // Non-stateful consumer returns Stopped state
@@ -187,7 +187,7 @@ class DefaultRestRegistryTest {
     void testStopClearsRegistry() throws Exception {
         registry.addRestService(consumer1, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
-                null, null, null, null, "route1", "Get users");
+                null, null, null, null, "route1", null, null, "Get users");
 
         assertThat(registry.size()).isEqualTo(1);
 

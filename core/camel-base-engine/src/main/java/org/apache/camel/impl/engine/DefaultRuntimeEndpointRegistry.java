@@ -218,6 +218,15 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             // a HashSet is fine for inputs as we only have a limited number of those
             Set<String> uris = new HashSet<>();
             uris.add(endpoint.getEndpointUri());
+            // some components (e.g. rest-openapi) delegate to an underlying consumer (e.g. platform-http) whose
+            // endpoint URI differs from the route's logical endpoint URI; include the consumer's URI so that
+            // ExchangeCreatedEvent hits recorded under the consumer URI are matched when looking up statistics
+            if (rse.getRoute().getConsumer() != null) {
+                String consumerUri = rse.getRoute().getConsumer().getEndpoint().getEndpointUri();
+                if (!endpoint.getEndpointUri().equals(consumerUri)) {
+                    uris.add(consumerUri);
+                }
+            }
             inputs.put(routeId, uris);
             // use a LRUCache for outputs as we could potential have unlimited uris if dynamic routing is in use
             // and therefore need to have the limit in use
@@ -235,6 +244,15 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 if (key != null) {
                     inputUtilization.remove(key);
                 }
+                if (rse.getRoute().getConsumer() != null) {
+                    String consumerUri = rse.getRoute().getConsumer().getEndpoint().getEndpointUri();
+                    if (!uri.equals(consumerUri)) {
+                        String consumerKey = asUtilizationKey(routeId, consumerUri);
+                        if (consumerKey != null) {
+                            inputUtilization.remove(consumerKey);
+                        }
+                    }
+                }
             }
         } else if (extended && event instanceof ExchangeCreatedEvent ece) {
             // we only capture details in extended mode
@@ -242,6 +260,21 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             if (endpoint != null) {
                 String routeId = ece.getExchange().getFromRouteId();
                 String uri = endpoint.getEndpointUri();
+                // some components (e.g. rest-openapi) delegate to an underlying consumer (e.g. platform-http)
+                // whose exchange may not carry a fromRouteId; fall back to scanning inputs by URI
+                if (routeId == null) {
+                    for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
+                        if (entry.getValue().contains(uri)) {
+                            routeId = entry.getKey();
+                            break;
+                        }
+                    }
+                }
+                // ensure the actual consumer URI is in inputs so getEndpointStatistics() can find it
+                Set<String> routeInputs = inputs.get(routeId);
+                if (routeInputs != null) {
+                    routeInputs.add(uri);
+                }
                 String key = asUtilizationKey(routeId, uri);
                 if (key != null) {
                     inputUtilization.onHit(key);

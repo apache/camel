@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -182,6 +184,13 @@ public interface BacklogTracer {
     long getTraceCounter();
 
     /**
+     * Increments and returns the trace counter.
+     *
+     * @since 4.21
+     */
+    long incrementTraceCounter();
+
+    /**
      * Number of traced messages in the backlog
      */
     long getQueueSize();
@@ -190,6 +199,20 @@ public interface BacklogTracer {
      * Reset the tracing counter
      */
     void resetTraceCounter();
+
+    /**
+     * Whether the tracer should trace the given node and exchange (taking into account patterns and filters).
+     *
+     * @since 4.21
+     */
+    boolean shouldTrace(NamedNode node, Exchange exchange);
+
+    /**
+     * Records a trace event. Used internally by the route pipeline advices to submit pre-built trace events.
+     *
+     * @since 4.21
+     */
+    void traceEvent(BacklogTracerEventMessage event);
 
     /**
      * Get all tracing data (without removing)
