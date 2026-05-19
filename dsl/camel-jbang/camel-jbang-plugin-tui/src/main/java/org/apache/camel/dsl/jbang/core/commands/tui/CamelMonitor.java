@@ -2912,6 +2912,19 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
         }
 
+        // Split area: table on top, state diagram below for the selected entry
+        CircuitBreakerInfo selectedCb = null;
+        Integer sel = cbTableState.selected();
+        if (sel != null && sel >= 0 && sel < sorted.size()) {
+            selectedCb = sorted.get(sel);
+        }
+        boolean showDiagram = selectedCb != null;
+        List<Rect> chunks = showDiagram
+                ? Layout.vertical()
+                        .constraints(Constraint.fill(), Constraint.length(15))
+                        .split(area)
+                : List.of(area);
+
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
@@ -2939,7 +2952,117 @@ public class CamelMonitor extends CamelCommand {
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(" Circuit Breaker ").build())
                 .build();
 
-        frame.renderStatefulWidget(table, area, cbTableState);
+        frame.renderStatefulWidget(table, chunks.get(0), cbTableState);
+
+        if (showDiagram) {
+            renderCircuitBreakerDiagram(frame, chunks.get(1), selectedCb);
+        }
+    }
+
+    private void renderCircuitBreakerDiagram(Frame frame, Rect area, CircuitBreakerInfo cb) {
+        String state = cb.state != null ? cb.state.toLowerCase() : "";
+        boolean isClosed = state.equals("closed");
+        boolean isOpen = state.equals("open") || state.equals("forced_open");
+
+        Style closedBox = isClosed ? Style.EMPTY.fg(Color.GREEN).bold() : Style.EMPTY;
+        Style openBox = isOpen ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+        Style halfOpenBox = !isClosed && !isOpen ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY;
+        Style lbl = Style.EMPTY.dim();
+
+        List<Line> lines = new ArrayList<>();
+        // ┌──────────────┐              ┌──────────────┐
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("┌──────────────┐", closedBox),
+                Span.raw("              "),
+                Span.styled("┌──────────────┐", openBox)));
+        // │    CLOSED    │─────────────►│     OPEN     │◄─┐
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("│    CLOSED    │", closedBox),
+                Span.raw("─────────────►"),
+                Span.styled("│     OPEN     │", openBox),
+                Span.raw("◄─┐")));
+        // │  (flowing)   │ failure rate │  (blocked)   │  │
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("│  (flowing)   │", closedBox),
+                Span.styled(" failure rate ", lbl),
+                Span.styled("│  (blocked)   │", openBox),
+                Span.raw("  │")));
+        // └──────▲───────┘              └───────┬──────┘  │
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("└──────", closedBox),
+                Span.raw("▲"),
+                Span.styled("───────┘", closedBox),
+                Span.raw("              "),
+                Span.styled("└───────", openBox),
+                Span.raw("┬"),
+                Span.styled("──────┘", openBox),
+                Span.raw("  │")));
+        //          │                              │         │
+        lines.add(Line.from(Span.raw(
+                "          │                              │         │")));
+        //          │ success                wait timeout    │ fail
+        lines.add(Line.from(
+                Span.raw("          │"),
+                Span.styled(" success", lbl),
+                Span.raw("                "),
+                Span.styled("wait timeout", lbl),
+                Span.raw("    │"),
+                Span.styled(" fail", lbl)));
+        //          │                              │         │
+        lines.add(Line.from(Span.raw(
+                "          │                              │         │")));
+        //          │                      ┌───────▼──────┐  │
+        lines.add(Line.from(
+                Span.raw("          │                      "),
+                Span.styled("┌───────", halfOpenBox),
+                Span.raw("▼"),
+                Span.styled("──────┐", halfOpenBox),
+                Span.raw("  │")));
+        //          └──────────────────────┤  HALF_OPEN   ├──┘
+        lines.add(Line.from(
+                Span.raw("          └──────────────────────"),
+                Span.styled("┤  HALF_OPEN   ├", halfOpenBox),
+                Span.raw("──┘")));
+        //                                 │   (probe)    │
+        lines.add(Line.from(
+                Span.raw("                                 "),
+                Span.styled("│   (probe)    │", halfOpenBox)));
+        //                                 └──────────────┘
+        lines.add(Line.from(
+                Span.raw("                                 "),
+                Span.styled("└──────────────┘", halfOpenBox)));
+        // Metrics
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("success:", lbl),
+                Span.raw(cb.successfulCalls + "  "),
+                Span.styled("fail:", lbl),
+                Span.raw(cb.failedCalls + "  "),
+                Span.styled("rate:", lbl),
+                Span.raw((cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "n/a") + "  "),
+                Span.styled("pending:", lbl),
+                Span.raw(cb.bufferedCalls + "  "),
+                Span.styled("rejected:", lbl),
+                Span.raw(String.valueOf(cb.notPermittedCalls))));
+
+        String title = " ";
+        if (cb.id != null && !cb.id.isEmpty()) {
+            title += cb.id;
+        }
+        if (cb.component != null) {
+            title += " (" + cb.component + ")";
+        }
+        title += " ";
+
+        frame.renderWidget(Paragraph.builder()
+                .text(Text.from(lines))
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .build(), area);
     }
 
     private String cbSortLabel(String label, String column) {
