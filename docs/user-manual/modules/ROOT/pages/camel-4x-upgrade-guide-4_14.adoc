@@ -88,6 +88,16 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
+=== camel-neo4j
+
+When using the `RETRIEVE_NODES` or `DELETE_NODE` operations with the `CamelNeo4jMatchProperties`
+header, the property names provided in the JSON match map are now validated before the `MATCH` /
+`DELETE` `WHERE` clause is built. Property names must be valid identifiers matching
+`[A-Za-z_][A-Za-z0-9_]*`. A request whose match map contains a property name that does not match
+this pattern now fails fast with an `IllegalArgumentException` (wrapped in a
+`Neo4jOperationException`) instead of producing a malformed query. Property values continue to be
+passed as bound query parameters and are unaffected.
+
 == Upgrading from 4.14.5 to 4.14.6
 
 === camel-platform-http-main
