@@ -25,11 +25,14 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
+import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.BeanRepository;
@@ -207,6 +210,19 @@ public abstract class AbstractReifier implements BeanRepository {
         T answer = null;
         if (EndpointHelper.isReferenceParameter(name)) {
             answer = EndpointHelper.resolveReferenceParameter(camelContext, name, type, false);
+        }
+        if (answer == null && route != null) {
+            // check local bean repository from route template context first
+            NamedNode routeNode = route.getRoute();
+            if (routeNode instanceof RouteDefinition routeDef) {
+                RouteTemplateContext rtc = routeDef.getRouteTemplateContext();
+                if (rtc != null) {
+                    BeanRepository localRepo = rtc.getLocalBeanRepository();
+                    if (localRepo != null) {
+                        answer = localRepo.lookupByNameAndType(name, type);
+                    }
+                }
+            }
         }
         if (answer == null) {
             // fallback to use registry which allows tooling to influence reifier that uses beans or classes
