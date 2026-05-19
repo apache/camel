@@ -28,6 +28,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -44,6 +45,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     private AggregationStrategy aggregationStrategyBean;
     @XmlTransient
     private Processor onPrepareProcessor;
+    @XmlTransient
+    private ResumeStrategy resumeStrategyBean;
 
     @XmlAttribute
     @Metadata(defaultValue = ",")
@@ -85,6 +88,24 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    private String group;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Double")
+    private String errorThreshold;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    private String maxFailedRecords;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.resume.ResumeStrategy")
+    private String resumeStrategy;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String watermarkKey;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String watermarkExpression;
 
     public SplitDefinition() {
     }
@@ -107,6 +128,13 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.executorService = source.executorService;
         this.onPrepare = source.onPrepare;
         this.shareUnitOfWork = source.shareUnitOfWork;
+        this.group = source.group;
+        this.errorThreshold = source.errorThreshold;
+        this.maxFailedRecords = source.maxFailedRecords;
+        this.resumeStrategyBean = source.resumeStrategyBean;
+        this.resumeStrategy = source.resumeStrategy;
+        this.watermarkKey = source.watermarkKey;
+        this.watermarkExpression = source.watermarkExpression;
     }
 
     public SplitDefinition(Expression expression) {
@@ -566,6 +594,161 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return this;
     }
 
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     *
+     * @param  group the number of items per group
+     * @return       the builder
+     */
+    public SplitDefinition group(int group) {
+        return group(Integer.toString(group));
+    }
+
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     *
+     * @param  group the number of items per group
+     * @return       the builder
+     */
+    public SplitDefinition group(String group) {
+        setGroup(group);
+        return this;
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For
+     * example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
+     * but processing continues until the threshold is exceeded.
+     * <p/>
+     * <b>Note:</b> When combined with {@code parallelProcessing}, the failure ratio may vary between runs because
+     * parallel items complete in non-deterministic order. For deterministic abort behavior with parallel processing,
+     * prefer {@code maxFailedRecords} (absolute count) over {@code errorThreshold} (ratio).
+     *
+     * @param  errorThreshold the failure ratio threshold (0.0-1.0)
+     * @return                the builder
+     */
+    public SplitDefinition errorThreshold(double errorThreshold) {
+        return errorThreshold(Double.toString(errorThreshold));
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For
+     * example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
+     * but processing continues until the threshold is exceeded.
+     *
+     * @param  errorThreshold the failure ratio threshold (0.0-1.0)
+     * @return                the builder
+     */
+    public SplitDefinition errorThreshold(String errorThreshold) {
+        setErrorThreshold(errorThreshold);
+        return this;
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. Can be combined with {@code errorThreshold} —
+     * processing aborts when either threshold is exceeded.
+     *
+     * @param  maxFailedRecords the maximum number of allowed failures
+     * @return                  the builder
+     */
+    public SplitDefinition maxFailedRecords(int maxFailedRecords) {
+        return maxFailedRecords(Integer.toString(maxFailedRecords));
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. Can be combined with {@code errorThreshold} —
+     * processing aborts when either threshold is exceeded.
+     *
+     * @param  maxFailedRecords the maximum number of allowed failures
+     * @return                  the builder
+     */
+    public SplitDefinition maxFailedRecords(String maxFailedRecords) {
+        setMaxFailedRecords(maxFailedRecords);
+        return this;
+    }
+
+    /**
+     * Sets a {@link ResumeStrategy} and key for resume-from-last-position support. When configured, the Splitter tracks
+     * progress and can skip already-processed items on subsequent runs.
+     * <p/>
+     * With index-based watermarking (no {@code watermarkExpression}), items up to the stored index are automatically
+     * skipped. With value-based watermarking (with {@code watermarkExpression}), the stored value is exposed as an
+     * exchange property ({@link org.apache.camel.Exchange#SPLIT_WATERMARK}) for upstream filtering.
+     * <p/>
+     * The watermark is only updated on successful completion — aborted runs preserve the previous watermark to allow
+     * retry.
+     *
+     * @param  strategy the ResumeStrategy to persist watermark state
+     * @param  key      the key to use in the strategy
+     * @return          the builder
+     */
+    public SplitDefinition resumeStrategy(ResumeStrategy strategy, String key) {
+        this.resumeStrategyBean = strategy;
+        setWatermarkKey(key);
+        return this;
+    }
+
+    /**
+     * Sets a {@link ResumeStrategy} for resume-from-last-position support. The watermark key must also be configured
+     * via {@link #watermarkKey(String)}.
+     *
+     * @param  strategy the ResumeStrategy to persist watermark state
+     * @return          the builder
+     */
+    public SplitDefinition resumeStrategy(ResumeStrategy strategy) {
+        this.resumeStrategyBean = strategy;
+        return this;
+    }
+
+    /**
+     * Sets a reference to a {@link ResumeStrategy} in the registry.
+     *
+     * @param  resumeStrategy reference to the strategy bean
+     * @return                the builder
+     */
+    public SplitDefinition resumeStrategy(String resumeStrategy) {
+        setResumeStrategy(resumeStrategy);
+        return this;
+    }
+
+    /**
+     * Sets the key to use in the watermark store.
+     *
+     * @param  watermarkKey the key
+     * @return              the builder
+     */
+    public SplitDefinition watermarkKey(String watermarkKey) {
+        setWatermarkKey(watermarkKey);
+        return this;
+    }
+
+    /**
+     * Sets a Simple expression to evaluate on each completed sub-exchange to determine the new watermark value. When
+     * set, enables value-based watermarking instead of index-based. The expression is evaluated using the Simple
+     * language.
+     *
+     * @param  watermarkExpression the Simple expression
+     * @return                     the builder
+     */
+    public SplitDefinition watermarkExpression(String watermarkExpression) {
+        setWatermarkExpression(watermarkExpression);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -722,5 +905,76 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     */
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getErrorThreshold() {
+        return errorThreshold;
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation.
+     */
+    public void setErrorThreshold(String errorThreshold) {
+        this.errorThreshold = errorThreshold;
+    }
+
+    public String getMaxFailedRecords() {
+        return maxFailedRecords;
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation.
+     */
+    public void setMaxFailedRecords(String maxFailedRecords) {
+        this.maxFailedRecords = maxFailedRecords;
+    }
+
+    public ResumeStrategy getResumeStrategyBean() {
+        return resumeStrategyBean;
+    }
+
+    public String getResumeStrategy() {
+        return resumeStrategy;
+    }
+
+    /**
+     * Sets a reference to a {@link ResumeStrategy} in the registry for resume-from-last-position support.
+     */
+    public void setResumeStrategy(String resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
+    }
+
+    public String getWatermarkKey() {
+        return watermarkKey;
+    }
+
+    /**
+     * Sets the key to use in the watermark store.
+     */
+    public void setWatermarkKey(String watermarkKey) {
+        this.watermarkKey = watermarkKey;
+    }
+
+    public String getWatermarkExpression() {
+        return watermarkExpression;
+    }
+
+    /**
+     * Sets a Simple expression to evaluate on the exchange after split completion to determine the new watermark value.
+     */
+    public void setWatermarkExpression(String watermarkExpression) {
+        this.watermarkExpression = watermarkExpression;
     }
 }

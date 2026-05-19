@@ -587,7 +587,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                             msg = "Multicast processing failed for number " + index;
                         }
                         boolean continueProcessing = PipelineHelper.continueProcessing(exchange, msg, LOG);
-                        if (stopOnException && !continueProcessing) {
+                        if (!continueProcessing && !shouldContinueOnFailure(exchange, original, index)) {
                             if (exchange.getException() != null) {
                                 // wrap in exception to explain where it failed
                                 exchange.setException(new CamelExchangeException(
@@ -723,7 +723,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 msg = "Multicast processing failed for number " + index;
             }
             boolean continueProcessing = PipelineHelper.continueProcessing(exchange, msg, LOG);
-            if (stopOnException && !continueProcessing) {
+            if (!continueProcessing && !shouldContinueOnFailure(exchange, original, index)) {
                 if (exchange.getException() != null) {
                     // wrap in exception to explain where it failed
                     exchange.setException(new CamelExchangeException(
@@ -757,6 +757,22 @@ public class MulticastProcessor extends BaseProcessorSupport
             LOG.trace("Run next: {}", next);
             return next;
         }
+    }
+
+    /**
+     * Determines whether processing should continue after a sub-exchange has failed.
+     * <p>
+     * The default implementation returns {@code false} when {@code stopOnException} is enabled (meaning processing
+     * should stop). Subclasses (e.g., Splitter) can override this to implement more sophisticated failure policies such
+     * as error threshold checking.
+     *
+     * @param  subExchange the failed sub-exchange
+     * @param  original    the original exchange
+     * @param  index       the index of the failed sub-exchange
+     * @return             {@code true} to continue processing despite the failure, {@code false} to stop
+     */
+    protected boolean shouldContinueOnFailure(Exchange subExchange, Exchange original, int index) {
+        return !stopOnException;
     }
 
     protected ScheduledFuture<?> schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {

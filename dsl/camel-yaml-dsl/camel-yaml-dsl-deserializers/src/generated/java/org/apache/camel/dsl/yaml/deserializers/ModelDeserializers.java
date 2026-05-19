@@ -16873,19 +16873,25 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delimiter", type = "string", defaultValue = ",", description = "Delimiter used in splitting messages. Can be turned off using the value false. To force not splitting then the delimiter can be set to single to use the value as a single list, this can be needed in some special situations. The default value is comma.", displayName = "Delimiter"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Disables this EIP from the route.", displayName = "Disabled"),
+                    @YamlProperty(name = "errorThreshold", type = "number", description = "Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation.", displayName = "Error Threshold"),
                     @YamlProperty(name = "executorService", type = "string", description = "To use a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel processing is automatically implied, and you do not have to enable that option as well.", displayName = "Executor Service"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression of how to split the message body, such as as-is, using a tokenizer, or using a xpath.", displayName = "Expression", oneOf = "expression"),
+                    @YamlProperty(name = "group", type = "number", description = "Groups N split messages into a single message with a java.util.List body. This allows processing items in chunks instead of one at a time.", displayName = "Group"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxFailedRecords", type = "number", description = "Sets the maximum number of failed records before aborting the split operation.", displayName = "Max Failed Records"),
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "onPrepare", type = "string", description = "Uses the Processor when preparing the org.apache.camel.Exchange to be sent. This can be used to deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.", displayName = "On Prepare"),
                     @YamlProperty(name = "parallelAggregate", type = "boolean", deprecated = true, defaultValue = "false", description = "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.", displayName = "Parallel Aggregate"),
                     @YamlProperty(name = "parallelProcessing", type = "boolean", defaultValue = "false", description = "If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. It's only processing the sub messages from the splitter which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the splitter, then make sure to enable the synchronous option as well. In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive routing engine to use as many threads as possible, which may be available due to sub-tasks using other thread-pools such as CompletableFuture.runAsync or others.", displayName = "Parallel Processing"),
+                    @YamlProperty(name = "resumeStrategy", type = "string", description = "Sets a reference to a ResumeStrategy in the registry for resume-from-last-position support.", displayName = "Resume Strategy"),
                     @YamlProperty(name = "shareUnitOfWork", type = "boolean", defaultValue = "false", description = "Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub messages. Splitter will by default not share unit of work between the parent exchange and each split exchange. This means each split exchange has its own individual unit of work.", displayName = "Share Unit Of Work"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "stopOnException", type = "boolean", defaultValue = "false", description = "Will now stop further processing if an exception or failure occurred during processing of an org.apache.camel.Exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException). In all situations the splitter will stop further processing. This is the same behavior as in pipeline, which is used by the routing engine. The default behavior is to not stop but continue processing till the end", displayName = "Stop On Exception"),
                     @YamlProperty(name = "streaming", type = "boolean", defaultValue = "false", description = "When in streaming mode, then the splitter splits the original message on-demand, and each split message is processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we do not know the total size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty. In non-streaming mode (default) the splitter will split each message first, to know the total size, and then process each message one by one. This requires to keep all the split messages in memory and therefore requires more memory. The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header. The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies out-of-order, e.g. in the order they come back. If disabled, Camel will process replies in the same order as the messages was split.", displayName = "Streaming"),
                     @YamlProperty(name = "synchronous", type = "boolean", defaultValue = "false", description = "Sets whether synchronous processing should be strictly used. When enabled then the same thread is used to continue routing after the split is complete, even if parallel processing is enabled.", displayName = "Synchronous"),
-                    @YamlProperty(name = "timeout", type = "string", defaultValue = "0", description = "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.", displayName = "Timeout")
+                    @YamlProperty(name = "timeout", type = "string", defaultValue = "0", description = "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.", displayName = "Timeout"),
+                    @YamlProperty(name = "watermarkExpression", type = "string", description = "Sets a Simple expression to evaluate on the exchange after split completion to determine the new watermark value.", displayName = "Watermark Expression"),
+                    @YamlProperty(name = "watermarkKey", type = "string", description = "Sets the key to use in the watermark store.", displayName = "Watermark Key")
             }
     )
     public static class SplitDefinitionDeserializer extends YamlDeserializerBase<SplitDefinition> {
@@ -16928,6 +16934,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
+                case "errorThreshold": {
+                    String val = asText(node);
+                    target.setErrorThreshold(val);
+                    break;
+                }
                 case "executorService": {
                     String val = asText(node);
                     target.setExecutorService(val);
@@ -16936,6 +16947,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
+                    break;
+                }
+                case "group": {
+                    String val = asText(node);
+                    target.setGroup(val);
+                    break;
+                }
+                case "maxFailedRecords": {
+                    String val = asText(node);
+                    target.setMaxFailedRecords(val);
                     break;
                 }
                 case "onPrepare": {
@@ -16951,6 +16972,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "parallelProcessing": {
                     String val = asText(node);
                     target.setParallelProcessing(val);
+                    break;
+                }
+                case "resumeStrategy": {
+                    String val = asText(node);
+                    target.setResumeStrategy(val);
                     break;
                 }
                 case "shareUnitOfWork": {
@@ -16976,6 +17002,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeout": {
                     String val = asText(node);
                     target.setTimeout(val);
+                    break;
+                }
+                case "watermarkExpression": {
+                    String val = asText(node);
+                    target.setWatermarkExpression(val);
+                    break;
+                }
+                case "watermarkKey": {
+                    String val = asText(node);
+                    target.setWatermarkKey(val);
                     break;
                 }
                 case "id": {

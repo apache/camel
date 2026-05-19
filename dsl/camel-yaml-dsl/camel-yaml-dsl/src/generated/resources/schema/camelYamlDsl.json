@@ -7259,15 +7259,30 @@
             "description" : "Disables this EIP from the route.",
             "default" : false
           },
+          "errorThreshold" : {
+            "type" : "number",
+            "title" : "Error Threshold",
+            "description" : "Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation."
+          },
           "executorService" : {
             "type" : "string",
             "title" : "Executor Service",
             "description" : "To use a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel processing is automatically implied, and you do not have to enable that option as well."
           },
+          "group" : {
+            "type" : "number",
+            "title" : "Group",
+            "description" : "Groups N split messages into a single message with a java.util.List body. This allows processing items in chunks instead of one at a time."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "maxFailedRecords" : {
+            "type" : "number",
+            "title" : "Max Failed Records",
+            "description" : "Sets the maximum number of failed records before aborting the split operation."
           },
           "note" : {
             "type" : "string",
@@ -7291,6 +7306,11 @@
             "title" : "Parallel Processing",
             "description" : "If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. It's only processing the sub messages from the splitter which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the splitter, then make sure to enable the synchronous option as well. In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive routing engine to use as many threads as possible, which may be available due to sub-tasks using other thread-pools such as CompletableFuture.runAsync or others.",
             "default" : false
+          },
+          "resumeStrategy" : {
+            "type" : "string",
+            "title" : "Resume Strategy",
+            "description" : "Sets a reference to a ResumeStrategy in the registry for resume-from-last-position support."
           },
           "shareUnitOfWork" : {
             "type" : "boolean",
@@ -7327,6 +7347,16 @@
             "title" : "Timeout",
             "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
             "default" : "0"
+          },
+          "watermarkExpression" : {
+            "type" : "string",
+            "title" : "Watermark Expression",
+            "description" : "Sets a Simple expression to evaluate on the exchange after split completion to determine the new watermark value."
+          },
+          "watermarkKey" : {
+            "type" : "string",
+            "title" : "Watermark Key",
+            "description" : "Sets the key to use in the watermark store."
           },
           "constant" : { },
           "csimple" : { },

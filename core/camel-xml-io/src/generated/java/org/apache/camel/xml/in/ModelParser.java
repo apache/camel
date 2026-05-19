@@ -1134,15 +1134,21 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); yield true;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); yield true;
                 case "delimiter": def.setDelimiter(val); yield true;
+                case "errorThreshold": def.setErrorThreshold(val); yield true;
                 case "executorService": def.setExecutorService(val); yield true;
+                case "group": def.setGroup(val); yield true;
+                case "maxFailedRecords": def.setMaxFailedRecords(val); yield true;
                 case "onPrepare": def.setOnPrepare(val); yield true;
                 case "parallelAggregate": def.setParallelAggregate(val); yield true;
                 case "parallelProcessing": def.setParallelProcessing(val); yield true;
+                case "resumeStrategy": def.setResumeStrategy(val); yield true;
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); yield true;
                 case "stopOnException": def.setStopOnException(val); yield true;
                 case "streaming": def.setStreaming(val); yield true;
                 case "synchronous": def.setSynchronous(val); yield true;
                 case "timeout": def.setTimeout(val); yield true;
+                case "watermarkExpression": def.setWatermarkExpression(val); yield true;
+                case "watermarkKey": def.setWatermarkKey(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, outputExpressionNodeElementHandler(), noValueHandler());
     }
