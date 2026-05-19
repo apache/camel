@@ -4057,8 +4057,8 @@ public class CamelMonitor extends CamelCommand {
                             s.routeId != null ? truncate(s.routeId, 15) : "",
                             Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(s.status, statusStyle)),
-                    Cell.from(String.format("%7s", s.elapsed + "ms")),
-                    Cell.from(String.format("%6s", s.steps)),
+                    rightCell(s.elapsed + "ms", 10),
+                    rightCell(String.valueOf(s.steps), 6),
                     Cell.from(s.exchangeId)));
         }
 
@@ -4066,8 +4066,8 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from(Span.styled(traceSortLabel("TIME", "time"), traceSortStyle("time"))),
                 Cell.from(Span.styled(traceSortLabel("ROUTE", "route"), traceSortStyle("route"))),
                 Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
-                Cell.from(Span.styled(traceSortLabel("ELAPSED", "elapsed"), traceSortStyle("elapsed"))),
-                Cell.from(Span.styled("STEPS", Style.EMPTY.bold())),
+                rightCell(traceSortLabel("ELAPSED", "elapsed"), 10, traceSortStyle("elapsed")),
+                rightCell("STEPS", 6, Style.EMPTY.bold()),
                 Cell.from(Span.styled(traceSortLabel("EXCHANGE", "exchange"), traceSortStyle("exchange"))));
 
         String traceTitle = String.format(" Traces [%d] sort:%s ", summaries.size(), traceSort);
@@ -4494,7 +4494,7 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from(Span.styled(routeId != null ? truncate(routeId, 15) : "", Style.EMPTY.fg(Color.CYAN))),
                 Cell.from(nodeId != null ? truncate(nodeId, 15) : ""),
                 Cell.from(processor != null ? processor : ""),
-                Cell.from(elapsedStr));
+                rightCell(elapsedStr, 10));
     }
 
     private static Table buildStepTable(List<Row> rows, Object title) {
@@ -4504,7 +4504,7 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
                 Cell.from(Span.styled("ID", Style.EMPTY.bold())),
                 Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
+                rightCell("ELAPSED", 10, Style.EMPTY.bold()));
         Block block = title instanceof Title t
                 ? Block.builder().borderType(BorderType.ROUNDED).title(t).build()
                 : Block.builder().borderType(BorderType.ROUNDED).title(title.toString()).build();
