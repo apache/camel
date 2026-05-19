@@ -50,6 +50,7 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
     private PlatformHttpConsumerAware platformHttpConsumer;
     private Consumer consumer;
     private OpenApiUtils openApiUtils;
+    private RestRegistry restRegistry;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -111,6 +112,10 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
             // map path-parameters from operation to camel headers
             HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), path, consumerPath);
 
+            if (restRegistry != null) {
+                restRegistry.hit(verb, basePath, consumerPath);
+            }
+
             // process the incoming request
             return restOpenapiProcessorStrategy.process(openAPI, o, verb, path, rcp.getBinding(), exchange, callback);
         }
@@ -150,6 +155,7 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         // this is required to build the paths with all the details
 
         this.openApiUtils = new OpenApiUtils(camelContext, endpoint.getBindingPackageScan(), openAPI.getComponents());
+        this.restRegistry = PluginHelper.getRestRegistry(camelContext);
         // register all openapi paths
         for (var e : openAPI.getPaths().entrySet()) {
             String path = e.getKey(); // path
