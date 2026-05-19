@@ -351,6 +351,40 @@ work without changes. Routes that set the header by its literal string value
 (for example `setHeader("SEARCH_QUERY", ...)`) must be updated to use the
 new value (`setHeader("CamelElasticsearchSearchQuery", ...)`).
 
+=== camel-cxf
+
+The Exchange header constants in `CxfConstants` (module `camel-cxf-common`, shared
+by `camel-cxf` and `camel-cxfrs`) have been renamed to follow the Camel naming
+convention used across the rest of the component catalog. The Java field names are
+unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `CxfConstants.OPERATION_NAME` | `operationName` | `CamelCxfOperationName`
+| `CxfConstants.OPERATION_NAMESPACE` | `operationNamespace` | `CamelCxfOperationNamespace`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(CxfConstants.OPERATION_NAME, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("operationName", ...)`) must be updated to use the new value
+(`setHeader("CamelCxfOperationName", ...)`).
+
+In particular, the documented `cxfrs` `SimpleConsumer` dispatch idiom that routes
+on the operation name by its literal header name must be updated:
+
+[source,java]
+----
+// before
+from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+    .recipientList(simple("direct:${header.operationName}"));
+
+// after
+from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+    .recipientList(simple("direct:${header.CamelCxfOperationName}"));
+----
+
 === camel-aws2-s3
 
 The `listObjects` operation now uses the `ListObjectsV2` AWS API instead of the deprecated `ListObjects` API.

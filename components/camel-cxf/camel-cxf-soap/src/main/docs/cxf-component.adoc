@@ -441,7 +441,7 @@ As an alternative, you can add a message header for it as demonstrated in https:
 You can configure the CXF endpoint with the Spring configuration file
 shown below, and you can also embed the endpoint into the `camelContext`
 tags. When you are invoking the service endpoint, you can set the
-`operationName` and `operationNamespace` headers to explicitly state
+`CamelCxfOperationName` and `CamelCxfOperationNamespace` headers to explicitly state
 which operation you are calling.
 
 [source,xml]
