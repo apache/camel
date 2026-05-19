@@ -69,7 +69,7 @@ mvn archetype:generate -B -DarchetypeGroupId=org.apache.camel.archetypes -Darche
 If you have never used archetypes before, the command looks lengthy. We'll explain the relevant arguments:
 
 * `-DarchetypeArtifactId`: this is the ID of the archetype to use (i.e., which of the templates from Camel Core to use - `camel-archetype-java` in this case)
-* `-DarchetypeVersion`: this is the version of the archetype to use. It is also the same version of Camel to use for the example. We are using `4.20.0` in this example. Check https://camel.apache.org/download/[the Camel download page] for the latest released version.
+* `-DarchetypeVersion`: this is the version of the archetype to use. It is also the same version of Camel to use for the example. We are using `4.20.0` in this example. Check /download/[the Camel download page] for the latest released version.
 * `-Dpackage`: the package name for the project you are creating. We'll use `org.apache.camel.learn` in all this guide.
 * `-DgroupId`: the group ID for the project you are creating. We'll use `org.apache.camel.learn` in all this guide.
 * `-DartifactId`: the artifact name for the project you are creating.
