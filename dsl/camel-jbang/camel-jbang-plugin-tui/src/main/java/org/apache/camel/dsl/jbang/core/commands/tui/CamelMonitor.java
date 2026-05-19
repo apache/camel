@@ -195,6 +195,12 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LinkedList<long[]>> endpointRemoteStubSamples = new ConcurrentHashMap<>();
     private final Map<String, Long> previousEndpointRemoteStubTime = new ConcurrentHashMap<>();
 
+    // Circuit breaker throughput history per PID/cbId (success + fail, one point per second)
+    private final Map<String, LinkedList<Long>> cbSuccessHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> cbFailHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<long[]>> cbThroughputSamples = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousCbTime = new ConcurrentHashMap<>();
+
     // Load averages (EWMA) — CPU%, per PID (inflight EWMA is read from the management JSON)
     private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
     private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
@@ -1983,7 +1989,7 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(Span.styled(ci.id != null ? ci.id : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
-                    rightCell(ci.inflight > 0 ? String.valueOf(ci.inflight) : "", 8),
+                    rightCell(String.valueOf(ci.inflight), 8),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     rightCell(period, 10),
                     Cell.from(sinceLast),
@@ -2081,7 +2087,7 @@ public class CamelMonitor extends CamelCommand {
                 rightCell(String.valueOf(route.total), 8),
                 rightCell(String.valueOf(route.failed), 6,
                         route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                Cell.from(""),
+                rightCell(String.valueOf(route.inflight), 8),
                 rightCell(route.total > 0
                         ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
                         : "", 14),
@@ -2098,7 +2104,7 @@ public class CamelMonitor extends CamelCommand {
                     rightCell(String.valueOf(proc.total), 8),
                     rightCell(String.valueOf(proc.failed), 6,
                             proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                    Cell.from(""),
+                    rightCell(String.valueOf(proc.inflight), 8),
                     rightCell(proc.total > 0
                             ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime
                             : "", 14),
@@ -2113,7 +2119,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                         rightCell("TOTAL", 8, Style.EMPTY.bold()),
                         rightCell("FAIL", 6, Style.EMPTY.bold()),
-                        Cell.from(""),
+                        rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                         rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
                         Cell.from("")))
                 .widths(
@@ -2892,6 +2898,8 @@ public class CamelMonitor extends CamelCommand {
             String failed = cb.failedCalls > 0 ? String.valueOf(cb.failedCalls) : "";
             String reject = cb.notPermittedCalls > 0 ? String.valueOf(cb.notPermittedCalls) : "";
             String rate = cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "";
+            String inflight = String.valueOf(cb.inflight);
+            String sinceLast = formatSinceLast(cb.sinceLastStarted, cb.sinceLastSuccess, cb.sinceLastFail);
 
             rows.add(Row.from(
                     Cell.from(Span.styled(cb.routeId != null ? cb.routeId : "", Style.EMPTY.fg(Color.CYAN))),
@@ -2899,18 +2907,34 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(cb.component != null ? cb.component : ""),
                     Cell.from(Span.styled(state, stateStyle)),
                     rightCell(pending, 8),
+                    rightCell(inflight, 8),
                     rightCell(success, 8),
                     rightCell(failed, 8),
                     rightCell(rate, 6),
-                    rightCell(reject, 8)));
+                    rightCell(reject, 8),
+                    Cell.from(sinceLast)));
         }
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
                     Cell.from(Span.styled("No circuit breakers", Style.EMPTY.dim())),
                     Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
+                    Cell.from(""), Cell.from("")));
         }
+
+        // Split area: table on top, state diagram below for the selected entry
+        CircuitBreakerInfo selectedCb = null;
+        Integer sel = cbTableState.selected();
+        if (sel != null && sel >= 0 && sel < sorted.size()) {
+            selectedCb = sorted.get(sel);
+        }
+        boolean showDiagram = selectedCb != null;
+        List<Rect> chunks = showDiagram
+                ? Layout.vertical()
+                        .constraints(Constraint.fill(), Constraint.length(25))
+                        .split(area)
+                : List.of(area);
 
         Table table = Table.builder()
                 .rows(rows)
@@ -2919,11 +2943,13 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled(cbSortLabel("ID", "id"), cbSortStyle("id"))),
                         Cell.from(Span.styled(cbSortLabel("COMPONENT", "component"), cbSortStyle("component"))),
                         Cell.from(Span.styled(cbSortLabel("STATE", "state"), cbSortStyle("state"))),
-                        rightCell("PENDING", 8, Style.EMPTY.bold()),
+                        rightCell("WINDOW", 8, Style.EMPTY.bold()),
+                        rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                         rightCell("SUCCESS", 8, Style.EMPTY.bold()),
                         rightCell("FAIL", 8, Style.EMPTY.bold()),
                         rightCell("RATE%", 6, Style.EMPTY.bold()),
-                        rightCell("REJECT", 8, Style.EMPTY.bold())))
+                        rightCell("REJECT", 8, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(20),
                         Constraint.length(20),
@@ -2932,14 +2958,219 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(8),
+                        Constraint.length(8),
                         Constraint.length(6),
+                        Constraint.length(8),
                         Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(" Circuit Breaker ").build())
                 .build();
 
-        frame.renderStatefulWidget(table, area, cbTableState);
+        frame.renderStatefulWidget(table, chunks.get(0), cbTableState);
+
+        if (showDiagram) {
+            renderCircuitBreakerDiagram(frame, chunks.get(1), selectedCb, info.pid);
+        }
+    }
+
+    private void renderCircuitBreakerDiagram(Frame frame, Rect area, CircuitBreakerInfo cb, String pid) {
+        // Split horizontally: state diagram on left (55 cols), chart on right (fill)
+        List<Rect> hSplit = Layout.horizontal()
+                .constraints(Constraint.length(55), Constraint.fill())
+                .split(area);
+
+        renderCbStateDiagram(frame, hSplit.get(0), cb);
+        renderCbChart(frame, hSplit.get(1), cb, pid);
+    }
+
+    private void renderCbStateDiagram(Frame frame, Rect area, CircuitBreakerInfo cb) {
+        String state = cb.state != null ? cb.state.toLowerCase() : "";
+        boolean isClosed = state.equals("closed");
+        boolean isOpen = state.equals("open") || state.equals("forced_open");
+
+        Style closedBox = isClosed ? Style.EMPTY.fg(Color.GREEN).bold() : Style.EMPTY;
+        Style openBox = isOpen ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+        Style halfOpenBox = !isClosed && !isOpen ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY;
+        Style lbl = Style.EMPTY.dim();
+
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.from(Span.raw("")));
+        // ┌──────────────┐              ┌──────────────┐
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("┌──────────────┐", closedBox),
+                Span.raw("              "),
+                Span.styled("┌──────────────┐", openBox)));
+        // │    CLOSED    │─────────────►│     OPEN     │◄─┐
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("│    CLOSED    │", closedBox),
+                Span.raw("─────────────►"),
+                Span.styled("│     OPEN     │", openBox),
+                Span.raw("◄─┐")));
+        // │  (flowing)   │ failure rate │  (blocked)   │  │
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("│  (allowed)   │", closedBox),
+                Span.styled(" failure rate ", lbl),
+                Span.styled("│  (rejected)  │", openBox),
+                Span.raw("  │")));
+        // └──────▲───────┘              └───────┬──────┘  │
+        lines.add(Line.from(
+                Span.raw("   "),
+                Span.styled("└──────", closedBox),
+                Span.raw("▲"),
+                Span.styled("───────┘", closedBox),
+                Span.raw("              "),
+                Span.styled("└───────", openBox),
+                Span.raw("┬"),
+                Span.styled("──────┘", openBox),
+                Span.raw("  │")));
+        //          │                              │         │
+        lines.add(Line.from(Span.raw(
+                "          │                              │         │")));
+        //          │ success      wait timeout    │         │
+        lines.add(Line.from(
+                Span.raw("          │"),
+                Span.styled(" success", lbl),
+                Span.raw("      "),
+                Span.styled("wait timeout", lbl),
+                Span.raw("    │         │")));
+        //          │                              │         │
+        lines.add(Line.from(Span.raw(
+                "          │                              │         │")));
+        //          │                      ┌───────▼──────┐  │
+        lines.add(Line.from(
+                Span.raw("          │                      "),
+                Span.styled("┌───────", halfOpenBox),
+                Span.raw("▼"),
+                Span.styled("──────┐", halfOpenBox),
+                Span.raw("  │")));
+        //          └──────────────────────┤  HALF_OPEN   ├──┘
+        lines.add(Line.from(
+                Span.raw("          └──────────────────────"),
+                Span.styled("┤  HALF_OPEN   ├", halfOpenBox),
+                Span.raw("──┘")));
+        //                                 │   (probe)    │
+        lines.add(Line.from(
+                Span.raw("                                 "),
+                Span.styled("│   (probe)    │", halfOpenBox)));
+        //                                 └──────────────┘
+        lines.add(Line.from(
+                Span.raw("                                 "),
+                Span.styled("└──────────────┘", halfOpenBox)));
+
+        String title = " ";
+        if (cb.id != null && !cb.id.isEmpty()) {
+            title += cb.id;
+        }
+        if (cb.component != null) {
+            title += " (" + cb.component + ")";
+        }
+        title += " ";
+
+        frame.renderWidget(Paragraph.builder()
+                .text(Text.from(lines))
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .build(), area);
+    }
+
+    private void renderCbChart(Frame frame, Rect area, CircuitBreakerInfo cb, String pid) {
+        String key = pid + "/" + cb.id;
+
+        // Split vertically: failure rate bar (3 rows), sparkline (fill), metrics (6 rows)
+        List<Rect> vSplit = Layout.vertical()
+                .constraints(Constraint.length(3), Constraint.fill(), Constraint.length(6))
+                .split(area);
+
+        // Top: Failure rate bar (fixed width matching sparkline data points)
+        double rate = cb.failureRate >= 0 ? cb.failureRate : 0;
+        Style barColor;
+        if (rate >= 80) {
+            barColor = Style.EMPTY.fg(Color.LIGHT_RED);
+        } else if (rate >= 50) {
+            barColor = Style.EMPTY.fg(Color.YELLOW);
+        } else {
+            barColor = Style.EMPTY.fg(Color.GREEN);
+        }
+        String rateLabel = String.format(" %.0f%%", Math.max(0, cb.failureRate));
+        int barWidth = MAX_ENDPOINT_CHART_POINTS;
+        int usable = barWidth - rateLabel.length();
+        int filled = Math.max(0, (int) (usable * rate / 100.0));
+        int empty = Math.max(0, usable - filled);
+        Line barLine = Line.from(
+                Span.raw("    "),
+                Span.styled("█".repeat(filled), barColor),
+                Span.styled(rateLabel, Style.EMPTY.bold()),
+                Span.styled("░".repeat(empty), Style.EMPTY.dim()));
+        frame.renderWidget(Paragraph.builder()
+                .text(Text.from(barLine))
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Failure Rate ").build())
+                .build(), vSplit.get(0));
+
+        // Middle: Throughput sparkline (success up, fail down)
+        LinkedList<Long> successHist = cbSuccessHistory.get(key);
+        LinkedList<Long> failHist = cbFailHistory.get(key);
+        int renderPoints = MAX_ENDPOINT_CHART_POINTS;
+        long[] successArr = new long[renderPoints];
+        long[] failArr = new long[renderPoints];
+        if (successHist != null) {
+            for (int i = 0; i < renderPoints; i++) {
+                int idx = successHist.size() - renderPoints + i;
+                if (idx >= 0) {
+                    successArr[i] = successHist.get(idx);
+                }
+            }
+        }
+        if (failHist != null) {
+            for (int i = 0; i < renderPoints; i++) {
+                int idx = failHist.size() - renderPoints + i;
+                if (idx >= 0) {
+                    failArr[i] = failHist.get(idx);
+                }
+            }
+        }
+        long curSuccess = successArr[renderPoints - 1];
+        long curFail = failArr[renderPoints - 1];
+        Line chartTitle = Line.from(
+                Span.styled("▬", Style.EMPTY.fg(Color.GREEN)),
+                Span.raw(String.format(" ok:%-4d ", curSuccess)),
+                Span.styled("▬", Style.EMPTY.fg(Color.LIGHT_RED)),
+                Span.raw(String.format(" fail:%-4d msg/s", curFail)));
+        frame.renderWidget(MirroredSparkline.builder()
+                .topData(successArr)
+                .bottomData(failArr)
+                .topStyle(Style.EMPTY.fg(Color.GREEN))
+                .bottomStyle(Style.EMPTY.fg(Color.LIGHT_RED))
+                .xLabels("-60s", "-45s", "-30s", "-15s", "now")
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(Title.from(chartTitle)).build())
+                .build(), vSplit.get(1));
+
+        // Bottom: Metrics summary
+        Style dim = Style.EMPTY.dim();
+        Line metricsLine1 = Line.from(
+                Span.raw(" "),
+                Span.styled("total:", dim), Span.raw(cb.total + " "),
+                Span.styled("fail:", dim), Span.raw(cb.totalFailed + " "),
+                Span.styled("inflight:", dim), Span.raw(cb.inflight + " "),
+                Span.styled("reject:", dim), Span.raw(cb.notPermittedCalls + " "),
+                Span.styled("mean:", dim), Span.raw(cb.meanTime + "ms "),
+                Span.styled("min:", dim), Span.raw(cb.minTime + "ms "),
+                Span.styled("max:", dim), Span.raw(cb.maxTime + "ms"));
+        String lastSuccess = cb.sinceLastSuccess != null ? cb.sinceLastSuccess : "-";
+        String lastFail = cb.sinceLastFail != null ? cb.sinceLastFail : "-";
+        Line metricsLine2 = Line.from(
+                Span.raw(" "),
+                Span.styled("since last", dim),
+                Span.raw(" "),
+                Span.styled("success:", dim), Span.raw(" " + lastSuccess + " "),
+                Span.styled("fail:", dim), Span.raw(" " + lastFail));
+        frame.renderWidget(Paragraph.builder()
+                .text(Text.from(Line.from(Span.raw("")), metricsLine1, metricsLine2))
+                .block(Block.builder().borderType(BorderType.ROUNDED).build())
+                .build(), vSplit.get(2));
     }
 
     private String cbSortLabel(String label, String column) {
@@ -3235,6 +3466,8 @@ public class CamelMonitor extends CamelCommand {
         Style dimStyle = Style.EMPTY.dim();
 
         List<Line> flowLines = new ArrayList<>();
+        flowLines.add(Line.from(Span.raw("")));
+        flowLines.add(Line.from(Span.raw("")));
         flowLines.add(Line.from(
                 Span.styled(" ".repeat(inPad) + inStr, inTotal > 0 ? inStyle : dimStyle),
                 Span.raw(" ".repeat(centerGap)),
@@ -4057,8 +4290,8 @@ public class CamelMonitor extends CamelCommand {
                             s.routeId != null ? truncate(s.routeId, 15) : "",
                             Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(s.status, statusStyle)),
-                    Cell.from(String.format("%7s", s.elapsed + "ms")),
-                    Cell.from(String.format("%6s", s.steps)),
+                    rightCell(s.elapsed + "ms", 10),
+                    rightCell(String.valueOf(s.steps), 6),
                     Cell.from(s.exchangeId)));
         }
 
@@ -4066,8 +4299,8 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from(Span.styled(traceSortLabel("TIME", "time"), traceSortStyle("time"))),
                 Cell.from(Span.styled(traceSortLabel("ROUTE", "route"), traceSortStyle("route"))),
                 Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
-                Cell.from(Span.styled(traceSortLabel("ELAPSED", "elapsed"), traceSortStyle("elapsed"))),
-                Cell.from(Span.styled("STEPS", Style.EMPTY.bold())),
+                rightCell(traceSortLabel("ELAPSED", "elapsed"), 10, traceSortStyle("elapsed")),
+                rightCell("STEPS", 6, Style.EMPTY.bold()),
                 Cell.from(Span.styled(traceSortLabel("EXCHANGE", "exchange"), traceSortStyle("exchange"))));
 
         String traceTitle = String.format(" Traces [%d] sort:%s ", summaries.size(), traceSort);
@@ -4305,11 +4538,18 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 typeLabel = String.format("%-21s", "");
             }
+            String val = entry.getValue() != null ? entry.getValue().toString() : "null";
+            try {
+                val = Jsoner.unescape(val);
+            } catch (Exception e) {
+                // ignore
+            }
+            val = stripControlChars(val);
             lines.add(Line.from(
                     Span.styled("   " + typeLabel, Style.EMPTY.dim()),
                     Span.styled(entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
                     Span.raw(" = "),
-                    Span.raw(entry.getValue() != null ? entry.getValue().toString() : "null")));
+                    Span.raw(val)));
         }
         lines.add(Line.from(Span.raw("")));
     }
@@ -4323,14 +4563,48 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
             }
+            try {
+                body = Jsoner.unescape(body);
+            } catch (Exception e) {
+                // ignore
+            }
             String[] bodyParts = body.split("\n");
             for (String bl : bodyParts) {
-                lines.add(Line.from(Span.raw("   " + bl)));
+                lines.add(Line.from(Span.raw("   " + stripControlChars(bl))));
             }
         } else {
             lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
         }
         lines.add(Line.from(Span.raw("")));
+    }
+
+    private static String stripControlChars(String s) {
+        if (s == null) {
+            return s;
+        }
+        boolean needsStrip = false;
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch < 0x20 || (ch >= 0x7F && ch <= 0x9F)) {
+                needsStrip = true;
+                break;
+            }
+        }
+        if (!needsStrip) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == '\t') {
+                sb.append("    ");
+            } else if (ch < 0x20 || (ch >= 0x7F && ch <= 0x9F)) {
+                // skip C0 and C1 control chars
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 
     private static void addExceptionLines(List<Line> lines, String exception) {
@@ -4453,7 +4727,7 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from(Span.styled(routeId != null ? truncate(routeId, 15) : "", Style.EMPTY.fg(Color.CYAN))),
                 Cell.from(nodeId != null ? truncate(nodeId, 15) : ""),
                 Cell.from(processor != null ? processor : ""),
-                Cell.from(elapsedStr));
+                rightCell(elapsedStr, 10));
     }
 
     private static Table buildStepTable(List<Row> rows, Object title) {
@@ -4463,7 +4737,7 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
                 Cell.from(Span.styled("ID", Style.EMPTY.bold())),
                 Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
+                rightCell("ELAPSED", 10, Style.EMPTY.bold()));
         Block block = title instanceof Title t
                 ? Block.builder().borderType(BorderType.ROUNDED).title(t).build()
                 : Block.builder().borderType(BorderType.ROUNDED).title(title.toString()).build();
@@ -4772,6 +5046,7 @@ public class CamelMonitor extends CamelCommand {
                                 infos.add(info);
                                 updateThroughputHistory(info);
                                 updateEndpointHistory(info);
+                                updateCbHistory(info);
                                 updateLoadMetrics(ph, info);
                             }
                         }
@@ -4809,6 +5084,11 @@ public class CamelMonitor extends CamelCommand {
                     previousEndpointRemoteStubTime.remove(entry.getKey());
                     cpuLoadAvg.remove(entry.getKey());
                     prevCpuSample.remove(entry.getKey());
+                    String vanishPid = entry.getKey() + "/";
+                    cbSuccessHistory.keySet().removeIf(k -> k.startsWith(vanishPid));
+                    cbFailHistory.keySet().removeIf(k -> k.startsWith(vanishPid));
+                    cbThroughputSamples.keySet().removeIf(k -> k.startsWith(vanishPid));
+                    previousCbTime.keySet().removeIf(k -> k.startsWith(vanishPid));
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
                     ghost.vanishing = true;
@@ -4961,6 +5241,20 @@ public class CamelMonitor extends CamelCommand {
                     outHist.remove(0);
                 }
             }
+        }
+    }
+
+    private void updateCbHistory(IntegrationInfo info) {
+        long now = System.currentTimeMillis();
+        for (CircuitBreakerInfo cb : info.circuitBreakers) {
+            if (cb.id == null) {
+                continue;
+            }
+            String key = info.pid + "/" + cb.id;
+            long success = cb.successfulCalls;
+            long failed = cb.failedCalls;
+            recordEndpointSample(key, now, success, failed,
+                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory);
         }
     }
 
@@ -5552,6 +5846,19 @@ public class CamelMonitor extends CamelCommand {
                             pi.minTime = Math.max(0, objToLong(ps.get("minProcessingTime")));
                             pi.maxTime = Math.max(0, objToLong(ps.get("maxProcessingTime")));
                             pi.lastTime = objToLong(ps.get("lastProcessingTime"));
+                            pi.inflight = objToLong(ps.get("exchangesInflight"));
+                            long tsStarted = objToLong(ps.get("lastCreatedExchangeTimestamp"));
+                            if (tsStarted > 0) {
+                                pi.sinceLastStarted = TimeUtils.printSince(tsStarted);
+                            }
+                            long tsCompleted = objToLong(ps.get("lastCompletedExchangeTimestamp"));
+                            if (tsCompleted > 0) {
+                                pi.sinceLastCompleted = TimeUtils.printSince(tsCompleted);
+                            }
+                            long tsFailed = objToLong(ps.get("lastFailedExchangeTimestamp"));
+                            if (tsFailed > 0) {
+                                pi.sinceLastFailed = TimeUtils.printSince(tsFailed);
+                            }
                         }
 
                         ri.processors.add(pi);
@@ -5657,6 +5964,28 @@ public class CamelMonitor extends CamelCommand {
         parseCbSection(root, "resilience4j", info);
         parseCbSection(root, "fault-tolerance", info);
         parseCbSection(root, "circuit-breaker", info);
+
+        // Enrich circuit breakers with processor statistics (matched by id)
+        for (CircuitBreakerInfo cb : info.circuitBreakers) {
+            if (cb.id != null) {
+                for (RouteInfo ri : info.routes) {
+                    for (ProcessorInfo pi : ri.processors) {
+                        if (cb.id.equals(pi.id)) {
+                            cb.total = pi.total;
+                            cb.totalFailed = pi.failed;
+                            cb.meanTime = pi.meanTime;
+                            cb.minTime = pi.minTime;
+                            cb.maxTime = pi.maxTime;
+                            cb.inflight = pi.inflight;
+                            cb.sinceLastStarted = pi.sinceLastStarted;
+                            cb.sinceLastSuccess = pi.sinceLastCompleted;
+                            cb.sinceLastFail = pi.sinceLastFailed;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         // Parse REST DSL services
         JsonObject restsObj = (JsonObject) root.get("rests");
@@ -5963,6 +6292,10 @@ public class CamelMonitor extends CamelCommand {
         long minTime;
         long maxTime;
         long lastTime;
+        long inflight;
+        String sinceLastStarted;
+        String sinceLastCompleted;
+        String sinceLastFailed;
     }
 
     static class HealthCheckInfo {
@@ -6010,6 +6343,16 @@ public class CamelMonitor extends CamelCommand {
         long failedCalls;
         long notPermittedCalls;
         double failureRate; // -1 means not available
+        // enriched from processor statistics (matched by id)
+        long total;
+        long totalFailed;
+        long meanTime;
+        long minTime;
+        long maxTime;
+        long inflight;
+        String sinceLastStarted;
+        String sinceLastSuccess;
+        String sinceLastFail;
     }
 
     // HTTP endpoint from REST DSL or Platform-HTTP

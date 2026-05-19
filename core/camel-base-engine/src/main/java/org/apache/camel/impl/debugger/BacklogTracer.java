@@ -179,6 +179,8 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                 event.setEndpointUri(route.getConsumer().getEndpoint().getEndpointUri());
             }
         }
+        // synthetic events are snapshots, mark done immediately so elapsed doesn't keep growing
+        event.doneProcessing();
         traceEvent(event);
     }
 
