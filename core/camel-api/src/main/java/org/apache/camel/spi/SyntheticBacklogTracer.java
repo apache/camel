@@ -25,8 +25,8 @@ import org.apache.camel.NamedNode;
  * {@code CamelInternalProcessor} applies to every node in the route graph, so they must emit synthetic first/last trace
  * events manually to participate in message-history capture.
  * <p>
- * Callers obtain a {@link SyntheticBacklogTracer} from the context plugin manager and guard on null before invoking
- * the synthetic tracing methods:
+ * Callers obtain a {@link SyntheticBacklogTracer} from the context plugin manager and guard on null before invoking the
+ * synthetic tracing methods:
  *
  * <pre>
  * <code>
