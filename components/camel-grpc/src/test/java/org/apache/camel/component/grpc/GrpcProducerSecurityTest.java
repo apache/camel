@@ -30,13 +30,11 @@ import io.netty.handler.ssl.SslContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
 import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +46,6 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerSecurityTest.class);
 
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcTlsTestPort = AvailablePortFinder.find();
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcJwtTestPort = AvailablePortFinder.find();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final int GRPC_TEST_PONG_ID01 = 1;
     private static final int GRPC_TEST_PONG_ID02 = 2;
@@ -74,18 +68,18 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
 
         Assumptions.assumeTrue(sslContext instanceof OpenSslClientContext || sslContext instanceof JdkSslContext);
 
-        grpcServerWithTLS = NettyServerBuilder.forPort(grpcTlsTestPort.getPort())
+        grpcServerWithTLS = NettyServerBuilder.forPort(0)
                 .sslContext(sslContext)
                 .addService(new PingPongImpl()).build().start();
 
-        grpcServerWithJWT = NettyServerBuilder.forPort(grpcJwtTestPort.getPort())
+        grpcServerWithJWT = NettyServerBuilder.forPort(0)
                 .addService(new PingPongImpl())
                 .intercept(new JwtServerInterceptor(JwtAlgorithm.HMAC256, GRPC_JWT_CORRECT_SECRET, null, null))
                 .build()
                 .start();
 
-        LOG.info("gRPC server with TLS started on port {}", grpcTlsTestPort.getPort());
-        LOG.info("gRPC server with the JWT auth started on port {}", grpcJwtTestPort.getPort());
+        LOG.info("gRPC server with TLS started on port {}", grpcServerWithTLS.getPort());
+        LOG.info("gRPC server with the JWT auth started on port {}", grpcServerWithJWT.getPort());
     }
 
     @AfterAll
@@ -153,18 +147,18 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:grpc-tls")
-                        .to("grpc://localhost:" + grpcTlsTestPort.getPort()
+                        .to("grpc://localhost:" + grpcServerWithTLS.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&"
                             + "negotiationType=TLS&keyCertChainResource=file:src/test/resources/certs/client.pem&"
                             + "keyResource=file:src/test/resources/certs/client.key&trustCertCollectionResource=file:src/test/resources/certs/ca.pem");
 
                 from("direct:grpc-correct-jwt")
-                        .to("grpc://localhost:" + grpcJwtTestPort.getPort()
+                        .to("grpc://localhost:" + grpcServerWithJWT.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&"
                             + "authenticationType=JWT&jwtSecret=" + GRPC_JWT_CORRECT_SECRET);
 
                 from("direct:grpc-incorrect-jwt")
-                        .to("grpc://localhost:" + grpcJwtTestPort.getPort()
+                        .to("grpc://localhost:" + grpcServerWithJWT.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&"
                             + "authenticationType=JWT&jwtSecret=" + GRPC_JWT_INCORRECT_SECRET);
             }

@@ -25,12 +25,10 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.CamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +41,6 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerExceptionTest.class);
 
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcSyncRequestTestPort = AvailablePortFinder.find();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final String GRPC_TEST_PING_VALUE = "PING";
 
@@ -54,8 +50,8 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
     @BeforeEach
     public void startGrpcChannels() {
-        syncRequestChannel
-                = ManagedChannelBuilder.forAddress("localhost", grpcSyncRequestTestPort.getPort()).usePlaintext().build();
+        int port = ((GrpcConsumer) context.getRoute("grpc-exception").getConsumer()).getLocalPort();
+        syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", port).usePlaintext().build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
         nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);
     }
@@ -96,8 +92,8 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("grpc://localhost:" + grpcSyncRequestTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true")
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true")
+                        .routeId("grpc-exception")
                         .throwException(CamelException.class, "GRPC Camel exception message");
 
             }

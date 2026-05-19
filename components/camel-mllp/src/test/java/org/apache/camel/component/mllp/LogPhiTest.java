@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
@@ -42,9 +41,6 @@ public class LogPhiTest extends CamelTestSupport {
     static final int SERVER_ACKNOWLEDGEMENT_DELAY = 10000;
 
     @RegisterExtension
-    AvailablePortFinder.Port mllpServerPort = AvailablePortFinder.find();
-
-    @RegisterExtension
     public MllpServerResource mllpServer = new MllpServerResource();
 
     @EndpointInject("direct:startNoLogPhi")
@@ -59,7 +55,7 @@ public class LogPhiTest extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         mllpServer.setListenHost("localhost");
-        mllpServer.setListenPort(mllpServerPort.getPort());
+        mllpServer.setListenPort(0);
         mllpServer.setDelayDuringAcknowledgement(SERVER_ACKNOWLEDGEMENT_DELAY);
         mllpServer.startup();
         assertTrue(mllpServer.isActive());

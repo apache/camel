@@ -68,6 +68,14 @@ public class GrpcConsumer extends DefaultConsumer {
         return configuration;
     }
 
+    /**
+     * Returns the actual local port the gRPC server is listening on. Useful when the server was started with port 0
+     * (OS-assigned port).
+     */
+    public int getLocalPort() {
+        return server != null ? server.getPort() : -1;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -94,7 +102,7 @@ public class GrpcConsumer extends DefaultConsumer {
         BindableService bindableService = getBindableServiceFactory().createBindableService(this);
         ServerInterceptor headerInterceptor = new GrpcHeaderInterceptor();
 
-        if (ObjectHelper.isNotEmpty(configuration.getHost()) && configuration.getPort() > 0) {
+        if (ObjectHelper.isNotEmpty(configuration.getHost()) && configuration.getPort() >= 0) {
             LOG.debug("Building gRPC server on {}:{}", configuration.getHost(), configuration.getPort());
             serverBuilder
                     = NettyServerBuilder.forAddress(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
