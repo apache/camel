@@ -21,9 +21,13 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An exception caused when a mandatory property is not available on a message {@link Exchange}
+ * Thrown when a mandatory exchange property is not available on an {@link Exchange}.
+ * <p/>
+ * Typically raised by {@link org.apache.camel.support.ExchangeHelper#getMandatoryProperty(Exchange, String, Class)}
+ * when a processor or EIP requires a specific property to be present.
  *
  * @see org.apache.camel.support.ExchangeHelper#getMandatoryProperty(Exchange, String, Class)
+ * @see NoSuchHeaderException
  */
 public class NoSuchPropertyException extends CamelExchangeException {
 

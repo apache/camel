@@ -21,7 +21,14 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Runtime version of the {@link InvalidPayloadException}.
+ * Unchecked variant of {@link InvalidPayloadException}, thrown when the body of a {@link Message} cannot be converted
+ * to the expected type.
+ * <p/>
+ * Used in contexts where a checked exception is not permitted, such as inside a {@link Processor} that calls
+ * {@link Message#getMandatoryBody(Class)}.
+ *
+ * @see InvalidPayloadException
+ * @see Message
  */
 public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
 

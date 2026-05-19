@@ -21,9 +21,14 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An exception caused when a mandatory header is not available on a message {@link Exchange}
+ * Thrown when a mandatory header is not available on the {@link Message} of an {@link Exchange}.
+ * <p/>
+ * Typically raised by {@link org.apache.camel.support.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)} when
+ * a processor requires a specific header to be present.
  *
  * @see org.apache.camel.support.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)
+ * @see NoSuchPropertyException
+ * @see Message
  */
 public class NoSuchHeaderException extends CamelExchangeException {
 

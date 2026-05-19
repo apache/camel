@@ -21,6 +21,14 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
+ * Thrown when neither a mandatory header nor a mandatory exchange property is available on an {@link Exchange}, and at
+ * least one of them is required for processing to continue.
+ * <p/>
+ * Combines the roles of {@link NoSuchHeaderException} and {@link NoSuchPropertyException} for callers that accept
+ * either source but need at least one to be present.
+ *
+ * @see   NoSuchHeaderException
+ * @see   NoSuchPropertyException
  * @since 3.18
  */
 public class NoSuchHeaderOrPropertyException extends CamelExchangeException {

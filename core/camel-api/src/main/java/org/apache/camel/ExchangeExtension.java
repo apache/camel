@@ -24,12 +24,17 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.jspecify.annotations.Nullable;
 
-/*
- * {@link Exchange} extensions which contains the methods and APIs that are not intended for Camel end users but
- * used internally by Camel for optimization purposes, SPI, custom components, or more advanced used-cases with
- * Camel.
-  *
-  * @since 4.0
+/**
+ * Internal extension surface of {@link Exchange} exposing methods and APIs not intended for Camel end users, but used
+ * inside Camel for optimization, SPI integration, custom component development, and advanced use cases.
+ * <p/>
+ * An instance is obtained by calling {@link Exchange#getExchangeExtension()}.
+ * <p/>
+ * The contract of this interface may change between minor releases without the usual deprecation cycle that applies to
+ * the main {@link Exchange} API.
+ *
+ * @see   Exchange
+ * @since 4.0
  */
 public interface ExchangeExtension {
 

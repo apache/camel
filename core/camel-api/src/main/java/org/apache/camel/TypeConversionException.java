@@ -21,7 +21,12 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Exception when failing during type conversion.
+ * Unchecked exception thrown when a type converter is found but fails to convert a value to the required type.
+ * <p/>
+ * Contrast with {@link NoTypeConversionAvailableException}, which is thrown when no converter exists for the
+ * source-to-target type pair at all.
+ *
+ * @see NoTypeConversionAvailableException
  */
 public class TypeConversionException extends RuntimeCamelException {
 

@@ -31,6 +31,9 @@ import org.jspecify.annotations.Nullable;
  * implementation of the map can be configured by the {@link HeadersMapFactory} which can be set on the
  * {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap
  * CaseInsensitiveMap}.
+ *
+ * @see Exchange
+ * @see ExchangePattern
  */
 public interface Message {
 
