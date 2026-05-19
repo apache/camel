@@ -31,6 +31,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -358,13 +359,9 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
                 StringBuilder builder = new StringBuilder();
 
-                if (ObjectHelper.isNotEmpty(getConfiguration().getDestinationBucketPrefix())) {
-                    builder.append(getConfiguration().getDestinationBucketPrefix());
-                }
+                builder.append(AWS2S3Utils.evaluateDestinationBucketPrefix(exchange, getConfiguration()));
                 builder.append(key);
-                if (ObjectHelper.isNotEmpty(getConfiguration().getDestinationBucketSuffix())) {
-                    builder.append(getConfiguration().getDestinationBucketSuffix());
-                }
+                builder.append(AWS2S3Utils.evaluateDestinationBucketSuffix(exchange, getConfiguration()));
 
                 String destinationKey = builder.toString();
                 if (getConfiguration().isRemovePrefixOnMove()) {
