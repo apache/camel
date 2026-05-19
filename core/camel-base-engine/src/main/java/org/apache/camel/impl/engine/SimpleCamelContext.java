@@ -613,10 +613,10 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestRegistryFactory createRestRegistryFactory() {
-        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
+        return ResolverHelper.resolveBootstrapService(getCamelContextReference(),
                 RestRegistryFactory.FACTORY,
-                RestRegistryFactory.class,
-                "camel-rest");
+                RestRegistryFactory.class)
+                .orElse(null);
     }
 
     @Override

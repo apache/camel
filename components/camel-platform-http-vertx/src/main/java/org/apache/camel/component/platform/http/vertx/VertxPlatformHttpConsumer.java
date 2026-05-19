@@ -116,9 +116,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         super.doInit();
 
         // camel-rest is optional
-        if (getEndpoint().getCamelContext().getCamelContextExtension().isContextPluginInUse(RestRegistry.class)) {
-            restRegistry = PluginHelper.getRestRegistry(getEndpoint().getCamelContext());
-        }
+        restRegistry = PluginHelper.getRestRegistry(getEndpoint().getCamelContext());
 
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
         path = configureEndpointPath(getEndpoint());  // in vertx-web we should replace path parameters from {xxx} to :xxx syntax

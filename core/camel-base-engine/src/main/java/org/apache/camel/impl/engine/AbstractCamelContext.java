@@ -4348,6 +4348,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected RestRegistry createRestRegistry() {
         RestRegistryFactory factory = camelContextExtension.getRestRegistryFactory();
+        if (factory == null) {
+            return null;
+        }
         return factory.createRegistry();
     }
 
