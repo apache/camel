@@ -134,7 +134,7 @@ public class CamelMonitor extends CamelCommand {
 
     // Route sort columns
     private static final String[] ROUTE_SORT_COLUMNS = { "name", "group", "from", "status", "total", "failed" };
-    private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta", "total", "failed" };
+    private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta" };
 
     // Consumer sort columns (order matches table column order)
     private static final String[] CONSUMER_SORT_COLUMNS = { "id", "status", "type", "inflight", "total", "uri" };
@@ -1225,7 +1225,7 @@ public class CamelMonitor extends CamelCommand {
         Line[] labels = {
                 Line.from(" 1 Overview "),
                 Line.from(" 2 Log "),
-                Line.from(" 3 Route "),
+                Line.from(routeTopMode ? " 3  Top  " : " 3 Route "),
                 Line.from(" 4 Consumer "),
                 Line.from(" 5 Endpoint "),
                 Line.from(" 6 HTTP "),
@@ -1776,8 +1776,8 @@ public class CamelMonitor extends CamelCommand {
                             rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
                             rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
                             rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
-                            rightCell(routeTopSortLabel("TOTAL", "total"), 8, routeTopSortStyle("total")),
-                            rightCell(routeTopSortLabel("FAIL", "failed"), 6, routeTopSortStyle("failed")),
+                            rightCell("TOTAL", 8, Style.EMPTY.bold()),
+                            rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                             rightCell("MSG/S", 8, Style.EMPTY.bold()),
                             rightCell("LOAD", 12, Style.EMPTY.bold())))
@@ -1959,8 +1959,6 @@ public class CamelMonitor extends CamelCommand {
             case "min" -> Long.compare(b.minTime, a.minTime);
             case "last" -> Long.compare(b.lastTime, a.lastTime);
             case "delta" -> Long.compare(b.deltaTime, a.deltaTime);
-            case "total" -> Long.compare(b.total, a.total);
-            case "failed" -> Long.compare(b.failed, a.failed);
             default -> 0;
         };
         return routeTopSortReversed ? -result : result;
@@ -1973,8 +1971,6 @@ public class CamelMonitor extends CamelCommand {
             case "min" -> Long.compare(b.minTime, a.minTime);
             case "last" -> Long.compare(b.lastTime, a.lastTime);
             case "delta" -> Long.compare(b.deltaTime, a.deltaTime);
-            case "total" -> Long.compare(b.total, a.total);
-            case "failed" -> Long.compare(b.failed, a.failed);
             default -> 0;
         };
         return routeTopSortReversed ? -result : result;
@@ -2244,12 +2240,31 @@ public class CamelMonitor extends CamelCommand {
             List<ProcessorInfo> sorted = new ArrayList<>(route.processors);
             sorted.sort(this::sortProcessorTop);
 
+            long maxValue = sorted.stream().mapToLong(this::procChartValue).max().orElse(1);
+            if (maxValue <= 0) {
+                maxValue = 1;
+            }
+
             for (ProcessorInfo proc : sorted) {
                 Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+                long chartVal = procChartValue(proc);
+                String bar;
+                if (chartVal > 0) {
+                    bar = buildBar(chartVal, maxValue, 20);
+                } else if (proc.total > 0) {
+                    bar = "█";
+                } else {
+                    bar = "";
+                }
+                Style barStyle = topTimeStyle(chartVal);
+                if (barStyle == Style.EMPTY) {
+                    barStyle = Style.EMPTY.fg(Color.CYAN);
+                }
 
                 rows.add(Row.from(
                         Cell.from("   " + (proc.processor != null ? proc.processor : "")),
                         Cell.from(Span.styled(proc.id != null ? proc.id : "", nameStyle)),
+                        Cell.from(Span.styled(bar, barStyle)),
                         rightCell(proc.total > 0 ? String.valueOf(proc.meanTime) : "", 6, topTimeStyle(proc.meanTime)),
                         rightCell(proc.total > 0 ? String.valueOf(proc.maxTime) : "", 6, topTimeStyle(proc.maxTime)),
                         rightCell(proc.total > 0 ? String.valueOf(proc.minTime) : "", 6),
@@ -2266,16 +2281,18 @@ public class CamelMonitor extends CamelCommand {
                     .header(Row.from(
                             Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
                             Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                            Cell.from(""),
                             rightCell(routeTopSortLabel("MEAN", "mean"), 6, routeTopSortStyle("mean")),
                             rightCell(routeTopSortLabel("MAX", "max"), 6, routeTopSortStyle("max")),
                             rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
                             rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
                             rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
-                            rightCell(routeTopSortLabel("TOTAL", "total"), 8, routeTopSortStyle("total")),
-                            rightCell(routeTopSortLabel("FAIL", "failed"), 6, routeTopSortStyle("failed")),
+                            rightCell("TOTAL", 8, Style.EMPTY.bold()),
+                            rightCell("FAIL", 6, Style.EMPTY.bold()),
                             rightCell("INFLIGHT", 8, Style.EMPTY.bold())))
                     .widths(
                             Constraint.length(20),
+                            Constraint.length(14),
                             Constraint.fill(),
                             Constraint.length(6),
                             Constraint.length(6),
@@ -2353,6 +2370,26 @@ public class CamelMonitor extends CamelCommand {
         }
 
         frame.renderStatefulWidget(table, area, processorTableState);
+    }
+
+    private static String buildBar(long value, long maxValue, int maxWidth) {
+        if (value <= 0 || maxValue <= 0) {
+            return "";
+        }
+        int len = (int) Math.round((double) value / maxValue * maxWidth);
+        len = Math.max(len > 0 ? 1 : 0, Math.min(len, maxWidth));
+        return "█".repeat(len);
+    }
+
+    private long procChartValue(ProcessorInfo proc) {
+        return switch (routeTopSort) {
+            case "mean" -> proc.meanTime;
+            case "max" -> proc.maxTime;
+            case "min" -> proc.minTime;
+            case "last" -> proc.lastTime;
+            case "delta" -> Math.abs(proc.deltaTime);
+            default -> proc.meanTime;
+        };
     }
 
     private void renderRouteHeader(Frame frame, Rect area, IntegrationInfo info) {
@@ -5084,24 +5121,26 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "t", routeTopMode ? "top [on]" : "top [off]");
-            hint(spans, "c", "source");
-            hint(spans, "d", "diagram");
-            hint(spans, "D", "text diagram");
-            hint(spans, "a", diagramAllRoutes ? "all [on]" : "all [off]");
-            String routeState = selectedRouteState();
-            boolean supSus = selectedRouteSupportsSuspension();
-            if ("Started".equals(routeState)) {
-                hint(spans, "p", "stop");
-                if (supSus) {
-                    hint(spans, "P", "suspend");
+            if (!routeTopMode) {
+                hint(spans, "c", "source");
+                hint(spans, "d", "diagram");
+                hint(spans, "D", "text diagram");
+                hint(spans, "a", diagramAllRoutes ? "all [on]" : "all [off]");
+                String routeState = selectedRouteState();
+                boolean supSus = selectedRouteSupportsSuspension();
+                if ("Started".equals(routeState)) {
+                    hint(spans, "p", "stop");
+                    if (supSus) {
+                        hint(spans, "P", "suspend");
+                    }
+                } else if ("Suspended".equals(routeState)) {
+                    hint(spans, "p", "start");
+                    if (supSus) {
+                        hint(spans, "P", "resume");
+                    }
+                } else if (routeState != null) {
+                    hint(spans, "p", "start");
                 }
-            } else if ("Suspended".equals(routeState)) {
-                hint(spans, "p", "start");
-                if (supSus) {
-                    hint(spans, "P", "resume");
-                }
-            } else if (routeState != null) {
-                hint(spans, "p", "start");
             }
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CONSUMERS) {
