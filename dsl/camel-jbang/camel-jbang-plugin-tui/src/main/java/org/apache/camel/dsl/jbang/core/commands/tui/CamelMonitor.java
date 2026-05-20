@@ -69,10 +69,10 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramRenderer;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -1012,35 +1012,11 @@ public class CamelMonitor extends CamelCommand {
             diagramImageData = null;
             diagramProtocol = null;
 
-            StringBuilder sb = new StringBuilder();
-            org.apache.camel.dsl.jbang.core.common.Printer capturingPrinter
-                    = new org.apache.camel.dsl.jbang.core.common.Printer() {
-                        @Override
-                        public void println() {
-                            sb.append('\n');
-                        }
-
-                        @Override
-                        public void println(String line) {
-                            sb.append(line).append('\n');
-                        }
-
-                        @Override
-                        public void print(String output) {
-                            sb.append(output);
-                        }
-
-                        @Override
-                        public void printf(String format, Object... args) {
-                            sb.append(String.format(format, args));
-                        }
-                    };
-
             RouteDiagramRenderer renderer = new RouteDiagramRenderer();
-            renderer.printTextDiagram(diagramRoutes, capturingPrinter);
+            List<String> lines = renderer.printTextDiagram(diagramRoutes);
 
             List<String> result = new ArrayList<>();
-            for (String line : sb.toString().split("\n", -1)) {
+            for (String line : lines) {
                 if (!line.isEmpty()) {
                     result.add(line);
                 }
