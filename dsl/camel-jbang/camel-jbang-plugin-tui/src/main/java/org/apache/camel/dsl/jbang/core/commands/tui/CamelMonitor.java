@@ -36,6 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -163,8 +164,12 @@ public class CamelMonitor extends CamelCommand {
 
     // State
     private final AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(Collections.emptyList());
+    private final AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(Collections.emptyList());
     private final Map<String, VanishingInfo> vanishing = new ConcurrentHashMap<>();
+    private final Map<String, VanishingInfraInfo> vanishingInfra = new ConcurrentHashMap<>();
     private final TableState overviewTableState = new TableState();
+    private final TableState infraTableState = new TableState();
+    private boolean infraTableFocused;
     private final TableState routeTableState = new TableState();
     private final TableState consumerTableState = new TableState();
     private final TableState healthTableState = new TableState();
@@ -356,6 +361,7 @@ public class CamelMonitor extends CamelCommand {
     private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
     private boolean showLogLevelPopup;
     private final ListState logLevelListState = new ListState();
+    private boolean showKillConfirm;
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private final AtomicBoolean diagramLoading = new AtomicBoolean(false);
@@ -409,6 +415,17 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
+            // Kill confirm dialog: Enter to confirm, Esc/any other key to cancel
+            if (showKillConfirm) {
+                if (ke.isConfirm()) {
+                    showKillConfirm = false;
+                    stopSelectedProcess(true);
+                } else {
+                    showKillConfirm = false;
+                }
+                return true;
+            }
+
             // Escape: navigate back
             if (ke.isCancel()) {
                 if (showLogLevelPopup) {
@@ -439,6 +456,11 @@ public class CamelMonitor extends CamelCommand {
                     tabsState.select(TAB_OVERVIEW);
                     return true;
                 }
+                if (infraTableFocused) {
+                    infraTableFocused = false;
+                    syncSelectedPidFromOverview();
+                    return true;
+                }
                 if (selectedPid != null) {
                     selectedPid = null;
                     return true;
@@ -451,49 +473,63 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             // Tab switching with number keys
+            // When infra is selected, only Overview (1) and Log (2) are available
             if (ke.isChar('1')) {
                 return handleTabKey(TAB_OVERVIEW);
             }
             if (ke.isChar('2')) {
                 return handleTabKey(TAB_LOG);
             }
-            if (ke.isChar('3')) {
-                return handleTabKey(TAB_ROUTES);
-            }
-            if (ke.isChar('4')) {
-                return handleTabKey(TAB_CONSUMERS);
-            }
-            if (ke.isChar('5')) {
-                return handleTabKey(TAB_ENDPOINTS);
-            }
-            if (ke.isChar('6')) {
-                return handleTabKey(TAB_HTTP);
-            }
-            if (ke.isChar('7')) {
-                return handleTabKey(TAB_HEALTH);
-            }
-            if (ke.isChar('8')) {
-                return handleTabKey(TAB_HISTORY);
-            }
-            if (ke.isChar('9')) {
-                return handleTabKey(TAB_CIRCUIT_BREAKER);
+            if (!isInfraSelected()) {
+                if (ke.isChar('3')) {
+                    return handleTabKey(TAB_ROUTES);
+                }
+                if (ke.isChar('4')) {
+                    return handleTabKey(TAB_CONSUMERS);
+                }
+                if (ke.isChar('5')) {
+                    return handleTabKey(TAB_ENDPOINTS);
+                }
+                if (ke.isChar('6')) {
+                    return handleTabKey(TAB_HTTP);
+                }
+                if (ke.isChar('7')) {
+                    return handleTabKey(TAB_HEALTH);
+                }
+                if (ke.isChar('8')) {
+                    return handleTabKey(TAB_HISTORY);
+                }
+                if (ke.isChar('9')) {
+                    return handleTabKey(TAB_CIRCUIT_BREAKER);
+                }
             }
 
             // Tab cycling (check Shift+Tab before Tab since Tab binding also matches Shift+Tab)
             if (ke.isFocusPrevious()) {
-                int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
-                if (prev != TAB_OVERVIEW) {
-                    selectCurrentIntegration();
+                if (isInfraSelected()) {
+                    // Cycle between Overview and Log only
+                    int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                    tabsState.select(prev);
+                } else {
+                    int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
+                    if (prev != TAB_OVERVIEW) {
+                        selectCurrentIntegration();
+                    }
+                    tabsState.select(prev);
                 }
-                tabsState.select(prev);
                 return true;
             }
             if (ke.isFocusNext()) {
-                int next = (tabsState.selected() + 1) % NUM_TABS;
-                if (next != TAB_OVERVIEW) {
-                    selectCurrentIntegration();
+                if (isInfraSelected()) {
+                    int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                    tabsState.select(next);
+                } else {
+                    int next = (tabsState.selected() + 1) % NUM_TABS;
+                    if (next != TAB_OVERVIEW) {
+                        selectCurrentIntegration();
+                    }
+                    tabsState.select(next);
                 }
-                tabsState.select(next);
                 return true;
             }
 
@@ -625,13 +661,40 @@ public class CamelMonitor extends CamelCommand {
                 chartMode = (chartMode + 1) % 3;
                 return true;
             }
-            // Overview tab: start/stop all routes for selected integration
-            if (tab == TAB_OVERVIEW && ke.isChar('p') && selectedPid != null) {
+            // Overview tab: toggle focus between integrations and infra tables
+            if (tab == TAB_OVERVIEW && ke.isChar('i') && !infraData.get().isEmpty()) {
+                infraTableFocused = !infraTableFocused;
+                if (infraTableFocused) {
+                    if (infraTableState.selected() == null) {
+                        infraTableState.select(0);
+                    }
+                    syncSelectedPidFromInfra();
+                } else {
+                    List<IntegrationInfo> intInfos = sortedOverviewInfos();
+                    if (!intInfos.isEmpty() && overviewTableState.selected() == null) {
+                        overviewTableState.select(0);
+                    }
+                    syncSelectedPidFromOverview();
+                }
+                return true;
+            }
+            // Overview tab: start/stop all routes for selected integration (not infra)
+            if (tab == TAB_OVERVIEW && ke.isChar('p') && selectedPid != null && !infraTableFocused) {
                 IntegrationInfo selInfo = findSelectedIntegration();
                 if (selInfo != null) {
                     String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
                     sendRouteCommand(selectedPid, "*", cmd);
                 }
+                return true;
+            }
+            // Overview tab: stop process (SIGTERM) for selected integration or infra
+            if (tab == TAB_OVERVIEW && ke.isChar('x') && selectedPid != null) {
+                stopSelectedProcess(false);
+                return true;
+            }
+            // Overview tab: kill process (SIGKILL) — show confirm dialog first
+            if (tab == TAB_OVERVIEW && ke.isChar('X') && selectedPid != null) {
+                showKillConfirm = true;
                 return true;
             }
 
@@ -1038,12 +1101,20 @@ public class CamelMonitor extends CamelCommand {
         if (selectedPid != null) {
             return;
         }
-        List<IntegrationInfo> infos = sortedOverviewInfos();
-        Integer sel = overviewTableState.selected();
-        if (sel != null && sel >= 0 && sel < infos.size()) {
-            selectedPid = infos.get(sel).pid;
-        } else if (infos.size() == 1) {
-            selectedPid = infos.get(0).pid;
+        if (infraTableFocused) {
+            List<InfraInfo> infras = infraData.get();
+            Integer sel = infraTableState.selected();
+            if (sel != null && sel >= 0 && sel < infras.size()) {
+                selectedPid = infras.get(sel).pid;
+            }
+        } else {
+            List<IntegrationInfo> infos = sortedOverviewInfos();
+            Integer sel = overviewTableState.selected();
+            if (sel != null && sel >= 0 && sel < infos.size()) {
+                selectedPid = infos.get(sel).pid;
+            } else if (infos.size() == 1) {
+                selectedPid = infos.get(0).pid;
+            }
         }
     }
 
@@ -1055,6 +1126,19 @@ public class CamelMonitor extends CamelCommand {
             newPid = infos.get(sel).pid;
         } else if (infos.size() == 1) {
             newPid = infos.get(0).pid;
+        }
+        if (newPid != null && !newPid.equals(selectedPid)) {
+            selectedPid = newPid;
+            resetIntegrationTabState();
+        }
+    }
+
+    private void syncSelectedPidFromInfra() {
+        List<InfraInfo> infras = infraData.get();
+        Integer sel = infraTableState.selected();
+        String newPid = null;
+        if (sel != null && sel >= 0 && sel < infras.size()) {
+            newPid = infras.get(sel).pid;
         }
         if (newPid != null && !newPid.equals(selectedPid)) {
             selectedPid = newPid;
@@ -1105,8 +1189,13 @@ public class CamelMonitor extends CamelCommand {
     private void navigateUp() {
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> {
-                overviewTableState.selectPrevious();
-                syncSelectedPidFromOverview();
+                if (infraTableFocused) {
+                    infraTableState.selectPrevious();
+                    syncSelectedPidFromInfra();
+                } else {
+                    overviewTableState.selectPrevious();
+                    syncSelectedPidFromOverview();
+                }
             }
             case TAB_ROUTES -> routeTableState.selectPrevious();
             case TAB_CIRCUIT_BREAKER -> cbTableState.selectPrevious();
@@ -1132,11 +1221,15 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void navigateDown() {
-        List<IntegrationInfo> infos = data.get().stream().filter(i -> !i.vanishing).toList();
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> {
-                overviewTableState.selectNext(sortedOverviewInfos().size());
-                syncSelectedPidFromOverview();
+                if (infraTableFocused) {
+                    infraTableState.selectNext(infraData.get().size());
+                    syncSelectedPidFromInfra();
+                } else {
+                    overviewTableState.selectNext(sortedOverviewInfos().size());
+                    syncSelectedPidFromOverview();
+                }
             }
             case TAB_ROUTES -> {
                 IntegrationInfo info = findSelectedIntegration();
@@ -1190,6 +1283,9 @@ public class CamelMonitor extends CamelCommand {
         renderTabs(frame, mainChunks.get(2));
         // mainChunks.get(3) is the empty spacer row between tabs and content
         renderContent(frame, mainChunks.get(4));
+        if (showKillConfirm) {
+            renderKillConfirm(frame, mainChunks.get(4));
+        }
         renderFooter(frame, mainChunks.get(5));
     }
 
@@ -1204,9 +1300,19 @@ public class CamelMonitor extends CamelCommand {
         titleSpans.add(Span.styled(camelVersion != null ? "v" + camelVersion : "", Style.EMPTY.fg(Color.GREEN)));
         titleSpans.add(Span.raw("  "));
         titleSpans.add(Span.styled(activeCount + " integration(s)", Style.EMPTY.fg(Color.CYAN)));
+        long activeInfra = infraData.get().stream().filter(i -> !i.vanishing).count();
+        if (activeInfra > 0) {
+            titleSpans.add(Span.raw("  "));
+            titleSpans.add(Span.styled(activeInfra + " infra(s)", Style.EMPTY.fg(Color.MAGENTA)));
+        }
         if (selectedPid != null) {
             titleSpans.add(Span.raw("  "));
-            titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.YELLOW)));
+            InfraInfo selInfra = findSelectedInfra();
+            if (selInfra != null) {
+                titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.MAGENTA)));
+            } else {
+                titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.YELLOW)));
+            }
         }
         Line titleLine = Line.from(titleSpans);
 
@@ -1216,6 +1322,32 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderTabs(Frame frame, Rect area) {
+        boolean infraSelected = isInfraSelected();
+
+        if (infraSelected) {
+            // Infra mode: only Overview and Log tabs
+            Line[] labels = {
+                    Line.from(" 1 Overview "),
+                    Line.from(" 2 Log "),
+            };
+
+            // Map real tab index to infra tab index for highlight
+            int infraTabIdx = tabsState.selected() == TAB_LOG ? 1 : 0;
+            TabsState infraTabsState = new TabsState(infraTabIdx);
+
+            Tabs tabs = Tabs.builder()
+                    .titles(labels)
+                    .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
+                    .divider(Span.styled(" | ", Style.EMPTY.dim()))
+                    .build();
+
+            Rect labelsArea = area.height() >= 2
+                    ? new Rect(area.x(), area.y() + 1, area.width(), 1)
+                    : area;
+            frame.renderStatefulWidget(tabs, labelsArea, infraTabsState);
+            return;
+        }
+
         // Compute notification counts (0 if no integration selected)
         List<IntegrationInfo> infos = data.get();
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
@@ -1349,9 +1481,10 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderOverview(Frame frame, Rect area) {
         List<IntegrationInfo> infos = sortedOverviewInfos();
+        List<InfraInfo> infraInfos = infraData.get();
 
         // Keep the table selection index tracking the same PID across sort changes and data refreshes
-        if (selectedPid != null) {
+        if (selectedPid != null && !infraTableFocused) {
             for (int i = 0; i < infos.size(); i++) {
                 if (selectedPid.equals(infos.get(i).pid)) {
                     overviewTableState.select(i);
@@ -1359,17 +1492,28 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
         }
-
-        // Split: table (fill) + chart (14 rows: 13 chart + 1 x-axis) if we have data and chart is on
-        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty();
-        List<Rect> chunks;
-        if (hasSparkline) {
-            chunks = Layout.vertical()
-                    .constraints(Constraint.fill(), Constraint.length(14))
-                    .split(area);
-        } else {
-            chunks = List.of(area);
+        if (selectedPid != null && infraTableFocused) {
+            for (int i = 0; i < infraInfos.size(); i++) {
+                if (selectedPid.equals(infraInfos.get(i).pid)) {
+                    infraTableState.select(i);
+                    break;
+                }
+            }
         }
+
+        // Split: one table (integrations or infra, toggled by 'i') + chart or info panel
+        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !infraTableFocused;
+        boolean showInfoPanel = infraTableFocused && findSelectedInfra() != null && !hasSparkline;
+        List<Constraint> constraints = new ArrayList<>();
+        constraints.add(Constraint.fill());
+        if (hasSparkline) {
+            constraints.add(Constraint.length(14));
+        } else if (showInfoPanel) {
+            constraints.add(Constraint.length(10));
+        }
+        List<Rect> chunks = Layout.vertical()
+                .constraints(constraints)
+                .split(area);
 
         // Integration table
         List<Row> rows = new ArrayList<>();
@@ -1439,32 +1583,39 @@ public class CamelMonitor extends CamelCommand {
                 rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                 Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
 
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(8),
-                        Constraint.fill(),
-                        Constraint.length(16),
-                        Constraint.length(5),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(7),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(12))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
-                .build();
+        if (infraTableFocused) {
+            // Show infra table only
+            renderInfraTable(frame, chunks.get(0), infraInfos);
+        } else {
+            // Show integrations table only
+            Style integrationHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
+            Table table = Table.builder()
+                    .rows(rows)
+                    .header(header)
+                    .widths(
+                            Constraint.length(8),
+                            Constraint.fill(),
+                            Constraint.length(16),
+                            Constraint.length(5),
+                            Constraint.length(10),
+                            Constraint.length(8),
+                            Constraint.length(7),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(12))
+                    .highlightStyle(integrationHighlight)
+                    .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                    .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
+                    .build();
 
-        frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
+            frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
+        }
 
         // Split green/red throughput bar chart with Y and X axes
         if (hasSparkline && chunks.size() > 1) {
-            Rect chartTotalArea = chunks.get(1);
+            Rect chartTotalArea = chunks.get(chunks.size() - 1);
 
             // Split chart area horizontally: bar chart (fill) + info panel (30 cols)
             List<Rect> chartHSplit = Layout.horizontal()
@@ -1607,10 +1758,19 @@ public class CamelMonitor extends CamelCommand {
 
             // Info panel: heap and threads for the selected integration
             renderOverviewInfoPanel(frame, infoArea);
+        } else if (showInfoPanel) {
+            renderOverviewInfoPanel(frame, chunks.get(chunks.size() - 1));
         }
     }
 
     private void renderOverviewInfoPanel(Frame frame, Rect area) {
+        // Check if an infra service is selected — show connection details instead
+        InfraInfo infraSel = infraTableFocused ? findSelectedInfra() : null;
+        if (infraSel != null) {
+            renderInfraInfoPanel(frame, area, infraSel);
+            return;
+        }
+
         IntegrationInfo sel = findSelectedIntegration();
         // Fall back to the single active integration when nothing is explicitly selected
         if (sel == null) {
@@ -1709,6 +1869,89 @@ public class CamelMonitor extends CamelCommand {
             }
         } else {
             lines.add(Line.from(Span.raw("-")));
+        }
+        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
+    }
+
+    // ---- Infra table (overview sub-section) ----
+
+    private void renderInfraTable(Frame frame, Rect area, List<InfraInfo> infraInfos) {
+        List<Row> infraRows = new ArrayList<>();
+        for (InfraInfo info : infraInfos) {
+            if (info.vanishing) {
+                long elapsed = System.currentTimeMillis() - info.vanishStart;
+                float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
+                int gray = (int) (100 * fade);
+                Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
+                infraRows.add(Row.from(
+                        Cell.from(Span.styled(info.pid, dimStyle)),
+                        Cell.from(Span.styled(info.alias, dimStyle)),
+                        Cell.from(Span.styled("✖ Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle))));
+            } else {
+                Style statusStyle = info.alive ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
+                String statusText = info.alive ? "Running" : "Stopped";
+                String port = objToString(info.properties.get("getPort"));
+                String host = objToString(info.properties.get("getHost"));
+                if (host.isEmpty()) {
+                    host = objToString(info.properties.get("getHostname"));
+                }
+                infraRows.add(Row.from(
+                        Cell.from(info.pid),
+                        Cell.from(Span.styled(info.alias, Style.EMPTY.fg(Color.MAGENTA))),
+                        Cell.from(Span.styled(statusText, statusStyle)),
+                        Cell.from(port),
+                        Cell.from(host)));
+            }
+        }
+
+        Row infraHeader = Row.from(
+                Cell.from(Span.styled("PID", Style.EMPTY.bold())),
+                Cell.from(Span.styled("SERVICE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
+                Cell.from(Span.styled("PORT", Style.EMPTY.bold())),
+                Cell.from(Span.styled("HOST", Style.EMPTY.bold())));
+
+        Style infraHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
+        Table infraTable = Table.builder()
+                .rows(infraRows)
+                .header(infraHeader)
+                .widths(
+                        Constraint.length(8),
+                        Constraint.fill(),
+                        Constraint.length(10),
+                        Constraint.length(8),
+                        Constraint.length(20))
+                .highlightStyle(infraHighlight)
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Infrastructure ").build())
+                .build();
+
+        frame.renderStatefulWidget(infraTable, area, infraTableState);
+    }
+
+    private void renderInfraInfoPanel(Frame frame, Rect area, InfraInfo infra) {
+        Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).build();
+        frame.renderWidget(infoBlock, area);
+        Rect inner = infoBlock.inner(area);
+        List<Line> lines = new ArrayList<>();
+        Style dim = Style.EMPTY.dim();
+        lines.add(Line.from(
+                Span.styled("Service: ", dim),
+                Span.styled(infra.alias, Style.EMPTY.fg(Color.MAGENTA))));
+        lines.add(Line.from(Span.raw("")));
+        // Show connection properties with cleaned-up key names
+        for (Map.Entry<String, Object> e : infra.properties.entrySet()) {
+            String key = e.getKey();
+            // Strip "get" prefix and capitalize
+            if (key.startsWith("get") && key.length() > 3) {
+                key = key.substring(3);
+            }
+            String value = String.valueOf(e.getValue());
+            lines.add(Line.from(
+                    Span.styled(key + ": ", dim),
+                    Span.raw(TuiHelper.truncate(value, inner.width() - key.length() - 2))));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
     }
@@ -2855,6 +3098,49 @@ public class CamelMonitor extends CamelCommand {
         sendRouteCommand(selectedPid, route.routeId, command);
     }
 
+    private void stopSelectedProcess(boolean forceKill) {
+        if (selectedPid == null) {
+            return;
+        }
+        long pid;
+        try {
+            pid = Long.parseLong(selectedPid);
+        } catch (NumberFormatException e) {
+            return;
+        }
+        if (infraTableFocused) {
+            // For infra services: delete the JSON and log files to trigger graceful shutdown
+            InfraInfo infra = findSelectedInfra();
+            if (infra != null) {
+                Path camelDir = CommandLineHelper.getCamelDir();
+                PathUtils.deleteFile(camelDir.resolve("infra-" + infra.alias + "-" + infra.pid + ".json"));
+                PathUtils.deleteFile(camelDir.resolve("infra-" + infra.alias + "-" + infra.pid + ".log"));
+            }
+            if (forceKill) {
+                ProcessHandle.of(pid).ifPresent(ProcessHandle::destroyForcibly);
+            }
+        } else {
+            // For integrations: signal the process directly
+            ProcessHandle.of(pid).ifPresent(ph -> {
+                if (forceKill) {
+                    ph.destroyForcibly();
+                    // Clean up orphaned files after force kill
+                    Path camelDir = CommandLineHelper.getCamelDir();
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + ".log"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-status.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-action.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-output.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-trace.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-history.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-debug.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-receive.json"));
+                } else {
+                    ph.destroy();
+                }
+            });
+        }
+    }
+
     private void sendRouteCommand(String pid, String routeId, String command) {
         JsonObject root = new JsonObject();
         root.put("action", "route");
@@ -3830,7 +4116,8 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderLog(Frame frame, Rect area) {
         IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
+        InfraInfo infraSel = info == null ? findSelectedInfra() : null;
+        if (info == null && infraSel == null) {
             renderNoSelection(frame, area);
             return;
         }
@@ -3842,9 +4129,14 @@ public class CamelMonitor extends CamelCommand {
         String chunkSuffix = totalRead > entries.size()
                 ? " #" + (totalRead - entries.size() + 1) + "-" + totalRead
                 : "";
-        String logTitle = info.rootLogLevel != null
-                ? " Log level:" + info.rootLogLevel + chunkSuffix + " "
-                : " Log" + chunkSuffix + " ";
+        String logTitle;
+        if (infraSel != null) {
+            logTitle = " Log [" + infraSel.alias + "]" + chunkSuffix + " ";
+        } else if (info.rootLogLevel != null) {
+            logTitle = " Log level:" + info.rootLogLevel + chunkSuffix + " ";
+        } else {
+            logTitle = " Log" + chunkSuffix + " ";
+        }
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(logTitle)
@@ -3950,6 +4242,39 @@ public class CamelMonitor extends CamelCommand {
         frame.renderStatefulWidget(list, popup, logLevelListState);
     }
 
+    private void renderKillConfirm(Frame frame, Rect area) {
+        String name = selectedName();
+        String msg = " Kill " + name + " (PID: " + selectedPid + ")? ";
+        int popupW = Math.max(34, msg.length() + 4);
+        int popupH = 6;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .borderStyle(Style.EMPTY.fg(Color.LIGHT_RED))
+                .title(" Confirm Kill ")
+                .build();
+        frame.renderWidget(block, popup);
+        Rect inner = block.inner(popup);
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(
+                                Line.from(Span.raw("")),
+                                Line.from(Span.styled(msg, Style.EMPTY.fg(Color.LIGHT_RED).bold())),
+                                Line.from(Span.raw("")),
+                                Line.from(
+                                        Span.raw("  "),
+                                        Span.styled("Enter", Style.EMPTY.bold()),
+                                        Span.raw(" confirm  "),
+                                        Span.styled("Esc", Style.EMPTY.bold()),
+                                        Span.raw(" cancel"))))
+                        .build(),
+                inner);
+    }
+
     private void sendLoggerLevelAction(String pid, String level) {
         JsonObject root = new JsonObject();
         root.put("action", "logger");
@@ -3961,7 +4286,11 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void readNewLogLines(String pid, List<String> newLines) {
-        Path logFile = CommandLineHelper.getCamelDir().resolve(pid + ".log");
+        readNewLogLinesFromFile(pid, pid + ".log", newLines);
+    }
+
+    private void readNewLogLinesFromFile(String pid, String fileName, List<String> newLines) {
+        Path logFile = CommandLineHelper.getCamelDir().resolve(fileName);
         if (!Files.exists(logFile)) {
             logFilePid = pid;
             logFilePos = -1;
@@ -5099,23 +5428,31 @@ public class CamelMonitor extends CamelCommand {
         if (tab == TAB_OVERVIEW) {
             hint(spans, "q", "quit");
             if (selectedPid != null) {
-                hint(spans, "Esc", "unselect");
+                hint(spans, "Esc", infraTableFocused ? "integrations" : "unselect");
             }
             hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "s", "sort");
-            hint(spans, "a", "chart " + switch (chartMode) {
-                case CHART_ALL -> "[all]";
-                case CHART_SINGLE -> "[single]";
-                default -> "[off]";
-            });
-            hint(spans, "Enter", "details");
-            if (selectedPid != null) {
+            if (!infraData.get().isEmpty()) {
+                hint(spans, "i", infraTableFocused ? "integrations" : "infra");
+            }
+            if (!infraTableFocused) {
+                hint(spans, "s", "sort");
+                hint(spans, "a", "chart " + switch (chartMode) {
+                    case CHART_ALL -> "[all]";
+                    case CHART_SINGLE -> "[single]";
+                    default -> "[off]";
+                });
+            }
+            if (selectedPid != null && !infraTableFocused) {
                 IntegrationInfo selInfo = findSelectedIntegration();
                 if (selInfo != null) {
-                    hint(spans, "p", selInfo.routeStarted > 0 ? "stop" : "start");
+                    hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
                 }
             }
-            hint(spans, "1-9", "tabs");
+            if (selectedPid != null) {
+                hint(spans, "x", "stop");
+                hint(spans, "X", "kill");
+            }
+            hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
         } else if (tab == TAB_ROUTES && showSource) {
             hint(spans, "c/Esc", "close");
             hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
@@ -5193,8 +5530,11 @@ public class CamelMonitor extends CamelCommand {
             if (!logWordWrap) {
                 hint(spans, "\u2190\u2192", "h-scroll");
             }
-            hint(spans, "l", "level");
-            hintLast(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
+            if (!isInfraSelected()) {
+                hint(spans, "l", "level");
+            }
+            hint(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
+            hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
         } else if (tab == TAB_HTTP && showHttpSpec) {
             hint(spans, "c/Esc", "close");
             hint(spans, "↑↓", "scroll");
@@ -5394,12 +5734,37 @@ public class CamelMonitor extends CamelCommand {
 
             data.set(infos);
 
+            // Discover running infra services
+            refreshInfraData();
+
+            // Auto-focus infra table when no active integrations exist
+            if (!infraTableFocused && !infraData.get().isEmpty()
+                    && infos.stream().noneMatch(i -> !i.vanishing)) {
+                infraTableFocused = true;
+                if (infraTableState.selected() == null) {
+                    infraTableState.select(0);
+                }
+                syncSelectedPidFromInfra();
+            }
+
             // Refresh log data only when the Log tab is visible
             if (tabsState.selected() == TAB_LOG) {
-                IntegrationInfo selected = findSelectedIntegration();
-                if (selected != null) {
-                    if (!selected.pid.equals(logFilePid)) {
-                        // Integration changed: reset all incremental log state
+                // Determine which log file to tail: infra or integration
+                String logPid = null;
+                String logFileName = null;
+                InfraInfo selInfra = findSelectedInfra();
+                if (selInfra != null) {
+                    logPid = selInfra.pid;
+                    logFileName = "infra-" + selInfra.alias + "-" + selInfra.pid + ".log";
+                } else {
+                    IntegrationInfo selected = findSelectedIntegration();
+                    if (selected != null) {
+                        logPid = selected.pid;
+                        logFileName = selected.pid + ".log";
+                    }
+                }
+                if (logPid != null) {
+                    if (!logPid.equals(logFilePid)) {
                         mutableFilteredEntries.clear();
                         logFilePos = -1;
                         logTotalLinesRead = 0;
@@ -5407,7 +5772,7 @@ public class CamelMonitor extends CamelCommand {
                         logLineBuffer.setLength(0);
                     }
                     List<String> newRawLines = new ArrayList<>();
-                    readNewLogLines(selected.pid, newRawLines);
+                    readNewLogLinesFromFile(logPid, logFileName, newRawLines);
                     if (!newRawLines.isEmpty()) {
                         logTotalLinesRead += newRawLines.size();
                         for (String line : newRawLines) {
@@ -5428,6 +5793,88 @@ public class CamelMonitor extends CamelCommand {
         } catch (Exception e) {
             // ignore refresh errors
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void refreshInfraData() {
+        List<InfraInfo> infraInfos = new ArrayList<>();
+        try {
+            Path camelDir = CommandLineHelper.getCamelDir();
+            if (Files.isDirectory(camelDir)) {
+                try (var files = Files.list(camelDir)) {
+                    List<Path> jsonFiles = files
+                            .filter(p -> {
+                                String n = p.getFileName().toString();
+                                return n.startsWith("infra-") && n.endsWith(".json");
+                            })
+                            .toList();
+                    for (Path jsonFile : jsonFiles) {
+                        String fn = jsonFile.getFileName().toString();
+                        // Format: infra-{alias}-{pid}.json
+                        String withoutExt = fn.substring(0, fn.lastIndexOf('.'));
+                        int lastDash = withoutExt.lastIndexOf('-');
+                        if (lastDash <= 6) {
+                            continue;
+                        }
+                        String alias = withoutExt.substring(6, lastDash);
+                        String pidStr = withoutExt.substring(lastDash + 1);
+                        long pid;
+                        try {
+                            pid = Long.parseLong(pidStr);
+                        } catch (NumberFormatException e) {
+                            continue;
+                        }
+                        boolean alive = ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
+
+                        InfraInfo info = new InfraInfo();
+                        info.pid = pidStr;
+                        info.alias = alias;
+                        info.alive = alive;
+                        try {
+                            String json = Files.readString(jsonFile);
+                            Object parsed = Jsoner.deserialize(json);
+                            if (parsed instanceof Map<?, ?> map) {
+                                for (Map.Entry<?, ?> e : map.entrySet()) {
+                                    info.properties.put(String.valueOf(e.getKey()), e.getValue());
+                                }
+                            }
+                        } catch (Exception e) {
+                            // ignore parse errors
+                        }
+                        infraInfos.add(info);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+
+        // Handle vanishing infra services
+        Set<String> liveInfraPids = infraInfos.stream().map(i -> i.pid).collect(Collectors.toSet());
+        List<InfraInfo> previousInfra = infraData.get();
+        for (InfraInfo prev : previousInfra) {
+            if (!prev.vanishing && !liveInfraPids.contains(prev.pid) && !vanishingInfra.containsKey(prev.pid)) {
+                vanishingInfra.put(prev.pid, new VanishingInfraInfo(prev, System.currentTimeMillis()));
+            }
+        }
+        long now = System.currentTimeMillis();
+        Iterator<Map.Entry<String, VanishingInfraInfo>> infraIt = vanishingInfra.entrySet().iterator();
+        while (infraIt.hasNext()) {
+            Map.Entry<String, VanishingInfraInfo> entry = infraIt.next();
+            if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
+                infraIt.remove();
+            } else if (!liveInfraPids.contains(entry.getKey())) {
+                InfraInfo ghost = entry.getValue().info;
+                ghost.vanishing = true;
+                ghost.vanishStart = entry.getValue().startTime;
+                infraInfos.add(ghost);
+            } else {
+                infraIt.remove();
+            }
+        }
+
+        infraInfos.sort((a, b) -> a.alias.compareToIgnoreCase(b.alias));
+        infraData.set(infraInfos);
     }
 
     private void updateThroughputHistory(IntegrationInfo info) {
@@ -6408,9 +6855,29 @@ public class CamelMonitor extends CamelCommand {
                 .findFirst().orElse(null);
     }
 
+    private InfraInfo findSelectedInfra() {
+        if (selectedPid == null) {
+            return null;
+        }
+        return infraData.get().stream()
+                .filter(i -> selectedPid.equals(i.pid) && !i.vanishing)
+                .findFirst().orElse(null);
+    }
+
+    private boolean isInfraSelected() {
+        return infraTableFocused && findSelectedInfra() != null;
+    }
+
     private String selectedName() {
         IntegrationInfo info = findSelectedIntegration();
-        return info != null ? truncate(info.name, 20) : "?";
+        if (info != null) {
+            return truncate(info.name, 20);
+        }
+        InfraInfo infra = findSelectedInfra();
+        if (infra != null) {
+            return truncate(infra.alias, 20);
+        }
+        return "?";
     }
 
     private List<Long> findPids(String name) {
@@ -6754,6 +7221,19 @@ public class CamelMonitor extends CamelCommand {
         Map<String, String> exchangeVariableTypes;
     }
 
+    static class InfraInfo {
+        String pid;
+        String alias;
+        String description;
+        Map<String, Object> properties = new TreeMap<>();
+        boolean alive;
+        boolean vanishing;
+        long vanishStart;
+    }
+
     record VanishingInfo(IntegrationInfo info, long startTime) {
+    }
+
+    record VanishingInfraInfo(InfraInfo info, long startTime) {
     }
 }
