@@ -82,7 +82,7 @@ class McpJsonSerializationTest {
         ObjectMapper mapper = newConfiguredObjectMapper();
 
         CatalogTools.ComponentDetailResult detail = new CatalogTools.ComponentDetailResult(
-                "timer", "Timer", null, null, false, null, null, null, null, null,
+                "timer", "Timer", null, null, false, null, null,
                 false, false, false, null, null);
 
         String json = mapper.writeValueAsString(detail);
@@ -94,6 +94,21 @@ class McpJsonSerializationTest {
         assertThat(json).doesNotContain("\"groupId\"");
         assertThat(json).doesNotContain("\"componentOptions\"");
         assertThat(json).doesNotContain("\"endpointOptions\"");
+    }
+
+    @Test
+    void componentMavenResultSerializesNonNullFields() throws Exception {
+        ObjectMapper mapper = newConfiguredObjectMapper();
+
+        CatalogTools.ComponentMavenResult maven = new CatalogTools.ComponentMavenResult(
+                "kafka", "org.apache.camel", "camel-kafka", "4.21.0");
+
+        String json = mapper.writeValueAsString(maven);
+
+        assertThat(json).contains("\"name\":\"kafka\"");
+        assertThat(json).contains("\"groupId\":\"org.apache.camel\"");
+        assertThat(json).contains("\"artifactId\":\"camel-kafka\"");
+        assertThat(json).contains("\"version\":\"4.21.0\"");
     }
 
     private static ObjectMapper newConfiguredObjectMapper() {

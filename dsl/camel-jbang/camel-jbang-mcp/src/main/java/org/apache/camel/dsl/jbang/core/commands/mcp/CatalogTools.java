@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -27,6 +28,7 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -88,10 +90,16 @@ public class CatalogTools {
      * Tool to get detailed documentation for a specific component.
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Get detailed documentation for a Camel component including all options, " +
-                        "endpoint parameters, and usage examples.")
+          description = "Get documentation for a Camel component: URI syntax and endpoint options. "
+                        + "Default returns common options only (excludes deprecated and advanced). "
+                        + "Use camel_catalog_component_maven for groupId/artifactId/version.")
     public ComponentDetailResult camel_catalog_component_doc(
             @ToolArg(description = "Component name (e.g., kafka, http, file, timer)") String component,
+            @ToolArg(description = "Filter options by name (case-insensitive substring match)",
+                     required = false) String optionsFilter,
+            @ToolArg(description = "Which options to include: required | common | all (default: common). "
+                                   + "'common' excludes deprecated and advanced options.",
+                     required = false) String includeOptions,
             @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
             @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
@@ -99,6 +107,8 @@ public class CatalogTools {
         if (component == null || component.isBlank()) {
             throw new ToolCallException("Component name is required", null);
         }
+
+        OptionScope scope = OptionScope.parse(includeOptions);
 
         try {
             CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
@@ -132,7 +142,42 @@ public class CatalogTools {
                 throw new ToolCallException(hint.toString(), null);
             }
 
-            return toComponentDetailResult(model);
+            return toComponentDetailResult(model, scope, optionsFilter);
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Component not found: " + component + " (" + e.getClass().getName() + "): " + e.getMessage(), null);
+        }
+    }
+
+    /**
+     * Tool to get the Maven coordinates (groupId, artifactId, version) for a specific component.
+     */
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get Maven coordinates (groupId, artifactId, version) for a Camel component, "
+                        + "for adding it as a dependency.")
+    public ComponentMavenResult camel_catalog_component_maven(
+            @ToolArg(description = "Component name (e.g., kafka, http, file, timer)") String component,
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+
+        if (component == null || component.isBlank()) {
+            throw new ToolCallException("Component name is required", null);
+        }
+
+        try {
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+            ComponentModel model = cat.componentModel(component);
+            if (model == null) {
+                throw new ToolCallException("Component not found: " + component, null);
+            }
+            return new ComponentMavenResult(
+                    model.getScheme(),
+                    model.getGroupId(),
+                    model.getArtifactId(),
+                    model.getVersion());
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -377,27 +422,33 @@ public class CatalogTools {
                 model.getSupportLevel() != null ? model.getSupportLevel().name() : null);
     }
 
-    private ComponentDetailResult toComponentDetailResult(ComponentModel model) {
+    private ComponentDetailResult toComponentDetailResult(ComponentModel model, OptionScope scope, String optionsFilter) {
+        Predicate<BaseOptionModel> filter = scope.asPredicate().and(nameFilter(optionsFilter));
+
         List<OptionInfo> componentOptions = new ArrayList<>();
         if (model.getComponentOptions() != null) {
-            model.getComponentOptions().forEach(opt -> componentOptions.add(new OptionInfo(
-                    opt.getName(),
-                    opt.getDescription(),
-                    opt.getType(),
-                    opt.isRequired(),
-                    opt.getDefaultValue() != null ? opt.getDefaultValue().toString() : null,
-                    null)));
+            model.getComponentOptions().stream()
+                    .filter(filter)
+                    .forEach(opt -> componentOptions.add(new OptionInfo(
+                            opt.getName(),
+                            opt.getDescription(),
+                            opt.getType(),
+                            opt.isRequired(),
+                            opt.getDefaultValue() != null ? opt.getDefaultValue().toString() : null,
+                            null)));
         }
 
         List<OptionInfo> endpointOptions = new ArrayList<>();
         if (model.getEndpointOptions() != null) {
-            model.getEndpointOptions().forEach(opt -> endpointOptions.add(new OptionInfo(
-                    opt.getName(),
-                    opt.getDescription(),
-                    opt.getType(),
-                    opt.isRequired(),
-                    opt.getDefaultValue() != null ? opt.getDefaultValue().toString() : null,
-                    opt.getGroup())));
+            model.getEndpointOptions().stream()
+                    .filter(filter)
+                    .forEach(opt -> endpointOptions.add(new OptionInfo(
+                            opt.getName(),
+                            opt.getDescription(),
+                            opt.getType(),
+                            opt.isRequired(),
+                            opt.getDefaultValue() != null ? opt.getDefaultValue().toString() : null,
+                            opt.getGroup())));
         }
 
         return new ComponentDetailResult(
@@ -407,15 +458,55 @@ public class CatalogTools {
                 model.getLabel(),
                 model.isDeprecated(),
                 model.getSupportLevel() != null ? model.getSupportLevel().name() : null,
-                model.getGroupId(),
-                model.getArtifactId(),
-                model.getVersion(),
                 model.getSyntax(),
                 model.isAsync(),
                 model.isConsumerOnly(),
                 model.isProducerOnly(),
                 componentOptions,
                 endpointOptions);
+    }
+
+    private static Predicate<BaseOptionModel> nameFilter(String optionsFilter) {
+        if (optionsFilter == null || optionsFilter.isBlank()) {
+            return opt -> true;
+        }
+        String lower = optionsFilter.toLowerCase();
+        return opt -> opt.getName() != null && opt.getName().toLowerCase().contains(lower);
+    }
+
+    private static boolean isAdvanced(BaseOptionModel opt) {
+        String label = opt.getLabel();
+        return label != null && label.contains("advanced");
+    }
+
+    /**
+     * Subset of options to include in {@code camel_catalog_component_doc} responses.
+     */
+    private enum OptionScope {
+        REQUIRED,
+        COMMON,
+        ALL;
+
+        Predicate<BaseOptionModel> asPredicate() {
+            return switch (this) {
+                case REQUIRED -> BaseOptionModel::isRequired;
+                case COMMON -> opt -> !opt.isDeprecated() && !isAdvanced(opt);
+                case ALL -> opt -> true;
+            };
+        }
+
+        static OptionScope parse(String value) {
+            if (value == null || value.isBlank()) {
+                return COMMON;
+            }
+            return switch (value.trim().toLowerCase()) {
+                case "required" -> REQUIRED;
+                case "common" -> COMMON;
+                case "all" -> ALL;
+                default -> throw new ToolCallException(
+                        "Invalid includeOptions value: '" + value + "'. Expected one of: required, common, all.", null);
+            };
+        }
     }
 
     private DataFormatInfo toDataFormatInfo(DataFormatModel model) {
@@ -523,9 +614,12 @@ public class CatalogTools {
     }
 
     public record ComponentDetailResult(String name, String title, String description, String label,
-            boolean deprecated, String supportLevel, String groupId, String artifactId,
-            String version, String syntax, boolean async, boolean consumerOnly, boolean producerOnly,
+            boolean deprecated, String supportLevel, String syntax,
+            boolean async, boolean consumerOnly, boolean producerOnly,
             List<OptionInfo> componentOptions, List<OptionInfo> endpointOptions) {
+    }
+
+    public record ComponentMavenResult(String name, String groupId, String artifactId, String version) {
     }
 
     public record OptionInfo(String name, String description, String type, boolean required,

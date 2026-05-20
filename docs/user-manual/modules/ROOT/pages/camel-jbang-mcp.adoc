@@ -34,7 +34,7 @@ over the MCP protocol.
 
 == Available Tools
 
-The server exposes 27 tools organized into eleven functional areas, plus 3 prompts that provide structured
+The server exposes 28 tools organized into eleven functional areas, plus 3 prompts that provide structured
 multi-step workflows.
 
 === Catalog Exploration
@@ -48,8 +48,13 @@ multi-step workflows.
   runtime type (`main`, `spring-boot`, `quarkus`). Supports querying specific Camel versions.
 
 | `camel_catalog_component_doc`
-| Get detailed documentation for a specific component including all endpoint options, component-level options,
-  Maven coordinates, and URI syntax.
+| Get documentation for a specific component: URI syntax, component-level and endpoint options. Supports
+  `optionsFilter` (case-insensitive substring on option name) and `includeOptions` (`required`, `common`, or
+  `all`; default `common`, which excludes deprecated and advanced options) to control payload size.
+
+| `camel_catalog_component_maven`
+| Get the Maven coordinates (`groupId`, `artifactId`, `version`) of a specific component, for adding it as a
+  project dependency.
 
 | `camel_catalog_dataformats`
 | List available data formats (JSON, XML, CSV, Avro, Protobuf, and others).

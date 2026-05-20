@@ -84,10 +84,87 @@ class CatalogToolsTest {
     void componentDocWithRepos() {
         CatalogTools tools = createTools("https://maven.repository.redhat.com/ga/");
 
-        CatalogTools.ComponentDetailResult result = tools.camel_catalog_component_doc("timer", null, null, null);
+        CatalogTools.ComponentDetailResult result
+                = tools.camel_catalog_component_doc("timer", null, null, null, null, null);
 
         assertThat(result).isNotNull();
         assertThat(result.name()).isEqualTo("timer");
+    }
+
+    @Test
+    void componentDocDefaultsToCommonScope() {
+        CatalogTools tools = createTools(null);
+
+        CatalogTools.ComponentDetailResult defaultResult
+                = tools.camel_catalog_component_doc("kafka", null, null, null, null, null);
+        CatalogTools.ComponentDetailResult allResult
+                = tools.camel_catalog_component_doc("kafka", null, "all", null, null, null);
+
+        assertThat(defaultResult.endpointOptions()).isNotEmpty();
+        assertThat(allResult.endpointOptions()).isNotEmpty();
+        assertThat(defaultResult.endpointOptions().size())
+                .as("default 'common' scope must filter out advanced/deprecated options")
+                .isLessThan(allResult.endpointOptions().size());
+
+        // 'common' must not include any deprecated option (advanced options are not exposed in the
+        // returned OptionInfo, but deprecated is hidden internally via the label/deprecated flags)
+        assertThat(defaultResult.endpointOptions())
+                .as("default 'common' scope must not contain options whose name starts with 'synchronous'")
+                .noneMatch(o -> "synchronous".equals(o.name()));
+    }
+
+    @Test
+    void componentDocRequiredScopeOnlyReturnsRequiredOptions() {
+        CatalogTools tools = createTools(null);
+
+        CatalogTools.ComponentDetailResult result
+                = tools.camel_catalog_component_doc("kafka", null, "required", null, null, null);
+
+        assertThat(result.endpointOptions()).allMatch(CatalogTools.OptionInfo::required);
+    }
+
+    @Test
+    void componentDocOptionsFilterByName() {
+        CatalogTools tools = createTools(null);
+
+        CatalogTools.ComponentDetailResult result
+                = tools.camel_catalog_component_doc("kafka", "topic", "all", null, null, null);
+
+        assertThat(result.endpointOptions()).isNotEmpty();
+        assertThat(result.endpointOptions())
+                .allMatch(o -> o.name().toLowerCase().contains("topic"));
+    }
+
+    @Test
+    void componentDocInvalidIncludeOptionsThrows() {
+        CatalogTools tools = createTools(null);
+
+        assertThatThrownBy(() -> tools.camel_catalog_component_doc("timer", null, "bogus", null, null, null))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining("Invalid includeOptions");
+    }
+
+    @Test
+    void componentMavenReturnsCoordinates() {
+        CatalogTools tools = createTools(null);
+
+        CatalogTools.ComponentMavenResult result
+                = tools.camel_catalog_component_maven("timer", null, null, null);
+
+        assertThat(result).isNotNull();
+        assertThat(result.name()).isEqualTo("timer");
+        assertThat(result.groupId()).isEqualTo("org.apache.camel");
+        assertThat(result.artifactId()).isEqualTo("camel-timer");
+        assertThat(result.version()).isNotBlank();
+    }
+
+    @Test
+    void componentMavenUnknownComponentThrows() {
+        CatalogTools tools = createTools(null);
+
+        assertThatThrownBy(() -> tools.camel_catalog_component_maven("does-not-exist", null, null, null))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining("Component not found");
     }
 
     // platformBom validation tests
@@ -206,11 +283,11 @@ class CatalogToolsTest {
 
         assertThat(listResult.camelVersion()).isEqualTo(requestedVersion);
 
-        CatalogTools.ComponentDetailResult docResult
-                = tools.camel_catalog_component_doc("timer", "main", requestedVersion, null);
+        CatalogTools.ComponentMavenResult mavenResult
+                = tools.camel_catalog_component_maven("timer", "main", requestedVersion, null);
 
-        assertThat(docResult.version()).isEqualTo(requestedVersion);
-        assertThat(docResult.version()).isNotEqualTo(BUILTIN_VERSION);
+        assertThat(mavenResult.version()).isEqualTo(requestedVersion);
+        assertThat(mavenResult.version()).isNotEqualTo(BUILTIN_VERSION);
     }
 
     @Test
@@ -226,10 +303,10 @@ class CatalogToolsTest {
 
         assertThat(listResult.camelVersion()).isEqualTo(requestedVersion);
 
-        CatalogTools.ComponentDetailResult docResult
-                = tools.camel_catalog_component_doc("timer", "main", null, bom);
+        CatalogTools.ComponentMavenResult mavenResult
+                = tools.camel_catalog_component_maven("timer", "main", null, bom);
 
-        assertThat(docResult.version()).isEqualTo(requestedVersion);
-        assertThat(docResult.version()).isNotEqualTo(BUILTIN_VERSION);
+        assertThat(mavenResult.version()).isEqualTo(requestedVersion);
+        assertThat(mavenResult.version()).isNotEqualTo(BUILTIN_VERSION);
     }
 }
