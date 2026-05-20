@@ -100,7 +100,9 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrl
                  "  camel run *",
                  "  camel run hello.java --dev",
                  "  camel run hello.java --port=8080",
-                 "  camel run https://gist.github.com/user/123456" })
+                 "  camel run https://gist.github.com/user/123456",
+                 "  camel run --example",
+                 "  camel run --example=timer-log" })
 public class Run extends CamelCommand {
 
     // special template for running camel-jbang in docker containers
@@ -339,14 +341,9 @@ public class Run extends CamelCommand {
     boolean skipPlugins;
 
     @Option(names = { "--example" },
-            description = "Run an example by name. Use --example-list to show available examples.",
+            description = "Run an example by name, or list available examples when no name is given.",
             arity = "0..1", fallbackValue = "")
     String example;
-
-    @Option(names = { "--example-list" },
-            description = "List available examples. Optionally filter by keyword (e.g., --example-list ai).",
-            arity = "0..1", fallbackValue = "")
-    String exampleFilter;
 
     public Run(CamelJBangMain main) {
         super(main);
@@ -368,8 +365,8 @@ public class Run extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         // handle --example
-        if (exampleFilter != null || (example != null && example.isEmpty())) {
-            return listExamples(exampleFilter);
+        if (example != null && example.isEmpty()) {
+            return listExamples(null);
         }
         if (example != null) {
             return runExample();
@@ -400,28 +397,51 @@ public class Run extends CamelCommand {
         } else {
             printer().println("Available examples:");
         }
-        printer().println();
-        printer().printf("  %-30s %-14s %-50s %s%n", "NAME", "LEVEL", "DESCRIPTION", "SOURCE");
-        printer().printf("  %-30s %-14s %-50s %s%n", "----", "-----", "-----------", "------");
+
+        Map<String, List<JsonObject>> groups = new LinkedHashMap<>();
+        for (String level : new String[] { "beginner", "intermediate", "advanced" }) {
+            groups.put(level, new ArrayList<>());
+        }
         for (JsonObject entry : filtered) {
-            String eName = entry.getString("name");
             String level = entry.getString("level");
             if (level == null) {
-                level = "";
+                level = "intermediate";
             }
-            String desc = entry.getString("description");
-            if (desc.length() > 50) {
-                desc = desc.substring(0, 47) + "...";
+            groups.computeIfAbsent(level, k -> new ArrayList<>()).add(entry);
+        }
+
+        for (Map.Entry<String, List<JsonObject>> group : groups.entrySet()) {
+            List<JsonObject> entries = group.getValue();
+            if (entries.isEmpty()) {
+                continue;
             }
-            String source = ExampleHelper.isBundled(entry) ? "bundled" : "online";
-            if (ExampleHelper.requiresDocker(entry)) {
-                source += ", docker";
+            entries.sort(Comparator.comparing(e -> e.getString("name")));
+            printer().println();
+            printer().println(group.getKey().substring(0, 1).toUpperCase() + group.getKey().substring(1) + ":");
+            printer().printf("       %-30s %s%n", "NAME", "DESCRIPTION");
+            printer().printf("       %-30s %s%n", "----", "-----------");
+            for (JsonObject entry : entries) {
+                String eName = entry.getString("name");
+                String desc = entry.getString("description");
+                StringBuilder icons = new StringBuilder();
+                if (ExampleHelper.isBundled(entry)) {
+                    icons.append("📦");
+                } else {
+                    icons.append("🌐");
+                }
+                if (ExampleHelper.requiresDocker(entry)) {
+                    icons.append("🐳");
+                } else {
+                    icons.append("  ");
+                }
+                printer().printf("  %s %-30s %s%n", icons, eName, desc);
             }
-            printer().printf("  %-30s %-14s %-50s %s%n", eName, level, desc, source);
         }
         printer().println();
-        printer().println("Usage: camel run --example <name>");
-        printer().println("       camel run --example <name> --dev");
+        printer().println("  📦 = bundled (works offline)  🌐 = online (fetched from GitHub)  🐳 = requires Docker");
+        printer().println();
+        printer().println("Usage: camel run --example=<name>");
+        printer().println("       camel run --example=<name> --dev");
         return 0;
     }
 
@@ -437,7 +457,7 @@ public class Run extends CamelCommand {
             } else {
                 printer().printErr("Unknown example: " + example);
             }
-            printer().printErr("Run 'camel run --example-list' to see available examples.");
+            printer().printErr("Run 'camel run --example' to see available examples.");
             return 1;
         }
 

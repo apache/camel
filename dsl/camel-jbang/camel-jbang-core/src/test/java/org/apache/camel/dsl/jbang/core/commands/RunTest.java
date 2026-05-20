@@ -58,7 +58,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldListExamples() throws Exception {
         Run command = new Run(new CamelJBangMain().withPrinter(printer));
-        command.exampleFilter = "";
+        command.example = "";
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -67,29 +67,6 @@ class RunTest extends CamelCommandBaseTestSupport {
         Assertions.assertTrue(output.contains("circuit-breaker"));
         Assertions.assertTrue(output.contains("groovy"));
         Assertions.assertTrue(output.contains("routes"));
-    }
-
-    @Test
-    public void shouldListExamplesWithFilter() throws Exception {
-        Run command = new Run(new CamelJBangMain().withPrinter(printer));
-        command.exampleFilter = "security";
-        int exit = command.doCall();
-
-        Assertions.assertEquals(0, exit);
-        String output = printer.getOutput();
-        Assertions.assertTrue(output.contains("keycloak"));
-        Assertions.assertFalse(output.contains("circuit-breaker"));
-    }
-
-    @Test
-    public void shouldListExamplesWithEmptyExampleFlag() throws Exception {
-        Run command = new Run(new CamelJBangMain().withPrinter(printer));
-        command.example = "";
-        int exit = command.doCall();
-
-        Assertions.assertEquals(0, exit);
-        String output = printer.getOutput();
-        Assertions.assertTrue(output.contains("Available examples:"));
     }
 
     @Test
@@ -123,8 +100,8 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldParseExampleListOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--example-list");
+        CommandLine.populateCommand(command, "--example");
 
-        Assertions.assertNotNull(command.exampleFilter);
+        Assertions.assertNotNull(command.example);
     }
 }
