@@ -53,7 +53,7 @@ public interface SimpleLanguageFunctionFactory {
      * @param      function     the function
      * @param      index        index of the function in the literal input
      * @return                  the source code or <tt>null</tt> if not supported by this factory.
-     * @deprecated              will be removed in 5.0 along with csimple
+     * @deprecated              will be removed along with csimple
      */
     @Nullable
     @Deprecated(since = "4.21")

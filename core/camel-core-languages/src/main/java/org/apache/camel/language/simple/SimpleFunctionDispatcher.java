@@ -21,14 +21,17 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.functions.BodyFunctionFactory;
 import org.apache.camel.language.simple.functions.CollateFunctionFactory;
+import org.apache.camel.language.simple.functions.HeaderFunctionFactory;
 import org.apache.camel.language.simple.functions.JoinFunctionFactory;
 import org.apache.camel.language.simple.functions.RandomFunctionFactory;
 import org.apache.camel.language.simple.functions.SkipFunctionFactory;
+import org.apache.camel.language.simple.functions.VariableFunctionFactory;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.ResolverHelper;
 
-import static org.apache.camel.language.simple.ast.SimpleFunctionExpression.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 
 /**
  * Dispatches Simple/CSimple function lookup to built-in function factories and to {@link SimpleLanguageFunctionFactory}
@@ -45,9 +48,12 @@ public final class SimpleFunctionDispatcher {
     /**
      * Built-in factories shipped by camel-core-languages itself. Iterated before {@link #EXPRESSION_ENTRIES}, matching
      * the original priority of these functions inside {@code SimpleFunctionExpression}. Each factory returns
-     * {@code null} for inputs it does not recognise, so no gating predicate is needed.
+     * {@code null} for inputs it does not recognize, so no gating predicate is needed.
      */
     private static final List<SimpleLanguageFunctionFactory> BUILT_INS = List.of(
+            new BodyFunctionFactory(),
+            new HeaderFunctionFactory(),
+            new VariableFunctionFactory(),
             new RandomFunctionFactory(),
             new SkipFunctionFactory(),
             new CollateFunctionFactory(),
@@ -69,6 +75,11 @@ public final class SimpleFunctionDispatcher {
     private SimpleFunctionDispatcher() {
     }
 
+    /**
+     * Migrated as-is from main; not currently called. Candidate for removal once all Simple functions are extracted
+     * into dedicated {@link SimpleLanguageFunctionFactory} implementations (CAMEL-22894).
+     */
+    @Deprecated(forRemoval = true)
     public static Expression tryCreate(CamelContext camelContext, String function, int index) {
         Expression answer = tryCreateBuiltIn(camelContext, function, index);
         if (answer != null) {
@@ -101,6 +112,11 @@ public final class SimpleFunctionDispatcher {
         return null;
     }
 
+    /**
+     * Migrated as-is from main; not currently called. Candidate for removal once all Simple functions are extracted
+     * into dedicated {@link SimpleLanguageFunctionFactory} implementations (CAMEL-22894).
+     */
+    @Deprecated(forRemoval = true)
     public static String tryCreateCode(CamelContext camelContext, String function, int index) {
         String code = tryCreateCodeBuiltIn(camelContext, function, index);
         if (code != null) {

@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
-import static org.apache.camel.language.simple.ast.SimpleFunctionExpression.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 
 /**
  * Built-in Simple function: {@code ${join()}} / {@code ${join(separator)}} / {@code ${join(separator,prefix)}} /

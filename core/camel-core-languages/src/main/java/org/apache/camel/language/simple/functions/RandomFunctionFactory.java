@@ -24,7 +24,7 @@ import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.language.simple.ast.SimpleFunctionExpression.ifStartsWithReturnRemainder;
+import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 
 /**
  * Built-in Simple function: {@code ${random(max)}} / {@code ${random(min,max)}}.
