@@ -635,6 +635,23 @@ public class CamelMonitor extends CamelCommand {
                 chartMode = (chartMode + 1) % 3;
                 return true;
             }
+            // Overview tab: toggle focus between integrations and infra tables
+            if (tab == TAB_OVERVIEW && ke.isChar('i') && !infraData.get().isEmpty()) {
+                infraTableFocused = !infraTableFocused;
+                if (infraTableFocused) {
+                    if (infraTableState.selected() == null) {
+                        infraTableState.select(0);
+                    }
+                    syncSelectedPidFromInfra();
+                } else {
+                    List<IntegrationInfo> intInfos = sortedOverviewInfos();
+                    if (!intInfos.isEmpty() && overviewTableState.selected() == null) {
+                        overviewTableState.select(0);
+                    }
+                    syncSelectedPidFromOverview();
+                }
+                return true;
+            }
             // Overview tab: start/stop all routes for selected integration (not infra)
             if (tab == TAB_OVERVIEW && ke.isChar('p') && selectedPid != null && !infraTableFocused) {
                 IntegrationInfo selInfo = findSelectedIntegration();
@@ -1147,18 +1164,8 @@ public class CamelMonitor extends CamelCommand {
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> {
                 if (infraTableFocused) {
-                    Integer sel = infraTableState.selected();
-                    if (sel != null && sel <= 0) {
-                        infraTableFocused = false;
-                        List<IntegrationInfo> intInfos = sortedOverviewInfos();
-                        if (!intInfos.isEmpty()) {
-                            overviewTableState.select(intInfos.size() - 1);
-                        }
-                        syncSelectedPidFromOverview();
-                    } else {
-                        infraTableState.selectPrevious();
-                        syncSelectedPidFromInfra();
-                    }
+                    infraTableState.selectPrevious();
+                    syncSelectedPidFromInfra();
                 } else {
                     overviewTableState.selectPrevious();
                     syncSelectedPidFromOverview();
@@ -1191,20 +1198,11 @@ public class CamelMonitor extends CamelCommand {
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> {
                 if (infraTableFocused) {
-                    List<InfraInfo> infraInfos = infraData.get();
-                    infraTableState.selectNext(infraInfos.size());
+                    infraTableState.selectNext(infraData.get().size());
                     syncSelectedPidFromInfra();
                 } else {
-                    List<IntegrationInfo> overviewInfos = sortedOverviewInfos();
-                    Integer sel = overviewTableState.selected();
-                    if (sel != null && sel >= overviewInfos.size() - 1 && !infraData.get().isEmpty()) {
-                        infraTableFocused = true;
-                        infraTableState.select(0);
-                        syncSelectedPidFromInfra();
-                    } else {
-                        overviewTableState.selectNext(overviewInfos.size());
-                        syncSelectedPidFromOverview();
-                    }
+                    overviewTableState.selectNext(sortedOverviewInfos().size());
+                    syncSelectedPidFromOverview();
                 }
             }
             case TAB_ROUTES -> {
@@ -1443,27 +1441,14 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
-        // Split: integrations + infra table (if present) + chart or info panel
-        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty();
-        boolean hasInfra = !infraInfos.isEmpty();
-        boolean hasActiveIntegrations = infos.stream().anyMatch(i -> !i.vanishing);
-        boolean showInfraInfoPanel = hasInfra && infraTableFocused && findSelectedInfra() != null && !hasSparkline;
-        // infra table height: header(1) + borders(2) + rows (capped at 6)
-        int infraHeight = hasInfra ? Math.min(infraInfos.size(), 6) + 3 : 0;
+        // Split: one table (integrations or infra, toggled by 'i') + chart or info panel
+        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !infraTableFocused;
+        boolean showInfoPanel = infraTableFocused && findSelectedInfra() != null && !hasSparkline;
         List<Constraint> constraints = new ArrayList<>();
-        if (hasInfra && !hasActiveIntegrations) {
-            // No active integrations: collapse integrations table, infra fills
-            constraints.add(Constraint.length(3)); // border + header only
-            constraints.add(Constraint.fill());
-        } else {
-            constraints.add(Constraint.fill());
-            if (hasInfra) {
-                constraints.add(Constraint.length(infraHeight));
-            }
-        }
+        constraints.add(Constraint.fill());
         if (hasSparkline) {
             constraints.add(Constraint.length(14));
-        } else if (showInfraInfoPanel) {
+        } else if (showInfoPanel) {
             constraints.add(Constraint.length(10));
         }
         List<Rect> chunks = Layout.vertical()
@@ -1538,35 +1523,34 @@ public class CamelMonitor extends CamelCommand {
                 rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                 Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
 
-        Style integrationHighlight = infraTableFocused
-                ? Style.EMPTY.fg(Color.WHITE).dim()
-                : Style.EMPTY.fg(Color.WHITE).bold().onBlue();
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(8),
-                        Constraint.fill(),
-                        Constraint.length(16),
-                        Constraint.length(5),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(7),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(12))
-                .highlightStyle(integrationHighlight)
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
-                .build();
+        if (infraTableFocused) {
+            // Show infra table only
+            renderInfraTable(frame, chunks.get(0), infraInfos);
+        } else {
+            // Show integrations table only
+            Style integrationHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
+            Table table = Table.builder()
+                    .rows(rows)
+                    .header(header)
+                    .widths(
+                            Constraint.length(8),
+                            Constraint.fill(),
+                            Constraint.length(16),
+                            Constraint.length(5),
+                            Constraint.length(10),
+                            Constraint.length(8),
+                            Constraint.length(7),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(12))
+                    .highlightStyle(integrationHighlight)
+                    .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                    .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
+                    .build();
 
-        frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
-
-        // Infrastructure services table
-        if (hasInfra) {
-            renderInfraTable(frame, chunks.get(1), infraInfos);
+            frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
         }
 
         // Split green/red throughput bar chart with Y and X axes
@@ -1714,7 +1698,7 @@ public class CamelMonitor extends CamelCommand {
 
             // Info panel: heap and threads for the selected integration
             renderOverviewInfoPanel(frame, infoArea);
-        } else if (showInfraInfoPanel) {
+        } else if (showInfoPanel) {
             renderOverviewInfoPanel(frame, chunks.get(chunks.size() - 1));
         }
     }
@@ -1869,9 +1853,7 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from(Span.styled("PORT", Style.EMPTY.bold())),
                 Cell.from(Span.styled("HOST", Style.EMPTY.bold())));
 
-        Style infraHighlight = infraTableFocused
-                ? Style.EMPTY.fg(Color.WHITE).bold().onBlue()
-                : Style.EMPTY.fg(Color.WHITE).dim();
+        Style infraHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
         Table infraTable = Table.builder()
                 .rows(infraRows)
                 .header(infraHeader)
@@ -5346,6 +5328,9 @@ public class CamelMonitor extends CamelCommand {
                 hint(spans, "Esc", infraTableFocused ? "integrations" : "unselect");
             }
             hint(spans, "\u2191\u2193", "navigate");
+            if (!infraData.get().isEmpty()) {
+                hint(spans, "i", infraTableFocused ? "integrations" : "infra");
+            }
             if (!infraTableFocused) {
                 hint(spans, "s", "sort");
                 hint(spans, "a", "chart " + switch (chartMode) {
@@ -5646,6 +5631,16 @@ public class CamelMonitor extends CamelCommand {
 
             // Discover running infra services
             refreshInfraData();
+
+            // Auto-focus infra table when no active integrations exist
+            if (!infraTableFocused && !infraData.get().isEmpty()
+                    && infos.stream().noneMatch(i -> !i.vanishing)) {
+                infraTableFocused = true;
+                if (infraTableState.selected() == null) {
+                    infraTableState.select(0);
+                }
+                syncSelectedPidFromInfra();
+            }
 
             // Refresh log data only when the Log tab is visible
             if (tabsState.selected() == TAB_LOG) {
