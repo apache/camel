@@ -46,9 +46,9 @@ public final class CxfConstants {
     public static final String PROTOCOL_NAME_RES = "res";
 
     @Metadata(description = "The name of the operation.", javaType = "String")
-    public static final String OPERATION_NAME = "operationName";
+    public static final String OPERATION_NAME = "CamelCxfOperationName";
     @Metadata(description = "The operation namespace.", javaType = "String", applicableFor = SCHEME_CXF)
-    public static final String OPERATION_NAMESPACE = "operationNamespace";
+    public static final String OPERATION_NAMESPACE = "CamelCxfOperationNamespace";
     public static final String SPRING_CONTEXT_ENDPOINT = "bean:";
     @Metadata(description = "The destination override url", javaType = "String", applicableFor = SCHEME_CXF)
     public static final String DESTINATION_OVERRIDE_URL = Exchange.DESTINATION_OVERRIDE_URL;
