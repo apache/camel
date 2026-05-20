@@ -78,6 +78,8 @@ When creating a PR, **always identify and request reviews** from the most releva
   command or component documentation page. This includes: changed defaults, new auto-detection
   behavior, removed or renamed options, changed header names or values, API/SPI signature changes,
   removed or deprecated components, migrated libraries, and renamed documentation pages.
+  For backported changes, the upgrade guide entry must be added on the `main` branch (not on the
+  maintenance branch where the fix is backported).
 - All code must pass formatting checks (`mvn formatter:format impsort:sort`) before pushing.
 - All generated files must be regenerated and committed (CI checks for uncommitted changes).
 
