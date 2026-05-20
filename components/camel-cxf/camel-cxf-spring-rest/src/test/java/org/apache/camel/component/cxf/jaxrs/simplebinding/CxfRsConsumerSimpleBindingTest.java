@@ -84,7 +84,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI)
-                        .recipientList(simple("direct:${header.operationName}"));
+                        .recipientList(simple("direct:${header.CamelCxfOperationName}"));
 
                 from("direct:getCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

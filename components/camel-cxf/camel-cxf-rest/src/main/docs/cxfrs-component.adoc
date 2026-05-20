@@ -179,7 +179,7 @@ Serviced by the following route:
 [source,java]
 --------------------------------------------------------------------------------------------
 from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
-    .recipientList(simple("direct:${header.operationName}"));
+    .recipientList(simple("direct:${header.CamelCxfOperationName}"));
 
 from("direct:newCustomer")
     .log("Request: type=${header.type}, active=${header.active}, customerData=${body}");
