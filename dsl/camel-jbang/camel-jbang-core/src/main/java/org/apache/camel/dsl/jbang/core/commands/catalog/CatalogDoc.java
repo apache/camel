@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.awt.*;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -58,7 +59,8 @@ import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseComman
                              "  camel doc kafka",
                              "  camel doc timer",
                              "  camel doc aws-s3-source",
-                             "  camel doc jsonpath" })
+                             "  camel doc jsonpath",
+                             "  camel doc kafka --example" })
 public class CatalogDoc extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
@@ -108,6 +110,10 @@ public class CatalogDoc extends CamelCommand {
     @CommandLine.Option(names = { "--header" },
                         description = "Whether to display component message headers", defaultValue = "false")
     boolean headers;
+
+    @CommandLine.Option(names = { "--example" },
+                        description = "Prints a minimal working YAML route snippet for the component", defaultValue = "false")
+    boolean example;
 
     @CommandLine.Option(names = {
             "--kamelets-version" }, description = "Apache Camel Kamelets version",
@@ -161,7 +167,11 @@ public class CatalogDoc extends CamelCommand {
         if (prefix == null || "component".equals(prefix)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
-                docComponent(cm);
+                if (example) {
+                    printExample(cm);
+                } else {
+                    docComponent(cm);
+                }
                 return 0;
             }
         }
@@ -224,6 +234,79 @@ public class CatalogDoc extends CamelCommand {
             }
         }
         return 1;
+    }
+
+    private void printExample(ComponentModel cm) {
+        String scheme = cm.getScheme();
+        String uri = buildExampleUri(cm);
+
+        printer().println("# Example: " + scheme + " component");
+
+        if (cm.isProducerOnly()) {
+            printer().println("- route:");
+            printer().println("    from:");
+            printer().println("      uri: \"timer:tick\"");
+            printer().println("      parameters:");
+            printer().println("        period: 1000");
+            printer().println("    steps:");
+            printer().println("      - to:");
+            printer().println("          uri: \"" + uri + "\"");
+        } else {
+            printer().println("- route:");
+            printer().println("    from:");
+            printer().println("      uri: \"" + uri + "\"");
+            printer().println("    steps:");
+            printer().println("      - to:");
+            printer().println("          uri: \"log:" + scheme + "\"");
+        }
+
+        printer().println();
+        printer().println("# Save to a file and run with:");
+        printer().println("#   camel run my-route.yaml");
+    }
+
+    private String buildExampleUri(ComponentModel cm) {
+        String scheme = cm.getScheme();
+        List<ComponentModel.EndpointOptionModel> pathOptions = cm.getEndpointPathOptions();
+        if (pathOptions.isEmpty()) {
+            return scheme;
+        }
+        List<String> pathValues = new ArrayList<>();
+        for (ComponentModel.EndpointOptionModel opt : pathOptions) {
+            Object dv = opt.getDefaultValue();
+            if (dv != null && !dv.toString().isEmpty()) {
+                pathValues.add(dv.toString());
+            } else if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
+                pathValues.add(opt.getEnums().get(0));
+            } else {
+                pathValues.add("my" + capitalize(opt.getName()));
+            }
+        }
+        String syntax = cm.getSyntax();
+        if (syntax != null) {
+            String result = syntax;
+            for (ComponentModel.EndpointOptionModel opt : pathOptions) {
+                Object dv = opt.getDefaultValue();
+                String value;
+                if (dv != null && !dv.toString().isEmpty()) {
+                    value = dv.toString();
+                } else if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
+                    value = opt.getEnums().get(0);
+                } else {
+                    value = "my" + capitalize(opt.getName());
+                }
+                result = result.replace(opt.getName(), value);
+            }
+            return result;
+        }
+        return scheme + ":" + String.join("/", pathValues);
+    }
+
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
     private void docKamelet(KameletModel km) throws Exception {

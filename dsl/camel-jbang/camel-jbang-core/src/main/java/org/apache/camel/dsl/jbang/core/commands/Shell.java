@@ -159,6 +159,7 @@ public class Shell extends CamelCommand {
             writer.println("  Quick start:  init MyRoute.yaml && run *");
             writer.println("  Templates:    init --list");
             writer.println("  Docs:         doc <component>");
+            writer.println("  AI scaffold:  plugin add kit");
             writer.println("  Need help?    help");
         } else {
             writer.printf("Found %d route file(s) in current directory.%n", routeCount);
