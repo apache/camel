@@ -1443,18 +1443,28 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
-        // Split: integrations (fill) + infra table (if present) + chart (14 rows)
+        // Split: integrations + infra table (if present) + chart or info panel
         boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty();
         boolean hasInfra = !infraInfos.isEmpty();
+        boolean hasActiveIntegrations = infos.stream().anyMatch(i -> !i.vanishing);
+        boolean showInfraInfoPanel = hasInfra && infraTableFocused && findSelectedInfra() != null && !hasSparkline;
         // infra table height: header(1) + borders(2) + rows (capped at 6)
         int infraHeight = hasInfra ? Math.min(infraInfos.size(), 6) + 3 : 0;
         List<Constraint> constraints = new ArrayList<>();
-        constraints.add(Constraint.fill());
-        if (hasInfra) {
-            constraints.add(Constraint.length(infraHeight));
+        if (hasInfra && !hasActiveIntegrations) {
+            // No active integrations: collapse integrations table, infra fills
+            constraints.add(Constraint.length(3)); // border + header only
+            constraints.add(Constraint.fill());
+        } else {
+            constraints.add(Constraint.fill());
+            if (hasInfra) {
+                constraints.add(Constraint.length(infraHeight));
+            }
         }
         if (hasSparkline) {
             constraints.add(Constraint.length(14));
+        } else if (showInfraInfoPanel) {
+            constraints.add(Constraint.length(10));
         }
         List<Rect> chunks = Layout.vertical()
                 .constraints(constraints)
@@ -1704,6 +1714,8 @@ public class CamelMonitor extends CamelCommand {
 
             // Info panel: heap and threads for the selected integration
             renderOverviewInfoPanel(frame, infoArea);
+        } else if (showInfraInfoPanel) {
+            renderOverviewInfoPanel(frame, chunks.get(chunks.size() - 1));
         }
     }
 
@@ -4052,7 +4064,8 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderLog(Frame frame, Rect area) {
         IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
+        InfraInfo infraSel = info == null ? findSelectedInfra() : null;
+        if (info == null && infraSel == null) {
             renderNoSelection(frame, area);
             return;
         }
@@ -4064,9 +4077,14 @@ public class CamelMonitor extends CamelCommand {
         String chunkSuffix = totalRead > entries.size()
                 ? " #" + (totalRead - entries.size() + 1) + "-" + totalRead
                 : "";
-        String logTitle = info.rootLogLevel != null
-                ? " Log level:" + info.rootLogLevel + chunkSuffix + " "
-                : " Log" + chunkSuffix + " ";
+        String logTitle;
+        if (infraSel != null) {
+            logTitle = " Log [" + infraSel.alias + "]" + chunkSuffix + " ";
+        } else if (info.rootLogLevel != null) {
+            logTitle = " Log level:" + info.rootLogLevel + chunkSuffix + " ";
+        } else {
+            logTitle = " Log" + chunkSuffix + " ";
+        }
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(logTitle)
