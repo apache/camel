@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.hashicorp.vault.services;
 
 import java.util.function.Consumer;
 
+import com.github.dockerjava.api.model.Capability;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
@@ -72,6 +73,7 @@ public class HashicorpVaultLocalContainerInfraService
 
                 withNetworkAliases(containerName)
                         .withEnv("VAULT_DEV_ROOT_TOKEN_ID", DEFAULT_TOKEN)
+                        .withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withCapAdd(Capability.IPC_LOCK))
                         .withLogConsumer(logConsumer)
                         .waitingFor(Wait.forListeningPort())
                         .waitingFor(Wait.forLogMessage(".*Development.*mode.*should.*", 1));
