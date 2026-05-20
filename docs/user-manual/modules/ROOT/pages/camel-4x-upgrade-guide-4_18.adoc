@@ -115,6 +115,29 @@ this pattern now fails fast with an `IllegalArgumentException` (wrapped in a
 `Neo4jOperationException`) instead of producing a malformed query. Property values continue to be
 passed as bound query parameters and are unaffected.
 
+=== camel-mail
+
+The SMTP producer no longer extracts dynamic JavaMail session properties from message headers by
+default. Previously any message header whose key started with `mail.smtp.` (or `mail.smtps.`) was
+applied to a per-message `JavaMailSender`, which meant an upstream producer that mapped untrusted
+input into the exchange header map (for example `platform-http` query parameters, JMS or Kafka
+messages from untrusted producers) could override transport-security settings such as
+`mail.smtp.ssl.trust` or `mail.smtp.starttls.enable`, or redirect the SMTP connection.
+
+This behaviour is now disabled by default. Routes that legitimately rely on per-message
+`mail.smtp.*` / `mail.smtps.*` headers must opt back in on the endpoint:
+
+[source,java]
+----
+.to("smtp://mymailserver:1234?useJavaMailSessionPropertiesFromHeaders=true");
+----
+
+Even with the opt-in, route authors should still strip the namespace with
+`removeHeaders("mail.smtp.*", "mail.smtps.*")` between any untrusted ingress and the mail producer.
+
+In addition, the inbound `MailHeaderFilterStrategy` now blocks the `mail.smtp.` / `mail.smtps.`
+prefix as well, so an external mail message can no longer inject these into a downstream exchange.
+
 == Upgrading from 4.18.1 to 4.18.2
 
 === camel-platform-http-main

@@ -575,20 +575,30 @@ SearchTerm term = builder.build();
 === Using headers with additional Java Mail Sender properties
 
 When sending mails, then you can provide dynamic java mail properties for the `JavaMailSender` from
-the Exchange as message headers with keys starting with `java.smtp.`.
+the Exchange as message headers with keys starting with `mail.smtp.` (or `mail.smtps.`).
 
-You can set any of the `java.smtp` properties which you can find in the Java Mail documentation.
+You can set any of the `mail.smtp` properties which you can find in the Java Mail documentation.
 
-For example, to provide a dynamic uuid in `java.smtp.from` (SMTP MAIL command):
+For example, to provide a dynamic uuid in `mail.smtp.from` (SMTP MAIL command):
 
 [source,java]
 ----
     .setHeader("from", constant("reply2me@foo.com"));
-    .setHeader("java.smtp.from", method(UUID.class, "randomUUID"));
-    .to("smtp://mymailserver:1234");
+    .setHeader("mail.smtp.from", method(UUID.class, "randomUUID"));
+    .to("smtp://mymailserver:1234?useJavaMailSessionPropertiesFromHeaders=true");
 ----
 
 NOTE: This is only supported when *not* using a custom `JavaMailSender`.
+
+WARNING: This feature is *disabled by default* and must be explicitly enabled with
+`useJavaMailSessionPropertiesFromHeaders=true`. The `mail.smtp.*` / `mail.smtps.*` keys are a
+Camel-internal namespace that is not filtered by any `HeaderFilterStrategy`, so if these headers can
+originate from data crossing a trust boundary (for example HTTP query parameters, or JMS/Kafka
+messages from untrusted producers) an attacker could weaken transport security (such as
+`mail.smtp.ssl.trust` or `mail.smtp.starttls.enable`) or redirect the SMTP connection. Only enable
+the option when these headers are set exclusively by trusted route logic, and strip the namespace
+with `removeHeaders("mail.smtp.*", "mail.smtps.*")` before the producer when bridging an untrusted
+source.
 
 
 include::spring-boot:partial$starter.adoc[]
