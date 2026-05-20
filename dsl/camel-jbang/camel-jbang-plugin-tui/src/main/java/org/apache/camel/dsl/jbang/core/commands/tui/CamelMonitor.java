@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -312,8 +313,10 @@ public class CamelMonitor extends CamelCommand {
     private int chartMode = CHART_ALL;
     private boolean showDiagram;
     private boolean diagramTextMode;
+    private boolean diagramAllRoutes;
     private boolean diagramMetrics = true;
     private List<RouteDiagramAsciiRenderer.CounterPos> diagramCounterPositions = Collections.emptyList();
+    private Set<Integer> diagramRouteTitleRows = Collections.emptySet();
     private List<String> diagramLines = Collections.emptyList();
     private int diagramScroll;
     private int diagramScrollX;
@@ -699,6 +702,10 @@ public class CamelMonitor extends CamelCommand {
             }
             if (tab == TAB_ROUTES && ke.isChar('S')) {
                 routeSortReversed = !routeSortReversed;
+                return true;
+            }
+            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isCharIgnoreCase('a')) {
+                diagramAllRoutes = !diagramAllRoutes;
                 return true;
             }
             if (tab == TAB_ROUTES && ke.isChar('d')) {
@@ -1683,12 +1690,16 @@ public class CamelMonitor extends CamelCommand {
 
         // Fullscreen diagram mode
         if (showDiagram && (diagramTextMode ? !diagramLines.isEmpty() : diagramFullImageData != null)) {
-            // Split: route info header (4 rows) + diagram (fill)
-            List<Rect> fullChunks = Layout.vertical()
-                    .constraints(Constraint.length(4), Constraint.fill())
-                    .split(area);
-            renderRouteHeader(frame, fullChunks.get(0), info);
-            renderDiagram(frame, fullChunks.get(1));
+            if (diagramAllRoutes) {
+                renderDiagram(frame, area);
+            } else {
+                // Split: route info header (4 rows) + diagram (fill)
+                List<Rect> fullChunks = Layout.vertical()
+                        .constraints(Constraint.length(4), Constraint.fill())
+                        .split(area);
+                renderRouteHeader(frame, fullChunks.get(0), info);
+                renderDiagram(frame, fullChunks.get(1));
+            }
             return;
         }
 
@@ -2356,6 +2367,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private Line styleDiagramLine(String text, int row, int scrollX) {
+        if (diagramRouteTitleRows.contains(row)) {
+            return Line.from(Span.styled(text, Style.EMPTY.fg(Color.WHITE).bold()));
+        }
+
         // Build counter color ranges for this row
         List<int[]> counterRanges = new ArrayList<>();
         for (RouteDiagramAsciiRenderer.CounterPos cp : diagramCounterPositions) {
@@ -2486,11 +2501,11 @@ public class CamelMonitor extends CamelCommand {
         String pid = selectedPid;
         boolean textMode = diagramTextMode;
         boolean showMetrics = diagramMetrics;
-        String routeId = selectedRoute.routeId;
+        String routeId = diagramAllRoutes ? null : selectedRoute.routeId;
 
         boolean initialLoad = !showDiagram;
         if (initialLoad) {
-            diagramRouteId = routeId;
+            diagramRouteId = routeId != null ? routeId : "all";
             diagramLines = List.of("(Loading diagram...)");
             diagramImageData = null;
             diagramFullImageData = null;
@@ -2759,39 +2774,49 @@ public class CamelMonitor extends CamelCommand {
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                     RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                     RouteDiagramLayoutEngine.NodeLabelMode.CODE);
-            List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
-            int currentY = RouteDiagramLayoutEngine.PADDING;
-            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
-                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, currentY);
-                layoutRoutes.add(lr);
-                currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
-            }
-            RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
-                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
-            String ascii = asciiRenderer.renderDiagram(layoutRoutes, currentY);
-            List<RouteDiagramAsciiRenderer.CounterPos> origPositions = asciiRenderer.getCounterPositions();
 
-            // Build result lines, remapping counter positions to account for removed empty lines
-            String[] rawLines = ascii.split("\n", -1);
             List<String> result = new ArrayList<>();
-            int[] rowMapping = new int[rawLines.length];
-            int newRow = 0;
-            for (int i = 0; i < rawLines.length; i++) {
-                if (!rawLines[i].isEmpty()) {
-                    rowMapping[i] = newRow++;
-                    result.add(rawLines[i]);
-                } else {
-                    rowMapping[i] = -1;
-                }
-            }
             List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
-            for (RouteDiagramAsciiRenderer.CounterPos cp : origPositions) {
-                if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
-                    positions.add(new RouteDiagramAsciiRenderer.CounterPos(
-                            rowMapping[cp.row()], cp.col(), cp.length(), cp.type()));
+            Set<Integer> titleRows = new HashSet<>();
+
+            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
+                // Add separator between routes
+                if (!result.isEmpty()) {
+                    result.add("");
+                    result.add("");
                 }
+
+                int titleRow = result.size();
+
+                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, RouteDiagramLayoutEngine.PADDING);
+                RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
+                        RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
+                String ascii = asciiRenderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+                List<RouteDiagramAsciiRenderer.CounterPos> origPositions = asciiRenderer.getCounterPositions();
+
+                // Strip empty lines and remap counter positions
+                String[] rawLines = ascii.split("\n", -1);
+                int[] rowMapping = new int[rawLines.length];
+                int baseRow = result.size();
+                int newRow = baseRow;
+                for (int i = 0; i < rawLines.length; i++) {
+                    if (!rawLines[i].isEmpty()) {
+                        rowMapping[i] = newRow++;
+                        result.add(rawLines[i]);
+                    } else {
+                        rowMapping[i] = -1;
+                    }
+                }
+                for (RouteDiagramAsciiRenderer.CounterPos cp : origPositions) {
+                    if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
+                        positions.add(new RouteDiagramAsciiRenderer.CounterPos(
+                                rowMapping[cp.row()], cp.col(), cp.length(), cp.type()));
+                    }
+                }
+                titleRows.add(titleRow);
             }
-            applyDiagramResult(routeId, result, null, null, null, positions);
+
+            applyDiagramResult(routeId, result, null, null, null, positions, titleRows);
         } else {
             TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
             if (caps.supportsNativeImages()) {
@@ -2822,20 +2847,27 @@ public class CamelMonitor extends CamelCommand {
 
     private void applyDiagramResult(
             String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol) {
-        applyDiagramResult(routeId, lines, imageData, fullImageData, protocol, Collections.emptyList());
+        applyDiagramResult(routeId, lines, imageData, fullImageData, protocol, Collections.emptyList(), Collections.emptySet());
     }
 
     private void applyDiagramResult(
             String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol,
             List<RouteDiagramAsciiRenderer.CounterPos> positions) {
+        applyDiagramResult(routeId, lines, imageData, fullImageData, protocol, positions, Collections.emptySet());
+    }
+
+    private void applyDiagramResult(
+            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol,
+            List<RouteDiagramAsciiRenderer.CounterPos> positions, Set<Integer> titleRows) {
         if (runner == null) {
             return;
         }
         runner.runOnRenderThread(() -> {
             boolean wasShowing = showDiagram;
-            diagramRouteId = routeId;
+            diagramRouteId = routeId != null ? routeId : "all";
             diagramLines = lines;
             diagramCounterPositions = positions;
+            diagramRouteTitleRows = titleRows;
             diagramImageData = imageData;
             diagramFullImageData = fullImageData;
             diagramProtocol = protocol;
@@ -4851,6 +4883,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "c", "source");
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
+            hint(spans, "a", diagramAllRoutes ? "all [on]" : "all [off]");
             String routeState = selectedRouteState();
             boolean supSus = selectedRouteSupportsSuspension();
             if ("Started".equals(routeState)) {
