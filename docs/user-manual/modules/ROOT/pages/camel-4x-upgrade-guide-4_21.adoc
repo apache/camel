@@ -63,6 +63,20 @@ auto-disables `contentCache` on resource-based components (such as `xslt`) whose
 the route. Set `camel.component.<name>.contentCache=true` (or pass `?contentCache=true` on the
 URI) to opt back in to caching during dev mode.
 
+==== camel-jbang-mcp
+
+The `camel_catalog_component_doc` tool no longer returns every component option by default. Two new
+arguments make the response lean by default to reduce LLM context-window pressure:
+
+* `optionsFilter` (optional) — case-insensitive substring match on option name.
+* `includeOptions` (optional) — one of `required`, `common`, or `all`; defaults to `common`, which
+  excludes deprecated options and options whose label contains `advanced`. Pass `all` to restore the
+  previous behaviour.
+
+The `groupId`, `artifactId`, and `version` fields have been removed from the `camel_catalog_component_doc`
+response. A new `camel_catalog_component_maven` tool returns just those Maven coordinates and should be
+called only when you actually need to add the component as a dependency.
+
 ==== camel-jbang plugins
 
 Plugins are now loaded lazily. Built-in commands that do not consume plugins
