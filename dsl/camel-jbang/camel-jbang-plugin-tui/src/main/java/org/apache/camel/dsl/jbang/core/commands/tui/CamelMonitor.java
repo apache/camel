@@ -154,6 +154,11 @@ public class CamelMonitor extends CamelCommand {
                         defaultValue = "100")
     long refreshInterval = DEFAULT_REFRESH_MS;
 
+    @CommandLine.Option(names = { "--record" },
+                        description = "Record a demo to an Asciinema .cast file using a TamboUI tape script",
+                        arity = "0..1")
+    String record;
+
     // State
     private final AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(Collections.emptyList());
     private final Map<String, VanishingInfo> vanishing = new ConcurrentHashMap<>();
@@ -358,6 +363,18 @@ public class CamelMonitor extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
+
+        // Configure TamboUI recording if --record is specified
+        if (record != null) {
+            Path tapeFile = Path.of(record);
+            Path castFile = Path.of(record.replaceAll("\\.tape$", "") + ".cast");
+            System.setProperty("tamboui.record", castFile.toAbsolutePath().toString());
+            System.setProperty("tamboui.record.config", tapeFile.toAbsolutePath().toString());
+            System.setProperty("tamboui.record.width", "200");
+            System.setProperty("tamboui.record.height", "50");
+            System.setProperty("tamboui.record.duration", "120000");
+            System.setProperty("tamboui.record.fps", "10");
+        }
 
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
