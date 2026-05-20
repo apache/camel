@@ -622,6 +622,18 @@ The page titles are likewise disambiguated (`JSON Jackson 2` / `JSON Jackson 3`,
 variants now appear in the dataformats navigation. Update any external `xref:` links that point
 at the old filenames; routes referencing the dataformats by `name` are unaffected.
 
+=== camel-platform-http-main
+
+Two new optional configuration properties are available on both `camel.server.*` and `camel.management.*`
+for the embedded HTTP server:
+
+* `jwtIssuer` — when set, validates the `iss` (issuer) claim of incoming JWT tokens.
+* `jwtAudience` — comma-separated list of accepted audience values; when set, validates the `aud` (audience)
+  claim. A token is accepted if its `aud` claim matches any configured value.
+
+Both default to unset. When both are unset, JWT validation behaviour is unchanged (signature plus the
+default `exp` / `nbf` checks).
+
 === Deprecation of camel-ironmq
 
 The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017

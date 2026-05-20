@@ -73,6 +73,10 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jwtKeystorePath;
     @Metadata(label = "security", security = "secret")
     private String jwtKeystorePassword;
+    @Metadata(label = "security")
+    private String jwtIssuer;
+    @Metadata(label = "security")
+    private String jwtAudience;
 
     public HttpManagementServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -362,6 +366,29 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
         this.jwtKeystorePassword = jwtKeystorePassword;
     }
 
+    public String getJwtIssuer() {
+        return jwtIssuer;
+    }
+
+    /**
+     * Expected JWT issuer (iss claim) for token validation. When set, tokens whose issuer does not match are rejected.
+     */
+    public void setJwtIssuer(String jwtIssuer) {
+        this.jwtIssuer = jwtIssuer;
+    }
+
+    public String getJwtAudience() {
+        return jwtAudience;
+    }
+
+    /**
+     * Expected JWT audience (aud claim) for token validation. Multiple values can be separated by comma. When set,
+     * tokens whose audience does not contain any of the configured values are rejected.
+     */
+    public void setJwtAudience(String jwtAudience) {
+        this.jwtAudience = jwtAudience;
+    }
+
     /**
      * Whether embedded HTTP management server is enabled. By default, the server is not enabled.
      */
@@ -539,6 +566,23 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public HttpManagementServerConfigurationProperties withJwtKeystorePassword(String jwtKeystorePassword) {
         this.jwtKeystorePassword = jwtKeystorePassword;
+        return this;
+    }
+
+    /**
+     * Expected JWT issuer (iss claim) for token validation. When set, tokens whose issuer does not match are rejected.
+     */
+    public HttpManagementServerConfigurationProperties withJwtIssuer(String jwtIssuer) {
+        this.jwtIssuer = jwtIssuer;
+        return this;
+    }
+
+    /**
+     * Expected JWT audience (aud claim) for token validation. Multiple values can be separated by comma. When set,
+     * tokens whose audience does not contain any of the configured values are rejected.
+     */
+    public HttpManagementServerConfigurationProperties withJwtAudience(String jwtAudience) {
+        this.jwtAudience = jwtAudience;
         return this;
     }
 
