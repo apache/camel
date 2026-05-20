@@ -513,7 +513,7 @@
         <twilio-version>12.1.1</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-servlet-version>2.3.24.Final</undertow-servlet-version>
-        <undertow-version>2.4.0.Final</undertow-version>
+        <undertow-version>2.4.1.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <vavr-version>1.0.0</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
