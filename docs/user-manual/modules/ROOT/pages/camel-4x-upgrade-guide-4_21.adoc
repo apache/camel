@@ -52,6 +52,11 @@ and dev consoles for nodes inside Choice EIP branches.
 The `camel wrapper` command now installs the scripts as `camel` instead of `camelw`.
 You can use the `--command-name=camelw` to use the old name.
 
+The `camel run` and `camel export` commands now auto-detect `application.properties` (and profile-specific
+variants such as `application-prod.properties`) in the current directory and include them automatically.
+Previously you had to explicitly list the properties file on the command line
+(e.g. `camel run hello.java application.properties`). This is no longer required.
+
 When `camel.main.routesReloadEnabled=true` (automatically set by `camel run --dev`), Camel now
 auto-disables `contentCache` on resource-based components (such as `xslt`) whose default is
 `true`, so that edits to the resource file are picked up on the next message without restarting
