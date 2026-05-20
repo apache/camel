@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.Arrays;
+
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class MailHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
@@ -28,7 +30,12 @@ public class MailHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         setLowerCase(true);
         // filter headers begin with "Camel" or "org.apache.camel"
         setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
+        // on the inbound path also filter the Camel-internal mail.smtp.* / mail.smtps.* namespace so an
+        // external mail message cannot inject JavaMail session properties (CAMEL-23522)
+        String[] inFilter = Arrays.copyOf(CAMEL_FILTER_STARTS_WITH, CAMEL_FILTER_STARTS_WITH.length + 2);
+        inFilter[CAMEL_FILTER_STARTS_WITH.length] = "mail.smtp.";
+        inFilter[CAMEL_FILTER_STARTS_WITH.length + 1] = "mail.smtps.";
+        setInFilterStartsWith(inFilter);
     }
 
 }

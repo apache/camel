@@ -72,6 +72,7 @@ public final class SecurityUtils {
         map.put("trustallcertificates", new SecurityOption(INSECURE_SSL, "true"));
         map.put("trustallpackages", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("uploadenabled", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("usejavamailsessionpropertiesfromheaders", new SecurityOption(INSECURE_SSL, "true"));
         map.put("validatecertificates", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         // SECURITY-OPTIONS: END
         SECURITY_OPTIONS = Collections.unmodifiableMap(map);

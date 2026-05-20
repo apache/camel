@@ -143,6 +143,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "useinlineattachments":
         case "useInlineAttachments": target.getConfiguration().setUseInlineAttachments(property(camelContext, boolean.class, value)); return true;
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": target.getConfiguration().setUseJavaMailSessionPropertiesFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -271,6 +273,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useFixedDelay": return boolean.class;
         case "useinlineattachments":
         case "useInlineAttachments": return boolean.class;
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -400,6 +404,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useFixedDelay": return target.isUseFixedDelay();
         case "useinlineattachments":
         case "useInlineAttachments": return target.getConfiguration().isUseInlineAttachments();
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": return target.getConfiguration().isUseJavaMailSessionPropertiesFromHeaders();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }
