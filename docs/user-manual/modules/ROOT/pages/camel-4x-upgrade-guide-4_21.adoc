@@ -385,6 +385,46 @@ from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
     .recipientList(simple("direct:${header.CamelCxfOperationName}"));
 ----
 
+==== Behaviour change: cross-transport propagation of the operation header
+
+Because the renamed header value now begins with `Camel`, it is filtered by the
+standard transport `HeaderFilterStrategy` (`JmsHeaderFilterStrategy`,
+`HttpHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design
+— `Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (JMS, HTTP, ...) into a `cxf:` producer
+and select the SOAP operation from a header supplied by the sender must
+therefore carry the operation in a non-`Camel`-prefixed application header and
+map it to `CxfConstants.OPERATION_NAME` (`CamelCxfOperationName`) in the route
+between the transport `from` and the `cxf:` `to`:
+
+[source,xml]
+----
+<!-- before (pre-4.21) -->
+<route>
+    <from uri="jms:queue:bridge.cxf"/>
+    <to uri="cxf://bean:serviceEndpoint"/>
+</route>
+<!-- caller sets the header keyed by the pre-4.21 value:
+     setHeader("operationName", "greetMe") -->
+
+<!-- after -->
+<route>
+    <from uri="jms:queue:bridge.cxf"/>
+    <setHeader name="CamelCxfOperationName">
+        <simple>${header.operationName}</simple>
+    </setHeader>
+    <to uri="cxf://bean:serviceEndpoint"/>
+</route>
+<!-- caller sets a non-Camel-prefixed application carrier header (any name
+     that is not stripped by the transport HeaderFilterStrategy works);
+     the route restores the CXF operation header after the transport hop. -->
+----
+
+The same pattern applies to HTTP-based bridges (`platform-http`/`jetty`/`netty
+-http`/`http` -> `cxf:`) and any other transport whose default
+`HeaderFilterStrategy` filters `Camel*` headers.
+
 === camel-aws2-s3
 
 The `listObjects` operation now uses the `ListObjectsV2` AWS API instead of the deprecated `ListObjects` API.
