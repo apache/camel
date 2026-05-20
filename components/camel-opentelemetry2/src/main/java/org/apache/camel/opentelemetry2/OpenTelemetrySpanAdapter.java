@@ -30,7 +30,7 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     private static final String DEFAULT_EVENT_NAME = "log";
 
     private final Span otelSpan;
-    private final Baggage baggage;
+    private Baggage baggage;
 
     protected OpenTelemetrySpanAdapter(Span otelSpan, Baggage baggage) {
         this.otelSpan = otelSpan;
@@ -57,6 +57,10 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
 
     protected Baggage getBaggage() {
         return this.baggage;
+    }
+
+    protected void setBaggage(Baggage baggage) {
+        this.baggage = baggage;
     }
 
     @Override
