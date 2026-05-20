@@ -134,6 +134,7 @@ public class CamelMonitor extends CamelCommand {
 
     // Route sort columns
     private static final String[] ROUTE_SORT_COLUMNS = { "name", "group", "from", "status", "total", "failed" };
+    private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta", "total", "failed" };
 
     // Consumer sort columns (order matches table column order)
     private static final String[] CONSUMER_SORT_COLUMNS = { "id", "status", "type", "inflight", "total", "uri" };
@@ -215,6 +216,10 @@ public class CamelMonitor extends CamelCommand {
     private String routeSort = "name";
     private int routeSortIndex = 0;
     private boolean routeSortReversed;
+    private boolean routeTopMode;
+    private String routeTopSort = "mean";
+    private int routeTopSortIndex = 0;
+    private boolean routeTopSortReversed;
 
     // Consumer sort state (default: id = index 0)
     private String consumerSort = "id";
@@ -695,13 +700,27 @@ public class CamelMonitor extends CamelCommand {
 
             // Routes tab: sort and diagram
             if (tab == TAB_ROUTES && ke.isChar('s')) {
-                routeSortIndex = (routeSortIndex + 1) % ROUTE_SORT_COLUMNS.length;
-                routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
-                routeSortReversed = false;
+                if (routeTopMode) {
+                    routeTopSortIndex = (routeTopSortIndex + 1) % ROUTE_TOP_SORT_COLUMNS.length;
+                    routeTopSort = ROUTE_TOP_SORT_COLUMNS[routeTopSortIndex];
+                    routeTopSortReversed = false;
+                } else {
+                    routeSortIndex = (routeSortIndex + 1) % ROUTE_SORT_COLUMNS.length;
+                    routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
+                    routeSortReversed = false;
+                }
                 return true;
             }
             if (tab == TAB_ROUTES && ke.isChar('S')) {
-                routeSortReversed = !routeSortReversed;
+                if (routeTopMode) {
+                    routeTopSortReversed = !routeTopSortReversed;
+                } else {
+                    routeSortReversed = !routeSortReversed;
+                }
+                return true;
+            }
+            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isCharIgnoreCase('t')) {
+                routeTopMode = !routeTopMode;
                 return true;
             }
             if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isCharIgnoreCase('a')) {
@@ -1713,68 +1732,129 @@ public class CamelMonitor extends CamelCommand {
                 .split(area);
 
         // Routes table
-        List<Row> routeRows = new ArrayList<>();
-        for (RouteInfo route : sortedRoutes) {
-            Style stateStyle = "Started".equals(route.state)
-                    ? Style.EMPTY.fg(Color.GREEN)
-                    : Style.EMPTY.fg(Color.LIGHT_RED);
+        Table routeTable;
+        if (routeTopMode) {
+            sortedRoutes.sort(this::sortRouteTop);
 
-            Style failStyle = route.failed > 0
-                    ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
-                    : Style.EMPTY;
+            List<Row> routeRows = new ArrayList<>();
+            for (RouteInfo route : sortedRoutes) {
+                Style failStyle = route.failed > 0
+                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
+                        : Style.EMPTY;
 
-            String sinceLastRoute = formatSinceLastRoute(route);
+                routeRows.add(Row.from(
+                        Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                        Cell.from(route.from != null ? route.from : ""),
+                        rightCell(route.total > 0 ? String.valueOf(route.meanTime) : "", 6, topTimeStyle(route.meanTime)),
+                        rightCell(route.total > 0 ? String.valueOf(route.maxTime) : "", 6, topTimeStyle(route.maxTime)),
+                        rightCell(route.total > 0 ? String.valueOf(route.minTime) : "", 6),
+                        rightCell(route.total > 0 ? String.valueOf(route.lastTime) : "", 6),
+                        rightCell(route.deltaTime != 0 ? String.valueOf(route.deltaTime) : "", 6,
+                                topDeltaStyle(route.deltaTime)),
+                        rightCell(String.valueOf(route.total), 8),
+                        rightCell(String.valueOf(route.failed), 6, failStyle),
+                        rightCell(String.valueOf(route.inflight), 8),
+                        rightCell(route.throughput != null ? route.throughput : "", 8),
+                        rightCell(formatLoad(route.load01, route.load05, route.load15), 12)));
+            }
 
-            routeRows.add(Row.from(
-                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(route.group != null ? route.group : "", Style.EMPTY.dim())),
-                    Cell.from(route.from != null ? route.from : ""),
-                    Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
-                    Cell.from(route.uptime != null ? route.uptime : ""),
-                    rightCell(route.coverage != null ? route.coverage : "", 6),
-                    rightCell(route.throughput != null ? route.throughput : "", 8),
-                    rightCell(String.valueOf(route.total), 8),
-                    rightCell(String.valueOf(route.failed), 6, failStyle),
-                    rightCell(String.valueOf(route.inflight), 8),
-                    rightCell(route.total > 0
-                            ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
-                            : "", 14),
-                    Cell.from(sinceLastRoute)));
+            routeTable = Table.builder()
+                    .rows(routeRows)
+                    .header(Row.from(
+                            Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                            Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
+                            rightCell(routeTopSortLabel("MEAN", "mean"), 6, routeTopSortStyle("mean")),
+                            rightCell(routeTopSortLabel("MAX", "max"), 6, routeTopSortStyle("max")),
+                            rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
+                            rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
+                            rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
+                            rightCell(routeTopSortLabel("TOTAL", "total"), 8, routeTopSortStyle("total")),
+                            rightCell(routeTopSortLabel("FAIL", "failed"), 6, routeTopSortStyle("failed")),
+                            rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
+                            rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                            rightCell("LOAD", 12, Style.EMPTY.bold())))
+                    .widths(
+                            Constraint.length(12),
+                            Constraint.fill(),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(12))
+                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                    .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .title(" Top Routes sort:" + routeTopSort + " ").build())
+                    .build();
+        } else {
+            List<Row> routeRows = new ArrayList<>();
+            for (RouteInfo route : sortedRoutes) {
+                Style stateStyle = "Started".equals(route.state)
+                        ? Style.EMPTY.fg(Color.GREEN)
+                        : Style.EMPTY.fg(Color.LIGHT_RED);
+
+                Style failStyle = route.failed > 0
+                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
+                        : Style.EMPTY;
+
+                String sinceLastRoute = formatSinceLastRoute(route);
+
+                routeRows.add(Row.from(
+                        Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                        Cell.from(Span.styled(route.group != null ? route.group : "", Style.EMPTY.dim())),
+                        Cell.from(route.from != null ? route.from : ""),
+                        Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
+                        Cell.from(route.uptime != null ? route.uptime : ""),
+                        rightCell(route.coverage != null ? route.coverage : "", 6),
+                        rightCell(route.throughput != null ? route.throughput : "", 8),
+                        rightCell(String.valueOf(route.total), 8),
+                        rightCell(String.valueOf(route.failed), 6, failStyle),
+                        rightCell(String.valueOf(route.inflight), 8),
+                        rightCell(route.total > 0
+                                ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
+                                : "", 14),
+                        Cell.from(sinceLastRoute)));
+            }
+
+            routeTable = Table.builder()
+                    .rows(routeRows)
+                    .header(Row.from(
+                            Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
+                            Cell.from(Span.styled(routeSortLabel("GROUP", "group"), routeSortStyle("group"))),
+                            Cell.from(Span.styled(routeSortLabel("FROM", "from"), routeSortStyle("from"))),
+                            Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
+                            Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
+                            rightCell("COVER", 6, Style.EMPTY.bold()),
+                            rightCell("MSG/S", 8, Style.EMPTY.bold()),
+                            rightCell(routeSortLabel("TOTAL", "total"), 8, routeSortStyle("total")),
+                            rightCell(routeSortLabel("FAIL", "failed"), 6, routeSortStyle("failed")),
+                            rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
+                            rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
+                            Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
+                    .widths(
+                            Constraint.length(12),
+                            Constraint.length(14),
+                            Constraint.fill(),
+                            Constraint.length(10),
+                            Constraint.length(8),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(14),
+                            Constraint.length(12))
+                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                    .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .title(" Routes sort:" + routeSort + " ").build())
+                    .build();
         }
-
-        Table routeTable = Table.builder()
-                .rows(routeRows)
-                .header(Row.from(
-                        Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
-                        Cell.from(Span.styled(routeSortLabel("GROUP", "group"), routeSortStyle("group"))),
-                        Cell.from(Span.styled(routeSortLabel("FROM", "from"), routeSortStyle("from"))),
-                        Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
-                        Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
-                        rightCell("COVER", 6, Style.EMPTY.bold()),
-                        rightCell("MSG/S", 8, Style.EMPTY.bold()),
-                        rightCell(routeSortLabel("TOTAL", "total"), 8, routeSortStyle("total")),
-                        rightCell(routeSortLabel("FAIL", "failed"), 6, routeSortStyle("failed")),
-                        rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                        rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
-                        Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
-                .widths(
-                        Constraint.length(12),
-                        Constraint.length(14),
-                        Constraint.fill(),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(14),
-                        Constraint.length(12))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Routes sort:" + routeSort + " ").build())
-                .build();
 
         frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
 
@@ -1862,6 +1942,67 @@ public class CamelMonitor extends CamelCommand {
             default -> 0;
         };
         return routeSortReversed ? -result : result;
+    }
+
+    private int sortRouteTop(RouteInfo a, RouteInfo b) {
+        int result = switch (routeTopSort) {
+            case "mean" -> Long.compare(b.meanTime, a.meanTime);
+            case "max" -> Long.compare(b.maxTime, a.maxTime);
+            case "min" -> Long.compare(b.minTime, a.minTime);
+            case "last" -> Long.compare(b.lastTime, a.lastTime);
+            case "delta" -> Long.compare(b.deltaTime, a.deltaTime);
+            case "total" -> Long.compare(b.total, a.total);
+            case "failed" -> Long.compare(b.failed, a.failed);
+            default -> 0;
+        };
+        return routeTopSortReversed ? -result : result;
+    }
+
+    private int sortProcessorTop(ProcessorInfo a, ProcessorInfo b) {
+        int result = switch (routeTopSort) {
+            case "mean" -> Long.compare(b.meanTime, a.meanTime);
+            case "max" -> Long.compare(b.maxTime, a.maxTime);
+            case "min" -> Long.compare(b.minTime, a.minTime);
+            case "last" -> Long.compare(b.lastTime, a.lastTime);
+            case "delta" -> Long.compare(b.deltaTime, a.deltaTime);
+            case "total" -> Long.compare(b.total, a.total);
+            case "failed" -> Long.compare(b.failed, a.failed);
+            default -> 0;
+        };
+        return routeTopSortReversed ? -result : result;
+    }
+
+    private String routeTopSortLabel(String label, String column) {
+        return sortLabel(label, column, routeTopSort, routeTopSortReversed);
+    }
+
+    private Style routeTopSortStyle(String column) {
+        return sortStyle(column, routeTopSort);
+    }
+
+    private static Style topTimeStyle(long ms) {
+        if (ms >= 1000) {
+            return Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        } else if (ms >= 100) {
+            return Style.EMPTY.fg(Color.YELLOW);
+        }
+        return Style.EMPTY;
+    }
+
+    private static Style topDeltaStyle(long delta) {
+        if (delta > 0) {
+            return Style.EMPTY.fg(Color.LIGHT_RED);
+        } else if (delta < 0) {
+            return Style.EMPTY.fg(Color.GREEN);
+        }
+        return Style.EMPTY;
+    }
+
+    private static String formatLoad(String l1, String l5, String l15) {
+        String s1 = l1 != null && !"0.00".equals(l1) ? l1 : "0";
+        String s5 = l5 != null && !"0.00".equals(l5) ? l5 : "0";
+        String s15 = l15 != null && !"0.00".equals(l15) ? l15 : "0";
+        return s1 + "/" + s5 + "/" + s15;
     }
 
     private String traceSortLabel(String label, String column) {
@@ -2087,67 +2228,136 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderProcessors(Frame frame, Rect area, RouteInfo route) {
-        List<Row> rows = new ArrayList<>();
+        Table table;
 
-        // Synthetic top row representing the route itself
-        Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
-        rows.add(Row.from(
-                Cell.from("   route"),
-                Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
-                Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                rightCell(String.valueOf(route.total), 8),
-                rightCell(String.valueOf(route.failed), 6,
-                        route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                rightCell(String.valueOf(route.inflight), 8),
-                rightCell(route.total > 0
-                        ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
-                        : "", 14),
-                Cell.from("")));
+        if (routeTopMode) {
+            List<Row> rows = new ArrayList<>();
 
-        for (ProcessorInfo proc : route.processors) {
-            String indent = "  ".repeat(proc.level);
-            Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
-
+            // Synthetic top row representing the route itself
+            Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
             rows.add(Row.from(
-                    Cell.from("   " + (proc.processor != null ? proc.processor : "")),
-                    Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
+                    Cell.from("   route"),
+                    Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
+                    rightCell(route.total > 0 ? String.valueOf(route.meanTime) : "", 6, topTimeStyle(route.meanTime)),
+                    rightCell(route.total > 0 ? String.valueOf(route.maxTime) : "", 6, topTimeStyle(route.maxTime)),
+                    rightCell(route.total > 0 ? String.valueOf(route.minTime) : "", 6),
+                    rightCell(route.total > 0 ? String.valueOf(route.lastTime) : "", 6),
+                    rightCell(route.deltaTime != 0 ? String.valueOf(route.deltaTime) : "", 6, topDeltaStyle(route.deltaTime)),
+                    rightCell(String.valueOf(route.total), 8),
+                    rightCell(String.valueOf(route.failed), 6,
+                            route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
+                    rightCell(String.valueOf(route.inflight), 8)));
+
+            List<ProcessorInfo> sorted = new ArrayList<>(route.processors);
+            sorted.sort(this::sortProcessorTop);
+
+            for (ProcessorInfo proc : sorted) {
+                Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+
+                rows.add(Row.from(
+                        Cell.from("   " + (proc.processor != null ? proc.processor : "")),
+                        Cell.from(Span.styled(proc.id != null ? proc.id : "", nameStyle)),
+                        rightCell(proc.total > 0 ? String.valueOf(proc.meanTime) : "", 6, topTimeStyle(proc.meanTime)),
+                        rightCell(proc.total > 0 ? String.valueOf(proc.maxTime) : "", 6, topTimeStyle(proc.maxTime)),
+                        rightCell(proc.total > 0 ? String.valueOf(proc.minTime) : "", 6),
+                        rightCell(proc.total > 0 ? String.valueOf(proc.lastTime) : "", 6),
+                        rightCell(proc.deltaTime != 0 ? String.valueOf(proc.deltaTime) : "", 6, topDeltaStyle(proc.deltaTime)),
+                        rightCell(String.valueOf(proc.total), 8),
+                        rightCell(String.valueOf(proc.failed), 6,
+                                proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
+                        rightCell(String.valueOf(proc.inflight), 8)));
+            }
+
+            table = Table.builder()
+                    .rows(rows)
+                    .header(Row.from(
+                            Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
+                            Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                            rightCell(routeTopSortLabel("MEAN", "mean"), 6, routeTopSortStyle("mean")),
+                            rightCell(routeTopSortLabel("MAX", "max"), 6, routeTopSortStyle("max")),
+                            rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
+                            rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
+                            rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
+                            rightCell(routeTopSortLabel("TOTAL", "total"), 8, routeTopSortStyle("total")),
+                            rightCell(routeTopSortLabel("FAIL", "failed"), 6, routeTopSortStyle("failed")),
+                            rightCell("INFLIGHT", 8, Style.EMPTY.bold())))
+                    .widths(
+                            Constraint.length(20),
+                            Constraint.fill(),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(6),
+                            Constraint.length(8))
+                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .title(" Top Processors [" + route.routeId + "] sort:" + routeTopSort + " ").build())
+                    .build();
+        } else {
+            List<Row> rows = new ArrayList<>();
+
+            // Synthetic top row representing the route itself
+            Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+            rows.add(Row.from(
+                    Cell.from("   route"),
+                    Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                    rightCell(String.valueOf(proc.total), 8),
-                    rightCell(String.valueOf(proc.failed), 6,
-                            proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                    rightCell(String.valueOf(proc.inflight), 8),
-                    rightCell(proc.total > 0
-                            ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime
+                    rightCell(String.valueOf(route.total), 8),
+                    rightCell(String.valueOf(route.failed), 6,
+                            route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
+                    rightCell(String.valueOf(route.inflight), 8),
+                    rightCell(route.total > 0
+                            ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
                             : "", 14),
                     Cell.from("")));
-        }
 
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+            for (ProcessorInfo proc : route.processors) {
+                String indent = "  ".repeat(proc.level);
+                Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
+
+                rows.add(Row.from(
+                        Cell.from("   " + (proc.processor != null ? proc.processor : "")),
+                        Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
                         Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                        rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                        rightCell("FAIL", 6, Style.EMPTY.bold()),
-                        rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                        rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
-                        Cell.from("")))
-                .widths(
-                        Constraint.length(20),
-                        Constraint.fill(),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(14),
-                        Constraint.length(12))
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Processors [" + route.routeId + "] ").build())
-                .build();
+                        rightCell(String.valueOf(proc.total), 8),
+                        rightCell(String.valueOf(proc.failed), 6,
+                                proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
+                        rightCell(String.valueOf(proc.inflight), 8),
+                        rightCell(proc.total > 0
+                                ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime
+                                : "", 14),
+                        Cell.from("")));
+            }
+
+            table = Table.builder()
+                    .rows(rows)
+                    .header(Row.from(
+                            Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
+                            Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                            Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
+                            rightCell("TOTAL", 8, Style.EMPTY.bold()),
+                            rightCell("FAIL", 6, Style.EMPTY.bold()),
+                            rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
+                            rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
+                            Cell.from("")))
+                    .widths(
+                            Constraint.length(20),
+                            Constraint.fill(),
+                            Constraint.length(10),
+                            Constraint.length(8),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(8),
+                            Constraint.length(6),
+                            Constraint.length(8),
+                            Constraint.length(14),
+                            Constraint.length(12))
+                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .title(" Processors [" + route.routeId + "] ").build())
+                    .build();
+        }
 
         frame.renderStatefulWidget(table, area, processorTableState);
     }
@@ -4880,6 +5090,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
+            hint(spans, "t", routeTopMode ? "top [on]" : "top [off]");
             hint(spans, "c", "source");
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
@@ -5847,6 +6058,11 @@ public class CamelMonitor extends CamelCommand {
                     ri.meanTime = Math.max(0, objToLong(rs.get("meanProcessingTime")));
                     ri.minTime = Math.max(0, objToLong(rs.get("minProcessingTime")));
                     ri.maxTime = Math.max(0, objToLong(rs.get("maxProcessingTime")));
+                    ri.lastTime = Math.max(0, objToLong(rs.get("lastProcessingTime")));
+                    ri.deltaTime = objToLong(rs.get("deltaProcessingTime"));
+                    ri.load01 = objToString(rs.get("load01"));
+                    ri.load05 = objToString(rs.get("load05"));
+                    ri.load15 = objToString(rs.get("load15"));
                     long tsStarted = objToLong(rs.get("lastCreatedExchangeTimestamp"));
                     if (tsStarted > 0) {
                         ri.sinceLastStarted = TimeUtils.printSince(tsStarted);
@@ -5879,6 +6095,7 @@ public class CamelMonitor extends CamelCommand {
                             pi.minTime = Math.max(0, objToLong(ps.get("minProcessingTime")));
                             pi.maxTime = Math.max(0, objToLong(ps.get("maxProcessingTime")));
                             pi.lastTime = objToLong(ps.get("lastProcessingTime"));
+                            pi.deltaTime = objToLong(ps.get("deltaProcessingTime"));
                             pi.inflight = objToLong(ps.get("exchangesInflight"));
                             long tsStarted = objToLong(ps.get("lastCreatedExchangeTimestamp"));
                             if (tsStarted > 0) {
@@ -6309,6 +6526,11 @@ public class CamelMonitor extends CamelCommand {
         long meanTime;
         long minTime;
         long maxTime;
+        long lastTime;
+        long deltaTime;
+        String load01;
+        String load05;
+        String load15;
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;
@@ -6325,6 +6547,7 @@ public class CamelMonitor extends CamelCommand {
         long minTime;
         long maxTime;
         long lastTime;
+        long deltaTime;
         long inflight;
         String sinceLastStarted;
         String sinceLastCompleted;
