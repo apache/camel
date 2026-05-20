@@ -44,6 +44,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
@@ -338,13 +339,14 @@ public class Run extends CamelCommand {
     boolean skipPlugins;
 
     @Option(names = { "--example" },
-            description = "Run a built-in example by name (e.g., timer-log, rest-api). Use --example --list to show available examples.",
+            description = "Run an example by name. Use --example-list to show available examples.",
             arity = "0..1", fallbackValue = "")
     String example;
 
     @Option(names = { "--example-list" },
-            description = "List available built-in examples")
-    boolean exampleList;
+            description = "List available examples. Optionally filter by keyword (e.g., --example-list ai).",
+            arity = "0..1", fallbackValue = "")
+    String exampleFilter;
 
     public Run(CamelJBangMain main) {
         super(main);
@@ -366,8 +368,8 @@ public class Run extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         // handle --example
-        if (exampleList || (example != null && example.isEmpty())) {
-            return listExamples();
+        if (exampleFilter != null || (example != null && example.isEmpty())) {
+            return listExamples(exampleFilter);
         }
         if (example != null) {
             return runExample();
@@ -380,26 +382,56 @@ public class Run extends CamelCommand {
         return run();
     }
 
-    private int listExamples() {
-        printer().println("Available built-in examples:");
+    private int listExamples(String filter) {
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        if (catalog.isEmpty()) {
+            printer().printErr("No example catalog found.");
+            return 1;
+        }
+
+        List<JsonObject> filtered = ExampleHelper.filterExamples(catalog, filter);
+        if (filtered.isEmpty()) {
+            printer().printErr("No examples matching: " + filter);
+            return 1;
+        }
+
+        if (filter != null && !filter.isEmpty()) {
+            printer().println("Examples matching '" + filter + "':");
+        } else {
+            printer().println("Available examples:");
+        }
         printer().println();
-        printer().printf("  %-20s %s%n", "timer-log", "Simple timer that logs messages every second");
-        printer().printf("  %-20s %s%n", "rest-api", "REST API with hello endpoints");
-        printer().printf("  %-20s %s%n", "cron-log", "Scheduled task that logs every 5 seconds");
+        printer().printf("  %-30s %-14s %-50s %s%n", "NAME", "LEVEL", "DESCRIPTION", "SOURCE");
+        printer().printf("  %-30s %-14s %-50s %s%n", "----", "-----", "-----------", "------");
+        for (JsonObject entry : filtered) {
+            String eName = entry.getString("name");
+            String level = entry.getString("level");
+            if (level == null) {
+                level = "";
+            }
+            String desc = entry.getString("description");
+            if (desc.length() > 50) {
+                desc = desc.substring(0, 47) + "...";
+            }
+            String source = ExampleHelper.isBundled(entry) ? "bundled" : "online";
+            if (ExampleHelper.requiresDocker(entry)) {
+                source += ", docker";
+            }
+            printer().printf("  %-30s %-14s %-50s %s%n", eName, level, desc, source);
+        }
         printer().println();
         printer().println("Usage: camel run --example <name>");
         printer().println("       camel run --example <name> --dev");
         return 0;
     }
 
-    private static final List<String> EXAMPLE_NAMES = List.of("timer-log", "rest-api", "cron-log");
-
     private int runExample() throws Exception {
-        String resourcePath = "examples/" + example + ".yaml";
-        InputStream is = Run.class.getClassLoader().getResourceAsStream(resourcePath);
-        if (is == null) {
-            List<String> suggestions
-                    = SuggestSimilarHelper.didYouMean(EXAMPLE_NAMES, example);
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        JsonObject entry = ExampleHelper.findExample(catalog, example);
+
+        if (entry == null) {
+            List<String> names = ExampleHelper.getExampleNames(catalog);
+            List<String> suggestions = SuggestSimilarHelper.didYouMean(names, example);
             if (!suggestions.isEmpty()) {
                 printer().printErr("Unknown example: " + example + ". Did you mean? " + String.join(", ", suggestions));
             } else {
@@ -409,29 +441,80 @@ public class Run extends CamelCommand {
             return 1;
         }
 
-        // extract example to a temp file and run it
-        Path tempDir = Files.createTempDirectory("camel-example-");
-        Path exampleFile = tempDir.resolve(example + ".yaml");
-        try {
-            String content = IOHelper.loadText(is);
-            IOHelper.close(is);
-            Files.writeString(exampleFile, content);
-
-            printer().println("Running example: " + example);
-            files.add(exampleFile.toString());
-            if ("CamelJBang".equals(name)) {
-                name = example;
-            }
-
-            if (!exportRun) {
-                printConfigurationValues("Running integration with the following configuration:");
-            }
-            return run();
-        } finally {
-            // clean up temp files on JVM exit
-            exampleFile.toFile().deleteOnExit();
-            tempDir.toFile().deleteOnExit();
+        if (ExampleHelper.isBundled(entry)) {
+            return runBundledExample(entry);
+        } else {
+            return runGithubExample(entry);
         }
+    }
+
+    private int runBundledExample(JsonObject entry) throws Exception {
+        String eName = entry.getString("name");
+        Path tempDir = ExampleHelper.extractBundledExample(entry);
+        List<String> exampleFiles = ExampleHelper.getFiles(entry);
+
+        printer().println("Running example: " + eName);
+        for (String f : exampleFiles) {
+            files.add(tempDir.resolve(f).toString());
+        }
+        if ("CamelJBang".equals(name)) {
+            name = eName;
+        }
+
+        if (!exportRun) {
+            printConfigurationValues("Running integration with the following configuration:");
+        }
+        return run();
+    }
+
+    private int runGithubExample(JsonObject entry) throws Exception {
+        String eName = entry.getString("name");
+        String url = ExampleHelper.getGithubUrl(entry);
+
+        printer().println("Fetching example from GitHub: " + eName);
+        if (ExampleHelper.requiresDocker(entry)) {
+            printer().println("Note: this example requires Docker/Podman");
+        }
+
+        StringJoiner routes = new StringJoiner(",");
+        StringJoiner kamelets = new StringJoiner(",");
+        StringJoiner properties = new StringJoiner(",");
+        try {
+            fetchGithubUrls(url, routes, kamelets, properties);
+        } catch (Exception e) {
+            printer().printErr("Failed to fetch example from GitHub: " + e.getMessage());
+            printer().printErr("This example requires an internet connection.");
+            return 1;
+        }
+
+        if (routes.length() == 0 && kamelets.length() == 0 && properties.length() == 0) {
+            printer().printErr("No files found for example: " + eName);
+            return 1;
+        }
+
+        if (routes.length() > 0) {
+            for (String r : routes.toString().split(",")) {
+                files.add(r);
+            }
+        }
+        if (kamelets.length() > 0) {
+            for (String k : kamelets.toString().split(",")) {
+                files.add(k);
+            }
+        }
+        if (properties.length() > 0) {
+            for (String p : properties.toString().split(",")) {
+                files.add(p);
+            }
+        }
+        if ("CamelJBang".equals(name)) {
+            name = eName;
+        }
+
+        if (!exportRun) {
+            printConfigurationValues("Running integration with the following configuration:");
+        }
+        return run();
     }
 
     public Integer runExport() throws Exception {

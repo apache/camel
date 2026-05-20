@@ -250,4 +250,34 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>sync-example-catalog</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>download-example-catalog</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <get src="https://raw.githubusercontent.com/apache/camel-jbang-examples/main/camel-jbang-example-catalog.json"
+                                             dest="${project.basedir}/src/main/resources/examples/camel-jbang-example-catalog.json"
+                                             usetimestamp="true"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
