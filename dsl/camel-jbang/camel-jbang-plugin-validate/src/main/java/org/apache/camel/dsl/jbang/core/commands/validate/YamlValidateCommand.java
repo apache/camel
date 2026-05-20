@@ -96,7 +96,7 @@ public class YamlValidateCommand extends CamelCommand {
         if (IGNORE_FILE.equals(no)) {
             return false;
         }
-        String ext = FileUtil.onlyExt(name);
+        String ext = FileUtil.onlyExt(name, true);
         if (ext == null) {
             return false;
         }
