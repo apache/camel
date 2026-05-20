@@ -78,7 +78,7 @@ public class YamlNormalizeCommand extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesInclude", "routes,rests,routeConfigurations,beans,dataFormats");
                 main.addInitialProperty("camel.main.dumpRoutesLog", "false");
                 main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "false");
-                main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "false");
+                main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "true");
                 main.addInitialProperty("camel.main.dumpRoutesOutput", target);
                 main.addInitialProperty("camel.debug.enabled", "false");
                 main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
