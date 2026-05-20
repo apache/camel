@@ -58,26 +58,15 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldListExamples() throws Exception {
         Run command = new Run(new CamelJBangMain().withPrinter(printer));
-        command.exampleList = true;
-        int exit = command.doCall();
-
-        Assertions.assertEquals(0, exit);
-        String output = printer.getOutput();
-        Assertions.assertTrue(output.contains("Available built-in examples:"));
-        Assertions.assertTrue(output.contains("timer-log"));
-        Assertions.assertTrue(output.contains("rest-api"));
-        Assertions.assertTrue(output.contains("cron-log"));
-    }
-
-    @Test
-    public void shouldListExamplesWithEmptyExampleFlag() throws Exception {
-        Run command = new Run(new CamelJBangMain().withPrinter(printer));
         command.example = "";
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
         String output = printer.getOutput();
-        Assertions.assertTrue(output.contains("Available built-in examples:"));
+        Assertions.assertTrue(output.contains("Available examples:"));
+        Assertions.assertTrue(output.contains("circuit-breaker"));
+        Assertions.assertTrue(output.contains("groovy"));
+        Assertions.assertTrue(output.contains("routes"));
     }
 
     @Test
@@ -90,18 +79,29 @@ class RunTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    public void shouldSuggestSimilarExample() throws Exception {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        command.example = "circuit-brake";
+        int exit = command.doCall();
+
+        Assertions.assertEquals(1, exit);
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.contains("Did you mean"));
+    }
+
+    @Test
     public void shouldParseExampleOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--example=timer-log");
+        CommandLine.populateCommand(command, "--example=circuit-breaker");
 
-        Assertions.assertEquals("timer-log", command.example);
+        Assertions.assertEquals("circuit-breaker", command.example);
     }
 
     @Test
     public void shouldParseExampleListOption() throws Exception {
         Run command = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--example-list");
+        CommandLine.populateCommand(command, "--example");
 
-        Assertions.assertTrue(command.exampleList);
+        Assertions.assertNotNull(command.example);
     }
 }

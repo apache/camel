@@ -1,0 +1,436 @@
+[
+    {
+        "name": "artemis",
+        "title": "Apache ActiveMQ Artemis",
+        "description": "Setup connection factory to a remote Apache ActiveMQ Artemis messaging broker",
+        "level": "intermediate",
+        "tags": [
+            "messaging",
+            "jms",
+            "artemis"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "consumer.camel.yaml",
+            "producer.camel.yaml"
+        ]
+    },
+    {
+        "name": "aws/aws-s3-event-based",
+        "title": "AWS S3 CDC",
+        "description": "Consume S3 events using EventBridge and SQS for change data capture",
+        "level": "advanced",
+        "tags": [
+            "aws",
+            "s3",
+            "sqs",
+            "eventbridge",
+            "cloud"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "aws-s3-cdc-log.camel.yaml",
+            "example-file.txt",
+            "policy-queue.json",
+            "terraform/main.tf"
+        ]
+    },
+    {
+        "name": "aws/aws-sqs",
+        "title": "AWS SQS Sink",
+        "description": "Push messages to AWS SQS queue via HTTP service",
+        "level": "advanced",
+        "tags": [
+            "aws",
+            "sqs",
+            "http",
+            "cloud"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "http-to-aws-sqs.camel.yaml"
+        ]
+    },
+    {
+        "name": "circuit-breaker",
+        "title": "Circuit Breaker",
+        "description": "Use the circuit breaker EIP for fault tolerance",
+        "level": "beginner",
+        "tags": [
+            "eip",
+            "resilience"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "route.camel.yaml"
+        ]
+    },
+    {
+        "name": "cron-log",
+        "title": "Cron Log",
+        "description": "Scheduled task that logs every 5 seconds",
+        "level": "beginner",
+        "tags": [
+            "beginner",
+            "timer",
+            "cron",
+            "log"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "cron-log.camel.yaml"
+        ]
+    },
+    {
+        "name": "docling-langchain4j-rag",
+        "title": "Document Analysis with Docling and LangChain4j RAG",
+        "description": "RAG workflow combining Docling document conversion with LangChain4j and Ollama",
+        "level": "advanced",
+        "tags": [
+            "ai",
+            "rag",
+            "langchain4j",
+            "docling"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "compose.yaml",
+            "docling-langchain4j-rag.yaml",
+            "sample.md"
+        ]
+    },
+    {
+        "name": "financial-doc-analyzer",
+        "title": "Financial Document Analyzer",
+        "description": "Automated financial document analysis with Docling, LangChain4j, and market data",
+        "level": "advanced",
+        "tags": [
+            "ai",
+            "langchain4j",
+            "docling",
+            "finance"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "examples/banking-sector-brief.pdf",
+            "examples/magnificent-seven-update.pdf",
+            "examples/semiconductor-sector-analysis.pdf",
+            "examples/tesla-q3-2024.pdf",
+            "financial-doc-analyzer.yaml"
+        ]
+    },
+    {
+        "name": "ftp",
+        "title": "ActiveMQ to FTP",
+        "description": "Integrate ActiveMQ messaging with an FTP server",
+        "level": "intermediate",
+        "tags": [
+            "messaging",
+            "ftp",
+            "activemq"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "compose.yaml",
+            "ftp.camel.yaml",
+            "jbang.properties"
+        ]
+    },
+    {
+        "name": "groovy",
+        "title": "Groovy",
+        "description": "Use Groovy with extra dependencies and content-based routing",
+        "level": "beginner",
+        "tags": [
+            "language",
+            "groovy",
+            "eip"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "groovy.camel.yaml"
+        ]
+    },
+    {
+        "name": "keycloak-introspection-rest",
+        "title": "Keycloak Token Introspection REST API",
+        "description": "Secure REST APIs with Keycloak OAuth 2.0 token introspection",
+        "level": "advanced",
+        "tags": [
+            "security",
+            "keycloak",
+            "rest",
+            "oauth"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "rest-api.camel.yaml"
+        ]
+    },
+    {
+        "name": "keycloak-security-rest",
+        "title": "Keycloak Security REST API",
+        "description": "Secure REST APIs with Keycloak authentication and authorization",
+        "level": "advanced",
+        "tags": [
+            "security",
+            "keycloak",
+            "rest",
+            "oauth"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "rest-api.camel.yaml"
+        ]
+    },
+    {
+        "name": "mqtt",
+        "title": "MQTT",
+        "description": "Receive MQTT events from an external MQTT broker",
+        "level": "intermediate",
+        "tags": [
+            "messaging",
+            "mqtt",
+            "iot"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "compose.yaml",
+            "infra/mosquitto.conf",
+            "mqtt.camel.yaml",
+            "start.sh"
+        ]
+    },
+    {
+        "name": "openai/pii-redaction",
+        "title": "OpenAI PII Redaction",
+        "description": "Redact personal identifiable information from text using OpenAI-compatible LLMs",
+        "level": "advanced",
+        "tags": [
+            "ai",
+            "openai",
+            "privacy",
+            "security"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "pii-redaction.camel.yaml",
+            "pii.schema.json"
+        ]
+    },
+    {
+        "name": "openapi/client",
+        "title": "OpenAPI Client",
+        "description": "REST client generated from an OpenAPI specification",
+        "level": "intermediate",
+        "tags": [
+            "rest",
+            "openapi",
+            "client"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "examples/1001.json",
+            "petstore-api.json",
+            "petstore-client.camel.yaml"
+        ]
+    },
+    {
+        "name": "openapi/server",
+        "title": "OpenAPI Server",
+        "description": "REST service implemented from an OpenAPI specification",
+        "level": "intermediate",
+        "tags": [
+            "rest",
+            "openapi",
+            "server"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "examples/pet/1000.json",
+            "petstore-api.json",
+            "petstore.camel.yaml"
+        ]
+    },
+    {
+        "name": "rest-api",
+        "title": "REST API",
+        "description": "REST API with hello endpoints",
+        "level": "beginner",
+        "tags": [
+            "beginner",
+            "rest",
+            "http"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "rest-api.camel.yaml"
+        ]
+    },
+    {
+        "name": "routes",
+        "title": "Routes",
+        "description": "Define routes in YAML with Java beans",
+        "level": "beginner",
+        "tags": [
+            "beginner",
+            "yaml",
+            "bean"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "files": [
+            "Greeter.java",
+            "README.adoc",
+            "beans.yaml",
+            "routes.camel.yaml"
+        ]
+    },
+    {
+        "name": "smart-log-analyzer",
+        "title": "Smart Log Analyzer",
+        "description": "Intelligent observability correlating OpenTelemetry logs and traces with LLM analysis",
+        "level": "advanced",
+        "tags": [
+            "ai",
+            "observability",
+            "opentelemetry",
+            "logging"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "analyzer/application-dev.properties",
+            "analyzer/error-analyzer.camel.yaml",
+            "containers/caches/infinispan-events-config.json",
+            "containers/caches/infinispan-events-to-process-config.json",
+            "containers/docker-compose.yaml",
+            "containers/otel-collector-config.yaml",
+            "correlator/application-dev.properties",
+            "correlator/correlated-log-schema.json",
+            "correlator/correlated-trace-schema.json",
+            "correlator/infinispan.camel.yaml",
+            "correlator/kafka-ca-cert.pem",
+            "correlator/kaoto-datamapper-4a94acc3.xsl",
+            "correlator/kaoto-datamapper-8f5bb2dd.xsl",
+            "correlator/logs-mapper.camel.yaml",
+            "correlator/otel-log-record-schema.json",
+            "correlator/otel-logs-schema.json",
+            "correlator/otel-span-schema.json",
+            "correlator/otel-traces-schema.json",
+            "correlator/traces-mapper.camel.yaml",
+            "first-iteration/analyzer.camel.yaml",
+            "first-iteration/application.properties",
+            "first-iteration/load-generator.camel.yaml",
+            "log-generator/agent.properties",
+            "log-generator/application-dev.properties",
+            "log-generator/log-generator.camel.yaml",
+            "log-generator/opentelemetry-javaagent.jar",
+            "ui-console/application-dev.properties",
+            "ui-console/index.html",
+            "ui-console/jms-file-storage.camel.yaml",
+            "ui-console/rest-api.camel.yaml"
+        ]
+    },
+    {
+        "name": "sql",
+        "title": "SQL Database",
+        "description": "Use a SQL database with Camel and Postgres",
+        "level": "intermediate",
+        "tags": [
+            "database",
+            "sql",
+            "postgres"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "files": [
+            "README.adoc",
+            "application.properties",
+            "compose.yaml",
+            "sql.camel.yaml"
+        ]
+    },
+    {
+        "name": "timer-log",
+        "title": "Timer Log",
+        "description": "Simple timer that logs a hello message every second",
+        "level": "beginner",
+        "tags": [
+            "beginner",
+            "timer",
+            "log"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "timer-log.camel.yaml"
+        ]
+    },
+    {
+        "name": "xslt",
+        "title": "XSLT Transformation",
+        "description": "Basic XML transformation using XSLT style sheets",
+        "level": "beginner",
+        "tags": [
+            "transformation",
+            "xml",
+            "xslt"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "files": [
+            "README.adoc",
+            "consumer.camel.yaml",
+            "input/account.xml",
+            "stylesheet.xsl"
+        ]
+    }
+]
