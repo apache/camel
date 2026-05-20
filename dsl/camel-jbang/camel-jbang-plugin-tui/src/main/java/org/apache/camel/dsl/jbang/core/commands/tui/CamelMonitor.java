@@ -461,49 +461,63 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             // Tab switching with number keys
+            // When infra is selected, only Overview (1) and Log (2) are available
             if (ke.isChar('1')) {
                 return handleTabKey(TAB_OVERVIEW);
             }
             if (ke.isChar('2')) {
                 return handleTabKey(TAB_LOG);
             }
-            if (ke.isChar('3')) {
-                return handleTabKey(TAB_ROUTES);
-            }
-            if (ke.isChar('4')) {
-                return handleTabKey(TAB_CONSUMERS);
-            }
-            if (ke.isChar('5')) {
-                return handleTabKey(TAB_ENDPOINTS);
-            }
-            if (ke.isChar('6')) {
-                return handleTabKey(TAB_HTTP);
-            }
-            if (ke.isChar('7')) {
-                return handleTabKey(TAB_HEALTH);
-            }
-            if (ke.isChar('8')) {
-                return handleTabKey(TAB_HISTORY);
-            }
-            if (ke.isChar('9')) {
-                return handleTabKey(TAB_CIRCUIT_BREAKER);
+            if (!isInfraSelected()) {
+                if (ke.isChar('3')) {
+                    return handleTabKey(TAB_ROUTES);
+                }
+                if (ke.isChar('4')) {
+                    return handleTabKey(TAB_CONSUMERS);
+                }
+                if (ke.isChar('5')) {
+                    return handleTabKey(TAB_ENDPOINTS);
+                }
+                if (ke.isChar('6')) {
+                    return handleTabKey(TAB_HTTP);
+                }
+                if (ke.isChar('7')) {
+                    return handleTabKey(TAB_HEALTH);
+                }
+                if (ke.isChar('8')) {
+                    return handleTabKey(TAB_HISTORY);
+                }
+                if (ke.isChar('9')) {
+                    return handleTabKey(TAB_CIRCUIT_BREAKER);
+                }
             }
 
             // Tab cycling (check Shift+Tab before Tab since Tab binding also matches Shift+Tab)
             if (ke.isFocusPrevious()) {
-                int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
-                if (prev != TAB_OVERVIEW) {
-                    selectCurrentIntegration();
+                if (isInfraSelected()) {
+                    // Cycle between Overview and Log only
+                    int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                    tabsState.select(prev);
+                } else {
+                    int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
+                    if (prev != TAB_OVERVIEW) {
+                        selectCurrentIntegration();
+                    }
+                    tabsState.select(prev);
                 }
-                tabsState.select(prev);
                 return true;
             }
             if (ke.isFocusNext()) {
-                int next = (tabsState.selected() + 1) % NUM_TABS;
-                if (next != TAB_OVERVIEW) {
-                    selectCurrentIntegration();
+                if (isInfraSelected()) {
+                    int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                    tabsState.select(next);
+                } else {
+                    int next = (tabsState.selected() + 1) % NUM_TABS;
+                    if (next != TAB_OVERVIEW) {
+                        selectCurrentIntegration();
+                    }
+                    tabsState.select(next);
                 }
-                tabsState.select(next);
                 return true;
             }
 
@@ -1274,11 +1288,16 @@ public class CamelMonitor extends CamelCommand {
         long activeInfra = infraData.get().stream().filter(i -> !i.vanishing).count();
         if (activeInfra > 0) {
             titleSpans.add(Span.raw("  "));
-            titleSpans.add(Span.styled(activeInfra + " infra", Style.EMPTY.fg(Color.MAGENTA)));
+            titleSpans.add(Span.styled(activeInfra + " infra(s)", Style.EMPTY.fg(Color.MAGENTA)));
         }
         if (selectedPid != null) {
             titleSpans.add(Span.raw("  "));
-            titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.YELLOW)));
+            InfraInfo selInfra = findSelectedInfra();
+            if (selInfra != null) {
+                titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.MAGENTA)));
+            } else {
+                titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.YELLOW)));
+            }
         }
         Line titleLine = Line.from(titleSpans);
 
@@ -1288,6 +1307,32 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderTabs(Frame frame, Rect area) {
+        boolean infraSelected = isInfraSelected();
+
+        if (infraSelected) {
+            // Infra mode: only Overview and Log tabs
+            Line[] labels = {
+                    Line.from(" 1 Overview "),
+                    Line.from(" 2 Log "),
+            };
+
+            // Map real tab index to infra tab index for highlight
+            int infraTabIdx = tabsState.selected() == TAB_LOG ? 1 : 0;
+            TabsState infraTabsState = new TabsState(infraTabIdx);
+
+            Tabs tabs = Tabs.builder()
+                    .titles(labels)
+                    .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
+                    .divider(Span.styled(" | ", Style.EMPTY.dim()))
+                    .build();
+
+            Rect labelsArea = area.height() >= 2
+                    ? new Rect(area.x(), area.y() + 1, area.width(), 1)
+                    : area;
+            frame.renderStatefulWidget(tabs, labelsArea, infraTabsState);
+            return;
+        }
+
         // Compute notification counts (0 if no integration selected)
         List<IntegrationInfo> infos = data.get();
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
@@ -5339,7 +5384,6 @@ public class CamelMonitor extends CamelCommand {
                     default -> "[off]";
                 });
             }
-            hint(spans, "Enter", "details");
             if (selectedPid != null && !infraTableFocused) {
                 IntegrationInfo selInfo = findSelectedIntegration();
                 if (selInfo != null) {
@@ -5350,7 +5394,7 @@ public class CamelMonitor extends CamelCommand {
                 hint(spans, "x", "stop");
                 hint(spans, "X", "kill");
             }
-            hint(spans, "1-9", "tabs");
+            hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
         } else if (tab == TAB_ROUTES && showSource) {
             hint(spans, "c/Esc", "close");
             hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
@@ -5428,8 +5472,11 @@ public class CamelMonitor extends CamelCommand {
             if (!logWordWrap) {
                 hint(spans, "\u2190\u2192", "h-scroll");
             }
-            hint(spans, "l", "level");
-            hintLast(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
+            if (!isInfraSelected()) {
+                hint(spans, "l", "level");
+            }
+            hint(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
+            hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
         } else if (tab == TAB_HTTP && showHttpSpec) {
             hint(spans, "c/Esc", "close");
             hint(spans, "↑↓", "scroll");
