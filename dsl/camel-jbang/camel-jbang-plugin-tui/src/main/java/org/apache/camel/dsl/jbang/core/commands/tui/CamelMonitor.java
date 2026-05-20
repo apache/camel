@@ -26,36 +26,24 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import dev.tamboui.image.Image;
-import dev.tamboui.image.ImageData;
-import dev.tamboui.image.ImageScaling;
-import dev.tamboui.image.capability.TerminalImageCapabilities;
-import dev.tamboui.image.protocol.ImageProtocol;
-import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
-import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
@@ -74,22 +62,13 @@ import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.list.ListItem;
-import dev.tamboui.widgets.list.ListState;
-import dev.tamboui.widgets.list.ListWidget;
-import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
-import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
-import org.apache.camel.diagram.RouteDiagramLayoutEngine;
-import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -104,6 +83,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import sun.misc.Signal;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
 @Command(name = "monitor",
@@ -133,22 +113,6 @@ public class CamelMonitor extends CamelCommand {
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
 
-    // Route sort columns
-    private static final String[] ROUTE_SORT_COLUMNS = { "name", "group", "from", "status", "total", "failed" };
-    private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta" };
-
-    // Consumer sort columns (order matches table column order)
-    private static final String[] CONSUMER_SORT_COLUMNS = { "id", "status", "type", "inflight", "total", "uri" };
-
-    // Endpoint sort columns (order matches table column order)
-    private static final String[] ENDPOINT_SORT_COLUMNS = { "component", "route", "dir", "total", "uri" };
-
-    // Circuit breaker sort columns (order matches table column order)
-    private static final String[] CB_SORT_COLUMNS = { "route", "id", "component", "state" };
-
-    // HTTP sort columns
-    private static final String[] HTTP_SORT_COLUMNS = { "method", "path", "consumes", "produces", "source" };
-
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
@@ -169,15 +133,7 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, VanishingInfraInfo> vanishingInfra = new ConcurrentHashMap<>();
     private final TableState overviewTableState = new TableState();
     private final TableState infraTableState = new TableState();
-    private boolean infraTableFocused;
-    private final TableState routeTableState = new TableState();
-    private final TableState consumerTableState = new TableState();
-    private final TableState healthTableState = new TableState();
-    private final TableState endpointTableState = new TableState();
-    private final TableState cbTableState = new TableState();
-    private final TableState httpTableState = new TableState();
-    private final TableState processorTableState = new TableState();
-    private final TableState routeHeaderTableState = new TableState();
+    // infraTableFocused is stored on ctx (MonitorContext) so tabs can access it
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
 
     // Sparkline: throughput history per PID (one point per second)
@@ -222,150 +178,33 @@ public class CamelMonitor extends CamelCommand {
     private int overviewSortIndex = 1;
     private boolean overviewSortReversed;
 
-    // Route sort state
-    private String routeSort = "name";
-    private int routeSortIndex = 0;
-    private boolean routeSortReversed;
-    private boolean routeTopMode;
-    private String routeTopSort = "mean";
-    private int routeTopSortIndex = 0;
-    private boolean routeTopSortReversed;
-
-    // Consumer sort state (default: id = index 0)
-    private String consumerSort = "id";
-    private int consumerSortIndex = 0;
-    private boolean consumerSortReversed;
-
-    // Endpoint sort state (default: route = index 1)
-    private String endpointSort = "route";
-    private int endpointSortIndex = 1;
-    private boolean endpointSortReversed;
-
-    // Endpoint filter state: 0=all, 1=remote, 2=remote+stub
-    private int endpointFilter;
-    private boolean showEndpointChart = true;
-
-    // Circuit breaker sort state (default: route = index 0)
-    private String cbSort = "route";
-    private int cbSortIndex = 0;
-    private boolean cbSortReversed;
-
-    // HTTP tab sort/filter state
-    private String httpSort = "method";
-    private int httpSortIndex = 0;
-    private boolean httpSortReversed;
-    // httpFilter: 0=all, 1=REST DSL only, 2=Platform-HTTP only
-    private int httpFilter;
-    private boolean httpShowManagement;
-    // HTTP spec viewer state
-    private boolean showHttpSpec;
-    private List<String> httpSpecLines = Collections.emptyList();
-    private String httpSpecTitle;
-    private int httpSpecScroll;
-    private final AtomicBoolean specLoading = new AtomicBoolean(false);
-
-    // Health filter state
-    private boolean showOnlyDown;
-
-    // Log state
-    private volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
-    // Incremental log tail state — persisted across refresh cycles
-    private long logFilePos = -1;
-    private long logTotalLinesRead;
-    private String logFilePid;
-    private final StringBuilder logLineBuffer = new StringBuilder();
-    private final List<LogEntry> mutableFilteredEntries = new ArrayList<>();
-    // Render-side Line cache — rebuilt only when entries or hSkip changes
-    private List<LogEntry> cachedLogEntries;
-    private int cachedLogHSkip = -1;
-    private int cachedLogMaxWidth;
-    private List<Line> cachedLogLines = Collections.emptyList();
-    private int logScroll;
-    private long logEvictedSeen;
-    private final ScrollbarState logScrollState = new ScrollbarState();
-    private boolean logFollowMode = true;
-    private boolean logWordWrap = true;
-    private int logHScroll;
-
-    // Trace state
+    // Trace/history data — shared between CamelMonitor and tabs
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
-    private final TableState traceTableState = new TableState();
-    private final TableState traceStepTableState = new TableState();
     private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
-    private static final String[] TRACE_SORT_COLUMNS = { "time", "route", "elapsed", "exchange" };
-    private String traceSort = "time";
-    private int traceSortIndex;
-    private boolean traceSortReversed;
-    private boolean traceDetailView;
-    private volatile List<String> traceSortedExchangeIds = Collections.emptyList();
-    private String traceSelectedExchangeId;
-    private boolean showTraceProperties;
-    private boolean showTraceVariables;
-    private boolean showTraceHeaders = true;
-    private boolean showTraceBody = true;
-    private boolean traceWordWrap = true;
-    private int traceDetailScroll;
-    private int traceDetailHScroll;
 
-    // History state
-    private volatile List<HistoryEntry> historyEntries = Collections.emptyList();
-    private final TableState historyTableState = new TableState();
-    private boolean showHistoryProperties;
-    private boolean showHistoryVariables;
-    private boolean showHistoryHeaders = true;
-    private boolean showHistoryBody = true;
-    private boolean historyWordWrap = true;
-    private int historyDetailScroll;
-    private int historyDetailHScroll;
+    // selectedPid is stored on ctx (MonitorContext) so tabs can access it
 
-    // Selected integration for detail views
-    private String selectedPid;
-
-    // Diagram state
+    // Overview chart mode
     private static final int CHART_ALL = 0;
     private static final int CHART_SINGLE = 1;
     private static final int CHART_OFF = 2;
     private int chartMode = CHART_ALL;
-    private boolean showDiagram;
-    private boolean diagramTextMode;
-    private boolean diagramAllRoutes;
-    private boolean diagramMetrics = true;
-    private List<RouteDiagramAsciiRenderer.CounterPos> diagramCounterPositions = Collections.emptyList();
-    private Set<Integer> diagramRouteTitleRows = Collections.emptySet();
-    private List<String> diagramLines = Collections.emptyList();
-    private int diagramScroll;
-    private int diagramScrollX;
-    private final ScrollbarState diagramVScrollState = new ScrollbarState();
-    private final ScrollbarState diagramHScrollState = new ScrollbarState();
-    private final ScrollbarState traceDetailScrollState = new ScrollbarState();
-    private final ScrollbarState historyDetailScrollState = new ScrollbarState();
-    private String diagramRouteId;
-    private ImageData diagramImageData;
-    private ImageData diagramFullImageData;
-    private ImageProtocol diagramProtocol;
-    private int diagramCropX = -1;
-    private int diagramCropY = -1;
-    private int diagramCropW = -1;
-    private int diagramCropH = -1;
 
     private volatile long lastRefresh;
-    private boolean showSource;
-    private List<String> sourceLines = Collections.emptyList();
-    private String sourceTitle;
-    private int sourceScroll;
-    private int sourceScrollX;
-    private final ScrollbarState sourceVScrollState = new ScrollbarState();
-    private final ScrollbarState sourceHScrollState = new ScrollbarState();
-    private final AtomicBoolean sourceLoading = new AtomicBoolean(false);
-
-    private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
-    private boolean showLogLevelPopup;
-    private final ListState logLevelListState = new ListState();
     private boolean showKillConfirm;
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
-    private final AtomicBoolean diagramLoading = new AtomicBoolean(false);
     private TuiRunner runner;
+
+    private MonitorContext ctx;
+    private LogTab logTab;
+    private RoutesTab routesTab;
+    private ConsumersTab consumersTab;
+    private EndpointsTab endpointsTab;
+    private HttpTab httpTab;
+    private HealthTab healthTab;
+    private HistoryTab historyTab;
+    private CircuitBreakerTab circuitBreakerTab;
 
     private ClassLoader classLoader;
 
@@ -394,11 +233,27 @@ public class CamelMonitor extends CamelCommand {
         Thread.currentThread().setContextClassLoader(classLoader);
         TuiHelper.preloadClasses(classLoader);
 
+        // Create shared context and tab instances
+        ctx = new MonitorContext(data, infraData);
+        logTab = new LogTab(ctx);
+        routesTab = new RoutesTab(ctx);
+        consumersTab = new ConsumersTab(ctx);
+        endpointsTab = new EndpointsTab(
+                ctx,
+                endpointInHistory, endpointOutHistory,
+                endpointRemoteInHistory, endpointRemoteOutHistory,
+                endpointRemoteStubInHistory, endpointRemoteStubOutHistory);
+        httpTab = new HttpTab(ctx);
+        healthTab = new HealthTab(ctx);
+        historyTab = new HistoryTab(ctx, traces, traceFilePositions);
+        circuitBreakerTab = new CircuitBreakerTab(ctx, cbSuccessHistory, cbFailHistory);
+
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
 
         try (var tui = TuiRunner.create()) {
             this.runner = tui;
+            ctx.runner = tui;
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -426,43 +281,23 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
-            // Escape: navigate back
+            // Escape: navigate back — delegate to active tab first
             if (ke.isCancel()) {
-                if (showLogLevelPopup) {
-                    showLogLevelPopup = false;
-                    return true;
-                }
-                if (showSource) {
-                    showSource = false;
-                    return true;
-                }
-                if (showHttpSpec) {
-                    showHttpSpec = false;
-                    return true;
-                }
-                if (showDiagram) {
-                    showDiagram = false;
-                    diagramImageData = null;
-                    diagramFullImageData = null;
-                    return true;
-                }
-                if (traceDetailView) {
-                    traceDetailView = false;
-                    traceSelectedExchangeId = null;
-                    traceDetailScroll = 0;
+                MonitorTab tab = activeTab();
+                if (tab != null && tab.handleEscape()) {
                     return true;
                 }
                 if (tabsState.selected() != TAB_OVERVIEW) {
                     tabsState.select(TAB_OVERVIEW);
                     return true;
                 }
-                if (infraTableFocused) {
-                    infraTableFocused = false;
+                if (ctx.infraTableFocused) {
+                    ctx.infraTableFocused = false;
                     syncSelectedPidFromOverview();
                     return true;
                 }
-                if (selectedPid != null) {
-                    selectedPid = null;
+                if (ctx.selectedPid != null) {
+                    ctx.selectedPid = null;
                     return true;
                 }
                 return true;
@@ -533,105 +368,54 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
-            // Tab-specific keys
+            // Tab-specific keys — delegate to active tab first
             int tab = tabsState.selected();
+            MonitorTab activeTab = activeTab();
 
             // Navigation (all tabs)
             if (ke.isUp()) {
-                if (tab == TAB_HTTP && showHttpSpec) {
-                    httpSpecScroll = Math.max(0, httpSpecScroll - 1);
-                } else if (tab == TAB_LOG && showLogLevelPopup) {
-                    logLevelListState.selectPrevious();
-                } else if (showDiagram && tab == TAB_ROUTES) {
-                    diagramScroll = Math.max(0, diagramScroll - 1);
-                } else {
-                    navigateUp();
+                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                    return true;
                 }
+                navigateUp();
                 return true;
             }
             if (ke.isDown()) {
-                if (tab == TAB_HTTP && showHttpSpec) {
-                    httpSpecScroll++;
-                } else if (tab == TAB_LOG && showLogLevelPopup) {
-                    logLevelListState.selectNext(LOG_LEVELS.length);
-                } else if (showDiagram && tab == TAB_ROUTES) {
-                    diagramScroll++;
-                } else {
-                    navigateDown();
+                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                    return true;
                 }
+                navigateDown();
                 return true;
             }
             if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                if (tab == TAB_HTTP && showHttpSpec) {
-                    httpSpecScroll = Math.max(0, httpSpecScroll - 20);
-                } else if (showDiagram && tab == TAB_ROUTES) {
-                    diagramScroll = Math.max(0, diagramScroll - 20);
-                } else if (tab == TAB_LOG) {
-                    logFollowMode = false;
-                    logScroll = Math.max(0, logScroll - 20);
-                } else if (tab == TAB_HISTORY) {
-                    if (!traces.get().isEmpty() && traceDetailView) {
-                        traceDetailScroll = Math.max(0, traceDetailScroll - 5);
-                    } else {
-                        historyDetailScroll = Math.max(0, historyDetailScroll - 5);
-                    }
+                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                    return true;
                 }
                 return true;
             }
             if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (tab == TAB_HTTP && showHttpSpec) {
-                    httpSpecScroll += 20;
-                } else if (showDiagram && tab == TAB_ROUTES) {
-                    diagramScroll += 20;
-                } else if (tab == TAB_LOG) {
-                    logScroll += 20;
-                } else if (tab == TAB_HISTORY) {
-                    if (!traces.get().isEmpty() && traceDetailView) {
-                        traceDetailScroll += 5;
-                    } else {
-                        historyDetailScroll += 5;
-                    }
+                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                    return true;
                 }
                 return true;
             }
             if (ke.isLeft()) {
-                if (showDiagram && tab == TAB_ROUTES) {
-                    diagramScrollX = Math.max(0, diagramScrollX - 1);
+                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                     return true;
-                } else if (tab == TAB_HISTORY) {
-                    if (!traces.get().isEmpty() && traceDetailView && !traceWordWrap) {
-                        traceDetailHScroll = Math.max(0, traceDetailHScroll - 4);
-                        return true;
-                    } else if (!historyWordWrap) {
-                        historyDetailHScroll = Math.max(0, historyDetailHScroll - 4);
-                        return true;
-                    }
                 }
             }
             if (ke.isRight()) {
-                if (showDiagram && tab == TAB_ROUTES) {
-                    diagramScrollX++;
+                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                     return true;
-                } else if (tab == TAB_HISTORY) {
-                    if (!traces.get().isEmpty() && traceDetailView && !traceWordWrap) {
-                        traceDetailHScroll += 4;
-                        return true;
-                    } else if (!historyWordWrap) {
-                        historyDetailHScroll += 4;
-                        return true;
-                    }
                 }
             }
             if (ke.isHome()) {
-                if (showDiagram && tab == TAB_ROUTES) {
-                    diagramScroll = 0;
-                    diagramScrollX = 0;
+                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                     return true;
                 }
             }
             if (ke.isEnd()) {
-                if (showDiagram && tab == TAB_ROUTES) {
-                    diagramScroll = Integer.MAX_VALUE;
+                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                     return true;
                 }
             }
@@ -639,7 +423,7 @@ public class CamelMonitor extends CamelCommand {
             // Enter to drill into selected integration
             if (ke.isConfirm() && tab == TAB_OVERVIEW) {
                 selectCurrentIntegration();
-                if (selectedPid != null) {
+                if (ctx.selectedPid != null) {
                     tabsState.select(TAB_LOG);
                 }
                 return true;
@@ -663,8 +447,8 @@ public class CamelMonitor extends CamelCommand {
             }
             // Overview tab: toggle focus between integrations and infra tables
             if (tab == TAB_OVERVIEW && ke.isChar('i') && !infraData.get().isEmpty()) {
-                infraTableFocused = !infraTableFocused;
-                if (infraTableFocused) {
+                ctx.infraTableFocused = !ctx.infraTableFocused;
+                if (ctx.infraTableFocused) {
                     if (infraTableState.selected() == null) {
                         infraTableState.select(0);
                     }
@@ -679,383 +463,39 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             // Overview tab: start/stop all routes for selected integration (not infra)
-            if (tab == TAB_OVERVIEW && ke.isChar('p') && selectedPid != null && !infraTableFocused) {
+            if (tab == TAB_OVERVIEW && ke.isChar('p') && ctx.selectedPid != null && !ctx.infraTableFocused) {
                 IntegrationInfo selInfo = findSelectedIntegration();
                 if (selInfo != null) {
                     String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
-                    sendRouteCommand(selectedPid, "*", cmd);
+                    sendRouteCommand(ctx.selectedPid, "*", cmd);
                 }
                 return true;
             }
             // Overview tab: stop process (SIGTERM) for selected integration or infra
-            if (tab == TAB_OVERVIEW && ke.isChar('x') && selectedPid != null) {
+            if (tab == TAB_OVERVIEW && ke.isChar('x') && ctx.selectedPid != null) {
                 stopSelectedProcess(false);
                 return true;
             }
             // Overview tab: kill process (SIGKILL) — show confirm dialog first
-            if (tab == TAB_OVERVIEW && ke.isChar('X') && selectedPid != null) {
+            if (tab == TAB_OVERVIEW && ke.isChar('X') && ctx.selectedPid != null) {
                 showKillConfirm = true;
                 return true;
             }
 
-            // Consumers tab: sort
-            if (tab == TAB_CONSUMERS && ke.isChar('s')) {
-                consumerSortIndex = (consumerSortIndex + 1) % CONSUMER_SORT_COLUMNS.length;
-                consumerSort = CONSUMER_SORT_COLUMNS[consumerSortIndex];
-                consumerSortReversed = false;
+            // Delegate remaining keys to active tab
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                 return true;
-            }
-            if (tab == TAB_CONSUMERS && ke.isChar('S')) {
-                consumerSortReversed = !consumerSortReversed;
-                return true;
-            }
-
-            // Circuit breaker tab: sort
-            if (tab == TAB_CIRCUIT_BREAKER && ke.isChar('s')) {
-                cbSortIndex = (cbSortIndex + 1) % CB_SORT_COLUMNS.length;
-                cbSort = CB_SORT_COLUMNS[cbSortIndex];
-                cbSortReversed = false;
-                return true;
-            }
-            if (tab == TAB_CIRCUIT_BREAKER && ke.isChar('S')) {
-                cbSortReversed = !cbSortReversed;
-                return true;
-            }
-
-            // HTTP tab: sort, filter, management toggle
-            if (tab == TAB_HTTP && ke.isChar('s')) {
-                httpSortIndex = (httpSortIndex + 1) % HTTP_SORT_COLUMNS.length;
-                httpSort = HTTP_SORT_COLUMNS[httpSortIndex];
-                httpSortReversed = false;
-                return true;
-            }
-            if (tab == TAB_HTTP && ke.isChar('S')) {
-                httpSortReversed = !httpSortReversed;
-                return true;
-            }
-            if (tab == TAB_HTTP && ke.isCharIgnoreCase('f')) {
-                httpFilter = (httpFilter + 1) % 3;
-                return true;
-            }
-            if (tab == TAB_HTTP && ke.isCharIgnoreCase('m')) {
-                httpShowManagement = !httpShowManagement;
-                return true;
-            }
-            if (tab == TAB_HTTP && !showHttpSpec && ke.isChar('c')) {
-                loadSpecForSelectedHttpEndpoint();
-                return true;
-            }
-            if (tab == TAB_HTTP && showHttpSpec) {
-                if (ke.isChar('c')) {
-                    showHttpSpec = false;
-                } else if (ke.isUp()) {
-                    httpSpecScroll = Math.max(0, httpSpecScroll - 1);
-                } else if (ke.isDown()) {
-                    httpSpecScroll++;
-                } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                    httpSpecScroll = Math.max(0, httpSpecScroll - 20);
-                } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                    httpSpecScroll += 20;
-                } else if (ke.isHome()) {
-                    httpSpecScroll = 0;
-                } else if (ke.isEnd()) {
-                    httpSpecScroll = Integer.MAX_VALUE;
-                } else {
-                    return false;
-                }
-                return true;
-            }
-
-            // Endpoints tab: sort and filter
-            if (tab == TAB_ENDPOINTS && ke.isChar('s')) {
-                endpointSortIndex = (endpointSortIndex + 1) % ENDPOINT_SORT_COLUMNS.length;
-                endpointSort = ENDPOINT_SORT_COLUMNS[endpointSortIndex];
-                endpointSortReversed = false;
-                return true;
-            }
-            if (tab == TAB_ENDPOINTS && ke.isChar('S')) {
-                endpointSortReversed = !endpointSortReversed;
-                return true;
-            }
-            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('f')) {
-                endpointFilter = (endpointFilter + 1) % 3;
-                return true;
-            }
-            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('a')) {
-                showEndpointChart = !showEndpointChart;
-                return true;
-            }
-
-            // Routes tab: sort and diagram
-            if (tab == TAB_ROUTES && ke.isChar('s')) {
-                if (routeTopMode) {
-                    routeTopSortIndex = (routeTopSortIndex + 1) % ROUTE_TOP_SORT_COLUMNS.length;
-                    routeTopSort = ROUTE_TOP_SORT_COLUMNS[routeTopSortIndex];
-                    routeTopSortReversed = false;
-                } else {
-                    routeSortIndex = (routeSortIndex + 1) % ROUTE_SORT_COLUMNS.length;
-                    routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
-                    routeSortReversed = false;
-                }
-                return true;
-            }
-            if (tab == TAB_ROUTES && ke.isChar('S')) {
-                if (routeTopMode) {
-                    routeTopSortReversed = !routeTopSortReversed;
-                } else {
-                    routeSortReversed = !routeSortReversed;
-                }
-                return true;
-            }
-            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isCharIgnoreCase('t')) {
-                routeTopMode = !routeTopMode;
-                return true;
-            }
-            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isCharIgnoreCase('a')) {
-                diagramAllRoutes = !diagramAllRoutes;
-                return true;
-            }
-            if (tab == TAB_ROUTES && ke.isChar('d')) {
-                if (showDiagram) {
-                    showDiagram = false;
-                    diagramImageData = null;
-                    diagramFullImageData = null;
-                } else {
-                    diagramTextMode = false;
-                    loadDiagramForSelectedRoute();
-                }
-                return true;
-            }
-            if (tab == TAB_ROUTES && ke.isChar('D')) {
-                if (showDiagram) {
-                    showDiagram = false;
-                    diagramImageData = null;
-                    diagramFullImageData = null;
-                } else {
-                    diagramTextMode = true;
-                    loadDiagramForSelectedRoute();
-                }
-                return true;
-            }
-
-            if (tab == TAB_ROUTES && ke.isChar('c')) {
-                if (showSource) {
-                    showSource = false;
-                } else {
-                    loadSourceForSelectedRoute();
-                }
-                return true;
-            }
-            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isChar('p')) {
-                toggleRouteStartStop();
-                return true;
-            }
-            if (tab == TAB_ROUTES && !showSource && !showDiagram && ke.isChar('P') && selectedRouteSupportsSuspension()) {
-                toggleRouteSuspendResume();
-                return true;
-            }
-            if (tab == TAB_ROUTES && showSource) {
-                if (ke.isUp()) {
-                    sourceScroll = Math.max(0, sourceScroll - 1);
-                } else if (ke.isDown()) {
-                    sourceScroll++;
-                } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                    sourceScroll = Math.max(0, sourceScroll - 20);
-                } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                    sourceScroll += 20;
-                } else if (ke.isLeft()) {
-                    sourceScrollX = Math.max(0, sourceScrollX - 1);
-                } else if (ke.isRight()) {
-                    sourceScrollX++;
-                } else if (ke.isHome()) {
-                    sourceScroll = 0;
-                    sourceScrollX = 0;
-                } else if (ke.isEnd()) {
-                    sourceScroll = Integer.MAX_VALUE;
-                } else {
-                    return false;
-                }
-                return true;
-            }
-            if (tab == TAB_ROUTES && showDiagram && ke.isCharIgnoreCase('m')) {
-                diagramMetrics = !diagramMetrics;
-                diagramLoading.set(false);
-                loadDiagramForSelectedRoute();
-                return true;
-            }
-            if (tab == TAB_ROUTES && showDiagram && !diagramTextMode && ke.isKey(KeyCode.F5)) {
-                diagramLoading.set(false);
-                loadDiagramForSelectedRoute();
-                return true;
-            }
-
-            // Health tab: DOWN filter
-            if (tab == TAB_HEALTH && ke.isCharIgnoreCase('d')) {
-                showOnlyDown = !showOnlyDown;
-                return true;
-            }
-
-            // Log tab: log level popup — absorb all keys except Enter to confirm
-            if (tab == TAB_LOG && showLogLevelPopup) {
-                if (ke.isConfirm()) {
-                    Integer sel = logLevelListState.selected();
-                    if (sel != null && sel >= 0 && sel < LOG_LEVELS.length && selectedPid != null) {
-                        sendLoggerLevelAction(selectedPid, LOG_LEVELS[sel]);
-                    }
-                    showLogLevelPopup = false;
-                }
-                return true;
-            }
-
-            // Log tab: follow mode, word wrap, horizontal scroll
-            if (tab == TAB_LOG) {
-                if (ke.isChar('l')) {
-                    showLogLevelPopup = true;
-                    // pre-select INFO as a sensible default
-                    logLevelListState.select(2);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('f')) {
-                    logFollowMode = !logFollowMode;
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('w')) {
-                    logWordWrap = !logWordWrap;
-                    logHScroll = 0;
-                    return true;
-                }
-                if (!logWordWrap) {
-                    if (ke.isLeft()) {
-                        logFollowMode = false;
-                        logHScroll = Math.max(0, logHScroll - 4);
-                        return true;
-                    }
-                    if (ke.isRight()) {
-                        logFollowMode = false;
-                        logHScroll += 4;
-                        return true;
-                    }
-                }
-                if (ke.isHome()) {
-                    logFollowMode = false;
-                    logScroll = 0;
-                    logHScroll = 0;
-                    return true;
-                }
-                if (ke.isEnd()) {
-                    logFollowMode = true;
-                    return true;
-                }
-            }
-
-            // Inspect tab (merged Last + Tracer)
-            if (tab == TAB_HISTORY) {
-                boolean tracerActive = !traces.get().isEmpty();
-                if (tracerActive && traceDetailView) {
-                    // Viewing a trace exchange's step detail
-                    if (ke.isCancel()) {
-                        traceDetailView = false;
-                        traceSelectedExchangeId = null;
-                        traceDetailScroll = 0;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('p')) {
-                        showTraceProperties = !showTraceProperties;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('v')) {
-                        showTraceVariables = !showTraceVariables;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('h')) {
-                        showTraceHeaders = !showTraceHeaders;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('b')) {
-                        showTraceBody = !showTraceBody;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('w')) {
-                        traceWordWrap = !traceWordWrap;
-                        traceDetailScroll = 0;
-                        traceDetailHScroll = 0;
-                        return true;
-                    }
-                } else if (tracerActive) {
-                    // Tracer ON: trace list view
-                    if (ke.isChar('s')) {
-                        traceSortIndex = (traceSortIndex + 1) % TRACE_SORT_COLUMNS.length;
-                        traceSort = TRACE_SORT_COLUMNS[traceSortIndex];
-                        traceSortReversed = false;
-                        return true;
-                    }
-                    if (ke.isChar('S')) {
-                        traceSortReversed = !traceSortReversed;
-                        return true;
-                    }
-                    if (ke.isConfirm()) {
-                        Integer sel = traceTableState.selected();
-                        if (sel != null && sel >= 0 && sel < traceSortedExchangeIds.size()) {
-                            traceSelectedExchangeId = traceSortedExchangeIds.get(sel);
-                            traceDetailView = true;
-                            traceStepTableState.select(0);
-                            traceDetailScroll = 0;
-                        }
-                        return true;
-                    }
-                    if (ke.isKey(KeyCode.F5)) {
-                        if (selectedPid != null) {
-                            traceFilePositions.clear();
-                            traces.set(Collections.emptyList());
-                            refreshTraceData(List.of(Long.parseLong(selectedPid)));
-                        }
-                        return true;
-                    }
-                } else {
-                    // Tracer OFF: history (Last) view
-                    if (ke.isCharIgnoreCase('p')) {
-                        showHistoryProperties = !showHistoryProperties;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('v')) {
-                        showHistoryVariables = !showHistoryVariables;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('h')) {
-                        showHistoryHeaders = !showHistoryHeaders;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('b')) {
-                        showHistoryBody = !showHistoryBody;
-                        return true;
-                    }
-                    if (ke.isCharIgnoreCase('w')) {
-                        historyWordWrap = !historyWordWrap;
-                        historyDetailScroll = 0;
-                        historyDetailHScroll = 0;
-                        return true;
-                    }
-                    if (ke.isKey(KeyCode.F5)) {
-                        if (selectedPid != null) {
-                            refreshHistoryData(List.of(Long.parseLong(selectedPid)));
-                        }
-                        return true;
-                    }
-                }
             }
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
-            long interval = showDiagram ? Math.max(refreshInterval, 1000) : refreshInterval;
+            long interval = routesTab.isShowDiagram() ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
                 refreshData();
-                if (showDiagram && diagramTextMode && diagramMetrics) {
-                    loadDiagramForSelectedRoute();
-                }
+                routesTab.refreshDiagramIfNeeded();
                 return true;
             }
-            // Skip re-render when showing image diagram to prevent flicker
-            return diagramFullImageData == null;
+            return !routesTab.hasImageDiagram();
         }
         return false;
     }
@@ -1065,25 +505,12 @@ public class CamelMonitor extends CamelCommand {
             selectCurrentIntegration();
         }
         if (tab == TAB_LOG) {
-            // Reset log state so the next tick tails from the correct file/position
-            logFilePos = -1;
-            logLineBuffer.setLength(0);
+            logTab.onTabSelected();
         }
-        if (tab == TAB_HISTORY && selectedPid != null) {
-            refreshHistoryData(List.of(Long.parseLong(selectedPid)));
-            if (!historyEntries.isEmpty()) {
-                historyTableState.select(0);
-            }
-            // Also refresh trace data if Tracer is enabled
-            traceFilePositions.clear();
-            traces.set(Collections.emptyList());
-            refreshTraceData(List.of(Long.parseLong(selectedPid)));
-            traceDetailView = false;
-            traceSelectedExchangeId = null;
-            // Auto-select first (latest) trace so user can press Enter immediately
-            if (!traces.get().isEmpty()) {
-                traceTableState.select(0);
-            }
+        if (tab == TAB_HISTORY && ctx.selectedPid != null) {
+            refreshHistoryData(List.of(Long.parseLong(ctx.selectedPid)));
+            refreshTraceData(List.of(Long.parseLong(ctx.selectedPid)));
+            historyTab.onTabSelected();
         }
         tabsState.select(tab);
         return true;
@@ -1098,22 +525,22 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void selectCurrentIntegration() {
-        if (selectedPid != null) {
+        if (ctx.selectedPid != null) {
             return;
         }
-        if (infraTableFocused) {
+        if (ctx.infraTableFocused) {
             List<InfraInfo> infras = infraData.get();
             Integer sel = infraTableState.selected();
             if (sel != null && sel >= 0 && sel < infras.size()) {
-                selectedPid = infras.get(sel).pid;
+                ctx.selectedPid = infras.get(sel).pid;
             }
         } else {
             List<IntegrationInfo> infos = sortedOverviewInfos();
             Integer sel = overviewTableState.selected();
             if (sel != null && sel >= 0 && sel < infos.size()) {
-                selectedPid = infos.get(sel).pid;
+                ctx.selectedPid = infos.get(sel).pid;
             } else if (infos.size() == 1) {
-                selectedPid = infos.get(0).pid;
+                ctx.selectedPid = infos.get(0).pid;
             }
         }
     }
@@ -1127,8 +554,8 @@ public class CamelMonitor extends CamelCommand {
         } else if (infos.size() == 1) {
             newPid = infos.get(0).pid;
         }
-        if (newPid != null && !newPid.equals(selectedPid)) {
-            selectedPid = newPid;
+        if (newPid != null && !newPid.equals(ctx.selectedPid)) {
+            ctx.selectedPid = newPid;
             resetIntegrationTabState();
         }
     }
@@ -1140,124 +567,45 @@ public class CamelMonitor extends CamelCommand {
         if (sel != null && sel >= 0 && sel < infras.size()) {
             newPid = infras.get(sel).pid;
         }
-        if (newPid != null && !newPid.equals(selectedPid)) {
-            selectedPid = newPid;
+        if (newPid != null && !newPid.equals(ctx.selectedPid)) {
+            ctx.selectedPid = newPid;
             resetIntegrationTabState();
         }
     }
 
-    // NOTE: When adding a new tab, reset its view state here too so switching integrations
-    // on the Overview always shows a clean slate for the newly selected integration.
     private void resetIntegrationTabState() {
-        // Source (TAB_ROUTES)
-        showSource = false;
-        sourceLines = Collections.emptyList();
-        sourceTitle = null;
-        sourceScroll = 0;
-        sourceScrollX = 0;
-        // Spec viewer (TAB_HTTP)
-        showHttpSpec = false;
-        httpSpecLines = Collections.emptyList();
-        httpSpecTitle = null;
-        httpSpecScroll = 0;
-        // Diagram (TAB_ROUTES)
-        showDiagram = false;
-        diagramImageData = null;
-        diagramFullImageData = null;
-        diagramLines = Collections.emptyList();
-        diagramScroll = 0;
-        diagramScrollX = 0;
-        // Routes (TAB_ROUTES)
-        routeTableState.select(0);
-        // Log (TAB_LOG)
-        logScroll = 0;
-        logFollowMode = true;
-        showLogLevelPopup = false;
-        mutableFilteredEntries.clear();
-        filteredLogEntries = Collections.emptyList();
-        cachedLogEntries = null;
-        logFilePos = -1;
-        logTotalLinesRead = 0;
-        logEvictedSeen = 0;
-        logLineBuffer.setLength(0);
-        // Trace (Inspect tab)
-        traceDetailView = false;
-        traceSelectedExchangeId = null;
-        traceDetailScroll = 0;
+        routesTab.onIntegrationChanged();
+        httpTab.onIntegrationChanged();
+        logTab.onIntegrationChanged();
+        historyTab.onIntegrationChanged();
     }
 
     private void navigateUp() {
-        switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> {
-                if (infraTableFocused) {
-                    infraTableState.selectPrevious();
-                    syncSelectedPidFromInfra();
-                } else {
-                    overviewTableState.selectPrevious();
-                    syncSelectedPidFromOverview();
-                }
-            }
-            case TAB_ROUTES -> routeTableState.selectPrevious();
-            case TAB_CIRCUIT_BREAKER -> cbTableState.selectPrevious();
-            case TAB_HTTP -> httpTableState.selectPrevious();
-            case TAB_LOG -> {
-                logFollowMode = false;
-                logScroll = Math.max(0, logScroll - 1);
-            }
-            case TAB_HISTORY -> {
-                if (!traces.get().isEmpty()) {
-                    if (traceDetailView) {
-                        traceStepTableState.selectPrevious();
-                        traceDetailScroll = 0;
-                    } else {
-                        traceTableState.selectPrevious();
-                    }
-                } else {
-                    historyTableState.selectPrevious();
-                    historyDetailScroll = 0;
-                }
+        MonitorTab tab = activeTab();
+        if (tab != null) {
+            tab.navigateUp();
+        } else {
+            if (ctx.infraTableFocused) {
+                infraTableState.selectPrevious();
+                syncSelectedPidFromInfra();
+            } else {
+                overviewTableState.selectPrevious();
+                syncSelectedPidFromOverview();
             }
         }
     }
 
     private void navigateDown() {
-        switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> {
-                if (infraTableFocused) {
-                    infraTableState.selectNext(infraData.get().size());
-                    syncSelectedPidFromInfra();
-                } else {
-                    overviewTableState.selectNext(sortedOverviewInfos().size());
-                    syncSelectedPidFromOverview();
-                }
-            }
-            case TAB_ROUTES -> {
-                IntegrationInfo info = findSelectedIntegration();
-                routeTableState.selectNext(info != null ? info.routes.size() : 0);
-            }
-            case TAB_CIRCUIT_BREAKER -> {
-                IntegrationInfo info = findSelectedIntegration();
-                cbTableState.selectNext(info != null ? info.circuitBreakers.size() : 0);
-            }
-            case TAB_HTTP -> {
-                List<HttpEndpointInfo> visible = sortedVisibleHttpEndpoints(findSelectedIntegration());
-                httpTableState.selectNext(visible.size());
-            }
-            case TAB_LOG -> logScroll++;
-            case TAB_HISTORY -> {
-                if (!traces.get().isEmpty()) {
-                    if (traceDetailView) {
-                        List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
-                        traceStepTableState.selectNext(steps.size());
-                        traceDetailScroll = 0;
-                    } else {
-                        List<String> exchangeIds = getTraceExchangeIds();
-                        traceTableState.selectNext(exchangeIds.size());
-                    }
-                } else {
-                    historyTableState.selectNext(historyEntries.size());
-                    historyDetailScroll = 0;
-                }
+        MonitorTab tab = activeTab();
+        if (tab != null) {
+            tab.navigateDown();
+        } else {
+            if (ctx.infraTableFocused) {
+                infraTableState.selectNext(infraData.get().size());
+                syncSelectedPidFromInfra();
+            } else {
+                overviewTableState.selectNext(sortedOverviewInfos().size());
+                syncSelectedPidFromOverview();
             }
         }
     }
@@ -1305,7 +653,7 @@ public class CamelMonitor extends CamelCommand {
             titleSpans.add(Span.raw("  "));
             titleSpans.add(Span.styled(activeInfra + " infra(s)", Style.EMPTY.fg(Color.MAGENTA)));
         }
-        if (selectedPid != null) {
+        if (ctx.selectedPid != null) {
             titleSpans.add(Span.raw("  "));
             InfraInfo selInfra = findSelectedInfra();
             if (selInfra != null) {
@@ -1352,7 +700,7 @@ public class CamelMonitor extends CamelCommand {
         List<IntegrationInfo> infos = data.get();
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
         IntegrationInfo sel = findSelectedIntegration();
-        boolean hasSelection = selectedPid != null && sel != null;
+        boolean hasSelection = ctx.selectedPid != null && sel != null;
         int routeCount = hasSelection ? sel.routes.size() : 0;
         int consumerCount = hasSelection ? sel.consumers.size() : 0;
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
@@ -1366,7 +714,7 @@ public class CamelMonitor extends CamelCommand {
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
         long healthDownCount = hasSelection
                 ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
-        int historyCount = hasSelection ? historyEntries.size() : 0;
+        int historyCount = hasSelection ? historyTab.historyEntries.size() : 0;
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
         int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
 
@@ -1374,7 +722,7 @@ public class CamelMonitor extends CamelCommand {
         Line[] labels = {
                 Line.from(" 1 Overview "),
                 Line.from(" 2 Log "),
-                Line.from(routeTopMode ? " 3  Top  " : " 3 Route "),
+                Line.from(routesTab.isTopMode() ? " 3  Top  " : " 3 Route "),
                 Line.from(" 4 Consumer "),
                 Line.from(" 5 Endpoint "),
                 Line.from(" 6 HTTP "),
@@ -1464,17 +812,26 @@ public class CamelMonitor extends CamelCommand {
         // from the previous tab (e.g. RED error text in the log detail) can bleed through when
         // switching tabs if TamboUI's buffer diff does not reset every cell in the region.
         frame.buffer().clear(area);
-        switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> renderOverview(frame, area);
-            case TAB_ROUTES -> renderRoutes(frame, area);
-            case TAB_CONSUMERS -> renderConsumers(frame, area);
-            case TAB_ENDPOINTS -> renderEndpoints(frame, area);
-            case TAB_CIRCUIT_BREAKER -> renderCircuitBreaker(frame, area);
-            case TAB_HEALTH -> renderHealth(frame, area);
-            case TAB_LOG -> renderLog(frame, area);
-            case TAB_HISTORY -> renderInspect(frame, area);
-            case TAB_HTTP -> renderHttp(frame, area);
+        MonitorTab tab = activeTab();
+        if (tab != null) {
+            tab.render(frame, area);
+        } else {
+            renderOverview(frame, area);
         }
+    }
+
+    private MonitorTab activeTab() {
+        return switch (tabsState.selected()) {
+            case TAB_LOG -> logTab;
+            case TAB_ROUTES -> routesTab;
+            case TAB_CONSUMERS -> consumersTab;
+            case TAB_ENDPOINTS -> endpointsTab;
+            case TAB_CIRCUIT_BREAKER -> circuitBreakerTab;
+            case TAB_HEALTH -> healthTab;
+            case TAB_HISTORY -> historyTab;
+            case TAB_HTTP -> httpTab;
+            default -> null;
+        };
     }
 
     // ---- Tab 1: Overview ----
@@ -1484,17 +841,17 @@ public class CamelMonitor extends CamelCommand {
         List<InfraInfo> infraInfos = infraData.get();
 
         // Keep the table selection index tracking the same PID across sort changes and data refreshes
-        if (selectedPid != null && !infraTableFocused) {
+        if (ctx.selectedPid != null && !ctx.infraTableFocused) {
             for (int i = 0; i < infos.size(); i++) {
-                if (selectedPid.equals(infos.get(i).pid)) {
+                if (ctx.selectedPid.equals(infos.get(i).pid)) {
                     overviewTableState.select(i);
                     break;
                 }
             }
         }
-        if (selectedPid != null && infraTableFocused) {
+        if (ctx.selectedPid != null && ctx.infraTableFocused) {
             for (int i = 0; i < infraInfos.size(); i++) {
-                if (selectedPid.equals(infraInfos.get(i).pid)) {
+                if (ctx.selectedPid.equals(infraInfos.get(i).pid)) {
                     infraTableState.select(i);
                     break;
                 }
@@ -1502,8 +859,8 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Split: one table (integrations or infra, toggled by 'i') + chart or info panel
-        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !infraTableFocused;
-        boolean showInfoPanel = infraTableFocused && findSelectedInfra() != null && !hasSparkline;
+        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !ctx.infraTableFocused;
+        boolean showInfoPanel = ctx.infraTableFocused && findSelectedInfra() != null && !hasSparkline;
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
         if (hasSparkline) {
@@ -1583,7 +940,7 @@ public class CamelMonitor extends CamelCommand {
                 rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                 Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
 
-        if (infraTableFocused) {
+        if (ctx.infraTableFocused) {
             // Show infra table only
             renderInfraTable(frame, chunks.get(0), infraInfos);
         } else {
@@ -1643,7 +1000,7 @@ public class CamelMonitor extends CamelCommand {
             // Merge throughput histories: all PIDs or selected only
             long[] mergedTotal = new long[renderPoints];
             long[] mergedFailed = new long[renderPoints];
-            String chartPid = (chartMode == CHART_SINGLE && selectedPid != null) ? selectedPid : null;
+            String chartPid = (chartMode == CHART_SINGLE && ctx.selectedPid != null) ? ctx.selectedPid : null;
             for (int i = 0; i < renderPoints; i++) {
                 for (Map.Entry<String, LinkedList<Long>> e : throughputHistory.entrySet()) {
                     if (chartPid == null || chartPid.equals(e.getKey())) {
@@ -1673,9 +1030,9 @@ public class CamelMonitor extends CamelCommand {
 
             // Styled legend in chart title
             Line titleLine;
-            if (chartMode == CHART_SINGLE && selectedPid != null) {
+            if (chartMode == CHART_SINGLE && ctx.selectedPid != null) {
                 IntegrationInfo chartSel = findSelectedIntegration();
-                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12) : selectedPid;
+                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12) : ctx.selectedPid;
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),
@@ -1765,7 +1122,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderOverviewInfoPanel(Frame frame, Rect area) {
         // Check if an infra service is selected — show connection details instead
-        InfraInfo infraSel = infraTableFocused ? findSelectedInfra() : null;
+        InfraInfo infraSel = ctx.infraTableFocused ? findSelectedInfra() : null;
         if (infraSel != null) {
             renderInfraInfoPanel(frame, area, infraSel);
             return;
@@ -1956,196 +1313,7 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
     }
 
-    // ---- Tab 2: Routes ----
-
-    private void renderRoutes(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        // Fullscreen source view
-        if (showSource) {
-            List<Rect> fullChunks = Layout.vertical()
-                    .constraints(Constraint.length(4), Constraint.fill())
-                    .split(area);
-            renderRouteHeader(frame, fullChunks.get(0), info);
-            renderSource(frame, fullChunks.get(1));
-            return;
-        }
-
-        // Fullscreen diagram mode
-        if (showDiagram && (diagramTextMode ? !diagramLines.isEmpty() : diagramFullImageData != null)) {
-            if (diagramAllRoutes) {
-                renderDiagram(frame, area);
-            } else {
-                // Split: route info header (4 rows) + diagram (fill)
-                List<Rect> fullChunks = Layout.vertical()
-                        .constraints(Constraint.length(4), Constraint.fill())
-                        .split(area);
-                renderRouteHeader(frame, fullChunks.get(0), info);
-                renderDiagram(frame, fullChunks.get(1));
-            }
-            return;
-        }
-
-        // Sort routes
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-
-        // Split: routes table (top half) + processors table (bottom half)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(45), Constraint.percentage(55))
-                .split(area);
-
-        // Routes table
-        Table routeTable;
-        if (routeTopMode) {
-            sortedRoutes.sort(this::sortRouteTop);
-
-            List<Row> routeRows = new ArrayList<>();
-            for (RouteInfo route : sortedRoutes) {
-                Style failStyle = route.failed > 0
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
-                        : Style.EMPTY;
-
-                routeRows.add(Row.from(
-                        Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                        Cell.from(route.from != null ? route.from : ""),
-                        rightCell(route.total > 0 ? String.valueOf(route.meanTime) : "", 6, topTimeStyle(route.meanTime)),
-                        rightCell(route.total > 0 ? String.valueOf(route.maxTime) : "", 6, topTimeStyle(route.maxTime)),
-                        rightCell(route.total > 0 ? String.valueOf(route.minTime) : "", 6),
-                        rightCell(route.total > 0 ? String.valueOf(route.lastTime) : "", 6),
-                        rightCell(route.deltaTime != 0 ? String.valueOf(route.deltaTime) : "", 6,
-                                topDeltaStyle(route.deltaTime)),
-                        rightCell(String.valueOf(route.total), 8),
-                        rightCell(String.valueOf(route.failed), 6, failStyle),
-                        rightCell(String.valueOf(route.inflight), 8),
-                        rightCell(route.throughput != null ? route.throughput : "", 8),
-                        rightCell(formatLoad(route.load01, route.load05, route.load15), 12)));
-            }
-
-            routeTable = Table.builder()
-                    .rows(routeRows)
-                    .header(Row.from(
-                            Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
-                            Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
-                            rightCell(routeTopSortLabel("MEAN", "mean"), 6, routeTopSortStyle("mean")),
-                            rightCell(routeTopSortLabel("MAX", "max"), 6, routeTopSortStyle("max")),
-                            rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
-                            rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
-                            rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
-                            rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                            rightCell("FAIL", 6, Style.EMPTY.bold()),
-                            rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                            rightCell("MSG/S", 8, Style.EMPTY.bold()),
-                            rightCell("LOAD", 12, Style.EMPTY.bold())))
-                    .widths(
-                            Constraint.length(12),
-                            Constraint.fill(),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(8),
-                            Constraint.length(12))
-                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                    .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
-                            .title(" Top Routes sort:" + routeTopSort + " ").build())
-                    .build();
-        } else {
-            List<Row> routeRows = new ArrayList<>();
-            for (RouteInfo route : sortedRoutes) {
-                Style stateStyle = "Started".equals(route.state)
-                        ? Style.EMPTY.fg(Color.GREEN)
-                        : Style.EMPTY.fg(Color.LIGHT_RED);
-
-                Style failStyle = route.failed > 0
-                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
-                        : Style.EMPTY;
-
-                String sinceLastRoute = formatSinceLastRoute(route);
-
-                routeRows.add(Row.from(
-                        Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                        Cell.from(Span.styled(route.group != null ? route.group : "", Style.EMPTY.dim())),
-                        Cell.from(route.from != null ? route.from : ""),
-                        Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
-                        Cell.from(route.uptime != null ? route.uptime : ""),
-                        rightCell(route.coverage != null ? route.coverage : "", 6),
-                        rightCell(route.throughput != null ? route.throughput : "", 8),
-                        rightCell(String.valueOf(route.total), 8),
-                        rightCell(String.valueOf(route.failed), 6, failStyle),
-                        rightCell(String.valueOf(route.inflight), 8),
-                        rightCell(route.total > 0
-                                ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
-                                : "", 14),
-                        Cell.from(sinceLastRoute)));
-            }
-
-            routeTable = Table.builder()
-                    .rows(routeRows)
-                    .header(Row.from(
-                            Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
-                            Cell.from(Span.styled(routeSortLabel("GROUP", "group"), routeSortStyle("group"))),
-                            Cell.from(Span.styled(routeSortLabel("FROM", "from"), routeSortStyle("from"))),
-                            Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
-                            Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
-                            rightCell("COVER", 6, Style.EMPTY.bold()),
-                            rightCell("MSG/S", 8, Style.EMPTY.bold()),
-                            rightCell(routeSortLabel("TOTAL", "total"), 8, routeSortStyle("total")),
-                            rightCell(routeSortLabel("FAIL", "failed"), 6, routeSortStyle("failed")),
-                            rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                            rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
-                            Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
-                    .widths(
-                            Constraint.length(12),
-                            Constraint.length(14),
-                            Constraint.fill(),
-                            Constraint.length(10),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(14),
-                            Constraint.length(12))
-                    .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                    .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
-                            .title(" Routes sort:" + routeSort + " ").build())
-                    .build();
-        }
-
-        frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
-
-        // Bottom panel: diagram or processors
-        if (showDiagram && (diagramImageData != null || !diagramLines.isEmpty())) {
-            renderDiagram(frame, chunks.get(1));
-        } else {
-            Integer selectedRoute = routeTableState.selected();
-            if (selectedRoute != null && selectedRoute >= 0 && selectedRoute < sortedRoutes.size()) {
-                RouteInfo route = sortedRoutes.get(selectedRoute);
-                renderProcessors(frame, chunks.get(1), route);
-            } else if (!sortedRoutes.isEmpty()) {
-                renderProcessors(frame, chunks.get(1), sortedRoutes.get(0));
-            } else {
-                frame.renderWidget(
-                        Paragraph.builder()
-                                .text(Text.from(Line.from(Span.styled("No routes", Style.EMPTY.dim()))))
-                                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Processors ").build())
-                                .build(),
-                        chunks.get(1));
-            }
-        }
-    }
+    // ---- Overview helpers ----
 
     private int sortOverview(IntegrationInfo a, IntegrationInfo b) {
         if (a.vanishing != b.vanishing) {
@@ -2183,933 +1351,17 @@ public class CamelMonitor extends CamelCommand {
         return sortStyle(column, overviewSort);
     }
 
-    private int sortRoute(RouteInfo a, RouteInfo b) {
-        int result = switch (routeSort) {
-            case "total" -> Long.compare(b.total, a.total);
-            case "failed" -> Long.compare(b.failed, a.failed);
-            case "name" -> {
-                String ra = a.routeId != null ? a.routeId : "";
-                String rb = b.routeId != null ? b.routeId : "";
-                yield ra.compareToIgnoreCase(rb);
-            }
-            case "status" -> {
-                String sa = a.state != null ? a.state : "";
-                String sb2 = b.state != null ? b.state : "";
-                yield sa.compareToIgnoreCase(sb2);
-            }
-            case "group" -> {
-                String ga = a.group != null ? a.group : "";
-                String gb = b.group != null ? b.group : "";
-                yield ga.compareToIgnoreCase(gb);
-            }
-            case "from" -> {
-                String fa = a.from != null ? a.from : "";
-                String fb = b.from != null ? b.from : "";
-                yield fa.compareToIgnoreCase(fb);
-            }
-            default -> 0;
-        };
-        return routeSortReversed ? -result : result;
-    }
-
-    private int sortRouteTop(RouteInfo a, RouteInfo b) {
-        int result = switch (routeTopSort) {
-            case "mean" -> Long.compare(b.meanTime, a.meanTime);
-            case "max" -> Long.compare(b.maxTime, a.maxTime);
-            case "min" -> Long.compare(b.minTime, a.minTime);
-            case "last" -> Long.compare(b.lastTime, a.lastTime);
-            case "delta" -> Long.compare(b.deltaTime, a.deltaTime);
-            default -> 0;
-        };
-        return routeTopSortReversed ? -result : result;
-    }
-
-    private int sortProcessorTop(ProcessorInfo a, ProcessorInfo b) {
-        int result = switch (routeTopSort) {
-            case "mean" -> Long.compare(b.meanTime, a.meanTime);
-            case "max" -> Long.compare(b.maxTime, a.maxTime);
-            case "min" -> Long.compare(b.minTime, a.minTime);
-            case "last" -> Long.compare(b.lastTime, a.lastTime);
-            case "delta" -> Long.compare(b.deltaTime, a.deltaTime);
-            default -> 0;
-        };
-        return routeTopSortReversed ? -result : result;
-    }
-
-    private String routeTopSortLabel(String label, String column) {
-        return sortLabel(label, column, routeTopSort, routeTopSortReversed);
-    }
-
-    private Style routeTopSortStyle(String column) {
-        return sortStyle(column, routeTopSort);
-    }
-
-    private static Style topTimeStyle(long ms) {
-        if (ms >= 1000) {
-            return Style.EMPTY.fg(Color.LIGHT_RED).bold();
-        } else if (ms >= 100) {
-            return Style.EMPTY.fg(Color.YELLOW);
-        }
-        return Style.EMPTY;
-    }
-
-    private static Style topDeltaStyle(long delta) {
-        if (delta > 0) {
-            return Style.EMPTY.fg(Color.LIGHT_RED);
-        } else if (delta < 0) {
-            return Style.EMPTY.fg(Color.GREEN);
-        }
-        return Style.EMPTY;
-    }
-
-    private static String formatLoad(String l1, String l5, String l15) {
-        String s1 = l1 != null && !"0.00".equals(l1) ? l1 : "0";
-        String s5 = l5 != null && !"0.00".equals(l5) ? l5 : "0";
-        String s15 = l15 != null && !"0.00".equals(l15) ? l15 : "0";
-        return s1 + "/" + s5 + "/" + s15;
-    }
-
-    private String traceSortLabel(String label, String column) {
-        return sortLabel(label, column, traceSort, traceSortReversed);
-    }
-
-    private Style traceSortStyle(String column) {
-        return sortStyle(column, traceSort);
-    }
-
-    private String routeSortLabel(String label, String column) {
-        return sortLabel(label, column, routeSort, routeSortReversed);
-    }
-
-    private Style routeSortStyle(String column) {
-        return sortStyle(column, routeSort);
-    }
-
-    private String consumerSortLabel(String label, String column) {
-        return sortLabel(label, column, consumerSort, consumerSortReversed);
-    }
-
-    private Style consumerSortStyle(String column) {
-        return sortStyle(column, consumerSort);
-    }
-
-    private int sortConsumer(ConsumerInfo a, ConsumerInfo b) {
-        int result = switch (consumerSort) {
-            case "status" -> {
-                String sa = consumerStatus(a);
-                String sb = consumerStatus(b);
-                yield sa.compareToIgnoreCase(sb);
-            }
-            case "type" -> {
-                String ta = consumerType(a);
-                String tb = consumerType(b);
-                yield ta.compareToIgnoreCase(tb);
-            }
-            case "inflight" -> Integer.compare(b.inflight, a.inflight);
-            case "total" -> {
-                long la = a.totalCounter != null ? a.totalCounter : 0;
-                long lb = b.totalCounter != null ? b.totalCounter : 0;
-                yield Long.compare(lb, la);
-            }
-            case "uri" -> {
-                String ua = a.uri != null ? a.uri : "";
-                String ub = b.uri != null ? b.uri : "";
-                yield ua.compareToIgnoreCase(ub);
-            }
-            default -> { // "id"
-                String ia = a.id != null ? a.id : "";
-                String ib = b.id != null ? b.id : "";
-                yield ia.compareToIgnoreCase(ib);
-            }
-        };
-        return consumerSortReversed ? -result : result;
-    }
-
-    private static String consumerStatus(ConsumerInfo ci) {
-        if (ci.polling != null && ci.polling) {
-            return "Polling";
-        }
-        return ci.state != null ? ci.state : "";
-    }
-
-    private static String consumerType(ConsumerInfo ci) {
-        if (ci.className == null) {
-            return "";
-        }
-        String s = ci.className;
-        if (s.endsWith("Consumer")) {
-            s = s.substring(0, s.length() - 8);
-        }
-        int dot = s.lastIndexOf('.');
-        return dot >= 0 ? s.substring(dot + 1) : s;
-    }
-
-    private static HealthCheckInfo consumerHealthCheck(IntegrationInfo info, ConsumerInfo ci) {
-        if (ci.id == null) {
-            return null;
-        }
-        String hcId = "consumer:" + ci.id;
-        for (HealthCheckInfo hc : info.healthChecks) {
-            if (hcId.equals(hc.name)) {
-                return hc;
-            }
-        }
-        return null;
-    }
-
-    private static String consumerPeriod(ConsumerInfo ci) {
-        if (ci.period != null) {
-            return ci.period + "ms";
-        } else if (ci.delay != null) {
-            return ci.delay + "ms";
-        }
-        return "";
-    }
-
-    private static String consumerSinceLast(ConsumerInfo ci) {
-        String s1 = ci.sinceLastStarted != null ? ci.sinceLastStarted : "-";
-        String s2 = ci.sinceLastCompleted != null ? ci.sinceLastCompleted : "-";
-        String s3 = ci.sinceLastFailed != null ? ci.sinceLastFailed : "-";
-        return s1 + "/" + s2 + "/" + s3;
-    }
-
-    private void renderConsumers(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        List<ConsumerInfo> sorted = new ArrayList<>(info.consumers);
-        sorted.sort(this::sortConsumer);
-
-        List<Row> rows = new ArrayList<>();
-        for (ConsumerInfo ci : sorted) {
-            String status = consumerStatus(ci);
-            HealthCheckInfo hc = consumerHealthCheck(info, ci);
-            boolean healthDown = hc != null && "DOWN".equals(hc.state);
-            Style statusStyle = healthDown
-                    ? Style.EMPTY.fg(Color.LIGHT_RED)
-                    : ("Started".equals(ci.state) || "Polling".equals(status)
-                            ? Style.EMPTY.fg(Color.GREEN)
-                            : Style.EMPTY.fg(Color.LIGHT_RED));
-            String statusText = healthDown ? "⚠ " + status : status;
-            String type = consumerType(ci);
-            String period = consumerPeriod(ci);
-            String sinceLast = consumerSinceLast(ci);
-            String uri = healthDown && hc.message != null
-                    ? hc.message
-                    : (ci.uri != null ? ci.uri : "");
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(ci.id != null ? ci.id : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(statusText, statusStyle)),
-                    Cell.from(type),
-                    rightCell(String.valueOf(ci.inflight), 8),
-                    rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
-                    rightCell(period, 10),
-                    Cell.from(sinceLast),
-                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
-        }
-
-        if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No consumers", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
-        }
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled(consumerSortLabel("ROUTE", "id"), consumerSortStyle("id"))),
-                        Cell.from(Span.styled(consumerSortLabel("STATUS", "status"), consumerSortStyle("status"))),
-                        Cell.from(Span.styled(consumerSortLabel("TYPE", "type"), consumerSortStyle("type"))),
-                        rightCell(consumerSortLabel("INFLIGHT", "inflight"), 8, consumerSortStyle("inflight")),
-                        rightCell(consumerSortLabel("TOTAL", "total"), 8, consumerSortStyle("total")),
-                        rightCell("PERIOD", 10, Style.EMPTY.bold()),
-                        Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
-                        Cell.from(Span.styled(consumerSortLabel("URI", "uri"), consumerSortStyle("uri")))))
-                .widths(
-                        Constraint.length(20),
-                        Constraint.length(10),
-                        Constraint.length(20),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(10),
-                        Constraint.length(22),
-                        Constraint.fill())
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Consumers sort:" + consumerSort + " ").build())
-                .build();
-
-        frame.renderStatefulWidget(table, area, consumerTableState);
-    }
-
-    private String endpointSortLabel(String label, String column) {
-        return sortLabel(label, column, endpointSort, endpointSortReversed);
-    }
-
-    private Style endpointSortStyle(String column) {
-        return sortStyle(column, endpointSort);
-    }
-
-    private int sortEndpoint(EndpointInfo a, EndpointInfo b) {
-        int result = switch (endpointSort) {
-            case "component" -> {
-                String ca = a.component != null ? a.component : "";
-                String cb = b.component != null ? b.component : "";
-                yield ca.compareToIgnoreCase(cb);
-            }
-            case "dir" -> {
-                String da = a.direction != null ? a.direction : "";
-                String db = b.direction != null ? b.direction : "";
-                yield da.compareToIgnoreCase(db);
-            }
-            case "total" -> Long.compare(b.hits, a.hits);
-            case "uri" -> {
-                String ua = a.uri != null ? a.uri : "";
-                String ub = b.uri != null ? b.uri : "";
-                yield ua.compareToIgnoreCase(ub);
-            }
-            default -> { // "route"
-                String ra = a.routeId != null ? a.routeId : "";
-                String rb = b.routeId != null ? b.routeId : "";
-                yield ra.compareToIgnoreCase(rb);
-            }
-        };
-        return endpointSortReversed ? -result : result;
-    }
-
-    private static String sortLabel(String label, String column, String currentSort, boolean reversed) {
-        return currentSort.equals(column) ? label + (reversed ? "▲" : "▼") : label;
-    }
-
-    private static Style sortStyle(String column, String currentSort) {
-        return currentSort.equals(column)
-                ? Style.EMPTY.fg(Color.YELLOW).bold()
-                : Style.EMPTY.bold();
-    }
-
-    private void renderProcessors(Frame frame, Rect area, RouteInfo route) {
-        Table table;
-
-        if (routeTopMode) {
-            List<Row> rows = new ArrayList<>();
-
-            List<ProcessorInfo> sorted = new ArrayList<>(route.processors);
-            sorted.sort(this::sortProcessorTop);
-
-            long maxValue = sorted.stream().mapToLong(this::procChartValue).max().orElse(1);
-            if (maxValue <= 0) {
-                maxValue = 1;
-            }
-
-            for (ProcessorInfo proc : sorted) {
-                Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
-                long chartVal = procChartValue(proc);
-                String bar;
-                if (chartVal > 0) {
-                    bar = buildBar(chartVal, maxValue, 20);
-                } else if (proc.total > 0) {
-                    bar = "█";
-                } else {
-                    bar = "";
-                }
-                Style barStyle = topTimeStyle(chartVal);
-                if (barStyle == Style.EMPTY) {
-                    barStyle = Style.EMPTY.fg(Color.CYAN);
-                }
-
-                rows.add(Row.from(
-                        Cell.from("   " + (proc.processor != null ? proc.processor : "")),
-                        Cell.from(Span.styled(proc.id != null ? proc.id : "", nameStyle)),
-                        Cell.from(Span.styled(bar, barStyle)),
-                        rightCell(proc.total > 0 ? String.valueOf(proc.meanTime) : "", 6, topTimeStyle(proc.meanTime)),
-                        rightCell(proc.total > 0 ? String.valueOf(proc.maxTime) : "", 6, topTimeStyle(proc.maxTime)),
-                        rightCell(proc.total > 0 ? String.valueOf(proc.minTime) : "", 6),
-                        rightCell(proc.total > 0 ? String.valueOf(proc.lastTime) : "", 6),
-                        rightCell(proc.deltaTime != 0 ? String.valueOf(proc.deltaTime) : "", 6, topDeltaStyle(proc.deltaTime)),
-                        rightCell(String.valueOf(proc.total), 8),
-                        rightCell(String.valueOf(proc.failed), 6,
-                                proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                        rightCell(String.valueOf(proc.inflight), 8)));
-            }
-
-            table = Table.builder()
-                    .rows(rows)
-                    .header(Row.from(
-                            Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
-                            Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                            Cell.from(""),
-                            rightCell(routeTopSortLabel("MEAN", "mean"), 6, routeTopSortStyle("mean")),
-                            rightCell(routeTopSortLabel("MAX", "max"), 6, routeTopSortStyle("max")),
-                            rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
-                            rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
-                            rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
-                            rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                            rightCell("FAIL", 6, Style.EMPTY.bold()),
-                            rightCell("INFLIGHT", 8, Style.EMPTY.bold())))
-                    .widths(
-                            Constraint.length(20),
-                            Constraint.length(14),
-                            Constraint.fill(),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(8))
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
-                            .title(" Top Processors [" + route.routeId + "] sort:" + routeTopSort + " ").build())
-                    .build();
-        } else {
-            List<Row> rows = new ArrayList<>();
-
-            // Synthetic top row representing the route itself
-            Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
-            rows.add(Row.from(
-                    Cell.from("   route"),
-                    Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                    rightCell(String.valueOf(route.total), 8),
-                    rightCell(String.valueOf(route.failed), 6,
-                            route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                    rightCell(String.valueOf(route.inflight), 8),
-                    rightCell(route.total > 0
-                            ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
-                            : "", 14),
-                    Cell.from("")));
-
-            for (ProcessorInfo proc : route.processors) {
-                String indent = "  ".repeat(proc.level);
-                Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
-
-                rows.add(Row.from(
-                        Cell.from("   " + (proc.processor != null ? proc.processor : "")),
-                        Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
-                        Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                        rightCell(String.valueOf(proc.total), 8),
-                        rightCell(String.valueOf(proc.failed), 6,
-                                proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                        rightCell(String.valueOf(proc.inflight), 8),
-                        rightCell(proc.total > 0
-                                ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime
-                                : "", 14),
-                        Cell.from("")));
-            }
-
-            table = Table.builder()
-                    .rows(rows)
-                    .header(Row.from(
-                            Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
-                            Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                            Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                            rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                            rightCell("FAIL", 6, Style.EMPTY.bold()),
-                            rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                            rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
-                            Cell.from("")))
-                    .widths(
-                            Constraint.length(20),
-                            Constraint.fill(),
-                            Constraint.length(10),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(14),
-                            Constraint.length(12))
-                    .block(Block.builder().borderType(BorderType.ROUNDED)
-                            .title(" Processors [" + route.routeId + "] ").build())
-                    .build();
-        }
-
-        frame.renderStatefulWidget(table, area, processorTableState);
-    }
-
-    private static String buildBar(long value, long maxValue, int maxWidth) {
-        if (value <= 0 || maxValue <= 0) {
-            return "";
-        }
-        int len = (int) Math.round((double) value / maxValue * maxWidth);
-        len = Math.max(len > 0 ? 1 : 0, Math.min(len, maxWidth));
-        return "█".repeat(len);
-    }
-
-    private long procChartValue(ProcessorInfo proc) {
-        return switch (routeTopSort) {
-            case "mean" -> proc.meanTime;
-            case "max" -> proc.maxTime;
-            case "min" -> proc.minTime;
-            case "last" -> proc.lastTime;
-            case "delta" -> Math.abs(proc.deltaTime);
-            default -> proc.meanTime;
-        };
-    }
-
-    private void renderRouteHeader(Frame frame, Rect area, IntegrationInfo info) {
-        RouteInfo route = null;
-        if (diagramRouteId != null) {
-            for (RouteInfo r : info.routes) {
-                if (diagramRouteId.equals(r.routeId)) {
-                    route = r;
-                    break;
-                }
-            }
-        }
-
-        List<Row> rows = new ArrayList<>();
-        if (route != null) {
-            Style stateStyle = "Started".equals(route.state)
-                    ? Style.EMPTY.fg(Color.GREEN)
-                    : Style.EMPTY.fg(Color.LIGHT_RED);
-            Style failStyle = route.failed > 0
-                    ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
-                    : Style.EMPTY;
-            rows.add(Row.from(
-                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(route.from != null ? route.from : ""),
-                    Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
-                    Cell.from(route.uptime != null ? route.uptime : ""),
-                    rightCell(route.throughput != null ? route.throughput : "", 8),
-                    rightCell(String.valueOf(route.total), 8),
-                    rightCell(String.valueOf(route.failed), 6, failStyle),
-                    rightCell(String.valueOf(route.inflight), 8)));
-        }
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
-                        rightCell("MSG/S", 8, Style.EMPTY.bold()),
-                        rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                        rightCell("FAIL", 6, Style.EMPTY.bold()),
-                        rightCell("INFLIGHT", 8, Style.EMPTY.bold())))
-                .widths(
-                        Constraint.length(12),
-                        Constraint.fill(),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Route ").build())
-                .build();
-
-        frame.renderStatefulWidget(table, area, routeHeaderTableState);
-    }
-
-    private void renderDiagram(Frame frame, Rect area) {
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(diagramTextMode ? "" : " Diagram [" + diagramRouteId + "] ")
-                .build();
-
-        if (diagramFullImageData != null) {
-            renderImageDiagram(frame, area, block);
-            return;
-        }
-
-        // Compute max width for horizontal scrolling
-        int maxWidth = 0;
-        for (String line : diagramLines) {
-            maxWidth = Math.max(maxWidth, CharWidth.of(line));
-        }
-
-        Rect inner = block.inner(area);
-        // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
-        int visibleLines = Math.max(1, inner.height() - 1);
-        int visibleCols = Math.max(1, inner.width() - 1);
-
-        int maxVScroll = Math.max(0, diagramLines.size() - visibleLines);
-        int maxHScroll = Math.max(0, maxWidth - visibleCols);
-        diagramScroll = Math.min(diagramScroll, maxVScroll);
-        diagramScrollX = Math.min(diagramScrollX, maxHScroll);
-
-        // Build visible lines with horizontal offset applied
-        List<Line> lines = new ArrayList<>();
-        int end = Math.min(diagramScroll + visibleLines, diagramLines.size());
-        for (int i = diagramScroll; i < end; i++) {
-            String line = diagramLines.get(i);
-            if (diagramScrollX > 0) {
-                line = diagramScrollX < line.length() ? line.substring(diagramScrollX) : "";
-            }
-            lines.add(styleDiagramLine(line, i, diagramScrollX));
-        }
-
-        // Layout: outer block wraps everything, inner splits content + scrollbars
-        frame.renderWidget(block, area);
-
-        // Vertical layout inside the block: [content row (fill), horizontal scrollbar (1 row)]
-        List<Rect> vChunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        // Horizontal layout for content row: [text (fill), vertical scrollbar (1 col)]
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(vChunks.get(0));
-
-        // Render diagram text
-        Paragraph paragraph = Paragraph.builder()
-                .text(Text.from(lines))
-                .build();
-        frame.renderWidget(paragraph, hChunks.get(0));
-
-        // Render vertical scrollbar
-        diagramVScrollState.contentLength(diagramLines.size());
-        diagramVScrollState.viewportContentLength(visibleLines);
-        diagramVScrollState.position(diagramScroll);
-        frame.renderStatefulWidget(
-                Scrollbar.builder().build(),
-                hChunks.get(1), diagramVScrollState);
-
-        // Render horizontal scrollbar
-        if (maxWidth > visibleCols) {
-            diagramHScrollState.contentLength(maxWidth);
-            diagramHScrollState.viewportContentLength(visibleCols);
-            diagramHScrollState.position(diagramScrollX);
-            frame.renderStatefulWidget(
-                    Scrollbar.horizontal(),
-                    vChunks.get(1), diagramHScrollState);
-        }
-    }
-
-    private void renderImageDiagram(Frame frame, Rect area, Block block) {
-        int imgW = diagramFullImageData.width();
-        int imgH = diagramFullImageData.height();
-
-        Rect inner = block.inner(area);
-        // Convert cell area to pixel viewport using protocol resolution
-        int pxPerCol = diagramProtocol.resolution().widthMultiplier();
-        int pxPerRow = diagramProtocol.resolution().heightMultiplier();
-        // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
-        int viewCols = Math.max(1, inner.width() - 1);
-        int viewRows = Math.max(1, inner.height() - 1);
-        int viewW = viewCols * pxPerCol;
-        int viewH = viewRows * pxPerRow;
-
-        // Scroll units are in cells; convert to pixels for clamping
-        int maxScrollY = Math.max(0, (imgH - viewH + pxPerRow - 1) / pxPerRow);
-        int maxScrollX = Math.max(0, (imgW - viewW + pxPerCol - 1) / pxPerCol);
-        diagramScroll = Math.min(diagramScroll, maxScrollY);
-        diagramScrollX = Math.min(diagramScrollX, maxScrollX);
-
-        int cropX = Math.min(diagramScrollX * pxPerCol, imgW);
-        int cropY = Math.min(diagramScroll * pxPerRow, imgH);
-        int cropW = Math.min(viewW, imgW - cropX);
-        int cropH = Math.min(viewH, imgH - cropY);
-
-        if (cropW > 0 && cropH > 0) {
-            if (cropX != diagramCropX || cropY != diagramCropY
-                    || cropW != diagramCropW || cropH != diagramCropH) {
-                diagramImageData = diagramFullImageData.crop(cropX, cropY, cropW, cropH);
-                diagramCropX = cropX;
-                diagramCropY = cropY;
-                diagramCropW = cropW;
-                diagramCropH = cropH;
-            }
-        } else if (diagramImageData != diagramFullImageData) {
-            diagramImageData = diagramFullImageData;
-        }
-
-        // Render the outer block border
-        frame.renderWidget(block, area);
-
-        // Vertical layout inside the block: [image+vscrollbar (fill), hscrollbar (1 row)]
-        List<Rect> vChunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        // Horizontal layout: [image (fill), vertical scrollbar (1 col)]
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(vChunks.get(0));
-
-        // Render cropped image
-        Image img = Image.builder()
-                .data(diagramImageData)
-                .protocol(diagramProtocol)
-                .scaling(ImageScaling.FIT)
-                .build();
-        frame.renderWidget(img, hChunks.get(0));
-
-        // Render vertical scrollbar
-        int totalRows = (imgH + pxPerRow - 1) / pxPerRow;
-        diagramVScrollState.contentLength(totalRows);
-        diagramVScrollState.viewportContentLength(viewRows);
-        diagramVScrollState.position(diagramScroll);
-        frame.renderStatefulWidget(
-                Scrollbar.builder().build(),
-                hChunks.get(1), diagramVScrollState);
-
-        // Render horizontal scrollbar
-        if (imgW > viewW) {
-            int totalCols = (imgW + pxPerCol - 1) / pxPerCol;
-            diagramHScrollState.contentLength(totalCols);
-            diagramHScrollState.viewportContentLength(viewCols);
-            diagramHScrollState.position(diagramScrollX);
-            frame.renderStatefulWidget(
-                    Scrollbar.horizontal(),
-                    vChunks.get(1), diagramHScrollState);
-        }
-    }
-
-    private Line styleDiagramLine(String text, int row, int scrollX) {
-        if (diagramRouteTitleRows.contains(row)) {
-            return Line.from(Span.styled(text, Style.EMPTY.fg(Color.WHITE).bold()));
-        }
-
-        // Build counter color ranges for this row
-        List<int[]> counterRanges = new ArrayList<>();
-        for (RouteDiagramAsciiRenderer.CounterPos cp : diagramCounterPositions) {
-            if (cp.row() == row) {
-                int start = cp.col() - scrollX;
-                int end = start + cp.length();
-                if (end > 0 && start < text.length()) {
-                    start = Math.max(0, start);
-                    end = Math.min(end, text.length());
-                    int colorFlag = cp.type() == RouteDiagramAsciiRenderer.CounterType.OK ? 1 : 2;
-                    counterRanges.add(new int[] { start, end, colorFlag });
-                }
-            }
-        }
-
-        List<Span> spans = new ArrayList<>();
-        int idx = 0;
-        while (idx < text.length()) {
-            int open = text.indexOf('[', idx);
-            if (open < 0) {
-                addStyledSegment(spans, text, idx, text.length(), counterRanges, Color.WHITE);
-                break;
-            }
-            int close = text.indexOf(']', open);
-            if (close < 0) {
-                addStyledSegment(spans, text, idx, text.length(), counterRanges, Color.WHITE);
-                break;
-            }
-            if (open > idx) {
-                addStyledSegment(spans, text, idx, open, counterRanges, Color.GRAY);
-            }
-            String tag = text.substring(open + 1, close);
-            Color tagColor = getDiagramNodeColor(tag);
-            spans.add(Span.styled("[" + tag + "]", Style.EMPTY.fg(tagColor).bold()));
-
-            int afterTag = close + 1;
-            int nextOpen = text.indexOf('[', afterTag);
-            int labelEnd = nextOpen >= 0 ? nextOpen : text.length();
-            if (afterTag < labelEnd) {
-                addStyledSegment(spans, text, afterTag, labelEnd, counterRanges, Color.WHITE);
-            }
-            idx = labelEnd;
-        }
-        return Line.from(spans);
-    }
-
-    private void addStyledSegment(
-            List<Span> spans, String text, int from, int to, List<int[]> counterRanges, Color defaultColor) {
-        int pos = from;
-        while (pos < to) {
-            int[] cr = findNextCounterRange(counterRanges, pos, to);
-            if (cr != null) {
-                if (pos < cr[0]) {
-                    spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(defaultColor)));
-                }
-                int counterEnd = Math.min(cr[1], to);
-                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.LIGHT_RED;
-                spans.add(Span.styled(text.substring(cr[0], counterEnd), Style.EMPTY.fg(counterColor).bold()));
-                pos = counterEnd;
-            } else {
-                spans.add(Span.styled(text.substring(pos, to), Style.EMPTY.fg(defaultColor)));
-                pos = to;
-            }
-        }
-    }
-
-    private static int[] findNextCounterRange(List<int[]> ranges, int pos, int limit) {
-        int[] best = null;
-        for (int[] range : ranges) {
-            if (range[1] > pos && range[0] < limit) {
-                int start = Math.max(range[0], pos);
-                if (best == null || start < best[0]) {
-                    best = new int[] { start, range[1], range[2] };
-                }
-            }
-        }
-        return best;
-    }
-
-    private Color getDiagramNodeColor(String type) {
-        if (type == null) {
-            return Color.GRAY;
-        }
-        return switch (type) {
-            case "from" -> Color.GREEN;
-            case "to", "toD", "wireTap", "enrich", "pollEnrich" -> Color.CYAN;
-            case "choice", "when", "otherwise" -> Color.YELLOW;
-            case "marshal", "unmarshal", "transform", "setBody", "setHeader", "setProperty",
-                    "convertBodyTo", "removeHeader", "removeHeaders", "removeProperty", "removeProperties" ->
-                Color.CYAN;
-            case "bean", "process", "log", "script", "delay" -> Color.MAGENTA;
-            case "filter", "split", "aggregate", "multicast", "recipientList",
-                    "routingSlip", "dynamicRouter", "loadBalance",
-                    "circuitBreaker", "saga", "doTry", "doCatch", "doFinally",
-                    "onException", "onCompletion", "intercept",
-                    "loop", "resequence", "throttle", "kamelet", "pipeline", "threads" ->
-                Color.rgb(0x89, 0x57, 0xE5);
-            default -> Color.GRAY;
-        };
-    }
-
-    private void loadDiagramForSelectedRoute() {
-        if (selectedPid == null || runner == null) {
-            return;
-        }
-        if (!diagramLoading.compareAndSet(false, true)) {
-            return;
-        }
-
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
-            diagramLoading.set(false);
-            return;
-        }
-
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-
-        Integer sel = routeTableState.selected();
-        RouteInfo selectedRoute;
-        if (sel != null && sel >= 0 && sel < sortedRoutes.size()) {
-            selectedRoute = sortedRoutes.get(sel);
-        } else {
-            selectedRoute = sortedRoutes.get(0);
-        }
-
-        // Capture state needed by the background thread
-        String pid = selectedPid;
-        boolean textMode = diagramTextMode;
-        boolean showMetrics = diagramMetrics;
-        String routeId = diagramAllRoutes ? null : selectedRoute.routeId;
-
-        boolean initialLoad = !showDiagram;
-        if (initialLoad) {
-            diagramRouteId = routeId != null ? routeId : "all";
-            diagramLines = List.of("(Loading diagram...)");
-            diagramImageData = null;
-            diagramFullImageData = null;
-            showDiagram = true;
-            diagramScroll = 0;
-            diagramScrollX = 0;
-        }
-
-        runner.scheduler().execute(() -> {
-            try {
-                loadDiagramInBackground(pid, textMode, routeId, showMetrics);
-            } finally {
-                diagramLoading.set(false);
-            }
-        });
-    }
-
-    private void loadSourceForSelectedRoute() {
-        if (selectedPid == null || runner == null) {
-            return;
-        }
-        if (!sourceLoading.compareAndSet(false, true)) {
-            return;
-        }
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
-            sourceLoading.set(false);
-            return;
-        }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo selectedRoute = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-
-        sourceLines = List.of("(Loading source...)");
-        sourceTitle = selectedRoute.routeId;
-        sourceScroll = 0;
-        sourceScrollX = 0;
-        showSource = true;
-
-        String pid = selectedPid;
-        String routeId = selectedRoute.routeId;
-        runner.scheduler().execute(() -> {
-            try {
-                loadSourceInBackground(pid, routeId);
-            } finally {
-                sourceLoading.set(false);
-            }
-        });
-    }
-
-    private void toggleRouteStartStop() {
-        if (selectedPid == null) {
-            return;
-        }
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
-            return;
-        }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        // Started → stop; Stopped or Suspended → start
-        String command = "Started".equals(route.state) ? "stop" : "start";
-        sendRouteCommand(selectedPid, route.routeId, command);
-    }
-
-    private void toggleRouteSuspendResume() {
-        if (selectedPid == null) {
-            return;
-        }
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
-            return;
-        }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        // Started → suspend; Suspended → resume; Stopped → start
-        String command = switch (route.state != null ? route.state : "") {
-            case "Started" -> "suspend";
-            case "Suspended" -> "resume";
-            default -> "start";
-        };
-        sendRouteCommand(selectedPid, route.routeId, command);
-    }
-
     private void stopSelectedProcess(boolean forceKill) {
-        if (selectedPid == null) {
+        if (ctx.selectedPid == null) {
             return;
         }
         long pid;
         try {
-            pid = Long.parseLong(selectedPid);
+            pid = Long.parseLong(ctx.selectedPid);
         } catch (NumberFormatException e) {
             return;
         }
-        if (infraTableFocused) {
-            // For infra services: delete the JSON and log files to trigger graceful shutdown
+        if (ctx.infraTableFocused) {
             InfraInfo infra = findSelectedInfra();
             if (infra != null) {
                 Path camelDir = CommandLineHelper.getCamelDir();
@@ -3120,20 +1372,18 @@ public class CamelMonitor extends CamelCommand {
                 ProcessHandle.of(pid).ifPresent(ProcessHandle::destroyForcibly);
             }
         } else {
-            // For integrations: signal the process directly
             ProcessHandle.of(pid).ifPresent(ph -> {
                 if (forceKill) {
                     ph.destroyForcibly();
-                    // Clean up orphaned files after force kill
                     Path camelDir = CommandLineHelper.getCamelDir();
-                    PathUtils.deleteFile(camelDir.resolve(selectedPid + ".log"));
-                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-status.json"));
-                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-action.json"));
-                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-output.json"));
-                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-trace.json"));
-                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-history.json"));
-                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-debug.json"));
-                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-receive.json"));
+                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + ".log"));
+                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-status.json"));
+                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-action.json"));
+                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-output.json"));
+                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-trace.json"));
+                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-history.json"));
+                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-debug.json"));
+                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-receive.json"));
                 } else {
                     ph.destroy();
                 }
@@ -3146,1105 +1396,13 @@ public class CamelMonitor extends CamelCommand {
         root.put("action", "route");
         root.put("id", routeId);
         root.put("command", command);
-        Path actionFile = getActionFile(pid);
-        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
-    }
-
-    private String selectedRouteState() {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
-            return null;
-        }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        return route.state;
-    }
-
-    private boolean selectedRouteSupportsSuspension() {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null || info.routes.isEmpty()) {
-            return false;
-        }
-        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
-        sortedRoutes.sort(this::sortRoute);
-        Integer sel = routeTableState.selected();
-        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
-                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        return route.supportsSuspension;
-    }
-
-    private void loadSourceInBackground(String pid, String routeId) {
-        Path outputFile = getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "source");
-        root.put("filter", routeId);
-
-        Path actionFile = getActionFile(pid);
-        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
-
-        if (jo == null) {
-            applySourceResult(routeId, null, List.of("(No response from integration)"));
-            return;
-        }
-
-        JsonArray routes = (JsonArray) jo.get("routes");
-        if (routes == null || routes.isEmpty()) {
-            applySourceResult(routeId, null, List.of("(No source available for route: " + routeId + ")"));
-            return;
-        }
-
-        JsonObject routeObj = (JsonObject) routes.get(0);
-        String sourceLocation = objToString(routeObj.get("source"));
-        List<JsonObject> codeLines = routeObj.getCollection("code");
-        if (codeLines == null || codeLines.isEmpty()) {
-            applySourceResult(routeId, sourceLocation, List.of("(No source code available)"));
-            return;
-        }
-
-        List<String> lines = new ArrayList<>();
-        int maxLineNum = 0;
-        for (JsonObject codeLine : codeLines) {
-            Integer lineNum = codeLine.getInteger("line");
-            if (lineNum != null && lineNum > maxLineNum) {
-                maxLineNum = lineNum;
-            }
-        }
-        int lineNumWidth = String.valueOf(maxLineNum).length();
-        int matchLine = -1;
-        int idx = 0;
-        for (JsonObject codeLine : codeLines) {
-            Integer lineNum = codeLine.getInteger("line");
-            String code = Jsoner.unescape(objToString(codeLine.get("code")));
-            Boolean match = codeLine.getBoolean("match");
-            String prefix = lineNum != null
-                    ? String.format("%" + lineNumWidth + "d  ", lineNum)
-                    : String.format("%" + lineNumWidth + "s  ", "");
-            lines.add(prefix + code);
-            if (Boolean.TRUE.equals(match) && matchLine < 0) {
-                matchLine = idx;
-            }
-            idx++;
-        }
-
-        int scrollTo = matchLine > 0 ? Math.max(0, matchLine - 2) : 0;
-        applySourceResult(routeId, sourceLocation, lines, scrollTo);
-    }
-
-    private void applySourceResult(String routeId, String location, List<String> lines) {
-        applySourceResult(routeId, location, lines, 0);
-    }
-
-    private void applySourceResult(String routeId, String location, List<String> lines, int scrollTo) {
-        if (runner == null) {
-            return;
-        }
-        runner.runOnRenderThread(() -> {
-            if (!showSource) {
-                return; // user cancelled via Esc while loading
-            }
-            sourceTitle = location != null ? routeId + "  " + location : routeId;
-            sourceLines = lines;
-            sourceScroll = scrollTo;
-        });
-    }
-
-    private void loadDiagramInBackground(String pid, boolean textMode, String routeId, boolean metrics) {
-        Path outputFile = getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "route-structure");
-        root.put("filter", "*");
-        root.put("brief", false);
-        root.put("metric", true);
-
-        Path actionFile = getActionFile(pid);
-        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
-
-        if (jo == null) {
-            applyDiagramResult(routeId, List.of("(No response from integration)"), null, null, null);
-            return;
-        }
-
-        JsonArray arr = (JsonArray) jo.get("routes");
-        if (arr == null) {
-            applyDiagramResult(routeId, List.of("(No routes in response)"), null, null, null);
-            return;
-        }
-
-        List<RouteDiagramLayoutEngine.RouteInfo> diagramRoutes = new ArrayList<>();
-        for (int i = 0; i < arr.size(); i++) {
-            JsonObject o = (JsonObject) arr.get(i);
-            String rid = objToString(o.get("routeId"));
-            if (routeId != null && !routeId.equals(rid)) {
-                continue;
-            }
-            RouteDiagramLayoutEngine.RouteInfo route = new RouteDiagramLayoutEngine.RouteInfo();
-            route.routeId = rid;
-            List<JsonObject> lines = o.getCollection("code");
-            if (lines != null) {
-                for (JsonObject line : lines) {
-                    RouteDiagramLayoutEngine.NodeInfo node = new RouteDiagramLayoutEngine.NodeInfo();
-                    node.type = objToString(line.get("type"));
-                    node.code = Jsoner.unescape(objToString(line.get("code")));
-                    Integer level = line.getInteger("level");
-                    node.level = level != null ? level : 0;
-                    JsonObject stats = (JsonObject) line.get("statistics");
-                    if (stats != null) {
-                        RouteDiagramLayoutEngine.StatInfo stat = new RouteDiagramLayoutEngine.StatInfo();
-                        stat.exchangesTotal = stats.getLongOrDefault("exchangesTotal", 0);
-                        stat.exchangesFailed = stats.getLongOrDefault("exchangesFailed", 0);
-                        node.stat = stat;
-                    }
-                    route.nodes.add(node);
-                }
-            }
-            diagramRoutes.add(route);
-        }
-
-        if (textMode) {
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                    RouteDiagramLayoutEngine.NodeLabelMode.CODE);
-
-            List<String> result = new ArrayList<>();
-            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
-            Set<Integer> titleRows = new HashSet<>();
-
-            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
-                // Add separator between routes
-                if (!result.isEmpty()) {
-                    result.add("");
-                    result.add("");
-                }
-
-                int titleRow = result.size();
-
-                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, RouteDiagramLayoutEngine.PADDING);
-                RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
-                        RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
-                String ascii = asciiRenderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
-                List<RouteDiagramAsciiRenderer.CounterPos> origPositions = asciiRenderer.getCounterPositions();
-
-                // Strip empty lines and remap counter positions
-                String[] rawLines = ascii.split("\n", -1);
-                int[] rowMapping = new int[rawLines.length];
-                int baseRow = result.size();
-                int newRow = baseRow;
-                for (int i = 0; i < rawLines.length; i++) {
-                    if (!rawLines[i].isEmpty()) {
-                        rowMapping[i] = newRow++;
-                        result.add(rawLines[i]);
-                    } else {
-                        rowMapping[i] = -1;
-                    }
-                }
-                for (RouteDiagramAsciiRenderer.CounterPos cp : origPositions) {
-                    if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
-                        positions.add(new RouteDiagramAsciiRenderer.CounterPos(
-                                rowMapping[cp.row()], cp.col(), cp.length(), cp.type()));
-                    }
-                }
-                titleRows.add(titleRow);
-            }
-
-            applyDiagramResult(routeId, result, null, null, null, positions, titleRows);
-        } else {
-            TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
-            if (caps.supportsNativeImages()) {
-                RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
-                List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
-                int totalHeight = 0;
-                for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
-                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, totalHeight);
-                    layoutRoutes.add(lr);
-                    totalHeight = lr.maxY;
-                }
-                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                        engine.getNodeWidth(), RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * RouteDiagramLayoutEngine.SCALE,
-                        metrics);
-                RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
-                java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
-                ImageData fullImage = ImageData.fromBufferedImage(image);
-                ImageData resized = fullImage.resize(fullImage.width() / 2, fullImage.height() / 2);
-                ImageProtocol protocol = caps.bestProtocol();
-                applyDiagramResult(routeId, Collections.emptyList(), resized, resized, protocol);
-            } else {
-                applyDiagramResult(routeId, List.of(
-                        "(Terminal does not support image rendering)",
-                        "(Press Shift+D for text diagram)"), null, null, null);
-            }
-        }
-    }
-
-    private void applyDiagramResult(
-            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol) {
-        applyDiagramResult(routeId, lines, imageData, fullImageData, protocol, Collections.emptyList(), Collections.emptySet());
-    }
-
-    private void applyDiagramResult(
-            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol,
-            List<RouteDiagramAsciiRenderer.CounterPos> positions) {
-        applyDiagramResult(routeId, lines, imageData, fullImageData, protocol, positions, Collections.emptySet());
-    }
-
-    private void applyDiagramResult(
-            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol,
-            List<RouteDiagramAsciiRenderer.CounterPos> positions, Set<Integer> titleRows) {
-        if (runner == null) {
-            return;
-        }
-        runner.runOnRenderThread(() -> {
-            boolean wasShowing = showDiagram;
-            diagramRouteId = routeId != null ? routeId : "all";
-            diagramLines = lines;
-            diagramCounterPositions = positions;
-            diagramRouteTitleRows = titleRows;
-            diagramImageData = imageData;
-            diagramFullImageData = fullImageData;
-            diagramProtocol = protocol;
-            if (!wasShowing) {
-                diagramScroll = 0;
-                diagramScrollX = 0;
-                diagramCropX = -1;
-                diagramCropY = -1;
-                diagramCropW = -1;
-                diagramCropH = -1;
-            }
-            // Only restore showDiagram if user hasn't cancelled via Esc while loading
-            if (wasShowing) {
-                showDiagram = true;
-            }
-        });
-    }
-
-    private static JsonObject pollJsonResponse(Path outputFile, long timeout) {
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < timeout) {
-            try {
-                Thread.sleep(100);
-                if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
-                    String text = Files.readString(outputFile);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return null;
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return null;
-    }
-
-    // ---- Tab 5: Circuit Breaker ----
-
-    private void renderCircuitBreaker(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        List<CircuitBreakerInfo> sorted = new ArrayList<>(info.circuitBreakers);
-        sorted.sort(this::sortCircuitBreaker);
-
-        List<Row> rows = new ArrayList<>();
-        for (CircuitBreakerInfo cb : sorted) {
-            Style stateStyle = switch (cb.state != null ? cb.state.toLowerCase() : "") {
-                case "closed" -> Style.EMPTY.fg(Color.GREEN);
-                case "open", "forced_open" -> Style.EMPTY.fg(Color.LIGHT_RED);
-                default -> Style.EMPTY.fg(Color.YELLOW); // half_open / half opened / unknown
-            };
-            String state = cb.state != null ? cb.state : "";
-            String pending = cb.bufferedCalls > 0 ? String.valueOf(cb.bufferedCalls) : "";
-            String success = cb.successfulCalls > 0 ? String.valueOf(cb.successfulCalls) : "";
-            String failed = cb.failedCalls > 0 ? String.valueOf(cb.failedCalls) : "";
-            String reject = cb.notPermittedCalls > 0 ? String.valueOf(cb.notPermittedCalls) : "";
-            String rate = cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "";
-            String inflight = String.valueOf(cb.inflight);
-            String sinceLast = formatSinceLast(cb.sinceLastStarted, cb.sinceLastSuccess, cb.sinceLastFail);
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(cb.routeId != null ? cb.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(cb.id != null ? cb.id : ""),
-                    Cell.from(cb.component != null ? cb.component : ""),
-                    Cell.from(Span.styled(state, stateStyle)),
-                    rightCell(pending, 8),
-                    rightCell(inflight, 8),
-                    rightCell(success, 8),
-                    rightCell(failed, 8),
-                    rightCell(rate, 6),
-                    rightCell(reject, 8),
-                    Cell.from(sinceLast)));
-        }
-
-        if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No circuit breakers", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from("")));
-        }
-
-        // Split area: table on top, state diagram below for the selected entry
-        CircuitBreakerInfo selectedCb = null;
-        Integer sel = cbTableState.selected();
-        if (sel != null && sel >= 0 && sel < sorted.size()) {
-            selectedCb = sorted.get(sel);
-        }
-        boolean showDiagram = selectedCb != null;
-        List<Rect> chunks = showDiagram
-                ? Layout.vertical()
-                        .constraints(Constraint.fill(), Constraint.length(25))
-                        .split(area)
-                : List.of(area);
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled(cbSortLabel("ROUTE", "route"), cbSortStyle("route"))),
-                        Cell.from(Span.styled(cbSortLabel("ID", "id"), cbSortStyle("id"))),
-                        Cell.from(Span.styled(cbSortLabel("COMPONENT", "component"), cbSortStyle("component"))),
-                        Cell.from(Span.styled(cbSortLabel("STATE", "state"), cbSortStyle("state"))),
-                        rightCell("WINDOW", 8, Style.EMPTY.bold()),
-                        rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                        rightCell("SUCCESS", 8, Style.EMPTY.bold()),
-                        rightCell("FAIL", 8, Style.EMPTY.bold()),
-                        rightCell("RATE%", 6, Style.EMPTY.bold()),
-                        rightCell("REJECT", 8, Style.EMPTY.bold()),
-                        Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
-                .widths(
-                        Constraint.length(20),
-                        Constraint.length(20),
-                        Constraint.length(16),
-                        Constraint.length(12),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Circuit Breaker ").build())
-                .build();
-
-        frame.renderStatefulWidget(table, chunks.get(0), cbTableState);
-
-        if (showDiagram) {
-            renderCircuitBreakerDiagram(frame, chunks.get(1), selectedCb, info.pid);
-        }
-    }
-
-    private void renderCircuitBreakerDiagram(Frame frame, Rect area, CircuitBreakerInfo cb, String pid) {
-        // Split horizontally: state diagram on left (55 cols), chart on right (fill)
-        List<Rect> hSplit = Layout.horizontal()
-                .constraints(Constraint.length(55), Constraint.fill())
-                .split(area);
-
-        renderCbStateDiagram(frame, hSplit.get(0), cb);
-        renderCbChart(frame, hSplit.get(1), cb, pid);
-    }
-
-    private void renderCbStateDiagram(Frame frame, Rect area, CircuitBreakerInfo cb) {
-        String state = cb.state != null ? cb.state.toLowerCase() : "";
-        boolean isClosed = state.equals("closed");
-        boolean isOpen = state.equals("open") || state.equals("forced_open");
-
-        Style closedBox = isClosed ? Style.EMPTY.fg(Color.GREEN).bold() : Style.EMPTY;
-        Style openBox = isOpen ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
-        Style halfOpenBox = !isClosed && !isOpen ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY;
-        Style lbl = Style.EMPTY.dim();
-
-        List<Line> lines = new ArrayList<>();
-        lines.add(Line.from(Span.raw("")));
-        // ┌──────────────┐              ┌──────────────┐
-        lines.add(Line.from(
-                Span.raw("   "),
-                Span.styled("┌──────────────┐", closedBox),
-                Span.raw("              "),
-                Span.styled("┌──────────────┐", openBox)));
-        // │    CLOSED    │─────────────►│     OPEN     │◄─┐
-        lines.add(Line.from(
-                Span.raw("   "),
-                Span.styled("│    CLOSED    │", closedBox),
-                Span.raw("─────────────►"),
-                Span.styled("│     OPEN     │", openBox),
-                Span.raw("◄─┐")));
-        // │  (flowing)   │ failure rate │  (blocked)   │  │
-        lines.add(Line.from(
-                Span.raw("   "),
-                Span.styled("│  (allowed)   │", closedBox),
-                Span.styled(" failure rate ", lbl),
-                Span.styled("│  (rejected)  │", openBox),
-                Span.raw("  │")));
-        // └──────▲───────┘              └───────┬──────┘  │
-        lines.add(Line.from(
-                Span.raw("   "),
-                Span.styled("└──────", closedBox),
-                Span.raw("▲"),
-                Span.styled("───────┘", closedBox),
-                Span.raw("              "),
-                Span.styled("└───────", openBox),
-                Span.raw("┬"),
-                Span.styled("──────┘", openBox),
-                Span.raw("  │")));
-        //          │                              │         │
-        lines.add(Line.from(Span.raw(
-                "          │                              │         │")));
-        //          │ success      wait timeout    │         │
-        lines.add(Line.from(
-                Span.raw("          │"),
-                Span.styled(" success", lbl),
-                Span.raw("      "),
-                Span.styled("wait timeout", lbl),
-                Span.raw("    │         │")));
-        //          │                              │         │
-        lines.add(Line.from(Span.raw(
-                "          │                              │         │")));
-        //          │                      ┌───────▼──────┐  │
-        lines.add(Line.from(
-                Span.raw("          │                      "),
-                Span.styled("┌───────", halfOpenBox),
-                Span.raw("▼"),
-                Span.styled("──────┐", halfOpenBox),
-                Span.raw("  │")));
-        //          └──────────────────────┤  HALF_OPEN   ├──┘
-        lines.add(Line.from(
-                Span.raw("          └──────────────────────"),
-                Span.styled("┤  HALF_OPEN   ├", halfOpenBox),
-                Span.raw("──┘")));
-        //                                 │   (probe)    │
-        lines.add(Line.from(
-                Span.raw("                                 "),
-                Span.styled("│   (probe)    │", halfOpenBox)));
-        //                                 └──────────────┘
-        lines.add(Line.from(
-                Span.raw("                                 "),
-                Span.styled("└──────────────┘", halfOpenBox)));
-
-        String title = " ";
-        if (cb.id != null && !cb.id.isEmpty()) {
-            title += cb.id;
-        }
-        if (cb.component != null) {
-            title += " (" + cb.component + ")";
-        }
-        title += " ";
-
-        frame.renderWidget(Paragraph.builder()
-                .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
-                .build(), area);
-    }
-
-    private void renderCbChart(Frame frame, Rect area, CircuitBreakerInfo cb, String pid) {
-        String key = pid + "/" + cb.id;
-
-        // Split vertically: failure rate bar (3 rows), sparkline (fill), metrics (6 rows)
-        List<Rect> vSplit = Layout.vertical()
-                .constraints(Constraint.length(3), Constraint.fill(), Constraint.length(6))
-                .split(area);
-
-        // Top: Failure rate bar (fixed width matching sparkline data points)
-        double rate = cb.failureRate >= 0 ? cb.failureRate : 0;
-        Style barColor;
-        if (rate >= 80) {
-            barColor = Style.EMPTY.fg(Color.LIGHT_RED);
-        } else if (rate >= 50) {
-            barColor = Style.EMPTY.fg(Color.YELLOW);
-        } else {
-            barColor = Style.EMPTY.fg(Color.GREEN);
-        }
-        String rateLabel = String.format(" %.0f%%", Math.max(0, cb.failureRate));
-        int barWidth = MAX_ENDPOINT_CHART_POINTS;
-        int usable = barWidth - rateLabel.length();
-        int filled = Math.max(0, (int) (usable * rate / 100.0));
-        int empty = Math.max(0, usable - filled);
-        Line barLine = Line.from(
-                Span.raw("    "),
-                Span.styled("█".repeat(filled), barColor),
-                Span.styled(rateLabel, Style.EMPTY.bold()),
-                Span.styled("░".repeat(empty), Style.EMPTY.dim()));
-        frame.renderWidget(Paragraph.builder()
-                .text(Text.from(barLine))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Failure Rate ").build())
-                .build(), vSplit.get(0));
-
-        // Middle: Throughput sparkline (success up, fail down)
-        LinkedList<Long> successHist = cbSuccessHistory.get(key);
-        LinkedList<Long> failHist = cbFailHistory.get(key);
-        int renderPoints = MAX_ENDPOINT_CHART_POINTS;
-        long[] successArr = new long[renderPoints];
-        long[] failArr = new long[renderPoints];
-        if (successHist != null) {
-            for (int i = 0; i < renderPoints; i++) {
-                int idx = successHist.size() - renderPoints + i;
-                if (idx >= 0) {
-                    successArr[i] = successHist.get(idx);
-                }
-            }
-        }
-        if (failHist != null) {
-            for (int i = 0; i < renderPoints; i++) {
-                int idx = failHist.size() - renderPoints + i;
-                if (idx >= 0) {
-                    failArr[i] = failHist.get(idx);
-                }
-            }
-        }
-        long curSuccess = successArr[renderPoints - 1];
-        long curFail = failArr[renderPoints - 1];
-        Line chartTitle = Line.from(
-                Span.styled("▬", Style.EMPTY.fg(Color.GREEN)),
-                Span.raw(String.format(" ok:%-4d ", curSuccess)),
-                Span.styled("▬", Style.EMPTY.fg(Color.LIGHT_RED)),
-                Span.raw(String.format(" fail:%-4d msg/s", curFail)));
-        frame.renderWidget(MirroredSparkline.builder()
-                .topData(successArr)
-                .bottomData(failArr)
-                .topStyle(Style.EMPTY.fg(Color.GREEN))
-                .bottomStyle(Style.EMPTY.fg(Color.LIGHT_RED))
-                .xLabels("-60s", "-45s", "-30s", "-15s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(Title.from(chartTitle)).build())
-                .build(), vSplit.get(1));
-
-        // Bottom: Metrics summary
-        Style dim = Style.EMPTY.dim();
-        Line metricsLine1 = Line.from(
-                Span.raw(" "),
-                Span.styled("total:", dim), Span.raw(cb.total + " "),
-                Span.styled("fail:", dim), Span.raw(cb.totalFailed + " "),
-                Span.styled("inflight:", dim), Span.raw(cb.inflight + " "),
-                Span.styled("reject:", dim), Span.raw(cb.notPermittedCalls + " "),
-                Span.styled("mean:", dim), Span.raw(cb.meanTime + "ms "),
-                Span.styled("min:", dim), Span.raw(cb.minTime + "ms "),
-                Span.styled("max:", dim), Span.raw(cb.maxTime + "ms"));
-        String lastSuccess = cb.sinceLastSuccess != null ? cb.sinceLastSuccess : "-";
-        String lastFail = cb.sinceLastFail != null ? cb.sinceLastFail : "-";
-        Line metricsLine2 = Line.from(
-                Span.raw(" "),
-                Span.styled("since last", dim),
-                Span.raw(" "),
-                Span.styled("success:", dim), Span.raw(" " + lastSuccess + " "),
-                Span.styled("fail:", dim), Span.raw(" " + lastFail));
-        frame.renderWidget(Paragraph.builder()
-                .text(Text.from(Line.from(Span.raw("")), metricsLine1, metricsLine2))
-                .block(Block.builder().borderType(BorderType.ROUNDED).build())
-                .build(), vSplit.get(2));
-    }
-
-    private String cbSortLabel(String label, String column) {
-        return sortLabel(label, column, cbSort, cbSortReversed);
-    }
-
-    private Style cbSortStyle(String column) {
-        return sortStyle(column, cbSort);
-    }
-
-    private String httpSortLabel(String label, String column) {
-        return sortLabel(label, column, httpSort, httpSortReversed);
-    }
-
-    private Style httpSortStyle(String column) {
-        return sortStyle(column, httpSort);
-    }
-
-    private int sortCircuitBreaker(CircuitBreakerInfo a, CircuitBreakerInfo b) {
-        int result = switch (cbSort) {
-            case "id" -> compareStr(a.id, b.id);
-            case "component" -> compareStr(a.component, b.component);
-            case "state" -> compareStr(a.state, b.state);
-            default -> compareStr(a.routeId, b.routeId); // "route"
-        };
-        return cbSortReversed ? -result : result;
-    }
-
-    private static int compareStr(String a, String b) {
-        if (a == null && b == null)
-            return 0;
-        if (a == null)
-            return 1;
-        if (b == null)
-            return -1;
-        return a.compareToIgnoreCase(b);
-    }
-
-    private void renderSource(Frame frame, Rect area) {
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Source [" + (sourceTitle != null ? sourceTitle : "") + "] ")
-                .build();
-        Rect inner = block.inner(area);
-        frame.renderWidget(block, area);
-
-        if (sourceLines.isEmpty()) {
-            return;
-        }
-
-        int visibleLines = inner.height();
-        int maxScroll = Math.max(0, sourceLines.size() - visibleLines);
-        sourceScroll = Math.min(sourceScroll, maxScroll);
-
-        int maxLineWidth = sourceLines.stream().mapToInt(String::length).max().orElse(0);
-        int maxHScroll = Math.max(0, maxLineWidth - inner.width());
-        sourceScrollX = Math.min(sourceScrollX, maxHScroll);
-
-        int end = Math.min(sourceScroll + visibleLines, sourceLines.size());
-        List<Line> visible = new ArrayList<>();
-        for (int i = sourceScroll; i < end; i++) {
-            String raw = sourceLines.get(i);
-            visible.add(TuiHelper.ansiToLine(raw, sourceScrollX));
-        }
-        frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
-
-        // Vertical scrollbar
-        if (sourceLines.size() > visibleLines) {
-            sourceVScrollState.contentLength(sourceLines.size()).viewportContentLength(visibleLines).position(sourceScroll);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), inner, sourceVScrollState);
-        }
-        // Horizontal scrollbar
-        if (maxHScroll > 0) {
-            sourceHScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(sourceScrollX);
-            frame.renderStatefulWidget(Scrollbar.horizontal(), inner, sourceHScrollState);
-        }
-    }
-
-    // ---- Tab 3: Health ----
-
-    private void renderHealth(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        List<HealthCheckInfo> healthChecks = getFilteredHealthChecks(info);
-
-        List<Row> rows = new ArrayList<>();
-        for (HealthCheckInfo hc : healthChecks) {
-            Style stateStyle;
-            String icon;
-            if ("UP".equals(hc.state)) {
-                stateStyle = Style.EMPTY.fg(Color.GREEN);
-                icon = "\u2714 ";
-            } else if ("DOWN".equals(hc.state)) {
-                stateStyle = Style.EMPTY.fg(Color.LIGHT_RED);
-                icon = "\u2716 ";
-            } else {
-                stateStyle = Style.EMPTY.fg(Color.YELLOW);
-                icon = "\u26A0 ";
-            }
-
-            String kind = "";
-            if (hc.readiness) {
-                kind += "R";
-            }
-            if (hc.liveness) {
-                kind += kind.isEmpty() ? "L" : "/L";
-            }
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(hc.group != null ? hc.group : "", Style.EMPTY.dim())),
-                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(icon + hc.state, stateStyle)),
-                    Cell.from(kind),
-                    Cell.from(hc.message != null ? hc.message : "")));
-        }
-
-        if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(""),
-                    Cell.from(Span.styled(showOnlyDown ? "No DOWN checks" : "No health checks registered",
-                            Style.EMPTY.dim())),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from("")));
-        }
-
-        String title = showOnlyDown
-                ? " Health [DOWN only] "
-                : " Health ";
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("GROUP", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("NAME", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("KIND", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
-                .widths(
-                        Constraint.length(12),
-                        Constraint.length(25),
-                        Constraint.length(12),
-                        Constraint.length(6),
-                        Constraint.fill())
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
-                .build();
-
-        frame.renderStatefulWidget(table, area, healthTableState);
-    }
-
-    private List<HealthCheckInfo> getFilteredHealthChecks(IntegrationInfo info) {
-        if (showOnlyDown) {
-            return info.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).toList();
-        }
-        return info.healthChecks;
-    }
-
-    // ---- Tab 4: Endpoints ----
-
-    private void renderEndpoints(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        List<EndpointInfo> sortedEndpoints = new ArrayList<>(info.endpoints);
-        if (endpointFilter == 1) {
-            sortedEndpoints.removeIf(ep -> !ep.remote);
-        } else if (endpointFilter == 2) {
-            sortedEndpoints.removeIf(ep -> !ep.remote && !ep.stub);
-        }
-        sortedEndpoints.sort(this::sortEndpoint);
-
-        List<Row> rows = new ArrayList<>();
-        for (EndpointInfo ep : sortedEndpoints) {
-            String dir = ep.direction != null ? ep.direction : "";
-            Style dirStyle = switch (dir) {
-                case "in" -> Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
-                case "out" -> Style.EMPTY.fg(Color.CYAN);
-                default -> Style.EMPTY.fg(Color.YELLOW);
-            };
-            String arrow = switch (dir) {
-                case "in" -> "\u2192 ";
-                case "out" -> "\u2190 ";
-                default -> "\u2194 ";
-            };
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(ep.routeId != null ? ep.routeId : ""),
-                    Cell.from(Span.styled(arrow + dir, dirStyle)),
-                    rightCell(ep.hits > 0 ? String.valueOf(ep.hits) : "", 8),
-                    centerCell(ep.stub ? "x" : "", 6),
-                    centerCell(ep.remote ? "x" : "", 8),
-                    Cell.from(ep.uri != null ? ep.uri : "")));
-        }
-
-        if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from("")));
-        }
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled(endpointSortLabel("COMPONENT", "component"), endpointSortStyle("component"))),
-                        Cell.from(Span.styled(endpointSortLabel("ROUTE", "route"), endpointSortStyle("route"))),
-                        Cell.from(Span.styled(endpointSortLabel("DIR", "dir"), endpointSortStyle("dir"))),
-                        rightCell(endpointSortLabel("TOTAL", "total"), 8, endpointSortStyle("total")),
-                        centerCell("STUB", 6, Style.EMPTY.bold()),
-                        centerCell("REMOTE", 8, Style.EMPTY.bold()),
-                        Cell.from(Span.styled(endpointSortLabel("URI", "uri"), endpointSortStyle("uri")))))
-                .widths(
-                        Constraint.length(15),
-                        Constraint.length(20),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.fill())
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Endpoints sort:" + endpointSort
-                               + (endpointFilter == 1 ? " filter:remote" : endpointFilter == 2 ? " filter:remote+stub" : "")
-                               + " ")
-                        .build())
-                .build();
-
-        List<Rect> chunks = showEndpointChart
-                ? Layout.vertical().constraints(Constraint.fill(), Constraint.length(16)).split(area)
-                : List.of(area);
-
-        frame.renderStatefulWidget(table, chunks.get(0), endpointTableState);
-
-        if (showEndpointChart) {
-            long inTotal = info.endpoints.stream()
-                    .filter(ep -> "in".equals(ep.direction) && endpointMatchesFilter(ep))
-                    .mapToLong(ep -> ep.hits)
-                    .sum();
-            long outTotal = info.endpoints.stream()
-                    .filter(ep -> "out".equals(ep.direction) && endpointMatchesFilter(ep))
-                    .mapToLong(ep -> ep.hits)
-                    .sum();
-            renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid, endpointFilter);
-        }
-    }
-
-    private void renderEndpointFlow(
-            Frame frame, Rect area, long inTotal, long outTotal, String name, String pid, int filter) {
-        List<Rect> hSplit = Layout.horizontal()
-                .constraints(Constraint.length(38), Constraint.fill())
-                .split(area);
-
-        // --- Left: ASCII flow diagram ---
-        int w = Math.max(10, hSplit.get(0).width() - 2);
-
-        String label = name != null ? name : "INTEGRATION";
-        if (CharWidth.of(label) > 20) {
-            label = CharWidth.truncateWithEllipsis(label, 20, CharWidth.TruncatePosition.END);
-        }
-        String box = "[ " + label + " ]";
-        int boxLen = CharWidth.of(box);
-
-        int sideLen = Math.max(4, (w - boxLen - 2) / 2);
-        String arm = "─".repeat(Math.max(1, sideLen - 1));
-        String arrowStr = arm + "►";
-
-        String inStr = String.valueOf(inTotal);
-        String outStr = String.valueOf(outTotal);
-
-        int inPad = Math.max(0, sideLen - inStr.length());
-        int centerGap = boxLen + 2;
-        int outPad = Math.max(0, sideLen - outStr.length());
-
-        // Centre "in"/"out" labels within the fixed sideLen slot, independent of count width
-        int inLabelPad = (sideLen - 2) / 2;
-        int outLabelPad = (sideLen - 3) / 2;
-        String inLabelStr = " ".repeat(inLabelPad) + "in" + " ".repeat(sideLen - inLabelPad - 2);
-        String outLabelStr = " ".repeat(outLabelPad) + "out";
-
-        Style inStyle = Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
-        Style outStyle = Style.EMPTY.fg(Color.CYAN);
-        Style dimStyle = Style.EMPTY.dim();
-
-        List<Line> flowLines = new ArrayList<>();
-        flowLines.add(Line.from(Span.raw("")));
-        flowLines.add(Line.from(Span.raw("")));
-        flowLines.add(Line.from(
-                Span.styled(" ".repeat(inPad) + inStr, inTotal > 0 ? inStyle : dimStyle),
-                Span.raw(" ".repeat(centerGap)),
-                Span.styled(outStr + " ".repeat(outPad), outTotal > 0 ? outStyle : dimStyle)));
-        flowLines.add(Line.from(
-                Span.styled(arrowStr, inStyle),
-                Span.raw(" "),
-                Span.styled(box, Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(" "),
-                Span.styled(arrowStr, outStyle)));
-        flowLines.add(Line.from(
-                Span.styled(inLabelStr, inStyle.dim()),
-                Span.raw(" ".repeat(centerGap)),
-                Span.styled(outLabelStr, outStyle.dim())));
-
-        frame.renderWidget(Paragraph.builder()
-                .text(Text.from(flowLines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Flow ").build())
-                .build(), hSplit.get(0));
-
-        // --- Right: 60-second sliding window chart (in=green up, out=blue down) ---
-        Map<String, LinkedList<Long>> inHistMap = switch (filter) {
-            case 1 -> endpointRemoteInHistory;
-            case 2 -> endpointRemoteStubInHistory;
-            default -> endpointInHistory;
-        };
-        Map<String, LinkedList<Long>> outHistMap = switch (filter) {
-            case 1 -> endpointRemoteOutHistory;
-            case 2 -> endpointRemoteStubOutHistory;
-            default -> endpointOutHistory;
-        };
-        LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
-        LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
-
-        int renderPoints = MAX_ENDPOINT_CHART_POINTS;
-        long[] inArr = new long[renderPoints];
-        long[] outArr = new long[renderPoints];
-        for (int i = 0; i < renderPoints; i++) {
-            int idx = inHist.size() - renderPoints + i;
-            if (idx >= 0) {
-                inArr[i] = inHist.get(idx);
-            }
-            idx = outHist.size() - renderPoints + i;
-            if (idx >= 0) {
-                outArr[i] = outHist.get(idx);
-            }
-        }
-        long curIn = inArr[renderPoints - 1];
-        long curOut = outArr[renderPoints - 1];
-
-        Line chartTitle = Line.from(
-                Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
-                Span.raw(String.format(" in:%-4d ", curIn)),
-                Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
-                Span.raw(String.format(" out:%-4d msg/s", curOut)));
-
-        Rect rightArea = hSplit.get(1);
-        frame.renderWidget(MirroredSparkline.builder()
-                .topData(inArr)
-                .bottomData(outArr)
-                .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
-                .bottomStyle(Style.EMPTY.fg(Color.CYAN))
-                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
-                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(Title.from(chartTitle)).build())
-                .build(), rightArea);
-    }
-
-    // ---- Tab 5: Log ----
-
-    private void renderLog(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        InfraInfo infraSel = info == null ? findSelectedInfra() : null;
-        if (info == null && infraSel == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        List<LogEntry> entries = filteredLogEntries;
-        int contentHeight = entries.size();
-
-        long totalRead = logTotalLinesRead;
-        String chunkSuffix = totalRead > entries.size()
-                ? " #" + (totalRead - entries.size() + 1) + "-" + totalRead
-                : "";
-        String logTitle;
-        if (infraSel != null) {
-            logTitle = " Log [" + infraSel.alias + "]" + chunkSuffix + " ";
-        } else if (info.rootLogLevel != null) {
-            logTitle = " Log level:" + info.rootLogLevel + chunkSuffix + " ";
-        } else {
-            logTitle = " Log" + chunkSuffix + " ";
-        }
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(logTitle)
-                .build();
-        frame.renderWidget(block, area);
-
-        Rect inner = block.inner(area);
-        int visibleHeight = Math.max(1, inner.height());
-
-        // Compensate for buffer evictions: when the ring buffer is full and new lines
-        // push old ones off the front, logScroll (an absolute index) would drift forward
-        // without this adjustment, making the view scroll even with follow mode off.
-        long evictedNow = Math.max(0L, logTotalLinesRead - entries.size());
-        if (!logFollowMode && evictedNow > logEvictedSeen) {
-            logScroll = (int) Math.max(0, logScroll - (evictedNow - logEvictedSeen));
-        }
-        logEvictedSeen = evictedNow;
-
-        if (logFollowMode) {
-            logScroll = Math.max(0, contentHeight - visibleHeight);
-        }
-        logScroll = Math.min(logScroll, Math.max(0, contentHeight - visibleHeight));
-
-        int hSkip = logWordWrap ? 0 : logHScroll;
-
-        // Rebuild Line cache only when entries or horizontal offset changes
-        if (entries != cachedLogEntries || hSkip != cachedLogHSkip) {
-            cachedLogEntries = entries;
-            cachedLogHSkip = hSkip;
-            List<Line> built = new ArrayList<>(entries.size());
-            int maxW = 0;
-            for (LogEntry entry : entries) {
-                String raw = entry.raw != null ? entry.raw : "";
-                if (!logWordWrap) {
-                    maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
-                }
-                built.add(TuiHelper.ansiToLine(raw, hSkip));
-            }
-            cachedLogMaxWidth = maxW;
-            cachedLogLines = built;
-        }
-
-        // Cap horizontal scroll using cached max width
-        if (!logWordWrap) {
-            int visibleWidth = Math.max(1, inner.width() - 1);
-            logHScroll = Math.min(logHScroll, Math.max(0, cachedLogMaxWidth - visibleWidth));
-        }
-
-        // Slice only the visible window so Paragraph doesn't iterate all entries every frame
-        List<Line> allLines = cachedLogLines;
-        int start = Math.min(logScroll, Math.max(0, allLines.size() - visibleHeight));
-        List<Line> visibleLines = allLines.subList(start, Math.min(allLines.size(), start + visibleHeight));
-
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        Overflow overflow = logWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
-        Paragraph para = Paragraph.builder()
-                .text(Text.from(visibleLines))
-                .overflow(overflow)
-                .build();
-        frame.renderWidget(para, hChunks.get(0));
-
-        if (contentHeight > visibleHeight) {
-            logScrollState.contentLength(contentHeight);
-            logScrollState.viewportContentLength(visibleHeight);
-            logScrollState.position(logScroll);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), logScrollState);
-        }
-
-        if (showLogLevelPopup) {
-            renderLogLevelPopup(frame, area);
-        }
-    }
-
-    private void renderLogLevelPopup(Frame frame, Rect area) {
-        int popupW = 24;
-        int popupH = 7; // 2 border rows + 5 level items
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
-
-        // Clear the popup area so log content doesn't bleed through the border
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        ListWidget list = ListWidget.builder()
-                .items(
-                        ListItem.from("  ERROR  ").style(Style.EMPTY.fg(Color.LIGHT_RED)),
-                        ListItem.from("  WARN   ").style(Style.EMPTY.fg(Color.YELLOW)),
-                        ListItem.from("  INFO   ").style(Style.EMPTY),
-                        ListItem.from("  DEBUG  ").style(Style.EMPTY.fg(Color.CYAN)),
-                        ListItem.from("  TRACE  ").style(Style.EMPTY.dim()))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
-                        .title(" Set Log Level ")
-                        .build())
-                .build();
-
-        frame.renderStatefulWidget(list, popup, logLevelListState);
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
     }
 
     private void renderKillConfirm(Frame frame, Rect area) {
         String name = selectedName();
-        String msg = " Kill " + name + " (PID: " + selectedPid + ")? ";
+        String msg = " Kill " + name + " (PID: " + ctx.selectedPid + ")? ";
         int popupW = Math.max(34, msg.length() + 4);
         int popupH = 6;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
@@ -4275,1372 +1433,47 @@ public class CamelMonitor extends CamelCommand {
                 inner);
     }
 
-    private void sendLoggerLevelAction(String pid, String level) {
-        JsonObject root = new JsonObject();
-        root.put("action", "logger");
-        root.put("command", "set-logging-level");
-        root.put("logger-name", "root");
-        root.put("logging-level", level);
-        Path actionFile = getActionFile(pid);
-        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
-    }
-
-    private void readNewLogLines(String pid, List<String> newLines) {
-        readNewLogLinesFromFile(pid, pid + ".log", newLines);
-    }
-
-    private void readNewLogLinesFromFile(String pid, String fileName, List<String> newLines) {
-        Path logFile = CommandLineHelper.getCamelDir().resolve(fileName);
-        if (!Files.exists(logFile)) {
-            logFilePid = pid;
-            logFilePos = -1;
-            return;
-        }
-        logFilePid = pid;
-        try (RandomAccessFile raf = new RandomAccessFile(logFile.toFile(), "r")) {
-            long length = raf.length();
-            if (logFilePos < 0 || logFilePos > length) {
-                // First read or file truncated/rotated: start 1 MB from end
-                logFilePos = Math.max(0, length - 1024 * 1024);
-                logLineBuffer.setLength(0);
-            }
-            if (logFilePos >= length) {
-                return; // nothing new
-            }
-            raf.seek(logFilePos);
-            byte[] buf = new byte[(int) Math.min(length - logFilePos, 4 * 1024 * 1024)];
-            raf.readFully(buf);
-            logFilePos += buf.length;
-
-            // Prepend any unfinished line from previous read, then process line by line
-            String chunk = logLineBuffer + new String(buf, StandardCharsets.UTF_8);
-            logLineBuffer.setLength(0);
-            int start = 0;
-            int end;
-            while ((end = chunk.indexOf('\n', start)) >= 0) {
-                // TODO: remove fixControlChars workaround once TamboUI ships a release that
-                // sanitises C0 control chars in Buffer.setString (fix contributed in PR #345).
-                String line = TuiHelper.fixControlChars(chunk.substring(start, end));
-                if (!line.isEmpty()) {
-                    newLines.add(line);
-                }
-                start = end + 1;
-            }
-            // Save incomplete trailing line for next call
-            if (start < chunk.length()) {
-                logLineBuffer.append(chunk, start, chunk.length());
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-    }
-
-    // Regex for Spring Boot / Camel log format:
-    // "2026-03-23T21:24:11.705+01:00  WARN 11283 --- [thread] logger : message"
-    // "2026-03-23 21:24:11.705  WARN 11283 --- [thread] logger : message"
-    private static final Pattern LOG_PATTERN = Pattern.compile(
-            "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
-                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
-                                                               + "\\d+\\s+---\\s+"
-                                                               + "\\[([^]]*)]\\s+"
-                                                               + "(\\S+)\\s*:\\s*(.*)$");
-
-    private static LogEntry parseLogLine(String line) {
-        LogEntry entry = new LogEntry();
-        entry.raw = line;
-        try {
-            String plain = TuiHelper.stripAnsi(line);
-            Matcher m = LOG_PATTERN.matcher(plain);
-            if (m.matches()) {
-                entry.time = m.group(2); // HH:mm:ss.SSS...
-                // Truncate time to 12 chars (HH:mm:ss.SSS)
-                if (entry.time.length() > 12) {
-                    entry.time = entry.time.substring(0, 12);
-                }
-                entry.level = m.group(3);
-                entry.logger = m.group(5);
-                // Shorten logger to simple name
-                int lastDot = entry.logger.lastIndexOf('.');
-                if (lastDot > 0) {
-                    entry.logger = entry.logger.substring(lastDot + 1);
-                }
-                entry.message = m.group(6);
-            } else {
-                entry.time = "";
-                entry.level = "INFO";
-                entry.message = plain;
-            }
-        } catch (Exception e) {
-            entry.time = "";
-            entry.level = "INFO";
-            entry.message = TuiHelper.stripAnsi(line);
-        }
-        return entry;
-    }
-
-    // ---- Tab 9: HTTP Services ----
-
-    private List<HttpEndpointInfo> visibleHttpEndpoints(IntegrationInfo info) {
-        if (info == null) {
-            return Collections.emptyList();
-        }
-        List<HttpEndpointInfo> result = new ArrayList<>();
-        for (HttpEndpointInfo ep : info.httpEndpoints) {
-            if (ep.management && !httpShowManagement) {
-                continue;
-            }
-            if (httpFilter == 1 && !ep.fromRest) {
-                continue;
-            }
-            if (httpFilter == 2 && ep.fromRest) {
-                continue;
-            }
-            result.add(ep);
-        }
-        return result;
-    }
-
-    private List<HttpEndpointInfo> sortedVisibleHttpEndpoints(IntegrationInfo info) {
-        List<HttpEndpointInfo> visible = visibleHttpEndpoints(info);
-        visible.sort((a, b) -> {
-            int result = switch (httpSort) {
-                case "path" -> compareStr(a.path, b.path);
-                case "source" -> Boolean.compare(b.fromRest, a.fromRest);
-                case "consumes" -> compareStr(a.consumes, b.consumes);
-                case "produces" -> compareStr(a.produces, b.produces);
-                default -> compareStr(a.method, b.method); // "method"
-            };
-            return httpSortReversed ? -result : result;
-        });
-        return visible;
-    }
-
-    private void renderHttp(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        if (showHttpSpec) {
-            renderHttpSpec(frame, area);
-            return;
-        }
-
-        List<HttpEndpointInfo> visible = sortedVisibleHttpEndpoints(info);
-
-        // Layout: server info row (1) + table (fill) + detail (10)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(1), Constraint.fill(), Constraint.length(10))
-                .split(area);
-
-        // Server info row
-        renderHttpServerInfo(frame, chunks.get(0), info, visible);
-
-        // Table
-        renderHttpTable(frame, chunks.get(1), visible);
-
-        // Detail panel
-        renderHttpDetail(frame, chunks.get(2), visible);
-    }
-
-    private void renderHttpServerInfo(Frame frame, Rect area, IntegrationInfo info, List<HttpEndpointInfo> visible) {
-        List<Span> spans = new ArrayList<>();
-        if (info.httpServer != null) {
-            spans.add(Span.styled(" Server: ", Style.EMPTY.fg(Color.YELLOW).bold()));
-            spans.add(Span.styled(info.httpServer, Style.EMPTY.fg(Color.CYAN)));
-            spans.add(Span.raw("    "));
-        }
-        long restCount = info.httpEndpoints.stream().filter(e -> e.fromRest && !e.specification).count();
-        long specCount = info.httpEndpoints.stream().filter(e -> e.specification).count();
-        long httpCount = info.httpEndpoints.stream().filter(e -> !e.fromRest && !e.management).count();
-        long mgmtCount = info.httpEndpoints.stream().filter(e -> e.management).count();
-        if (restCount > 0) {
-            spans.add(Span.styled("REST: ", Style.EMPTY.fg(Color.GREEN)));
-            spans.add(Span.raw(restCount + "  "));
-        }
-        if (specCount > 0) {
-            spans.add(Span.styled("Spec: ", Style.EMPTY.fg(Color.MAGENTA)));
-            spans.add(Span.raw(specCount + "  "));
-        }
-        if (httpCount > 0) {
-            spans.add(Span.styled("HTTP: ", Style.EMPTY.fg(Color.CYAN)));
-            spans.add(Span.raw(httpCount + "  "));
-        }
-        if (mgmtCount > 0) {
-            spans.add(Span.styled("Mgmt: ", Style.EMPTY.fg(Color.YELLOW).dim()));
-            spans.add(Span.raw(mgmtCount + ""));
-        }
-        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
-    }
-
-    private static Style methodStyle(String method) {
-        if (method == null) {
-            return Style.EMPTY;
-        }
-        // Use first verb if comma-separated
-        String m = method.split(",")[0].trim().toUpperCase(Locale.ENGLISH);
-        return switch (m) {
-            case "GET" -> Style.EMPTY.fg(Color.GREEN);
-            case "POST" -> Style.EMPTY.fg(Color.YELLOW);
-            case "PUT" -> Style.EMPTY.fg(Color.CYAN);
-            case "DELETE" -> Style.EMPTY.fg(Color.LIGHT_RED);
-            case "PATCH" -> Style.EMPTY.fg(Color.rgb(0xFF, 0x80, 0x00));
-            default -> Style.EMPTY.dim();
-        };
-    }
-
-    private void renderHttpTable(Frame frame, Rect area, List<HttpEndpointInfo> visible) {
-        List<Row> rows = new ArrayList<>();
-        for (HttpEndpointInfo ep : visible) {
-            String method = ep.method != null ? ep.method : "";
-            String path = ep.path != null ? ep.path : (ep.url != null ? ep.url : "");
-            String consumes = ep.consumes != null ? ep.consumes : "";
-            String produces = ep.produces != null ? ep.produces : "";
-            String source;
-            if (ep.management) {
-                source = "Mgmt";
-            } else if (ep.specification) {
-                source = "API Spec";
-            } else if (ep.fromRest) {
-                source = ep.contractFirst ? "REST(contract)" : "REST(code)";
-            } else {
-                source = "HTTP";
-            }
-            String state = ep.state != null ? ep.state : "";
-            String hitsStr = ep.hits > 0 ? String.valueOf(ep.hits) : "";
-            rows.add(Row.from(
-                    Cell.from(Span.styled(method, methodStyle(method))),
-                    Cell.from(path),
-                    rightCell(hitsStr, 8),
-                    Cell.from(consumes),
-                    Cell.from(produces),
-                    Cell.from(Span.styled(source,
-                            ep.specification ? Style.EMPTY.fg(Color.MAGENTA)
-                                    : ep.fromRest ? Style.EMPTY.fg(Color.GREEN)
-                                    : Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(state,
-                            "Stopped".equals(state) ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
-        }
-
-        String title = String.format(" HTTP Services [%d] sort:%s ", visible.size(), httpSort);
-
-        Row header = Row.from(
-                Cell.from(Span.styled(httpSortLabel("METHOD", "method"), httpSortStyle("method"))),
-                Cell.from(Span.styled(httpSortLabel("PATH", "path"), httpSortStyle("path"))),
-                rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                Cell.from(Span.styled(httpSortLabel("CONSUMES", "consumes"), httpSortStyle("consumes"))),
-                Cell.from(Span.styled(httpSortLabel("PRODUCES", "produces"), httpSortStyle("produces"))),
-                Cell.from(Span.styled(httpSortLabel("SOURCE", "source"), httpSortStyle("source"))),
-                Cell.from(Span.styled("STATE", Style.EMPTY.bold())));
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(12),
-                        Constraint.fill(),
-                        Constraint.length(8),
-                        Constraint.length(30),
-                        Constraint.length(30),
-                        Constraint.length(15),
-                        Constraint.length(8))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
-                .build();
-
-        frame.renderStatefulWidget(table, area, httpTableState);
-    }
-
-    private void renderHttpDetail(Frame frame, Rect area, List<HttpEndpointInfo> visible) {
-        Integer sel = httpTableState.selected();
-        if (sel == null || sel < 0 || sel >= visible.size()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(
-                                    Span.styled(" Select an endpoint to view details",
-                                            Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
-                                    .title(" Detail ").build())
-                            .build(),
-                    area);
-            return;
-        }
-
-        HttpEndpointInfo ep = visible.get(sel);
-        List<Span> titleSpans = new ArrayList<>();
-        if (ep.method != null) {
-            titleSpans.add(Span.raw(" "));
-            titleSpans.add(Span.styled(ep.method, methodStyle(ep.method).bold()));
-            titleSpans.add(Span.raw(" "));
-        }
-        if (ep.path != null) {
-            titleSpans.add(Span.raw(ep.path + " "));
-        }
-        Title detailTitle = Title.from(Line.from(titleSpans));
-
-        List<Line> lines = new ArrayList<>();
-        addDetailLine(lines, "URL", ep.url);
-        addDetailLine(lines, "Consumes", ep.consumes);
-        addDetailLine(lines, "Produces", ep.produces);
-        String sourceStr;
-        if (ep.management) {
-            sourceStr = "Platform-HTTP (management)";
-        } else if (ep.specification) {
-            sourceStr = "REST DSL (API specification - " + (ep.contractFirst ? "contract-first" : "code-first") + ")";
-        } else if (ep.fromRest) {
-            sourceStr = "REST DSL (" + (ep.contractFirst ? "contract-first" : "code-first") + ")";
-        } else {
-            sourceStr = "Platform-HTTP";
-        }
-        addDetailLine(lines, "Source", sourceStr);
-        if (ep.routeId != null) {
-            addDetailLine(lines, "Route", ep.routeId);
-        }
-        if (ep.operationId != null) {
-            addDetailLine(lines, "Operation", ep.operationId);
-        }
-        if (ep.specificationUri != null) {
-            addDetailLine(lines, "Spec", ep.specificationUri);
-        }
-        if (ep.state != null) {
-            addDetailLine(lines, "State", ep.state);
-        }
-        if (ep.inType != null) {
-            addDetailLine(lines, "In type", ep.inType);
-        }
-        if (ep.outType != null) {
-            addDetailLine(lines, "Out type", ep.outType);
-        }
-        if (ep.description != null) {
-            addDetailLine(lines, "Desc", ep.description);
-        }
-
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(detailTitle).build())
-                        .build(),
-                area);
-    }
-
-    private static void addDetailLine(List<Line> lines, String label, String value) {
-        if (value == null || value.isEmpty()) {
-            return;
-        }
-        lines.add(Line.from(
-                Span.styled(String.format("  %-10s ", label + ":"), Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(value)));
-    }
-
-    private void loadSpecForSelectedHttpEndpoint() {
-        if (selectedPid == null || runner == null) {
-            return;
-        }
-        List<HttpEndpointInfo> visible = sortedVisibleHttpEndpoints(findSelectedIntegration());
-        Integer sel = httpTableState.selected();
-        if (sel == null || sel < 0 || sel >= visible.size()) {
-            return;
-        }
-        HttpEndpointInfo ep = visible.get(sel);
-        if (ep.specificationUri == null) {
-            return;
-        }
-        if (!specLoading.compareAndSet(false, true)) {
-            return;
-        }
-
-        httpSpecLines = List.of("(Loading spec...)");
-        httpSpecTitle = ep.specificationUri;
-        httpSpecScroll = 0;
-        showHttpSpec = true;
-
-        String pid = selectedPid;
-        String specUri = ep.specificationUri;
-        String operationId = ep.operationId;
-
-        runner.scheduler().execute(() -> {
-            try {
-                loadSpecInBackground(pid, specUri, operationId);
-            } finally {
-                specLoading.set(false);
-            }
-        });
-    }
-
-    private void loadSpecInBackground(String pid, String specUri, String operationId) {
-        Path outputFile = getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "rest-spec");
-        root.put("filter", specUri);
-
-        Path actionFile = getActionFile(pid);
-        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
-
-        if (jo == null) {
-            applySpecResult(specUri, List.of("(No response from integration)"), 0);
-            return;
-        }
-
-        JsonArray specs = (JsonArray) jo.get("specs");
-        if (specs == null || specs.isEmpty()) {
-            applySpecResult(specUri, List.of("(No spec content available for: " + specUri + ")"), 0);
-            return;
-        }
-
-        JsonObject specObj = (JsonObject) specs.get(0);
-        String content = specObj.getString("content");
-        if (content == null || content.isBlank()) {
-            applySpecResult(specUri, List.of("(Empty spec content for: " + specUri + ")"), 0);
-            return;
-        }
-
-        List<String> lines = List.of(content.split("\n", -1));
-
-        int scrollTo = 0;
-        if (operationId != null) {
-            // Find the line that declares this operationId
-            int opIdLine = -1;
-            for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i);
-                // match both YAML (operationId: foo) and JSON ("operationId": "foo")
-                if (line.contains("operationId") && line.contains(operationId)) {
-                    opIdLine = i;
-                    break;
-                }
-            }
-            if (opIdLine >= 0) {
-                scrollTo = findOperationDeclarationLine(lines, opIdLine);
-            }
-        }
-
-        applySpecResult(specUri, lines, scrollTo);
-    }
-
-    private static final Set<String> OPENAPI_HTTP_VERBS
-            = Set.of("get", "post", "put", "delete", "patch", "options", "head", "trace");
-
-    /**
-     * Walk backwards from the operationId line to find where the HTTP verb declaration starts (e.g. "get:" in YAML or
-     * '"get":' in JSON). Returns the line index to scroll to.
-     */
-    private static int findOperationDeclarationLine(List<String> lines, int opIdLine) {
-        int opIdIndent = leadingSpaces(lines.get(opIdLine));
-        for (int i = opIdLine - 1; i >= 0; i--) {
-            String raw = lines.get(i);
-            String trimmed = raw.trim();
-            if (trimmed.isEmpty()) {
-                continue;
-            }
-            int indent = leadingSpaces(raw);
-            if (indent >= opIdIndent) {
-                continue; // still inside the operation body
-            }
-            // Check if this line is an HTTP verb (YAML: "get:" / JSON: '"get":')
-            String lower = trimmed.toLowerCase(Locale.ENGLISH);
-            for (String verb : OPENAPI_HTTP_VERBS) {
-                if (lower.equals(verb + ":") || lower.startsWith(verb + ": ")
-                        || lower.equals("\"" + verb + "\":") || lower.startsWith("\"" + verb + "\": ")) {
-                    return Math.max(0, i - 1); // show one line of context above
-                }
-            }
-            // Hit something at a shallower indent that isn't a verb (e.g. a path key) — stop
-            break;
-        }
-        // Fallback: scroll to operationId line with a couple lines of context
-        return Math.max(0, opIdLine - 2);
-    }
-
-    private static int leadingSpaces(String line) {
-        int count = 0;
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
-            if (c == ' ') {
-                count++;
-            } else if (c == '\t') {
-                count += 2;
-            } else {
-                break;
-            }
-        }
-        return count;
-    }
-
-    private void applySpecResult(String specUri, List<String> lines, int scrollTo) {
-        if (runner == null) {
-            return;
-        }
-        runner.runOnRenderThread(() -> {
-            if (!showHttpSpec) {
-                return;
-            }
-            httpSpecTitle = specUri;
-            httpSpecLines = lines;
-            httpSpecScroll = scrollTo;
-        });
-    }
-
-    private void renderHttpSpec(Frame frame, Rect area) {
-        String title = " Spec [" + (httpSpecTitle != null ? httpSpecTitle : "") + "] ";
-
-        int visibleLines = area.height() - 2; // border top+bottom
-        if (visibleLines < 1) {
-            visibleLines = 1;
-        }
-        int maxScroll = Math.max(0, httpSpecLines.size() - visibleLines);
-        httpSpecScroll = Math.min(httpSpecScroll, maxScroll);
-
-        int end = Math.min(httpSpecScroll + visibleLines, httpSpecLines.size());
-        List<Line> visible = new ArrayList<>();
-        for (int i = httpSpecScroll; i < end; i++) {
-            visible.add(Line.from(Span.raw(httpSpecLines.get(i))));
-        }
-
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(visible))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
-                        .build(),
-                area);
-    }
-
-    // ---- Tab 7: Inspect (merged Last + Tracer) ----
-
-    private void renderInspect(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        boolean tracerActive = !traces.get().isEmpty();
-        if (!tracerActive) {
-            // Tracer OFF: existing Last/History view
-            renderHistory(frame, area);
-            return;
-        }
-
-        // Tracer ON: trace exchange list at top, detail panel at bottom
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(12), Constraint.fill())
-                .split(area);
-
-        renderTraceExchangeList(frame, chunks.get(0));
-
-        if (traceDetailView && traceSelectedExchangeId != null) {
-            renderTraceExchangeDetail(frame, chunks.get(1));
-        } else {
-            renderHistoryDetail(frame, chunks.get(1), historyEntries);
-        }
-    }
-
-    private void renderTraceExchangeList(Frame frame, Rect area) {
-        List<String> exchangeIds = getTraceExchangeIds();
-
-        // Build exchange summaries for sorting
-        List<TraceEntry> current = traces.get();
-        record ExchangeSummary(String exchangeId, String timestamp, long epochMs, String routeId,
-                String status, long elapsed, int steps) {
-        }
-        List<ExchangeSummary> summaries = new ArrayList<>();
-        for (String exchangeId : exchangeIds) {
-            TraceEntry first = null;
-            TraceEntry lastEntry = null;
-            TraceEntry latestEntry = null;
-            int stepCount = 0;
-            for (TraceEntry e : current) {
-                if (exchangeId.equals(e.exchangeId)) {
-                    if (first == null) {
-                        first = e;
-                    }
-                    latestEntry = e;
-                    if (e.last) {
-                        lastEntry = e;
-                    }
-                    stepCount++;
-                }
-            }
-            if (first != null) {
-                TraceEntry doneEntry = lastEntry != null ? lastEntry : latestEntry;
-                String status = doneEntry.status != null ? doneEntry.status : "Processing";
-                long elapsed = doneEntry.elapsed;
-                summaries.add(new ExchangeSummary(
-                        exchangeId, first.timestamp, first.epochMs,
-                        first.routeId, status, elapsed, stepCount));
-            }
-        }
-
-        // Sort
-        summaries.sort((a, b) -> {
-            int result = switch (traceSort) {
-                case "time" -> Long.compare(b.epochMs, a.epochMs);
-                case "route" -> {
-                    String ra = a.routeId != null ? a.routeId : "";
-                    String rb = b.routeId != null ? b.routeId : "";
-                    yield ra.compareToIgnoreCase(rb);
-                }
-                case "elapsed" -> Long.compare(b.elapsed, a.elapsed);
-                case "exchange" -> a.exchangeId.compareTo(b.exchangeId);
-                default -> 0;
-            };
-            return traceSortReversed ? -result : result;
-        });
-
-        traceSortedExchangeIds = summaries.stream().map(ExchangeSummary::exchangeId).toList();
-
-        List<Row> rows = new ArrayList<>();
-        for (ExchangeSummary s : summaries) {
-            Style statusStyle = switch (s.status) {
-                case "Done" -> Style.EMPTY.fg(Color.GREEN);
-                case "Failed" -> Style.EMPTY.fg(Color.LIGHT_RED);
-                case "Processing" -> Style.EMPTY.fg(Color.YELLOW);
-                default -> Style.EMPTY;
-            };
-            rows.add(Row.from(
-                    Cell.from(s.timestamp != null ? truncate(s.timestamp, 12) : ""),
-                    Cell.from(Span.styled(
-                            s.routeId != null ? truncate(s.routeId, 15) : "",
-                            Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(s.status, statusStyle)),
-                    rightCell(s.elapsed + "ms", 10),
-                    rightCell(String.valueOf(s.steps), 6),
-                    Cell.from(s.exchangeId)));
-        }
-
-        Row header = Row.from(
-                Cell.from(Span.styled(traceSortLabel("TIME", "time"), traceSortStyle("time"))),
-                Cell.from(Span.styled(traceSortLabel("ROUTE", "route"), traceSortStyle("route"))),
-                Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
-                rightCell(traceSortLabel("ELAPSED", "elapsed"), 10, traceSortStyle("elapsed")),
-                rightCell("STEPS", 6, Style.EMPTY.bold()),
-                Cell.from(Span.styled(traceSortLabel("EXCHANGE", "exchange"), traceSortStyle("exchange"))));
-
-        String traceTitle = String.format(" Traces [%d] sort:%s ", summaries.size(), traceSort);
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(12),
-                        Constraint.length(15),
-                        Constraint.length(12),
-                        Constraint.length(10),
-                        Constraint.length(6),
-                        Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(traceTitle).build())
-                .build();
-
-        frame.renderStatefulWidget(table, area, traceTableState);
-    }
-
-    private void renderTraceExchangeDetail(Frame frame, Rect area) {
-        List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
-
-        // Layout: step table (fixed 10 rows) + detail panel (fill)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(10), Constraint.fill())
-                .split(area);
-
-        List<Row> rows = new ArrayList<>();
-        for (TraceEntry entry : steps) {
-            rows.add(buildStepRow(
-                    entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, entry.elapsed));
-        }
-
-        String stepTitle = String.format(" Trace [%s] ", truncate(traceSelectedExchangeId, 30));
-        frame.renderStatefulWidget(
-                buildStepTable(rows, stepTitle), chunks.get(0), traceStepTableState);
-
-        // Detail panel for selected step
-        renderTraceStepDetail(frame, chunks.get(1), steps);
-    }
-
-    private void renderTraceStepDetail(Frame frame, Rect area, List<TraceEntry> steps) {
-        Integer sel = traceStepTableState.selected();
-
-        if (sel == null || sel < 0 || sel >= steps.size()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(
-                                    Span.styled(" Select a trace step to view details",
-                                            Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).build())
-                            .build(),
-                    area);
-            return;
-        }
-
-        TraceEntry entry = steps.get(sel);
-        List<Line> lines = new ArrayList<>();
-
-        addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
-                entry.location, entry.elapsed, entry.threadName, entry.failed);
-        if (showTraceProperties) {
-            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes);
-        }
-        if (showTraceVariables) {
-            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes);
-        }
-        if (showTraceHeaders) {
-            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes);
-        }
-        if (showTraceBody) {
-            addBodyLines(lines, entry.body, entry.bodyType);
-        }
-        addExceptionLines(lines, entry.exception);
-
-        int[] scroll = { traceDetailScroll };
-        int[] hScroll = { traceDetailHScroll };
-        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState);
-        traceDetailScroll = scroll[0];
-        traceDetailHScroll = hScroll[0];
-    }
-
-    private List<String> getTraceExchangeIds() {
-        List<TraceEntry> current = traces.get();
-        // LinkedHashSet: O(1) contains, preserves first-seen insertion order
-        LinkedHashSet<String> seen = new LinkedHashSet<>();
-        for (TraceEntry e : current) {
-            if (e.exchangeId != null) {
-                seen.add(e.exchangeId);
-            }
-        }
-        return new ArrayList<>(seen);
-    }
-
-    private List<TraceEntry> getTraceSteps(String exchangeId) {
-        List<TraceEntry> current = traces.get();
-        List<TraceEntry> steps = new ArrayList<>();
-        for (TraceEntry e : current) {
-            if (exchangeId != null && exchangeId.equals(e.exchangeId)) {
-                steps.add(e);
-            }
-        }
-        steps.sort((a, b) -> {
-            String ua = a.uid != null ? a.uid : "";
-            String ub = b.uid != null ? b.uid : "";
-            try {
-                return Long.compare(Long.parseLong(ua), Long.parseLong(ub));
-            } catch (NumberFormatException e) {
-                return ua.compareTo(ub);
-            }
-        });
-        return steps;
-    }
-
-    // ---- History (Last) panel — used by renderInspect when Tracer is OFF ----
-
-    private void renderHistory(Frame frame, Rect area) {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            renderNoSelection(frame, area);
-            return;
-        }
-
-        List<HistoryEntry> current = historyEntries;
-
-        // Layout: history list (fixed 6 rows + header + borders) + detail panel (fill)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(10), Constraint.fill())
-                .split(area);
-
-        // History list
-        List<Row> rows = new ArrayList<>();
-        for (HistoryEntry entry : current) {
-            rows.add(buildStepRow(
-                    entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, entry.elapsed));
-        }
-
-        Title historyTitle = buildHistoryTitle(current);
-        frame.renderStatefulWidget(
-                buildStepTable(rows, historyTitle), chunks.get(0), historyTableState);
-
-        // Detail panel
-        renderHistoryDetail(frame, chunks.get(1), current);
-    }
-
-    private void renderHistoryDetail(Frame frame, Rect area, List<HistoryEntry> current) {
-        Integer sel = historyTableState.selected();
-
-        if (sel == null || sel < 0 || sel >= current.size()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(
-                                    Span.styled(" Select a history entry to view details",
-                                            Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
-                                    .title(" Detail ").build())
-                            .build(),
-                    area);
-            return;
-        }
-
-        HistoryEntry entry = current.get(sel);
-        List<Line> lines = new ArrayList<>();
-
-        addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
-                entry.location, entry.elapsed, entry.threadName, entry.failed);
-        if (showHistoryProperties) {
-            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes);
-        }
-        if (showHistoryVariables) {
-            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes);
-        }
-        if (showHistoryHeaders) {
-            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes);
-        }
-        if (showHistoryBody) {
-            addBodyLines(lines, entry.body, entry.bodyType);
-        }
-        addExceptionLines(lines, entry.exception);
-
-        int[] scroll = { historyDetailScroll };
-        int[] hScroll = { historyDetailHScroll };
-        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState);
-        historyDetailScroll = scroll[0];
-        historyDetailHScroll = hScroll[0];
-    }
-
-    private static void addExchangeInfoLines(
-            List<Line> lines, String exchangeId, String routeId,
-            String nodeId, String nodeLabel, String location, long elapsed, String threadName, boolean failed) {
-        lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(exchangeId != null ? exchangeId : "")));
-        lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(routeId != null ? routeId : ""),
-                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(nodeId != null ? nodeId : ""),
-                Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
-        lines.add(Line.from(
-                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(location != null ? location : "")));
-        lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(threadName != null ? threadName : "")));
-        if (failed) {
-            lines.add(Line.from(
-                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
-        }
-        lines.add(Line.from(Span.raw("")));
-    }
-
-    private static void addKvLines(
-            List<Line> lines, String section,
-            Map<String, Object> map, Map<String, String> types) {
-        if (map == null || map.isEmpty()) {
-            return;
-        }
-        lines.add(Line.from(Span.styled(section, Style.EMPTY.fg(Color.GREEN).bold())));
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String type = types != null ? types.get(entry.getKey()) : null;
-            String typeLabel;
-            if (type != null) {
-                String t = "(" + type + ")";
-                t = TuiHelper.truncateStart(t, 20);
-                typeLabel = String.format("%-20s ", t);
-            } else {
-                typeLabel = String.format("%-21s", "");
-            }
-            String val = entry.getValue() != null ? entry.getValue().toString() : "null";
-            try {
-                val = Jsoner.unescape(val);
-            } catch (Exception e) {
-                // ignore
-            }
-            val = stripControlChars(val);
-            lines.add(Line.from(
-                    Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                    Span.styled(entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                    Span.raw(" = "),
-                    Span.raw(val)));
-        }
-        lines.add(Line.from(Span.raw("")));
-    }
-
-    private static void addBodyLines(List<Line> lines, String body, String bodyType) {
-        if (body != null) {
-            if (bodyType != null) {
-                lines.add(Line.from(
-                        Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
-                        Span.styled("(" + bodyType + ")", Style.EMPTY.dim())));
-            } else {
-                lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
-            }
-            try {
-                body = Jsoner.unescape(body);
-            } catch (Exception e) {
-                // ignore
-            }
-            String[] bodyParts = body.split("\n");
-            for (String bl : bodyParts) {
-                lines.add(Line.from(Span.raw("   " + stripControlChars(bl))));
-            }
-        } else {
-            lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
-        }
-        lines.add(Line.from(Span.raw("")));
-    }
-
-    private static String stripControlChars(String s) {
-        if (s == null) {
-            return s;
-        }
-        boolean needsStrip = false;
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
-            if (ch < 0x20 || (ch >= 0x7F && ch <= 0x9F)) {
-                needsStrip = true;
-                break;
-            }
-        }
-        if (!needsStrip) {
-            return s;
-        }
-        StringBuilder sb = new StringBuilder(s.length());
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
-            if (ch == '\t') {
-                sb.append("    ");
-            } else if (ch < 0x20 || (ch >= 0x7F && ch <= 0x9F)) {
-                // skip C0 and C1 control chars
-            } else {
-                sb.append(ch);
-            }
-        }
-        return sb.toString();
-    }
-
-    private static void addExceptionLines(List<Line> lines, String exception) {
-        if (exception == null) {
-            return;
-        }
-        lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
-        for (String l : exception.split("\n", -1)) {
-            lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(l))));
-        }
-        lines.add(Line.from(Span.raw("")));
-    }
-
-    private void renderDetailPanel(
-            Frame frame, Rect area, List<Line> lines,
-            boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState) {
-        Block block = Block.builder().borderType(BorderType.ROUNDED).build();
-        frame.renderWidget(block, area);
-
-        Rect inner = block.inner(area);
-        int visibleHeight = Math.max(1, inner.height());
-        int visibleWidth = Math.max(1, inner.width() - 1); // -1 for scrollbar column
-        int contentHeight;
-        if (wordWrap) {
-            contentHeight = 0;
-            for (Line l : lines) {
-                int w = l.width();
-                contentHeight += Math.max(1, (w + visibleWidth - 1) / visibleWidth);
-            }
-        } else {
-            contentHeight = lines.size();
-        }
-        int maxScroll = Math.max(0, contentHeight - visibleHeight);
-        if (scroll[0] > maxScroll) {
-            scroll[0] = maxScroll;
-        }
-
-        // Cap horizontal scroll so it can't go past the longest line
-        if (!wordWrap) {
-            int maxLineWidth = lines.stream().mapToInt(Line::width).max().orElse(0);
-            hScroll[0] = Math.min(hScroll[0], Math.max(0, maxLineWidth - visibleWidth));
-        }
-
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        List<Line> visibleLines = (!wordWrap && hScroll[0] > 0) ? applyHSkip(lines, hScroll[0]) : lines;
-        Paragraph detail = Paragraph.builder()
-                .text(Text.from(visibleLines))
-                .overflow(wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
-                .scroll(scroll[0])
-                .build();
-        frame.renderWidget(detail, hChunks.get(0));
-
-        if (contentHeight > visibleHeight) {
-            scrollState.contentLength(contentHeight);
-            scrollState.viewportContentLength(visibleHeight);
-            scrollState.position(scroll[0]);
-            frame.renderStatefulWidget(
-                    Scrollbar.builder().build(),
-                    hChunks.get(1), scrollState);
-        }
-    }
-
-    private static List<Line> applyHSkip(List<Line> lines, int hSkip) {
-        List<Line> result = new ArrayList<>(lines.size());
-        for (Line line : lines) {
-            result.add(hSkipLine(line, hSkip));
-        }
-        return result;
-    }
-
-    private static Line hSkipLine(Line line, int hSkip) {
-        List<Span> result = new ArrayList<>();
-        int skip = hSkip;
-        for (Span span : line.spans()) {
-            if (skip <= 0) {
-                result.add(span);
-                continue;
-            }
-            String text = span.content();
-            int spanWidth = CharWidth.of(text);
-            if (spanWidth <= skip) {
-                skip -= spanWidth;
-            } else {
-                // Partial skip: advance char-by-char until skip columns consumed
-                int i = 0;
-                int consumed = 0;
-                while (i < text.length() && consumed < skip) {
-                    int cp = text.codePointAt(i);
-                    consumed += CharWidth.of(cp);
-                    i += Character.charCount(cp);
-                }
-                skip = 0;
-                String remaining = text.substring(i);
-                if (!remaining.isEmpty()) {
-                    result.add(Span.styled(remaining, span.style()));
-                }
-            }
-        }
-        return Line.from(result);
-    }
-
-    private static Row buildStepRow(
-            String direction, boolean first, boolean last, boolean failed,
-            String timestamp, String routeId, String nodeId, String processor, long elapsed) {
-        Style dirStyle;
-        if (first) {
-            dirStyle = Style.EMPTY.fg(Color.GREEN);
-        } else if (last) {
-            dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
-        } else {
-            dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY;
-        }
-        String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
-        return Row.from(
-                Cell.from(Span.styled(direction, dirStyle)),
-                Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? truncate(routeId, 15) : "", Style.EMPTY.fg(Color.CYAN))),
-                Cell.from(nodeId != null ? truncate(nodeId, 15) : ""),
-                Cell.from(processor != null ? processor : ""),
-                rightCell(elapsedStr, 10));
-    }
-
-    private static Table buildStepTable(List<Row> rows, Object title) {
-        Row header = Row.from(
-                Cell.from(Span.styled("", Style.EMPTY.bold())),
-                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ID", Style.EMPTY.bold())),
-                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                rightCell("ELAPSED", 10, Style.EMPTY.bold()));
-        Block block = title instanceof Title t
-                ? Block.builder().borderType(BorderType.ROUNDED).title(t).build()
-                : Block.builder().borderType(BorderType.ROUNDED).title(title.toString()).build();
-        return Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(4),
-                        Constraint.length(12),
-                        Constraint.length(15),
-                        Constraint.length(15),
-                        Constraint.fill(),
-                        Constraint.length(10))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(block)
-                .build();
-    }
-
-    private Title buildHistoryTitle(List<HistoryEntry> entries) {
-        if (entries.isEmpty()) {
-            return Title.from(" History of last completed ");
-        }
-        HistoryEntry first = entries.get(0);
-        HistoryEntry last = null;
-        for (HistoryEntry e : entries) {
-            if (e.last) {
-                last = e;
-                break;
-            }
-        }
-        if (last == null) {
-            last = entries.get(entries.size() - 1);
-        }
-
-        List<Span> spans = new ArrayList<>();
-        spans.add(Span.raw(" History of last completed ("));
-        boolean failed = last.failed;
-        spans.add(Span.styled("status:" + (failed ? "failed" : "success"),
-                failed ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN).bold()));
-        if (last.elapsed >= 0) {
-            spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));
-        }
-        if (first.epochMs > 0) {
-            String ago = TimeUtils.printSince(first.epochMs);
-            spans.add(Span.raw(" ago:" + ago));
-        }
-        spans.add(Span.raw(") "));
-        return new Title(Line.from(spans), Alignment.LEFT, Overflow.CLIP);
-    }
-
-    // ---- Shared rendering ----
-
-    private void renderNoSelection(Frame frame, Rect area) {
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(Line.from(
-                                Span.styled(" Select an integration from the Overview tab (press 1)",
-                                        Style.EMPTY.dim()))))
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
-                                .title(" No integration selected ").build())
-                        .build(),
-                area);
-    }
-
     private void renderFooter(Frame frame, Rect area) {
         List<Span> spans = new ArrayList<>();
-        int tab = tabsState.selected();
+        MonitorTab tab = activeTab();
 
-        if (tab == TAB_OVERVIEW) {
-            hint(spans, "q", "quit");
-            if (selectedPid != null) {
-                hint(spans, "Esc", infraTableFocused ? "integrations" : "unselect");
-            }
-            hint(spans, "\u2191\u2193", "navigate");
-            if (!infraData.get().isEmpty()) {
-                hint(spans, "i", infraTableFocused ? "integrations" : "infra");
-            }
-            if (!infraTableFocused) {
-                hint(spans, "s", "sort");
-                hint(spans, "a", "chart " + switch (chartMode) {
-                    case CHART_ALL -> "[all]";
-                    case CHART_SINGLE -> "[single]";
-                    default -> "[off]";
-                });
-            }
-            if (selectedPid != null && !infraTableFocused) {
-                IntegrationInfo selInfo = findSelectedIntegration();
-                if (selInfo != null) {
-                    hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
-                }
-            }
-            if (selectedPid != null) {
-                hint(spans, "x", "stop");
-                hint(spans, "X", "kill");
-            }
-            hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
-        } else if (tab == TAB_ROUTES && showSource) {
-            hint(spans, "c/Esc", "close");
-            hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
-            hint(spans, "PgUp/PgDn", "page");
-            hintLast(spans, "Home/End", "top/bottom");
-        } else if (tab == TAB_ROUTES && showDiagram) {
-            String closeKey = diagramTextMode ? "D" : "d";
-            hint(spans, closeKey + "/Esc", "close");
-            hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
-            hint(spans, "PgUp/PgDn", "page");
-            hint(spans, "Home/End", "top/bottom");
-            if (diagramMetrics && !diagramTextMode) {
-                hint(spans, "m", "metrics [on]");
-                hintLast(spans, "F5", "refresh counters");
-            } else {
-                hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
-            }
-        } else if (tab == TAB_ROUTES) {
-            hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "s", "sort");
-            hint(spans, "t", routeTopMode ? "top [on]" : "top [off]");
-            if (!routeTopMode) {
-                hint(spans, "c", "source");
-                hint(spans, "d", "diagram");
-                hint(spans, "D", "text diagram");
-                hint(spans, "a", diagramAllRoutes ? "all [on]" : "all [off]");
-                String routeState = selectedRouteState();
-                boolean supSus = selectedRouteSupportsSuspension();
-                if ("Started".equals(routeState)) {
-                    hint(spans, "p", "stop");
-                    if (supSus) {
-                        hint(spans, "P", "suspend");
-                    }
-                } else if ("Suspended".equals(routeState)) {
-                    hint(spans, "p", "start");
-                    if (supSus) {
-                        hint(spans, "P", "resume");
-                    }
-                } else if (routeState != null) {
-                    hint(spans, "p", "start");
-                }
-            }
-            hint(spans, "1-9", "tabs");
-        } else if (tab == TAB_CONSUMERS) {
-            hint(spans, "Esc", "back");
-            hint(spans, "s", "sort");
-            hint(spans, "1-9", "tabs");
-        } else if (tab == TAB_ENDPOINTS) {
-            hint(spans, "Esc", "back");
-            hint(spans, "s", "sort");
-            String[] filterLabels = { "all", "remote", "remote+stub" };
-            hint(spans, "f", "filter [" + filterLabels[endpointFilter] + "]");
-            hint(spans, "a", "chart " + (showEndpointChart ? "[all]" : "[off]"));
-            hint(spans, "1-9", "tabs");
-        } else if (tab == TAB_CIRCUIT_BREAKER) {
-            hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "s", "sort");
-            hint(spans, "1-9", "tabs");
-        } else if (tab == TAB_HEALTH) {
-            hint(spans, "Esc", "back");
-            hint(spans, "d", "toggle DOWN");
-            hint(spans, "1-9", "tabs");
-        } else if (tab == TAB_LOG && showLogLevelPopup) {
-            hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "Enter", "set level");
-            hintLast(spans, "Esc", "cancel");
-        } else if (tab == TAB_LOG) {
-            hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "scroll");
-            hint(spans, "PgUp/PgDn", "page");
-            hint(spans, "Home/End", "top/end");
-            hint(spans, "w", "wrap" + (logWordWrap ? " [on]" : " [off]"));
-            if (!logWordWrap) {
-                hint(spans, "\u2190\u2192", "h-scroll");
-            }
-            if (!isInfraSelected()) {
-                hint(spans, "l", "level");
-            }
-            hint(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
-            hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
-        } else if (tab == TAB_HTTP && showHttpSpec) {
-            hint(spans, "c/Esc", "close");
-            hint(spans, "↑↓", "scroll");
-            hintLast(spans, "PgUp/PgDn", "page");
-        } else if (tab == TAB_HTTP) {
-            hint(spans, "Esc", "back");
-            hint(spans, "↑↓", "navigate");
-            hint(spans, "s", "sort");
-            String[] filterLabels = { "all", "rest", "http" };
-            hint(spans, "f", "filter [" + filterLabels[httpFilter] + "]");
-            hint(spans, "m", "management" + (httpShowManagement ? " [on]" : " [off]"));
-            // show spec key only when selected row has a spec
-            List<HttpEndpointInfo> hVisible = sortedVisibleHttpEndpoints(findSelectedIntegration());
-            Integer hSel = httpTableState.selected();
-            if (hSel != null && hSel >= 0 && hSel < hVisible.size() && hVisible.get(hSel).specificationUri != null) {
-                hintLast(spans, "c", "spec");
-            } else {
-                hintLast(spans, "1-9", "tabs");
-            }
-        } else if (tab == TAB_HISTORY) {
-            boolean tracerActive = !traces.get().isEmpty();
-            if (tracerActive && traceDetailView) {
-                hint(spans, "Esc", "back");
-                hint(spans, "\u2191\u2193", "navigate");
-                hint(spans, "PgUp/PgDn", "scroll detail");
-                if (!traceWordWrap) {
-                    hint(spans, "\u2190\u2192", "h-scroll");
-                }
-                hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
-                hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
-                hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
-                hint(spans, "b", "body" + (showTraceBody ? " [on]" : " [off]"));
-                hintLast(spans, "w", "wrap" + (traceWordWrap ? " [on]" : " [off]"));
-            } else if (tracerActive) {
-                hint(spans, "Esc", "back");
-                hint(spans, "\u2191\u2193", "navigate");
-                hint(spans, "s", "sort");
-                hint(spans, "Enter", "details");
-                hintLast(spans, "F5", "refresh");
-            } else {
-                hint(spans, "Esc", "back");
-                hint(spans, "\u2191\u2193", "navigate");
-                hint(spans, "PgUp/PgDn", "scroll detail");
-                if (!historyWordWrap) {
-                    hint(spans, "\u2190\u2192", "h-scroll");
-                }
-                hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
-                hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
-                hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
-                hint(spans, "b", "body" + (showHistoryBody ? " [on]" : " [off]"));
-                hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
-                hintLast(spans, "F5", "refresh");
-            }
+        if (tab != null) {
+            tab.renderFooter(spans);
         } else {
-            hint(spans, "Esc", "back");
-            hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "1-9", "tabs");
+            renderOverviewFooter(spans);
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
-    private static String formatSinceLastRoute(RouteInfo route) {
-        return formatSinceLast(route.sinceLastStarted, route.sinceLastCompleted, route.sinceLastFailed);
-    }
-
-    private static Cell rightCell(String text, int width) {
-        return Cell.from(String.format("%" + width + "s", text));
-    }
-
-    private static Cell rightCell(String text, int width, Style style) {
-        return Cell.from(Span.styled(String.format("%" + width + "s", text), style));
-    }
-
-    private static Cell centerCell(String text, int width) {
-        int len = text.length();
-        int padding = Math.max(0, width - len);
-        int leftPad = padding / 2;
-        return Cell.from(" ".repeat(leftPad) + text);
-    }
-
-    private static Cell centerCell(String text, int width, Style style) {
-        int len = text.length();
-        int padding = Math.max(0, width - len);
-        int leftPad = padding / 2;
-        return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
-    }
-
-    private boolean endpointMatchesFilter(EndpointInfo ep) {
-        return switch (endpointFilter) {
-            case 1 -> ep.remote;
-            case 2 -> ep.remote || ep.stub;
-            default -> true;
-        };
-    }
-
-    private static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
-
-    private static void hint(List<Span> spans, String key, String label) {
-        spans.add(Span.styled(" " + key, HINT_KEY_STYLE));
-        spans.add(Span.raw(" " + label + "  "));
-    }
-
-    private static void hintLast(List<Span> spans, String key, String label) {
-        spans.add(Span.styled(" " + key, HINT_KEY_STYLE));
-        spans.add(Span.raw(" " + label));
+    private void renderOverviewFooter(List<Span> spans) {
+        hint(spans, "q", "quit");
+        if (ctx.selectedPid != null) {
+            hint(spans, "Esc", ctx.infraTableFocused ? "integrations" : "unselect");
+        }
+        hint(spans, "↑↓", "navigate");
+        if (!infraData.get().isEmpty()) {
+            hint(spans, "i", ctx.infraTableFocused ? "integrations" : "infra");
+        }
+        if (!ctx.infraTableFocused) {
+            hint(spans, "s", "sort");
+            hint(spans, "a", "chart " + switch (chartMode) {
+                case CHART_ALL -> "[all]";
+                case CHART_SINGLE -> "[single]";
+                default -> "[off]";
+            });
+        }
+        if (ctx.selectedPid != null && !ctx.infraTableFocused) {
+            IntegrationInfo selInfo = findSelectedIntegration();
+            if (selInfo != null) {
+                hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
+            }
+        }
+        if (ctx.selectedPid != null) {
+            hint(spans, "x", "stop");
+            hint(spans, "X", "kill");
+        }
+        hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
     }
 
     // ---- Data Loading ----
@@ -5654,7 +1487,7 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
         lastRefresh = System.currentTimeMillis();
-        String currentSelectedPid = selectedPid;
+        String currentSelectedPid = ctx.selectedPid;
         runner.scheduler().execute(() -> {
             try {
                 refreshDataSync();
@@ -5738,9 +1571,9 @@ public class CamelMonitor extends CamelCommand {
             refreshInfraData();
 
             // Auto-focus infra table when no active integrations exist
-            if (!infraTableFocused && !infraData.get().isEmpty()
+            if (!ctx.infraTableFocused && !infraData.get().isEmpty()
                     && infos.stream().noneMatch(i -> !i.vanishing)) {
-                infraTableFocused = true;
+                ctx.infraTableFocused = true;
                 if (infraTableState.selected() == null) {
                     infraTableState.select(0);
                 }
@@ -5749,7 +1582,6 @@ public class CamelMonitor extends CamelCommand {
 
             // Refresh log data only when the Log tab is visible
             if (tabsState.selected() == TAB_LOG) {
-                // Determine which log file to tail: infra or integration
                 String logPid = null;
                 String logFileName = null;
                 InfraInfo selInfra = findSelectedInfra();
@@ -5764,24 +1596,24 @@ public class CamelMonitor extends CamelCommand {
                     }
                 }
                 if (logPid != null) {
-                    if (!logPid.equals(logFilePid)) {
-                        mutableFilteredEntries.clear();
-                        logFilePos = -1;
-                        logTotalLinesRead = 0;
-                        logEvictedSeen = 0;
-                        logLineBuffer.setLength(0);
+                    if (!logPid.equals(logTab.logFilePid)) {
+                        logTab.mutableFilteredEntries.clear();
+                        logTab.logFilePos = -1;
+                        logTab.logTotalLinesRead = 0;
+                        logTab.logLineBuffer.setLength(0);
                     }
                     List<String> newRawLines = new ArrayList<>();
-                    readNewLogLinesFromFile(logPid, logFileName, newRawLines);
+                    logTab.readNewLogLinesFromFile(logPid, logFileName, newRawLines);
                     if (!newRawLines.isEmpty()) {
-                        logTotalLinesRead += newRawLines.size();
+                        logTab.logTotalLinesRead += newRawLines.size();
                         for (String line : newRawLines) {
-                            mutableFilteredEntries.add(parseLogLine(line));
+                            logTab.mutableFilteredEntries.add(LogTab.parseLogLine(line));
                         }
-                        if (mutableFilteredEntries.size() > MAX_LOG_LINES) {
-                            mutableFilteredEntries.subList(0, mutableFilteredEntries.size() - MAX_LOG_LINES).clear();
+                        if (logTab.mutableFilteredEntries.size() > MAX_LOG_LINES) {
+                            logTab.mutableFilteredEntries.subList(0, logTab.mutableFilteredEntries.size() - MAX_LOG_LINES)
+                                    .clear();
                         }
-                        filteredLogEntries = new ArrayList<>(mutableFilteredEntries);
+                        logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
                     }
                 }
             }
@@ -6249,7 +2081,7 @@ public class CamelMonitor extends CamelCommand {
                 // ignore
             }
         }
-        historyEntries = allEntries;
+        historyTab.historyEntries = allEntries;
     }
 
     @SuppressWarnings("unchecked")
@@ -6847,37 +2679,19 @@ public class CamelMonitor extends CamelCommand {
     // ---- Helpers ----
 
     private IntegrationInfo findSelectedIntegration() {
-        if (selectedPid == null) {
-            return null;
-        }
-        return data.get().stream()
-                .filter(i -> selectedPid.equals(i.pid) && !i.vanishing)
-                .findFirst().orElse(null);
+        return ctx.findSelectedIntegration();
     }
 
     private InfraInfo findSelectedInfra() {
-        if (selectedPid == null) {
-            return null;
-        }
-        return infraData.get().stream()
-                .filter(i -> selectedPid.equals(i.pid) && !i.vanishing)
-                .findFirst().orElse(null);
+        return ctx.findSelectedInfra();
     }
 
     private boolean isInfraSelected() {
-        return infraTableFocused && findSelectedInfra() != null;
+        return ctx.isInfraSelected();
     }
 
     private String selectedName() {
-        IntegrationInfo info = findSelectedIntegration();
-        if (info != null) {
-            return truncate(info.name, 20);
-        }
-        InfraInfo infra = findSelectedInfra();
-        if (infra != null) {
-            return truncate(infra.alias, 20);
-        }
-        return "?";
+        return ctx.selectedName();
     }
 
     private List<Long> findPids(String name) {
@@ -6892,343 +2706,12 @@ public class CamelMonitor extends CamelCommand {
         return ph.info().startInstant().map(Instant::toEpochMilli).orElse(0L);
     }
 
-    private static String truncate(String s, int max) {
-        return TuiHelper.truncate(s, max);
-    }
-
-    private static String formatMemory(long used, long max) {
-        if (used <= 0) {
-            return "";
-        }
-        String u = formatBytes(used);
-        if (max > 0) {
-            return u + "/" + formatBytes(max);
-        }
-        return u;
-    }
-
-    private static String formatBytes(long bytes) {
-        if (bytes < 1024) {
-            return bytes + "B";
-        }
-        if (bytes < 1024 * 1024) {
-            return (bytes / 1024) + "K";
-        }
-        return (bytes / (1024 * 1024)) + "M";
-    }
-
-    private static String formatSinceLast(IntegrationInfo info) {
-        return formatSinceLast(info.sinceLastStarted, info.sinceLastCompleted, info.sinceLastFailed);
-    }
-
-    private static String formatSinceLast(String started, String completed, String failed) {
-        StringBuilder sb = new StringBuilder();
-        if (started != null) {
-            sb.append(started);
-        }
-        if (completed != null) {
-            if (!sb.isEmpty()) {
-                sb.append('/');
-            }
-            sb.append(completed);
-        }
-        if (failed != null) {
-            if (!sb.isEmpty()) {
-                sb.append('/');
-            }
-            sb.append(failed);
-        }
-        return sb.toString();
-    }
-
-    private static String formatThreads(int count, int peak) {
-        if (count <= 0) {
-            return "";
-        }
-        return count + "/" + peak;
-    }
-
     private static String objToString(Object o) {
         return o != null ? o.toString() : "";
     }
 
     private static long objToLong(Object o) {
         return TuiHelper.objToLong(o);
-    }
-
-    // ---- Load Average ----
-
-    private static class LoadAvg {
-        private static final double EXP_1 = Math.exp(-1 / 60.0);
-        private static final double EXP_5 = Math.exp(-1 / (60.0 * 5.0));
-        private static final double EXP_15 = Math.exp(-1 / (60.0 * 15.0));
-
-        private double load1 = Double.NaN;
-        private double load5 = Double.NaN;
-        private double load15 = Double.NaN;
-
-        synchronized void update(double value) {
-            load1 = Double.isNaN(load1) ? value : value + EXP_1 * (load1 - value);
-            load5 = Double.isNaN(load5) ? value : value + EXP_5 * (load5 - value);
-            load15 = Double.isNaN(load15) ? value : value + EXP_15 * (load15 - value);
-        }
-
-        synchronized String format(String fmt) {
-            return Double.isNaN(load1) ? "-" : String.format(fmt, load1, load5, load15);
-        }
-    }
-
-    // ---- Data Classes ----
-
-    static class IntegrationInfo {
-        String pid;
-        String name;
-        String camelVersion;
-        String platform;
-        String platformVersion;
-        String javaVersion;
-        String javaVendor;
-        String javaVmName;
-        String profile;
-        boolean devMode;
-        String ready;
-        int state;
-        long uptime;
-        String ago;
-        String throughput;
-        long exchangesTotal;
-        long failed;
-        long inflight;
-        String inflightLoad01;
-        String inflightLoad05;
-        String inflightLoad15;
-        String last;
-        String delta;
-        String sinceLastStarted;
-        String sinceLastCompleted;
-        String sinceLastFailed;
-        int reloaded;
-        String rootLogLevel;
-        int routeStarted;
-        int routeTotal;
-        long heapMemUsed;
-        long heapMemMax;
-        long nonHeapMemUsed;
-        int threadCount;
-        int peakThreadCount;
-        boolean vanishing;
-        long vanishStart;
-        final List<RouteInfo> routes = new ArrayList<>();
-        final List<ConsumerInfo> consumers = new ArrayList<>();
-        final List<HealthCheckInfo> healthChecks = new ArrayList<>();
-        final List<EndpointInfo> endpoints = new ArrayList<>();
-        final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
-        final List<HttpEndpointInfo> httpEndpoints = new ArrayList<>();
-        String httpServer; // platform-http server binding, e.g. http://0.0.0.0:8080
-    }
-
-    static class RouteInfo {
-        String routeId;
-        String group;
-        String from;
-        String state;
-        boolean supportsSuspension;
-        String uptime;
-        String throughput;
-        String coverage;
-        long total;
-        long failed;
-        long inflight;
-        long meanTime;
-        long minTime;
-        long maxTime;
-        long lastTime;
-        long deltaTime;
-        String load01;
-        String load05;
-        String load15;
-        String sinceLastStarted;
-        String sinceLastCompleted;
-        String sinceLastFailed;
-        final List<ProcessorInfo> processors = new ArrayList<>();
-    }
-
-    static class ProcessorInfo {
-        String id;
-        String processor;
-        int level;
-        long total;
-        long failed;
-        long meanTime;
-        long minTime;
-        long maxTime;
-        long lastTime;
-        long deltaTime;
-        long inflight;
-        String sinceLastStarted;
-        String sinceLastCompleted;
-        String sinceLastFailed;
-    }
-
-    static class HealthCheckInfo {
-        String group;
-        String name;
-        String state;
-        boolean readiness;
-        boolean liveness;
-        String message;
-    }
-
-    static class ConsumerInfo {
-        String id;
-        String uri;
-        String state;
-        String className;
-        boolean scheduled;
-        int inflight;
-        Boolean polling;
-        Long totalCounter;
-        Long delay;
-        Long period;
-        String sinceLastStarted;
-        String sinceLastCompleted;
-        String sinceLastFailed;
-    }
-
-    static class EndpointInfo {
-        String uri;
-        String component;
-        String direction;
-        String routeId;
-        long hits;
-        boolean stub;
-        boolean remote;
-    }
-
-    static class CircuitBreakerInfo {
-        String routeId;
-        String id;
-        String component; // "resilience4j", "fault-tolerance", "core"
-        String state;
-        int bufferedCalls;
-        long successfulCalls;
-        long failedCalls;
-        long notPermittedCalls;
-        double failureRate; // -1 means not available
-        // enriched from processor statistics (matched by id)
-        long total;
-        long totalFailed;
-        long meanTime;
-        long minTime;
-        long maxTime;
-        long inflight;
-        String sinceLastStarted;
-        String sinceLastSuccess;
-        String sinceLastFail;
-    }
-
-    // HTTP endpoint from REST DSL or Platform-HTTP
-    static class HttpEndpointInfo {
-        String method;   // HTTP method(s), e.g. "GET" or "GET,POST"
-        String path;     // URI path, e.g. /api/orders
-        String url;      // full URL including server
-        String consumes;
-        String produces;
-        long hits;       // per-operation request count
-        // REST DSL only
-        boolean fromRest;
-        boolean contractFirst;
-        boolean specification; // true = OpenAPI/Swagger spec endpoint
-        String routeId;
-        String operationId;
-        String specificationUri;
-        String description;
-        String inType;
-        String outType;
-        String state;
-        // Platform-HTTP only
-        boolean management;
-        String server;   // e.g. http://0.0.0.0:8080
-    }
-
-    static class TraceEntry {
-        String pid;
-        String uid;
-        String exchangeId;
-        String timestamp;
-        String routeId;
-        String nodeId;
-        String nodeShortName;
-        String nodeLabel;
-        String location;
-        String processor;
-        String direction;
-        String status;
-        String threadName;
-        boolean first;
-        boolean last;
-        boolean failed;
-        int nodeLevel;
-        long elapsed;
-        long epochMs;
-        String body;
-        String bodyType;
-        String bodyPreview;
-        Map<String, Object> headers;
-        Map<String, String> headerTypes;
-        Map<String, Object> exchangeProperties;
-        Map<String, String> exchangePropertyTypes;
-        Map<String, Object> exchangeVariables;
-        Map<String, String> exchangeVariableTypes;
-        String exception;
-    }
-
-    static class LogEntry {
-        String raw;
-        String time = "";
-        String level = "INFO";
-        String logger;
-        String message = "";
-    }
-
-    static class HistoryEntry {
-        String pid;
-        String exchangeId;
-        String timestamp;
-        String routeId;
-        String fromRouteId;
-        String nodeId;
-        String nodeShortName;
-        String nodeLabel;
-        String location;
-        String processor;
-        String direction;
-        String threadName;
-        boolean first;
-        boolean last;
-        boolean failed;
-        int nodeLevel;
-        long elapsed;
-        long epochMs;
-        String body;
-        String bodyType;
-        String exception;
-        Map<String, Object> headers;
-        Map<String, String> headerTypes;
-        Map<String, Object> exchangeProperties;
-        Map<String, String> exchangePropertyTypes;
-        Map<String, Object> exchangeVariables;
-        Map<String, String> exchangeVariableTypes;
-    }
-
-    static class InfraInfo {
-        String pid;
-        String alias;
-        String description;
-        Map<String, Object> properties = new TreeMap<>();
-        boolean alive;
-        boolean vanishing;
-        long vanishStart;
     }
 
     record VanishingInfo(IntegrationInfo info, long startTime) {
