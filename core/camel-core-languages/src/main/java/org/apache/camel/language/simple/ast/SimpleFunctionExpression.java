@@ -29,13 +29,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -391,6 +390,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // miscellaneous functions
+        Expression builtIn = SimpleFunctionDispatcher.tryCreateBuiltIn(camelContext, function, token.getIndex());
+        if (builtIn != null) {
+            return builtIn;
+        }
         Expression misc = createSimpleExpressionMisc(function);
         if (misc != null) {
             return misc;
@@ -401,33 +404,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return math;
         }
 
-        // attachments
-        if ("attachments".equals(function) || "clearAttachments".equals(function)
-                || ifStartsWithReturnRemainder("setAttachment", function) != null
-                || ifStartsWithReturnRemainder("attachment", function) != null) {
-            Expression exp = createSimpleAttachments(camelContext, function);
-            if (exp != null) {
-                return exp;
-            }
-        }
-        // base64
-        if ("base64Encode".equals(function) || "base64Decode".equals(function)
-                || ifStartsWithReturnRemainder("base64Encode", function) != null
-                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
-            Expression exp = createSimpleBase64(camelContext, function);
-            if (exp != null) {
-                return exp;
-            }
-        }
-        // html
-        if ("htmlClean".equals(function) || "htmlParse".equals(function) || "htmlDecode".equals(function)
-                || ifStartsWithReturnRemainder("htmlClean", function) != null
-                || ifStartsWithReturnRemainder("htmlParse", function) != null
-                || ifStartsWithReturnRemainder("htmlDecode", function) != null) {
-            Expression exp = createSimpleHtml(camelContext, function);
-            if (exp != null) {
-                return exp;
-            }
+        // functions from external components (attachments, base64, html, ...)
+        Expression external = SimpleFunctionDispatcher.tryCreateExternal(camelContext, function, token.getIndex());
+        if (external != null) {
+            return external;
         }
 
         // it may be a custom function
@@ -450,33 +430,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else {
             return null;
         }
-    }
-
-    private Expression createSimpleAttachments(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
-                SimpleLanguageFunctionFactory.class,
-                "camel-attachments");
-        return factory.createFunction(camelContext, function, token.getIndex());
-    }
-
-    private Expression createSimpleBase64(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
-                SimpleLanguageFunctionFactory.class,
-                "camel-base64");
-        return factory.createFunction(camelContext, function, token.getIndex());
-    }
-
-    private Expression createSimpleHtml(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-jsoup",
-                SimpleLanguageFunctionFactory.class,
-                "camel-jsoup");
-        return factory.createFunction(camelContext, function, token.getIndex());
     }
 
     private Expression createSimpleExpressionMessage(CamelContext camelContext, String function, boolean strict) {
@@ -1115,25 +1068,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.containsExpression(exp, pattern);
         }
 
-        // random function
-        remainder = ifStartsWithReturnRemainder("random(", function);
-        if (remainder != null) {
-            String values = StringHelper.beforeLast(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
-            }
-            if (values.contains(",")) {
-                String[] tokens = values.split(",", 3);
-                if (tokens.length > 2) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
-                }
-                return SimpleExpressionBuilder.randomExpression(tokens[0].trim(), tokens[1].trim());
-            } else {
-                return SimpleExpressionBuilder.randomExpression("0", values.trim());
-            }
-        }
         // range function
         remainder = ifStartsWithReturnRemainder("range(", function);
         if (remainder != null) {
@@ -1189,54 +1123,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 tokens = new String[] { "${body}" };
             }
             return SimpleExpressionBuilder.shuffleExpression(tokens);
-        }
-        // skip function
-        remainder = ifStartsWithReturnRemainder("skip(", function);
-        if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
-            }
-            String exp = "${body}";
-            return SimpleExpressionBuilder.skipExpression(exp, values.trim());
-        }
-
-        // collate function
-        remainder = ifStartsWithReturnRemainder("collate(", function);
-        if (remainder != null) {
-            String values = StringHelper.beforeLast(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
-            }
-            String exp = "${body}";
-            return SimpleExpressionBuilder.collateExpression(exp, values.trim());
-        }
-
-        // join function
-        remainder = ifStartsWithReturnRemainder("join(", function);
-        if (remainder != null) {
-            String values = StringHelper.beforeLast(remainder, ")");
-            String separator = ",";
-            String prefix = null;
-            String exp = "${body}";
-            if (ObjectHelper.isNotEmpty(values)) {
-                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
-                if (tokens.length > 3) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${join(separator,prefix,expression)} was: " + function, token.getIndex());
-                }
-                if (tokens.length == 3) {
-                    separator = tokens[0];
-                    prefix = tokens[1];
-                    exp = tokens[2];
-                } else if (tokens.length == 2) {
-                    separator = tokens[0];
-                    prefix = tokens[1];
-                } else {
-                    separator = tokens[0];
-                }
-            }
-            return SimpleExpressionBuilder.joinExpression(exp, separator, prefix);
         }
         // split function
         remainder = ifStartsWithReturnRemainder("split(", function);
@@ -2153,6 +2039,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // miscellaneous functions
+        String builtIn = SimpleFunctionDispatcher.tryCreateCodeBuiltIn(camelContext, function, token.getIndex());
+        if (builtIn != null) {
+            return builtIn;
+        }
         String misc = createCodeExpressionMisc(camelContext, function);
         if (misc != null) {
             return misc;
@@ -2163,23 +2053,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return math;
         }
 
-        // attachments
-        if ("attachments".equals(function) || "clearAttachments".equals(function)
-                || ifStartsWithReturnRemainder("setAttachment", function) != null
-                || ifStartsWithReturnRemainder("attachment", function) != null) {
-            String code = createCodeAttachments(camelContext, function);
-            if (code != null) {
-                return code;
-            }
-        }
-        // base64
-        if ("base64Encode".equals(function) || "base64Decode".equals(function)
-                || ifStartsWithReturnRemainder("base64Encode", function) != null
-                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
-            String code = createCodeBase64(camelContext, function);
-            if (code != null) {
-                return code;
-            }
+        // code from external components (attachments, base64, ...)
+        String external = SimpleFunctionDispatcher.tryCreateCodeExternal(camelContext, function, token.getIndex());
+        if (external != null) {
+            return external;
         }
 
         throw new SimpleParserException("Unknown function: " + function, token.getIndex());
@@ -2791,24 +2668,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
     }
 
-    private String createCodeAttachments(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
-                SimpleLanguageFunctionFactory.class,
-                "camel-attachments");
-        return factory.createCode(camelContext, function, token.getIndex());
-    }
-
-    private String createCodeBase64(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
-                camelContext,
-                SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
-                SimpleLanguageFunctionFactory.class,
-                "camel-base64");
-        return factory.createCode(camelContext, function, token.getIndex());
-    }
-
     private String createCodeExpressionMisc(CamelContext camelContext, String function) {
         String remainder;
 
@@ -3123,27 +2982,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "Object value = " + exp + ";\n        return containsIgnoreCase(exchange, value, " + pattern + ");";
         }
 
-        // random function
-        remainder = ifStartsWithReturnRemainder("random(", function);
-        if (remainder != null) {
-            String values = StringHelper.beforeLast(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
-            }
-            if (values.contains(",")) {
-                String before = StringHelper.before(remainder, ",");
-                before = before.trim();
-                String after = StringHelper.after(remainder, ",");
-                after = after.trim();
-                if (after.endsWith(")")) {
-                    after = after.substring(0, after.length() - 1);
-                }
-                return "random(exchange, " + before + ", " + after + ")";
-            } else {
-                return "random(exchange, 0, " + values.trim() + ")";
-            }
-        }
         remainder = ifStartsWithReturnRemainder("range(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");
@@ -3258,16 +3096,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             String p = sj.length() > 0 ? sj.toString() : "body";
             return "shuffle(exchange, " + p + ")";
-        }
-
-        // skip function
-        remainder = ifStartsWithReturnRemainder("skip(", function);
-        if (remainder != null) {
-            String values = StringHelper.beforeLast(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
-            }
-            return "skip(exchange, " + values.trim() + ")";
         }
 
         // pad function
@@ -3845,16 +3673,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "Object o = " + exp + ";\n        return normalizeWhitespace(exchange, o);";
         }
 
-        // collate function
-        remainder = ifStartsWithReturnRemainder("collate(", function);
-        if (remainder != null) {
-            String values = StringHelper.beforeLast(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
-            }
-            return "collate(exchange, " + values.trim() + ")";
-        }
-
         // messageHistory function
         remainder = ifStartsWithReturnRemainder("messageHistory", function);
         if (remainder != null) {
@@ -3868,45 +3686,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "messageHistory(exchange, " + (detailed ? "true" : "false") + ")";
         } else if (ObjectHelper.equal(function, "messageHistory")) {
             return "messageHistory(exchange, true)";
-        }
-
-        // join function
-        remainder = ifStartsWithReturnRemainder("join(", function);
-        if (remainder != null) {
-            String values = StringHelper.beforeLast(remainder, ")");
-            String separator = "\",\"";
-            String prefix = null;
-            String exp = "body";
-            if (ObjectHelper.isNotEmpty(values)) {
-                String[] tokens = codeSplitSafe(values, ',', true, true);
-                if (tokens.length > 3) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${join(separator,prefix,expression)} was: " + function, token.getIndex());
-                }
-                // single quotes should be double quotes
-                for (int i = 0; i < tokens.length; i++) {
-                    String s = tokens[i];
-                    if (StringHelper.isSingleQuoted(s)) {
-                        s = StringHelper.removeLeadingAndEndingQuotes(s);
-                        s = StringQuoteHelper.doubleQuote(s);
-                        tokens[i] = s;
-                    } else if (i < 2 && !StringHelper.isDoubleQuoted(s)) {
-                        s = StringQuoteHelper.doubleQuote(s);
-                        tokens[i] = s;
-                    }
-                }
-                if (tokens.length == 3) {
-                    separator = tokens[0];
-                    prefix = tokens[1];
-                    exp = tokens[2];
-                } else if (tokens.length == 2) {
-                    separator = tokens[0];
-                    prefix = tokens[1];
-                } else {
-                    separator = tokens[0];
-                }
-            }
-            return "var val = " + exp + ";\n        return join(exchange, val, " + separator + ", " + prefix + ");";
         }
 
         // empty function
