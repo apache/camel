@@ -2233,21 +2233,6 @@ public class CamelMonitor extends CamelCommand {
         if (routeTopMode) {
             List<Row> rows = new ArrayList<>();
 
-            // Synthetic top row representing the route itself
-            Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
-            rows.add(Row.from(
-                    Cell.from("   route"),
-                    Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
-                    rightCell(route.total > 0 ? String.valueOf(route.meanTime) : "", 6, topTimeStyle(route.meanTime)),
-                    rightCell(route.total > 0 ? String.valueOf(route.maxTime) : "", 6, topTimeStyle(route.maxTime)),
-                    rightCell(route.total > 0 ? String.valueOf(route.minTime) : "", 6),
-                    rightCell(route.total > 0 ? String.valueOf(route.lastTime) : "", 6),
-                    rightCell(route.deltaTime != 0 ? String.valueOf(route.deltaTime) : "", 6, topDeltaStyle(route.deltaTime)),
-                    rightCell(String.valueOf(route.total), 8),
-                    rightCell(String.valueOf(route.failed), 6,
-                            route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
-                    rightCell(String.valueOf(route.inflight), 8)));
-
             List<ProcessorInfo> sorted = new ArrayList<>(route.processors);
             sorted.sort(this::sortProcessorTop);
 
