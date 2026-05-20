@@ -410,7 +410,7 @@ public class CxfProducer extends DefaultAsyncProducer {
      * null:
      * </p>
      * <ul>
-     * <li>Using the in message header "operationName".</li>
+     * <li>Using the in message header "CamelCxfOperationName".</li>
      * <li>Using the defaultOperationName option value from the CxfEndpoint.</li>
      * <li>Using the first operation which is find from the CxfEndpoint Operations list.</li>
      * <ul>
