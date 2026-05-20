@@ -158,6 +158,8 @@ Scalpel is configured permanently in `.mvn/extensions.xml` (version `0.1.0`). On
 
 Note: the script overrides `fullBuildTriggers` to empty (`-Dscalpel.fullBuildTriggers=`) because Scalpel's default (`.mvn/**`) would trigger a full build whenever `.mvn/extensions.xml` itself changes (e.g., Dependabot bumping Scalpel).
 
+Scalpel is only invoked when a **subdirectory** `pom.xml` is changed (e.g. `parent/pom.xml`, `components/camel-kafka/pom.xml`). Changes to the **root** `pom.xml` are excluded because it contains build-infrastructure config (license plugin, checkstyle, etc.) that does not affect module compilation or test behavior. Without this filter, Scalpel would report every module as affected since they all inherit from the root POM.
+
 ## Manual Integration Test Advisories
 
 Some modules are excluded from CI's `-amd` expansion (the `EXCLUSION_LIST`) because they are generated code, meta-modules, or expensive integration test suites. When a contributor changes one of these modules, CI cannot automatically test all downstream effects.
