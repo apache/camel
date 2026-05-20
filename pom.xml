@@ -391,6 +391,7 @@
                                     <exclude>**/helm/etc/**</exclude>
                                     <exclude>**/examples/*</exclude>
                                     <exclude>**/*.wav</exclude>
+                                    <exclude>**/*.cast</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
@@ -436,6 +437,7 @@
                             <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
                             <spring.schemas>CAMEL_PROPERTIES_STYLE</spring.schemas>
                             <sql>DOUBLEDASHES_STYLE</sql>
+                            <tape>SCRIPT_STYLE</tape>
                             <thrift>JAVADOC_STYLE</thrift>
                             <toml>SCRIPT_STYLE</toml>
                             <unrealircd.conf>SLASHSTAR_STYLE</unrealircd.conf>
