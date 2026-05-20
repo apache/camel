@@ -21,7 +21,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ScriptDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ScriptProcessor;
+import org.apache.camel.util.ObjectHelper;
 
 public class ScriptReifier extends ExpressionReifier<ScriptDefinition> {
 
@@ -31,7 +33,11 @@ public class ScriptReifier extends ExpressionReifier<ScriptDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Expression expr = createExpression(definition.getExpression());
+        ExpressionDefinition exp = definition.getExpression();
+        if (exp == null || ObjectHelper.isEmpty(exp.getExpression())) {
+            throw new IllegalArgumentException("Script has no script code configured in " + definition);
+        }
+        Expression expr = createExpression(exp);
         ScriptProcessor answer = new ScriptProcessor(expr);
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
