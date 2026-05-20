@@ -52,8 +52,9 @@ public class MultiRestConsumer extends DefaultConsumer {
                     null, null, null, config, Collections.emptyMap());
             configurer.configure(consumer);
 
-            if (context.getCamelContextExtension().isContextPluginInUse(RestRegistry.class)) {
-                PluginHelper.getRestRegistry(context).addRestService(consumer, false, url, url, path, null, method,
+            RestRegistry rr = PluginHelper.getRestRegistry(context);
+            if (rr != null) {
+                rr.addRestService(consumer, false, url, url, path, null, method,
                         null, null, null, null, null, null, null, null);
             }
 

@@ -776,7 +776,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             lock.lock();
             try {
                 if (restRegistryFactory == null) {
-                    setRestRegistryFactory(camelContext.createRestRegistryFactory());
+                    RestRegistryFactory factory = camelContext.createRestRegistryFactory();
+                    if (factory != null) {
+                        setRestRegistryFactory(factory);
+                    }
                 }
             } finally {
                 lock.unlock();
