@@ -361,6 +361,7 @@ public class CamelMonitor extends CamelCommand {
     private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
     private boolean showLogLevelPopup;
     private final ListState logLevelListState = new ListState();
+    private boolean showKillConfirm;
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private final AtomicBoolean diagramLoading = new AtomicBoolean(false);
@@ -414,6 +415,17 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
+            // Kill confirm dialog: Enter to confirm, Esc/any other key to cancel
+            if (showKillConfirm) {
+                if (ke.isConfirm()) {
+                    showKillConfirm = false;
+                    stopSelectedProcess(true);
+                } else {
+                    showKillConfirm = false;
+                }
+                return true;
+            }
+
             // Escape: navigate back
             if (ke.isCancel()) {
                 if (showLogLevelPopup) {
@@ -680,9 +692,9 @@ public class CamelMonitor extends CamelCommand {
                 stopSelectedProcess(false);
                 return true;
             }
-            // Overview tab: kill process (SIGKILL) for selected integration or infra
+            // Overview tab: kill process (SIGKILL) — show confirm dialog first
             if (tab == TAB_OVERVIEW && ke.isChar('X') && selectedPid != null) {
-                stopSelectedProcess(true);
+                showKillConfirm = true;
                 return true;
             }
 
@@ -1271,6 +1283,9 @@ public class CamelMonitor extends CamelCommand {
         renderTabs(frame, mainChunks.get(2));
         // mainChunks.get(3) is the empty spacer row between tabs and content
         renderContent(frame, mainChunks.get(4));
+        if (showKillConfirm) {
+            renderKillConfirm(frame, mainChunks.get(4));
+        }
         renderFooter(frame, mainChunks.get(5));
     }
 
@@ -3094,12 +3109,12 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
         if (infraTableFocused) {
-            // For infra services: delete the JSON file to trigger graceful shutdown
+            // For infra services: delete the JSON and log files to trigger graceful shutdown
             InfraInfo infra = findSelectedInfra();
             if (infra != null) {
-                Path jsonFile = CommandLineHelper.getCamelDir()
-                        .resolve("infra-" + infra.alias + "-" + infra.pid + ".json");
-                PathUtils.deleteFile(jsonFile);
+                Path camelDir = CommandLineHelper.getCamelDir();
+                PathUtils.deleteFile(camelDir.resolve("infra-" + infra.alias + "-" + infra.pid + ".json"));
+                PathUtils.deleteFile(camelDir.resolve("infra-" + infra.alias + "-" + infra.pid + ".log"));
             }
             if (forceKill) {
                 ProcessHandle.of(pid).ifPresent(ProcessHandle::destroyForcibly);
@@ -3109,6 +3124,16 @@ public class CamelMonitor extends CamelCommand {
             ProcessHandle.of(pid).ifPresent(ph -> {
                 if (forceKill) {
                     ph.destroyForcibly();
+                    // Clean up orphaned files after force kill
+                    Path camelDir = CommandLineHelper.getCamelDir();
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + ".log"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-status.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-action.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-output.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-trace.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-history.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-debug.json"));
+                    PathUtils.deleteFile(camelDir.resolve(selectedPid + "-receive.json"));
                 } else {
                     ph.destroy();
                 }
@@ -4215,6 +4240,39 @@ public class CamelMonitor extends CamelCommand {
                 .build();
 
         frame.renderStatefulWidget(list, popup, logLevelListState);
+    }
+
+    private void renderKillConfirm(Frame frame, Rect area) {
+        String name = selectedName();
+        String msg = " Kill " + name + " (PID: " + selectedPid + ")? ";
+        int popupW = Math.max(34, msg.length() + 4);
+        int popupH = 6;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .borderStyle(Style.EMPTY.fg(Color.LIGHT_RED))
+                .title(" Confirm Kill ")
+                .build();
+        frame.renderWidget(block, popup);
+        Rect inner = block.inner(popup);
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(
+                                Line.from(Span.raw("")),
+                                Line.from(Span.styled(msg, Style.EMPTY.fg(Color.LIGHT_RED).bold())),
+                                Line.from(Span.raw("")),
+                                Line.from(
+                                        Span.raw("  "),
+                                        Span.styled("Enter", Style.EMPTY.bold()),
+                                        Span.raw(" confirm  "),
+                                        Span.styled("Esc", Style.EMPTY.bold()),
+                                        Span.raw(" cancel"))))
+                        .build(),
+                inner);
     }
 
     private void sendLoggerLevelAction(String pid, String level) {
