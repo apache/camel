@@ -179,6 +179,7 @@ public final class SimpleFunctionHelper {
                     input = input.trim();
                 }
             }
+            // no separator in data, so return single string with input as is
             return new String[] { input };
         }
 
@@ -196,6 +197,7 @@ public final class SimpleFunctionHelper {
             boolean isQuoting = singleQuoted || doubleQuoted;
             boolean last = i == input.length() - 1;
 
+            // do not split inside code blocks
             if (input.indexOf(BaseSimpleParser.CODE_START, i) == i) {
                 codeLevel++;
                 sb.append(BaseSimpleParser.CODE_START);
@@ -213,65 +215,92 @@ public final class SimpleFunctionHelper {
             }
 
             if (!doubleQuoted && ch == '\'') {
-                if (!singleQuoted) {
-                    singleQuoted = true;
+                if (singleQuoted && prev == ch && sb.isEmpty()) {
+                    // its an empty quote so add empty text
                     if (keepQuotes) {
-                        sb.append(ch);
+                        answer.add("''");
+                    } else {
+                        answer.add("");
                     }
-                    continue;
-                } else if (prev != '\\') {
-                    singleQuoted = false;
-                    if (keepQuotes) {
-                        sb.append(ch);
-                    }
-                    continue;
                 }
+                // special logic needed if this quote is the end
+                if (last) {
+                    if (singleQuoted && !sb.isEmpty()) {
+                        String text = sb.toString();
+                        // do not trim a quoted string
+                        if (keepQuotes) {
+                            answer.add(text + "'"); // append ending quote
+                        } else {
+                            answer.add(text);
+                        }
+                        sb.setLength(0);
+                    }
+                    break; // break out as we are finished
+                }
+                singleQuoted = !singleQuoted;
+                if (keepQuotes) {
+                    sb.append(ch);
+                }
+                continue;
             } else if (!singleQuoted && ch == '"') {
-                if (!doubleQuoted) {
-                    doubleQuoted = true;
+                if (doubleQuoted && prev == ch && sb.isEmpty()) {
+                    // its an empty quote so add empty text
                     if (keepQuotes) {
-                        sb.append(ch);
+                        answer.add("\""); // append ending quote
+                    } else {
+                        answer.add("");
                     }
-                    continue;
-                } else if (prev != '\\') {
-                    doubleQuoted = false;
-                    if (keepQuotes) {
-                        sb.append(ch);
-                    }
-                    continue;
                 }
-            }
-
-            if (isQuoting) {
-                sb.append(ch);
+                // special logic needed if this quote is the end
+                if (last) {
+                    if (doubleQuoted && !sb.isEmpty()) {
+                        String text = sb.toString();
+                        // do not trim a quoted string
+                        if (keepQuotes) {
+                            answer.add(text + "\"");
+                        } else {
+                            answer.add(text);
+                        }
+                        sb.setLength(0);
+                    }
+                    break; // break out as we are finished
+                }
+                doubleQuoted = !doubleQuoted;
+                if (keepQuotes) {
+                    sb.append(ch);
+                }
                 continue;
-            }
-
-            if (ch == separator) {
-                if (separating) {
-                    continue;
-                }
-                String s = sb.toString();
-                if (trim) {
-                    s = s.trim();
-                }
-                answer.add(s);
-                sb.setLength(0);
+            } else if (!isQuoting && ch == separator) {
                 separating = true;
-                continue;
-            } else if (separating) {
-                separating = false;
-            }
-
-            sb.append(ch);
-
-            if (last) {
-                String s = sb.toString();
-                if (trim) {
-                    s = s.trim();
+                // add as answer if we are not in a quote
+                if (!sb.isEmpty()) {
+                    String text = sb.toString();
+                    if (trim) {
+                        text = text.trim();
+                    }
+                    answer.add(text);
+                    sb.setLength(0);
                 }
-                answer.add(s);
+                // we should avoid adding the separator
+                continue;
             }
+
+            if (trim && !isQuoting && separating && separator != ' ' && ch == ' ') {
+                continue;
+            }
+            separating = false;
+
+            // append char
+            sb.append(ch);
+        }
+
+        // any leftover
+        if (!sb.isEmpty()) {
+            String text = sb.toString();
+            if (trim) {
+                text = text.trim();
+            }
+            answer.add(text);
         }
 
         return answer.toArray(new String[0]);
