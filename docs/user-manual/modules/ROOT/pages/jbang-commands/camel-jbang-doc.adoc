@@ -21,6 +21,7 @@ camel doc [options]
 | Option | Description | Default | Type
 | `--camel-version` | To use a different Camel version than the default version |  | String
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--example` | Prints a minimal working YAML route snippet for the component | false | boolean
 | `--filter` | Filter option listed in tables by name, description, or group |  | String
 | `--header` | Whether to display component message headers | false | boolean
 | `--kamelets-version` | Apache Camel Kamelets version | RuntimeType.KAMELETS_VERSION | String
