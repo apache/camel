@@ -462,7 +462,15 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_CIRCUIT_BREAKER);
             }
 
-            // Tab cycling
+            // Tab cycling (check Shift+Tab before Tab since Tab binding also matches Shift+Tab)
+            if (ke.isFocusPrevious()) {
+                int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
+                if (prev != TAB_OVERVIEW) {
+                    selectCurrentIntegration();
+                }
+                tabsState.select(prev);
+                return true;
+            }
             if (ke.isFocusNext()) {
                 int next = (tabsState.selected() + 1) % NUM_TABS;
                 if (next != TAB_OVERVIEW) {
