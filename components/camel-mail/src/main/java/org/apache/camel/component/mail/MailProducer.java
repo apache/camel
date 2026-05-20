@@ -87,6 +87,14 @@ public class MailProducer extends DefaultAsyncProducer {
     }
 
     protected JavaMailSender getSender(Exchange exchange) {
+        // dynamic JavaMail session properties from message headers is an opt-in feature; it is disabled by
+        // default because mail.smtp.* / mail.smtps.* is a Camel-internal namespace that is not filtered by
+        // any HeaderFilterStrategy, so an untrusted producer could otherwise weaken transport security or
+        // redirect the SMTP connection (CAMEL-23522)
+        if (!getEndpoint().getConfiguration().isUseJavaMailSessionPropertiesFromHeaders()) {
+            LOG.trace("Using default JavaMailSender (useJavaMailSessionPropertiesFromHeaders=false)");
+            return defaultSender;
+        }
         // do we have special headers (try both smtp and smtps)
         String prefix = "mail.smtp.";
         Map<String, Object> additional = URISupport.extractProperties(exchange.getMessage().getHeaders(), prefix);
