@@ -465,6 +465,9 @@ public class Run extends CamelCommand {
             name = eName;
         }
 
+        // use the temp dir as base so run() loads the example's application.properties
+        exportBaseDir = tempDir;
+
         if (!exportRun) {
             printConfigurationValues("Running integration with the following configuration:");
         }
