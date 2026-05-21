@@ -4210,7 +4210,7 @@ The follow options related to _exporting_ or _running_, can be configured in `ap
 
 // jbang options: START
 === Camel JBang configurations
-The camel.jbang supports 47 options, which are listed below.
+The camel.jbang supports 48 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -4254,6 +4254,7 @@ The camel.jbang supports 47 options, which are listed below.
 | *camel.jbang.quarkusExtensionRegistryBaseUri* | The base URI of Quarkus Extension Registry |  | String
 | *camel.jbang.quarkusGroupId* | groupId of Quarkus Platform BOM |  | String
 | *camel.jbang.quarkusVersion* | version of Quarkus Platform BOM |  | String
+| *camel.jbang.readmeFiles* | README files included with the integration (Use commas to separate multiple files) |  | String
 | *camel.jbang.repos* | Additional Maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | *camel.jbang.runtime* | Which runtime to use (camel-main, spring-boot, quarkus) |  | String
 | *camel.jbang.scriptFiles* | Additional shell script files to export to src/main/scripts directory |  | String

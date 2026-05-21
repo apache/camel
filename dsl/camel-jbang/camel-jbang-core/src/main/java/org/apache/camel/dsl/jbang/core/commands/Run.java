@@ -910,6 +910,7 @@ public class Run extends CamelCommand {
         StringJoiner sjTlsFiles = new StringJoiner(",");
         StringJoiner sjKamelets = new StringJoiner(",");
         StringJoiner sjJKubeFiles = new StringJoiner(",");
+        StringJoiner sjReadmeFiles = new StringJoiner(",");
 
         // include generated openapi to files to run
         if (openapi != null) {
@@ -969,6 +970,10 @@ public class Run extends CamelCommand {
             } else if (jkubeFile(file)) {
                 // jkube
                 sjJKubeFiles.add(file);
+                continue;
+            } else if (isReadmeFile(file)) {
+                sjReadmeFiles.add(file);
+                sjClasspathFiles.add(file);
                 continue;
             } else if (!knownFile(file) && !file.endsWith(".properties")) {
                 // unknown files to be added on classpath
@@ -1069,6 +1074,12 @@ public class Run extends CamelCommand {
             writeSettings(CLASSPATH_FILES, sjClasspathFiles.toString());
         } else {
             writeSetting(main, profileProperties, CLASSPATH_FILES, () -> null);
+        }
+        if (sjReadmeFiles.length() > 0) {
+            main.addInitialProperty(README_FILES, sjReadmeFiles.toString());
+            writeSettings(README_FILES, sjReadmeFiles.toString());
+        } else {
+            writeSetting(main, profileProperties, README_FILES, () -> null);
         }
         if (sjScriptFiles.length() > 0) {
             main.addInitialProperty(SCRIPT_FILES, sjScriptFiles.toString());
@@ -2216,12 +2227,6 @@ public class Run extends CamelCommand {
             return true;
         }
 
-        String on = FileUtil.onlyName(name, true);
-        on = on.toLowerCase(Locale.ROOT);
-        if (on.startsWith("readme")) {
-            return true;
-        }
-
         return false;
     }
 
@@ -2251,6 +2256,11 @@ public class Run extends CamelCommand {
 
     private boolean jkubeFile(String name) {
         return name.endsWith(".jkube.yaml") || name.endsWith(".jkube.yml");
+    }
+
+    private static boolean isReadmeFile(String name) {
+        String on = FileUtil.onlyName(FileUtil.stripPath(name), true);
+        return on.toLowerCase(Locale.ROOT).startsWith("readme");
     }
 
     private void writeSettings(String key, String value) {

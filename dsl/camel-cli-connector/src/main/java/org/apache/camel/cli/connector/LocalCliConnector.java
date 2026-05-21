@@ -334,6 +334,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionBrowseTask(root);
             } else if ("receive".equals(action)) {
                 doActionReceiveTask(root);
+            } else if ("readme".equals(action)) {
+                doActionReadmeTask(root);
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             }
@@ -346,6 +348,26 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             // action done so delete file
             FileUtil.deleteFile(actionFile);
         }
+    }
+
+    private void doActionReadmeTask(JsonObject root) throws Exception {
+        String readmeFiles = camelContext.getPropertiesComponent()
+                .resolveProperty("camel.jbang.readmeFiles").orElse(null);
+        JsonObject json = new JsonObject();
+        if (readmeFiles != null) {
+            String filter = root.getString("filter");
+            for (String f : readmeFiles.split(",")) {
+                if (filter == null || f.contains(filter)) {
+                    File file = new File(f);
+                    if (file.isFile() && file.exists()) {
+                        json.put("file", f);
+                        json.put("content", Files.readString(file.toPath()));
+                        break;
+                    }
+                }
+            }
+        }
+        IOHelper.writeText(json.toJson(), outputFile);
     }
 
     private void doActionCliDebug(JsonObject root) {
@@ -1116,6 +1138,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 rc.put("javaVersion", mb.getVmVersion());
                 rc.put("javaVendor", mb.getVmVendor());
                 rc.put("javaVmName", mb.getVmName());
+            }
+            String readmeFiles = camelContext.getPropertiesComponent()
+                    .resolveProperty("camel.jbang.readmeFiles").orElse(null);
+            if (readmeFiles != null) {
+                rc.put("readmeFiles", readmeFiles);
             }
             root.put("runtime", rc);
 
