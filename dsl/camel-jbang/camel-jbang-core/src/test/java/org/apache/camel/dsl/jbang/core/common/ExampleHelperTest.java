@@ -145,6 +145,16 @@ class ExampleHelperTest {
     }
 
     @Test
+    void shouldDetectCitrusTests() {
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        JsonObject mqtt = ExampleHelper.findExample(catalog, "mqtt");
+        assertTrue(ExampleHelper.hasCitrusTests(mqtt));
+
+        JsonObject circuitBreaker = ExampleHelper.findExample(catalog, "circuit-breaker");
+        assertFalse(ExampleHelper.hasCitrusTests(circuitBreaker));
+    }
+
+    @Test
     void shouldGetExampleNames() {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         List<String> names = ExampleHelper.getExampleNames(catalog);
