@@ -1,0 +1,475 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
+import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.Clear;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.list.ListItem;
+import dev.tamboui.widgets.list.ListState;
+import dev.tamboui.widgets.list.ListWidget;
+import dev.tamboui.widgets.list.ScrollMode;
+import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.util.json.JsonObject;
+
+import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+
+class ActionsPopup {
+
+    private boolean showActionsMenu;
+    private final ListState actionsMenuState = new ListState();
+
+    private boolean showExampleBrowser;
+    private final ListState exampleBrowserState = new ListState();
+    private List<JsonObject> exampleCatalog;
+
+    private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
+    private String launchNotification;
+    private boolean launchNotificationError;
+    private long launchNotificationExpiry;
+
+    boolean isVisible() {
+        return showActionsMenu || showExampleBrowser;
+    }
+
+    void open() {
+        showActionsMenu = true;
+        actionsMenuState.select(0);
+    }
+
+    void close() {
+        showActionsMenu = false;
+        showExampleBrowser = false;
+    }
+
+    String notification() {
+        return launchNotification;
+    }
+
+    boolean notificationError() {
+        return launchNotificationError;
+    }
+
+    boolean handleKeyEvent(KeyEvent ke) {
+        if (showExampleBrowser) {
+            if (ke.isCancel()) {
+                showExampleBrowser = false;
+                showActionsMenu = true;
+            } else if (ke.isUp()) {
+                navigateExampleBrowser(-1);
+            } else if (ke.isDown()) {
+                navigateExampleBrowser(1);
+            } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                navigateExampleBrowser(-10);
+            } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                navigateExampleBrowser(10);
+            } else if (ke.isConfirm()) {
+                launchSelectedExample();
+            }
+            return true;
+        }
+        if (showActionsMenu) {
+            if (ke.isCancel()) {
+                showActionsMenu = false;
+            } else if (ke.isUp()) {
+                actionsMenuState.selectPrevious();
+            } else if (ke.isDown()) {
+                actionsMenuState.selectNext(1);
+            } else if (ke.isConfirm()) {
+                openExampleBrowser();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    void render(Frame frame, Rect area) {
+        if (showActionsMenu) {
+            renderActionsMenu(frame, area);
+        }
+        if (showExampleBrowser) {
+            renderExampleBrowser(frame, area);
+        }
+    }
+
+    void renderFooter(List<Span> spans) {
+        if (showExampleBrowser) {
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "run");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
+        if (showActionsMenu) {
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "select");
+            hintLast(spans, "Esc", "cancel");
+        }
+    }
+
+    void tick(long now) {
+        monitorPendingLaunches(now);
+        if (launchNotification != null && now > launchNotificationExpiry) {
+            launchNotification = null;
+        }
+    }
+
+    // ---- Rendering ----
+
+    private void renderActionsMenu(Frame frame, Rect area) {
+        int popupW = 32;
+        int popupH = 3;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+        ListWidget list = ListWidget.builder()
+                .items(ListItem.from("  Run an example..."))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(" Actions ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, actionsMenuState);
+    }
+
+    private void renderExampleBrowser(Frame frame, Rect area) {
+        if (exampleCatalog == null || exampleCatalog.isEmpty()) {
+            return;
+        }
+        int popupW = Math.min(100, area.width() - 4);
+        int popupH = Math.min(exampleCatalog.size() + 10, Math.min(28, area.height() - 4));
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        List<ListItem> items = buildExampleListItems(popupW - 4);
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.AUTO_SCROLL)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(" Run an Example (" + exampleCatalog.size() + ") ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, exampleBrowserState);
+    }
+
+    private List<ListItem> buildExampleListItems(int width) {
+        List<ListItem> items = new ArrayList<>();
+        String currentLevel = null;
+        for (JsonObject ex : exampleCatalog) {
+            String level = ex.getStringOrDefault("level", "beginner");
+            if (!level.equals(currentLevel)) {
+                currentLevel = level;
+                String header = "── " + capitalize(level) + " ──";
+                items.add(ListItem.from(header).style(Style.EMPTY.dim()));
+            }
+            String name = ex.getStringOrDefault("name", "");
+            String desc = ex.getStringOrDefault("description", "");
+            boolean docker = ExampleHelper.requiresDocker(ex);
+            boolean bundled = ExampleHelper.isBundled(ex);
+
+            String icons = (bundled ? "📦" : "🌐") + (docker ? "🐳" : "  ");
+            int nameCol = Math.min(30, width / 3);
+            String padded = String.format("%-" + nameCol + "s", TuiHelper.truncate(name, nameCol));
+            String prefix = " " + icons + " " + padded + " ";
+            int descCol = Math.max(10, width - prefix.length());
+
+            Style style = bundled ? Style.EMPTY : Style.EMPTY.dim();
+            if (desc.length() <= descCol) {
+                items.add(ListItem.from(prefix + desc).style(style));
+            } else {
+                String indent = " ".repeat(prefix.length());
+                List<Line> lines = new ArrayList<>();
+                List<String> wrapped = wrapWords(desc, descCol);
+                lines.add(Line.from(prefix + wrapped.get(0)));
+                for (int w = 1; w < wrapped.size(); w++) {
+                    lines.add(Line.from(indent + wrapped.get(w)));
+                }
+                items.add(ListItem.from(Text.from(lines.toArray(Line[]::new))).style(style));
+            }
+        }
+        items.add(ListItem.from(""));
+        items.add(ListItem.from(" 📦 = bundled (offline)  🌐 = online (GitHub)  🐳 = Docker")
+                .style(Style.EMPTY.dim()));
+        return items;
+    }
+
+    // ---- Example Browser Navigation ----
+
+    private void openExampleBrowser() {
+        showActionsMenu = false;
+        if (exampleCatalog == null) {
+            exampleCatalog = loadAndSortExamples();
+        }
+        if (exampleCatalog.isEmpty()) {
+            launchNotification = "No examples found";
+            launchNotificationError = true;
+            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+            return;
+        }
+        showExampleBrowser = true;
+        exampleBrowserState.select(1);
+    }
+
+    private List<JsonObject> loadAndSortExamples() {
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        catalog.sort((a, b) -> {
+            int la = levelOrder(a.getStringOrDefault("level", "beginner"));
+            int lb = levelOrder(b.getStringOrDefault("level", "beginner"));
+            if (la != lb) {
+                return Integer.compare(la, lb);
+            }
+            return a.getStringOrDefault("name", "").compareTo(b.getStringOrDefault("name", ""));
+        });
+        return catalog;
+    }
+
+    private static int levelOrder(String level) {
+        return switch (level) {
+            case "beginner" -> 0;
+            case "intermediate" -> 1;
+            case "advanced" -> 2;
+            default -> 3;
+        };
+    }
+
+    private void navigateExampleBrowser(int direction) {
+        if (exampleCatalog == null || exampleCatalog.isEmpty()) {
+            return;
+        }
+        int totalItems = countExampleListItems();
+        Integer current = exampleBrowserState.selected();
+        if (current == null) {
+            current = 0;
+        }
+        int next = current + direction;
+        if (next < 0) {
+            next = 0;
+        }
+        if (next >= totalItems) {
+            next = totalItems - 1;
+        }
+        while (isSeparatorIndex(next) && next > 0 && next < totalItems - 1) {
+            next += direction;
+        }
+        if (next < 0) {
+            next = 0;
+        }
+        if (next >= totalItems) {
+            next = totalItems - 1;
+        }
+        if (isSeparatorIndex(next)) {
+            return;
+        }
+        exampleBrowserState.select(next);
+    }
+
+    private int countExampleListItems() {
+        if (exampleCatalog == null) {
+            return 0;
+        }
+        int count = 0;
+        String currentLevel = null;
+        for (JsonObject ex : exampleCatalog) {
+            String level = ex.getStringOrDefault("level", "beginner");
+            if (!level.equals(currentLevel)) {
+                currentLevel = level;
+                count++;
+            }
+            count++;
+        }
+        return count + 2;
+    }
+
+    private boolean isSeparatorIndex(int index) {
+        if (exampleCatalog == null) {
+            return false;
+        }
+        int pos = 0;
+        String currentLevel = null;
+        for (JsonObject ex : exampleCatalog) {
+            String level = ex.getStringOrDefault("level", "beginner");
+            if (!level.equals(currentLevel)) {
+                currentLevel = level;
+                if (pos == index) {
+                    return true;
+                }
+                pos++;
+            }
+            if (pos == index) {
+                return false;
+            }
+            pos++;
+        }
+        return true;
+    }
+
+    private JsonObject getExampleAtListIndex(int index) {
+        if (exampleCatalog == null) {
+            return null;
+        }
+        int pos = 0;
+        String currentLevel = null;
+        for (JsonObject ex : exampleCatalog) {
+            String level = ex.getStringOrDefault("level", "beginner");
+            if (!level.equals(currentLevel)) {
+                currentLevel = level;
+                pos++;
+            }
+            if (pos == index) {
+                return ex;
+            }
+            pos++;
+        }
+        return null;
+    }
+
+    // ---- Process Launch & Monitoring ----
+
+    private void launchSelectedExample() {
+        Integer sel = exampleBrowserState.selected();
+        if (sel == null || isSeparatorIndex(sel)) {
+            return;
+        }
+        JsonObject example = getExampleAtListIndex(sel);
+        if (example == null) {
+            return;
+        }
+        String exampleName = example.getStringOrDefault("name", "");
+        showExampleBrowser = false;
+        try {
+            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+            cmd.add("run");
+            cmd.add("--example=" + exampleName);
+            Path outputFile = Files.createTempFile("camel-example-", ".log");
+            outputFile.toFile().deleteOnExit();
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(outputFile.toFile());
+            Process process = pb.start();
+            pendingLaunches.add(new PendingLaunch(exampleName, process, outputFile, System.currentTimeMillis()));
+            launchNotification = "Starting: " + exampleName;
+            launchNotificationError = false;
+            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+        } catch (Exception e) {
+            launchNotification = "Failed to start: " + exampleName + " - " + e.getMessage();
+            launchNotificationError = true;
+            launchNotificationExpiry = System.currentTimeMillis() + 10000;
+        }
+    }
+
+    private void monitorPendingLaunches(long now) {
+        Iterator<PendingLaunch> it = pendingLaunches.iterator();
+        while (it.hasNext()) {
+            PendingLaunch pl = it.next();
+            if (!pl.process().isAlive()) {
+                int exitCode = pl.process().exitValue();
+                if (exitCode == 0) {
+                    launchNotification = "Started: " + pl.name();
+                    launchNotificationError = false;
+                    launchNotificationExpiry = now + 5000;
+                } else {
+                    String detail = readFirstLine(pl.outputFile());
+                    launchNotification = "Failed: " + pl.name()
+                                         + (detail != null ? " - " + detail : "");
+                    launchNotificationError = true;
+                    launchNotificationExpiry = now + 10000;
+                }
+                it.remove();
+            } else if (now - pl.startTime() > 8000) {
+                launchNotification = "Started: " + pl.name();
+                launchNotificationError = false;
+                launchNotificationExpiry = now + 5000;
+                it.remove();
+            }
+        }
+    }
+
+    // ---- Utilities ----
+
+    private static String readFirstLine(Path file) {
+        try {
+            List<String> lines = Files.readAllLines(file);
+            for (String line : lines) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    return TuiHelper.truncate(trimmed, 60);
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    private static List<String> wrapWords(String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (line.isEmpty()) {
+                line.append(word);
+            } else if (line.length() + 1 + word.length() <= maxWidth) {
+                line.append(' ').append(word);
+            } else {
+                lines.add(line.toString());
+                line.setLength(0);
+                line.append(word);
+            }
+        }
+        if (!line.isEmpty()) {
+            lines.add(line.toString());
+        }
+        return lines;
+    }
+
+    private record PendingLaunch(String name, Process process, Path outputFile, long startTime) {
+    }
+}
