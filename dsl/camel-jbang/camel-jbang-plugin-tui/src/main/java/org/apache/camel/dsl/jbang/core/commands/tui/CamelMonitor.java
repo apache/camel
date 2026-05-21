@@ -192,7 +192,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int CHART_ALL = 0;
     private static final int CHART_SINGLE = 1;
     private static final int CHART_OFF = 2;
-    private int chartMode = CHART_ALL;
+    private int chartMode = CHART_SINGLE;
 
     private volatile long lastRefresh;
     private boolean showKillConfirm;

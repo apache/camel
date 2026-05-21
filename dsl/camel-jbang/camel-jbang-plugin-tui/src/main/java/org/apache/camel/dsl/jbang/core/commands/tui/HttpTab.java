@@ -51,7 +51,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class HttpTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "method", "path", "consumes", "produces", "source" };
+    private static final String[] SORT_COLUMNS = { "method", "path", "total", "consumes", "produces", "source" };
     private static final Set<String> OPENAPI_HTTP_VERBS
             = Set.of("get", "post", "put", "delete", "patch", "options", "head", "trace");
 
@@ -202,6 +202,7 @@ class HttpTab implements MonitorTab {
         visible.sort((a, b) -> {
             int result = switch (sort) {
                 case "path" -> compareStr(a.path, b.path);
+                case "total" -> Long.compare(a.hits, b.hits);
                 case "source" -> Boolean.compare(b.fromRest, a.fromRest);
                 case "consumes" -> compareStr(a.consumes, b.consumes);
                 case "produces" -> compareStr(a.produces, b.produces);
@@ -315,7 +316,7 @@ class HttpTab implements MonitorTab {
         Row header = Row.from(
                 Cell.from(Span.styled(sortLabel("METHOD", "method"), sortStyle("method"))),
                 Cell.from(Span.styled(sortLabel("PATH", "path"), sortStyle("path"))),
-                rightCell("TOTAL", 8, Style.EMPTY.bold()),
+                rightCell(sortLabel("TOTAL", "total"), 8, sortStyle("total")),
                 Cell.from(Span.styled(sortLabel("CONSUMES", "consumes"), sortStyle("consumes"))),
                 Cell.from(Span.styled(sortLabel("PRODUCES", "produces"), sortStyle("produces"))),
                 Cell.from(Span.styled(sortLabel("SOURCE", "source"), sortStyle("source"))),
