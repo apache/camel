@@ -39,7 +39,10 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLa
 
 class RunOptionsForm {
 
-    // Row indices
+    private static final int PAGE_OPTIONS = 0;
+    private static final int PAGE_PROPERTIES = 1;
+
+    // Row indices for page 0
     private static final int ROW_NAME = 0;
     private static final int ROW_PORT = 1;
     private static final int ROW_MAX_SECONDS = 2;
@@ -49,6 +52,7 @@ class RunOptionsForm {
     private static final int ROW_COUNT = 6;
 
     private boolean visible;
+    private int page;
     private int selectedRow;
 
     // Text fields
@@ -63,11 +67,15 @@ class RunOptionsForm {
 
     private String exampleTitle;
 
+    // Properties (page 2)
+    private List<PropertyEntry> properties;
+    private int selectedProperty;
+
     boolean isVisible() {
         return visible;
     }
 
-    void open(String defaultName, String exampleName) {
+    void open(String defaultName, String exampleName, boolean bundled) {
         nameInput = new TextInputState(defaultName != null ? defaultName : "");
         portInput = new TextInputState("");
         maxSecondsInput = new TextInputState("");
@@ -75,7 +83,10 @@ class RunOptionsForm {
         observe = false;
         backlogTrace = false;
         selectedRow = ROW_NAME;
+        page = PAGE_OPTIONS;
+        selectedProperty = 0;
         exampleTitle = exampleName != null ? exampleName : "Run";
+        loadProperties(exampleName, bundled);
         visible = true;
     }
 
@@ -98,121 +109,43 @@ class RunOptionsForm {
         if (ke.isConfirm()) {
             return true;
         }
-        if (ke.isUp()) {
-            selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
-            return true;
-        }
-        if (ke.isDown() || ke.isFocusNext()) {
-            selectedRow = (selectedRow + 1) % ROW_COUNT;
-            return true;
-        }
-        if (ke.isFocusPrevious()) {
-            selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
-            return true;
-        }
 
-        // Checkbox rows: Space toggles
-        if (ke.isChar(' ') && selectedRow >= ROW_DEV) {
-            switch (selectedRow) {
-                case ROW_DEV -> devMode = !devMode;
-                case ROW_OBSERVE -> observe = !observe;
-                case ROW_TRACE -> backlogTrace = !backlogTrace;
-            }
-            return true;
+        if (page == PAGE_OPTIONS) {
+            return handleOptionsPage(ke);
+        } else {
+            return handlePropertiesPage(ke);
         }
-
-        // Text field rows: delegate to active input
-        if (selectedRow <= ROW_MAX_SECONDS) {
-            TextInputState active = activeInput();
-            if (active != null) {
-                if (ke.isDeleteBackward()) {
-                    active.deleteBackward();
-                } else if (ke.isDeleteForward()) {
-                    active.deleteForward();
-                } else if (ke.isLeft()) {
-                    active.moveCursorLeft();
-                } else if (ke.isRight()) {
-                    active.moveCursorRight();
-                } else if (ke.isHome()) {
-                    active.moveCursorToStart();
-                } else if (ke.isEnd()) {
-                    active.moveCursorToEnd();
-                } else if (ke.code() == KeyCode.CHAR) {
-                    // port and max-seconds only accept digits
-                    if (selectedRow == ROW_PORT || selectedRow == ROW_MAX_SECONDS) {
-                        if (Character.isDigit(ke.character())) {
-                            active.insert(ke.character());
-                        }
-                    } else {
-                        active.insert(ke.character());
-                    }
-                }
-            }
-            return true;
-        }
-        return true;
     }
 
     void render(Frame frame, Rect area) {
-        int popupW = Math.min(56, area.width() - 4);
-        int popupH = 10;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Run: " + exampleTitle + " ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" Tab", MonitorContext.HINT_KEY_STYLE), Span.raw(" next │"),
-                        Span.styled(" Space", MonitorContext.HINT_KEY_STYLE), Span.raw(" toggle │"),
-                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" launch │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
-                .build();
-        frame.renderWidget(block, popup);
-
-        int innerX = popup.left() + 2;
-        int innerW = popup.width() - 4;
-        int labelW = 16;
-        int fieldW = innerW - labelW;
-        int rowY = popup.top() + 1;
-
-        // Name
-        renderLabel(frame, innerX, rowY, labelW, "Name:", selectedRow == ROW_NAME);
-        renderTextInput(frame, innerX + labelW, rowY, fieldW, nameInput, selectedRow == ROW_NAME);
-        rowY++;
-
-        // Port
-        renderLabel(frame, innerX, rowY, labelW, "Port:", selectedRow == ROW_PORT);
-        renderTextInput(frame, innerX + labelW, rowY, fieldW, portInput, selectedRow == ROW_PORT);
-        rowY++;
-
-        // Max duration
-        renderLabel(frame, innerX, rowY, labelW, "Max seconds:", selectedRow == ROW_MAX_SECONDS);
-        renderTextInput(frame, innerX + labelW, rowY, fieldW, maxSecondsInput, selectedRow == ROW_MAX_SECONDS);
-        rowY++;
-
-        // Dev mode checkbox
-        renderCheckbox(frame, innerX, rowY, innerW, "Dev mode (live reload)", devMode, selectedRow == ROW_DEV);
-        rowY++;
-
-        // Observe checkbox
-        renderCheckbox(frame, innerX, rowY, innerW, "Observe (health + metrics)", observe, selectedRow == ROW_OBSERVE);
-        rowY++;
-
-        // Backlog trace checkbox
-        renderCheckbox(frame, innerX, rowY, innerW, "Backlog trace", backlogTrace, selectedRow == ROW_TRACE);
+        if (page == PAGE_OPTIONS) {
+            renderOptionsPage(frame, area);
+        } else {
+            renderPropertiesPage(frame, area);
+        }
     }
 
     void renderFooter(List<Span> spans) {
-        hint(spans, "Tab", "next");
-        if (selectedRow >= ROW_DEV) {
-            hint(spans, "Space", "toggle");
+        if (page == PAGE_OPTIONS) {
+            if (hasProperties()) {
+                hint(spans, "Tab", "next");
+            } else {
+                hint(spans, "Tab", "next");
+            }
+            if (selectedRow >= ROW_DEV) {
+                hint(spans, "Space", "toggle");
+            }
+            if (hasProperties()) {
+                hint(spans, "→", "properties");
+            }
+            hint(spans, "Enter", "launch");
+            hintLast(spans, "Esc", "back");
+        } else {
+            hint(spans, "←", "options");
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "launch");
+            hintLast(spans, "Esc", "back");
         }
-        hint(spans, "Enter", "launch");
-        hintLast(spans, "Esc", "back");
     }
 
     List<String> buildArgs() {
@@ -238,8 +171,277 @@ class RunOptionsForm {
         if (backlogTrace) {
             args.add("--backlog-trace");
         }
+        if (properties != null) {
+            for (PropertyEntry pe : properties) {
+                String current = pe.valueInput().text();
+                if (!current.equals(pe.originalValue())) {
+                    args.add("--prop=" + pe.key() + "=" + current);
+                }
+            }
+        }
         return args;
     }
+
+    // ---- Options page (page 0) ----
+
+    private boolean handleOptionsPage(KeyEvent ke) {
+        if (ke.isUp()) {
+            selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
+            return true;
+        }
+        if (ke.isDown()) {
+            if (selectedRow == ROW_TRACE && hasProperties()) {
+                page = PAGE_PROPERTIES;
+                selectedProperty = 0;
+            } else {
+                selectedRow = (selectedRow + 1) % ROW_COUNT;
+            }
+            return true;
+        }
+        if (ke.isFocusNext()) {
+            if (selectedRow == ROW_TRACE && hasProperties()) {
+                page = PAGE_PROPERTIES;
+                selectedProperty = 0;
+            } else {
+                selectedRow = (selectedRow + 1) % ROW_COUNT;
+            }
+            return true;
+        }
+        if (ke.isFocusPrevious()) {
+            selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
+            return true;
+        }
+        if (ke.isRight() && hasProperties() && selectedRow >= ROW_DEV) {
+            page = PAGE_PROPERTIES;
+            selectedProperty = 0;
+            return true;
+        }
+
+        // Checkbox rows: Space toggles
+        if (ke.isChar(' ') && selectedRow >= ROW_DEV) {
+            switch (selectedRow) {
+                case ROW_DEV -> devMode = !devMode;
+                case ROW_OBSERVE -> observe = !observe;
+                case ROW_TRACE -> backlogTrace = !backlogTrace;
+            }
+            return true;
+        }
+
+        // Text field rows: delegate to active input
+        if (selectedRow <= ROW_MAX_SECONDS) {
+            TextInputState active = activeInput();
+            if (active != null) {
+                handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX_SECONDS);
+            }
+            return true;
+        }
+        return true;
+    }
+
+    // ---- Properties page (page 1) ----
+
+    private boolean handlePropertiesPage(KeyEvent ke) {
+        if (ke.isUp()) {
+            if (selectedProperty == 0) {
+                page = PAGE_OPTIONS;
+                selectedRow = ROW_TRACE;
+            } else {
+                selectedProperty--;
+            }
+            return true;
+        }
+        if (ke.isDown()) {
+            if (selectedProperty < properties.size() - 1) {
+                selectedProperty++;
+            }
+            return true;
+        }
+        if (ke.isFocusPrevious()) {
+            if (selectedProperty == 0) {
+                page = PAGE_OPTIONS;
+                selectedRow = ROW_TRACE;
+            } else {
+                selectedProperty--;
+            }
+            return true;
+        }
+        if (ke.isFocusNext()) {
+            if (selectedProperty < properties.size() - 1) {
+                selectedProperty++;
+            }
+            return true;
+        }
+        if (ke.isLeft() && properties.get(selectedProperty).valueInput().cursorPosition() == 0) {
+            page = PAGE_OPTIONS;
+            selectedRow = ROW_TRACE;
+            return true;
+        }
+
+        // Text editing for selected property
+        TextInputState active = properties.get(selectedProperty).valueInput();
+        handleTextInput(ke, active, false);
+        return true;
+    }
+
+    // ---- Rendering ----
+
+    private void renderOptionsPage(Frame frame, Rect area) {
+        int popupW = Math.min(56, area.width() - 4);
+        int popupH = 10;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        String title = " Run: " + exampleTitle;
+        if (hasProperties()) {
+            title += " (1/2) ";
+        } else {
+            title += " ";
+        }
+
+        List<Span> bottomSpans = new ArrayList<>();
+        bottomSpans.add(Span.styled(" Tab", MonitorContext.HINT_KEY_STYLE));
+        bottomSpans.add(Span.raw(" next"));
+        if (hasProperties()) {
+            bottomSpans.add(Span.raw(" │"));
+            bottomSpans.add(Span.styled(" →", MonitorContext.HINT_KEY_STYLE));
+            bottomSpans.add(Span.raw(" properties"));
+        }
+        bottomSpans.add(Span.raw(" │"));
+        bottomSpans.add(Span.styled(" Space", MonitorContext.HINT_KEY_STYLE));
+        bottomSpans.add(Span.raw(" toggle │"));
+        bottomSpans.add(Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE));
+        bottomSpans.add(Span.raw(" launch │"));
+        bottomSpans.add(Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE));
+        bottomSpans.add(Span.raw(" back "));
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(title)
+                .titleBottom(Title.from(Line.from(bottomSpans)))
+                .build();
+        frame.renderWidget(block, popup);
+
+        int innerX = popup.left() + 2;
+        int innerW = popup.width() - 4;
+        int labelW = 16;
+        int fieldW = innerW - labelW;
+        int rowY = popup.top() + 1;
+
+        renderLabel(frame, innerX, rowY, labelW, "Name:", selectedRow == ROW_NAME);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, nameInput, selectedRow == ROW_NAME);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Port:", selectedRow == ROW_PORT);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, portInput, selectedRow == ROW_PORT);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Max seconds:", selectedRow == ROW_MAX_SECONDS);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, maxSecondsInput, selectedRow == ROW_MAX_SECONDS);
+        rowY++;
+
+        renderCheckbox(frame, innerX, rowY, innerW, "Dev mode (live reload)", devMode, selectedRow == ROW_DEV);
+        rowY++;
+
+        renderCheckbox(frame, innerX, rowY, innerW, "Observe (health + metrics)", observe, selectedRow == ROW_OBSERVE);
+        rowY++;
+
+        renderCheckbox(frame, innerX, rowY, innerW, "Backlog trace", backlogTrace, selectedRow == ROW_TRACE);
+    }
+
+    private void renderPropertiesPage(Frame frame, Rect area) {
+        int popupW = Math.min(70, area.width() - 4);
+        int propCount = properties != null ? properties.size() : 0;
+        int popupH = Math.min(propCount + 2, Math.min(20, area.height() - 4));
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Run: " + exampleTitle + " — Properties (2/2) ")
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" ←", MonitorContext.HINT_KEY_STYLE), Span.raw(" options │"),
+                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
+                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" launch │"),
+                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
+                .build();
+        frame.renderWidget(block, popup);
+
+        int innerX = popup.left() + 2;
+        int innerW = popup.width() - 4;
+        int maxKeyLen = 0;
+        for (PropertyEntry pe : properties) {
+            maxKeyLen = Math.max(maxKeyLen, pe.key().length());
+        }
+        int labelW = Math.min(maxKeyLen + 2, innerW / 2);
+        int fieldW = innerW - labelW;
+
+        int rowY = popup.top() + 1;
+        int visibleRows = popup.height() - 2;
+        int scrollOffset = Math.max(0, selectedProperty - visibleRows + 1);
+
+        for (int i = scrollOffset; i < properties.size() && (rowY - popup.top() - 1) < visibleRows; i++) {
+            PropertyEntry pe = properties.get(i);
+            boolean selected = (i == selectedProperty);
+            String keyLabel = pe.key() + ":";
+            renderLabel(frame, innerX, rowY, labelW, TuiHelper.truncate(keyLabel, labelW), selected);
+
+            boolean modified = !pe.valueInput().text().equals(pe.originalValue());
+            if (selected) {
+                renderTextInput(frame, innerX + labelW, rowY, fieldW, pe.valueInput(), true);
+            } else {
+                String text = pe.valueInput().text();
+                Style style = modified ? Style.EMPTY.bold() : Style.EMPTY;
+                Rect inputArea = new Rect(innerX + labelW, rowY, fieldW, 1);
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
+            }
+            rowY++;
+        }
+    }
+
+    // ---- Properties loading ----
+
+    private void loadProperties(String exampleName, boolean bundled) {
+        properties = new ArrayList<>();
+        if (exampleName == null || exampleName.isEmpty()) {
+            return;
+        }
+        String content;
+        if (bundled) {
+            content = DocHelper.loadResourceContent("examples/" + exampleName + "/application.properties");
+        } else {
+            content = DocHelper.downloadContent(
+                    "https://raw.githubusercontent.com/apache/camel-jbang-examples/main/"
+                                                + exampleName + "/application.properties");
+        }
+        if (content == null || content.isBlank()) {
+            return;
+        }
+        for (String line : content.split("\n")) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                continue;
+            }
+            int eq = trimmed.indexOf('=');
+            if (eq > 0) {
+                String key = trimmed.substring(0, eq).trim();
+                String value = trimmed.substring(eq + 1).trim();
+                properties.add(new PropertyEntry(key, value, new TextInputState(value)));
+            }
+        }
+    }
+
+    private boolean hasProperties() {
+        return properties != null && !properties.isEmpty();
+    }
+
+    // ---- Shared helpers ----
 
     private TextInputState activeInput() {
         return switch (selectedRow) {
@@ -248,6 +450,30 @@ class RunOptionsForm {
             case ROW_MAX_SECONDS -> maxSecondsInput;
             default -> null;
         };
+    }
+
+    private void handleTextInput(KeyEvent ke, TextInputState active, boolean digitsOnly) {
+        if (ke.isDeleteBackward()) {
+            active.deleteBackward();
+        } else if (ke.isDeleteForward()) {
+            active.deleteForward();
+        } else if (ke.isLeft()) {
+            active.moveCursorLeft();
+        } else if (ke.isRight()) {
+            active.moveCursorRight();
+        } else if (ke.isHome()) {
+            active.moveCursorToStart();
+        } else if (ke.isEnd()) {
+            active.moveCursorToEnd();
+        } else if (ke.code() == KeyCode.CHAR) {
+            if (digitsOnly) {
+                if (Character.isDigit(ke.character())) {
+                    active.insert(ke.character());
+                }
+            } else {
+                active.insert(ke.character());
+            }
+        }
     }
 
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {
@@ -277,5 +503,8 @@ class RunOptionsForm {
         Rect cbArea = new Rect(x, y, w, 1);
         frame.renderWidget(Paragraph.from(Line.from(
                 Span.styled(" " + box + " " + label, style))), cbArea);
+    }
+
+    record PropertyEntry(String key, String originalValue, TextInputState valueInput) {
     }
 }

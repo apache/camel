@@ -662,7 +662,7 @@ class ActionsPopup {
         String baseName = example.getStringOrDefault("name", "");
         String autoName = generateUniqueName(baseName);
         showExampleBrowser = false;
-        runOptionsForm.open(autoName, baseName);
+        runOptionsForm.open(autoName, baseName, ExampleHelper.isBundled(example));
     }
 
     private String generateUniqueName(String baseName) {

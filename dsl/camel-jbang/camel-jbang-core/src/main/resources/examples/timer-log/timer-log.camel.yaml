@@ -23,5 +23,5 @@
         period: "{{timer.period}}"
       steps:
         - setBody:
-            simple: "{{greeting.message}} (message #${exchangeProperty.CamelTimerCounter})"
+            simple: "{{greeting.message}}"
         - log: "${body}"
