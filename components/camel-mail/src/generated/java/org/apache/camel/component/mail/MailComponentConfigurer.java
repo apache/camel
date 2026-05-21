@@ -111,6 +111,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "useinlineattachments":
         case "useInlineAttachments": getOrCreateConfiguration(target).setUseInlineAttachments(property(camelContext, boolean.class, value)); return true;
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": getOrCreateConfiguration(target).setUseJavaMailSessionPropertiesFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -200,6 +202,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "useGlobalSslContextParameters": return boolean.class;
         case "useinlineattachments":
         case "useInlineAttachments": return boolean.class;
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -290,6 +294,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "useinlineattachments":
         case "useInlineAttachments": return getOrCreateConfiguration(target).isUseInlineAttachments();
+        case "usejavamailsessionpropertiesfromheaders":
+        case "useJavaMailSessionPropertiesFromHeaders": return getOrCreateConfiguration(target).isUseJavaMailSessionPropertiesFromHeaders();
         case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }
