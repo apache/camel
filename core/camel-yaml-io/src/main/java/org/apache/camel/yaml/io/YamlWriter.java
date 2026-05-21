@@ -106,8 +106,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     }
 
     public void startElement(String name) throws IOException {
-        if ("routes".equals(name) || "dataFormats".equals(name)) {
-            // special for routes or dataFormats
+        if ("routes".equals(name) || "rests".equals(name) || "routeConfigurations".equals(name)
+                || "dataFormats".equals(name)) {
             routesIsRoot = true;
             return;
         }
@@ -138,8 +138,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     }
 
     public void endElement(String name) throws IOException {
-        if ("routes".equals(name) || "dataFormats".equals(name)) {
-            // we are done
+        if ("routes".equals(name) || "rests".equals(name) || "routeConfigurations".equals(name)
+                || "dataFormats".equals(name)) {
             writer.write(toYaml());
             return;
         }
