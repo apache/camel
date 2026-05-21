@@ -20,12 +20,15 @@ import java.io.FileInputStream;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.xml.in.ModelParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,9 +49,13 @@ public class XmlToYamlTest {
     void testRoutes(String xml) throws Exception {
         try (InputStream is = new FileInputStream("../camel-xml-io/src/test/resources/" + xml)) {
             RoutesDefinition expected = new ModelParser(is, NAMESPACE).parseRoutesDefinition().get();
-            StringWriter sw = new StringWriter();
-            new ModelWriter(sw).writeRoutesDefinition(expected);
-            LOG.info("xml={}\n{}\n", xml, sw);
+            YamlModelWriter writer = new YamlModelWriter();
+            List<JsonObject> roots = new ArrayList<>();
+            for (RouteDefinition route : expected.getRoutes()) {
+                roots.add(writer.writeRouteDefinition(route));
+            }
+            String out = writer.printAsYaml(roots);
+            LOG.info("xml={}\n{}\n", xml, out);
         }
     }
 
