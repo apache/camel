@@ -363,6 +363,20 @@ What it means is that, from now on, the final user or any third party dependency
 
 This is just an informative note, there is not action expected by the final user.
 
+=== camel-djl
+
+The `nlp/word_embedding` application no longer ships a built-in zoo predictor.
+The only zoo model previously listed for this application — `ai.djl.mxnet:glove:0.0.2` —
+relied on the discontinued Apache MXNet engine and never loaded successfully (the
+corresponding integration test had been permanently `@Disabled`). The
+`ZooWordEmbeddingPredictor` class has been removed and the `nlp/word_embedding`
+branch of `ModelPredictorProducer.getZooPredictor` now reports `Application not
+supported` for that path.
+
+Routes that use a custom word-embedding model (no `artifactId`, with explicit
+`model` and `translator` parameters) are unaffected — `CustomWordEmbeddingPredictor`
+and the `nlp/word_embedding` branch of `getCustomPredictor` remain in place.
+
 === camel-aws-bedrock
 
 The `applyGuardrail` producer operation now reads the guardrail identifier from a new dedicated header

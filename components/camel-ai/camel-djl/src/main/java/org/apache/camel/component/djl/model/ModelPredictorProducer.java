@@ -54,7 +54,6 @@ import org.apache.camel.component.djl.model.nlp.ZooTextClassificationPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooTextEmbeddingPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooTextGenerationPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooTokenClassificationPredictor;
-import org.apache.camel.component.djl.model.nlp.ZooWordEmbeddingPredictor;
 import org.apache.camel.component.djl.model.tabular.CustomTabularPredictor;
 import org.apache.camel.component.djl.model.tabular.ZooLinearRegressionPredictor;
 import org.apache.camel.component.djl.model.tabular.ZooSoftmaxRegressionPredictor;
@@ -126,8 +125,6 @@ public final class ModelPredictorProducer {
             return new ZooSentimentAnalysisPredictor(endpoint);
         } else if (TOKEN_CLASSIFICATION.getPath().equals(applicationPath)) {
             return new ZooTokenClassificationPredictor(endpoint);
-        } else if (WORD_EMBEDDING.getPath().equals(applicationPath)) {
-            return new ZooWordEmbeddingPredictor(endpoint);
         } else if (TEXT_GENERATION.getPath().equals(applicationPath)) {
             return new ZooTextGenerationPredictor(endpoint);
         } else if (MACHINE_TRANSLATION.getPath().equals(applicationPath)) {
