@@ -47,18 +47,19 @@ public class CatalogTools {
      * Tool to list available Camel components.
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "List available Camel components from the catalog. " +
-                        "Returns component name, description, and labels. " +
-                        "Use filter to search by name, label to filter by category.")
+          description = "List available Camel components from the catalog. "
+                        + "Returns component name, title, and labels (no description; call "
+                        + "camel_catalog_component_doc for that). "
+                        + "Use filter to search by name, label to filter by category.")
     public ComponentListResult camel_catalog_components(
             @ToolArg(description = "Filter components by name (case-insensitive substring match)") String filter,
             @ToolArg(description = "Filter by category label (e.g., cloud, messaging, database, file)") String label,
-            @ToolArg(description = "Maximum number of results to return (default: 50)") Integer limit,
+            @ToolArg(description = "Maximum number of results to return (default: 20)") Integer limit,
             @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
             @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
-        int maxResults = limit != null ? limit : 50;
+        int maxResults = limit != null ? limit : 20;
 
         try {
             CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
@@ -194,12 +195,12 @@ public class CatalogTools {
                         "(e.g., json, xml, csv, avro, protobuf).")
     public DataFormatListResult camel_catalog_dataformats(
             @ToolArg(description = "Filter by name") String filter,
-            @ToolArg(description = "Maximum results (default: 50)") Integer limit,
+            @ToolArg(description = "Maximum results (default: 20)") Integer limit,
             @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
-        int maxResults = limit != null ? limit : 50;
+        int maxResults = limit != null ? limit : 20;
 
         try {
             CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
@@ -416,7 +417,6 @@ public class CatalogTools {
         return new ComponentInfo(
                 model.getScheme(),
                 model.getTitle(),
-                model.getDescription(),
                 model.getLabel(),
                 model.isDeprecated(),
                 model.getSupportLevel() != null ? model.getSupportLevel().name() : null);
@@ -513,22 +513,19 @@ public class CatalogTools {
         return new DataFormatInfo(
                 model.getName(),
                 model.getTitle(),
-                model.getDescription(),
                 model.isDeprecated());
     }
 
     private LanguageInfo toLanguageInfo(LanguageModel model) {
         return new LanguageInfo(
                 model.getName(),
-                model.getTitle(),
-                model.getDescription());
+                model.getTitle());
     }
 
     private EipInfo toEipInfo(EipModel model) {
         return new EipInfo(
                 model.getName(),
                 model.getTitle(),
-                model.getDescription(),
                 model.getLabel());
     }
 
@@ -609,7 +606,7 @@ public class CatalogTools {
     public record ComponentListResult(int count, String camelVersion, List<ComponentInfo> components) {
     }
 
-    public record ComponentInfo(String name, String title, String description, String label,
+    public record ComponentInfo(String name, String title, String label,
             boolean deprecated, String supportLevel) {
     }
 
@@ -629,19 +626,19 @@ public class CatalogTools {
     public record DataFormatListResult(int count, List<DataFormatInfo> dataFormats) {
     }
 
-    public record DataFormatInfo(String name, String title, String description, boolean deprecated) {
+    public record DataFormatInfo(String name, String title, boolean deprecated) {
     }
 
     public record LanguageListResult(int count, List<LanguageInfo> languages) {
     }
 
-    public record LanguageInfo(String name, String title, String description) {
+    public record LanguageInfo(String name, String title) {
     }
 
     public record EipListResult(int count, List<EipInfo> eips) {
     }
 
-    public record EipInfo(String name, String title, String description, String label) {
+    public record EipInfo(String name, String title, String label) {
     }
 
     public record EipDetailResult(String name, String title, String description, String label,

@@ -50,6 +50,18 @@ class CatalogToolsTest {
     }
 
     @Test
+    void defaultLimitCapsResultsAtTwenty() {
+        // CAMEL-23473: default limit lowered from 50 to 20.
+        CatalogTools tools = createTools(null);
+
+        CatalogTools.ComponentListResult result = tools.camel_catalog_components(null, null, null, null, null, null);
+
+        assertThat(result.components().size())
+                .as("default limit should cap results at 20")
+                .isLessThanOrEqualTo(20);
+    }
+
+    @Test
     void defaultCatalogWithEmptyRepos() {
         CatalogTools tools = createTools("");
 
