@@ -42,8 +42,8 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.yaml.out.YamlModelWriter;
 
 /**
