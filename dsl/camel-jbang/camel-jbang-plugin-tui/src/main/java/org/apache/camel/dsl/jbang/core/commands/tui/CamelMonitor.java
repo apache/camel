@@ -193,6 +193,12 @@ public class CamelMonitor extends CamelCommand {
     private volatile long lastRefresh;
     private boolean showKillConfirm;
 
+    private final ActionsPopup actionsPopup = new ActionsPopup(
+            () -> data.get().stream()
+                    .filter(i -> !i.vanishing && i.name != null)
+                    .map(i -> i.name)
+                    .collect(Collectors.toSet()));
+
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
 
@@ -270,6 +276,9 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
+            if (actionsPopup.isVisible()) {
+                return actionsPopup.handleKeyEvent(ke);
+            }
             // Kill confirm dialog: Enter to confirm, Esc/any other key to cancel
             if (showKillConfirm) {
                 if (ke.isConfirm()) {
@@ -481,6 +490,11 @@ public class CamelMonitor extends CamelCommand {
                 showKillConfirm = true;
                 return true;
             }
+            // Overview tab: F2 opens actions menu
+            if (tab == TAB_OVERVIEW && ke.isKey(KeyCode.F2)) {
+                actionsPopup.open();
+                return true;
+            }
 
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
@@ -489,6 +503,7 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
+            actionsPopup.tick(now);
             long interval = routesTab.isShowDiagram() ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
                 refreshData();
@@ -634,6 +649,7 @@ public class CamelMonitor extends CamelCommand {
         if (showKillConfirm) {
             renderKillConfirm(frame, mainChunks.get(4));
         }
+        actionsPopup.render(frame, mainChunks.get(4));
         renderFooter(frame, mainChunks.get(5));
     }
 
@@ -661,6 +677,11 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.YELLOW)));
             }
+        }
+        if (actionsPopup.notification() != null) {
+            titleSpans.add(Span.raw("  "));
+            Style style = actionsPopup.notificationError() ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+            titleSpans.add(Span.styled(actionsPopup.notification(), style));
         }
         Line titleLine = Line.from(titleSpans);
 
@@ -1447,7 +1468,12 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderOverviewFooter(List<Span> spans) {
+        if (actionsPopup.isVisible()) {
+            actionsPopup.renderFooter(spans);
+            return;
+        }
         hint(spans, "q", "quit");
+        hint(spans, "F2", "actions");
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", ctx.infraTableFocused ? "integrations" : "unselect");
         }
@@ -2719,4 +2745,5 @@ public class CamelMonitor extends CamelCommand {
 
     record VanishingInfraInfo(InfraInfo info, long startTime) {
     }
+
 }
