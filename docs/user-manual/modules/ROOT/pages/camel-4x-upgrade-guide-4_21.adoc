@@ -94,6 +94,11 @@ Use `--fresh` to force re-downloading from remote repositories when needed.
 
 ==== camel-jbang-mcp
 
+The `camel_route_context` tool response no longer echoes the input route back to the caller. The
+`route` field has been removed from `RouteContextResult`; the response now contains only `format`,
+`components`, `eips`, and `summary`. This reduces token consumption for callers passing large
+routes.
+
 The `camel_catalog_component_doc` tool no longer returns every component option by default. Two new
 arguments make the response lean by default to reduce LLM context-window pressure:
 
