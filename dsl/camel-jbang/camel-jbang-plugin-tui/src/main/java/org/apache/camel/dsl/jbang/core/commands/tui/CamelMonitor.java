@@ -199,13 +199,14 @@ public class CamelMonitor extends CamelCommand {
     private volatile Buffer lastBuffer;
     private volatile String screenshotMessage;
     private volatile long screenshotMessageTime;
+    private volatile boolean pendingScreenshot;
 
     private final ActionsPopup actionsPopup = new ActionsPopup(
             () -> data.get().stream()
                     .filter(i -> !i.vanishing && i.name != null)
                     .map(i -> i.name)
                     .collect(Collectors.toSet()),
-            this::takeScreenshot);
+            () -> pendingScreenshot = true);
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
@@ -667,6 +668,11 @@ public class CamelMonitor extends CamelCommand {
         renderFooter(frame, mainChunks.get(5));
 
         lastBuffer = frame.buffer();
+
+        if (pendingScreenshot) {
+            pendingScreenshot = false;
+            takeScreenshot();
+        }
     }
 
     private void renderHeader(Frame frame, Rect area) {
