@@ -34,6 +34,13 @@ for this component:
 
 == Tooling
 
+[WARNING]
+====
+The command line utility shipped with `camel-jasypt` (the `Main` class) is *deprecated* and will be removed in a
+future Camel release. Use the official link:http://www.jasypt.org/cli.html[Jasypt CLI] instead — it is the
+supported tool for the same encrypt/decrypt workflow and removes the duplicated implementation maintained here.
+====
+
 The Jasypt component is a runnable JAR that provides a command line utility to encrypt or decrypt values.
 
 The usage documentation can be output to the console to describe the syntax and options it provides:

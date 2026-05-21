@@ -778,6 +778,16 @@ The component camel-irc is deprecated. The library used had no stable release si
 
 The component camel-iec-60870 is deprecated. The library used to implement it NeoScada is no more maintained since 2021. There are no alternatives in Java with compatible license.
 
+=== Deprecation of camel-jasypt CLI entrypoint
+
+The `org.apache.camel.component.jasypt.Main` class — the command line entrypoint that lets the `camel-jasypt`
+jar be invoked directly (e.g. via JBang) to encrypt or decrypt property values — is now deprecated and will be
+removed in a future Camel release.
+
+Use the upstream link:http://www.jasypt.org/cli.html[Jasypt CLI] instead. It is the supported tool for the same
+workflow and lets us drop the duplicate implementation maintained inside `camel-jasypt`. The component itself
+(property-source decryption at runtime) is unaffected.
+
 === Deprecation of camel-paho
 
 The components camel-paho is deprecated. There were no new release since 2020 of the Java client, last non-regulatory commit was in 2022.

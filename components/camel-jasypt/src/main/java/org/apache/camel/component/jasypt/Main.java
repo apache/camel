@@ -25,6 +25,15 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.salt.RandomSaltGenerator;
 
+/**
+ * Command line entrypoint for the camel-jasypt component, kept around so the {@code camel-jasypt} jar can be invoked
+ * directly (e.g. with JBang) to encrypt or decrypt property values.
+ * <p>
+ * Deprecated in favour of the upstream <a href="http://www.jasypt.org/cli.html">Jasypt CLI</a>, which is the supported
+ * tool for this workflow and removes the need to maintain a duplicate implementation here. This class is scheduled for
+ * removal in a future Camel release.
+ */
+@Deprecated(since = "4.21")
 public class Main {
 
     private final StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
