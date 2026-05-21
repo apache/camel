@@ -60,11 +60,14 @@ class ActionsPopup {
     private static final int ACTION_RUN_EXAMPLE = 0;
     private static final int ACTION_SHOW_DOCS = 1;
     private static final int ACTION_SCREENSHOT = 2;
-    private static final int ACTION_COUNT = 3;
+    private static final int ACTION_SHOW_KEYSTROKES = 3;
+    private static final int ACTION_COUNT = 4;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
     private final Runnable screenshotAction;
+    private final Runnable toggleKeystrokes;
+    private final Supplier<Boolean> keystrokesEnabled;
     private MonitorContext ctx;
 
     private boolean showActionsMenu;
@@ -93,10 +96,12 @@ class ActionsPopup {
     private long launchNotificationExpiry;
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
-                 Runnable screenshotAction) {
+                 Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled) {
         this.runningNames = runningNames;
         this.integrations = integrations;
         this.screenshotAction = screenshotAction;
+        this.toggleKeystrokes = toggleKeystrokes;
+        this.keystrokesEnabled = keystrokesEnabled;
     }
 
     void setContext(MonitorContext ctx) {
@@ -221,6 +226,9 @@ class ActionsPopup {
                     } else if (sel == ACTION_SCREENSHOT) {
                         showActionsMenu = false;
                         screenshotAction.run();
+                    } else if (sel == ACTION_SHOW_KEYSTROKES) {
+                        showActionsMenu = false;
+                        toggleKeystrokes.run();
                     }
                 }
             }
@@ -296,10 +304,14 @@ class ActionsPopup {
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
+        String keystrokeLabel = keystrokesEnabled.get()
+                ? "  Hide Keystrokes"
+                : "  Show Keystrokes";
         ListWidget list = ListWidget.builder()
                 .items(ListItem.from("  Run an example..."),
                         ListItem.from("  Show Documentation"),
-                        ListItem.from("  Take Screenshot"))
+                        ListItem.from("  Take Screenshot"),
+                        ListItem.from(keystrokeLabel))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
