@@ -22,6 +22,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
@@ -35,10 +37,14 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.input.TextInput;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.util.json.JsonObject;
@@ -48,6 +54,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLa
 
 class ActionsPopup {
 
+    private final Supplier<Set<String>> runningNames;
+
     private boolean showActionsMenu;
     private final ListState actionsMenuState = new ListState();
 
@@ -55,13 +63,21 @@ class ActionsPopup {
     private final ListState exampleBrowserState = new ListState();
     private List<JsonObject> exampleCatalog;
 
+    private boolean showNameInput;
+    private TextInputState nameInputState;
+    private JsonObject selectedExample;
+
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private String launchNotification;
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
 
+    ActionsPopup(Supplier<Set<String>> runningNames) {
+        this.runningNames = runningNames;
+    }
+
     boolean isVisible() {
-        return showActionsMenu || showExampleBrowser;
+        return showActionsMenu || showExampleBrowser || showNameInput;
     }
 
     void open() {
@@ -72,6 +88,7 @@ class ActionsPopup {
     void close() {
         showActionsMenu = false;
         showExampleBrowser = false;
+        showNameInput = false;
     }
 
     String notification() {
@@ -83,6 +100,29 @@ class ActionsPopup {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
+        if (showNameInput) {
+            if (ke.isCancel()) {
+                showNameInput = false;
+                showExampleBrowser = true;
+            } else if (ke.isConfirm()) {
+                launchWithName();
+            } else if (ke.isDeleteBackward()) {
+                nameInputState.deleteBackward();
+            } else if (ke.isDeleteForward()) {
+                nameInputState.deleteForward();
+            } else if (ke.isLeft()) {
+                nameInputState.moveCursorLeft();
+            } else if (ke.isRight()) {
+                nameInputState.moveCursorRight();
+            } else if (ke.isHome()) {
+                nameInputState.moveCursorToStart();
+            } else if (ke.isEnd()) {
+                nameInputState.moveCursorToEnd();
+            } else if (ke.code() == KeyCode.CHAR) {
+                nameInputState.insert(ke.character());
+            }
+            return true;
+        }
         if (showExampleBrowser) {
             if (ke.isCancel()) {
                 showExampleBrowser = false;
@@ -95,6 +135,8 @@ class ActionsPopup {
                 navigateExampleBrowser(-10);
             } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
                 navigateExampleBrowser(10);
+            } else if (ke.isChar('r')) {
+                openNameInput();
             } else if (ke.isConfirm()) {
                 launchSelectedExample();
             }
@@ -122,12 +164,21 @@ class ActionsPopup {
         if (showExampleBrowser) {
             renderExampleBrowser(frame, area);
         }
+        if (showNameInput) {
+            renderNameInput(frame, area);
+        }
     }
 
     void renderFooter(List<Span> spans) {
+        if (showNameInput) {
+            hint(spans, "Enter", "launch");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
         if (showExampleBrowser) {
             hint(spans, "↑↓", "navigate");
             hint(spans, "Enter", "run");
+            hint(spans, "n", "name");
             hintLast(spans, "Esc", "back");
             return;
         }
@@ -173,7 +224,7 @@ class ActionsPopup {
             return;
         }
         int popupW = Math.min(100, area.width() - 4);
-        int popupH = Math.min(exampleCatalog.size() + 10, Math.min(28, area.height() - 4));
+        int popupH = Math.min(exampleCatalog.size() + 10, Math.min(22, area.height() - 6));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -189,6 +240,11 @@ class ActionsPopup {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .title(" Run an Example (" + exampleCatalog.size() + ") ")
+                        .titleBottom(Title.from(Line.from(
+                                Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" run │"),
+                                Span.styled(" r", MonitorContext.HINT_KEY_STYLE), Span.raw(" run... │"),
+                                Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
+                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, exampleBrowserState);
@@ -233,6 +289,99 @@ class ActionsPopup {
         items.add(ListItem.from(" 📦 = bundled (offline)  🌐 = online (GitHub)  🐳 = Docker")
                 .style(Style.EMPTY.dim()));
         return items;
+    }
+
+    private void renderNameInput(Frame frame, Rect area) {
+        int popupW = Math.min(50, area.width() - 4);
+        int popupH = 4;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Name ")
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" launch │"),
+                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
+                .build();
+        frame.renderWidget(block, popup);
+
+        Rect inner = new Rect(popup.left() + 2, popup.top() + 1, popup.width() - 4, 1);
+        frame.renderWidget(Paragraph.from(Line.from(
+                Span.styled("Name for the integration:", Style.EMPTY.dim()))), inner);
+
+        Rect inputArea = new Rect(popup.left() + 2, popup.top() + 2, popup.width() - 4, 1);
+        TextInput textInput = TextInput.builder()
+                .cursorStyle(Style.EMPTY.reversed())
+                .build();
+        frame.renderStatefulWidget(textInput, inputArea, nameInputState);
+    }
+
+    // ---- Name Input ----
+
+    private void openNameInput() {
+        Integer sel = exampleBrowserState.selected();
+        if (sel == null || isSeparatorIndex(sel)) {
+            return;
+        }
+        JsonObject example = getExampleAtListIndex(sel);
+        if (example == null) {
+            return;
+        }
+        selectedExample = example;
+        String baseName = example.getStringOrDefault("name", "");
+        String autoName = generateUniqueName(baseName);
+        showExampleBrowser = false;
+        showNameInput = true;
+        nameInputState = new TextInputState(autoName);
+    }
+
+    private String generateUniqueName(String baseName) {
+        Set<String> names = runningNames.get();
+        if (!names.contains(baseName)) {
+            return baseName;
+        }
+        for (int i = 2;; i++) {
+            String candidate = baseName + i;
+            if (!names.contains(candidate)) {
+                return candidate;
+            }
+        }
+    }
+
+    private void launchWithName() {
+        if (selectedExample == null || nameInputState == null) {
+            return;
+        }
+        String customName = nameInputState.text().trim();
+        String exampleName = selectedExample.getStringOrDefault("name", "");
+        showNameInput = false;
+        try {
+            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+            cmd.add("run");
+            cmd.add("--example=" + exampleName);
+            if (!customName.isEmpty() && !customName.equals(exampleName)) {
+                cmd.add("--name=" + customName);
+            }
+            Path outputFile = Files.createTempFile("camel-example-", ".log");
+            outputFile.toFile().deleteOnExit();
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(outputFile.toFile());
+            Process process = pb.start();
+            String displayName = customName.isEmpty() ? exampleName : customName;
+            pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
+            launchNotification = "Starting: " + displayName;
+            launchNotificationError = false;
+            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+        } catch (Exception e) {
+            launchNotification = "Failed to start: " + exampleName + " - " + e.getMessage();
+            launchNotificationError = true;
+            launchNotificationExpiry = System.currentTimeMillis() + 10000;
+        }
     }
 
     // ---- Example Browser Navigation ----

@@ -193,7 +193,11 @@ public class CamelMonitor extends CamelCommand {
     private volatile long lastRefresh;
     private boolean showKillConfirm;
 
-    private final ActionsPopup actionsPopup = new ActionsPopup();
+    private final ActionsPopup actionsPopup = new ActionsPopup(
+            () -> data.get().stream()
+                    .filter(i -> !i.vanishing && i.name != null)
+                    .map(i -> i.name)
+                    .collect(Collectors.toSet()));
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
