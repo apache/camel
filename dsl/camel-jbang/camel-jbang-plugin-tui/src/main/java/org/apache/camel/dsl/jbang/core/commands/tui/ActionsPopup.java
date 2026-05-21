@@ -315,7 +315,7 @@ class ActionsPopup {
     // ---- Rendering ----
 
     private void renderActionsMenu(Frame frame, Rect area) {
-        int popupW = 32;
+        int popupW = 34;
         int popupH = 2 + ACTION_COUNT;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
@@ -323,12 +323,12 @@ class ActionsPopup {
 
         frame.renderWidget(Clear.INSTANCE, popup);
         String keystrokeLabel = keystrokesEnabled.get()
-                ? "  Hide Keystrokes"
-                : "  Show Keystrokes";
+                ? "  ⌨️ Hide Keystrokes"
+                : "  ⌨️ Show Keystrokes";
         ListWidget list = ListWidget.builder()
-                .items(ListItem.from("  Run an example..."),
-                        ListItem.from("  Show Documentation"),
-                        ListItem.from("  Take Screenshot"),
+                .items(ListItem.from("  🐪 Run an example..."),
+                        ListItem.from("  📖 Show Documentation"),
+                        ListItem.from("  📸 Take Screenshot"),
                         ListItem.from(keystrokeLabel),
                         ListItem.from("  🩺 Run Doctor"))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
