@@ -27,6 +27,9 @@ package org.apache.camel;
  * <p/>
  * The purpose of this is to check on startup that we do not have multiple consumers for the <b>same</b> endpoints. This
  * prevents starting up with copy/paste mistakes in the Camel routes.
+ *
+ * @see Endpoint
+ * @see Consumer
  */
 public interface MultipleConsumersSupport {
 

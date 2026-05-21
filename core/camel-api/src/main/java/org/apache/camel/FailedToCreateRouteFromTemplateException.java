@@ -19,8 +19,12 @@ package org.apache.camel;
 import java.util.Objects;
 
 /**
- * Exception when failing to create a {@link Route} from a RouteTemplateDefinition.
+ * Thrown when the {@link CamelContext} fails to instantiate a {@link Route} from a route template definition, for
+ * example because a required template parameter is missing or the generated route is invalid.
+ * <p/>
+ * Carries the template id and the target route id to help diagnose which template and instantiation attempt failed.
  *
+ * @see   Route
  * @since 3.10
  */
 public class FailedToCreateRouteFromTemplateException extends RuntimeCamelException {

@@ -32,6 +32,8 @@ import jakarta.xml.bind.annotation.XmlType;
  * <li>Defer - Will defer shutting down the route and let it be active during graceful shutdown. The route will be
  * shutdown at a later stage during the graceful shutdown process.</li>
  * </ul>
+ *
+ * @see ShutdownRunningTask
  */
 @XmlType
 @XmlEnum

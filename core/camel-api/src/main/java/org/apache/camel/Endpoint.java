@@ -28,6 +28,9 @@ import org.apache.camel.util.StringHelper;
  *
  * @see Exchange
  * @see Message
+ * @see Component
+ * @see Producer
+ * @see Consumer
  */
 public interface Endpoint extends IsSingleton, Service, ComponentAware {
 

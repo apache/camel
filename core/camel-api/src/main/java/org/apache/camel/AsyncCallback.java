@@ -22,6 +22,8 @@ package org.apache.camel;
  * For example a {@link AsyncProcessor} should invoke the done method when the {@link Exchange} is ready to be continued
  * routed. This allows to implement asynchronous {@link Producer} which can continue routing {@link Exchange} when all
  * the data has been gathered. This allows to build non blocking request/reply communication.
+ *
+ * @see AsyncProcessor
  */
 public interface AsyncCallback extends Runnable {
 

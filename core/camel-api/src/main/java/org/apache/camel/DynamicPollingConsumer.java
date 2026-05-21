@@ -19,9 +19,14 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A {@link PollingConsumer} that are used by dynamic Poll and PollEnrich EIPs to facilitate components that can use
- * information from the current {@link Exchange} during the poll.
+ * A {@link PollingConsumer} used by the dynamic {@code poll} and {@code pollEnrich} EIPs, allowing the component to use
+ * data from the current {@link Exchange} (such as headers or properties) to parameterise the poll operation at runtime.
+ * <p/>
+ * Components that support dynamic polling implement this interface in addition to {@link PollingConsumer} to provide
+ * exchange-aware overloads of the three receive methods.
  *
+ * @see   PollingConsumer
+ * @see   Exchange
  * @since 4.11
  */
 public interface DynamicPollingConsumer extends PollingConsumer {

@@ -19,7 +19,16 @@ package org.apache.camel;
 import java.util.Queue;
 
 /**
- * A consumer of a batch of message exchanges from an {@link Endpoint}
+ * A {@link Consumer} that receives messages from an {@link Endpoint} in discrete batches rather than one at a time.
+ * <p/>
+ * Batch consumers expose a {@link #setMaxMessagesPerPoll(int)} limit to bound the number of messages fetched in a
+ * single polling cycle, which helps control memory usage and startup latency.
+ * <p/>
+ * During graceful shutdown, the {@link ShutdownRunningTask} option controls whether a batch in progress is completed in
+ * full or interrupted after the current message.
+ *
+ * @see Consumer
+ * @see ShutdownRunningTask
  */
 public interface BatchConsumer extends Consumer {
 

@@ -17,7 +17,14 @@
 package org.apache.camel;
 
 /**
- * Asynchronous producer
+ * A {@link Producer} that can dispatch an {@link Exchange} to an {@link Endpoint} without blocking the calling thread.
+ * <p/>
+ * Implementations override {@link AsyncProcessor#process(Exchange, AsyncCallback)} to complete the dispatch without
+ * blocking and invoke the {@link AsyncCallback} when processing is done.
+ *
+ * @see Producer
+ * @see AsyncProcessor
+ * @see AsyncCallback
  */
 public interface AsyncProducer extends Producer, AsyncProcessor {
 
