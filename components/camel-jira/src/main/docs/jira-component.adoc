@@ -178,7 +178,7 @@ Optional:
 * `CamelJiraIssuePriorityId` or `CamelJiraIssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
 * `CamelJiraIssueComponents`: A list of string with the valid component names.
 * `CamelJiraIssueWatchersAdd`: A list of strings with the usernames (or id) to add to the watcher list.
-* `IssueDescription`: The description of the issue.
+* The exchange body is used as the issue description.
 
 === AddComment
 
