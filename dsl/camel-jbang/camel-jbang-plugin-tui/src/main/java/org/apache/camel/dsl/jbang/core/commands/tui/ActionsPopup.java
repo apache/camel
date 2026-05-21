@@ -220,7 +220,7 @@ class ActionsPopup {
         frame.renderWidget(Clear.INSTANCE, popup);
         ListWidget list = ListWidget.builder()
                 .items(ListItem.from("  Run an example..."),
-                        ListItem.from("  Screenshot"))
+                        ListItem.from("  Take Screenshot"))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
