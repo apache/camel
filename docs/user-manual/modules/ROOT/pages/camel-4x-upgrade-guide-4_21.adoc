@@ -86,6 +86,12 @@ In addition to `http://` and `https://`, it also accepts `file://` URIs.
 Those may come in handy when cannot access the internet.
 Append `.json` to the resource path when you store it locally.
 
+The internal Maven downloader used by Camel JBang now defaults to preferring locally cached
+artifacts over remote ones (`preferLocal = true`). Previously the default was `false`, meaning
+the downloader would always check remote repositories first. With the new default, already-resolved
+artifacts in the local Maven repository are used directly without contacting remote repositories.
+Use `--fresh` to force re-downloading from remote repositories when needed.
+
 ==== camel-jbang-mcp
 
 The `camel_catalog_component_doc` tool no longer returns every component option by default. Two new
