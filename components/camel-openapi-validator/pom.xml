@@ -49,8 +49,8 @@
 
         <dependency>
             <groupId>com.atlassian.oai</groupId>
-            <artifactId>swagger-request-validator-core</artifactId>
-            <version>${swagger-request-validator-version}</version>
+            <artifactId>openapi-request-validator-core</artifactId>
+            <version>${openapi-request-validator-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -79,6 +79,10 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
         </dependency>
     </dependencies>
 

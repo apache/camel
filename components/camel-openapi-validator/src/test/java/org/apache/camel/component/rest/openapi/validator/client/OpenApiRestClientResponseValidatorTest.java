@@ -29,6 +29,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class OpenApiRestClientResponseValidatorTest extends ExchangeTestSupport {
 
     static OpenAPI openAPI;
@@ -63,7 +65,7 @@ public class OpenApiRestClientResponseValidatorTest extends ExchangeTestSupport 
         exchange.getMessage().setBody("{ \"name\": \"tiger\" }");
         error = validator.validate(exchange, new RestClientResponseValidator.ValidationContext(
                 "application/json", "application/json", null, null));
-        Assertions.assertTrue(error.body().contains("Object has missing required properties ([\"photoUrls\"])"));
+        assertThat(error.body()).contains("required property 'photoUrls' not found");
 
         exchange.getMessage().setBody("{ \"name\": \"tiger\", \"photoUrls\": [\"image.jpg\"] }");
         error = validator.validate(exchange, new RestClientResponseValidator.ValidationContext(
