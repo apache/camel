@@ -22,28 +22,28 @@ public interface OpensearchConstants {
 
     @Metadata(description = "The operation to perform",
               javaType = "org.apache.camel.component.opensearch.OpensearchOperation")
-    String PARAM_OPERATION = "operation";
+    String PARAM_OPERATION = "CamelOpensearchOperation";
     @Metadata(description = "The id of the indexed document.", javaType = "String")
-    String PARAM_INDEX_ID = "indexId";
+    String PARAM_INDEX_ID = "CamelOpensearchIndexId";
     @Metadata(description = "The name of the index to act against", javaType = "String")
-    String PARAM_INDEX_NAME = "indexName";
+    String PARAM_INDEX_NAME = "CamelOpensearchIndexName";
     @Metadata(description = "The full qualified name of the class of the document to unmarshall", javaType = "Class",
               defaultValue = "ObjectNode")
-    String PARAM_DOCUMENT_CLASS = "documentClass";
+    String PARAM_DOCUMENT_CLASS = "CamelOpensearchDocumentClass";
     @Metadata(description = "The index creation waits for the write consistency number of shards to be available",
               javaType = "Integer")
-    String PARAM_WAIT_FOR_ACTIVE_SHARDS = "waitForActiveShards";
+    String PARAM_WAIT_FOR_ACTIVE_SHARDS = "CamelOpensearchWaitForActiveShards";
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
-    String PARAM_SCROLL_KEEP_ALIVE_MS = "scrollKeepAliveMs";
+    String PARAM_SCROLL_KEEP_ALIVE_MS = "CamelOpensearchScrollKeepAliveMs";
     @Metadata(description = "Set to true to enable scroll usage. When enabled, the body is returned as a `OpensearchScrollRequestIterator`."
                             +
                             " Make sure to use the stream and close it accordingly to avoid potential resource leaks.",
               javaType = "Boolean")
-    String PARAM_SCROLL = "useScroll";
+    String PARAM_SCROLL = "CamelOpensearchUseScroll";
     @Metadata(description = "The size of the response.", javaType = "Integer")
-    String PARAM_SIZE = "size";
+    String PARAM_SIZE = "CamelOpensearchSize";
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
-    String PARAM_FROM = "from";
+    String PARAM_FROM = "CamelOpensearchFrom";
 
     String PROPERTY_SCROLL_OPENSEARCH_QUERY_COUNT = "CamelOpenSearchScrollQueryCount";
 
