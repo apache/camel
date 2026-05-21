@@ -49,6 +49,9 @@ public class ProfileConfigurer {
             if (!enabled) {
                 config.tracerConfig().withStandby(true);
             }
+            if (!config.isTracing()) {
+                config.setTracingStandby(true);
+            }
         }
 
         if ("dev".equals(profile)) {
