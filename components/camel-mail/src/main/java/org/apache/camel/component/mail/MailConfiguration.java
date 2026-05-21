@@ -112,6 +112,8 @@ public class MailConfiguration implements Cloneable {
     private boolean useInlineAttachments;
     @UriParam(label = "advanced")
     private boolean ignoreUnsupportedCharset;
+    @UriParam(label = "producer,advanced,security")
+    private boolean useJavaMailSessionPropertiesFromHeaders;
     @UriParam
     @Metadata(label = "consumer")
     private boolean disconnect;
@@ -690,6 +692,23 @@ public class MailConfiguration implements Cloneable {
      */
     public void setUseInlineAttachments(boolean useInlineAttachments) {
         this.useInlineAttachments = useInlineAttachments;
+    }
+
+    public boolean isUseJavaMailSessionPropertiesFromHeaders() {
+        return useJavaMailSessionPropertiesFromHeaders;
+    }
+
+    /**
+     * Whether to allow dynamic JavaMail session properties (message headers whose key starts with <tt>mail.smtp.</tt>
+     * or <tt>mail.smtps.</tt>) to override the endpoint configuration on a per-message basis.
+     *
+     * This is disabled by default. Only enable it when these headers originate exclusively from trusted route logic,
+     * never from data crossing a trust boundary (for example HTTP query parameters, or JMS/Kafka messages from
+     * untrusted producers). When enabled, an attacker able to set these headers could weaken transport security (such
+     * as <tt>mail.smtp.ssl.trust</tt> or <tt>mail.smtp.starttls.enable</tt>) or redirect the SMTP connection.
+     */
+    public void setUseJavaMailSessionPropertiesFromHeaders(boolean useJavaMailSessionPropertiesFromHeaders) {
+        this.useJavaMailSessionPropertiesFromHeaders = useJavaMailSessionPropertiesFromHeaders;
     }
 
     public boolean isIgnoreUnsupportedCharset() {

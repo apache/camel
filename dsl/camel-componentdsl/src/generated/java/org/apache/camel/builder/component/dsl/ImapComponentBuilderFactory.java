@@ -926,6 +926,31 @@ public interface ImapComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to allow dynamic JavaMail session properties (message headers
+         * whose key starts with mail.smtp. or mail.smtps.) to override the
+         * endpoint configuration on a per-message basis. This is disabled by
+         * default. Only enable it when these headers originate exclusively from
+         * trusted route logic, never from data crossing a trust boundary (for
+         * example HTTP query parameters, or JMS/Kafka messages from untrusted
+         * producers). When enabled, an attacker able to set these headers could
+         * weaken transport security (such as mail.smtp.ssl.trust or
+         * mail.smtp.starttls.enable) or redirect the SMTP connection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useJavaMailSessionPropertiesFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default ImapComponentBuilder useJavaMailSessionPropertiesFromHeaders(boolean useJavaMailSessionPropertiesFromHeaders) {
+            doSetProperty("useJavaMailSessionPropertiesFromHeaders", useJavaMailSessionPropertiesFromHeaders);
+            return this;
+        }
+    
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
@@ -1008,6 +1033,7 @@ public interface ImapComponentBuilderFactory {
             case "password": getOrCreateConfiguration((MailComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((MailComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((MailComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "useJavaMailSessionPropertiesFromHeaders": getOrCreateConfiguration((MailComponent) component).setUseJavaMailSessionPropertiesFromHeaders((boolean) value); return true;
             case "username": getOrCreateConfiguration((MailComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
