@@ -42,7 +42,7 @@ import org.apache.camel.model.tokenizer.*;
 import org.apache.camel.model.transformer.*;
 import org.apache.camel.model.validator.*;
 
-@Generated("org.apache.camel.maven.packaging.YamlDirectModelWriterGeneratorMojo")
+@Generated("org.apache.camel.maven.packaging.YamlModelWriterGeneratorMojo")
 @SuppressWarnings({"deprecation","rawtypes"})
 public class YamlModelWriter extends YamlModelWriterSupport {
 

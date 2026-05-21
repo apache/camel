@@ -32,34 +32,34 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 
 /**
- * Generate direct YAML Model Writer that builds JsonObject/JsonArray structures for YAML serialization without Jackson.
+ * Generate YAML Model Writer that builds JsonObject/JsonArray structures for YAML serialization.
  */
-@Mojo(name = "generate-yaml-direct-writer", threadSafe = true,
+@Mojo(name = "generate-yaml-writer", threadSafe = true,
       requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
-public class YamlDirectModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
+public class YamlModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
 
     public static final String WRITER_PACKAGE = "org.apache.camel.yaml.out";
 
-    @Parameter(defaultValue = "${camel-generate-yaml-direct-writer}")
-    protected boolean generateYamlDirectWriter;
+    @Parameter(defaultValue = "${camel-generate-yaml-writer}")
+    protected boolean generateYamlWriter;
 
     @Inject
-    public YamlDirectModelWriterGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+    public YamlModelWriterGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
         super(projectHelper, buildContext);
     }
 
     @Override
     public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
-        generateYamlDirectWriter
-                = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-yaml-direct-writer", "false"));
+        generateYamlWriter
+                = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-yaml-writer", "false"));
         super.execute(project);
     }
 
     @Override
     public void execute() throws MojoExecutionException {
-        if (!generateYamlDirectWriter) {
+        if (!generateYamlWriter) {
             return;
         }
         Path javaDir = sourcesOutputDir.toPath();

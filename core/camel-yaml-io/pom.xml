@@ -33,7 +33,7 @@
     <properties>
         <firstVersion>4.0.0</firstVersion>
         <label>dsl</label>
-        <camel-generate-yaml-direct-writer>true</camel-generate-yaml-direct-writer>
+        <camel-generate-yaml-writer>true</camel-generate-yaml-writer>
     </properties>
 
     <dependencies>
@@ -99,7 +99,7 @@
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>generate-yaml-direct-writer</goal>
+                            <goal>generate-yaml-writer</goal>
                         </goals>
                     </execution>
                 </executions>
