@@ -18,7 +18,7 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The library used for Camel Grok component has been migrated from no more maintained `io.krakens:java-grok` to its fork `io.github.whatap:java-grok`.
 It implies small differences listed https://github.com/whatap/java-grok#what-is-different-from-iokrakensjava-grok[here].
 
-=== camel-coreand camel-paho-mqtt5 are
+=== camel-core
 
 The `camel-api` module now has an optional dependency on `org.jspecify:jspecify` for null safety annotations
 (`@NullMarked`, `@Nullable`). The dependency is `<optional>true</optional>`, so it is not pulled transitively
