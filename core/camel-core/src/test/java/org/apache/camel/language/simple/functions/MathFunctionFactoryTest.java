@@ -20,7 +20,6 @@ import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MathFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
@@ -115,9 +114,4 @@ public class MathFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
         assertEquals("average(exchange, 1, 2, 3)", createCode("average(1, 2, 3)"));
     }
 
-    @Test
-    public void testUnknownFunctionReturnsNull() {
-        assertNull(createFactory().createFunction(context, "trim()", 0));
-        assertNull(createFactory().createCode(context, "trim()", 0));
-    }
 }

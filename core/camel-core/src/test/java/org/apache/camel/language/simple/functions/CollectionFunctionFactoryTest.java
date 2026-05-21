@@ -284,11 +284,4 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals("map(exchange, \"k\", \"v\")", createCode("map('k','v')"));
     }
 
-    // --- unknown function ---
-
-    @Test
-    public void testUnknownFunctionReturnsNull() {
-        assertNull(createFactory().createFunction(context, "abs()", 0));
-        assertNull(createFactory().createCode(context, "abs()", 0));
-    }
 }

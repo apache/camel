@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class VariableFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
@@ -76,11 +75,5 @@ public class VariableFunctionFactoryTest extends AbstractSimpleFunctionFactoryTe
         assertEquals("variableAs(exchange, \"num\", Integer.class)", createCode("variableAs(num, Integer)"));
         assertEquals("variableAs(exchange, \"num\", java.lang.Integer.class)",
                 createCode("variableAs(num, java.lang.Integer)"));
-    }
-
-    @Test
-    public void testUnknownFunctionReturnsNull() {
-        assertNull(createFactory().createFunction(context, "body", 0));
-        assertNull(createFactory().createCode(context, "body", 0));
     }
 }

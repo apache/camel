@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HeaderFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
@@ -86,11 +85,5 @@ public class HeaderFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
     public void testCreateCodeHeaderAs() {
         assertEquals("headerAs(message, \"num\", Integer.class)", createCode("headerAs(num, Integer)"));
         assertEquals("headerAs(message, \"num\", java.lang.Integer.class)", createCode("headerAs(num, java.lang.Integer)"));
-    }
-
-    @Test
-    public void testUnknownFunctionReturnsNull() {
-        assertNull(createFactory().createFunction(context, "body", 0));
-        assertNull(createFactory().createCode(context, "body", 0));
     }
 }

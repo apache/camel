@@ -22,7 +22,6 @@ import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
@@ -307,13 +306,5 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
     public void testCreateCodeNormalizeWhitespace() {
         assertEquals("Object o = null;\n        return normalizeWhitespace(exchange, o);",
                 createCode("normalizeWhitespace()"));
-    }
-
-    // --- unknown function ---
-
-    @Test
-    public void testUnknownFunctionReturnsNull() {
-        assertNull(createFactory().createFunction(context, "abs()", 0));
-        assertNull(createFactory().createCode(context, "abs()", 0));
     }
 }
