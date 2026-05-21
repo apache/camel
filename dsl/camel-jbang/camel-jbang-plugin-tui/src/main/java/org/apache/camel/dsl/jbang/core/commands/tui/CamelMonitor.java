@@ -211,6 +211,9 @@ public class CamelMonitor extends CamelCommand {
             () -> data.get().stream()
                     .filter(i -> !i.vanishing)
                     .collect(Collectors.toList()),
+            () -> infraData.get().stream()
+                    .filter(i -> !i.vanishing)
+                    .collect(Collectors.toList()),
             () -> pendingScreenshot = true,
             () -> recording = !recording,
             () -> recording);

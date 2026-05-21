@@ -62,7 +62,8 @@ class ActionsPopup {
     private static final int ACTION_SCREENSHOT = 2;
     private static final int ACTION_SHOW_KEYSTROKES = 3;
     private static final int ACTION_DOCTOR = 4;
-    private static final int ACTION_COUNT = 5;
+    private static final int ACTION_STOP_ALL = 5;
+    private static final int ACTION_COUNT = 6;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -92,6 +93,7 @@ class ActionsPopup {
     private int docScroll;
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
+    private final StopAllPopup stopAllPopup;
 
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private String launchNotification;
@@ -99,12 +101,14 @@ class ActionsPopup {
     private long launchNotificationExpiry;
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
+                 Supplier<List<InfraInfo>> infraServices,
                  Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled) {
         this.runningNames = runningNames;
         this.integrations = integrations;
         this.screenshotAction = screenshotAction;
         this.toggleKeystrokes = toggleKeystrokes;
         this.keystrokesEnabled = keystrokesEnabled;
+        this.stopAllPopup = new StopAllPopup(integrations, infraServices);
     }
 
     void setContext(MonitorContext ctx) {
@@ -113,7 +117,7 @@ class ActionsPopup {
 
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || showNameInput || showDocPicker || showDocViewer
-                || doctorPopup.isVisible();
+                || doctorPopup.isVisible() || stopAllPopup.isVisible();
     }
 
     void open() {
@@ -128,6 +132,7 @@ class ActionsPopup {
         showDocPicker = false;
         showDocViewer = false;
         doctorPopup.close();
+        stopAllPopup.close();
     }
 
     String notification() {
@@ -214,6 +219,10 @@ class ActionsPopup {
             }
             return true;
         }
+        if (stopAllPopup.handleKeyEvent(ke)) {
+            checkStopAllNotification();
+            return true;
+        }
         if (doctorPopup.handleKeyEvent(ke)) {
             return true;
         }
@@ -240,6 +249,10 @@ class ActionsPopup {
                     } else if (sel == ACTION_DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
+                    } else if (sel == ACTION_STOP_ALL) {
+                        showActionsMenu = false;
+                        stopAllPopup.open();
+                        checkStopAllNotification();
                     }
                 }
             }
@@ -267,9 +280,16 @@ class ActionsPopup {
         if (doctorPopup.isVisible()) {
             doctorPopup.render(frame, area);
         }
+        if (stopAllPopup.isVisible()) {
+            stopAllPopup.render(frame, area);
+        }
     }
 
     void renderFooter(List<Span> spans) {
+        if (stopAllPopup.isVisible()) {
+            stopAllPopup.renderFooter(spans);
+            return;
+        }
         if (doctorPopup.isVisible()) {
             doctorPopup.renderFooter(spans);
             return;
@@ -322,15 +342,20 @@ class ActionsPopup {
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
+        // extra space after ⌨️ because it renders narrower than other emoji
         String keystrokeLabel = keystrokesEnabled.get()
-                ? "  ⌨️ Hide Keystrokes"
-                : "  ⌨️ Show Keystrokes";
+                ? "  ⌨️  Hide Keystrokes"
+                : "  ⌨️  Show Keystrokes";
+        String stopLabel = stopAllPopup.hasBothGroups()
+                ? "  🛑 Stop All..."
+                : "  🛑 Stop All";
         ListWidget list = ListWidget.builder()
                 .items(ListItem.from("  🐪 Run an example..."),
                         ListItem.from("  📖 Show Documentation"),
                         ListItem.from("  📸 Take Screenshot"),
                         ListItem.from(keystrokeLabel),
-                        ListItem.from("  🩺 Run Doctor"))
+                        ListItem.from("  🩺 Run Doctor"),
+                        ListItem.from(stopLabel))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
@@ -600,6 +625,13 @@ class ActionsPopup {
         launchNotification = msg;
         launchNotificationError = error;
         launchNotificationExpiry = System.currentTimeMillis() + 10000;
+    }
+
+    private void checkStopAllNotification() {
+        String msg = stopAllPopup.consumeNotification();
+        if (msg != null) {
+            setNotification(msg, false);
+        }
     }
 
     // ---- Name Input ----
