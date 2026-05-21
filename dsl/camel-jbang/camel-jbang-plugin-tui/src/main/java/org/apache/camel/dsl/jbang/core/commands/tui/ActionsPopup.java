@@ -17,9 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -512,7 +509,7 @@ class ActionsPopup {
             if (response != null && response.getString("content") != null) {
                 String raw = response.getString("content");
                 String file = response.getStringOrDefault("file", "README");
-                docContent = file.endsWith(".adoc") ? asciidocToMarkdown(raw) : raw;
+                docContent = file.endsWith(".adoc") ? DocHelper.asciidocToMarkdown(raw) : raw;
                 docTitle = (info.name != null ? info.name : info.pid) + " - " + Path.of(file).getFileName();
                 docScroll = 0;
                 showDocViewer = true;
@@ -543,17 +540,17 @@ class ActionsPopup {
         String content = null;
         boolean isAdoc = false;
         if (bundled) {
-            content = loadResourceContent("examples/" + name + "/README.md");
+            content = DocHelper.loadResourceContent("examples/" + name + "/README.md");
         } else {
             String base = "https://raw.githubusercontent.com/apache/camel-jbang-examples/main/" + name + "/";
-            content = downloadContent(base + "README.md");
+            content = DocHelper.downloadContent(base + "README.md");
             if (content == null) {
-                content = downloadContent(base + "README.adoc");
+                content = DocHelper.downloadContent(base + "README.adoc");
                 isAdoc = content != null;
             }
         }
         if (content != null && !content.isEmpty()) {
-            docContent = isAdoc ? asciidocToMarkdown(content) : content;
+            docContent = isAdoc ? DocHelper.asciidocToMarkdown(content) : content;
             docTitle = name;
             docScroll = 0;
             showExampleBrowser = false;
@@ -562,136 +559,6 @@ class ActionsPopup {
         } else {
             setNotification("No documentation available for: " + name, true);
         }
-    }
-
-    private static String loadResourceContent(String resourcePath) {
-        try (InputStream is = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
-            if (is != null) {
-                return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return null;
-    }
-
-    private static String downloadContent(String url) {
-        try (InputStream is = URI.create(url).toURL().openStream()) {
-            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    static String asciidocToMarkdown(String adoc) {
-        StringBuilder sb = new StringBuilder();
-        String[] lines = adoc.split("\n", -1);
-        String pendingLang = null;
-        boolean inCodeBlock = false;
-        for (String line : lines) {
-            if (!inCodeBlock && line.startsWith("[source")) {
-                int comma = line.indexOf(',');
-                int end = line.indexOf(']');
-                if (comma >= 0 && end > comma) {
-                    pendingLang = line.substring(comma + 1, end).trim();
-                } else {
-                    pendingLang = "";
-                }
-                continue;
-            }
-            if (line.equals("----")) {
-                if (inCodeBlock) {
-                    sb.append("```\n");
-                    inCodeBlock = false;
-                } else {
-                    sb.append("```").append(pendingLang != null ? pendingLang : "").append('\n');
-                    pendingLang = null;
-                    inCodeBlock = true;
-                }
-                continue;
-            }
-            if (inCodeBlock) {
-                sb.append(line).append('\n');
-                continue;
-            }
-            pendingLang = null;
-            if (line.startsWith("include::")) {
-                continue;
-            }
-            if (line.startsWith("=")) {
-                if (line.startsWith("==== ")) {
-                    sb.append("#### ").append(line.substring(5)).append('\n');
-                } else if (line.startsWith("=== ")) {
-                    sb.append("### ").append(line.substring(4)).append('\n');
-                } else if (line.startsWith("== ")) {
-                    sb.append("## ").append(line.substring(3)).append('\n');
-                } else if (line.startsWith("= ")) {
-                    sb.append("# ").append(line.substring(2)).append('\n');
-                } else {
-                    sb.append(line).append('\n');
-                }
-                continue;
-            }
-            String converted = line;
-            converted = convertImages(converted);
-            converted = convertLinks(converted);
-            sb.append(converted).append('\n');
-        }
-        if (inCodeBlock) {
-            sb.append("```\n");
-        }
-        return sb.toString();
-    }
-
-    private static String convertImages(String line) {
-        int idx = 0;
-        StringBuilder sb = new StringBuilder();
-        while (idx < line.length()) {
-            int imgStart = line.indexOf("image::", idx);
-            if (imgStart < 0) {
-                sb.append(line, idx, line.length());
-                break;
-            }
-            sb.append(line, idx, imgStart);
-            int bracketOpen = line.indexOf('[', imgStart);
-            int bracketClose = bracketOpen >= 0 ? line.indexOf(']', bracketOpen) : -1;
-            if (bracketOpen >= 0 && bracketClose >= 0) {
-                String file = line.substring(imgStart + 7, bracketOpen);
-                String alt = line.substring(bracketOpen + 1, bracketClose);
-                sb.append("![").append(alt).append("](").append(file).append(')');
-                idx = bracketClose + 1;
-            } else {
-                sb.append("image::");
-                idx = imgStart + 7;
-            }
-        }
-        return sb.toString();
-    }
-
-    private static String convertLinks(String line) {
-        int idx = 0;
-        StringBuilder sb = new StringBuilder();
-        while (idx < line.length()) {
-            int linkStart = line.indexOf("link:", idx);
-            if (linkStart < 0) {
-                // also handle bare URL[text] pattern
-                sb.append(line, idx, line.length());
-                break;
-            }
-            sb.append(line, idx, linkStart);
-            int bracketOpen = line.indexOf('[', linkStart);
-            int bracketClose = bracketOpen >= 0 ? line.indexOf(']', bracketOpen) : -1;
-            if (bracketOpen >= 0 && bracketClose >= 0) {
-                String url = line.substring(linkStart + 5, bracketOpen);
-                String text = line.substring(bracketOpen + 1, bracketClose);
-                sb.append('[').append(text).append("](").append(url).append(')');
-                idx = bracketClose + 1;
-            } else {
-                sb.append("link:");
-                idx = linkStart + 5;
-            }
-        }
-        return sb.toString();
     }
 
     private void setNotification(String msg, boolean error) {
