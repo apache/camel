@@ -514,7 +514,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (answer == null) {
                 answer = value;
             }
-            return answer;
+            return answer != null ? answer.trim() : null;
         }
     }
 

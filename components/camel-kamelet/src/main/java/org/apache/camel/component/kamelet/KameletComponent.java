@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kamelet;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -131,6 +133,18 @@ public class KameletComponent extends DefaultComponent {
         parameters.remove(PARAM_ROUTE_ID);
         parameters.remove(PARAM_LOCATION);
         parameters.remove(PARAM_UUID);
+
+        // URL-decode non-RAW parameter values. The YAML DSL URL-encodes property values
+        // when building query strings (via URISupport.createQueryString), but useRawUri=true
+        // prevents automatic decoding during URI parsing. Decode here so values like
+        // "application/json" are not left as "application%2Fjson".
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            if (entry.getValue() instanceof String s
+                    && !s.startsWith(URISupport.RAW_TOKEN_PREFIX + "(")
+                    && !s.startsWith(URISupport.RAW_TOKEN_PREFIX + "{")) {
+                entry.setValue(URLDecoder.decode(s, StandardCharsets.UTF_8));
+            }
+        }
 
         // manually need to resolve raw parameters as input to the kamelet because
         // resolveRawParameterValues is false
