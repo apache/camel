@@ -45,7 +45,7 @@ class RunOptionsForm {
     // Row indices for page 0
     private static final int ROW_NAME = 0;
     private static final int ROW_PORT = 1;
-    private static final int ROW_MAX_SECONDS = 2;
+    private static final int ROW_MAX = 2;
     private static final int ROW_DEV = 3;
     private static final int ROW_OBSERVE = 4;
     private static final int ROW_TRACE = 5;
@@ -55,10 +55,14 @@ class RunOptionsForm {
     private int page;
     private int selectedRow;
 
+    private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
+    private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
+
     // Text fields
     private TextInputState nameInput;
     private TextInputState portInput;
-    private TextInputState maxSecondsInput;
+    private TextInputState maxInput;
+    private int maxMode;
 
     // Checkboxes
     private boolean devMode;
@@ -79,7 +83,8 @@ class RunOptionsForm {
     void open(String defaultName, String exampleName, boolean bundled) {
         nameInput = new TextInputState(defaultName != null ? defaultName : "");
         portInput = new TextInputState("");
-        maxSecondsInput = new TextInputState("");
+        maxInput = new TextInputState("");
+        maxMode = 0;
         devMode = false;
         observe = false;
         backlogTrace = false;
@@ -160,9 +165,9 @@ class RunOptionsForm {
         if (!port.isEmpty()) {
             args.add("--port=" + port);
         }
-        String maxSec = maxSecondsInput.text().trim();
-        if (!maxSec.isEmpty() && !"0".equals(maxSec)) {
-            args.add("--max-seconds=" + maxSec);
+        String maxVal = maxInput.text().trim();
+        if (!maxVal.isEmpty() && !"0".equals(maxVal)) {
+            args.add(MAX_FLAGS[maxMode] + maxVal);
         }
         if (devMode) {
             args.add("--dev");
@@ -229,6 +234,12 @@ class RunOptionsForm {
             return true;
         }
 
+        // Max row: Space cycles mode
+        if (ke.isChar(' ') && selectedRow == ROW_MAX) {
+            maxMode = (maxMode + 1) % MAX_MODES.length;
+            return true;
+        }
+
         // Checkbox rows: Space toggles
         if (ke.isChar(' ') && selectedRow >= ROW_DEV) {
             switch (selectedRow) {
@@ -240,10 +251,10 @@ class RunOptionsForm {
         }
 
         // Text field rows: delegate to active input
-        if (selectedRow <= ROW_MAX_SECONDS) {
+        if (selectedRow <= ROW_MAX) {
             TextInputState active = activeInput();
             if (active != null) {
-                handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX_SECONDS);
+                handleTextInput(ke, active, selectedRow == ROW_PORT || selectedRow == ROW_MAX);
             }
             return true;
         }
@@ -401,8 +412,8 @@ class RunOptionsForm {
         renderTextInput(frame, innerX + labelW, rowY, fieldW, portInput, selectedRow == ROW_PORT);
         rowY++;
 
-        renderLabel(frame, innerX, rowY, labelW, "Max seconds:", selectedRow == ROW_MAX_SECONDS);
-        renderTextInput(frame, innerX + labelW, rowY, fieldW, maxSecondsInput, selectedRow == ROW_MAX_SECONDS);
+        renderLabel(frame, innerX, rowY, labelW, MAX_MODES[maxMode], selectedRow == ROW_MAX);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, maxInput, selectedRow == ROW_MAX);
         rowY++;
 
         renderCheckbox(frame, innerX, rowY, innerW, "Dev mode (live reload)", devMode, selectedRow == ROW_DEV);
@@ -537,7 +548,7 @@ class RunOptionsForm {
         return switch (selectedRow) {
             case ROW_NAME -> nameInput;
             case ROW_PORT -> portInput;
-            case ROW_MAX_SECONDS -> maxSecondsInput;
+            case ROW_MAX -> maxInput;
             default -> null;
         };
     }
