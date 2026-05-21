@@ -228,6 +228,10 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                         && ("batchConfig".equals(name) || "streamConfig".equals(name))) {
                     // special for resequence
                     setMetadata(parent, "resequenceConfig", last);
+                } else if ("circuitBreaker".equals(parent.getName())
+                        && ("resilience4jConfiguration".equals(name)
+                                || "faultToleranceConfiguration".equals(name))) {
+                    setMetadata(parent, name, last);
                 } else if (parent.isOutput()) {
                     List<EipModel> list = (List<EipModel>) parent.getMetadata().get("_output");
                     if (list == null) {
@@ -356,6 +360,21 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     node.addOutput(asNode(m));
                 }
             } else if ("resequence".equals(node.getName()) && "resequenceConfig".equals(key)) {
+                EipModel config = (EipModel) entry.getValue();
+                JsonObject jo = new JsonObject();
+                for (var o : config.getOptions()) {
+                    String n = o.getName();
+                    Object v = config.getMetadata().get(n);
+                    if (v != null) {
+                        jo.put(n, v);
+                    }
+                }
+                if (!jo.isEmpty()) {
+                    node.addProperty(config.getName(), jo);
+                }
+            } else if ("circuitBreaker".equals(node.getName())
+                    && ("resilience4jConfiguration".equals(key)
+                            || "faultToleranceConfiguration".equals(key))) {
                 EipModel config = (EipModel) entry.getValue();
                 JsonObject jo = new JsonObject();
                 for (var o : config.getOptions()) {
