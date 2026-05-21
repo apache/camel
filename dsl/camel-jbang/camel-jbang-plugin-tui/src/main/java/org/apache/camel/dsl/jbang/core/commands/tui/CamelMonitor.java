@@ -206,6 +206,9 @@ public class CamelMonitor extends CamelCommand {
                     .filter(i -> !i.vanishing && i.name != null)
                     .map(i -> i.name)
                     .collect(Collectors.toSet()),
+            () -> data.get().stream()
+                    .filter(i -> !i.vanishing)
+                    .collect(Collectors.toList()),
             () -> pendingScreenshot = true);
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
@@ -250,6 +253,7 @@ public class CamelMonitor extends CamelCommand {
 
         // Create shared context and tab instances
         ctx = new MonitorContext(data, infraData);
+        actionsPopup.setContext(ctx);
         logTab = new LogTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
@@ -541,6 +545,9 @@ public class CamelMonitor extends CamelCommand {
             refreshHistoryData(List.of(Long.parseLong(ctx.selectedPid)));
             refreshTraceData(List.of(Long.parseLong(ctx.selectedPid)));
             historyTab.onTabSelected();
+        }
+        if (tab == TAB_CIRCUIT_BREAKER) {
+            circuitBreakerTab.onTabSelected();
         }
         tabsState.select(tab);
         return true;
@@ -2367,6 +2374,7 @@ public class CamelMonitor extends CamelCommand {
         info.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
         info.javaVendor = runtime != null ? runtime.getString("javaVendor") : null;
         info.javaVmName = runtime != null ? runtime.getString("javaVmName") : null;
+        info.readmeFiles = runtime != null ? runtime.getString("readmeFiles") : null;
 
         Map<String, ?> stats = context.getMap("statistics");
         if (stats != null) {

@@ -65,6 +65,14 @@ class CircuitBreakerTab implements MonitorTab {
     }
 
     @Override
+    public void onTabSelected() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null && !info.circuitBreakers.isEmpty() && tableState.selected() == null) {
+            tableState.select(0);
+        }
+    }
+
+    @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (ke.isChar('s')) {
             sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;

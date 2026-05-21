@@ -13,7 +13,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "consumer.camel.yaml",
             "producer.camel.yaml"
@@ -35,7 +35,7 @@
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "aws-s3-cdc-log.camel.yaml",
             "example-file.txt",
@@ -58,7 +58,7 @@
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "http-to-aws-sqs.camel.yaml"
         ]
@@ -76,7 +76,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "route.camel.yaml"
         ]
     },
@@ -95,7 +95,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "cron-log.camel.yaml"
         ]
     },
@@ -114,7 +114,7 @@
         "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "compose.yaml",
             "docling-langchain4j-rag.yaml",
@@ -136,7 +136,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "examples/banking-sector-brief.pdf",
             "examples/magnificent-seven-update.pdf",
@@ -159,7 +159,7 @@
         "requiresDocker": true,
         "hasCitrusTests": true,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "compose.yaml",
             "ftp.camel.yaml",
@@ -180,7 +180,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "groovy.camel.yaml"
         ]
@@ -200,7 +200,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "rest-api.camel.yaml"
         ]
@@ -220,7 +220,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "rest-api.camel.yaml"
         ]
@@ -239,7 +239,7 @@
         "requiresDocker": true,
         "hasCitrusTests": true,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "compose.yaml",
             "infra/mosquitto.conf",
@@ -262,7 +262,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "pii-redaction.camel.yaml",
             "pii.schema.json"
@@ -282,7 +282,7 @@
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "examples/1001.json",
             "petstore-api.json",
@@ -303,7 +303,7 @@
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "examples/pet/1000.json",
             "petstore-api.json",
@@ -324,7 +324,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "rest-api.camel.yaml"
         ]
     },
@@ -343,7 +343,7 @@
         "hasCitrusTests": false,
         "files": [
             "Greeter.java",
-            "README.adoc",
+            "README.md",
             "beans.yaml",
             "routes.camel.yaml"
         ]
@@ -363,7 +363,7 @@
         "requiresDocker": false,
         "hasCitrusTests": true,
         "files": [
-            "README.adoc",
+            "README.md",
             "analyzer/application-dev.properties",
             "analyzer/error-analyzer.camel.yaml",
             "containers/caches/infinispan-events-config.json",
@@ -410,7 +410,7 @@
         "requiresDocker": true,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "application.properties",
             "compose.yaml",
             "sql.camel.yaml"
@@ -430,7 +430,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "timer-log.camel.yaml"
         ]
     },
@@ -448,7 +448,7 @@
         "requiresDocker": false,
         "hasCitrusTests": false,
         "files": [
-            "README.adoc",
+            "README.md",
             "consumer.camel.yaml",
             "input/account.xml",
             "stylesheet.xsl"

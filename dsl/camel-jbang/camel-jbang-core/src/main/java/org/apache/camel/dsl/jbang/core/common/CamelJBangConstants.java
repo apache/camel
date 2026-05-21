@@ -36,6 +36,10 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String CLASSPATH_FILES = "camel.jbang.classpathFiles";
 
+    @Metadata(description = "README files included with the integration (Use commas to separate multiple files)",
+              javaType = "String")
+    public static final String README_FILES = "camel.jbang.readmeFiles";
+
     @Metadata(description = "Local file directory for loading custom Kamelets",
               javaType = "String")
     public static final String LOCAL_KAMELET_DIR = "camel.jbang.localKameletDir";
