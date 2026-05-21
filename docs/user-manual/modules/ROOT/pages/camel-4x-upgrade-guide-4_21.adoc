@@ -784,9 +784,10 @@ The `org.apache.camel.component.jasypt.Main` class — the command line entrypoi
 jar be invoked directly (e.g. via JBang) to encrypt or decrypt property values — is now deprecated and will be
 removed in a future Camel release.
 
-Use the upstream link:http://www.jasypt.org/cli.html[Jasypt CLI] instead. It is the supported tool for the same
-workflow and lets us drop the duplicate implementation maintained inside `camel-jasypt`. The component itself
-(property-source decryption at runtime) is unaffected.
+Use the standalone CLI scripts (`encrypt.sh` / `decrypt.sh` / `digest.sh`) shipped in the upstream
+link:https://github.com/jasypt/jasypt/releases/tag/jasypt-1.9.3[jasypt-1.9.3 distribution] instead. They cover
+the same workflow and let us drop the duplicate implementation maintained inside `camel-jasypt`. The component
+itself (property-source decryption at runtime) is unaffected.
 
 === Deprecation of camel-paho
 

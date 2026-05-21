@@ -29,9 +29,10 @@ import org.jasypt.salt.RandomSaltGenerator;
  * Command line entrypoint for the camel-jasypt component, kept around so the {@code camel-jasypt} jar can be invoked
  * directly (e.g. with JBang) to encrypt or decrypt property values.
  * <p>
- * Deprecated in favour of the upstream <a href="http://www.jasypt.org/cli.html">Jasypt CLI</a>, which is the supported
- * tool for this workflow and removes the need to maintain a duplicate implementation here. This class is scheduled for
- * removal in a future Camel release.
+ * Deprecated in favour of the standalone Jasypt CLI scripts (encrypt.sh / decrypt.sh / digest.sh) shipped in the
+ * upstream <a href="https://github.com/jasypt/jasypt/releases/tag/jasypt-1.9.3">jasypt-1.9.3 distribution</a>, which
+ * remove the need to maintain a duplicate implementation here. This class is scheduled for removal in a future Camel
+ * release.
  */
 @Deprecated(since = "4.21")
 public class Main {
