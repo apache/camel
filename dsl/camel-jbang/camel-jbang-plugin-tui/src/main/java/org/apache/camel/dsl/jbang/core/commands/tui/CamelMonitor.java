@@ -62,6 +62,10 @@ import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.list.ListItem;
+import dev.tamboui.widgets.list.ListState;
+import dev.tamboui.widgets.list.ListWidget;
+import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -72,6 +76,8 @@ import dev.tamboui.widgets.tabs.TabsState;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -193,6 +199,19 @@ public class CamelMonitor extends CamelCommand {
     private volatile long lastRefresh;
     private boolean showKillConfirm;
 
+    // F2 actions menu
+    private boolean showActionsMenu;
+    private final ListState actionsMenuState = new ListState();
+    // Example browser
+    private boolean showExampleBrowser;
+    private final ListState exampleBrowserState = new ListState();
+    private List<JsonObject> exampleCatalog;
+    // Async example launches
+    private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
+    private String launchNotification;
+    private boolean launchNotificationError;
+    private long launchNotificationExpiry;
+
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
 
@@ -270,6 +289,33 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
+            // Example browser popup
+            if (showExampleBrowser) {
+                if (ke.isCancel()) {
+                    showExampleBrowser = false;
+                    showActionsMenu = true;
+                } else if (ke.isUp()) {
+                    navigateExampleBrowser(-1);
+                } else if (ke.isDown()) {
+                    navigateExampleBrowser(1);
+                } else if (ke.isConfirm()) {
+                    launchSelectedExample();
+                }
+                return true;
+            }
+            // Actions menu popup
+            if (showActionsMenu) {
+                if (ke.isCancel()) {
+                    showActionsMenu = false;
+                } else if (ke.isUp()) {
+                    actionsMenuState.selectPrevious();
+                } else if (ke.isDown()) {
+                    actionsMenuState.selectNext(1);
+                } else if (ke.isConfirm()) {
+                    openExampleBrowser();
+                }
+                return true;
+            }
             // Kill confirm dialog: Enter to confirm, Esc/any other key to cancel
             if (showKillConfirm) {
                 if (ke.isConfirm()) {
@@ -481,6 +527,12 @@ public class CamelMonitor extends CamelCommand {
                 showKillConfirm = true;
                 return true;
             }
+            // Overview tab: F2 opens actions menu
+            if (tab == TAB_OVERVIEW && ke.isKey(KeyCode.F2)) {
+                showActionsMenu = true;
+                actionsMenuState.select(0);
+                return true;
+            }
 
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
@@ -489,6 +541,10 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
+            monitorPendingLaunches(now);
+            if (launchNotification != null && now > launchNotificationExpiry) {
+                launchNotification = null;
+            }
             long interval = routesTab.isShowDiagram() ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
                 refreshData();
@@ -634,6 +690,12 @@ public class CamelMonitor extends CamelCommand {
         if (showKillConfirm) {
             renderKillConfirm(frame, mainChunks.get(4));
         }
+        if (showActionsMenu) {
+            renderActionsMenu(frame, mainChunks.get(4));
+        }
+        if (showExampleBrowser) {
+            renderExampleBrowser(frame, mainChunks.get(4));
+        }
         renderFooter(frame, mainChunks.get(5));
     }
 
@@ -661,6 +723,11 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 titleSpans.add(Span.styled("selected: " + selectedName(), Style.EMPTY.fg(Color.YELLOW)));
             }
+        }
+        if (launchNotification != null) {
+            titleSpans.add(Span.raw("  "));
+            Style style = launchNotificationError ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+            titleSpans.add(Span.styled(launchNotification, style));
         }
         Line titleLine = Line.from(titleSpans);
 
@@ -1433,6 +1500,288 @@ public class CamelMonitor extends CamelCommand {
                 inner);
     }
 
+    // ---- Actions Menu / Example Browser ----
+
+    private void renderActionsMenu(Frame frame, Rect area) {
+        int popupW = 32;
+        int popupH = 3;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+        ListWidget list = ListWidget.builder()
+                .items(ListItem.from("  Run an example..."))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(" Actions ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, actionsMenuState);
+    }
+
+    private void renderExampleBrowser(Frame frame, Rect area) {
+        if (exampleCatalog == null || exampleCatalog.isEmpty()) {
+            return;
+        }
+        int popupW = Math.min(80, area.width() - 4);
+        int popupH = Math.min(exampleCatalog.size() + 5, Math.min(24, area.height() - 4));
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        List<ListItem> items = buildExampleListItems(popupW - 4);
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(" Run an Example (" + exampleCatalog.size() + ") ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, exampleBrowserState);
+    }
+
+    private List<ListItem> buildExampleListItems(int width) {
+        List<ListItem> items = new ArrayList<>();
+        String currentLevel = null;
+        for (JsonObject ex : exampleCatalog) {
+            String level = ex.getStringOrDefault("level", "beginner");
+            if (!level.equals(currentLevel)) {
+                currentLevel = level;
+                String header = "── " + capitalize(level) + " ──";
+                items.add(ListItem.from(header).style(Style.EMPTY.dim()));
+            }
+            String name = ex.getStringOrDefault("name", "");
+            String desc = ex.getStringOrDefault("description", "");
+            boolean docker = Boolean.TRUE.equals(ex.get("requiresDocker"));
+            boolean bundled = Boolean.TRUE.equals(ex.get("bundled"));
+
+            String tag = docker ? " [docker]" : "";
+            int nameCol = Math.min(28, width / 3);
+            String padded = String.format("  %-" + nameCol + "s", TuiHelper.truncate(name + tag, nameCol));
+            int remaining = Math.max(10, width - padded.length() - 1);
+            String line = padded + " " + TuiHelper.truncate(desc, remaining);
+
+            Style style = bundled ? Style.EMPTY : Style.EMPTY.dim();
+            items.add(ListItem.from(line).style(style));
+        }
+        return items;
+    }
+
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    private void openExampleBrowser() {
+        showActionsMenu = false;
+        if (exampleCatalog == null) {
+            exampleCatalog = loadAndSortExamples();
+        }
+        if (exampleCatalog.isEmpty()) {
+            launchNotification = "No examples found";
+            launchNotificationError = true;
+            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+            return;
+        }
+        showExampleBrowser = true;
+        exampleBrowserState.select(1);
+    }
+
+    private List<JsonObject> loadAndSortExamples() {
+        List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        catalog.sort((a, b) -> {
+            int la = levelOrder(a.getStringOrDefault("level", "beginner"));
+            int lb = levelOrder(b.getStringOrDefault("level", "beginner"));
+            if (la != lb) {
+                return Integer.compare(la, lb);
+            }
+            return a.getStringOrDefault("name", "").compareTo(b.getStringOrDefault("name", ""));
+        });
+        return catalog;
+    }
+
+    private static int levelOrder(String level) {
+        return switch (level) {
+            case "beginner" -> 0;
+            case "intermediate" -> 1;
+            case "advanced" -> 2;
+            default -> 3;
+        };
+    }
+
+    private void navigateExampleBrowser(int direction) {
+        if (exampleCatalog == null || exampleCatalog.isEmpty()) {
+            return;
+        }
+        int totalItems = countExampleListItems();
+        Integer current = exampleBrowserState.selected();
+        if (current == null) {
+            current = 0;
+        }
+        int next = current + direction;
+        if (next < 0) {
+            next = 0;
+        }
+        if (next >= totalItems) {
+            next = totalItems - 1;
+        }
+        if (isSeparatorIndex(next)) {
+            next += direction;
+            if (next < 0) {
+                next = 0;
+            }
+            if (next >= totalItems) {
+                next = totalItems - 1;
+            }
+        }
+        exampleBrowserState.select(next);
+    }
+
+    private int countExampleListItems() {
+        if (exampleCatalog == null) {
+            return 0;
+        }
+        int count = 0;
+        String currentLevel = null;
+        for (JsonObject ex : exampleCatalog) {
+            String level = ex.getStringOrDefault("level", "beginner");
+            if (!level.equals(currentLevel)) {
+                currentLevel = level;
+                count++;
+            }
+            count++;
+        }
+        return count;
+    }
+
+    private boolean isSeparatorIndex(int index) {
+        if (exampleCatalog == null) {
+            return false;
+        }
+        int pos = 0;
+        String currentLevel = null;
+        for (JsonObject ex : exampleCatalog) {
+            String level = ex.getStringOrDefault("level", "beginner");
+            if (!level.equals(currentLevel)) {
+                currentLevel = level;
+                if (pos == index) {
+                    return true;
+                }
+                pos++;
+            }
+            if (pos == index) {
+                return false;
+            }
+            pos++;
+        }
+        return false;
+    }
+
+    private JsonObject getExampleAtListIndex(int index) {
+        if (exampleCatalog == null) {
+            return null;
+        }
+        int pos = 0;
+        String currentLevel = null;
+        for (JsonObject ex : exampleCatalog) {
+            String level = ex.getStringOrDefault("level", "beginner");
+            if (!level.equals(currentLevel)) {
+                currentLevel = level;
+                pos++;
+            }
+            if (pos == index) {
+                return ex;
+            }
+            pos++;
+        }
+        return null;
+    }
+
+    private void launchSelectedExample() {
+        Integer sel = exampleBrowserState.selected();
+        if (sel == null || isSeparatorIndex(sel)) {
+            return;
+        }
+        JsonObject example = getExampleAtListIndex(sel);
+        if (example == null) {
+            return;
+        }
+        String exampleName = example.getStringOrDefault("name", "");
+        showExampleBrowser = false;
+        try {
+            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+            cmd.add("run");
+            cmd.add("--example=" + exampleName);
+            Path outputFile = Files.createTempFile("camel-example-", ".log");
+            outputFile.toFile().deleteOnExit();
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(outputFile.toFile());
+            Process process = pb.start();
+            pendingLaunches.add(new PendingLaunch(exampleName, process, outputFile, System.currentTimeMillis()));
+            launchNotification = "Starting: " + exampleName;
+            launchNotificationError = false;
+            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+        } catch (Exception e) {
+            launchNotification = "Failed to start: " + exampleName + " - " + e.getMessage();
+            launchNotificationError = true;
+            launchNotificationExpiry = System.currentTimeMillis() + 10000;
+        }
+    }
+
+    private void monitorPendingLaunches(long now) {
+        Iterator<PendingLaunch> it = pendingLaunches.iterator();
+        while (it.hasNext()) {
+            PendingLaunch pl = it.next();
+            if (!pl.process().isAlive()) {
+                int exitCode = pl.process().exitValue();
+                if (exitCode == 0) {
+                    launchNotification = "Started: " + pl.name();
+                    launchNotificationError = false;
+                    launchNotificationExpiry = now + 5000;
+                } else {
+                    String detail = readFirstLine(pl.outputFile());
+                    launchNotification = "Failed: " + pl.name()
+                                         + (detail != null ? " - " + detail : "");
+                    launchNotificationError = true;
+                    launchNotificationExpiry = now + 10000;
+                }
+                it.remove();
+            } else if (now - pl.startTime() > 8000) {
+                launchNotification = "Started: " + pl.name();
+                launchNotificationError = false;
+                launchNotificationExpiry = now + 5000;
+                it.remove();
+            }
+        }
+    }
+
+    private static String readFirstLine(Path file) {
+        try {
+            List<String> lines = Files.readAllLines(file);
+            for (String line : lines) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    return TuiHelper.truncate(trimmed, 60);
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
     private void renderFooter(Frame frame, Rect area) {
         List<Span> spans = new ArrayList<>();
         MonitorTab tab = activeTab();
@@ -1447,6 +1796,18 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderOverviewFooter(List<Span> spans) {
+        if (showExampleBrowser) {
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "run");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
+        if (showActionsMenu) {
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "select");
+            hintLast(spans, "Esc", "cancel");
+            return;
+        }
         hint(spans, "q", "quit");
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", ctx.infraTableFocused ? "integrations" : "unselect");
@@ -1473,6 +1834,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "x", "stop");
             hint(spans, "X", "kill");
         }
+        hint(spans, "F2", "actions");
         hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
     }
 
@@ -2718,5 +3080,8 @@ public class CamelMonitor extends CamelCommand {
     }
 
     record VanishingInfraInfo(InfraInfo info, long startTime) {
+    }
+
+    private record PendingLaunch(String name, Process process, Path outputFile, long startTime) {
     }
 }
