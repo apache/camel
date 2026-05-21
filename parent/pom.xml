@@ -387,7 +387,6 @@
         <milvus-client-version>2.6.20</milvus-client-version>
         <mina-version>2.2.7</mina-version>
         <minio-version>8.6.0</minio-version>
-        <mock-javamail-version>1.9</mock-javamail-version>
         <mockito-version>5.23.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.7.0</mongo-java-driver-version>
