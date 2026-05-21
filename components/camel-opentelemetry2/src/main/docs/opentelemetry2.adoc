@@ -25,7 +25,7 @@ The configuration properties for the OpenTelemetry2 tracer are:
 |=======================================================================
 | Option | Default | Description
 |`enabled`| false | Turn the tracing on/off.
-|`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route).
+|`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route). When disabled, custom processors are not visible from the OpenTelemetry perspective and have no active span or context.
 |`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
 | `excludePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to exclude from tracing. Spans matching these patterns will be disabled.
 | `traceHeadersInclusion`| `false` | If set to `true`, adds the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
@@ -252,6 +252,8 @@ For this reason, whenever you need to provide custom telemetry information, it i
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getIn().setHeader("operation", "fake");
+                                // Baggage is available via the OpenTelemetry API
+                                String val = Baggage.current().getEntryValue("myValue");
                             }
                         })
                         .to("log:info");
