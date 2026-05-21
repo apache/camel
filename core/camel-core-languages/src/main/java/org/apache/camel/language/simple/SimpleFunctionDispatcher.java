@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.functions.BodyFunctionFactory;
 import org.apache.camel.language.simple.functions.CollateFunctionFactory;
+import org.apache.camel.language.simple.functions.CollectionFunctionFactory;
 import org.apache.camel.language.simple.functions.HeaderFunctionFactory;
 import org.apache.camel.language.simple.functions.JoinFunctionFactory;
 import org.apache.camel.language.simple.functions.MathFunctionFactory;
@@ -61,7 +62,8 @@ public final class SimpleFunctionDispatcher {
             new CollateFunctionFactory(),
             new JoinFunctionFactory(),
             new MathFunctionFactory(),
-            new StringFunctionFactory());
+            new StringFunctionFactory(),
+            new CollectionFunctionFactory());
 
     private static final List<Entry> EXPRESSION_ENTRIES = List.of(
             new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),

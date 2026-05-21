@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BodyFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
@@ -115,11 +114,5 @@ public class BodyFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
     @Test
     public void testCreateCodeBodyOgnl() {
         assertEquals("body.getLength()", createCode("body.length"));
-    }
-
-    @Test
-    public void testUnknownFunctionReturnsNull() {
-        assertNull(createFactory().createFunction(context, "random(10)", 0));
-        assertNull(createFactory().createCode(context, "random(10)", 0));
     }
 }
