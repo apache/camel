@@ -27,6 +27,7 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
@@ -46,10 +47,14 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLa
 
 class ClasspathPopup {
 
+    private static final Style MATCH_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
+
     private boolean visible;
     private final ListState listState = new ListState();
+    private final FuzzyFilter fuzzyFilter = new FuzzyFilter();
     private List<JarEntry> entries;
-    private String title;
+    private List<FilteredEntry> filteredEntries;
+    private String baseTitle;
     private String errorMessage;
 
     boolean isVisible() {
@@ -90,7 +95,9 @@ class ClasspathPopup {
                     entries.add(parseJarEntry(path));
                 }
                 entries.sort((a, b) -> a.display().compareToIgnoreCase(b.display()));
-                title = (integrationName != null ? integrationName : pid) + " - Classpath (" + entries.size() + " JARs)";
+                baseTitle = (integrationName != null ? integrationName : pid) + " - Classpath";
+                fuzzyFilter.clearFilter();
+                refilter();
                 listState.select(0);
                 visible = true;
             } else {
@@ -116,31 +123,45 @@ class ClasspathPopup {
             return false;
         }
         if (ke.isCancel()) {
-            visible = false;
+            if (fuzzyFilter.hasFilter()) {
+                fuzzyFilter.clearFilter();
+                refilter();
+            } else {
+                visible = false;
+            }
+        } else if (ke.isDeleteBackward()) {
+            if (fuzzyFilter.hasFilter()) {
+                fuzzyFilter.deleteChar();
+                refilter();
+            }
         } else if (ke.isUp()) {
             listState.selectPrevious();
         } else if (ke.isDown()) {
-            listState.selectNext(entries != null ? entries.size() : 0);
+            listState.selectNext(filteredEntries != null ? filteredEntries.size() : 0);
         } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             for (int i = 0; i < 10; i++) {
                 listState.selectPrevious();
             }
         } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            if (entries != null) {
+            if (filteredEntries != null) {
                 for (int i = 0; i < 10; i++) {
-                    listState.selectNext(entries.size());
+                    listState.selectNext(filteredEntries.size());
                 }
             }
+        } else if (ke.code() == KeyCode.CHAR) {
+            fuzzyFilter.appendChar(ke.character());
+            refilter();
         }
         return true;
     }
 
     void render(Frame frame, Rect area) {
-        if (entries == null || entries.isEmpty()) {
+        if (filteredEntries == null) {
             return;
         }
+        int itemCount = filteredEntries.size();
         int popupW = Math.min(100, area.width() - 4);
-        int popupH = Math.min(entries.size() + 2, Math.min(30, area.height() - 4));
+        int popupH = Math.min(itemCount + 2, Math.min(30, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -149,9 +170,24 @@ class ClasspathPopup {
 
         int contentW = popupW - 4;
         List<ListItem> items = new ArrayList<>();
-        for (JarEntry entry : entries) {
-            String line = formatEntry(entry, contentW);
-            items.add(ListItem.from(line).style(entry.isCamel() ? Style.EMPTY : Style.EMPTY.dim()));
+        for (FilteredEntry fe : filteredEntries) {
+            String displayText = formatEntry(fe.entry(), contentW);
+            Style normalStyle = fe.entry().isCamel() ? Style.EMPTY : Style.EMPTY.dim();
+            if (fe.matchPositions() != null && fe.matchPositions().length > 0) {
+                // offset match positions by the formatting prefix (2 spaces)
+                int[] adjusted = adjustPositions(fe.matchPositions(), fe.entry(), displayText);
+                Line line = FuzzyFilter.highlightLine(displayText, adjusted, normalStyle, MATCH_STYLE);
+                items.add(ListItem.from(Text.from(line)));
+            } else {
+                items.add(ListItem.from(displayText).style(normalStyle));
+            }
+        }
+
+        String title = " " + baseTitle + " (" + filteredEntries.size();
+        if (fuzzyFilter.hasFilter()) {
+            title += "/" + entries.size() + ") [" + fuzzyFilter.filter() + "] ";
+        } else {
+            title += ") ";
         }
 
         ListWidget list = ListWidget.builder()
@@ -161,10 +197,12 @@ class ClasspathPopup {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
-                        .title(" " + title + " ")
+                        .title(title)
                         .titleBottom(Title.from(Line.from(
                                 Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
-                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
+                                Span.styled(" type", MonitorContext.HINT_KEY_STYLE), Span.raw(" filter │"),
+                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE),
+                                Span.raw(fuzzyFilter.hasFilter() ? " clear " : " back "))))
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);
@@ -172,7 +210,42 @@ class ClasspathPopup {
 
     void renderFooter(List<Span> spans) {
         hint(spans, "↑↓", "navigate");
-        hintLast(spans, "Esc", "back");
+        hint(spans, "type", "filter");
+        hintLast(spans, "Esc", fuzzyFilter.hasFilter() ? "clear" : "back");
+    }
+
+    private void refilter() {
+        filteredEntries = new ArrayList<>();
+        if (entries == null) {
+            return;
+        }
+        for (JarEntry entry : entries) {
+            if (!fuzzyFilter.hasFilter()) {
+                filteredEntries.add(new FilteredEntry(entry, null));
+            } else {
+                int[] positions = fuzzyFilter.match(entry.display());
+                if (positions != null) {
+                    filteredEntries.add(new FilteredEntry(entry, positions));
+                }
+            }
+        }
+        listState.select(filteredEntries.isEmpty() ? null : 0);
+    }
+
+    private int[] adjustPositions(int[] matchPositions, JarEntry entry, String displayText) {
+        // match positions are relative to entry.display() (groupId:artifactId:version)
+        // displayText is formatted with "  " prefix and column layout
+        // find where the GAV text starts in the display text
+        String searchText = entry.display();
+        int offset = displayText.indexOf(searchText.substring(0, Math.min(searchText.length(), 5)));
+        if (offset < 0) {
+            offset = 2;
+        }
+        int[] adjusted = new int[matchPositions.length];
+        for (int i = 0; i < matchPositions.length; i++) {
+            adjusted[i] = matchPositions[i] + offset;
+        }
+        return adjusted;
     }
 
     private String formatEntry(JarEntry entry, int width) {
@@ -191,7 +264,6 @@ class ClasspathPopup {
         int repoIdx = normalized.indexOf("/repository/");
         if (repoIdx >= 0) {
             String relative = normalized.substring(repoIdx + "/repository/".length());
-            // relative: org/apache/camel/camel-core/4.x.0/camel-core-4.x.0.jar
             int lastSlash = relative.lastIndexOf('/');
             if (lastSlash > 0) {
                 String parentPath = relative.substring(0, lastSlash);
@@ -225,5 +297,8 @@ class ClasspathPopup {
         boolean isCamel() {
             return groupId != null && groupId.startsWith("org.apache.camel");
         }
+    }
+
+    record FilteredEntry(JarEntry entry, int[] matchPositions) {
     }
 }
