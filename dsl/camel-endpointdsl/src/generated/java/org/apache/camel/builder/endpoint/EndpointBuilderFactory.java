@@ -133,7 +133,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.GeoCoderBuilders,
             org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.GitBuilders,
             org.apache.camel.builder.endpoint.dsl.GitHub2EndpointBuilderFactory.GitHub2Builders,
-            org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory.GitHubBuilders,
             org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory.GlanceBuilders,
             org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryBuilders,
             org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLBuilders,
