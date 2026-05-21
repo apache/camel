@@ -139,6 +139,14 @@ class LogTab implements MonitorTab {
                 return true;
             }
         }
+        if (ke.isPageUp()) {
+            pageUp();
+            return true;
+        }
+        if (ke.isPageDown()) {
+            pageDown();
+            return true;
+        }
         if (ke.isHome()) {
             followMode = false;
             scroll = 0;

@@ -192,7 +192,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int CHART_ALL = 0;
     private static final int CHART_SINGLE = 1;
     private static final int CHART_OFF = 2;
-    private int chartMode = CHART_ALL;
+    private int chartMode = CHART_SINGLE;
 
     private volatile long lastRefresh;
     private boolean showKillConfirm;
@@ -200,6 +200,8 @@ public class CamelMonitor extends CamelCommand {
     private volatile String screenshotMessage;
     private volatile long screenshotMessageTime;
     private volatile boolean pendingScreenshot;
+    private boolean recording;
+    private final List<KeyRecord> recentKeys = new ArrayList<>();
 
     private final ActionsPopup actionsPopup = new ActionsPopup(
             () -> data.get().stream()
@@ -209,7 +211,9 @@ public class CamelMonitor extends CamelCommand {
             () -> data.get().stream()
                     .filter(i -> !i.vanishing)
                     .collect(Collectors.toList()),
-            () -> pendingScreenshot = true);
+            () -> pendingScreenshot = true,
+            () -> recording = !recording,
+            () -> recording);
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
@@ -246,6 +250,8 @@ public class CamelMonitor extends CamelCommand {
             System.setProperty("tamboui.record.duration", "120000");
             System.setProperty("tamboui.record.fps", "10");
         }
+
+        recording = record != null;
 
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
@@ -289,6 +295,12 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
+            if (recording) {
+                String label = keyLabel(ke);
+                if (label != null) {
+                    recentKeys.add(new KeyRecord(label, System.currentTimeMillis()));
+                }
+            }
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
             }
@@ -393,6 +405,12 @@ public class CamelMonitor extends CamelCommand {
             // Screenshot: Shift+F5
             if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
                 takeScreenshot();
+                return true;
+            }
+
+            // F2 opens actions menu (global)
+            if (ke.isKey(KeyCode.F2)) {
+                actionsPopup.open();
                 return true;
             }
 
@@ -509,12 +527,6 @@ public class CamelMonitor extends CamelCommand {
                 showKillConfirm = true;
                 return true;
             }
-            // Overview tab: F2 opens actions menu
-            if (tab == TAB_OVERVIEW && ke.isKey(KeyCode.F2)) {
-                actionsPopup.open();
-                return true;
-            }
-
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                 return true;
@@ -523,6 +535,10 @@ public class CamelMonitor extends CamelCommand {
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
             actionsPopup.tick(now);
+            if (recording && !recentKeys.isEmpty()) {
+                long cutoff = now - 2000;
+                recentKeys.removeIf(k -> k.timestamp() < cutoff);
+            }
             long interval = routesTab.isShowDiagram() ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
                 refreshData();
@@ -532,6 +548,62 @@ public class CamelMonitor extends CamelCommand {
             return !routesTab.hasImageDiagram();
         }
         return false;
+    }
+
+    private String keyLabel(KeyEvent ke) {
+        if (ke.isKey(KeyCode.ENTER)) {
+            return "Enter";
+        }
+        if (ke.isKey(KeyCode.ESCAPE)) {
+            return "Esc";
+        }
+        if (ke.isKey(KeyCode.TAB)) {
+            return ke.hasShift() ? "⇧Tab" : "Tab";
+        }
+        if (ke.isKey(KeyCode.UP)) {
+            return "↑";
+        }
+        if (ke.isKey(KeyCode.DOWN)) {
+            return "↓";
+        }
+        if (ke.isKey(KeyCode.LEFT)) {
+            return "←";
+        }
+        if (ke.isKey(KeyCode.RIGHT)) {
+            return "→";
+        }
+        if (ke.isKey(KeyCode.PAGE_UP)) {
+            return "PgUp";
+        }
+        if (ke.isKey(KeyCode.PAGE_DOWN)) {
+            return "PgDn";
+        }
+        if (ke.isKey(KeyCode.HOME)) {
+            return "Home";
+        }
+        if (ke.isKey(KeyCode.END)) {
+            return "End";
+        }
+        if (ke.isKey(KeyCode.BACKSPACE)) {
+            return "⌫";
+        }
+        for (int i = 1; i <= 12; i++) {
+            try {
+                KeyCode fKey = KeyCode.valueOf("F" + i);
+                if (ke.isKey(fKey)) {
+                    return "F" + i;
+                }
+            } catch (IllegalArgumentException e) {
+                break;
+            }
+        }
+        if (ke.code() == KeyCode.CHAR) {
+            String s = ke.string();
+            if (!s.isEmpty()) {
+                return s;
+            }
+        }
+        return null;
     }
 
     private boolean handleTabKey(int tab) {
@@ -1499,8 +1571,32 @@ public class CamelMonitor extends CamelCommand {
 
         if (tab != null) {
             tab.renderFooter(spans);
+            // Insert F2 after the first hint (Esc) — each hint is 2 spans (key + label)
+            int insertPos = Math.min(2, spans.size());
+            List<Span> f2Spans = new ArrayList<>();
+            hint(f2Spans, "F2", "actions");
+            spans.addAll(insertPos, f2Spans);
         } else {
             renderOverviewFooter(spans);
+        }
+
+        if (recording && !recentKeys.isEmpty()) {
+            long now = System.currentTimeMillis();
+            List<Span> keySpans = new ArrayList<>();
+            int maxKeys = Math.min(recentKeys.size(), 8);
+            List<KeyRecord> visible = recentKeys.subList(recentKeys.size() - maxKeys, recentKeys.size());
+            for (KeyRecord kr : visible) {
+                long age = now - kr.timestamp();
+                Style style = age < 1000
+                        ? Style.EMPTY.fg(Color.WHITE).bold().onBlue()
+                        : Style.EMPTY.dim();
+                keySpans.add(Span.styled(" " + kr.label() + " ", style));
+            }
+            int hintsWidth = spans.stream().mapToInt(s -> s.width()).sum();
+            int keystrokeWidth = keySpans.stream().mapToInt(s -> s.width()).sum();
+            int gap = Math.max(1, area.width() - hintsWidth - keystrokeWidth);
+            spans.add(Span.raw(" ".repeat(gap)));
+            spans.addAll(keySpans);
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -2798,6 +2894,9 @@ public class CamelMonitor extends CamelCommand {
 
     private static long objToLong(Object o) {
         return TuiHelper.objToLong(o);
+    }
+
+    record KeyRecord(String label, long timestamp) {
     }
 
     record VanishingInfo(IntegrationInfo info, long startTime) {
