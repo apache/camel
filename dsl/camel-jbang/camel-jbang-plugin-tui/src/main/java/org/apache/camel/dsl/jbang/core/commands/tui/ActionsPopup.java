@@ -63,8 +63,9 @@ class ActionsPopup {
     private static final int ACTION_SCREENSHOT = 3;
     private static final int ACTION_SHOW_KEYSTROKES = 4;
     private static final int ACTION_DOCTOR = 5;
-    private static final int ACTION_STOP_ALL = 6;
-    private static final int ACTION_COUNT = 7;
+    private static final int ACTION_CLASSPATH = 6;
+    private static final int ACTION_STOP_ALL = 7;
+    private static final int ACTION_COUNT = 8;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -94,6 +95,7 @@ class ActionsPopup {
     private int docScroll;
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
+    private final ClasspathPopup classpathPopup = new ClasspathPopup();
     private final StopAllPopup stopAllPopup;
     private final CaptionOverlay captionOverlay;
 
@@ -120,7 +122,8 @@ class ActionsPopup {
 
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || showNameInput || showDocPicker || showDocViewer
-                || doctorPopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
+                || doctorPopup.isVisible() || classpathPopup.isVisible()
+                || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
     }
 
     void open() {
@@ -135,6 +138,7 @@ class ActionsPopup {
         showDocPicker = false;
         showDocViewer = false;
         doctorPopup.close();
+        classpathPopup.close();
         stopAllPopup.close();
         captionOverlay.close();
     }
@@ -226,6 +230,9 @@ class ActionsPopup {
         if (captionOverlay.isInputVisible()) {
             return captionOverlay.handleKeyEvent(ke);
         }
+        if (classpathPopup.handleKeyEvent(ke)) {
+            return true;
+        }
         if (stopAllPopup.handleKeyEvent(ke)) {
             checkStopAllNotification();
             return true;
@@ -256,6 +263,9 @@ class ActionsPopup {
                     } else if (sel == ACTION_DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
+                    } else if (sel == ACTION_CLASSPATH) {
+                        showActionsMenu = false;
+                        openClasspath();
                     } else if (sel == ACTION_STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
@@ -293,6 +303,9 @@ class ActionsPopup {
         if (stopAllPopup.isVisible()) {
             stopAllPopup.render(frame, area);
         }
+        if (classpathPopup.isVisible()) {
+            classpathPopup.render(frame, area);
+        }
         if (captionOverlay.isInputVisible()) {
             captionOverlay.render(frame, area);
         }
@@ -301,6 +314,10 @@ class ActionsPopup {
     void renderFooter(List<Span> spans) {
         if (captionOverlay.isInputVisible()) {
             captionOverlay.renderFooter(spans);
+            return;
+        }
+        if (classpathPopup.isVisible()) {
+            classpathPopup.renderFooter(spans);
             return;
         }
         if (stopAllPopup.isVisible()) {
@@ -373,6 +390,7 @@ class ActionsPopup {
                         ListItem.from("  📸 Take Screenshot"),
                         ListItem.from(keystrokeLabel),
                         ListItem.from("  🩺 Run Doctor"),
+                        ListItem.from("  📦 Show Classpath"),
                         ListItem.from(stopLabel))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
@@ -649,6 +667,29 @@ class ActionsPopup {
         String msg = stopAllPopup.consumeNotification();
         if (msg != null) {
             setNotification(msg, false);
+        }
+    }
+
+    private void openClasspath() {
+        if (ctx == null) {
+            return;
+        }
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            List<IntegrationInfo> ints = integrations.get();
+            List<IntegrationInfo> alive = ints.stream().filter(i -> !i.vanishing && i.pid != null).toList();
+            if (alive.size() == 1) {
+                pid = alive.get(0).pid;
+            }
+        }
+        if (pid == null) {
+            setNotification("Select an integration first", true);
+            return;
+        }
+        classpathPopup.open(ctx, pid, ctx.selectedName());
+        String err = classpathPopup.consumeError();
+        if (err != null) {
+            setNotification(err, true);
         }
     }
 
