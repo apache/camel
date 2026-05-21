@@ -17,6 +17,7 @@
 package org.apache.camel.component.platform.http.main.authentication;
 
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
@@ -27,6 +28,7 @@ import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.AuthenticationHandlerFactory;
 import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
+import org.apache.camel.util.ObjectHelper;
 
 public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer {
 
@@ -48,13 +50,20 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
                 return JWTAuthHandler.create(authProvider, realm);
             }
         });
-        entry.setAuthenticationProviderFactory(vertx -> JWTAuth.create(
-                vertx,
-                new JWTAuthOptions(
-                        new JsonObject().put("keyStore", new JsonObject()
-                                .put("type", properties.getJwtKeystoreType())
-                                .put("path", properties.getJwtKeystorePath())
-                                .put("password", properties.getJwtKeystorePassword())))));
+
+        entry.setAuthenticationProviderFactory(vertx -> {
+            JWTAuthOptions jwtAuthOptions = new JWTAuthOptions(
+                    new JsonObject().put("keyStore", new JsonObject()
+                            .put("type", properties.getJwtKeystoreType())
+                            .put("path", properties.getJwtKeystorePath())
+                            .put("password", properties.getJwtKeystorePassword())));
+
+            JWTOptions jwtOptions = buildJwtOptions(properties.getJwtAudience(), properties.getJwtIssuer());
+            if (jwtOptions != null) {
+                jwtAuthOptions.setJWTOptions(jwtOptions);
+            }
+            return JWTAuth.create(vertx, jwtAuthOptions);
+        });
 
         authenticationConfig.getEntries().add(entry);
         authenticationConfig.setEnabled(true);
@@ -78,15 +87,48 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
                 return JWTAuthHandler.create(authProvider, realm);
             }
         });
-        entry.setAuthenticationProviderFactory(vertx -> JWTAuth.create(
-                vertx,
-                new JWTAuthOptions(
-                        new JsonObject().put("keyStore", new JsonObject()
-                                .put("type", properties.getJwtKeystoreType())
-                                .put("path", properties.getJwtKeystorePath())
-                                .put("password", properties.getJwtKeystorePassword())))));
+
+        entry.setAuthenticationProviderFactory(vertx -> {
+            JWTAuthOptions jwtAuthOptions = new JWTAuthOptions(
+                    new JsonObject().put("keyStore", new JsonObject()
+                            .put("type", properties.getJwtKeystoreType())
+                            .put("path", properties.getJwtKeystorePath())
+                            .put("password", properties.getJwtKeystorePassword())));
+
+            JWTOptions jwtOptions = buildJwtOptions(properties.getJwtAudience(), properties.getJwtIssuer());
+            if (jwtOptions != null) {
+                jwtAuthOptions.setJWTOptions(jwtOptions);
+            }
+            return JWTAuth.create(vertx, jwtAuthOptions);
+        });
 
         authenticationConfig.getEntries().add(entry);
         authenticationConfig.setEnabled(true);
+    }
+
+    private static JWTOptions buildJwtOptions(String audience, String issuer) {
+
+        boolean isAudienceEmpty = ObjectHelper.isEmpty(audience);
+        boolean isIssuerEmpty = ObjectHelper.isEmpty(issuer);
+
+        if (isAudienceEmpty && isIssuerEmpty) {
+            return null;
+        }
+
+        JWTOptions options = new JWTOptions();
+
+        if (!isAudienceEmpty) {
+            for (String a : audience.split(",")) {
+                if (ObjectHelper.isNotEmpty(a)) {
+                    options.addAudience(a.trim());
+                }
+            }
+        }
+
+        if (!isIssuerEmpty) {
+            options.setIssuer(issuer);
+        }
+
+        return options;
     }
 }
