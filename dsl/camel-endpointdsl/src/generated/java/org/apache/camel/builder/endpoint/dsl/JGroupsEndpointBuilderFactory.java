@@ -420,10 +420,10 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code JGROUPS_CHANNEL_ADDRESS}.
+         * @return the name of the header {@code JGroupsChannelAddress}.
          */
-        public String jgroupsChannelAddress() {
-            return "JGROUPS_CHANNEL_ADDRESS";
+        public String jGroupsChannelAddress() {
+            return "CamelJGroupsChannelAddress";
         }
         /**
          * Consumer: The org.jgroups.Address instance extracted by
@@ -435,10 +435,10 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code JGROUPS_DEST}.
+         * @return the name of the header {@code JGroupsDest}.
          */
-        public String jgroupsDest() {
-            return "JGROUPS_DEST";
+        public String jGroupsDest() {
+            return "CamelJGroupsDest";
         }
         /**
          * Consumer : The org.jgroups.Address instance extracted by
@@ -450,10 +450,10 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code JGROUPS_SRC}.
+         * @return the name of the header {@code JGroupsSrc}.
          */
-        public String jgroupsSrc() {
-            return "JGROUPS_SRC";
+        public String jGroupsSrc() {
+            return "CamelJGroupsSrc";
         }
         /**
          * The original org.jgroups.Message instance from which the body of the
@@ -463,10 +463,10 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code JGROUPS_ORIGINAL_MESSAGE}.
+         * @return the name of the header {@code JGroupsOriginalMessage}.
          */
-        public String jgroupsOriginalMessage() {
-            return "JGROUPS_ORIGINAL_MESSAGE";
+        public String jGroupsOriginalMessage() {
+            return "CamelJGroupsOriginalMessage";
         }
     }
     static JGroupsEndpointBuilder endpointBuilder(String componentName, String path) {

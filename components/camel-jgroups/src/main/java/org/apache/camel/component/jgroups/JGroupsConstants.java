@@ -23,21 +23,21 @@ public final class JGroupsConstants {
     @Metadata(description = "Address (`org.jgroups.Address`) of the channel associated with the\n" +
                             "endpoint.",
               javaType = "org.jgroups.Address")
-    public static final String HEADER_JGROUPS_CHANNEL_ADDRESS = "JGROUPS_CHANNEL_ADDRESS";
+    public static final String HEADER_JGROUPS_CHANNEL_ADDRESS = "CamelJGroupsChannelAddress";
     @Metadata(description = "*Consumer*: The `org.jgroups.Address` instance extracted by\n" +
                             "`org.jgroups.Message`.getDest() method of the consumed message.\n" +
                             "*Producer*: The custom destination `org.jgroups.Address` of the message to be sent.",
               javaType = "org.jgroups.Address")
-    public static final String HEADER_JGROUPS_DEST = "JGROUPS_DEST";
+    public static final String HEADER_JGROUPS_DEST = "CamelJGroupsDest";
     @Metadata(description = "*Consumer* : The `org.jgroups.Address` instance extracted by\n" +
                             "`org.jgroups.Message`.getSrc() method of the consumed message. \n" +
                             "*Producer*: The custom source `org.jgroups.Address` of the message to be sent.",
               javaType = "org.jgroups.Address")
-    public static final String HEADER_JGROUPS_SRC = "JGROUPS_SRC";
+    public static final String HEADER_JGROUPS_SRC = "CamelJGroupsSrc";
     @Metadata(description = "The original `org.jgroups.Message` instance from which the body of the\n" +
                             "consumed message has been extracted.",
               javaType = "org.jgroups.Message")
-    public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
+    public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "CamelJGroupsOriginalMessage";
 
     private JGroupsConstants() {
 
