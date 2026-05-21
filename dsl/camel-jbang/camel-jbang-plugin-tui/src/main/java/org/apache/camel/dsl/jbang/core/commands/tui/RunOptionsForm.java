@@ -70,6 +70,7 @@ class RunOptionsForm {
     // Properties (page 2)
     private List<PropertyEntry> properties;
     private int selectedProperty;
+    private boolean editingKey;
 
     boolean isVisible() {
         return visible;
@@ -143,6 +144,7 @@ class RunOptionsForm {
         } else {
             hint(spans, "←", "options");
             hint(spans, "↑↓", "navigate");
+            hint(spans, "+", "add");
             hint(spans, "Enter", "launch");
             hintLast(spans, "Esc", "back");
         }
@@ -174,8 +176,12 @@ class RunOptionsForm {
         if (properties != null) {
             for (PropertyEntry pe : properties) {
                 String current = pe.valueInput().text();
-                if (!current.equals(pe.originalValue())) {
-                    args.add("--prop=" + pe.key() + "=" + current);
+                String key = pe.effectiveKey();
+                if (key.isEmpty()) {
+                    continue;
+                }
+                if (pe.isCustom() || !current.equals(pe.originalValue())) {
+                    args.add("--prop=" + key + "=" + current);
                 }
             }
         }
@@ -217,6 +223,12 @@ class RunOptionsForm {
             return true;
         }
 
+        if (ke.isChar('+') && selectedRow >= ROW_DEV) {
+            page = PAGE_PROPERTIES;
+            addCustomProperty();
+            return true;
+        }
+
         // Checkbox rows: Space toggles
         if (ke.isChar(' ') && selectedRow >= ROW_DEV) {
             switch (selectedRow) {
@@ -241,7 +253,12 @@ class RunOptionsForm {
     // ---- Properties page (page 1) ----
 
     private boolean handlePropertiesPage(KeyEvent ke) {
+        if (ke.isChar('+')) {
+            addCustomProperty();
+            return true;
+        }
         if (ke.isUp()) {
+            editingKey = false;
             if (selectedProperty == 0) {
                 page = PAGE_OPTIONS;
                 selectedRow = ROW_TRACE;
@@ -251,36 +268,82 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isDown()) {
+            editingKey = false;
             if (selectedProperty < properties.size() - 1) {
+                selectedProperty++;
+            }
+            return true;
+        }
+        if (ke.isFocusNext()) {
+            PropertyEntry current = properties.get(selectedProperty);
+            if (current.isCustom() && editingKey) {
+                editingKey = false;
+            } else if (selectedProperty < properties.size() - 1) {
+                editingKey = false;
                 selectedProperty++;
             }
             return true;
         }
         if (ke.isFocusPrevious()) {
-            if (selectedProperty == 0) {
+            PropertyEntry current = properties.get(selectedProperty);
+            if (current.isCustom() && !editingKey) {
+                editingKey = true;
+            } else if (selectedProperty == 0) {
+                editingKey = false;
                 page = PAGE_OPTIONS;
                 selectedRow = ROW_TRACE;
             } else {
+                editingKey = false;
                 selectedProperty--;
             }
             return true;
         }
-        if (ke.isFocusNext()) {
-            if (selectedProperty < properties.size() - 1) {
-                selectedProperty++;
+        if (ke.isLeft()) {
+            PropertyEntry current = properties.get(selectedProperty);
+            TextInputState active = editingKey ? current.keyInput() : current.valueInput();
+            if (active.cursorPosition() == 0) {
+                if (current.isCustom() && !editingKey) {
+                    editingKey = true;
+                    return true;
+                }
+                page = PAGE_OPTIONS;
+                selectedRow = ROW_TRACE;
+                editingKey = false;
+                return true;
             }
-            return true;
         }
-        if (ke.isLeft() && properties.get(selectedProperty).valueInput().cursorPosition() == 0) {
-            page = PAGE_OPTIONS;
-            selectedRow = ROW_TRACE;
-            return true;
+        if (ke.isDeleteBackward()) {
+            PropertyEntry current = properties.get(selectedProperty);
+            if (current.isCustom() && editingKey) {
+                if (current.keyInput().text().isEmpty()) {
+                    properties.remove(selectedProperty);
+                    if (selectedProperty >= properties.size() && selectedProperty > 0) {
+                        selectedProperty--;
+                    }
+                    if (properties.isEmpty()) {
+                        page = PAGE_OPTIONS;
+                        selectedRow = ROW_TRACE;
+                    }
+                    return true;
+                }
+            }
         }
 
         // Text editing for selected property
-        TextInputState active = properties.get(selectedProperty).valueInput();
+        PropertyEntry current = properties.get(selectedProperty);
+        TextInputState active = (current.isCustom() && editingKey) ? current.keyInput() : current.valueInput();
         handleTextInput(ke, active, false);
         return true;
+    }
+
+    private void addCustomProperty() {
+        if (properties == null) {
+            properties = new ArrayList<>();
+        }
+        PropertyEntry entry = new PropertyEntry("", "", new TextInputState(""), new TextInputState(""));
+        properties.add(entry);
+        selectedProperty = properties.size() - 1;
+        editingKey = true;
     }
 
     // ---- Rendering ----
@@ -367,6 +430,7 @@ class RunOptionsForm {
                 .titleBottom(Title.from(Line.from(
                         Span.styled(" ←", MonitorContext.HINT_KEY_STYLE), Span.raw(" options │"),
                         Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
+                        Span.styled(" +", MonitorContext.HINT_KEY_STYLE), Span.raw(" add │"),
                         Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" launch │"),
                         Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
@@ -388,18 +452,44 @@ class RunOptionsForm {
         for (int i = scrollOffset; i < properties.size() && (rowY - popup.top() - 1) < visibleRows; i++) {
             PropertyEntry pe = properties.get(i);
             boolean selected = (i == selectedProperty);
-            String keyLabel = pe.key() + ":";
-            renderLabel(frame, innerX, rowY, labelW, TuiHelper.truncate(keyLabel, labelW), selected);
 
-            boolean modified = !pe.valueInput().text().equals(pe.originalValue());
-            if (selected) {
-                renderTextInput(frame, innerX + labelW, rowY, fieldW, pe.valueInput(), true);
+            if (pe.isCustom()) {
+                // Custom entry: editable key and value
+                if (selected && editingKey) {
+                    renderTextInput(frame, innerX, rowY, labelW - 1, pe.keyInput(), true);
+                } else {
+                    String keyText = pe.keyInput().text();
+                    Style keyStyle = selected ? Style.EMPTY.bold() : (keyText.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY);
+                    Rect keyArea = new Rect(innerX, rowY, labelW - 1, 1);
+                    frame.renderWidget(Paragraph.from(Line.from(
+                            Span.styled(keyText.isEmpty() ? "<key>" : keyText, keyStyle))), keyArea);
+                }
+                Rect colonArea = new Rect(innerX + labelW - 1, rowY, 1, 1);
+                frame.renderWidget(Paragraph.from(Line.from(Span.styled(":", Style.EMPTY.dim()))), colonArea);
+                if (selected && !editingKey) {
+                    renderTextInput(frame, innerX + labelW, rowY, fieldW, pe.valueInput(), true);
+                } else {
+                    String text = pe.valueInput().text();
+                    Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
+                    Rect valArea = new Rect(innerX + labelW, rowY, fieldW, 1);
+                    frame.renderWidget(Paragraph.from(Line.from(
+                            Span.styled(text.isEmpty() ? "<value>" : text, style))), valArea);
+                }
             } else {
-                String text = pe.valueInput().text();
-                Style style = modified ? Style.EMPTY.bold() : Style.EMPTY;
-                Rect inputArea = new Rect(innerX + labelW, rowY, fieldW, 1);
-                frame.renderWidget(Paragraph.from(Line.from(
-                        Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
+                // Loaded entry: fixed key, editable value
+                String keyLabel = pe.key() + ":";
+                renderLabel(frame, innerX, rowY, labelW, TuiHelper.truncate(keyLabel, labelW), selected);
+
+                boolean modified = !pe.valueInput().text().equals(pe.originalValue());
+                if (selected) {
+                    renderTextInput(frame, innerX + labelW, rowY, fieldW, pe.valueInput(), true);
+                } else {
+                    String text = pe.valueInput().text();
+                    Style style = modified ? Style.EMPTY.bold() : Style.EMPTY;
+                    Rect inputArea = new Rect(innerX + labelW, rowY, fieldW, 1);
+                    frame.renderWidget(Paragraph.from(Line.from(
+                            Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
+                }
             }
             rowY++;
         }
@@ -432,7 +522,7 @@ class RunOptionsForm {
             if (eq > 0) {
                 String key = trimmed.substring(0, eq).trim();
                 String value = trimmed.substring(eq + 1).trim();
-                properties.add(new PropertyEntry(key, value, new TextInputState(value)));
+                properties.add(new PropertyEntry(key, value, null, new TextInputState(value)));
             }
         }
     }
@@ -505,6 +595,13 @@ class RunOptionsForm {
                 Span.styled(" " + box + " " + label, style))), cbArea);
     }
 
-    record PropertyEntry(String key, String originalValue, TextInputState valueInput) {
+    record PropertyEntry(String key, String originalValue, TextInputState keyInput, TextInputState valueInput) {
+        boolean isCustom() {
+            return keyInput != null;
+        }
+
+        String effectiveKey() {
+            return keyInput != null ? keyInput.text().trim() : key;
+        }
     }
 }
