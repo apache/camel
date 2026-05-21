@@ -18,9 +18,12 @@ package org.apache.camel.yaml.out;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.model.BeanDefinition;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -83,6 +86,7 @@ import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
@@ -1124,6 +1128,62 @@ public class YamlModelWriterTest {
         JsonObject jo = writer.writeRouteDefinition(route);
         String out = writer.printAsYaml(List.of(jo));
         String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-transacted.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testBeans() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        BeanFactoryDefinition<?> bean1 = new BeanFactoryDefinition<>();
+        bean1.setName("myBean");
+        bean1.setType("com.example.MyBean");
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("greeting", "Hello");
+        props.put("count", "5");
+        bean1.setProperties(props);
+
+        BeanFactoryDefinition<?> bean2 = new BeanFactoryDefinition<>();
+        bean2.setName("myFactory");
+        bean2.setType("com.example.MyFactory");
+        bean2.setFactoryMethod("create");
+        bean2.setInitMethod("init");
+        bean2.setDestroyMethod("cleanup");
+
+        List<JsonObject> result = new ArrayList<>();
+        result.add(writer.writeBeanFactoryDefinition(bean1));
+        result.add(writer.writeBeanFactoryDefinition(bean2));
+        String out = writer.printAsYaml(result);
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-beans.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testBeansWithRoute() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        BeansDefinition beansContainer = new BeansDefinition();
+
+        BeanFactoryDefinition<?> bean = new BeanFactoryDefinition<>();
+        bean.setName("myService");
+        bean.setType("com.example.MyService");
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("url", "http://localhost:8080");
+        bean.setProperties(props);
+        List<BeanFactoryDefinition> beanList = new ArrayList<>();
+        beanList.add(bean);
+        beansContainer.setBeans(beanList);
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+        route.addOutput(new LogDefinition("${body}"));
+        route.addOutput(new ToDefinition("mock:result"));
+        beansContainer.setRoutes(List.of(route));
+
+        JsonObject jo = writer.writeBeansDefinition(beansContainer);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-beans-with-route.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 }
