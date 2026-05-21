@@ -26,6 +26,9 @@ import org.jspecify.annotations.Nullable;
  * Channel acts as a channel between {@link Processor}s in the route graph.
  * <p/>
  * The channel is responsible for routing the {@link Exchange} to the next {@link Processor} in the route graph.
+ *
+ * @see Processor
+ * @see Route
  */
 public interface Channel extends AsyncProcessor, Navigate<Processor> {
 

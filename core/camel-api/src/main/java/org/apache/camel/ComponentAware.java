@@ -19,7 +19,11 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An interface to represent an object which wishes to be injected with a {@link Component}.
+ * Implemented by objects, such as {@link Endpoint}, that are associated with and can expose their parent
+ * {@link Component}.
+ *
+ * @see Component
+ * @see Endpoint
  */
 public interface ComponentAware {
 

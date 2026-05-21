@@ -20,11 +20,21 @@ import org.apache.camel.spi.UnitOfWork;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A consumer of message exchanges from an {@link Endpoint}.
+ * A service that receives messages from an {@link Endpoint} and routes them as {@link Exchange}s through the Camel
+ * processing pipeline.
+ * <p/>
+ * Consumers are created by calling {@link Endpoint#createConsumer(Processor)} and participate in the Camel lifecycle as
+ * {@link Service}s. For endpoints that require a dedicated polling loop, see {@link PollingConsumer}; for endpoints
+ * that deliver messages in batches, see {@link BatchConsumer}.
  * <p/>
  * Important: Do not do any initialization in the constructor. Instead use
  * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.
+ *
+ * @see Producer
+ * @see PollingConsumer
+ * @see BatchConsumer
+ * @see Endpoint
  */
 public interface Consumer extends Service, EndpointAware {
 

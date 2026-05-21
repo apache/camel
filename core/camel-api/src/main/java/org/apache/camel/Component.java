@@ -27,6 +27,15 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A <a href="https://camel.apache.org/component.html">component</a> is a factory of {@link Endpoint} objects.
+ * <p/>
+ * A component is registered in the {@link CamelContext} under a URI scheme (for example {@code "kafka"} or
+ * {@code "file"}) and is responsible for creating {@link Endpoint} instances for URIs that match that scheme.
+ * <p/>
+ * Components participate in the Camel lifecycle as {@link Service}s: they are started before any of their endpoints and
+ * stopped after the last endpoint is stopped.
+ *
+ * @see Endpoint
+ * @see CamelContext
  */
 public interface Component extends CamelContextAware, Service {
 

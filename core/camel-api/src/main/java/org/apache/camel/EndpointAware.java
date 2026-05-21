@@ -17,7 +17,12 @@
 package org.apache.camel;
 
 /**
- * An interface to represent an object such as a {@link org.apache.camel.Processor} that uses an {@link Endpoint}
+ * Implemented by objects that are associated with a specific {@link Endpoint}, such as a {@link Producer} sending to an
+ * endpoint or a {@link Consumer} reading from one.
+ *
+ * @see Endpoint
+ * @see Producer
+ * @see Consumer
  */
 public interface EndpointAware {
 

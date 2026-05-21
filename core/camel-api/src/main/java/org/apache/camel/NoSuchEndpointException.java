@@ -21,8 +21,14 @@ import java.util.Objects;
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
- * A runtime exception thrown if a routing processor such as a recipient list is unable to resolve an {@link Endpoint}
- * from a URI.
+ * Thrown when a routing processor (such as a recipient list or dynamic router) cannot resolve a URI to a known
+ * {@link Endpoint}, typically because the required Camel component is missing from the classpath.
+ * <p/>
+ * Contrast with {@link ResolveEndpointFailedException}, which is thrown when the component is present but the URI is
+ * malformed or configuration fails.
+ *
+ * @see ResolveEndpointFailedException
+ * @see Endpoint
  */
 public class NoSuchEndpointException extends RuntimeCamelException {
 

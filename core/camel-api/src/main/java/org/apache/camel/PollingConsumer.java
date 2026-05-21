@@ -31,6 +31,9 @@ import org.jspecify.annotations.Nullable;
  * Important: Do not do any initialization in the constructor. Instead use
  * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.
+ *
+ * @see DynamicPollingConsumer
+ * @see BatchConsumer
  */
 public interface PollingConsumer extends Consumer {
 
