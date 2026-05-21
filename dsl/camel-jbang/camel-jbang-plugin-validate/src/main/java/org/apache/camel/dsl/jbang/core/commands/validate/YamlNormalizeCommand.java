@@ -26,6 +26,7 @@ import java.util.Stack;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -40,6 +41,9 @@ import picocli.CommandLine;
 public class YamlNormalizeCommand extends CamelCommand {
 
     private static final String IGNORE_FILE = "application";
+
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     @CommandLine.Option(names = { "--output" },
                         description = "File or directory to write normalized output. If not specified, output is printed to console.")
@@ -86,6 +90,7 @@ public class YamlNormalizeCommand extends CamelCommand {
                 main.addInitialProperty("camel.language.bean.validate", "false");
             }
         };
+        run.mavenResolver = mavenResolver;
         run.files = matched;
         run.executionLimitOptions.maxSeconds = 1;
         Integer exit = run.runTransform(true);
