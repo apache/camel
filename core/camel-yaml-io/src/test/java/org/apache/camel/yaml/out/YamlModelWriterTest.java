@@ -19,38 +19,67 @@ package org.apache.camel.yaml.out;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.apache.camel.model.BeanDefinition;
+import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.CircuitBreakerDefinition;
+import org.apache.camel.model.ClaimCheckDefinition;
+import org.apache.camel.model.ConvertBodyDefinition;
+import org.apache.camel.model.ConvertHeaderDefinition;
 import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LogDefinition;
+import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OtherwiseDefinition;
+import org.apache.camel.model.PipelineDefinition;
+import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
+import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.RecipientListDefinition;
+import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.model.RemoveHeaderDefinition;
+import org.apache.camel.model.RemovePropertyDefinition;
+import org.apache.camel.model.RemoveVariableDefinition;
+import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
+import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
+import org.apache.camel.model.SagaDefinition;
+import org.apache.camel.model.SamplingDefinition;
+import org.apache.camel.model.ScriptDefinition;
+import org.apache.camel.model.SetPropertyDefinition;
+import org.apache.camel.model.SetVariableDefinition;
+import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.StepDefinition;
+import org.apache.camel.model.StopDefinition;
+import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
+import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransformDefinition;
+import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -585,6 +614,371 @@ public class YamlModelWriterTest {
         JsonObject jo = writer.writeRouteDefinition(route);
         String out = writer.printAsYaml(List.of(jo));
         String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-oncompletion.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testTryCatchFinally() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        TryDefinition tryDef = new TryDefinition();
+        tryDef.addOutput(new ToDefinition("mock:try"));
+
+        CatchDefinition catchDef = new CatchDefinition();
+        catchDef.getExceptions().add("java.io.IOException");
+        catchDef.addOutput(new ToDefinition("mock:catch"));
+        tryDef.addOutput(catchDef);
+
+        FinallyDefinition finallyDef = new FinallyDefinition();
+        finallyDef.addOutput(new ToDefinition("mock:finally"));
+        tryDef.addOutput(finallyDef);
+
+        route.addOutput(tryDef);
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-trycatch.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testSaga() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        SagaDefinition saga = new SagaDefinition();
+        saga.setCompensation("direct:compensate");
+        saga.setCompletion("direct:complete");
+        saga.setPropagation("MANDATORY");
+        saga.addOutput(new ToDefinition("mock:saga"));
+        route.addOutput(saga);
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-saga.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testSetVariableRemoveHeader() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        SetVariableDefinition sv = new SetVariableDefinition();
+        sv.setName("myVar");
+        sv.setExpression(new SimpleExpression("${body}"));
+        route.addOutput(sv);
+
+        SetPropertyDefinition sp = new SetPropertyDefinition();
+        sp.setName("myProp");
+        sp.setExpression(new ConstantExpression("propValue"));
+        route.addOutput(sp);
+
+        route.addOutput(new RemoveHeaderDefinition("foo"));
+        route.addOutput(new RemovePropertyDefinition("bar"));
+        route.addOutput(new RemoveVariableDefinition("myVar"));
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-setvariable.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testConvertBodyHeader() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        ConvertBodyDefinition cb = new ConvertBodyDefinition("java.lang.String");
+        cb.setCharset("UTF-8");
+        route.addOutput(cb);
+
+        ConvertHeaderDefinition ch = new ConvertHeaderDefinition();
+        ch.setName("myHeader");
+        ch.setType("java.lang.Integer");
+        route.addOutput(ch);
+
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-convertbody.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testLoop() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        LoopDefinition loop = new LoopDefinition();
+        loop.setExpression(new ConstantExpression("3"));
+        loop.setCopy("true");
+        loop.addOutput(new ToDefinition("mock:loop"));
+        route.addOutput(loop);
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-loop.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testStep() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        StepDefinition step = new StepDefinition();
+        step.setId("myStep");
+        step.addOutput(new LogDefinition("step log"));
+        step.addOutput(new ToDefinition("mock:step"));
+        route.addOutput(step);
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-step.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testPipeline() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        PipelineDefinition pipeline = new PipelineDefinition();
+        pipeline.addOutput(new ToDefinition("direct:a"));
+        pipeline.addOutput(new ToDefinition("direct:b"));
+        pipeline.addOutput(new ToDefinition("direct:c"));
+        route.addOutput(pipeline);
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-pipeline.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testToDynamic() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        ToDynamicDefinition toD = new ToDynamicDefinition();
+        toD.setUri("${header.destination}");
+        toD.setCacheSize("100");
+        route.addOutput(toD);
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-todynamic.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testProcessBean() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        ProcessDefinition process = new ProcessDefinition();
+        process.setRef("#myProcessor");
+        route.addOutput(process);
+
+        BeanDefinition bean = new BeanDefinition();
+        bean.setRef("#myBean");
+        bean.setMethod("transform");
+        route.addOutput(bean);
+
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-processbean.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testResequence() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        ResequenceDefinition reseq = new ResequenceDefinition();
+        reseq.setExpression(new SimpleExpression("${header.seqNum}"));
+        BatchResequencerConfig batchConfig = new BatchResequencerConfig();
+        batchConfig.setBatchSize("100");
+        batchConfig.setBatchTimeout("2000");
+        reseq.setBatchConfig(batchConfig);
+        reseq.addOutput(new ToDefinition("mock:result"));
+        route.addOutput(reseq);
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-resequence.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testClaimCheck() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        ClaimCheckDefinition push = new ClaimCheckDefinition();
+        push.setOperation("Push");
+        push.setKey("myKey");
+        route.addOutput(push);
+
+        route.addOutput(new ToDefinition("mock:process"));
+
+        ClaimCheckDefinition pop = new ClaimCheckDefinition();
+        pop.setOperation("Pop");
+        pop.setKey("myKey");
+        route.addOutput(pop);
+
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-claimcheck.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testSamplingThreadsSortScript() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        SamplingDefinition sampling = new SamplingDefinition();
+        sampling.setMessageFrequency("5");
+        route.addOutput(sampling);
+
+        ThreadsDefinition threads = new ThreadsDefinition();
+        threads.setPoolSize("5");
+        threads.setMaxPoolSize("10");
+        route.addOutput(threads);
+
+        SortDefinition<?> sort = new SortDefinition<>();
+        sort.setExpression(new SimpleExpression("${body}"));
+        route.addOutput(sort);
+
+        ScriptDefinition script = new ScriptDefinition();
+        script.setExpression(new SimpleExpression("log.info('hello')"));
+        route.addOutput(script);
+
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-misc.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testRollbackStopThrowException() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        route.addOutput(new StopDefinition());
+
+        RollbackDefinition rollback = new RollbackDefinition();
+        rollback.setMessage("forced rollback");
+        route.addOutput(rollback);
+
+        ThrowExceptionDefinition throwEx = new ThrowExceptionDefinition();
+        throwEx.setExceptionType("java.lang.IllegalArgumentException");
+        throwEx.setMessage("bad input");
+        route.addOutput(throwEx);
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-stop.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testOnExceptionStandalone() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        OnExceptionDefinition onEx = new OnExceptionDefinition();
+        onEx.getExceptions().add("java.io.IOException");
+        onEx.setHandled(new ExpressionSubElementDefinition(new ConstantExpression("true")));
+        RedeliveryPolicyDefinition redelivery = new RedeliveryPolicyDefinition();
+        redelivery.setMaximumRedeliveries("3");
+        onEx.setRedeliveryPolicyType(redelivery);
+        onEx.addOutput(new ToDefinition("mock:error"));
+        route.addOutput(onEx);
+
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-onexception.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testPoll() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        PollDefinition poll = new PollDefinition();
+        poll.setUri("file:inbox");
+        poll.setTimeout("5000");
+        route.addOutput(poll);
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-poll.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 }
