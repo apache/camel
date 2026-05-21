@@ -1251,10 +1251,19 @@ camel plugin get --all
 ----
 Supported plugins:
 
- NAME        COMMAND     DEPENDENCY                                      DESCRIPTION
- kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  Run Camel applications on Kubernetes
- generate    generate    org.apache.camel:camel-jbang-plugin-generate    Generate code such as DTOs
+ NAME        COMMAND     VENDOR  DEPENDENCY                                      DESCRIPTION
+ kubernetes  kubernetes  ASF     org.apache.camel:camel-jbang-plugin-kubernetes  Run Camel applications on Kubernetes
+ generate    generate    ASF     org.apache.camel:camel-jbang-plugin-generate    Generate code such as DTOs
+ ...
+
+Known 3rd party plugins:
+
+ NAME        COMMAND  VENDOR     DEPENDENCY                                        DESCRIPTION
+ forage      forage   Community  io.kaoto.forage:camel-jbang-plugin-forage         Utilities for working with Forage components
+ camel-kit   kit      Community  io.github.luigidemasi:camel-kit-jbang-plugin      Design Apache Camel Integrations with AI
 ----
+
+The `VENDOR` column indicates whether the plugin is from `ASF` (Apache Software Foundation) or `Community` (3rd party).
 
 In case you want to enable a plugin and its functionality, you can add it as follows:
 
@@ -1271,6 +1280,20 @@ camel plugin add generate
 ----
 
 This adds the plugin, and all subcommands are now available for execution.
+
+Known 3rd party plugins can be installed by name as well. For example:
+
+[source,bash]
+----
+camel plugin add forage
+----
+
+To install a specific version of a 3rd party plugin, use the `--version` option:
+
+[source,bash]
+----
+camel plugin add forage --version=1.2.3
+----
 
 You can list the currently installed plugins with:
 
