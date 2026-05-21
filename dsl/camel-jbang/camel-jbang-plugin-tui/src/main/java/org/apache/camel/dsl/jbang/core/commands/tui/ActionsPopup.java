@@ -59,11 +59,12 @@ class ActionsPopup {
 
     private static final int ACTION_RUN_EXAMPLE = 0;
     private static final int ACTION_SHOW_DOCS = 1;
-    private static final int ACTION_SCREENSHOT = 2;
-    private static final int ACTION_SHOW_KEYSTROKES = 3;
-    private static final int ACTION_DOCTOR = 4;
-    private static final int ACTION_STOP_ALL = 5;
-    private static final int ACTION_COUNT = 6;
+    private static final int ACTION_CAPTION = 2;
+    private static final int ACTION_SCREENSHOT = 3;
+    private static final int ACTION_SHOW_KEYSTROKES = 4;
+    private static final int ACTION_DOCTOR = 5;
+    private static final int ACTION_STOP_ALL = 6;
+    private static final int ACTION_COUNT = 7;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -94,6 +95,7 @@ class ActionsPopup {
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
     private final StopAllPopup stopAllPopup;
+    private final CaptionOverlay captionOverlay;
 
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private String launchNotification;
@@ -101,10 +103,11 @@ class ActionsPopup {
     private long launchNotificationExpiry;
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
-                 Supplier<List<InfraInfo>> infraServices,
+                 Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
                  Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled) {
         this.runningNames = runningNames;
         this.integrations = integrations;
+        this.captionOverlay = captionOverlay;
         this.screenshotAction = screenshotAction;
         this.toggleKeystrokes = toggleKeystrokes;
         this.keystrokesEnabled = keystrokesEnabled;
@@ -117,7 +120,7 @@ class ActionsPopup {
 
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || showNameInput || showDocPicker || showDocViewer
-                || doctorPopup.isVisible() || stopAllPopup.isVisible();
+                || doctorPopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
     }
 
     void open() {
@@ -133,6 +136,7 @@ class ActionsPopup {
         showDocViewer = false;
         doctorPopup.close();
         stopAllPopup.close();
+        captionOverlay.close();
     }
 
     String notification() {
@@ -219,6 +223,9 @@ class ActionsPopup {
             }
             return true;
         }
+        if (captionOverlay.isInputVisible()) {
+            return captionOverlay.handleKeyEvent(ke);
+        }
         if (stopAllPopup.handleKeyEvent(ke)) {
             checkStopAllNotification();
             return true;
@@ -253,6 +260,9 @@ class ActionsPopup {
                         showActionsMenu = false;
                         stopAllPopup.open();
                         checkStopAllNotification();
+                    } else if (sel == ACTION_CAPTION) {
+                        showActionsMenu = false;
+                        captionOverlay.openInput();
                     }
                 }
             }
@@ -283,9 +293,16 @@ class ActionsPopup {
         if (stopAllPopup.isVisible()) {
             stopAllPopup.render(frame, area);
         }
+        if (captionOverlay.isInputVisible()) {
+            captionOverlay.render(frame, area);
+        }
     }
 
     void renderFooter(List<Span> spans) {
+        if (captionOverlay.isInputVisible()) {
+            captionOverlay.renderFooter(spans);
+            return;
+        }
         if (stopAllPopup.isVisible()) {
             stopAllPopup.renderFooter(spans);
             return;
@@ -352,6 +369,7 @@ class ActionsPopup {
         ListWidget list = ListWidget.builder()
                 .items(ListItem.from("  🐪 Run an example..."),
                         ListItem.from("  📖 Show Documentation"),
+                        ListItem.from("  💬 Caption... (Ctrl+T)"),
                         ListItem.from("  📸 Take Screenshot"),
                         ListItem.from(keystrokeLabel),
                         ListItem.from("  🩺 Run Doctor"),

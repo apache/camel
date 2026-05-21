@@ -202,6 +202,7 @@ public class CamelMonitor extends CamelCommand {
     private volatile boolean pendingScreenshot;
     private boolean recording;
     private final List<KeyRecord> recentKeys = new ArrayList<>();
+    private final CaptionOverlay captionOverlay = new CaptionOverlay();
 
     private final ActionsPopup actionsPopup = new ActionsPopup(
             () -> data.get().stream()
@@ -214,6 +215,7 @@ public class CamelMonitor extends CamelCommand {
             () -> infraData.get().stream()
                     .filter(i -> !i.vanishing)
                     .collect(Collectors.toList()),
+            captionOverlay,
             () -> pendingScreenshot = true,
             () -> recording = !recording,
             () -> recording);
@@ -303,6 +305,14 @@ public class CamelMonitor extends CamelCommand {
                 if (label != null) {
                     recentKeys.add(new KeyRecord(label, System.currentTimeMillis()));
                 }
+            }
+            if (captionOverlay.isCaptionVisible()) {
+                captionOverlay.handleKeyEvent(ke);
+                return true;
+            }
+            if (ke.hasCtrl() && ke.isChar('t')) {
+                captionOverlay.openInput();
+                return true;
             }
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
@@ -538,6 +548,7 @@ public class CamelMonitor extends CamelCommand {
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
             actionsPopup.tick(now);
+            captionOverlay.tick(now);
             if (recording && !recentKeys.isEmpty()) {
                 long cutoff = now - 2000;
                 recentKeys.removeIf(k -> k.timestamp() < cutoff);
@@ -747,6 +758,9 @@ public class CamelMonitor extends CamelCommand {
             renderKillConfirm(frame, mainChunks.get(4));
         }
         actionsPopup.render(frame, mainChunks.get(4));
+        if (captionOverlay.isCaptionVisible()) {
+            captionOverlay.render(frame, mainChunks.get(4));
+        }
         renderFooter(frame, mainChunks.get(5));
 
         lastBuffer = frame.buffer();
@@ -1570,6 +1584,13 @@ public class CamelMonitor extends CamelCommand {
         screenshotMessage = null;
 
         List<Span> spans = new ArrayList<>();
+
+        if (captionOverlay.isCaptionVisible()) {
+            captionOverlay.renderFooter(spans);
+            frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+            return;
+        }
+
         MonitorTab tab = activeTab();
 
         if (tab != null) {
