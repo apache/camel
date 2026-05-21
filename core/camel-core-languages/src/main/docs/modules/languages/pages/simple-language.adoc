@@ -362,13 +362,13 @@ The condition functions is small functions that mostly evaluates to a `boolean` 
 |====
 |Function |Response Type |Description
 |`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false. This function is not supported when using csimple.
-|`contains(text`) | `boolean` | Returns true if the message body contains part of the text (ignore case)
-|`contains(exp,text`) | `boolean` | Returns true if the expression contains part of the text (ignore case)
-|`iif(predicate,trueExp,falseExp`) | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
+|`contains(text)` | `boolean` | Returns true if the message body contains part of the text (ignore case)
+|`contains(exp,text)` | `boolean` | Returns true if the expression contains part of the text (ignore case)
+|`iif(predicate,trueExp,falseExp)` | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
 |`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
 |`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
-|`isAlpha()` | `boolean` | Whether the message body is numeric value (A..Z). For more advanced checks use the `regex` operator.
-|`isAlpha(exp)` | `boolean` | Whether the expression is numeric value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlpha()` | `boolean` | Whether the message body is alphabetic value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlpha(exp)` | `boolean` | Whether the expression is alphabetic value (A..Z). For more advanced checks use the `regex` operator.
 |`isAlphaNumeric()` | `boolean` | Whether the message body is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
 |`isAlphaNumeric(exp)` | `boolean` | Whether the expression is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
 |`isNumeric()` | `boolean` | Whether the message body is numeric value (0..9). For more advanced checks use the `regex` operator.
@@ -537,14 +537,14 @@ The string functions is various functions to work with values that are String an
 |`safeQuote()` | `String` | Returns the message body safely quoted if needed
 |`safeQuote(exp)` | `String` | Returns the expression safely quoted if needed
 |`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
-|`substring(num1,num2)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
-|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
+|`substring(num1,num2)` | `String` | Returns a substring of the message body. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
+|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
 |`substringAfter(after)` | `String` | Returns a substring of the message body that comes after. Returns `null` if nothing comes after.
 |`substringAfter(exp,after)` | `String` | Returns a substring of the expression that comes after. Returns `null` if nothing comes after.
 |`substringBefore(before)` | `String` | Returns a substring of the message body that comes before. Returns `null` if nothing comes before.
 |`substringBefore(exp,before)` | `String` | Returns a substring of the expression that comes before. Returns `null` if nothing comes before.
-|`substringBetween(after,before` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
-|`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(after,before)` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(exp,after,before)` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
 |`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
 |`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
 |`unquote()` | `String` | Returns the message body with any leading/ending quotes removed

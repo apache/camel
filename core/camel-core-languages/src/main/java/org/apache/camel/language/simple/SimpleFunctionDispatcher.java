@@ -25,8 +25,10 @@ import org.apache.camel.language.simple.functions.BodyFunctionFactory;
 import org.apache.camel.language.simple.functions.CollateFunctionFactory;
 import org.apache.camel.language.simple.functions.HeaderFunctionFactory;
 import org.apache.camel.language.simple.functions.JoinFunctionFactory;
+import org.apache.camel.language.simple.functions.MathFunctionFactory;
 import org.apache.camel.language.simple.functions.RandomFunctionFactory;
 import org.apache.camel.language.simple.functions.SkipFunctionFactory;
+import org.apache.camel.language.simple.functions.StringFunctionFactory;
 import org.apache.camel.language.simple.functions.VariableFunctionFactory;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.ResolverHelper;
@@ -57,7 +59,9 @@ public final class SimpleFunctionDispatcher {
             new RandomFunctionFactory(),
             new SkipFunctionFactory(),
             new CollateFunctionFactory(),
-            new JoinFunctionFactory());
+            new JoinFunctionFactory(),
+            new MathFunctionFactory(),
+            new StringFunctionFactory());
 
     private static final List<Entry> EXPRESSION_ENTRIES = List.of(
             new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),
