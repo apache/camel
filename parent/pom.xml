@@ -412,6 +412,7 @@
         <nimbus-jose-jwt>10.10</nimbus-jose-jwt>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
+<<<<<<< Upstream, based on origin/main
         <ognl-version>3.4.15</ognl-version>
         <onnxruntime-version>1.31.0</onnxruntime-version>
         <opa-version>2.1.1</opa-version>
@@ -426,6 +427,13 @@
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
         <openai-java-version>4.78.0</openai-java-version>
         <openapi-generator-version>7.26.0</openapi-generator-version>
+=======
+        <ognl-version>3.4.11</ognl-version>
+        <mcp-java-sdk-version>1.1.2</mcp-java-sdk-version>
+        <openai-java-version>4.36.0</openai-java-version>
+        <openapi-generator-version>7.22.0</openapi-generator-version>
+        <openapi-request-validator-version>3.0.0</openapi-request-validator-version>
+>>>>>>> b1c9866 Bump com.atlassian.oai:swagger-request-validator-core from 2.46.1 to com.atlassian.oai:openapi-request-validator-core 3.0.0
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.9.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.10.0</opensearch-java-client-version>
