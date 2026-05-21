@@ -124,6 +124,11 @@ public final class ExampleHelper {
         return docker != null && docker;
     }
 
+    public static boolean hasCitrusTests(JsonObject entry) {
+        Boolean citrus = entry.getBoolean("hasCitrusTests");
+        return citrus != null && citrus;
+    }
+
     @SuppressWarnings("unchecked")
     public static List<String> getFiles(JsonObject entry) {
         Collection<String> files = (Collection<String>) entry.get("files");
