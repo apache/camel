@@ -546,6 +546,9 @@ public class CamelMonitor extends CamelCommand {
             refreshTraceData(List.of(Long.parseLong(ctx.selectedPid)));
             historyTab.onTabSelected();
         }
+        if (tab == TAB_CIRCUIT_BREAKER) {
+            circuitBreakerTab.onTabSelected();
+        }
         tabsState.select(tab);
         return true;
     }
