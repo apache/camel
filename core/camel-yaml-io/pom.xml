@@ -34,6 +34,7 @@
         <firstVersion>4.0.0</firstVersion>
         <label>dsl</label>
         <camel-generate-yaml-writer>true</camel-generate-yaml-writer>
+        <camel-generate-yaml-direct-writer>true</camel-generate-yaml-direct-writer>
     </properties>
 
     <dependencies>
@@ -100,6 +101,7 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate-yaml-writer</goal>
+                            <goal>generate-yaml-direct-writer</goal>
                         </goals>
                     </execution>
                 </executions>
