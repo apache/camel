@@ -201,7 +201,7 @@ public class Run extends CamelCommand {
     String kameletsVersion;
 
     @CommandLine.Mixin
-    QuarkusPlatformMixin quarkusPlatform;
+    QuarkusPlatformMixin quarkusPlatform = new QuarkusPlatformMixin();
 
     @Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
             defaultValue = RuntimeType.SPRING_BOOT_VERSION)
@@ -237,7 +237,7 @@ public class Run extends CamelCommand {
     boolean mavenApacheSnapshotEnabled = true;
 
     @CommandLine.Mixin
-    public MavenResolverMixin mavenResolver;
+    public MavenResolverMixin mavenResolver = new MavenResolverMixin();
 
     @Option(names = { "--package-scan-jars" }, defaultValue = "false",
             description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
