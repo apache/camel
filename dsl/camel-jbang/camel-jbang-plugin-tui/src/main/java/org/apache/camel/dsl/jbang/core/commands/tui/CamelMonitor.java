@@ -408,6 +408,12 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
+            // F2 opens actions menu (global)
+            if (ke.isKey(KeyCode.F2)) {
+                actionsPopup.open();
+                return true;
+            }
+
             // Tab-specific keys — delegate to active tab first
             int tab = tabsState.selected();
             MonitorTab activeTab = activeTab();
@@ -521,12 +527,6 @@ public class CamelMonitor extends CamelCommand {
                 showKillConfirm = true;
                 return true;
             }
-            // Overview tab: F2 opens actions menu
-            if (tab == TAB_OVERVIEW && ke.isKey(KeyCode.F2)) {
-                actionsPopup.open();
-                return true;
-            }
-
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                 return true;
@@ -1571,6 +1571,11 @@ public class CamelMonitor extends CamelCommand {
 
         if (tab != null) {
             tab.renderFooter(spans);
+            // Insert F2 after the first hint (Esc) — each hint is 2 spans (key + label)
+            int insertPos = Math.min(2, spans.size());
+            List<Span> f2Spans = new ArrayList<>();
+            hint(f2Spans, "F2", "actions");
+            spans.addAll(insertPos, f2Spans);
         } else {
             renderOverviewFooter(spans);
         }

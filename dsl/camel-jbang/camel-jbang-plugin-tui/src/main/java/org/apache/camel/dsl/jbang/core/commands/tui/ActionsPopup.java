@@ -553,6 +553,10 @@ class ActionsPopup {
         boolean isAdoc = false;
         if (bundled) {
             content = DocHelper.loadResourceContent("examples/" + name + "/README.md");
+            if (content == null) {
+                content = DocHelper.loadResourceContent("examples/" + name + "/README.adoc");
+                isAdoc = content != null;
+            }
         } else {
             String base = "https://raw.githubusercontent.com/apache/camel-jbang-examples/main/" + name + "/";
             content = DocHelper.downloadContent(base + "README.md");
