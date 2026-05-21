@@ -111,6 +111,13 @@ The `groupId`, `artifactId`, and `version` fields have been removed from the `ca
 response. A new `camel_catalog_component_maven` tool returns just those Maven coordinates and should be
 called only when you actually need to add the component as a dependency.
 
+The list-style catalog tools — `camel_catalog_components`, `camel_catalog_dataformats`,
+`camel_catalog_languages`, and `camel_catalog_eips` — no longer return the verbose
+`description` field in their per-item entries. Callers that need the full description should call
+the matching `*_doc` tool. The default `limit` for `camel_catalog_components` and
+`camel_catalog_dataformats` is also lowered from 50 to 20; pass an explicit `limit` to restore the
+previous behaviour.
+
 ==== camel-jbang plugins
 
 Plugins are now loaded lazily. Built-in commands that do not consume plugins

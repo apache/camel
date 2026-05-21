@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.RecordComponent;
+import java.util.Arrays;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -50,7 +52,7 @@ class McpJsonSerializationTest {
         ObjectMapper mapper = newConfiguredObjectMapper();
 
         CatalogTools.ComponentInfo info = new CatalogTools.ComponentInfo(
-                "timer", "Timer", null, null, false, null);
+                "timer", "Timer", null, false, null);
 
         String json = mapper.writeValueAsString(info);
 
@@ -94,6 +96,24 @@ class McpJsonSerializationTest {
         assertThat(json).doesNotContain("\"groupId\"");
         assertThat(json).doesNotContain("\"componentOptions\"");
         assertThat(json).doesNotContain("\"endpointOptions\"");
+    }
+
+    @Test
+    void listInfoRecordsCarryNoDescription() {
+        // CAMEL-23473: list result records must omit the verbose 'description' field. Callers
+        // that want the description should call the corresponding *_doc tool.
+        assertThat(Arrays.stream(CatalogTools.ComponentInfo.class.getRecordComponents())
+                .map(RecordComponent::getName))
+                .doesNotContain("description");
+        assertThat(Arrays.stream(CatalogTools.DataFormatInfo.class.getRecordComponents())
+                .map(RecordComponent::getName))
+                .doesNotContain("description");
+        assertThat(Arrays.stream(CatalogTools.LanguageInfo.class.getRecordComponents())
+                .map(RecordComponent::getName))
+                .doesNotContain("description");
+        assertThat(Arrays.stream(CatalogTools.EipInfo.class.getRecordComponents())
+                .map(RecordComponent::getName))
+                .doesNotContain("description");
     }
 
     @Test
