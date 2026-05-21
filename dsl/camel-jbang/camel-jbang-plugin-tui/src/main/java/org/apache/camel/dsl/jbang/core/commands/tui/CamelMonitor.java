@@ -298,6 +298,10 @@ public class CamelMonitor extends CamelCommand {
                     navigateExampleBrowser(-1);
                 } else if (ke.isDown()) {
                     navigateExampleBrowser(1);
+                } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                    navigateExampleBrowser(-10);
+                } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                    navigateExampleBrowser(10);
                 } else if (ke.isConfirm()) {
                     launchSelectedExample();
                 }
@@ -1527,8 +1531,8 @@ public class CamelMonitor extends CamelCommand {
         if (exampleCatalog == null || exampleCatalog.isEmpty()) {
             return;
         }
-        int popupW = Math.min(80, area.width() - 4);
-        int popupH = Math.min(exampleCatalog.size() + 5, Math.min(24, area.height() - 4));
+        int popupW = Math.min(100, area.width() - 4);
+        int popupH = Math.min(exampleCatalog.size() + 10, Math.min(28, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -1540,7 +1544,7 @@ public class CamelMonitor extends CamelCommand {
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .title(" Run an Example (" + exampleCatalog.size() + ") ")
@@ -1561,18 +1565,32 @@ public class CamelMonitor extends CamelCommand {
             }
             String name = ex.getStringOrDefault("name", "");
             String desc = ex.getStringOrDefault("description", "");
-            boolean docker = Boolean.TRUE.equals(ex.get("requiresDocker"));
-            boolean bundled = Boolean.TRUE.equals(ex.get("bundled"));
+            boolean docker = ExampleHelper.requiresDocker(ex);
+            boolean bundled = ExampleHelper.isBundled(ex);
 
-            String tag = docker ? " [docker]" : "";
-            int nameCol = Math.min(28, width / 3);
-            String padded = String.format("  %-" + nameCol + "s", TuiHelper.truncate(name + tag, nameCol));
-            int remaining = Math.max(10, width - padded.length() - 1);
-            String line = padded + " " + TuiHelper.truncate(desc, remaining);
+            String icons = (bundled ? "📦" : "🌐") + (docker ? "🐳" : "  ");
+            int nameCol = Math.min(30, width / 3);
+            String padded = String.format("%-" + nameCol + "s", TuiHelper.truncate(name, nameCol));
+            String prefix = " " + icons + " " + padded + " ";
+            int descCol = Math.max(10, width - prefix.length());
 
             Style style = bundled ? Style.EMPTY : Style.EMPTY.dim();
-            items.add(ListItem.from(line).style(style));
+            if (desc.length() <= descCol) {
+                items.add(ListItem.from(prefix + desc).style(style));
+            } else {
+                String indent = " ".repeat(prefix.length());
+                List<Line> lines = new ArrayList<>();
+                List<String> wrapped = wrapWords(desc, descCol);
+                lines.add(Line.from(prefix + wrapped.get(0)));
+                for (int w = 1; w < wrapped.size(); w++) {
+                    lines.add(Line.from(indent + wrapped.get(w)));
+                }
+                items.add(ListItem.from(Text.from(lines.toArray(Line[]::new))).style(style));
+            }
         }
+        items.add(ListItem.from(""));
+        items.add(ListItem.from(" 📦 = bundled (offline)  🌐 = online (GitHub)  🐳 = Docker")
+                .style(Style.EMPTY.dim()));
         return items;
     }
 
@@ -1581,6 +1599,26 @@ public class CamelMonitor extends CamelCommand {
             return s;
         }
         return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    private static List<String> wrapWords(String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (line.isEmpty()) {
+                line.append(word);
+            } else if (line.length() + 1 + word.length() <= maxWidth) {
+                line.append(' ').append(word);
+            } else {
+                lines.add(line.toString());
+                line.setLength(0);
+                line.append(word);
+            }
+        }
+        if (!line.isEmpty()) {
+            lines.add(line.toString());
+        }
+        return lines;
     }
 
     private void openExampleBrowser() {
@@ -1636,14 +1674,17 @@ public class CamelMonitor extends CamelCommand {
         if (next >= totalItems) {
             next = totalItems - 1;
         }
-        if (isSeparatorIndex(next)) {
+        while (isSeparatorIndex(next) && next > 0 && next < totalItems - 1) {
             next += direction;
-            if (next < 0) {
-                next = 0;
-            }
-            if (next >= totalItems) {
-                next = totalItems - 1;
-            }
+        }
+        if (next < 0) {
+            next = 0;
+        }
+        if (next >= totalItems) {
+            next = totalItems - 1;
+        }
+        if (isSeparatorIndex(next)) {
+            return;
         }
         exampleBrowserState.select(next);
     }
@@ -1662,7 +1703,7 @@ public class CamelMonitor extends CamelCommand {
             }
             count++;
         }
-        return count;
+        return count + 2;
     }
 
     private boolean isSeparatorIndex(int index) {
@@ -1685,7 +1726,7 @@ public class CamelMonitor extends CamelCommand {
             }
             pos++;
         }
-        return false;
+        return true;
     }
 
     private JsonObject getExampleAtListIndex(int index) {
@@ -1809,6 +1850,7 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
         hint(spans, "q", "quit");
+        hint(spans, "F2", "actions");
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", ctx.infraTableFocused ? "integrations" : "unselect");
         }
@@ -1834,7 +1876,6 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "x", "stop");
             hint(spans, "X", "kill");
         }
-        hint(spans, "F2", "actions");
         hint(spans, isInfraSelected() ? "1-2" : "1-9", "tabs");
     }
 
