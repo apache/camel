@@ -305,6 +305,12 @@ Camel Grape was deprecated with Camel 4.1. The component is now removed.
 
 Camel Grape was deprecated with Camel 4.0. The component is now removed.
 
+=== camel-github removal
+
+Camel GitHub was deprecated with Camel 4.18. The component is now removed.
+There is `camel-github2` to replace it.
+Technically, `camel-github` was based on Eclipse EGit which is no more active. `camel-github2` is based on `org.kohsuke:github-api`.
+
 === camel-telemetry
 
 In order to prevent some potential span leakage in `camel-opentelemetry2` (see notes below) we had to perform some changes and introduce the following parameter:

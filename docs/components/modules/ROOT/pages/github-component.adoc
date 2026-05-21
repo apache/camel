@@ -1,1 +1,0 @@
-../../../../../components/camel-github/src/main/docs/github-component.adoc

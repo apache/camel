@@ -1725,19 +1725,6 @@ public interface ComponentsBuilderFactory {
         return GitComponentBuilderFactory.git();
     }
     /**
-     * GitHub (camel-github)
-     * Interact with the GitHub API.
-     * 
-     * Category: file,cloud,api
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-github
-     * 
-     * @return the dsl builder
-     */
-    static GithubComponentBuilderFactory.GithubComponentBuilder github() {
-        return GithubComponentBuilderFactory.github();
-    }
-    /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
      * 
