@@ -22,6 +22,7 @@ import jakarta.xml.ws.Service;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
@@ -68,8 +69,9 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
         return new RouteBuilder() {
             public void configure() {
                 from("cxf:bean:routerEndpoint?synchronous=true&dataFormat=PAYLOAD")
-                        .setHeader("operationNamespace", constant("http://camel.apache.org/cxf/jaxws/dispatch"))
-                        .setHeader("operationName", constant("Invoke"))
+                        .setHeader(CxfConstants.OPERATION_NAMESPACE,
+                                constant("http://camel.apache.org/cxf/jaxws/dispatch"))
+                        .setHeader(CxfConstants.OPERATION_NAME, constant("Invoke"))
                         .to("cxf:bean:serviceEndpoint?synchronous=true&dataFormat=PAYLOAD");
             }
         };
