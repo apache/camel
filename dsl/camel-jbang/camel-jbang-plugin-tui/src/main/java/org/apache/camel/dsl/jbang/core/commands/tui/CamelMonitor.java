@@ -204,7 +204,8 @@ public class CamelMonitor extends CamelCommand {
             () -> data.get().stream()
                     .filter(i -> !i.vanishing && i.name != null)
                     .map(i -> i.name)
-                    .collect(Collectors.toSet()));
+                    .collect(Collectors.toSet()),
+            this::takeScreenshot);
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;

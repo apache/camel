@@ -54,7 +54,12 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLa
 
 class ActionsPopup {
 
+    private static final int ACTION_RUN_EXAMPLE = 0;
+    private static final int ACTION_SCREENSHOT = 1;
+    private static final int ACTION_COUNT = 2;
+
     private final Supplier<Set<String>> runningNames;
+    private final Runnable screenshotAction;
 
     private boolean showActionsMenu;
     private final ListState actionsMenuState = new ListState();
@@ -72,8 +77,9 @@ class ActionsPopup {
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
 
-    ActionsPopup(Supplier<Set<String>> runningNames) {
+    ActionsPopup(Supplier<Set<String>> runningNames, Runnable screenshotAction) {
         this.runningNames = runningNames;
+        this.screenshotAction = screenshotAction;
     }
 
     boolean isVisible() {
@@ -148,9 +154,15 @@ class ActionsPopup {
             } else if (ke.isUp()) {
                 actionsMenuState.selectPrevious();
             } else if (ke.isDown()) {
-                actionsMenuState.selectNext(1);
+                actionsMenuState.selectNext(ACTION_COUNT);
             } else if (ke.isConfirm()) {
-                openExampleBrowser();
+                Integer sel = actionsMenuState.selected();
+                if (sel != null && sel == ACTION_SCREENSHOT) {
+                    showActionsMenu = false;
+                    screenshotAction.run();
+                } else {
+                    openExampleBrowser();
+                }
             }
             return true;
         }
@@ -200,14 +212,15 @@ class ActionsPopup {
 
     private void renderActionsMenu(Frame frame, Rect area) {
         int popupW = 32;
-        int popupH = 3;
+        int popupH = 2 + ACTION_COUNT;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
         ListWidget list = ListWidget.builder()
-                .items(ListItem.from("  Run an example..."))
+                .items(ListItem.from("  Run an example..."),
+                        ListItem.from("  Screenshot"))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
