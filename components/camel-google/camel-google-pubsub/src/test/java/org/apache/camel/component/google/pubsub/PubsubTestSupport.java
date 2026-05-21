@@ -18,13 +18,14 @@ package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.LogManager;
 
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
-import com.google.api.gax.grpc.GrpcTransportChannel;
-import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
 import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
 import com.google.cloud.pubsub.v1.TopicAdminClient;
@@ -33,7 +34,6 @@ import com.google.pubsub.v1.ProjectSubscriptionName;
 import com.google.pubsub.v1.Subscription;
 import com.google.pubsub.v1.Topic;
 import com.google.pubsub.v1.TopicName;
-import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -42,6 +42,7 @@ import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubService;
 import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,8 @@ public class PubsubTestSupport extends CamelTestSupport {
     public static GooglePubSubService service = GooglePubSubServiceFactory.createService();
 
     public static final String PROJECT_ID;
+
+    private static final OrphanChannelLogAppender ORPHAN_APPENDER = new OrphanChannelLogAppender();
 
     static {
         Properties testProperties = loadProperties();
@@ -65,6 +68,11 @@ public class PubsubTestSupport extends CamelTestSupport {
                     "Unable to setup JUL-to-slf4j logging bridge. The test execution should result in a log of bogus output. Error: {}",
                     e.getMessage(), e);
         }
+
+        org.apache.logging.log4j.core.Logger orphanLogger
+                = (org.apache.logging.log4j.core.Logger) org.apache.logging.log4j.LogManager
+                        .getLogger("io.grpc.internal.ManagedChannelOrphanWrapper");
+        orphanLogger.addAppender(ORPHAN_APPENDER);
     }
 
     private static Properties loadProperties() {
@@ -84,6 +92,23 @@ public class PubsubTestSupport extends CamelTestSupport {
     @BindToRegistry("prop")
     public Properties loadRegProperties() {
         return loadProperties();
+    }
+
+    @Override
+    protected void setupResources() throws Exception {
+        ORPHAN_APPENDER.reset();
+        super.setupResources();
+    }
+
+    @Override
+    protected void cleanupResources() throws Exception {
+        super.cleanupResources();
+        System.gc();
+        List<String> orphans = ORPHAN_APPENDER.getMessages();
+        if (!orphans.isEmpty()) {
+            Assertions.fail("gRPC channel(s) garbage collected without shutdown (ManagedChannelOrphanWrapper):\n"
+                            + String.join("\n", orphans));
+        }
     }
 
     @Override
@@ -136,17 +161,16 @@ public class PubsubTestSupport extends CamelTestSupport {
         subscriptionAdminClient.shutdown();
     }
 
-    private FixedTransportChannelProvider createChannelProvider() {
-        ManagedChannel channel = ManagedChannelBuilder
-                .forTarget(service.getServiceAddress())
-                .usePlaintext()
-                .build();
+    private TransportChannelProvider createChannelProvider() {
 
-        return FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+        return InstantiatingGrpcChannelProvider.newBuilder()
+                .setEndpoint(service.getServiceAddress())
+                .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
+                .build();
     }
 
     private TopicAdminClient createTopicAdminClient() {
-        FixedTransportChannelProvider channelProvider = createChannelProvider();
+        TransportChannelProvider channelProvider = createChannelProvider();
         CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
         try {
@@ -161,7 +185,7 @@ public class PubsubTestSupport extends CamelTestSupport {
     }
 
     private SubscriptionAdminClient createSubscriptionAdminClient() {
-        FixedTransportChannelProvider channelProvider = createChannelProvider();
+        TransportChannelProvider channelProvider = createChannelProvider();
         CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
         try {
