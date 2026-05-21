@@ -28,7 +28,7 @@
       uri: direct:hello
       steps:
         - setBody:
-            constant: "Hello from Camel REST API!"
+            constant: "{{greeting.message}}"
 - route:
     id: hello-name
     from:

@@ -20,8 +20,8 @@
     from:
       uri: timer:tick
       parameters:
-        period: "1000"
+        period: "{{timer.period}}"
       steps:
         - setBody:
-            simple: "Hello Camel! (message #${exchangeProperty.CamelTimerCounter})"
+            simple: "{{greeting.message}} (message #${exchangeProperty.CamelTimerCounter})"
         - log: "${body}"

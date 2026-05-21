@@ -96,6 +96,7 @@
         "hasCitrusTests": false,
         "files": [
             "README.md",
+            "application.properties",
             "cron-log.camel.yaml"
         ]
     },
@@ -325,6 +326,7 @@
         "hasCitrusTests": false,
         "files": [
             "README.md",
+            "application.properties",
             "rest-api.camel.yaml"
         ]
     },
@@ -344,6 +346,7 @@
         "files": [
             "Greeter.java",
             "README.md",
+            "application.properties",
             "beans.yaml",
             "routes.camel.yaml"
         ]
@@ -431,6 +434,7 @@
         "hasCitrusTests": false,
         "files": [
             "README.md",
+            "application.properties",
             "timer-log.camel.yaml"
         ]
     },
