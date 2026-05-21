@@ -38,4 +38,4 @@
                   name: Exchange.HTTP_RESPONSE_CODE
                   expression:
                     constant:
-                      expression: 404
+                      expression: "404"
