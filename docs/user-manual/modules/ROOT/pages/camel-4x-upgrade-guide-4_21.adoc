@@ -668,6 +668,31 @@ for the embedded HTTP server:
 Both default to unset. When both are unset, JWT validation behaviour is unchanged (signature plus the
 default `exp` / `nbf` checks).
 
+=== camel-mongodb-gridfs
+
+The Exchange header values exposed by `GridFsConstants` have been renamed to follow the standard
+Camel naming convention, bringing `camel-mongodb-gridfs` in line with the parent `camel-mongodb`
+component (`MongoDbConstants.OPERATION_HEADER = "CamelMongoDbOperation"`). The Java field names
+are unchanged, so routes referencing the constants symbolically
+(e.g. `GridFsConstants.GRIDFS_OPERATION`, `GridFsConstants.GRIDFS_OBJECT_ID`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `gridfs.operation` -> `CamelGridFsOperation`
+* `gridfs.metadata` -> `CamelGridFsMetadata`
+* `gridfs.chunksize` -> `CamelGridFsChunkSize`
+* `gridfs.objectid` -> `CamelGridFsObjectId`
+* `gridfs.fileid` -> `CamelGridFsFileId`
+
+As a consequence, the generated Endpoint DSL header accessors on `GridFsHeaderNameBuilder`
+have been renamed accordingly:
+
+* `gridfsOperation()` -> `gridFsOperation()`
+* `gridfsMetadata()` -> `gridFsMetadata()`
+* `gridfsChunksize()` -> `gridFsChunkSize()`
+* `gridfsObjectid()` -> `gridFsObjectId()`
+* `gridfsFileid()` -> `gridFsFileId()`
+
 === Deprecation of camel-ironmq
 
 The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017
