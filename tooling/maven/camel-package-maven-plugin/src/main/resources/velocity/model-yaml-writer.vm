@@ -144,10 +144,19 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                             #if( $member.name == "outputs" )
         doWriteOutputs(jo, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
                             #else
-        doWriteElementRefList(jo, null, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
+                                #set( $refName = $member.xmlElementRef.name() )
+                                #if( $refName && $refName != $default && $refName != "" )
+        doWriteChildList(jo, "${refName}", "${refName}", def.${member.getter}(), this::doWrite${root.simpleName});
+                                #else
+        doWriteChildList(jo, "${member.name}", "${member.name}", def.${member.getter}(), this::doWrite${root.simpleName});
+                                #end
                             #end
                         #else
+                            #if( $member.name == "expression" && $root.simpleName == "ExpressionDefinition" )
+        doWriteExpressionRef(jo, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
+                            #else
         doWriteElementRef(jo, def.${member.getter}(), this::doWrite${root.simpleName}Ref);
+                            #end
                         #end
                     #elseif( $member.xmlElements )
                         #if( $list )
@@ -266,6 +275,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWrite${name}Elements(jo, def);
             #else
                 #writeYamlElems
+            #end
+            #if( $name == "RouteDefinition" )
+        doMoveStepsUnderFrom(jo);
             #end
         return jo;
     }

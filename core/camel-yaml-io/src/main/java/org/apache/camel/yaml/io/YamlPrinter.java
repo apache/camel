@@ -159,6 +159,12 @@ public final class YamlPrinter {
             if (c == '#' && i > 0 && s.charAt(i - 1) == ' ') {
                 return true;
             }
+            if (c == '$' && i + 1 < s.length() && s.charAt(i + 1) == '{') {
+                return true;
+            }
+            if (c == '{' && i + 1 < s.length() && s.charAt(i + 1) == '{') {
+                return true;
+            }
             if (c == '\n') {
                 return true;
             }

@@ -797,7 +797,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         return jo;
     }
     protected void doWriteBasicExpressionNodeElements(JsonObject jo, BasicExpressionNode<?> def) {
-        doWriteElementRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
+        doWriteExpressionRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
     }
     protected JsonObject doWriteBasicExpressionNode(BasicExpressionNode<?> def) {
         JsonObject jo = new JsonObject();
@@ -855,7 +855,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "precondition", def.getPrecondition(), "false");
-        doWriteElementRefList(jo, null, def.getWhenClauses(), this::doWriteWhenDefinitionRef);
+        doWriteChildList(jo, "when", "when", def.getWhenClauses(), this::doWriteWhenDefinition);
         doWriteChildElement(jo, "otherwise", def.getOtherwise(), this::doWriteOtherwiseDefinition);
         return jo;
     }
@@ -971,7 +971,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         return jo;
     }
     protected void doWriteExpressionNodeElements(JsonObject jo, ExpressionNode def) {
-        doWriteElementRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
+        doWriteExpressionRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
     }
     protected JsonObject doWriteExpressionNode(ExpressionNode def) {
         JsonObject jo = new JsonObject();
@@ -1260,7 +1260,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteOnWhenDefinition(OnWhenDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteElementRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
+        doWriteExpressionRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
         return jo;
     }
     protected JsonObject doWriteOptimisticLockRetryPolicyDefinition(OptimisticLockRetryPolicyDefinition def) {
@@ -1387,7 +1387,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWritePropertyExpressionDefinition(PropertyExpressionDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteAttribute(jo, "key", def.getKey(), null);
-        doWriteElementRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
+        doWriteExpressionRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
         return jo;
     }
     protected JsonObject doWriteRecipientListDefinition(RecipientListDefinition<?> def) {
@@ -1475,7 +1475,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteResequenceDefinition(ResequenceDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
-        doWriteElementRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
+        doWriteExpressionRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
         if (def.getResequencerConfig() != null) {
             switch (def.getResequencerConfig().getClass().getSimpleName()) {
                 case "BatchResequencerConfig" -> doWriteChildElement(jo, "batchConfig", (BatchResequencerConfig) def.getResequencerConfig(), this::doWriteBatchResequencerConfig);
@@ -1572,7 +1572,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteRouteConfigurationsDefinition(RouteConfigurationsDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteElementRefList(jo, null, def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinitionRef);
+        doWriteChildList(jo, "routeConfigurations", "routeConfigurations", def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinition);
         return jo;
     }
     protected JsonObject doWriteRouteContextRefDefinition(RouteContextRefDefinition def) {
@@ -1607,6 +1607,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteElementRef(jo, def.getInputType(), this::doWriteInputTypeDefinitionRef);
         doWriteElementRef(jo, def.getOutputType(), this::doWriteOutputTypeDefinitionRef);
         doWriteOutputs(jo, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        doMoveStepsUnderFrom(jo);
         return jo;
     }
     protected JsonObject doWriteRouteTemplateContextRefDefinition(RouteTemplateContextRefDefinition def) {
@@ -1633,13 +1634,13 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteRouteTemplatesDefinition(RouteTemplatesDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteElementRefList(jo, null, def.getRouteTemplates(), this::doWriteRouteTemplateDefinitionRef);
+        doWriteChildList(jo, "routeTemplates", "routeTemplates", def.getRouteTemplates(), this::doWriteRouteTemplateDefinition);
         return jo;
     }
     protected JsonObject doWriteRoutesDefinition(RoutesDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteElementRefList(jo, null, def.getRoutes(), this::doWriteRouteDefinitionRef);
+        doWriteChildList(jo, "routes", "routes", def.getRoutes(), this::doWriteRouteDefinition);
         return jo;
     }
     protected JsonObject doWriteRoutingSlipDefinition(RoutingSlipDefinition<?> def) {
@@ -1708,7 +1709,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteSetHeadersDefinition(SetHeadersDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
-        doWriteElementRefList(jo, null, def.getHeaders(), this::doWriteSetHeaderDefinitionRef);
+        doWriteChildList(jo, "headers", "headers", def.getHeaders(), this::doWriteSetHeaderDefinition);
         return jo;
     }
     protected JsonObject doWriteSetPropertyDefinition(SetPropertyDefinition def) {
@@ -1728,7 +1729,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteSetVariablesDefinition(SetVariablesDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
-        doWriteElementRefList(jo, null, def.getVariables(), this::doWriteSetVariableDefinitionRef);
+        doWriteChildList(jo, "variables", "variables", def.getVariables(), this::doWriteSetVariableDefinition);
         return jo;
     }
     protected JsonObject doWriteSortDefinition(SortDefinition<?> def) {
@@ -1787,7 +1788,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteTemplatedRoutesDefinition(TemplatedRoutesDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteElementRefList(jo, null, def.getTemplatedRoutes(), this::doWriteTemplatedRouteDefinitionRef);
+        doWriteChildList(jo, "templatedRoutes", "templatedRoutes", def.getTemplatedRoutes(), this::doWriteTemplatedRouteDefinition);
         return jo;
     }
     protected JsonObject doWriteThreadPoolProfileDefinition(ThreadPoolProfileDefinition def) {
@@ -2665,7 +2666,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "numberOfRecordsToRead", def.getNumberOfRecordsToRead(), null);
     }
     protected void doWriteUniVocityAbstractDataFormatElements(JsonObject jo, UniVocityAbstractDataFormat def) {
-        doWriteElementRefList(jo, null, def.getHeaders(), this::doWriteUniVocityHeaderRef);
+        doWriteChildList(jo, "headers", "headers", def.getHeaders(), this::doWriteUniVocityHeader);
     }
     protected JsonObject doWriteUniVocityAbstractDataFormat(UniVocityAbstractDataFormat def) {
         JsonObject jo = new JsonObject();
@@ -3299,7 +3300,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
         doWriteAttribute(jo, "apiDocs", def.getApiDocs(), "true");
         doWriteAttribute(jo, "tag", def.getTag(), null);
-        doWriteElementRefList(jo, null, def.getVerbs(), this::doWriteVerbDefinitionRef);
+        doWriteChildList(jo, "verbs", "verbs", def.getVerbs(), this::doWriteVerbDefinition);
         doWriteChildElement(jo, "openApi", def.getOpenApi(), this::doWriteOpenApiDefinition);
         doWriteChildElement(jo, "securityDefinitions", def.getSecurityDefinitions(), this::doWriteRestSecuritiesDefinition);
         doWriteChildList(jo, null, "securityRequirements", def.getSecurityRequirements(), this::doWriteSecurityDefinition);
@@ -3339,7 +3340,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteRestsDefinition(RestsDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteElementRefList(jo, null, def.getRests(), this::doWriteRestDefinitionRef);
+        doWriteChildList(jo, "rests", "rests", def.getRests(), this::doWriteRestDefinition);
         return jo;
     }
     protected JsonObject doWriteSecurityDefinition(SecurityDefinition def) {
@@ -3368,9 +3369,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "consumes", def.getConsumes(), null);
     }
     protected void doWriteVerbDefinitionElements(JsonObject jo, VerbDefinition def) {
-        doWriteElementRefList(jo, null, def.getParams(), this::doWriteParamDefinitionRef);
-        doWriteElementRefList(jo, null, def.getSecurity(), this::doWriteSecurityDefinitionRef);
-        doWriteElementRefList(jo, null, def.getResponseMsgs(), this::doWriteResponseMessageDefinitionRef);
+        doWriteChildList(jo, "params", "params", def.getParams(), this::doWriteParamDefinition);
+        doWriteChildList(jo, "security", "security", def.getSecurity(), this::doWriteSecurityDefinition);
+        doWriteChildList(jo, "responseMsgs", "responseMsgs", def.getResponseMsgs(), this::doWriteResponseMessageDefinition);
         doWriteChildElement(jo, "to", def.getTo(), this::doWriteToDefinition);
     }
     protected JsonObject doWriteVerbDefinition(VerbDefinition def) {
@@ -3536,7 +3537,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWritePredicateValidatorDefinition(PredicateValidatorDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteValidatorDefinitionAttributes(jo, def);
-        doWriteElementRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
+        doWriteExpressionRef(jo, def.getExpression(), this::doWriteExpressionDefinitionRef);
         return jo;
     }
     protected void doWriteValidatorDefinitionAttributes(JsonObject jo, ValidatorDefinition def) {

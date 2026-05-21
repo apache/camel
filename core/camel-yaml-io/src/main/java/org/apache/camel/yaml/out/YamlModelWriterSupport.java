@@ -66,8 +66,27 @@ public abstract class YamlModelWriterSupport {
     protected <T> void doWriteChildElement(JsonObject jo, String key, T value, Function<T, JsonObject> writer) {
         if (value != null) {
             JsonObject child = writer.apply(value);
-            if (child != null && !child.isEmpty()) {
+            if (child != null) {
                 jo.put(key, child);
+            }
+        }
+    }
+
+    protected <T> void doWriteExpressionRef(JsonObject jo, T value, Function<T, JsonObject> writer) {
+        if (value != null) {
+            JsonObject result = writer.apply(value);
+            if (result != null && !result.isEmpty()) {
+                jo.put("expression", result);
+            }
+        }
+    }
+
+    protected void doMoveStepsUnderFrom(JsonObject jo) {
+        Object steps = jo.remove("steps");
+        if (steps != null) {
+            JsonObject from = (JsonObject) jo.get("from");
+            if (from != null) {
+                from.put("steps", steps);
             }
         }
     }
@@ -183,9 +202,7 @@ public abstract class YamlModelWriterSupport {
             }
             if (params != null && !params.isEmpty()) {
                 JsonObject p = new JsonObject();
-                params.entrySet().stream()
-                        .sorted(Map.Entry.comparingByKey())
-                        .forEach(e -> p.put(e.getKey(), parseValue(e.getValue())));
+                params.forEach((k, v) -> p.put(k, parseValue(v)));
                 jo.put("parameters", p);
             }
         } catch (Exception e) {
