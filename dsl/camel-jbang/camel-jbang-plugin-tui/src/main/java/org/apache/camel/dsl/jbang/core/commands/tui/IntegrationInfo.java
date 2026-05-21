@@ -64,4 +64,5 @@ class IntegrationInfo {
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
     final List<HttpEndpointInfo> httpEndpoints = new ArrayList<>();
     String httpServer;
+    String readmeFiles;
 }

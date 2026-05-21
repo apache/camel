@@ -73,6 +73,11 @@
             <artifactId>tamboui-image</artifactId>
             <version>${tamboui-version}</version>
         </dependency>
+        <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-markdown</artifactId>
+            <version>${tamboui-version}</version>
+        </dependency>
     </dependencies>
 
 </project>
