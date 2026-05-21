@@ -40,13 +40,10 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.input.TextInput;
-import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -81,8 +78,7 @@ class ActionsPopup {
     private final ListState exampleBrowserState = new ListState();
     private List<JsonObject> exampleCatalog;
 
-    private boolean showNameInput;
-    private TextInputState nameInputState;
+    private final RunOptionsForm runOptionsForm = new RunOptionsForm();
     private JsonObject selectedExample;
 
     private boolean showDocPicker;
@@ -121,7 +117,7 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || showExampleBrowser || showNameInput || showDocPicker || showDocViewer
+        return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
                 || doctorPopup.isVisible() || classpathPopup.isVisible()
                 || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
     }
@@ -134,7 +130,7 @@ class ActionsPopup {
     void close() {
         showActionsMenu = false;
         showExampleBrowser = false;
-        showNameInput = false;
+        runOptionsForm.close();
         showDocPicker = false;
         showDocViewer = false;
         doctorPopup.close();
@@ -183,26 +179,14 @@ class ActionsPopup {
             }
             return true;
         }
-        if (showNameInput) {
+        if (runOptionsForm.isVisible()) {
             if (ke.isCancel()) {
-                showNameInput = false;
+                runOptionsForm.close();
                 showExampleBrowser = true;
             } else if (ke.isConfirm()) {
                 launchWithName();
-            } else if (ke.isDeleteBackward()) {
-                nameInputState.deleteBackward();
-            } else if (ke.isDeleteForward()) {
-                nameInputState.deleteForward();
-            } else if (ke.isLeft()) {
-                nameInputState.moveCursorLeft();
-            } else if (ke.isRight()) {
-                nameInputState.moveCursorRight();
-            } else if (ke.isHome()) {
-                nameInputState.moveCursorToStart();
-            } else if (ke.isEnd()) {
-                nameInputState.moveCursorToEnd();
-            } else if (ke.code() == KeyCode.CHAR) {
-                nameInputState.insert(ke.character());
+            } else {
+                runOptionsForm.handleKeyEvent(ke);
             }
             return true;
         }
@@ -288,8 +272,8 @@ class ActionsPopup {
         if (showExampleBrowser) {
             renderExampleBrowser(frame, area);
         }
-        if (showNameInput) {
-            renderNameInput(frame, area);
+        if (runOptionsForm.isVisible()) {
+            runOptionsForm.render(frame, area);
         }
         if (showDocPicker) {
             renderDocPicker(frame, area);
@@ -339,9 +323,8 @@ class ActionsPopup {
             hintLast(spans, "Esc", "back");
             return;
         }
-        if (showNameInput) {
-            hint(spans, "Enter", "launch");
-            hintLast(spans, "Esc", "back");
+        if (runOptionsForm.isVisible()) {
+            runOptionsForm.renderFooter(spans);
             return;
         }
         if (showExampleBrowser) {
@@ -475,35 +458,6 @@ class ActionsPopup {
         items.add(ListItem.from(" 📦 = bundled (offline)  🌐 = online (GitHub)  🐳 = Docker  🍋 = Citrus tests")
                 .style(Style.EMPTY.dim()));
         return items;
-    }
-
-    private void renderNameInput(Frame frame, Rect area) {
-        int popupW = Math.min(50, area.width() - 4);
-        int popupH = 4;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Name ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" launch │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
-                .build();
-        frame.renderWidget(block, popup);
-
-        Rect inner = new Rect(popup.left() + 2, popup.top() + 1, popup.width() - 4, 1);
-        frame.renderWidget(Paragraph.from(Line.from(
-                Span.styled("Name for the integration:", Style.EMPTY.dim()))), inner);
-
-        Rect inputArea = new Rect(popup.left() + 2, popup.top() + 2, popup.width() - 4, 1);
-        TextInput textInput = TextInput.builder()
-                .cursorStyle(Style.EMPTY.reversed())
-                .build();
-        frame.renderStatefulWidget(textInput, inputArea, nameInputState);
     }
 
     // ---- Doc Viewer & Picker ----
@@ -708,8 +662,7 @@ class ActionsPopup {
         String baseName = example.getStringOrDefault("name", "");
         String autoName = generateUniqueName(baseName);
         showExampleBrowser = false;
-        showNameInput = true;
-        nameInputState = new TextInputState(autoName);
+        runOptionsForm.open(autoName, baseName);
     }
 
     private String generateUniqueName(String baseName) {
@@ -726,26 +679,27 @@ class ActionsPopup {
     }
 
     private void launchWithName() {
-        if (selectedExample == null || nameInputState == null) {
+        if (selectedExample == null) {
             return;
         }
-        String customName = nameInputState.text().trim();
         String exampleName = selectedExample.getStringOrDefault("name", "");
-        showNameInput = false;
+        String displayName = runOptionsForm.name();
+        if (displayName.isEmpty()) {
+            displayName = exampleName;
+        }
+        List<String> extraArgs = runOptionsForm.buildArgs();
+        runOptionsForm.close();
         try {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
             cmd.add("--example=" + exampleName);
-            if (!customName.isEmpty() && !customName.equals(exampleName)) {
-                cmd.add("--name=" + customName);
-            }
+            cmd.addAll(extraArgs);
             Path outputFile = Files.createTempFile("camel-example-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.redirectErrorStream(true);
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
-            String displayName = customName.isEmpty() ? exampleName : customName;
             pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
             launchNotification = "Starting: " + displayName;
             launchNotificationError = false;
