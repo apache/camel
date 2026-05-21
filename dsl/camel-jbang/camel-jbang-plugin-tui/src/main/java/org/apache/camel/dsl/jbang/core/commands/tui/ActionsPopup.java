@@ -61,7 +61,8 @@ class ActionsPopup {
     private static final int ACTION_SHOW_DOCS = 1;
     private static final int ACTION_SCREENSHOT = 2;
     private static final int ACTION_SHOW_KEYSTROKES = 3;
-    private static final int ACTION_COUNT = 4;
+    private static final int ACTION_DOCTOR = 4;
+    private static final int ACTION_COUNT = 5;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -90,6 +91,8 @@ class ActionsPopup {
     private String docTitle;
     private int docScroll;
 
+    private final DoctorPopup doctorPopup = new DoctorPopup();
+
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private String launchNotification;
     private boolean launchNotificationError;
@@ -109,7 +112,8 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || showExampleBrowser || showNameInput || showDocPicker || showDocViewer;
+        return showActionsMenu || showExampleBrowser || showNameInput || showDocPicker || showDocViewer
+                || doctorPopup.isVisible();
     }
 
     void open() {
@@ -123,6 +127,7 @@ class ActionsPopup {
         showNameInput = false;
         showDocPicker = false;
         showDocViewer = false;
+        doctorPopup.close();
     }
 
     String notification() {
@@ -209,6 +214,9 @@ class ActionsPopup {
             }
             return true;
         }
+        if (doctorPopup.handleKeyEvent(ke)) {
+            return true;
+        }
         if (showActionsMenu) {
             if (ke.isCancel()) {
                 showActionsMenu = false;
@@ -229,6 +237,9 @@ class ActionsPopup {
                     } else if (sel == ACTION_SHOW_KEYSTROKES) {
                         showActionsMenu = false;
                         toggleKeystrokes.run();
+                    } else if (sel == ACTION_DOCTOR) {
+                        showActionsMenu = false;
+                        doctorPopup.open();
                     }
                 }
             }
@@ -253,9 +264,16 @@ class ActionsPopup {
         if (showDocViewer) {
             renderDocViewer(frame, area);
         }
+        if (doctorPopup.isVisible()) {
+            doctorPopup.render(frame, area);
+        }
     }
 
     void renderFooter(List<Span> spans) {
+        if (doctorPopup.isVisible()) {
+            doctorPopup.renderFooter(spans);
+            return;
+        }
         if (showDocViewer) {
             hint(spans, "↑↓", "scroll");
             hintLast(spans, "Esc", "back");
@@ -311,7 +329,8 @@ class ActionsPopup {
                 .items(ListItem.from("  Run an example..."),
                         ListItem.from("  Show Documentation"),
                         ListItem.from("  Take Screenshot"),
-                        ListItem.from(keystrokeLabel))
+                        ListItem.from(keystrokeLabel),
+                        ListItem.from("  🩺 Run Doctor"))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
