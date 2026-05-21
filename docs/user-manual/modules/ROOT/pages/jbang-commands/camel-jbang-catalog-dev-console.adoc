@@ -21,8 +21,15 @@ camel catalog dev-console [options]
 | Option | Description | Default | Type
 | `--camel-version` | To use a different Camel version than the default version |  | String
 | `--display-gav` | Display Maven GAV instead of name | false | boolean
+| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--filter` | Filter by name or description |  | String
+| `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--json` | Output in JSON Format |  | boolean
+| `--quarkus-artifact-id` _(deprecated)_ | Deprecated. This value is not used anymore. It is kept only for backwards compatibility and will be removed in Camel 5.x. Camel commands may use either 'quarkus-bom' or 'quarkus-camel-bom' artifactIds depending on the context. | quarkus-bom | String
+| `--quarkus-ext-registry` | The base URI of Quarkus Extension Registry. The default is {@value RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL} unless camel.jbang.quarkus.platform.url system property is set (the /client/platforms suffix is removed if present). |  | String
+| `--quarkus-group-id` | groupId of Quarkus Platform BOM; honored only if --quarkus-version is set | io.quarkus.platform | String
+| `--quarkus-version` | version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--since-after` | Filter by version more recent (inclusive) |  | String
 | `--since-before` | Filter by version older (inclusive) |  | String

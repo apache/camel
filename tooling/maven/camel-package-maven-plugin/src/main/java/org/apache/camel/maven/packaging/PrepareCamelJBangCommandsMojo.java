@@ -382,6 +382,22 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 }
             }
         }
+
+        // Also parse options from @CommandLine.Mixin fields
+        for (FieldSource<JavaClassSource> field : clazz.getFields()) {
+            if (hasMixinAnnotation(field)) {
+                String mixinTypeName = field.getType().getName();
+                File mixinFile = findClassFile(baseDir, mixinTypeName);
+                if (mixinFile != null && mixinFile.exists()) {
+                    try {
+                        JavaClassSource mixinClazz = (JavaClassSource) Roaster.parse(mixinFile);
+                        parseOptionsFromClassHierarchy(mixinClazz, options, mixinFile.getParentFile());
+                    } catch (Exception e) {
+                        getLog().debug("Could not parse mixin class: " + mixinTypeName + " - " + e.getMessage());
+                    }
+                }
+            }
+        }
     }
 
     private File findClassFile(File dir, String className) {
@@ -439,6 +455,12 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
             }
         }
         return null;
+    }
+
+    private boolean hasMixinAnnotation(FieldSource<JavaClassSource> field) {
+        return field.getAnnotation("picocli.CommandLine.Mixin") != null
+                || field.getAnnotation("CommandLine.Mixin") != null
+                || field.getAnnotation("Mixin") != null;
     }
 
     private AnnotationSource<?> findAnnotation(JavaClassSource clazz, String annotationName) {
