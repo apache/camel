@@ -562,10 +562,14 @@ main() {
     done <<< "$pom_files"
   fi
 
-  # Step 2b: Scalpel detection (parallel, for any pom.xml change)
+  # Step 2b: Scalpel detection (for parent or module pom.xml changes)
   # Scalpel uses effective POM model comparison — catches managed deps,
   # plugin changes, and transitive impacts that grep misses.
-  if echo "$diff_body" | grep -q '^diff --git a/.*pom\.xml'; then
+  # Skip when only the root pom.xml changed — it contains build-infrastructure
+  # config (license plugin, checkstyle, etc.) that doesn't affect module
+  # compilation or test behavior. Without this filter, Scalpel reports every
+  # module as affected because they all inherit from the root POM.
+  if echo "$diff_body" | sed -n 's|^diff --git a/\(.*\) b/.*|\1|p' | grep -q '.*/pom\.xml$'; then
     echo ""
     echo "Running Scalpel POM analysis..."
     runScalpelDetection
