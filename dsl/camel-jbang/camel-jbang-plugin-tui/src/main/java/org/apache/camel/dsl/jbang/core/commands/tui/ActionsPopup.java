@@ -359,7 +359,7 @@ class ActionsPopup {
             boolean bundled = ExampleHelper.isBundled(ex);
             boolean citrus = ExampleHelper.hasCitrusTests(ex);
 
-            String icons = (bundled ? "📦" : "🌐") + (docker ? "🐳" : "  ") + (citrus ? "🧪" : "  ");
+            String icons = (bundled ? "📦" : "🌐") + (docker ? "🐳" : "  ") + (citrus ? "🍋" : "  ");
             int nameCol = Math.min(30, width / 3);
             String padded = String.format("%-" + nameCol + "s", TuiHelper.truncate(name, nameCol));
             String prefix = " " + icons + " " + padded + " ";
@@ -380,7 +380,7 @@ class ActionsPopup {
             }
         }
         items.add(ListItem.from(""));
-        items.add(ListItem.from(" 📦 = bundled (offline)  🌐 = online (GitHub)  🐳 = Docker  🧪 = Citrus tests")
+        items.add(ListItem.from(" 📦 = bundled (offline)  🌐 = online (GitHub)  🐳 = Docker  🍋 = Citrus tests")
                 .style(Style.EMPTY.dim()));
         return items;
     }

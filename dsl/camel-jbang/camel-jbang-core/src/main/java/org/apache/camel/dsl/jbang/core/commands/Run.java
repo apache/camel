@@ -419,7 +419,7 @@ public class Run extends CamelCommand {
                     icons.append("  ");
                 }
                 if (ExampleHelper.hasCitrusTests(entry)) {
-                    icons.append("🧪");
+                    icons.append("🍋");
                 } else {
                     icons.append("  ");
                 }
@@ -428,7 +428,7 @@ public class Run extends CamelCommand {
         }
         printer().println();
         printer().println(
-                "  📦 = bundled (works offline)  🌐 = online (fetched from GitHub)  🐳 = requires Docker  🧪 = Citrus tests");
+                "  📦 = bundled (works offline)  🌐 = online (fetched from GitHub)  🐳 = requires Docker  🍋 = Citrus tests");
         printer().println();
         printer().println("Usage: camel run --example=<name>");
         printer().println("       camel run --example=<name> --dev");
