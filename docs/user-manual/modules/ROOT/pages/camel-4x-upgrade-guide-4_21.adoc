@@ -563,6 +563,37 @@ to drive `DnsConstants.DNS_SERVER` (the recursive resolver target in
 `dns:dig`) without such a mapping step is not the intended use of the
 component.
 
+=== camel-solr
+
+The two Exchange header prefix constants in `SolrConstants` have been renamed to
+follow the Camel naming convention already used by the other constants in the
+same file (which were renamed in 4.10 under CAMEL-21697). The Java field names
+are unchanged; only the prefix string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SolrConstants.HEADER_FIELD_PREFIX` | `SolrField.` | `CamelSolrField.`
+| `SolrConstants.HEADER_PARAM_PREFIX` | `SolrParam.` | `CamelSolrParam.`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(SolrConstants.HEADER_FIELD_PREFIX + "id", ...)`) continue to work
+without changes. Routes that set the headers by their literal string value
+(for example `setHeader("SolrField.id", ...)` or
+`setHeader("SolrParam.commit", ...)`) must be updated to use the new prefix
+(`CamelSolrField.id`, `CamelSolrParam.commit`).
+
+Because the renamed prefixes now begin with `Camel`, they are stripped by the
+standard transport `HeaderFilterStrategy` (`HttpHeaderFilterStrategy`, etc.)
+when crossing a transport boundary, by design — `Camel*` headers are
+framework-internal and are not propagated over the wire. Routes that bridge an
+external transport (HTTP, JMS, ...) into a `solr:` producer and want to drive
+Solr document fields or query parameters from a header supplied by the sender
+must therefore carry the value in a non-`Camel`-prefixed application header and
+map it to the appropriate `CamelSolrField.*` / `CamelSolrParam.*` header in the
+route between the transport `from` and the `solr:` `to`.
+
 === camel-aws2-s3
 
 The `listObjects` operation now uses the `ListObjectsV2` AWS API instead of the deprecated `ListObjects` API.
