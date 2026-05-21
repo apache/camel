@@ -23,7 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,6 +41,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.export.ExportRequest;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -192,6 +196,9 @@ public class CamelMonitor extends CamelCommand {
 
     private volatile long lastRefresh;
     private boolean showKillConfirm;
+    private volatile Buffer lastBuffer;
+    private volatile String screenshotMessage;
+    private volatile long screenshotMessageTime;
 
     private final ActionsPopup actionsPopup = new ActionsPopup(
             () -> data.get().stream()
@@ -374,6 +381,12 @@ public class CamelMonitor extends CamelCommand {
                     }
                     tabsState.select(next);
                 }
+                return true;
+            }
+
+            // Screenshot: Shift+F5
+            if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
+                takeScreenshot();
                 return true;
             }
 
@@ -651,6 +664,8 @@ public class CamelMonitor extends CamelCommand {
         }
         actionsPopup.render(frame, mainChunks.get(4));
         renderFooter(frame, mainChunks.get(5));
+
+        lastBuffer = frame.buffer();
     }
 
     private void renderHeader(Frame frame, Rect area) {
@@ -1455,6 +1470,16 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderFooter(Frame frame, Rect area) {
+        // Show screenshot flash message briefly
+        String msg = screenshotMessage;
+        if (msg != null && System.currentTimeMillis() - screenshotMessageTime < 3000) {
+            frame.renderWidget(
+                    Paragraph.from(Line.from(Span.styled(" " + msg, Style.EMPTY.fg(Color.GREEN)))),
+                    area);
+            return;
+        }
+        screenshotMessage = null;
+
         List<Span> spans = new ArrayList<>();
         MonitorTab tab = activeTab();
 
@@ -2730,6 +2755,23 @@ public class CamelMonitor extends CamelCommand {
 
     private static long extractSince(ProcessHandle ph) {
         return ph.info().startInstant().map(Instant::toEpochMilli).orElse(0L);
+    }
+
+    private void takeScreenshot() {
+        Buffer buf = lastBuffer;
+        if (buf == null) {
+            return;
+        }
+        try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+            Path path = Path.of("camel-tui-screenshot-" + timestamp + ".txt");
+            ExportRequest.export(buf).text().toFile(path);
+            screenshotMessage = "Screenshot saved to " + path.toAbsolutePath();
+            screenshotMessageTime = System.currentTimeMillis();
+        } catch (IOException e) {
+            screenshotMessage = "Screenshot failed: " + e.getMessage();
+            screenshotMessageTime = System.currentTimeMillis();
+        }
     }
 
     private static String objToString(Object o) {
