@@ -2764,9 +2764,12 @@ public class CamelMonitor extends CamelCommand {
         }
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
-            Path path = Path.of("camel-tui-screenshot-" + timestamp + ".txt");
-            ExportRequest.export(buf).text().toFile(path);
-            screenshotMessage = "Screenshot saved to " + path.toAbsolutePath();
+            String baseName = "camel-tui-screenshot-" + timestamp;
+            Path txtPath = Path.of(baseName + ".txt");
+            Path ansPath = Path.of(baseName + ".ans");
+            ExportRequest.export(buf).text().toFile(txtPath);
+            ExportRequest.export(buf).text().options(o -> o.styles(true)).toFile(ansPath);
+            screenshotMessage = "Screenshot saved to " + txtPath.toAbsolutePath() + " (and .ans with colors)";
             screenshotMessageTime = System.currentTimeMillis();
         } catch (IOException e) {
             screenshotMessage = "Screenshot failed: " + e.getMessage();
