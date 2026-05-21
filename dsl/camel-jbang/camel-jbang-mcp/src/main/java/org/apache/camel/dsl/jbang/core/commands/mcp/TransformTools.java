@@ -43,7 +43,8 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.xml.in.ModelParser;
-import org.apache.camel.yaml.out.ModelWriter;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.yaml.out.YamlModelWriter;
 
 /**
  * MCP Tools for validating and transforming Camel routes using Quarkus MCP Server.
@@ -227,9 +228,12 @@ public class TransformTools {
                     "Could not parse XML route. Ensure it contains a valid <routes> or <route> element.");
         }
 
-        StringWriter sw = new StringWriter();
-        new ModelWriter(sw).writeRoutesDefinition(routes);
-        return sw.toString();
+        YamlModelWriter writer = new YamlModelWriter();
+        List<JsonObject> roots = new ArrayList<>();
+        for (RouteDefinition route : routes.getRoutes()) {
+            roots.add(writer.writeRouteDefinition(route));
+        }
+        return writer.printAsYaml(roots);
     }
 
     /**
