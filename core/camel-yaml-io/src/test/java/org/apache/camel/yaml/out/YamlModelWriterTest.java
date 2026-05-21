@@ -17,6 +17,7 @@
 package org.apache.camel.yaml.out;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.model.BeanDefinition;
@@ -29,12 +30,14 @@ import org.apache.camel.model.ConvertHeaderDefinition;
 import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
+import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.LoopDefinition;
@@ -73,6 +76,7 @@ import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
@@ -83,6 +87,8 @@ import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -90,7 +96,15 @@ import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.PostDefinition;
+import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.transformer.EndpointTransformerDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.EndpointValidatorDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -979,6 +993,137 @@ public class YamlModelWriterTest {
         JsonObject jo = writer.writeRouteDefinition(route);
         String out = writer.printAsYaml(List.of(jo));
         String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-poll.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testErrorHandlerDeadLetterChannel() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        ErrorHandlerDefinition ehDef = new ErrorHandlerDefinition();
+        DeadLetterChannelDefinition dlc = new DeadLetterChannelDefinition();
+        dlc.setDeadLetterUri("mock:dead");
+        RedeliveryPolicyDefinition rp = new RedeliveryPolicyDefinition();
+        rp.setMaximumRedeliveries("3");
+        rp.setRedeliveryDelay("2000");
+        dlc.setRedeliveryPolicy(rp);
+        ehDef.setErrorHandlerType(dlc);
+
+        JsonObject jo = writer.writeErrorHandlerDefinition(ehDef);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-errorhandler-dlc.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testErrorHandlerDefault() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        ErrorHandlerDefinition ehDef = new ErrorHandlerDefinition();
+        DefaultErrorHandlerDefinition deh = new DefaultErrorHandlerDefinition();
+        deh.setLevel("WARN");
+        RedeliveryPolicyDefinition rp = new RedeliveryPolicyDefinition();
+        rp.setMaximumRedeliveries("5");
+        deh.setRedeliveryPolicy(rp);
+        ehDef.setErrorHandlerType(deh);
+
+        JsonObject jo = writer.writeErrorHandlerDefinition(ehDef);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-errorhandler-default.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testRestConfiguration() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RestConfigurationDefinition rc = new RestConfigurationDefinition();
+        rc.setComponent("platform-http");
+        rc.setHost("localhost");
+        rc.setPort("8080");
+        rc.setBindingMode(RestBindingMode.json);
+        rc.setContextPath("/api");
+
+        JsonObject jo = writer.writeRestConfigurationDefinition(rc);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-restconfiguration.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testTransformers() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        TransformersDefinition transformers = new TransformersDefinition();
+        EndpointTransformerDefinition et = new EndpointTransformerDefinition();
+        et.setFromType("xml");
+        et.setToType("json");
+        et.setUri("direct:transform");
+        List<TransformerDefinition> tList = new ArrayList<>();
+        tList.add(et);
+        transformers.setTransformers(tList);
+
+        JsonObject jo = writer.writeTransformersDefinition(transformers);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-transformers.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testValidators() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        ValidatorsDefinition validators = new ValidatorsDefinition();
+        EndpointValidatorDefinition ev = new EndpointValidatorDefinition();
+        ev.setType("json");
+        ev.setUri("direct:validate");
+        List<ValidatorDefinition> vList = new ArrayList<>();
+        vList.add(ev);
+        validators.setValidators(vList);
+
+        JsonObject jo = writer.writeValidatorsDefinition(validators);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-validators.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testKamelet() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        KameletDefinition kamelet = new KameletDefinition();
+        kamelet.setName("my-kamelet");
+        kamelet.addOutput(new ToDefinition("mock:kamelet"));
+        route.addOutput(kamelet);
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-kamelet.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testTransacted() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        TransactedDefinition transacted = new TransactedDefinition();
+        transacted.setRef("myTransactionPolicy");
+        transacted.addOutput(new ToDefinition("mock:transacted"));
+        route.addOutput(transacted);
+        route.addOutput(new ToDefinition("mock:result"));
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+        String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-transacted.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 }
