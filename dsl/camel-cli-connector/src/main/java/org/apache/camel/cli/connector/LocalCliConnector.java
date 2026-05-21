@@ -763,13 +763,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("trace");
         if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
             String enabled = root.getString("enabled");
-            JsonObject json;
             if (enabled != null) {
-                json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("enabled", enabled));
-            } else {
-                json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+                params.put("enabled", enabled);
             }
+            String dump = root.getString("dump");
+            if (dump != null) {
+                params.put("dump", dump);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
