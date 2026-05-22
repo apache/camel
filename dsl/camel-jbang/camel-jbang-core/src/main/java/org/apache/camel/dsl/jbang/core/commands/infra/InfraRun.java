@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -32,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -226,15 +226,14 @@ public class InfraRun extends InfraBaseCommand {
         final CountDownLatch latch = new CountDownLatch(1);
 
         // running in foreground then wait for user to exit
-        final Console c = System.console();
-        if (c != null) {
+        if (EnvironmentHelper.isInteractiveTerminal()) {
             if (!jsonOutput) {
                 printer().println("Press ENTER to stop the execution");
             }
             Thread t = new Thread(() -> {
                 boolean quit = false;
                 do {
-                    String line = c.readLine();
+                    String line = EnvironmentHelper.readLine();
                     if (line != null) {
                         quit = true;
                         latch.countDown();

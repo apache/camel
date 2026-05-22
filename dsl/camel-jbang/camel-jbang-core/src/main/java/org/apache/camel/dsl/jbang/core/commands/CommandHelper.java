@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.jline.terminal.Terminal;
 
 public final class CommandHelper {
 
@@ -93,8 +95,10 @@ public final class CommandHelper {
         System.out.print(message + " [y/N] ");
         System.out.flush();
         try {
-            // Do not use try-with-resources here: closing the Scanner would close System.in
-            Scanner scanner = new Scanner(System.in);
+            Terminal terminal = EnvironmentHelper.getActiveTerminal();
+            InputStream input = terminal != null ? terminal.input() : System.in;
+            // Do not use try-with-resources here: closing the Scanner would close the input stream
+            Scanner scanner = new Scanner(input);
             String answer = scanner.nextLine().trim().toLowerCase();
             return "y".equals(answer) || "yes".equals(answer);
         } catch (Exception e) {
@@ -116,8 +120,8 @@ public final class CommandHelper {
 
         @Override
         public void run() {
-            if (System.console() != null) {
-                System.console().readLine();
+            String line = EnvironmentHelper.readLine();
+            if (line != null) {
                 listener.run();
             }
         }

@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -41,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -187,7 +187,6 @@ public class Debug extends Run {
 
         // read log input
         final AtomicBoolean quit = new AtomicBoolean();
-        final Console c = System.console();
         if (logLines > 0) {
             Thread t = new Thread(() -> {
                 doReadLog(quit);
@@ -196,7 +195,7 @@ public class Debug extends Run {
         }
 
         // read CLI input from user
-        Thread t2 = new Thread(() -> doRead(c, quit), "ReadCommand");
+        Thread t2 = new Thread(() -> doRead(quit), "ReadCommand");
         t2.start();
 
         do {
@@ -285,9 +284,9 @@ public class Debug extends Run {
         } while (!quit.get());
     }
 
-    private void doRead(Console c, AtomicBoolean quit) {
+    private void doRead(AtomicBoolean quit) {
         do {
-            String line = c.readLine();
+            String line = EnvironmentHelper.readLine();
             if (line != null) {
                 line = line.trim();
                 if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
