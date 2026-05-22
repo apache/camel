@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Producer endpoint that adds a comment on a GitHub pull request.
  *
- * The endpoint requires the "GitHubPullRequest" header, identifying the pull request number (integer). If the
- * "GitHubInResponseTo" header is provided (identifying a comment ID), the comment will be a reply to that comment (if
- * supported).
+ * The endpoint requires the "CamelGitHubPullRequest" header, identifying the pull request number (integer). If the
+ * "CamelGitHubInResponseTo" header is provided (identifying a comment ID), the comment will be a reply to that comment
+ * (if supported).
  */
 public class PullRequestCommentProducer extends AbstractGitHub2Producer {
 

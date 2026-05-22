@@ -1147,6 +1147,43 @@ been renamed accordingly (`operation()` -> `elasticsearchOperation()` /
 `opensearchOperation()`, `indexId()` -> `elasticsearchIndexId()` /
 `opensearchIndexId()`, etc.).
 
+=== camel-github2
+
+The producer-side Exchange header constants in `GitHub2Constants` have been
+renamed to follow the Camel naming convention used across the rest of the
+component catalog. The Java field names are unchanged; only the header string
+values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `GitHub2Constants.GITHUB_PULLREQUEST` | `GitHubPullRequest` | `CamelGitHubPullRequest`
+| `GitHub2Constants.GITHUB_INRESPONSETO` | `GitHubInResponseTo` | `CamelGitHubInResponseTo`
+| `GitHub2Constants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA` | `GitHubPullRequestHeadCommitSHA` | `CamelGitHubPullRequestHeadCommitSha`
+| `GitHub2Constants.GITHUB_ISSUE_TITLE` | `GitHubIssueTitle` | `CamelGitHubIssueTitle`
+|===
+
+The consumer-side constants (`GITHUB_COMMIT_AUTHOR`, `GITHUB_COMMIT_COMMITTER`,
+`GITHUB_COMMIT_SHA`, `GITHUB_COMMIT_URL`, `GITHUB_EVENT_PAYLOAD`) were already
+`Camel`-prefixed (`CamelGitHubCommitAuthor`, etc.) and are unchanged, as is the
+`GITHUB_CLIENT` registry-lookup key (`github2Client`).
+
+Routes that reference the constants symbolically (for example
+`setHeader(GitHub2Constants.GITHUB_PULLREQUEST, ...)`) continue to work without
+changes. Routes that set the header by its literal string value (for example
+`setHeader("GitHubPullRequest", ...)`) must be updated to use the new value
+(`setHeader("CamelGitHubPullRequest", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessor
+`gitHubPullRequestHeadCommitSHA()` on `GitHub2HeaderNameBuilder` has been
+renamed to `gitHubPullRequestHeadCommitSha()`. The remaining accessors
+(`gitHubPullRequest()`, `gitHubInResponseTo()`, `gitHubIssueTitle()`) keep
+their names but now return the new `Camel`-prefixed values.
+
+NOTE: The deprecated `camel-github` component (the predecessor of
+`camel-github2`) was removed in Camel 4.21 (see the _camel-github removal_
+entry above), so the analogous rename does not apply there.
+
 === Jackson dataformat documentation pages renamed
 
 The Jackson 2.x and Jackson 3.x lines ship the same dataformat names (`jackson`, `jacksonXml`,
