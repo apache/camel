@@ -41,7 +41,7 @@ public class WatcherProducer extends DefaultProducer {
         String watchersRemove = exchange.getIn().getHeader(ISSUE_WATCHERS_REMOVE, String.class);
         if (issueKey == null) {
             throw new IllegalArgumentException(
-                    "Missing exchange input header named 'IssueKey', it should specify the issue key to add/remove watchers to.");
+                    "Missing exchange input header named 'CamelJiraIssueKey', it should specify the issue key to add/remove watchers to.");
         }
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
         boolean hasWatchersToAdd = ObjectHelper.isNotEmpty(watchersAdd);
