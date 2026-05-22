@@ -1182,7 +1182,7 @@ public interface GitHub2EndpointBuilderFactory {
          * @return the name of the header {@code GitHubPullRequest}.
          */
         public String gitHubPullRequest() {
-            return "GitHubPullRequest";
+            return "CamelGitHubPullRequest";
         }
         /**
          * The id of the comment to reply to.
@@ -1194,7 +1194,7 @@ public interface GitHub2EndpointBuilderFactory {
          * @return the name of the header {@code GitHubInResponseTo}.
          */
         public String gitHubInResponseTo() {
-            return "GitHubInResponseTo";
+            return "CamelGitHubInResponseTo";
         }
         /**
          * The sha of the head of the pull request.
@@ -1204,10 +1204,10 @@ public interface GitHub2EndpointBuilderFactory {
          * Group: common
          * 
          * @return the name of the header {@code
-         * GitHubPullRequestHeadCommitSHA}.
+         * GitHubPullRequestHeadCommitSha}.
          */
-        public String gitHubPullRequestHeadCommitSHA() {
-            return "GitHubPullRequestHeadCommitSHA";
+        public String gitHubPullRequestHeadCommitSha() {
+            return "CamelGitHubPullRequestHeadCommitSha";
         }
         /**
          * The title of the issue.
@@ -1219,7 +1219,7 @@ public interface GitHub2EndpointBuilderFactory {
          * @return the name of the header {@code GitHubIssueTitle}.
          */
         public String gitHubIssueTitle() {
-            return "GitHubIssueTitle";
+            return "CamelGitHubIssueTitle";
         }
         /**
          * The commit author.
