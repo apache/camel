@@ -62,7 +62,7 @@ public class DnsLookupEndpointSpringTest extends CamelSpringTestSupport {
     void testDNSWithEmptyNameHeader() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         try {
-            template.sendBodyAndHeader("hello", "dns.name", "");
+            template.sendBodyAndHeader("hello", DnsConstants.DNS_NAME, "");
             fail("Should have thrown exception");
         } catch (Exception t) {
             assertTrue(t.getCause() instanceof IllegalArgumentException, t.toString());
@@ -81,7 +81,7 @@ public class DnsLookupEndpointSpringTest extends CamelSpringTestSupport {
             }
         });
         Map<String, Object> headers = new HashMap<>();
-        headers.put("dns.name", "www.example.com");
+        headers.put(DnsConstants.DNS_NAME, "www.example.com");
         template.sendBodyAndHeaders("hello", headers);
         resultEndpoint.assertIsSatisfied();
     }
@@ -97,8 +97,8 @@ public class DnsLookupEndpointSpringTest extends CamelSpringTestSupport {
             }
         });
         Map<String, Object> headers = new HashMap<>();
-        headers.put("dns.name", "www.example.com");
-        headers.put("dns.type", "A");
+        headers.put(DnsConstants.DNS_NAME, "www.example.com");
+        headers.put(DnsConstants.DNS_TYPE, "A");
         template.sendBodyAndHeaders("hello", headers);
         resultEndpoint.assertIsSatisfied();
     }

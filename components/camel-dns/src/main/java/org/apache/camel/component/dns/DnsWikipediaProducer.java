@@ -32,7 +32,7 @@ import org.xbill.DNS.Type;
  * <p/>
  * See here for a reference: http://www.commandlinefu.com/commands/view/2829/query-wikipedia-via-console-over-dns
  * <p/>
- * This endpoint accepts the following header: term: a simple term to use to query wikipedia.
+ * This endpoint accepts the following header: CamelDnsTerm: a simple term to use to query wikipedia.
  */
 public class DnsWikipediaProducer extends DefaultProducer {
 
