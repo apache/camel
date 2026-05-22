@@ -286,7 +286,7 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * @return the name of the header {@code GoogleSecretManagerOperation}.
          */
         public String googleSecretManagerOperation() {
-            return "GoogleSecretManagerOperation";
+            return "CamelGoogleSecretManagerOperation";
         }
         /**
          * The id of the secret.

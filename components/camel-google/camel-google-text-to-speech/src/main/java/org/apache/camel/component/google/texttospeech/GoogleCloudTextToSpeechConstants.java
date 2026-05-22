@@ -21,8 +21,8 @@ import org.apache.camel.spi.Metadata;
 public interface GoogleCloudTextToSpeechConstants {
     @Metadata(description = "The operation to perform",
               javaType = "org.apache.camel.component.google.texttospeech.GoogleCloudTextToSpeechOperations")
-    String OPERATION = "GoogleCloudTextToSpeechOperation";
+    String OPERATION = "CamelGoogleCloudTextToSpeechOperation";
     @Metadata(description = "The response object resulting from the Google Cloud Text-to-Speech API invocation",
               javaType = "com.google.cloud.texttospeech.v1.SynthesizeSpeechResponse")
-    String RESPONSE_OBJECT = "GoogleCloudTextToSpeechResponseObject";
+    String RESPONSE_OBJECT = "CamelGoogleCloudTextToSpeechResponseObject";
 }

@@ -1184,6 +1184,46 @@ NOTE: The deprecated `camel-github` component (the predecessor of
 `camel-github2`) was removed in Camel 4.21 (see the _camel-github removal_
 entry above), so the analogous rename does not apply there.
 
+=== camel-google-functions / camel-google-secret-manager / camel-google-vision / camel-google-text-to-speech / camel-google-speech-to-text
+
+The Exchange header constants in these Google Cloud components carried a
+`GoogleCloud<Service>` / `GoogleSecretManager` prefix that is not in the
+`Camel` namespace, so the default `HeaderFilterStrategy` did not filter them
+at transport boundaries. They have been renamed to add the `Camel` prefix.
+The Java field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `GoogleCloudFunctionsConstants.OPERATION` | `GoogleCloudFunctionsOperation` | `CamelGoogleCloudFunctionsOperation`
+| `GoogleCloudFunctionsConstants.ENTRY_POINT` | `GoogleCloudFunctionsEntryPoint` | `CamelGoogleCloudFunctionsEntryPoint`
+| `GoogleCloudFunctionsConstants.RUNTIME` | `GoogleCloudFunctionsRuntime` | `CamelGoogleCloudFunctionsRuntime`
+| `GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL` | `GoogleCloudFunctionsSourceArchiveUrl` | `CamelGoogleCloudFunctionsSourceArchiveUrl`
+| `GoogleCloudFunctionsConstants.RESPONSE_OBJECT` | `GoogleCloudFunctionsResponseObject` | `CamelGoogleCloudFunctionsResponseObject`
+| `GoogleSecretManagerConstants.OPERATION` | `GoogleSecretManagerOperation` | `CamelGoogleSecretManagerOperation`
+| `GoogleCloudVisionConstants.OPERATION` | `GoogleCloudVisionOperation` | `CamelGoogleCloudVisionOperation`
+| `GoogleCloudVisionConstants.RESPONSE_OBJECT` | `GoogleCloudVisionResponseObject` | `CamelGoogleCloudVisionResponseObject`
+| `GoogleCloudTextToSpeechConstants.OPERATION` | `GoogleCloudTextToSpeechOperation` | `CamelGoogleCloudTextToSpeechOperation`
+| `GoogleCloudTextToSpeechConstants.RESPONSE_OBJECT` | `GoogleCloudTextToSpeechResponseObject` | `CamelGoogleCloudTextToSpeechResponseObject`
+| `GoogleCloudSpeechToTextConstants.OPERATION` | `GoogleCloudSpeechToTextOperation` | `CamelGoogleCloudSpeechToTextOperation`
+| `GoogleCloudSpeechToTextConstants.RESPONSE_OBJECT` | `GoogleCloudSpeechToTextResponseObject` | `CamelGoogleCloudSpeechToTextResponseObject`
+|===
+
+The `GoogleSecretManagerConstants.SECRET_ID`, `VERSION_ID` and `REPLICATION`
+constants were already `Camel`-prefixed (`CamelGoogleSecretManagerSecretId`,
+etc.) and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(GoogleCloudFunctionsConstants.OPERATION, ...)`) continue to work
+without changes. Routes that set the header by its literal string value (for
+example `setHeader("GoogleCloudFunctionsOperation", ...)`) must be updated to
+use the new value (`setHeader("CamelGoogleCloudFunctionsOperation", ...)`).
+
+The generated Endpoint DSL header accessor names are unchanged (for example
+`googleCloudFunctionsOperation()`), since the `Camel` prefix is stripped when
+deriving the accessor name; the accessors now return the new `Camel`-prefixed
+values.
+
 === Jackson dataformat documentation pages renamed
 
 The Jackson 2.x and Jackson 3.x lines ship the same dataformat names (`jackson`, `jacksonXml`,
