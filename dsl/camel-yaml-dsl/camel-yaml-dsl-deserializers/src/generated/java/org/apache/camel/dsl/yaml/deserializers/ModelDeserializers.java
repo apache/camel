@@ -17646,7 +17646,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxQueueSize", type = "number", description = "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue", displayName = "Max Queue Size"),
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "poolSize", type = "number", description = "Sets the core pool size", displayName = "Pool Size"),
-                    @YamlProperty(name = "rejectedPolicy", type = "enum:Abort,CallerRuns", description = "Sets the handler for tasks which cannot be executed by the thread pool.", displayName = "Rejected Policy"),
+                    @YamlProperty(name = "rejectedPolicy", type = "enum:Abort,CallerRuns,Block", description = "Sets the handler for tasks which cannot be executed by the thread pool.", displayName = "Rejected Policy"),
                     @YamlProperty(name = "timeUnit", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS", description = "Sets the time unit to use for keep alive time By default SECONDS is used.", displayName = "Time Unit")
             }
     )
@@ -17747,7 +17747,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maxQueueSize", type = "number", description = "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue", displayName = "Max Queue Size"),
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "poolSize", type = "number", description = "Sets the core pool size", displayName = "Pool Size"),
-                    @YamlProperty(name = "rejectedPolicy", type = "enum:Abort,CallerRuns", description = "Sets the handler for tasks which cannot be executed by the thread pool.", displayName = "Rejected Policy"),
+                    @YamlProperty(name = "rejectedPolicy", type = "enum:Abort,CallerRuns,Block", description = "Sets the handler for tasks which cannot be executed by the thread pool.", displayName = "Rejected Policy"),
                     @YamlProperty(name = "threadName", type = "string", defaultValue = "Threads", description = "Sets the thread name to use.", displayName = "Thread Name"),
                     @YamlProperty(name = "timeUnit", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS", description = "Sets the keep alive time unit. By default SECONDS is used.", displayName = "Time Unit")
             }

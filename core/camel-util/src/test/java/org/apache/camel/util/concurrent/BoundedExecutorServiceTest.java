@@ -19,6 +19,7 @@ package org.apache.camel.util.concurrent;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -102,6 +104,7 @@ public class BoundedExecutorServiceTest {
         try {
             CountDownLatch blockTask = new CountDownLatch(1);
             CountDownLatch secondStarted = new CountDownLatch(1);
+            CountDownLatch submitterBlocked = new CountDownLatch(1);
 
             sized.execute(() -> {
                 try {
@@ -111,11 +114,16 @@ public class BoundedExecutorServiceTest {
                 }
             });
 
-            Thread submitter = new Thread(() -> sized.execute(secondStarted::countDown));
+            Thread submitter = new Thread(() -> {
+                submitterBlocked.countDown();
+                sized.execute(secondStarted::countDown);
+            });
             submitter.start();
 
-            Thread.sleep(200);
-            assertEquals(1, secondStarted.getCount(), "Second task should be blocked waiting");
+            assertTrue(submitterBlocked.await(5, TimeUnit.SECONDS));
+            await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertTrue(sized.getWaitingCount() > 0,
+                            "Submitter should be blocked waiting for a permit"));
 
             blockTask.countDown();
 
@@ -138,25 +146,28 @@ public class BoundedExecutorServiceTest {
             AtomicInteger inFlight = new AtomicInteger();
             AtomicInteger peak = new AtomicInteger();
             int totalTasks = 20;
+            CountDownLatch holdTasks = new CountDownLatch(1);
             CountDownLatch allDone = new CountDownLatch(totalTasks);
 
             ExecutorService senders = Executors.newFixedThreadPool(totalTasks);
             for (int i = 0; i < totalTasks; i++) {
-                senders.submit(() -> {
-                    sized.execute(() -> {
-                        int current = inFlight.incrementAndGet();
-                        peak.accumulateAndGet(current, Math::max);
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                        inFlight.decrementAndGet();
-                        allDone.countDown();
-                    });
-                });
+                senders.submit(() -> sized.execute(() -> {
+                    int current = inFlight.incrementAndGet();
+                    peak.accumulateAndGet(current, Math::max);
+                    try {
+                        holdTasks.await(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    inFlight.decrementAndGet();
+                    allDone.countDown();
+                }));
             }
 
+            await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertEquals(maxConcurrent, sized.getActiveCount()));
+
+            holdTasks.countDown();
             assertTrue(allDone.await(30, TimeUnit.SECONDS), "All tasks should complete");
             assertTrue(peak.get() <= maxConcurrent,
                     "Peak concurrency (" + peak.get() + ") should be <= " + maxConcurrent);
@@ -171,7 +182,7 @@ public class BoundedExecutorServiceTest {
     public void testPermitsReleasedAfterCompletion() throws Exception {
         var delegate = Executors.newCachedThreadPool();
         var sized = new BoundedExecutorService(
-                delegate, 2, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.CallerRuns);
+                delegate, 2, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.Block);
         try {
             CountDownLatch firstBatch = new CountDownLatch(2);
             for (int i = 0; i < 2; i++) {
@@ -179,7 +190,8 @@ public class BoundedExecutorServiceTest {
             }
             assertTrue(firstBatch.await(5, TimeUnit.SECONDS), "First batch should complete");
 
-            Thread.sleep(50);
+            await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertEquals(2, sized.getAvailablePermits()));
 
             CountDownLatch secondBatch = new CountDownLatch(2);
             for (int i = 0; i < 2; i++) {
@@ -207,5 +219,23 @@ public class BoundedExecutorServiceTest {
                 () -> sized.execute(() -> {
                 }),
                 "Should reject after shutdown");
+    }
+
+    @Test
+    public void testSubmitReturnsFuture() throws Exception {
+        var delegate = Executors.newCachedThreadPool();
+        var sized = new BoundedExecutorService(
+                delegate, 5, 60, TimeUnit.SECONDS, false, ThreadPoolRejectedPolicy.CallerRuns);
+        try {
+            AtomicBoolean executed = new AtomicBoolean();
+            Future<?> future = sized.submit(() -> executed.set(true));
+
+            future.get(5, TimeUnit.SECONDS);
+            assertTrue(executed.get(), "Task submitted via submit() should execute");
+            assertTrue(future.isDone());
+        } finally {
+            sized.shutdown();
+            delegate.shutdown();
+        }
     }
 }

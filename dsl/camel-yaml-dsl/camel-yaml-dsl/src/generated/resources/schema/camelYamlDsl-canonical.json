@@ -4842,7 +4842,7 @@
             "type" : "string",
             "title" : "Rejected Policy",
             "description" : "Sets the handler for tasks which cannot be executed by the thread pool.",
-            "enum" : [ "Abort", "CallerRuns" ]
+            "enum" : [ "Abort", "CallerRuns", "Block" ]
           },
           "timeUnit" : {
             "type" : "string",
@@ -4920,7 +4920,7 @@
             "type" : "string",
             "title" : "Rejected Policy",
             "description" : "Sets the handler for tasks which cannot be executed by the thread pool.",
-            "enum" : [ "Abort", "CallerRuns" ]
+            "enum" : [ "Abort", "CallerRuns", "Block" ]
           },
           "threadName" : {
             "type" : "string",

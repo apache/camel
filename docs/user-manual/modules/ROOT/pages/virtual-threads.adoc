@@ -105,7 +105,7 @@ When virtual threads are enabled, Camel's `DefaultThreadPoolFactory` (JDK 21+ va
 |===
 
 When `maxQueueSize` is set to a positive value, the virtual thread executor is wrapped with a semaphore that enforces
-a flat concurrency cap of `maxPoolSize + maxQueueSize`. Unlike `ThreadPoolExecutor` where pool threads and queued tasks
+a flat concurrency cap of `maxQueueSize`. Unlike `ThreadPoolExecutor` where pool threads and queued tasks
 are distinct, all permitted tasks execute immediately on virtual threads. The `rejectedPolicy` controls what happens
 when the concurrency limit is reached — see xref:threading-model.adoc#rejected-policy[Rejected Policy] for details.
 

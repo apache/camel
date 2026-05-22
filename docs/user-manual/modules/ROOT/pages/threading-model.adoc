@@ -351,7 +351,8 @@ concurrency limit. This ensures that `maxQueueSize` is honored for backpressure,
 use a traditional work queue.
 
 Unlike `ThreadPoolExecutor` where pool threads and queued tasks are distinct concepts, the virtual thread executor
-enforces a flat concurrency cap: the maximum number of concurrently executing tasks is `maxPoolSize + maxQueueSize`.
+enforces a flat concurrency cap: the maximum number of concurrently executing tasks equals `maxQueueSize`.
+Pool sizing parameters (`poolSize`, `maxPoolSize`) are ignored since virtual threads are not pooled.
 All permitted tasks execute immediately on virtual threads — there is no queue of waiting tasks.
 
 The `rejectedPolicy` controls what happens when the concurrency limit is reached:

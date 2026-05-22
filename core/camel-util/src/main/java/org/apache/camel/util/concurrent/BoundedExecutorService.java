@@ -105,22 +105,25 @@ public class BoundedExecutorService extends AbstractExecutorService {
                 throw new RejectedExecutionException("Executor saturated: timed out waiting for a permit");
             }
 
-            delegate.execute(() -> {
-                try {
-                    command.run();
-                } finally {
-                    delegatedTaskCount.increment();
+            boolean submitted = false;
+            try {
+                delegate.execute(() -> {
+                    try {
+                        command.run();
+                    } finally {
+                        delegatedTaskCount.increment();
+                        semaphore.release();
+                    }
+                });
+                submitted = true;
+            } finally {
+                if (!submitted) {
                     semaphore.release();
                 }
-            });
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RejectedExecutionException("Interrupted while waiting for permit", e);
-        } catch (RejectedExecutionException e) {
-            if (acquired) {
-                semaphore.release();
-            }
-            throw e;
         }
     }
 

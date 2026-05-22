@@ -34,7 +34,13 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.concurrent.*;
+import org.apache.camel.util.concurrent.BoundedExecutorService;
+import org.apache.camel.util.concurrent.RejectableScheduledThreadPoolExecutor;
+import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
+import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
+import org.apache.camel.util.concurrent.ThreadFactoryTypeAware;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.apache.camel.util.concurrent.ThreadType;
 
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
@@ -60,6 +66,19 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
 
     @Override
     public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory factory) {
+        // Virtual threads: use the policy enum directly from the profile to avoid reverse-mapping
+        if (profile.getMaxQueueSize() > 0
+                && ThreadPoolFactoryType.from(factory, profile) == ThreadPoolFactoryType.VIRTUAL) {
+            ThreadPoolRejectedPolicy policy = profile.getRejectedPolicy();
+            if (policy == null) {
+                policy = ThreadPoolRejectedPolicy.CallerRuns;
+            }
+            return new BoundedExecutorService(
+                    ThreadPoolFactoryType.newThreadPerTaskExecutor(factory),
+                    profile.getMaxQueueSize(),
+                    profile.getKeepAliveTime(), profile.getTimeUnit(),
+                    false, policy);
+        }
         // allow core thread timeout is default true if not configured
         boolean allow = profile.getAllowCoreThreadTimeOut() != null ? profile.getAllowCoreThreadTimeOut() : true;
         return newThreadPool(profile.getPoolSize(),
@@ -169,13 +188,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
                     RejectedExecutionHandler rejectedExecutionHandler,
                     ThreadFactory threadFactory)
                     throws IllegalArgumentException {
-                ExecutorService executor = newThreadPerTaskExecutor(threadFactory);
-                if (maxQueueSize > 0) {
-                    return new BoundedExecutorService(
-                            executor, maxPoolSize + maxQueueSize, keepAliveTime, timeUnit,
-                            false, resolvePolicy(rejectedExecutionHandler));
-                }
-                return executor;
+                return newThreadPerTaskExecutor(threadFactory);
             }
 
             @Override
@@ -200,18 +213,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
                     && factoryTypeAware.isVirtual() ? ThreadPoolFactoryType.VIRTUAL : ThreadPoolFactoryType.PLATFORM;
         }
 
-        private static ThreadPoolRejectedPolicy resolvePolicy(RejectedExecutionHandler handler) {
-            if (handler == null || handler instanceof ThreadPoolExecutor.CallerRunsPolicy) {
-                return ThreadPoolRejectedPolicy.CallerRuns;
-            }
-            if ("Block".equals(handler.toString())) {
-                return ThreadPoolRejectedPolicy.Block;
-            }
-            return ThreadPoolRejectedPolicy.Abort;
-        }
-
         @SuppressWarnings("unchecked")
-        private static ExecutorService newThreadPerTaskExecutor(ThreadFactory threadFactory) {
+        static ExecutorService newThreadPerTaskExecutor(ThreadFactory threadFactory) {
             try {
                 return (ExecutorService) Executors.class
                         .getMethod("newThreadPerTaskExecutor", ThreadFactory.class)
