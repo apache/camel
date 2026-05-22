@@ -226,14 +226,14 @@ public final class SolrRequestConverter {
             docs.ifPresent(updateRequest::add);
             return updateRequest;
         }
-        // Map: gather solr fields from body and merge with solr fields from headers (gathered from SolrField.xxx headers)
+        // Map: gather solr fields from body and merge with solr fields from headers (gathered from CamelSolrField.xxx headers)
         //      The header solr fields have priority
         Map<String, Object> map = new LinkedHashMap<>(getMapFromBody(body));
         map.putAll(getMapFromHeaderSolrFields(exchange));
         if (!map.isEmpty()) {
             body = map;
         }
-        // Map: translate to SolrInputDocument (possibly gathered from SolrField.xxx headers
+        // Map: translate to SolrInputDocument (possibly gathered from CamelSolrField.xxx headers
         Optional<SolrInputDocument> doc = getOptionalSolrInputDocumentFromMap(body, exchange);
         if (doc.isPresent()) {
             updateRequest.add(doc.get());
