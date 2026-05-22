@@ -27,44 +27,44 @@ public interface JiraConstants {
     String PRIVATE_KEY = "privateKey";
     String CONSUMER_KEY = "consumerKey";
     @Metadata(label = "producer", description = "The assignee's id of the issue", javaType = "String")
-    String ISSUE_ASSIGNEE_ID = "IssueAssigneeId";
+    String ISSUE_ASSIGNEE_ID = "CamelJiraIssueAssigneeId";
     @Metadata(label = "producer", description = "The assignee's name of the issue", javaType = "String")
-    String ISSUE_ASSIGNEE = "IssueAssignee";
+    String ISSUE_ASSIGNEE = "CamelJiraIssueAssignee";
     @Metadata(label = "producer", description = "The comma separated list of the issue's components", javaType = "String")
-    String ISSUE_COMPONENTS = "IssueComponents";
-    String ISSUE_COMMENT = "IssueComment";
+    String ISSUE_COMPONENTS = "CamelJiraIssueComponents";
+    String ISSUE_COMMENT = "CamelJiraIssueComment";
     @Metadata(label = "consumer", description = "The name of the updated field (i.e Status)", javaType = "String")
-    String ISSUE_CHANGED = "IssueChanged";
+    String ISSUE_CHANGED = "CamelJiraIssueChanged";
     @Metadata(description = "The id of the issue", javaType = "String")
-    String ISSUE_KEY = "IssueKey";
+    String ISSUE_KEY = "CamelJiraIssueKey";
     @Metadata(label = "producer", description = "The priority's id of the issue", javaType = "Long")
-    String ISSUE_PRIORITY_ID = "IssuePriorityId";
+    String ISSUE_PRIORITY_ID = "CamelJiraIssuePriorityId";
     @Metadata(label = "producer", description = "The priority's name of the issue", javaType = "String")
-    String ISSUE_PRIORITY_NAME = "IssuePriorityName";
+    String ISSUE_PRIORITY_NAME = "CamelJiraIssuePriorityName";
     @Metadata(label = "producer", description = "The project's id of the issue", javaType = "String")
-    String ISSUE_PROJECT_KEY = "ProjectKey";
+    String ISSUE_PROJECT_KEY = "CamelJiraIssueProjectKey";
     @Metadata(label = "producer", description = "The summary of the issue", javaType = "String")
-    String ISSUE_SUMMARY = "IssueSummary";
+    String ISSUE_SUMMARY = "CamelJiraIssueSummary";
     @Metadata(label = "producer", description = "The transition id", javaType = "Integer")
-    String ISSUE_TRANSITION_ID = "IssueTransitionId";
+    String ISSUE_TRANSITION_ID = "CamelJiraIssueTransitionId";
     @Metadata(label = "producer", description = "The type's id of the issue", javaType = "Long")
-    String ISSUE_TYPE_ID = "IssueTypeId";
+    String ISSUE_TYPE_ID = "CamelJiraIssueTypeId";
     @Metadata(label = "producer", description = "The type's name of the issue", javaType = "String")
-    String ISSUE_TYPE_NAME = "IssueTypeName";
+    String ISSUE_TYPE_NAME = "CamelJiraIssueTypeName";
     @Metadata(label = "consumer", description = "The list of all issue keys that are watched in the time of update",
               javaType = "String")
-    String ISSUE_WATCHED_ISSUES = "IssueWatchedIssues";
+    String ISSUE_WATCHED_ISSUES = "CamelJiraIssueWatchedIssues";
     @Metadata(label = "producer", description = "The comma separated list of watchers to add to the issue", javaType = "String")
-    String ISSUE_WATCHERS_ADD = "IssueWatchersAdd";
+    String ISSUE_WATCHERS_ADD = "CamelJiraIssueWatchersAdd";
     @Metadata(label = "producer", description = "The watchers of the issue to remove", javaType = "String")
-    String ISSUE_WATCHERS_REMOVE = "IssueWatchersRemove";
+    String ISSUE_WATCHERS_REMOVE = "CamelJiraIssueWatchersRemove";
     String JIRA_REST_CLIENT_FACTORY = "JiraRestClientFactory";
     @Metadata(label = "producer", description = "The id of the parent issue", javaType = "String")
-    String PARENT_ISSUE_KEY = "ParentIssueKey";
+    String PARENT_ISSUE_KEY = "CamelJiraParentIssueKey";
     @Metadata(label = "producer", description = "The id of the child issue", javaType = "String")
-    String CHILD_ISSUE_KEY = "ChildIssueKey";
+    String CHILD_ISSUE_KEY = "CamelJiraChildIssueKey";
     @Metadata(label = "producer", description = "The type of link", javaType = "String")
-    String LINK_TYPE = "linkType";
+    String LINK_TYPE = "CamelJiraLinkType";
     @Metadata(label = "producer", description = "The minutes spent", javaType = "int", defaultValue = "-1")
-    String MINUTES_SPENT = "minutesSpent";
+    String MINUTES_SPENT = "CamelJiraMinutesSpent";
 }

@@ -109,7 +109,7 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
-=== camel-jgroups
+=== camel-jgroups - potential breaking change
 
 The Exchange header constants in `JGroupsConstants` have been renamed to follow
 the Camel naming convention used across the rest of the component catalog. The
@@ -124,11 +124,12 @@ Java field names are unchanged; only the header string values have changed:
 | `JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE` | `JGROUPS_ORIGINAL_MESSAGE` | `CamelJGroupsOriginalMessage`
 |===
 
-Routes that reference the constant symbolically (for example
-`setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, ...)`) continue to work
-without changes. Routes that set the header by its literal string value
-(for example `setHeader("JGROUPS_DEST", ...)`) must be updated to use the
-new value (`setHeader("CamelJGroupsDest", ...)`).
+This is a breaking change for routes that read or write these headers by
+their literal string value. Routes that reference the constant symbolically
+(for example `setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, ...)`) continue
+to work without changes. Routes that set the header by its literal string
+value (for example `setHeader("JGROUPS_DEST", ...)`) must be updated to use
+the new value (`setHeader("CamelJGroupsDest", ...)`).
 
 === camel-lucene
 
@@ -232,6 +233,66 @@ Even with the opt-in, route authors should still strip the namespace with
 
 In addition, the inbound `MailHeaderFilterStrategy` now blocks the `mail.smtp.` / `mail.smtps.`
 prefix as well, so an external mail message can no longer inject these into a downstream exchange.
+
+=== camel-jira - potential breaking change
+
+The Exchange header constants in `JiraConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `JiraConstants.ISSUE_ASSIGNEE_ID` | `IssueAssigneeId` | `CamelJiraIssueAssigneeId`
+| `JiraConstants.ISSUE_ASSIGNEE` | `IssueAssignee` | `CamelJiraIssueAssignee`
+| `JiraConstants.ISSUE_COMPONENTS` | `IssueComponents` | `CamelJiraIssueComponents`
+| `JiraConstants.ISSUE_COMMENT` | `IssueComment` | `CamelJiraIssueComment`
+| `JiraConstants.ISSUE_CHANGED` | `IssueChanged` | `CamelJiraIssueChanged`
+| `JiraConstants.ISSUE_KEY` | `IssueKey` | `CamelJiraIssueKey`
+| `JiraConstants.ISSUE_PRIORITY_ID` | `IssuePriorityId` | `CamelJiraIssuePriorityId`
+| `JiraConstants.ISSUE_PRIORITY_NAME` | `IssuePriorityName` | `CamelJiraIssuePriorityName`
+| `JiraConstants.ISSUE_PROJECT_KEY` | `ProjectKey` | `CamelJiraIssueProjectKey`
+| `JiraConstants.ISSUE_SUMMARY` | `IssueSummary` | `CamelJiraIssueSummary`
+| `JiraConstants.ISSUE_TRANSITION_ID` | `IssueTransitionId` | `CamelJiraIssueTransitionId`
+| `JiraConstants.ISSUE_TYPE_ID` | `IssueTypeId` | `CamelJiraIssueTypeId`
+| `JiraConstants.ISSUE_TYPE_NAME` | `IssueTypeName` | `CamelJiraIssueTypeName`
+| `JiraConstants.ISSUE_WATCHED_ISSUES` | `IssueWatchedIssues` | `CamelJiraIssueWatchedIssues`
+| `JiraConstants.ISSUE_WATCHERS_ADD` | `IssueWatchersAdd` | `CamelJiraIssueWatchersAdd`
+| `JiraConstants.ISSUE_WATCHERS_REMOVE` | `IssueWatchersRemove` | `CamelJiraIssueWatchersRemove`
+| `JiraConstants.PARENT_ISSUE_KEY` | `ParentIssueKey` | `CamelJiraParentIssueKey`
+| `JiraConstants.CHILD_ISSUE_KEY` | `ChildIssueKey` | `CamelJiraChildIssueKey`
+| `JiraConstants.LINK_TYPE` | `linkType` | `CamelJiraLinkType`
+| `JiraConstants.MINUTES_SPENT` | `minutesSpent` | `CamelJiraMinutesSpent`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(JiraConstants.ISSUE_KEY, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("IssueKey", ...)`) must be updated to use the new value
+(`setHeader("CamelJiraIssueKey", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`JiraHeaderNameBuilder` have been renamed accordingly:
+
+* `issueAssigneeId()` -> `jiraIssueAssigneeId()`
+* `issueAssignee()` -> `jiraIssueAssignee()`
+* `issueComponents()` -> `jiraIssueComponents()`
+* `issueChanged()` -> `jiraIssueChanged()`
+* `issueKey()` -> `jiraIssueKey()`
+* `issuePriorityId()` -> `jiraIssuePriorityId()`
+* `issuePriorityName()` -> `jiraIssuePriorityName()`
+* `projectKey()` -> `jiraIssueProjectKey()`
+* `issueSummary()` -> `jiraIssueSummary()`
+* `issueTransitionId()` -> `jiraIssueTransitionId()`
+* `issueTypeId()` -> `jiraIssueTypeId()`
+* `issueTypeName()` -> `jiraIssueTypeName()`
+* `issueWatchedIssues()` -> `jiraIssueWatchedIssues()`
+* `issueWatchersAdd()` -> `jiraIssueWatchersAdd()`
+* `issueWatchersRemove()` -> `jiraIssueWatchersRemove()`
+* `parentIssueKey()` -> `jiraParentIssueKey()`
+* `childIssueKey()` -> `jiraChildIssueKey()`
+* `linkType()` -> `jiraLinkType()`
+* `minutesSpent()` -> `jiraMinutesSpent()`
 
 == Upgrading from 4.18.0 to 4.18.1
 
@@ -590,7 +651,7 @@ component with the rest of the Camel component catalog. Routes that relied on re
 header names on inbound SNS messages can supply a custom `headerFilterStrategy` to restore the
 previous behaviour.
 
-=== camel-cxf
+=== camel-cxf - potential breaking change
 
 The Exchange header constants in `CxfConstants` (module `camel-cxf-common`, shared
 by `camel-cxf` and `camel-cxfrs`) have been renamed to follow the Camel naming

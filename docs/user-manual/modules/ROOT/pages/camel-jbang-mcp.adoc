@@ -34,7 +34,7 @@ over the MCP protocol.
 
 == Available Tools
 
-The server exposes 28 tools organized into eleven functional areas, plus 3 prompts that provide structured
+The server exposes 30 tools organized into twelve functional areas, plus 3 prompts that provide structured
 multi-step workflows.
 
 === Catalog Exploration
@@ -90,6 +90,23 @@ multi-step workflows.
 | `camel_catalog_kamelet_doc`
 | Get detailed documentation for a specific Kamelet including all properties/options, their types, defaults,
   examples, and the Kamelet's Maven dependencies.
+|===
+
+=== Example Catalog
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_catalog_examples`
+| List available Camel JBang examples with filtering by name, description, or tag (case-insensitive substring match).
+  Supports filtering by difficulty level (`beginner`, `intermediate`, `advanced`) and limiting the number of results.
+  Returns name, title, description, level, tags, and file list for each example.
+
+| `camel_catalog_example_file`
+| Get the content of a specific file from a Camel JBang example. For bundled examples, returns the file content
+  directly. For non-bundled examples, returns a GitHub URL where the file can be found. Use `camel_catalog_examples`
+  first to discover example names and their files.
 |===
 
 === Route Understanding
@@ -467,6 +484,24 @@ What options does the aws-s3-source kamelet accept?
 
 The assistant calls `camel_catalog_kamelet_doc` with `kamelet=aws-s3-source` and returns the complete property
 list including required fields, types, defaults, and Maven dependencies.
+
+=== Browsing Examples
+
+----
+Show me beginner-level Camel examples related to REST
+----
+
+The assistant calls `camel_catalog_examples` with `filter=rest` and `level=beginner` and returns matching examples
+with their name, title, description, difficulty level, tags, and file list.
+
+To read a specific file from an example:
+
+----
+Show me the route file from the rest-api example
+----
+
+The assistant calls `camel_catalog_example_file` with `example=rest-api` and `file=route.camel.yaml` and returns
+the file content directly for bundled examples, or a GitHub URL for non-bundled ones.
 
 === Validating an Endpoint URI
 

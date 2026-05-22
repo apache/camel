@@ -192,7 +192,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     public void testInsertStreaming() {
         // TODO rename method
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.id", "MA147LL/A");
+                .withHeader("CamelSolrField.id", "MA147LL/A");
         executeInsert(builder.build());
 
         QueryResponse response = executeSolrQuery("id:MA147LL/A");
@@ -203,7 +203,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     @Test
     public void indexSingleDocumentOnlyWithId() {
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.id", "MA147LL/A");
+                .withHeader("CamelSolrField.id", "MA147LL/A");
         executeInsert(builder.build());
 
         // Check things were indexed.
@@ -224,9 +224,9 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     public void setHeadersAsSolrFields() {
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
                 .withBody("Body is ignored")
-                .withHeader("SolrField.id", "MA147LL/A")
-                .withHeader("SolrField.name_s", "Apple 60 GB iPod with Video Playback Black")
-                .withHeader("SolrField.manu_s", "Apple Computer Inc.");
+                .withHeader("CamelSolrField.id", "MA147LL/A")
+                .withHeader("CamelSolrField.name_s", "Apple 60 GB iPod with Video Playback Black")
+                .withHeader("CamelSolrField.manu_s", "Apple Computer Inc.");
         executeInsert(builder.build());
 
         QueryResponse response = executeSolrQuery("id:MA147LL/A");
@@ -243,8 +243,8 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
         String[] categories = { "electronics", "apple" };
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
                 .withBody("Test body for iPod.")
-                .withHeader("SolrField.id", "MA147LL/A")
-                .withHeader("SolrField.cat", categories);
+                .withHeader("CamelSolrField.id", "MA147LL/A")
+                .withHeader("CamelSolrField.cat", categories);
         executeInsert(builder.build());
 
         // Check things were indexed.
@@ -260,9 +260,9 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     @Test
     public void indexDocumentsAndThenCommit() {
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.id", "MA147LL/A")
-                .withHeader("SolrField.name", "Apple 60 GB iPod with Video Playback Black")
-                .withHeader("SolrField.manu", "Apple Computer Inc.");
+                .withHeader("CamelSolrField.id", "MA147LL/A")
+                .withHeader("CamelSolrField.name", "Apple 60 GB iPod with Video Playback Black")
+                .withHeader("CamelSolrField.manu", "Apple Computer Inc.");
         executeInsert(builder.build(), false);
 
         QueryResponse response = executeSolrQuery("*:*");
@@ -280,7 +280,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     public void indexWithAutoCommit() {
         // new exchange - not autocommit route
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.content", "NO_AUTO_COMMIT");
+                .withHeader("CamelSolrField.content", "NO_AUTO_COMMIT");
         executeInsert(DEFAULT_START_ENDPOINT, builder.build(), false);
         // not committed
         QueryResponse response = executeSolrQuery("*:*");
@@ -293,7 +293,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
         // new exchange - autocommit route
         builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.content", "AUTO_COMMIT");
+                .withHeader("CamelSolrField.content", "AUTO_COMMIT");
         executeInsert(DEFAULT_START_ENDPOINT_AUTO_COMMIT, builder.build(), false);
         // should be committed
         response = executeSolrQuery("*:*");
@@ -304,9 +304,9 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     @Test
     public void invalidSolrParametersAreIgnored() {
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.id", "MA147LL/A")
-                .withHeader("SolrField.name", "Apple 60 GB iPod with Video Playback Black")
-                .withHeader("SolrParam.invalid-param", "this is ignored");
+                .withHeader("CamelSolrField.id", "MA147LL/A")
+                .withHeader("CamelSolrField.name", "Apple 60 GB iPod with Video Playback Black")
+                .withHeader("CamelSolrParam.invalid-param", "this is ignored");
         executeInsert(builder.build());
 
         QueryResponse response = executeSolrQuery("*:*");
@@ -375,9 +375,9 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
                 .withBody(new File("src/test/resources/data/books.csv"))
                 .withHeader(SolrConstants.PARAM_CONTENT_TYPE, "text/csv")
-                .withHeader("SolrParam.fieldnames", "id,cat,name,price,inStock,author_t,series_t,sequence_i,genre_s")
-                .withHeader("SolrParam.skip", "cat,sequence_i,genre_s")
-                .withHeader("SolrParam.skipLines", 1);
+                .withHeader("CamelSolrParam.fieldnames", "id,cat,name,price,inStock,author_t,series_t,sequence_i,genre_s")
+                .withHeader("CamelSolrParam.skip", "cat,sequence_i,genre_s")
+                .withHeader("CamelSolrParam.skipLines", 1);
         executeInsert(builder.build());
         QueryResponse response = executeSolrQuery("*:*");
         assertEquals(0, response.getStatus());
@@ -393,7 +393,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
                 .withBody(new File("src/test/resources/data/tutorial.pdf"))
-                .withHeader("SolrParam.literal.id", "tutorial.pdf");
+                .withHeader("CamelSolrParam.literal.id", "tutorial.pdf");
         executeInsert(builder.build());
 
         QueryResponse response = executeSolrQuery("*:*");
