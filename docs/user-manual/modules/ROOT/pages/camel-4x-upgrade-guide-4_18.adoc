@@ -289,6 +289,38 @@ As a consequence, the generated Endpoint DSL header accessors on
 `resultClassType()` -> `arangoDbResultClassType()`.
 
 
+=== camel-jt400 - potential breaking change
+
+The two Exchange header constants in `Jt400Constants` that were not in the
+`Camel` namespace (and therefore not filtered by the default
+`HeaderFilterStrategy`) have been renamed to follow the Camel naming
+convention. The Java field names are unchanged; only the header string values
+have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `Jt400Constants.KEY` | `KEY` | `CamelJt400Key`
+| `Jt400Constants.SENDER_INFORMATION` | `SENDER_INFORMATION` | `CamelJt400SenderInformation`
+|===
+
+`Jt400Constants.KEY` is the data-queue key used for keyed-data-queue read and
+write operations. The remaining constants (`MESSAGE`, `MESSAGE_ID`,
+`MESSAGE_FILE`, `MESSAGE_TYPE`, `MESSAGE_SEVERITY`, `MESSAGE_DFT_RPY`,
+`MESSAGE_REPLYTO_KEY`) were already `Camel`-prefixed and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(Jt400Constants.KEY, ...)`) continue to work without changes. Routes
+that set the header by its literal string value (for example
+`setHeader("KEY", ...)`) must be updated to use the new value
+(`setHeader("CamelJt400Key", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`Jt400HeaderNameBuilder` have been renamed: `kEY()` -> `jt400Key()` and
+`senderInformation()` -> `jt400SenderInformation()`.
+
+
+
 === camel-web3j - potential breaking change
 
 The Exchange header constants in `Web3jConstants` have been renamed to follow the
