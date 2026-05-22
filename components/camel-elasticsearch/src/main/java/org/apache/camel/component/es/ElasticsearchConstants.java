@@ -22,28 +22,28 @@ public interface ElasticsearchConstants {
 
     @Metadata(description = "The operation to perform",
               javaType = "org.apache.camel.component.es.ElasticsearchOperation")
-    String PARAM_OPERATION = "operation";
+    String PARAM_OPERATION = "CamelElasticsearchOperation";
     @Metadata(description = "The id of the indexed document.", javaType = "String")
-    String PARAM_INDEX_ID = "indexId";
+    String PARAM_INDEX_ID = "CamelElasticsearchIndexId";
     @Metadata(description = "The name of the index to act against", javaType = "String")
-    String PARAM_INDEX_NAME = "indexName";
+    String PARAM_INDEX_NAME = "CamelElasticsearchIndexName";
     @Metadata(description = "The full qualified name of the class of the document to unmarshall", javaType = "Class",
               defaultValue = "ObjectNode")
-    String PARAM_DOCUMENT_CLASS = "documentClass";
+    String PARAM_DOCUMENT_CLASS = "CamelElasticsearchDocumentClass";
     @Metadata(description = "The index creation waits for the write consistency number of shards to be available",
               javaType = "Integer")
-    String PARAM_WAIT_FOR_ACTIVE_SHARDS = "waitForActiveShards";
+    String PARAM_WAIT_FOR_ACTIVE_SHARDS = "CamelElasticsearchWaitForActiveShards";
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
-    String PARAM_SCROLL_KEEP_ALIVE_MS = "scrollKeepAliveMs";
+    String PARAM_SCROLL_KEEP_ALIVE_MS = "CamelElasticsearchScrollKeepAliveMs";
     @Metadata(description = "Set to true to enable scroll usage", javaType = "Boolean")
-    String PARAM_SCROLL = "useScroll";
+    String PARAM_SCROLL = "CamelElasticsearchUseScroll";
     @Metadata(description = "The size of the response.", javaType = "Integer")
-    String PARAM_SIZE = "size";
+    String PARAM_SIZE = "CamelElasticsearchSize";
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
-    String PARAM_FROM = "from";
+    String PARAM_FROM = "CamelElasticsearchFrom";
     @Metadata(description = "Indicates whether the body of the message contains only documents.", javaType = "Boolean",
               defaultValue = "false")
-    String PARAM_DOCUMENT_MODE = "enableDocumentOnlyMode";
+    String PARAM_DOCUMENT_MODE = "CamelElasticsearchEnableDocumentOnlyMode";
 
     String PROPERTY_SCROLL_ES_QUERY_COUNT = "CamelElasticsearchScrollQueryCount";
 

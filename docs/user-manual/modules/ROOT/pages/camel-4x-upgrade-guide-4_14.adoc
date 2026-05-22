@@ -514,6 +514,7 @@ A new accessor `web3jOperation()` is also generated for `Web3jConstants.OPERATIO
 (the producer dispatch header). This constant did not appear in the catalog
 previously, so no DSL accessor renaming applies to it.
 
+
 == Upgrading from 4.14.5 to 4.14.6
 
 === camel-platform-http-main
