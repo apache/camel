@@ -28,8 +28,8 @@ The default profile is pre-configured out of the box with the following settings
 | *maxPoolSize* | `20` | Sets the default maximum pool size
 | *maxQueueSize* | `1000` | Sets the default maximum number of tasks in the work queue. Use -1 for an unbounded queue.
 | *allowCoreThreadTimeOut* | `true` | Sets default whether to allow core threads to timeout
-| *rejectedPolicy* | `CallerRuns` | Sets the default handler for tasks which cannot be executed by the thread pool. Has four options:
-`Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the same four options provided out of the box in the JDK.
+| *rejectedPolicy* | `CallerRuns` | Sets the default handler for tasks which cannot be executed by the thread pool. Has three options:
+`Abort`, `CallerRuns`, `Block`. See <<rejected-policy>> for details.
 |===
 
 What that means is that for example when you use
@@ -310,15 +310,62 @@ To hook in custom thread pool providers a
 `ThreadPoolFactory` interface can be implemented. The implementation can
 be set in the `ExecutorServiceManager`.
 
+[[rejected-policy]]
+== Rejected Policy
+
+The `rejectedPolicy` option controls what happens when a thread pool cannot accept a new task
+(i.e., the pool and its work queue are full). The available policies are:
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+| Policy | Description
+| *CallerRuns* | The task runs on the caller's thread. This provides natural backpressure — the caller is blocked
+doing useful work and cannot submit more tasks until it finishes. Tasks are never lost. This is the default.
+| *Abort* | The task is rejected with a `RejectedExecutionException`. Use this for HTTP APIs or latency-sensitive
+systems where failing fast is preferred over blocking.
+| *Block* | The caller blocks indefinitely until capacity becomes available. No timeout, no rejection. Use this for
+message broker consumers and batch workloads where losing a task is unacceptable and latency is less critical.
+|===
+
+With platform threads, these policies apply when the `ThreadPoolExecutor` work queue is full. With virtual threads,
+the same policies apply when the concurrency semaphore has no available permits (see <<virtual-threads>>).
+
+[[virtual-threads]]
 == Virtual Threads
 
 Starting from Java 21, the default `ThreadPoolFactory` can build `ExecutorService` and `ScheduledExecutorService` that
-use https://openjdk.org/jeps/425[virtual threads] instead of platform threads.
+use https://openjdk.org/jeps/444[virtual threads] instead of platform threads.
 
-But as it is an experimental feature, it is not enabled by default, you need to set the System property `camel.threads.virtual.enabled`
-to `true` and run Camel using Java 21 or above to enable it.
+To enable virtual threads, set the System property `camel.threads.virtual.enabled` to `true` and run Camel using
+Java 21 or above.
 
 Be aware that even if it is enabled, there are some use cases where platform threads are still used, for example, if the
 thread factory is configured to create non-daemon threads since virtual threads can only be daemons, or when the
 `ExecutorService` or `ScheduledExecutorService` to build cannot have more than one thread or finally when `corePoolSize`
 is set to zero and `maxQueueSize` is set to a value less or equal to `0`.
+
+=== Bounded Concurrency with Virtual Threads
+
+When `maxQueueSize` is set to a positive value, Camel wraps the virtual thread executor with a semaphore-based
+concurrency limit. This ensures that `maxQueueSize` is honored for backpressure, even though virtual threads do not
+use a traditional work queue.
+
+Unlike `ThreadPoolExecutor` where pool threads and queued tasks are distinct concepts, the virtual thread executor
+enforces a flat concurrency cap: the maximum number of concurrently executing tasks is `maxPoolSize + maxQueueSize`.
+All permitted tasks execute immediately on virtual threads — there is no queue of waiting tasks.
+
+The `rejectedPolicy` controls what happens when the concurrency limit is reached:
+
+* *CallerRuns* (default): the caller blocks up to `keepAliveTime` waiting for a permit. If the timeout expires,
+the task runs on the caller's thread.
+* *Abort*: the caller blocks up to `keepAliveTime` waiting for a permit. If the timeout expires,
+a `RejectedExecutionException` is thrown.
+* *Block*: the caller blocks indefinitely until a permit becomes available.
+
+While waiting for a permit, the calling thread is blocked. When callers are virtual threads this is inexpensive
+(the carrier thread is released). When callers are platform threads (e.g., HTTP server threads) the blocked thread
+is unavailable for other work.
+
+Pool sizing parameters (`poolSize`, `maxPoolSize`, `keepAliveTime`) do not control thread reuse with virtual threads
+since virtual threads are cheap to create and are never pooled. However, `keepAliveTime` is reused as the timeout
+for permit acquisition with `CallerRuns` and `Abort` policies.

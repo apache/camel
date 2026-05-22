@@ -34,11 +34,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.concurrent.RejectableScheduledThreadPoolExecutor;
-import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
-import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
-import org.apache.camel.util.concurrent.ThreadFactoryTypeAware;
-import org.apache.camel.util.concurrent.ThreadType;
+import org.apache.camel.util.concurrent.*;
 
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
@@ -173,7 +169,13 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
                     RejectedExecutionHandler rejectedExecutionHandler,
                     ThreadFactory threadFactory)
                     throws IllegalArgumentException {
-                return newThreadPerTaskExecutor(threadFactory);
+                ExecutorService executor = newThreadPerTaskExecutor(threadFactory);
+                if (maxQueueSize > 0) {
+                    return new BoundedExecutorService(
+                            executor, maxPoolSize + maxQueueSize, keepAliveTime, timeUnit,
+                            false, resolvePolicy(rejectedExecutionHandler));
+                }
+                return executor;
             }
 
             @Override
@@ -196,6 +198,16 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             }
             return maxPoolSize > 1 && threadFactory instanceof ThreadFactoryTypeAware factoryTypeAware
                     && factoryTypeAware.isVirtual() ? ThreadPoolFactoryType.VIRTUAL : ThreadPoolFactoryType.PLATFORM;
+        }
+
+        private static ThreadPoolRejectedPolicy resolvePolicy(RejectedExecutionHandler handler) {
+            if (handler == null || handler instanceof ThreadPoolExecutor.CallerRunsPolicy) {
+                return ThreadPoolRejectedPolicy.CallerRuns;
+            }
+            if ("Block".equals(handler.toString())) {
+                return ThreadPoolRejectedPolicy.Block;
+            }
+            return ThreadPoolRejectedPolicy.Abort;
         }
 
         @SuppressWarnings("unchecked")
