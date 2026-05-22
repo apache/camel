@@ -1648,10 +1648,10 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code SENDER_INFORMATION}.
+         * @return the name of the header {@code Jt400SenderInformation}.
          */
-        public String senderInformation() {
-            return "SENDER_INFORMATION";
+        public String jt400SenderInformation() {
+            return "CamelJt400SenderInformation";
         }
         /**
          * The data queue key.
@@ -1660,10 +1660,10 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code KEY}.
+         * @return the name of the header {@code Jt400Key}.
          */
-        public String kEY() {
-            return "KEY";
+        public String jt400Key() {
+            return "CamelJt400Key";
         }
         /**
          * The message received.
