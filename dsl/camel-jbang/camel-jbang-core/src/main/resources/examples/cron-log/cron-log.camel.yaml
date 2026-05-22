@@ -20,8 +20,8 @@
     from:
       uri: timer:cron
       parameters:
-        period: "5000"
+        period: "{{cron.period}}"
       steps:
         - setBody:
-            simple: "Scheduled task running at ${date:now:HH:mm:ss}"
+            simple: "{{cron.message}} ${date:now:HH:mm:ss}"
         - log: "${body}"

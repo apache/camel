@@ -1,0 +1,217 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
+import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.Clear;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.input.TextInput;
+import dev.tamboui.widgets.input.TextInputState;
+import dev.tamboui.widgets.paragraph.Paragraph;
+
+import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
+
+class CaptionOverlay {
+
+    private static final long CHAR_DELAY_MS = 50;
+    private static final long HOLD_DURATION_MS = 3000;
+    private static final long FADE_DURATION_MS = 1000;
+
+    private boolean showInput;
+    private TextInputState inputState;
+
+    private String captionText;
+    private long captionStartTime;
+    private long captionFullyTypedTime;
+
+    boolean isInputVisible() {
+        return showInput;
+    }
+
+    boolean isCaptionVisible() {
+        return captionText != null;
+    }
+
+    boolean isVisible() {
+        return showInput || captionText != null;
+    }
+
+    void openInput() {
+        showInput = true;
+        inputState = new TextInputState("");
+    }
+
+    void close() {
+        showInput = false;
+        inputState = null;
+        captionText = null;
+        captionFullyTypedTime = 0;
+    }
+
+    boolean handleKeyEvent(KeyEvent ke) {
+        if (showInput) {
+            if (ke.isCancel()) {
+                showInput = false;
+                inputState = null;
+            } else if (ke.isConfirm()) {
+                String text = inputState.text().trim();
+                showInput = false;
+                inputState = null;
+                if (!text.isEmpty()) {
+                    captionText = text;
+                    captionStartTime = System.currentTimeMillis();
+                    captionFullyTypedTime = 0;
+                }
+            } else if (ke.isDeleteBackward()) {
+                inputState.deleteBackward();
+            } else if (ke.isDeleteForward()) {
+                inputState.deleteForward();
+            } else if (ke.isLeft()) {
+                inputState.moveCursorLeft();
+            } else if (ke.isRight()) {
+                inputState.moveCursorRight();
+            } else if (ke.isHome()) {
+                inputState.moveCursorToStart();
+            } else if (ke.isEnd()) {
+                inputState.moveCursorToEnd();
+            } else if (ke.code() == KeyCode.CHAR) {
+                inputState.insert(ke.character());
+            }
+            return true;
+        }
+        if (captionText != null) {
+            captionText = null;
+            captionFullyTypedTime = 0;
+            return true;
+        }
+        return false;
+    }
+
+    void tick(long now) {
+        if (captionText == null) {
+            return;
+        }
+        int totalChars = captionText.length();
+        long elapsed = now - captionStartTime;
+        int charsToShow = (int) (elapsed / CHAR_DELAY_MS);
+
+        if (charsToShow >= totalChars && captionFullyTypedTime == 0) {
+            captionFullyTypedTime = now;
+        }
+        if (captionFullyTypedTime > 0 && now - captionFullyTypedTime > HOLD_DURATION_MS + FADE_DURATION_MS) {
+            captionText = null;
+            captionFullyTypedTime = 0;
+        }
+    }
+
+    void render(Frame frame, Rect area) {
+        if (showInput) {
+            renderInput(frame, area);
+            return;
+        }
+        if (captionText != null) {
+            renderCaption(frame, area);
+        }
+    }
+
+    void renderFooter(List<Span> spans) {
+        if (showInput) {
+            hint(spans, "Enter", "show");
+            hintLast(spans, "Esc", "cancel");
+        } else if (captionText != null) {
+            hintLast(spans, "any key", "dismiss");
+        }
+    }
+
+    private void renderInput(Frame frame, Rect area) {
+        int popupW = Math.min(50, area.width() - 4);
+        int popupH = 4;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" 💬 Caption ")
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" show │"),
+                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" cancel "))))
+                .build();
+        frame.renderWidget(block, popup);
+
+        Rect inner = new Rect(popup.left() + 2, popup.top() + 1, popup.width() - 4, 1);
+        frame.renderWidget(Paragraph.from(Line.from(
+                Span.styled("Caption text (\\n for newline):", Style.EMPTY.dim()))), inner);
+
+        Rect inputArea = new Rect(popup.left() + 2, popup.top() + 2, popup.width() - 4, 1);
+        TextInput textInput = TextInput.builder()
+                .cursorStyle(Style.EMPTY.reversed())
+                .build();
+        frame.renderStatefulWidget(textInput, inputArea, inputState);
+    }
+
+    private void renderCaption(Frame frame, Rect area) {
+        long now = System.currentTimeMillis();
+        long elapsed = now - captionStartTime;
+        int charsToShow = Math.min((int) (elapsed / CHAR_DELAY_MS), captionText.length());
+        String visible = captionText.substring(0, charsToShow);
+
+        Style style;
+        if (captionFullyTypedTime == 0 || now - captionFullyTypedTime < HOLD_DURATION_MS) {
+            style = Style.EMPTY.fg(Color.WHITE).bold();
+        } else {
+            style = Style.EMPTY.dim();
+        }
+
+        String[] parts = visible.split("\\\\n", -1);
+        List<Line> lines = new ArrayList<>();
+        int maxWidth = 0;
+        for (String part : parts) {
+            lines.add(Line.from(Span.styled("  " + part + "  ", style)));
+            maxWidth = Math.max(maxWidth, part.length() + 4);
+        }
+
+        int captionW = Math.min(maxWidth, area.width() - 2);
+        int captionH = lines.size();
+        int captionX = area.left() + Math.max(0, (area.width() - captionW) / 2);
+        int captionY = area.top() + Math.max(0, (area.height() - captionH) / 2);
+        Rect captionArea = new Rect(
+                captionX, captionY, Math.min(captionW, area.width()),
+                Math.min(captionH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, captionArea);
+        frame.renderWidget(Paragraph.builder()
+                .text(Text.from(lines.toArray(Line[]::new)))
+                .build(), captionArea);
+    }
+}

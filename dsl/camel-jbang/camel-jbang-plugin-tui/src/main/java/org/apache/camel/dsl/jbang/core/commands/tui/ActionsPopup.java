@@ -40,13 +40,10 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.input.TextInput;
-import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -59,9 +56,13 @@ class ActionsPopup {
 
     private static final int ACTION_RUN_EXAMPLE = 0;
     private static final int ACTION_SHOW_DOCS = 1;
-    private static final int ACTION_SCREENSHOT = 2;
-    private static final int ACTION_SHOW_KEYSTROKES = 3;
-    private static final int ACTION_COUNT = 4;
+    private static final int ACTION_CAPTION = 2;
+    private static final int ACTION_SCREENSHOT = 3;
+    private static final int ACTION_SHOW_KEYSTROKES = 4;
+    private static final int ACTION_DOCTOR = 5;
+    private static final int ACTION_CLASSPATH = 6;
+    private static final int ACTION_STOP_ALL = 7;
+    private static final int ACTION_COUNT = 8;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -77,8 +78,7 @@ class ActionsPopup {
     private final ListState exampleBrowserState = new ListState();
     private List<JsonObject> exampleCatalog;
 
-    private boolean showNameInput;
-    private TextInputState nameInputState;
+    private final RunOptionsForm runOptionsForm = new RunOptionsForm();
     private JsonObject selectedExample;
 
     private boolean showDocPicker;
@@ -90,18 +90,26 @@ class ActionsPopup {
     private String docTitle;
     private int docScroll;
 
+    private final DoctorPopup doctorPopup = new DoctorPopup();
+    private final ClasspathPopup classpathPopup = new ClasspathPopup();
+    private final StopAllPopup stopAllPopup;
+    private final CaptionOverlay captionOverlay;
+
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private String launchNotification;
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
+                 Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
                  Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled) {
         this.runningNames = runningNames;
         this.integrations = integrations;
+        this.captionOverlay = captionOverlay;
         this.screenshotAction = screenshotAction;
         this.toggleKeystrokes = toggleKeystrokes;
         this.keystrokesEnabled = keystrokesEnabled;
+        this.stopAllPopup = new StopAllPopup(integrations, infraServices);
     }
 
     void setContext(MonitorContext ctx) {
@@ -109,7 +117,9 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || showExampleBrowser || showNameInput || showDocPicker || showDocViewer;
+        return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
+                || doctorPopup.isVisible() || classpathPopup.isVisible()
+                || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
     }
 
     void open() {
@@ -120,9 +130,13 @@ class ActionsPopup {
     void close() {
         showActionsMenu = false;
         showExampleBrowser = false;
-        showNameInput = false;
+        runOptionsForm.close();
         showDocPicker = false;
         showDocViewer = false;
+        doctorPopup.close();
+        classpathPopup.close();
+        stopAllPopup.close();
+        captionOverlay.close();
     }
 
     String notification() {
@@ -165,26 +179,14 @@ class ActionsPopup {
             }
             return true;
         }
-        if (showNameInput) {
+        if (runOptionsForm.isVisible()) {
             if (ke.isCancel()) {
-                showNameInput = false;
+                runOptionsForm.close();
                 showExampleBrowser = true;
             } else if (ke.isConfirm()) {
                 launchWithName();
-            } else if (ke.isDeleteBackward()) {
-                nameInputState.deleteBackward();
-            } else if (ke.isDeleteForward()) {
-                nameInputState.deleteForward();
-            } else if (ke.isLeft()) {
-                nameInputState.moveCursorLeft();
-            } else if (ke.isRight()) {
-                nameInputState.moveCursorRight();
-            } else if (ke.isHome()) {
-                nameInputState.moveCursorToStart();
-            } else if (ke.isEnd()) {
-                nameInputState.moveCursorToEnd();
-            } else if (ke.code() == KeyCode.CHAR) {
-                nameInputState.insert(ke.character());
+            } else {
+                runOptionsForm.handleKeyEvent(ke);
             }
             return true;
         }
@@ -209,6 +211,19 @@ class ActionsPopup {
             }
             return true;
         }
+        if (captionOverlay.isInputVisible()) {
+            return captionOverlay.handleKeyEvent(ke);
+        }
+        if (classpathPopup.handleKeyEvent(ke)) {
+            return true;
+        }
+        if (stopAllPopup.handleKeyEvent(ke)) {
+            checkStopAllNotification();
+            return true;
+        }
+        if (doctorPopup.handleKeyEvent(ke)) {
+            return true;
+        }
         if (showActionsMenu) {
             if (ke.isCancel()) {
                 showActionsMenu = false;
@@ -229,6 +244,19 @@ class ActionsPopup {
                     } else if (sel == ACTION_SHOW_KEYSTROKES) {
                         showActionsMenu = false;
                         toggleKeystrokes.run();
+                    } else if (sel == ACTION_DOCTOR) {
+                        showActionsMenu = false;
+                        doctorPopup.open();
+                    } else if (sel == ACTION_CLASSPATH) {
+                        showActionsMenu = false;
+                        openClasspath();
+                    } else if (sel == ACTION_STOP_ALL) {
+                        showActionsMenu = false;
+                        stopAllPopup.open();
+                        checkStopAllNotification();
+                    } else if (sel == ACTION_CAPTION) {
+                        showActionsMenu = false;
+                        captionOverlay.openInput();
                     }
                 }
             }
@@ -244,8 +272,8 @@ class ActionsPopup {
         if (showExampleBrowser) {
             renderExampleBrowser(frame, area);
         }
-        if (showNameInput) {
-            renderNameInput(frame, area);
+        if (runOptionsForm.isVisible()) {
+            runOptionsForm.render(frame, area);
         }
         if (showDocPicker) {
             renderDocPicker(frame, area);
@@ -253,9 +281,37 @@ class ActionsPopup {
         if (showDocViewer) {
             renderDocViewer(frame, area);
         }
+        if (doctorPopup.isVisible()) {
+            doctorPopup.render(frame, area);
+        }
+        if (stopAllPopup.isVisible()) {
+            stopAllPopup.render(frame, area);
+        }
+        if (classpathPopup.isVisible()) {
+            classpathPopup.render(frame, area);
+        }
+        if (captionOverlay.isInputVisible()) {
+            captionOverlay.render(frame, area);
+        }
     }
 
     void renderFooter(List<Span> spans) {
+        if (captionOverlay.isInputVisible()) {
+            captionOverlay.renderFooter(spans);
+            return;
+        }
+        if (classpathPopup.isVisible()) {
+            classpathPopup.renderFooter(spans);
+            return;
+        }
+        if (stopAllPopup.isVisible()) {
+            stopAllPopup.renderFooter(spans);
+            return;
+        }
+        if (doctorPopup.isVisible()) {
+            doctorPopup.renderFooter(spans);
+            return;
+        }
         if (showDocViewer) {
             hint(spans, "↑↓", "scroll");
             hintLast(spans, "Esc", "back");
@@ -267,9 +323,8 @@ class ActionsPopup {
             hintLast(spans, "Esc", "back");
             return;
         }
-        if (showNameInput) {
-            hint(spans, "Enter", "launch");
-            hintLast(spans, "Esc", "back");
+        if (runOptionsForm.isVisible()) {
+            runOptionsForm.renderFooter(spans);
             return;
         }
         if (showExampleBrowser) {
@@ -297,21 +352,29 @@ class ActionsPopup {
     // ---- Rendering ----
 
     private void renderActionsMenu(Frame frame, Rect area) {
-        int popupW = 32;
+        int popupW = 34;
         int popupH = 2 + ACTION_COUNT;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
+        // extra space after ⌨️ because it renders narrower than other emoji
         String keystrokeLabel = keystrokesEnabled.get()
-                ? "  Hide Keystrokes"
-                : "  Show Keystrokes";
+                ? "  ⌨️  Hide Keystrokes"
+                : "  ⌨️  Show Keystrokes";
+        String stopLabel = stopAllPopup.hasBothGroups()
+                ? "  🛑 Stop All..."
+                : "  🛑 Stop All";
         ListWidget list = ListWidget.builder()
-                .items(ListItem.from("  Run an example..."),
-                        ListItem.from("  Show Documentation"),
-                        ListItem.from("  Take Screenshot"),
-                        ListItem.from(keystrokeLabel))
+                .items(ListItem.from("  🐪 Run an example..."),
+                        ListItem.from("  📖 Show Documentation"),
+                        ListItem.from("  💬 Caption... (Ctrl+T)"),
+                        ListItem.from("  📸 Take Screenshot"),
+                        ListItem.from(keystrokeLabel),
+                        ListItem.from("  🩺 Run Doctor"),
+                        ListItem.from("  📦 Show Classpath"),
+                        ListItem.from(stopLabel))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
@@ -395,35 +458,6 @@ class ActionsPopup {
         items.add(ListItem.from(" 📦 = bundled (offline)  🌐 = online (GitHub)  🐳 = Docker  🍋 = Citrus tests")
                 .style(Style.EMPTY.dim()));
         return items;
-    }
-
-    private void renderNameInput(Frame frame, Rect area) {
-        int popupW = Math.min(50, area.width() - 4);
-        int popupH = 4;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Name ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" launch │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
-                .build();
-        frame.renderWidget(block, popup);
-
-        Rect inner = new Rect(popup.left() + 2, popup.top() + 1, popup.width() - 4, 1);
-        frame.renderWidget(Paragraph.from(Line.from(
-                Span.styled("Name for the integration:", Style.EMPTY.dim()))), inner);
-
-        Rect inputArea = new Rect(popup.left() + 2, popup.top() + 2, popup.width() - 4, 1);
-        TextInput textInput = TextInput.builder()
-                .cursorStyle(Style.EMPTY.reversed())
-                .build();
-        frame.renderStatefulWidget(textInput, inputArea, nameInputState);
     }
 
     // ---- Doc Viewer & Picker ----
@@ -583,6 +617,36 @@ class ActionsPopup {
         launchNotificationExpiry = System.currentTimeMillis() + 10000;
     }
 
+    private void checkStopAllNotification() {
+        String msg = stopAllPopup.consumeNotification();
+        if (msg != null) {
+            setNotification(msg, false);
+        }
+    }
+
+    private void openClasspath() {
+        if (ctx == null) {
+            return;
+        }
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            List<IntegrationInfo> ints = integrations.get();
+            List<IntegrationInfo> alive = ints.stream().filter(i -> !i.vanishing && i.pid != null).toList();
+            if (alive.size() == 1) {
+                pid = alive.get(0).pid;
+            }
+        }
+        if (pid == null) {
+            setNotification("Select an integration first", true);
+            return;
+        }
+        classpathPopup.open(ctx, pid, ctx.selectedName());
+        String err = classpathPopup.consumeError();
+        if (err != null) {
+            setNotification(err, true);
+        }
+    }
+
     // ---- Name Input ----
 
     private void openNameInput() {
@@ -598,8 +662,7 @@ class ActionsPopup {
         String baseName = example.getStringOrDefault("name", "");
         String autoName = generateUniqueName(baseName);
         showExampleBrowser = false;
-        showNameInput = true;
-        nameInputState = new TextInputState(autoName);
+        runOptionsForm.open(autoName, baseName, ExampleHelper.isBundled(example));
     }
 
     private String generateUniqueName(String baseName) {
@@ -616,26 +679,27 @@ class ActionsPopup {
     }
 
     private void launchWithName() {
-        if (selectedExample == null || nameInputState == null) {
+        if (selectedExample == null) {
             return;
         }
-        String customName = nameInputState.text().trim();
         String exampleName = selectedExample.getStringOrDefault("name", "");
-        showNameInput = false;
+        String displayName = runOptionsForm.name();
+        if (displayName.isEmpty()) {
+            displayName = exampleName;
+        }
+        List<String> extraArgs = runOptionsForm.buildArgs();
+        runOptionsForm.close();
         try {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
             cmd.add("--example=" + exampleName);
-            if (!customName.isEmpty() && !customName.equals(exampleName)) {
-                cmd.add("--name=" + customName);
-            }
+            cmd.addAll(extraArgs);
             Path outputFile = Files.createTempFile("camel-example-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.redirectErrorStream(true);
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
-            String displayName = customName.isEmpty() ? exampleName : customName;
             pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
             launchNotification = "Starting: " + displayName;
             launchNotificationError = false;

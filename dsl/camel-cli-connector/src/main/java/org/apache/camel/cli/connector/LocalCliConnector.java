@@ -302,6 +302,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionDebugTask(root);
             } else if ("reset-stats".equals(action)) {
                 doActionResetStatsTask();
+            } else if ("jvm".equals(action)) {
+                doActionJvmTask();
             } else if ("thread-dump".equals(action)) {
                 doActionThreadDumpTask();
             } else if ("top-processors".equals(action)) {
@@ -750,6 +752,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("top");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionJvmTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("jvm");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

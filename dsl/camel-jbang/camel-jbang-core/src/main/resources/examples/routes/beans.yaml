@@ -19,4 +19,4 @@
   - name: "greeter"
     type: "camel.example.Greeter"
     properties:
-      message: 'Hello!'
+      message: '{{greeter.message}}'
