@@ -102,7 +102,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.squareup</groupId>
+            <groupId>com.palantir.javapoet</groupId>
             <artifactId>javapoet</artifactId>
             <version>${javapoet-version}</version>
         </dependency>

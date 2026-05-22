@@ -16,8 +16,8 @@
  */
 package org.apache.camel.generator.openapi;
 
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.MethodSpec.Builder;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.MethodSpec.Builder;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
 

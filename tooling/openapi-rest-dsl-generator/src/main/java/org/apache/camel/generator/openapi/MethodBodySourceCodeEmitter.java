@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import com.squareup.javapoet.MethodSpec;
+import com.palantir.javapoet.MethodSpec;
 
 import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 

@@ -18,8 +18,8 @@ package org.apache.camel.generator.openapi;
 
 import java.util.Arrays;
 
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.MethodSpec.Builder;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.MethodSpec.Builder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;

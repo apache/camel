@@ -31,8 +31,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
+import com.palantir.javapoet.AnnotationSpec;
+import com.palantir.javapoet.ClassName;
 import org.apache.camel.maven.dsl.yaml.support.IndexerSupport;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.AntPathMatcher;
