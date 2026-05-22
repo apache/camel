@@ -311,10 +311,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: object container
          * 
-         * @return the name of the header {@code containerName}.
+         * @return the name of the header {@code OpenstackSwiftContainerName}.
          */
-        public String containerName() {
-            return "containerName";
+        public String openstackSwiftContainerName() {
+            return "CamelOpenstackSwiftContainerName";
         }
         /**
          * The object name.
@@ -323,10 +323,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: object
          * 
-         * @return the name of the header {@code objectName}.
+         * @return the name of the header {@code OpenstackSwiftObjectName}.
          */
-        public String objectName() {
-            return "objectName";
+        public String openstackSwiftObjectName() {
+            return "CamelOpenstackSwiftObjectName";
         }
         /**
          * Container metadata prefix.
@@ -383,10 +383,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: container
          * 
-         * @return the name of the header {@code limit}.
+         * @return the name of the header {@code OpenstackSwiftLimit}.
          */
-        public String limit() {
-            return "limit";
+        public String openstackSwiftLimit() {
+            return "CamelOpenstackSwiftLimit";
         }
         /**
          * List options - marker.
@@ -395,10 +395,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: container
          * 
-         * @return the name of the header {@code marker}.
+         * @return the name of the header {@code OpenstackSwiftMarker}.
          */
-        public String marker() {
-            return "marker";
+        public String openstackSwiftMarker() {
+            return "CamelOpenstackSwiftMarker";
         }
         /**
          * List options - end marker.
@@ -407,10 +407,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: container
          * 
-         * @return the name of the header {@code end_marker}.
+         * @return the name of the header {@code OpenstackSwiftEndMarker}.
          */
-        public String endMarker() {
-            return "end_marker";
+        public String openstackSwiftEndMarker() {
+            return "CamelOpenstackSwiftEndMarker";
         }
         /**
          * List options - delimiter.
@@ -419,10 +419,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: container
          * 
-         * @return the name of the header {@code delimiter}.
+         * @return the name of the header {@code OpenstackSwiftDelimiter}.
          */
-        public String delimiter() {
-            return "delimiter";
+        public String openstackSwiftDelimiter() {
+            return "CamelOpenstackSwiftDelimiter";
         }
         /**
          * The path.
@@ -431,10 +431,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: container object
          * 
-         * @return the name of the header {@code path}.
+         * @return the name of the header {@code OpenstackSwiftPath}.
          */
-        public String path() {
-            return "path";
+        public String openstackSwiftPath() {
+            return "CamelOpenstackSwiftPath";
         }
         /**
          * The operation to perform.
@@ -443,10 +443,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code operation}.
+         * @return the name of the header {@code OpenstackOperation}.
          */
-        public String operation() {
-            return "operation";
+        public String openstackOperation() {
+            return "CamelOpenstackOperation";
         }
         /**
          * The ID.
@@ -455,10 +455,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ID}.
+         * @return the name of the header {@code OpenstackId}.
          */
-        public String iD() {
-            return "ID";
+        public String openstackId() {
+            return "CamelOpenstackId";
         }
         /**
          * The name.
@@ -467,10 +467,10 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code name}.
+         * @return the name of the header {@code OpenstackName}.
          */
-        public String name() {
-            return "name";
+        public String openstackName() {
+            return "CamelOpenstackName";
         }
     }
     static SwiftEndpointBuilder endpointBuilder(String componentName, String path) {
