@@ -558,6 +558,146 @@ values.
 
 NOTE: The companion rename for `camel-google-vision`, `camel-google-text-to-speech` and `camel-google-speech-to-text` from the same main-branch PR (#23467) is NOT backported to 4.14.x because those components were added after the 4.14.x branch point and do not exist on this maintenance branch.
 
+=== camel-openstack - potential breaking change
+
+The Exchange header constants in `OpenstackConstants`, `KeystoneConstants`,
+`NovaConstants`, `CinderConstants`, `GlanceConstants`, `NeutronConstants`,
+and `SwiftConstants` have been renamed to follow the Camel naming convention
+used across the rest of the component catalog. The Java field names are
+unchanged; only the header string values have changed.
+
+Common constants (in `OpenstackConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `OpenstackConstants.OPERATION` | `operation` | `CamelOpenstackOperation`
+| `OpenstackConstants.ID` | `ID` | `CamelOpenstackId`
+| `OpenstackConstants.NAME` | `name` | `CamelOpenstackName`
+| `OpenstackConstants.DESCRIPTION` | `description` | `CamelOpenstackDescription`
+| `OpenstackConstants.PROPERTIES` | `properties` | `CamelOpenstackProperties`
+|===
+
+Keystone (`KeystoneConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `KeystoneConstants.DESCRIPTION` | `description` | `CamelOpenstackKeystoneDescription`
+| `KeystoneConstants.DOMAIN_ID` | `domainId` | `CamelOpenstackKeystoneDomainId`
+| `KeystoneConstants.PARENT_ID` | `parentId` | `CamelOpenstackKeystoneParentId`
+| `KeystoneConstants.PASSWORD` | `password` | `CamelOpenstackKeystonePassword`
+| `KeystoneConstants.EMAIL` | `email` | `CamelOpenstackKeystoneEmail`
+| `KeystoneConstants.USER_ID` | `userId` | `CamelOpenstackKeystoneUserId`
+| `KeystoneConstants.GROUP_ID` | `groupId` | `CamelOpenstackKeystoneGroupId`
+|===
+
+Nova (`NovaConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `NovaConstants.FLAVOR_ID` | `FlavorId` | `CamelOpenstackNovaFlavorId`
+| `NovaConstants.RAM` | `RAM` | `CamelOpenstackNovaRam`
+| `NovaConstants.VCPU` | `VCPU` | `CamelOpenstackNovaVcpu`
+| `NovaConstants.DISK` | `disk` | `CamelOpenstackNovaDisk`
+| `NovaConstants.SWAP` | `swap` | `CamelOpenstackNovaSwap`
+| `NovaConstants.RXTXFACTOR` | `rxtxFactor` | `CamelOpenstackNovaRxtxFactor`
+| `NovaConstants.ADMIN_PASSWORD` | `AdminPassword` | `CamelOpenstackNovaAdminPassword`
+| `NovaConstants.IMAGE_ID` | `ImageId` | `CamelOpenstackNovaImageId`
+| `NovaConstants.KEYPAIR_NAME` | `KeypairName` | `CamelOpenstackNovaKeypairName`
+| `NovaConstants.NETWORK` | `NetworkId` | `CamelOpenstackNovaNetworkId`
+| `NovaConstants.ACTION` | `action` | `CamelOpenstackNovaAction`
+|===
+
+Cinder (`CinderConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `CinderConstants.SIZE` | `size` | `CamelOpenstackCinderSize`
+| `CinderConstants.VOLUME_TYPE` | `volumeType` | `CamelOpenstackCinderVolumeType`
+| `CinderConstants.IMAGE_REF` | `imageRef` | `CamelOpenstackCinderImageRef`
+| `CinderConstants.SNAPSHOT_ID` | `snapshotId` | `CamelOpenstackCinderSnapshotId`
+| `CinderConstants.IS_BOOTABLE` | `isBootable` | `CamelOpenstackCinderIsBootable`
+| `CinderConstants.VOLUME_ID` | `volumeId` | `CamelOpenstackCinderVolumeId`
+| `CinderConstants.FORCE` | `force` | `CamelOpenstackCinderForce`
+|===
+
+Glance (`GlanceConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `GlanceConstants.DISK_FORMAT` | `diskFormat` | `CamelOpenstackGlanceDiskFormat`
+| `GlanceConstants.CONTAINER_FORMAT` | `containerFormat` | `CamelOpenstackGlanceContainerFormat`
+| `GlanceConstants.OWNER` | `owner` | `CamelOpenstackGlanceOwner`
+| `GlanceConstants.IS_PUBLIC` | `isPublic` | `CamelOpenstackGlanceIsPublic`
+| `GlanceConstants.MIN_RAM` | `minRam` | `CamelOpenstackGlanceMinRam`
+| `GlanceConstants.MIN_DISK` | `minDisk` | `CamelOpenstackGlanceMinDisk`
+| `GlanceConstants.SIZE` | `size` | `CamelOpenstackGlanceSize`
+| `GlanceConstants.CHECKSUM` | `checksum` | `CamelOpenstackGlanceChecksum`
+|===
+
+Neutron (`NeutronConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `NeutronConstants.TENANT_ID` | `tenantId` | `CamelOpenstackNeutronTenantId`
+| `NeutronConstants.NETWORK_ID` | `networkId` | `CamelOpenstackNeutronNetworkId`
+| `NeutronConstants.ADMIN_STATE_UP` | `adminStateUp` | `CamelOpenstackNeutronAdminStateUp`
+| `NeutronConstants.NETWORK_TYPE` | `networkType` | `CamelOpenstackNeutronNetworkType`
+| `NeutronConstants.PHYSICAL_NETWORK` | `physicalNetwork` | `CamelOpenstackNeutronPhysicalNetwork`
+| `NeutronConstants.SEGMENT_ID` | `segmentId` | `CamelOpenstackNeutronSegmentId`
+| `NeutronConstants.IS_SHARED` | `isShared` | `CamelOpenstackNeutronIsShared`
+| `NeutronConstants.IS_ROUTER_EXTERNAL` | `isRouterExternal` | `CamelOpenstackNeutronIsRouterExternal`
+| `NeutronConstants.ENABLE_DHCP` | `enableDHCP` | `CamelOpenstackNeutronEnableDhcp`
+| `NeutronConstants.GATEWAY` | `gateway` | `CamelOpenstackNeutronGateway`
+| `NeutronConstants.IP_VERSION` | `ipVersion` | `CamelOpenstackNeutronIpVersion`
+| `NeutronConstants.CIDR` | `cidr` | `CamelOpenstackNeutronCidr`
+| `NeutronConstants.SUBNET_POOL` | `subnetPools` | `CamelOpenstackNeutronSubnetPools`
+| `NeutronConstants.DEVICE_ID` | `deviceId` | `CamelOpenstackNeutronDeviceId`
+| `NeutronConstants.MAC_ADDRESS` | `macAddress` | `CamelOpenstackNeutronMacAddress`
+| `NeutronConstants.ROUTER_ID` | `routerId` | `CamelOpenstackNeutronRouterId`
+| `NeutronConstants.SUBNET_ID` | `subnetId` | `CamelOpenstackNeutronSubnetId`
+| `NeutronConstants.PORT_ID` | `portId` | `CamelOpenstackNeutronPortId`
+| `NeutronConstants.ITERFACE_TYPE` | `interfaceType` | `CamelOpenstackNeutronInterfaceType`
+|===
+
+Swift (`SwiftConstants`):
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SwiftConstants.CONTAINER_NAME` | `containerName` | `CamelOpenstackSwiftContainerName`
+| `SwiftConstants.OBJECT_NAME` | `objectName` | `CamelOpenstackSwiftObjectName`
+| `SwiftConstants.LIMIT` | `limit` | `CamelOpenstackSwiftLimit`
+| `SwiftConstants.MARKER` | `marker` | `CamelOpenstackSwiftMarker`
+| `SwiftConstants.END_MARKER` | `end_marker` | `CamelOpenstackSwiftEndMarker`
+| `SwiftConstants.DELIMITER` | `delimiter` | `CamelOpenstackSwiftDelimiter`
+| `SwiftConstants.PATH` | `path` | `CamelOpenstackSwiftPath`
+|===
+
+`SwiftConstants.CONTAINER_METADATA_PREFIX`, `SwiftConstants.VERSIONS_LOCATION`,
+`SwiftConstants.CONTAINER_READ`, and `SwiftConstants.CONTAINER_WRITE`
+intentionally keep their previous values (`X-Container-Meta-`,
+`X-Versions-Location`, `X-Container-Read`, `X-Container-Write`) because they
+are part of the Swift HTTP protocol contract used by openstack4j to forward
+container metadata and ACLs to the Swift backend. Renaming them would break
+interoperability with the Swift API.
+
+Routes that reference the constants symbolically (for example
+`setHeader(OpenstackConstants.OPERATION, ...)`) continue to work without
+changes. Routes that set the header by its literal string value (for example
+`setHeader("operation", ...)`) must be updated to use the new value
+(`setHeader("CamelOpenstackOperation", ...)`).
+
+The generated Endpoint DSL header accessors on each component's
+`HeaderNameBuilder` are renamed accordingly (`operation()` ->
+`openstackOperation()`, `password()` -> `openstackKeystonePassword()`,
+`adminPassword()` -> `openstackNovaAdminPassword()`, etc.).
+
 == Upgrading from 4.14.5 to 4.14.6
 
 === camel-platform-http-main

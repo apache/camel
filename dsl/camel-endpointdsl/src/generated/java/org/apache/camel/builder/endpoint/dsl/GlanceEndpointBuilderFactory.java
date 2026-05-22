@@ -296,10 +296,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code diskFormat}.
+         * @return the name of the header {@code OpenstackGlanceDiskFormat}.
          */
-        public String diskFormat() {
-            return "diskFormat";
+        public String openstackGlanceDiskFormat() {
+            return "CamelOpenstackGlanceDiskFormat";
         }
         /**
          * Size of RAM.
@@ -309,10 +309,11 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code containerFormat}.
+         * @return the name of the header {@code
+         * OpenstackGlanceContainerFormat}.
          */
-        public String containerFormat() {
-            return "containerFormat";
+        public String openstackGlanceContainerFormat() {
+            return "CamelOpenstackGlanceContainerFormat";
         }
         /**
          * Image owner.
@@ -321,10 +322,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code owner}.
+         * @return the name of the header {@code OpenstackGlanceOwner}.
          */
-        public String owner() {
-            return "owner";
+        public String openstackGlanceOwner() {
+            return "CamelOpenstackGlanceOwner";
         }
         /**
          * Is public.
@@ -333,10 +334,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code isPublic}.
+         * @return the name of the header {@code OpenstackGlanceIsPublic}.
          */
-        public String isPublic() {
-            return "isPublic";
+        public String openstackGlanceIsPublic() {
+            return "CamelOpenstackGlanceIsPublic";
         }
         /**
          * Minimum ram.
@@ -345,10 +346,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code minRam}.
+         * @return the name of the header {@code OpenstackGlanceMinRam}.
          */
-        public String minRam() {
-            return "minRam";
+        public String openstackGlanceMinRam() {
+            return "CamelOpenstackGlanceMinRam";
         }
         /**
          * Minimum disk.
@@ -357,10 +358,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code minDisk}.
+         * @return the name of the header {@code OpenstackGlanceMinDisk}.
          */
-        public String minDisk() {
-            return "minDisk";
+        public String openstackGlanceMinDisk() {
+            return "CamelOpenstackGlanceMinDisk";
         }
         /**
          * Size.
@@ -369,10 +370,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code size}.
+         * @return the name of the header {@code OpenstackGlanceSize}.
          */
-        public String size() {
-            return "size";
+        public String openstackGlanceSize() {
+            return "CamelOpenstackGlanceSize";
         }
         /**
          * Checksum.
@@ -381,10 +382,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code checksum}.
+         * @return the name of the header {@code OpenstackGlanceChecksum}.
          */
-        public String checksum() {
-            return "checksum";
+        public String openstackGlanceChecksum() {
+            return "CamelOpenstackGlanceChecksum";
         }
         /**
          * The operation to perform.
@@ -393,10 +394,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code operation}.
+         * @return the name of the header {@code OpenstackOperation}.
          */
-        public String operation() {
-            return "operation";
+        public String openstackOperation() {
+            return "CamelOpenstackOperation";
         }
         /**
          * The ID.
@@ -405,10 +406,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ID}.
+         * @return the name of the header {@code OpenstackId}.
          */
-        public String iD() {
-            return "ID";
+        public String openstackId() {
+            return "CamelOpenstackId";
         }
         /**
          * The name.
@@ -417,10 +418,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code name}.
+         * @return the name of the header {@code OpenstackName}.
          */
-        public String name() {
-            return "name";
+        public String openstackName() {
+            return "CamelOpenstackName";
         }
         /**
          * The image properties.
@@ -429,10 +430,10 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code properties}.
+         * @return the name of the header {@code OpenstackProperties}.
          */
-        public String properties() {
-            return "properties";
+        public String openstackProperties() {
+            return "CamelOpenstackProperties";
         }
     }
     static GlanceEndpointBuilder endpointBuilder(String componentName, String path) {
