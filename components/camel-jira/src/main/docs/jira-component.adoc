@@ -167,24 +167,24 @@ There are operations that requires `id` for fields such as the issue type, prior
 
 Required:
 
-* `ProjectKey`: The project key, example: CAMEL, HHH, MYP.
-* `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
-* `IssueSummary`: The summary of the issue.
+* `CamelJiraIssueProjectKey`: The project key, example: CAMEL, HHH, MYP.
+* `CamelJiraIssueTypeId` or `CamelJiraIssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
+* `CamelJiraIssueSummary`: The summary of the issue.
 
 Optional:
 
-* `IssueAssignee`: the assignee user
-* `IssueAssigneeId`: the assignee user id
-* `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
-* `IssueComponents`: A list of string with the valid component names.
-* `IssueWatchersAdd`: A list of strings with the usernames (or id) to add to the watcher list.
-* `IssueDescription`: The description of the issue.
+* `CamelJiraIssueAssignee`: the assignee user
+* `CamelJiraIssueAssigneeId`: the assignee user id
+* `CamelJiraIssuePriorityId` or `CamelJiraIssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
+* `CamelJiraIssueComponents`: A list of string with the valid component names.
+* `CamelJiraIssueWatchersAdd`: A list of strings with the usernames (or id) to add to the watcher list.
+* The exchange body is used as the issue description.
 
 === AddComment
 
 Required:
 
-* `IssueKey`: The issue key identifier.
+* `CamelJiraIssueKey`: The issue key identifier.
 * the body of the exchange is the description.
 
 === Attach
@@ -193,39 +193,39 @@ Only one file should attach per invocation.
 
 Required:
 
-* `IssueKey`: The issue key identifier.
+* `CamelJiraIssueKey`: The issue key identifier.
 * body of the exchange should be of type `File`
 
 === DeleteIssue
 
 Required:
 
-* `IssueKey`: The issue key identifier.
+* `CamelJiraIssueKey`: The issue key identifier.
 
 === TransitionIssue
 
 Required:
 
-* `IssueKey`: The issue key identifier.
-* `IssueTransitionId`: The issue transition `id`.
+* `CamelJiraIssueKey`: The issue key identifier.
+* `CamelJiraIssueTransitionId`: The issue transition `id`.
 * the body of the exchange is the description.
 
 === UpdateIssue
 
-* `IssueKey`: The issue key identifier.
-* `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
-* `IssueSummary`: The summary of the issue.
-* `IssueAssignee`: the assignee user
-* `IssueAssigneeId`: the assignee user id
-* `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
-* `IssueComponents`: A list of string with the valid component names.
-* `IssueDescription`: The description of the issue.
+* `CamelJiraIssueKey`: The issue key identifier.
+* `CamelJiraIssueTypeId` or `CamelJiraIssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
+* `CamelJiraIssueSummary`: The summary of the issue.
+* `CamelJiraIssueAssignee`: the assignee user
+* `CamelJiraIssueAssigneeId`: the assignee user id
+* `CamelJiraIssuePriorityId` or `CamelJiraIssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
+* `CamelJiraIssueComponents`: A list of string with the valid component names.
+* The exchange body is used as the issue description.
 
 === Watcher
 
-* `IssueKey`: The issue key identifier.
-* `IssueWatchersAdd`: A list of strings with the usernames (or id) to add to the watcher list.
-* `IssueWatchersRemove`: A list of strings with the usernames to remove from the watcher list.
+* `CamelJiraIssueKey`: The issue key identifier.
+* `CamelJiraIssueWatchersAdd`: A list of strings with the usernames (or id) to add to the watcher list.
+* `CamelJiraIssueWatchersRemove`: A list of strings with the usernames to remove from the watcher list.
 
 === WatchUpdates (consumer)
 
