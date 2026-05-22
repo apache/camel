@@ -809,6 +809,117 @@ directions, aligning the component with the rest of the Camel component catalog.
 `Camel`-prefixed user-header names from Iggy messages can supply a custom `headerFilterStrategy`
 to restore the previous behaviour.
 
+=== camel-web3j
+
+The Exchange header constants in `Web3jConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `Web3jConstants.ID` | `ID` | `CamelWeb3jId`
+| `Web3jConstants.OPERATION` | `OPERATION` | `CamelWeb3jOperation`
+| `Web3jConstants.AT_BLOCK` | `AT_BLOCK` | `CamelWeb3jAtBlock`
+| `Web3jConstants.ADDRESS` | `ADDRESS` | `CamelWeb3jAddress`
+| `Web3jConstants.ADDRESSES` | `ADDRESSES` | `CamelWeb3jAddresses`
+| `Web3jConstants.FROM_ADDRESS` | `FROM_ADDRESS` | `CamelWeb3jFromAddress`
+| `Web3jConstants.TO_ADDRESS` | `TO_ADDRESS` | `CamelWeb3jToAddress`
+| `Web3jConstants.POSITION` | `POSITION` | `CamelWeb3jPosition`
+| `Web3jConstants.BLOCK_HASH` | `BLOCK_HASH` | `CamelWeb3jBlockHash`
+| `Web3jConstants.TRANSACTION_HASH` | `TRANSACTION_HASH` | `CamelWeb3jTransactionHash`
+| `Web3jConstants.SHA3_HASH_OF_DATA_TO_SIGN` | `SHA3_HASH_OF_DATA_TO_SIGN` | `CamelWeb3jSha3HashOfDataToSign`
+| `Web3jConstants.SIGNED_TRANSACTION_DATA` | `SIGNED_TRANSACTION_DATA` | `CamelWeb3jSignedTransactionData`
+| `Web3jConstants.FULL_TRANSACTION_OBJECTS` | `FULL_TRANSACTION_OBJECTS` | `CamelWeb3jFullTransactionObjects`
+| `Web3jConstants.INDEX` | `INDEX` | `CamelWeb3jIndex`
+| `Web3jConstants.SOURCE_CODE` | `SOURCE_CODE` | `CamelWeb3jSourceCode`
+| `Web3jConstants.FILTER_ID` | `FILTER_ID` | `CamelWeb3jFilterId`
+| `Web3jConstants.DATABASE_NAME` | `DATABASE_NAME` | `CamelWeb3jDatabaseName`
+| `Web3jConstants.KEY_NAME` | `KEY_NAME` | `CamelWeb3jKeyName`
+| `Web3jConstants.NONCE` | `NONCE` | `CamelWeb3jNonce`
+| `Web3jConstants.HEADER_POW_HASH` | `HEADER_POW_HASH` | `CamelWeb3jHeaderPowHash`
+| `Web3jConstants.MIX_DIGEST` | `MIX_DIGEST` | `CamelWeb3jMixDigest`
+| `Web3jConstants.CLIENT_ID` | `CLIENT_ID` | `CamelWeb3jClientId`
+| `Web3jConstants.GAS_PRICE` | `GAS_PRICE` | `CamelWeb3jGasPrice`
+| `Web3jConstants.GAS_LIMIT` | `GAS_LIMIT` | `CamelWeb3jGasLimit`
+| `Web3jConstants.VALUE` | `VALUE` | `CamelWeb3jValue`
+| `Web3jConstants.DATA` | `DATA` | `CamelWeb3jData`
+| `Web3jConstants.FROM_BLOCK` | `FROM_BLOCK` | `CamelWeb3jFromBlock`
+| `Web3jConstants.TO_BLOCK` | `TO_BLOCK` | `CamelWeb3jToBlock`
+| `Web3jConstants.TOPICS` | `TOPICS` | `CamelWeb3jTopics`
+| `Web3jConstants.PRIORITY` | `PRIORITY` | `CamelWeb3jPriority`
+| `Web3jConstants.TTL` | `TTL` | `CamelWeb3jTtl`
+| `Web3jConstants.PRIVATE_FOR` | `PRIVATE_FOR` | `CamelWeb3jPrivateFor`
+| `Web3jConstants.PRIVATE_FROM` | `PRIVATE_FROM` | `CamelWeb3jPrivateFrom`
+| `Web3jConstants.ERROR_CODE` | `ERROR_CODE` | `CamelWeb3jErrorCode`
+| `Web3jConstants.ERROR_DATA` | `ERROR_DATA` | `CamelWeb3jErrorData`
+| `Web3jConstants.ERROR_MESSAGE` | `ERROR_MESSAGE` | `CamelWeb3jErrorMessage`
+| `Web3jConstants.HEADER_STATUS` | `status` | `CamelWeb3jStatus`
+| `Web3jConstants.HEADER_OPERATION` | `operation` | `CamelWeb3jHeaderOperation`
+| `Web3jConstants.ETH_HASHRATE` | `ETH_HASHRATE` | `CamelWeb3jEthHashrate`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(Web3jConstants.FROM_ADDRESS, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("FROM_ADDRESS", ...)`) must be updated to use the new value
+(`setHeader("CamelWeb3jFromAddress", ...)`).
+
+The `Web3jConstants.ETH_HASHRATE` constant is dual-purpose: it is both the
+`CamelWeb3jOperation` value that dispatches the `ethHashrate` RPC and the header
+name read by the `ETH_SUBMIT_HASHRATE` operation. Routes that referenced the
+literal string `"ETH_HASHRATE"` (in either role) must be updated to
+`"CamelWeb3jEthHashrate"`. Routes using the symbolic constant reference are
+unaffected. The other producer-dispatch operation identifiers (`WEB3_CLIENT_VERSION`,
+`ETH_GAS_PRICE`, `ETH_SEND_TRANSACTION`, ...) keep their previous string values
+because they are operation enum values rather than Exchange header names.
+
+As a consequence, the generated Endpoint DSL header accessors on
+`Web3jHeaderNameBuilder` have been renamed accordingly:
+
+* `iD()` -> `web3jId()`
+* `atBlock()` -> `web3jAtBlock()`
+* `aDDRESS()` -> `web3jAddress()`
+* `aDDRESSES()` -> `web3jAddresses()`
+* `fromAddress()` -> `web3jFromAddress()`
+* `toAddress()` -> `web3jToAddress()`
+* `pOSITION()` -> `web3jPosition()`
+* `blockHash()` -> `web3jBlockHash()`
+* `transactionHash()` -> `web3jTransactionHash()`
+* `sha3HashOfDataToSign()` -> `web3jSha3HashOfDataToSign()`
+* `signedTransactionData()` -> `web3jSignedTransactionData()`
+* `fullTransactionObjects()` -> `web3jFullTransactionObjects()`
+* `iNDEX()` -> `web3jIndex()`
+* `sourceCode()` -> `web3jSourceCode()`
+* `filterId()` -> `web3jFilterId()`
+* `databaseName()` -> `web3jDatabaseName()`
+* `keyName()` -> `web3jKeyName()`
+* `nONCE()` -> `web3jNonce()`
+* `headerPowHash()` -> `web3jHeaderPowHash()`
+* `mixDigest()` -> `web3jMixDigest()`
+* `clientId()` -> `web3jClientId()`
+* `gasPrice()` -> `web3jGasPrice()`
+* `gasLimit()` -> `web3jGasLimit()`
+* `vALUE()` -> `web3jValue()`
+* `dATA()` -> `web3jData()`
+* `fromBlock()` -> `web3jFromBlock()`
+* `toBlock()` -> `web3jToBlock()`
+* `tOPICS()` -> `web3jTopics()`
+* `pRIORITY()` -> `web3jPriority()`
+* `tTL()` -> `web3jTtl()`
+* `privateFor()` -> `web3jPrivateFor()`
+* `privateFrom()` -> `web3jPrivateFrom()`
+* `errorCode()` -> `web3jErrorCode()`
+* `errorData()` -> `web3jErrorData()`
+* `errorMessage()` -> `web3jErrorMessage()`
+* `status()` -> `web3jStatus()`
+* `operation()` -> `web3jHeaderOperation()`
+* `ethHashrate()` -> `web3jEthHashrate()`
+
+A new accessor `web3jOperation()` is also generated for `Web3jConstants.OPERATION`
+(the producer dispatch header). This constant did not appear in the catalog
+previously, so no DSL accessor renaming applies to it.
+
 === Jackson dataformat documentation pages renamed
 
 The Jackson 2.x and Jackson 3.x lines ship the same dataformat names (`jackson`, `jacksonXml`,
