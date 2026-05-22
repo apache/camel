@@ -51,7 +51,7 @@ public class DnsIpHeaderTransferTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(0);
 
         Exception e = assertThrows(Exception.class, () -> {
-            template.sendBodyAndHeader("hello", "dns.domain", null);
+            template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, null);
         });
         assertTrue(e.getCause() instanceof IllegalArgumentException);
         resultEndpoint.assertIsSatisfied();
@@ -62,7 +62,7 @@ public class DnsIpHeaderTransferTest extends CamelTestSupport {
         resultEndpoint.expectedMessageCount(0);
 
         Exception e = assertThrows(Exception.class, () -> {
-            template.sendBodyAndHeader("hello", "dns.domain", "");
+            template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, "");
         });
         assertTrue(e.getCause() instanceof IllegalArgumentException);
         resultEndpoint.assertIsSatisfied();
@@ -76,7 +76,7 @@ public class DnsIpHeaderTransferTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived("40.79.78.1");
         resultEndpoint.expectedHeaderReceived("foo", "bar");
 
-        template.sendBodyAndHeader("hello", "dns.domain", "www.apache.org");
+        template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, "www.apache.org");
         resultEndpoint.assertIsSatisfied();
     }
 }

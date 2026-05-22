@@ -66,8 +66,8 @@ public class DnsDigEndpointSpringTest extends CamelSpringTestSupport {
             }
         });
         Map<String, Object> headers = new HashMap<>();
-        headers.put("dns.name", "monkey.wp.dg.cx");
-        headers.put("dns.type", "TXT");
+        headers.put(DnsConstants.DNS_NAME, "monkey.wp.dg.cx");
+        headers.put(DnsConstants.DNS_TYPE, "TXT");
         template.sendBodyAndHeaders(null, headers);
         resultEndpoint.assertIsSatisfied();
     }
