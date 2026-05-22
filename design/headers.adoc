@@ -1,0 +1,222 @@
+---
+title: Exchange header naming conventions
+authors:
+  - "@oscerd"
+  - "@gnodet"
+reviewers: []
+approvers: []
+creation-date: 2026-05-22
+last-updated: 2026-05-22
+status: implementable
+see-also: []
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+This document defines the naming conventions for Apache Camel Exchange headers.
+All component headers must follow these rules so that header names are
+predictable, self-documenting, and compatible with the framework's
+`HeaderFilterStrategy` security mechanism.
+
+== Motivation
+
+Camel has 300+ components, many contributed independently over 15+ years.
+Without a written standard, header string values drifted into at least four
+different styles: `dns.name`, `QUERY`, `operationName`, `kafka.PARTITION_KEY`.
+This inconsistency causes:
+
+* Confusion for users who must memorize per-component formats.
+* Security gaps: `DefaultHeaderFilterStrategy` strips `Camel*` headers
+  case-insensitively. Headers that don't use the `Camel` prefix bypass this
+  filter, which matters when untrusted input flows through the Exchange
+  (see link:security.adoc[]).
+* Tooling friction: code generators, catalog introspection, and IDE completion
+  work best when header names follow a single predictable pattern.
+
+== Convention
+
+=== Header string values
+
+Every component-owned Exchange header string value MUST follow:
+
+----
+"Camel" + ComponentName + Feature
+----
+
+All segments are PascalCase, concatenated without separators.
+
+[cols="1,1,1", options="header"]
+|===
+| Component | Java constant | String value
+
+| camel-kafka
+| `KafkaConstants.TOPIC`
+| `CamelKafkaTopic`
+
+| camel-file
+| `FileConstants.FILE_NAME`
+| `CamelFileName`
+
+| camel-jira
+| `JiraConstants.ISSUE_KEY`
+| `CamelJiraIssueKey`
+
+| camel-pdf
+| `PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME`
+| `CamelPdfDocument`
+|===
+
+*ComponentName* is the PascalCase form of the Camel component scheme
+(e.g., `kafka` -> `Kafka`, `elasticsearch` -> `Elasticsearch`,
+`aws2-s3` -> `Aws2S3`).
+
+=== Core framework headers
+
+Headers defined in `org.apache.camel.Exchange` use the `Camel` prefix directly
+(no component name), because they are framework-wide:
+
+----
+CamelFileName, CamelHttpResponseCode, CamelBatchSize, ...
+----
+
+=== Java constant names
+
+Java constant field names use `UPPER_SNAKE_CASE`:
+
+[source,java]
+----
+public static final String ISSUE_KEY = "CamelJiraIssueKey";
+----
+
+The constant name describes the concept; the string value encodes the
+component namespace.
+
+=== Constants class
+
+Each component declares its header constants in a dedicated class:
+
+----
+<ComponentName>Constants.java
+----
+
+located in the component's main package
+(`org.apache.camel.component.<name>`).
+
+Each constant MUST carry an `@Metadata` annotation:
+
+[source,java]
+----
+@Metadata(description = "The issue key", javaType = "String")
+public static final String ISSUE_KEY = "CamelJiraIssueKey";
+----
+
+The `@Metadata` annotation drives automatic documentation generation (component
+doc pages, catalog JSON, Endpoint DSL).
+
+=== Header prefix constants
+
+Some components use prefix-based headers (e.g., `CamelSolrField.title`,
+`CamelSolrParam.rows`). The prefix constant follows the same convention:
+
+[source,java]
+----
+public static final String HEADER_FIELD_PREFIX = "CamelSolrField.";
+----
+
+=== Protocol and standard headers
+
+Headers that are part of an external wire protocol or standard (HTTP headers,
+JMS properties, Swift API headers, etc.) are *exempt* from the `Camel` prefix
+rule. They use the standard's own name because the framework passes them
+through to the underlying transport.
+
+Examples:
+
+* Swift: `X-Container-Meta-`, `X-Versions-Location`
+* HTTP: `Content-Type`, `Accept`
+* JMS: standard JMS property names
+
+When a component has both Camel-convention headers and protocol pass-through
+headers, document the distinction clearly (see `camel-openstack` Swift
+constants for an example).
+
+=== Exchange properties
+
+Exchange *properties* (set via `Exchange.setProperty()`) are internal to the
+route and are NOT visible to `HeaderFilterStrategy`. They do not require the
+`Camel` prefix, though many core properties use it by convention.
+
+== Security interaction
+
+The `Camel*` prefix is not just cosmetic. `DefaultHeaderFilterStrategy`
+strips headers matching `Camel*` and `org.apache.camel.*` case-insensitively
+from inbound messages. This prevents untrusted external senders from injecting
+Camel-internal routing directives.
+
+When a component header does *not* use the `Camel` prefix, it bypasses this
+security filter entirely. This is why aligning all component headers to the
+`Camel*` namespace is both a consistency improvement and a security hardening
+measure.
+
+See the link:security.adoc[] design document and the
+xref:ROOT:security-model.adoc[] for the full threat model.
+
+== Renaming existing headers
+
+When renaming a non-conforming header to follow this convention:
+
+=== What to change
+
+1. Update the string value in the constants class.
+2. Regenerate all downstream artifacts:
+   - `mvn install -pl <module> -DskipTests`
+   - `mvn install -pl catalog/camel-catalog -DskipTests`
+   - `mvn generate-sources -pl dsl/camel-endpointdsl -DskipTests`
+   - `mvn generate-sources -pl dsl/camel-componentdsl -DskipTests`
+3. Update documentation (`.adoc` files, Javadoc) to reference the new names.
+4. Update tests to use the Java constants (not literal strings).
+
+=== Upgrade guide
+
+Every header rename is a breaking change and MUST be documented in the upgrade
+guide (`docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_XX.adoc`):
+
+* List every old value -> new value.
+* Note which Endpoint DSL method names changed.
+* State that code using the Java constants is unaffected.
+* Warn that code using literal string header names must be updated.
+
+=== Backward compatibility
+
+The project's current policy (as of 4.21) is a *hard break* with no deprecated
+aliases. The Java constant names stay the same, so code using constants compiles
+and works without changes. But code using literal header strings (XML/YAML
+routes, Simple expressions, tests with hardcoded strings) will silently stop
+matching.
+
+This trade-off favors a clean, consistent header namespace over a gradual
+migration. The upgrade guide is the primary migration aid.
+
+=== Backport policy
+
+When a header rename is backported to a maintenance branch (e.g.,
+`camel-4.18.x`, `camel-4.14.x`):
+
+* Add an upgrade guide entry on the maintenance branch.
+* Also add the corresponding entry on `main` to keep the version-specific
+  upgrade guides in sync (see backport upgrade-guide policy in the project
+  contribution guidelines).
+
+== Scope
+
+This convention applies to:
+
+* All new components (mandatory).
+* Existing components when headers are modified for any reason (opportunistic
+  alignment).
+* Dedicated alignment PRs (the ongoing CAMEL-2357x/CAMEL-2359x effort).
+
+Headers in core (`Exchange.java`) already follow the convention and are not
+being renamed.
