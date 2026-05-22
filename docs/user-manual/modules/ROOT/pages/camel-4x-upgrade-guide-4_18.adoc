@@ -109,7 +109,7 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
-=== camel-jgroups
+=== camel-jgroups - potential breaking change
 
 The Exchange header constants in `JGroupsConstants` have been renamed to follow
 the Camel naming convention used across the rest of the component catalog. The
@@ -124,11 +124,12 @@ Java field names are unchanged; only the header string values have changed:
 | `JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE` | `JGROUPS_ORIGINAL_MESSAGE` | `CamelJGroupsOriginalMessage`
 |===
 
-Routes that reference the constant symbolically (for example
-`setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, ...)`) continue to work
-without changes. Routes that set the header by its literal string value
-(for example `setHeader("JGROUPS_DEST", ...)`) must be updated to use the
-new value (`setHeader("CamelJGroupsDest", ...)`).
+This is a breaking change for routes that read or write these headers by
+their literal string value. Routes that reference the constant symbolically
+(for example `setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, ...)`) continue
+to work without changes. Routes that set the header by its literal string
+value (for example `setHeader("JGROUPS_DEST", ...)`) must be updated to use
+the new value (`setHeader("CamelJGroupsDest", ...)`).
 
 === camel-lucene
 
