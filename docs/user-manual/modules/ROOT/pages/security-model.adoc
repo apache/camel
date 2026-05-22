@@ -10,7 +10,7 @@ It complements two existing documents:
 
 * xref:security.adoc[Security] - the user-facing catalog of security features
   (route, payload, endpoint and configuration security, vaults, JSSE).
-* The `proposals/security.adoc` design document in the repository - the
+* The `design/security.adoc` design document in the repository - the
   annotation-driven security policy enforcement framework that detects insecure
   configuration at startup time.
 
@@ -403,7 +403,7 @@ be closed as `not a vulnerability`.
   `prod`. A report whose impact only manifests under `camel.main.profile = dev`
   or `test` is out of scope as a non-default, development-only configuration;
   the production posture against which findings are judged is the default
-  `prod` profile (see _Deployment hardening_ and the `proposals/security.adoc`
+  `prod` profile (see _Deployment hardening_ and the `design/security.adoc`
   design document for the profile-aware policy defaults).
 * *Denial of service via resource exhaustion.* Unthrottled routes, unbounded
   aggregators, an HTTP consumer with no rate limit, a JMS consumer that
@@ -522,7 +522,7 @@ vulnerabilities if skipped; all of them reduce the attack surface materially.
   opt-in to development-only behaviour (extra services, dev console, debug
   endpoints) and should not be used in production. Override individual
   categories explicitly when a deployment genuinely needs a relaxed policy.
-  See the `proposals/security.adoc` design document for details.
+  See the `design/security.adoc` design document for details.
 * *Resolve secrets through a vault.* Use one of the supported backends
   (xref:security.adoc[AWS Secrets Manager, Azure Key Vault, Google Secret
   Manager, HashiCorp Vault, IBM Secrets Manager, CyberArk Conjur]) rather than
@@ -583,7 +583,7 @@ with the security model.
   appropriate `security = "insecure:*"` attribute so the policy enforcement
   framework can warn or fail on it. The four categories are `secret`,
   `insecure:ssl`, `insecure:serialization`, `insecure:dev`. See
-  `proposals/security.adoc`.
+  `design/security.adoc`.
 * *Does the component persist state?* Aggregation repositories, idempotent
   repositories and similar must not call `ObjectInputStream.readObject()`
   without an `ObjectInputFilter`; the project has accepted five sequential
@@ -623,7 +623,7 @@ reference to this document.
   payload, endpoint, configuration security, vaults).
 * xref:camel-configuration-utilities.adoc[Camel Configuration Utilities] -
   JSSE Utility for SSL/TLS configuration.
-* `proposals/security.adoc` (in the source tree) - design document for the
+* `design/security.adoc` (in the source tree) - design document for the
   security policy enforcement framework.
 * link:/security/[Apache Camel Security] - the public
   advisory index and reporting process.
