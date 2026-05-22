@@ -311,10 +311,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: flavor server
          * 
-         * @return the name of the header {@code FlavorId}.
+         * @return the name of the header {@code OpenstackNovaFlavorId}.
          */
-        public String flavorId() {
-            return "FlavorId";
+        public String openstackNovaFlavorId() {
+            return "CamelOpenstackNovaFlavorId";
         }
         /**
          * Size of RAM.
@@ -323,10 +323,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: flavor
          * 
-         * @return the name of the header {@code RAM}.
+         * @return the name of the header {@code OpenstackNovaRam}.
          */
-        public String rAM() {
-            return "RAM";
+        public String openstackNovaRam() {
+            return "CamelOpenstackNovaRam";
         }
         /**
          * The number of flavor VCPU.
@@ -335,10 +335,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: flavor
          * 
-         * @return the name of the header {@code VCPU}.
+         * @return the name of the header {@code OpenstackNovaVcpu}.
          */
-        public String vCPU() {
-            return "VCPU";
+        public String openstackNovaVcpu() {
+            return "CamelOpenstackNovaVcpu";
         }
         /**
          * Size of disk.
@@ -347,10 +347,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: flavor
          * 
-         * @return the name of the header {@code disk}.
+         * @return the name of the header {@code OpenstackNovaDisk}.
          */
-        public String disk() {
-            return "disk";
+        public String openstackNovaDisk() {
+            return "CamelOpenstackNovaDisk";
         }
         /**
          * Size of swap.
@@ -359,10 +359,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: flavor
          * 
-         * @return the name of the header {@code swap}.
+         * @return the name of the header {@code OpenstackNovaSwap}.
          */
-        public String swap() {
-            return "swap";
+        public String openstackNovaSwap() {
+            return "CamelOpenstackNovaSwap";
         }
         /**
          * Rxtx Factor.
@@ -371,10 +371,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: flavor
          * 
-         * @return the name of the header {@code rxtxFactor}.
+         * @return the name of the header {@code OpenstackNovaRxtxFactor}.
          */
-        public String rxtxFactor() {
-            return "rxtxFactor";
+        public String openstackNovaRxtxFactor() {
+            return "CamelOpenstackNovaRxtxFactor";
         }
         /**
          * Admin password of the new server.
@@ -383,10 +383,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: server
          * 
-         * @return the name of the header {@code AdminPassword}.
+         * @return the name of the header {@code OpenstackNovaAdminPassword}.
          */
-        public String adminPassword() {
-            return "AdminPassword";
+        public String openstackNovaAdminPassword() {
+            return "CamelOpenstackNovaAdminPassword";
         }
         /**
          * The Image ID.
@@ -395,10 +395,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: server
          * 
-         * @return the name of the header {@code ImageId}.
+         * @return the name of the header {@code OpenstackNovaImageId}.
          */
-        public String imageId() {
-            return "ImageId";
+        public String openstackNovaImageId() {
+            return "CamelOpenstackNovaImageId";
         }
         /**
          * The Keypair name.
@@ -407,10 +407,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: server
          * 
-         * @return the name of the header {@code KeypairName}.
+         * @return the name of the header {@code OpenstackNovaKeypairName}.
          */
-        public String keypairName() {
-            return "KeypairName";
+        public String openstackNovaKeypairName() {
+            return "CamelOpenstackNovaKeypairName";
         }
         /**
          * The list of networks (by id).
@@ -419,10 +419,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: server
          * 
-         * @return the name of the header {@code NetworkId}.
+         * @return the name of the header {@code OpenstackNovaNetworkId}.
          */
-        public String networkId() {
-            return "NetworkId";
+        public String openstackNovaNetworkId() {
+            return "CamelOpenstackNovaNetworkId";
         }
         /**
          * An action to perform.
@@ -431,10 +431,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: server
          * 
-         * @return the name of the header {@code action}.
+         * @return the name of the header {@code OpenstackNovaAction}.
          */
-        public String action() {
-            return "action";
+        public String openstackNovaAction() {
+            return "CamelOpenstackNovaAction";
         }
         /**
          * The operation to perform.
@@ -443,10 +443,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code operation}.
+         * @return the name of the header {@code OpenstackOperation}.
          */
-        public String operation() {
-            return "operation";
+        public String openstackOperation() {
+            return "CamelOpenstackOperation";
         }
         /**
          * The ID.
@@ -455,10 +455,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ID}.
+         * @return the name of the header {@code OpenstackId}.
          */
-        public String iD() {
-            return "ID";
+        public String openstackId() {
+            return "CamelOpenstackId";
         }
         /**
          * The name.
@@ -467,10 +467,10 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code name}.
+         * @return the name of the header {@code OpenstackName}.
          */
-        public String name() {
-            return "name";
+        public String openstackName() {
+            return "CamelOpenstackName";
         }
     }
     static NovaEndpointBuilder endpointBuilder(String componentName, String path) {

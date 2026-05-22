@@ -26,21 +26,21 @@ public final class CinderConstants extends OpenstackConstants {
 
     //volumes
     @Metadata(label = "volume", description = "Size of volume.", javaType = "Integer")
-    public static final String SIZE = "size";
+    public static final String SIZE = "CamelOpenstackCinderSize";
     @Metadata(label = "volume", description = "Volume type.", javaType = "String")
-    public static final String VOLUME_TYPE = "volumeType";
+    public static final String VOLUME_TYPE = "CamelOpenstackCinderVolumeType";
     @Metadata(label = "volume", description = "ID of image.", javaType = "String")
-    public static final String IMAGE_REF = "imageRef";
+    public static final String IMAGE_REF = "CamelOpenstackCinderImageRef";
     @Metadata(label = "volume", description = "ID of snapshot.", javaType = "String")
-    public static final String SNAPSHOT_ID = "snapshotId";
+    public static final String SNAPSHOT_ID = "CamelOpenstackCinderSnapshotId";
     @Metadata(label = "volume", description = "Is bootable.", javaType = "Boolean")
-    public static final String IS_BOOTABLE = "isBootable";
+    public static final String IS_BOOTABLE = "CamelOpenstackCinderIsBootable";
 
     //volumeSnapshots
     @Metadata(label = "snapshot", description = "The Volume ID.", javaType = "String")
-    public static final String VOLUME_ID = "volumeId";
+    public static final String VOLUME_ID = "CamelOpenstackCinderVolumeId";
     @Metadata(label = "snapshot", description = "Force.", javaType = "Boolean")
-    public static final String FORCE = "force";
+    public static final String FORCE = "CamelOpenstackCinderForce";
 
     public static final String GET_ALL_TYPES = "getAllTypes";
 

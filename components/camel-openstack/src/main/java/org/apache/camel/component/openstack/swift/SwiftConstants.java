@@ -26,10 +26,15 @@ public final class SwiftConstants extends OpenstackConstants {
     public static final String SWIFT_SUBSYSTEM_CONTAINERS = "containers";
 
     @Metadata(label = "object container", description = "The container name.", javaType = "String")
-    public static final String CONTAINER_NAME = "containerName";
+    public static final String CONTAINER_NAME = "CamelOpenstackSwiftContainerName";
     @Metadata(label = "object", description = "The object name.", javaType = "String")
-    public static final String OBJECT_NAME = "objectName";
+    public static final String OBJECT_NAME = "CamelOpenstackSwiftObjectName";
 
+    // The following four constants intentionally keep the openstack4j-defined values
+    // (X-Container-Meta-, X-Versions-Location, X-Container-Read, X-Container-Write)
+    // because they are part of the Swift HTTP protocol contract used by openstack4j
+    // to forward metadata and ACL headers to the Swift backend. Renaming them would
+    // break interoperability with the Swift API.
     @Metadata(label = "container", description = "Container metadata prefix.", javaType = "Map<String, String>")
     public static final String CONTAINER_METADATA_PREFIX = SwiftHeaders.CONTAINER_METADATA_PREFIX;
     @Metadata(label = "container", description = "Versions location.", javaType = "String")
@@ -40,15 +45,15 @@ public final class SwiftConstants extends OpenstackConstants {
     public static final String CONTAINER_WRITE = SwiftHeaders.CONTAINER_WRITE;
 
     @Metadata(label = "container", description = "List options - limit.", javaType = "Integer")
-    public static final String LIMIT = "limit";
+    public static final String LIMIT = "CamelOpenstackSwiftLimit";
     @Metadata(label = "container", description = "List options - marker.", javaType = "String")
-    public static final String MARKER = "marker";
+    public static final String MARKER = "CamelOpenstackSwiftMarker";
     @Metadata(label = "container", description = "List options - end marker.", javaType = "String")
-    public static final String END_MARKER = "end_marker";
+    public static final String END_MARKER = "CamelOpenstackSwiftEndMarker";
     @Metadata(label = "container", description = "List options - delimiter.", javaType = "Character")
-    public static final String DELIMITER = "delimiter";
+    public static final String DELIMITER = "CamelOpenstackSwiftDelimiter";
     @Metadata(label = "container object", description = "The path.", javaType = "String")
-    public static final String PATH = "path";
+    public static final String PATH = "CamelOpenstackSwiftPath";
 
     public static final String GET_METADATA = "getMetadata";
     public static final String CREATE_UPDATE_METADATA = "createUpdateMetadata";
