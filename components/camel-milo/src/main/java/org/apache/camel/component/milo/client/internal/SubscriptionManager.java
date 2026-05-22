@@ -601,6 +601,20 @@ public class SubscriptionManager {
         connect();
     }
 
+    /**
+     * Returns the milo {@link OpcUaClient} of the currently established connection, if any.
+     *
+     * @return the active client, or {@code null} if there is no current connection
+     */
+    public OpcUaClient getOpcUaClient() {
+        lock.lock();
+        try {
+            return this.connected != null ? this.connected.client : null;
+        } finally {
+            lock.unlock();
+        }
+    }
+
     private void handleConnectionFailure(final Throwable e) {
         lock.lock();
         try {
