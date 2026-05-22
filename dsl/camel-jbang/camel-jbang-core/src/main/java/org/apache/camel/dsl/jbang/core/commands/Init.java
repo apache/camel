@@ -34,6 +34,7 @@ import java.util.StringJoiner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.github.GistResourceResolver;
@@ -43,6 +44,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.io.IOUtils;
+import org.jline.terminal.Terminal;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -106,7 +108,7 @@ public class Init extends CamelCommand {
         }
         if (file == null) {
             // try interactive picker if running in a TTY and not in CI
-            if (System.console() != null && System.getenv("CI") == null) {
+            if (EnvironmentHelper.isInteractiveTerminal()) {
                 return interactivePicker();
             }
             printer().printErr("Missing required parameter: <file>");
@@ -309,7 +311,9 @@ public class Init extends CamelCommand {
         pipeTemplates.add(new String[] { "init-pipe.yaml", "Pipe CR (source to sink)", ".yaml" });
         categories.put("Pipes and CRs", pipeTemplates);
 
-        Scanner scanner = new Scanner(System.in);
+        Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
+        InputStream scannerInput = activeTerminal != null ? activeTerminal.input() : System.in;
+        Scanner scanner = new Scanner(scannerInput);
 
         // Step 1: Pick a category
         printer().println("Select a template category:");
