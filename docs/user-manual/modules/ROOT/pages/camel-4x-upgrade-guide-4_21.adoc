@@ -720,7 +720,7 @@ to work without changes. Routes that set the header by its literal string value
 (for example `setHeader("JGROUPSRAFT_SET_TIMEOUT", ...)`) must be updated to
 use the new value (`setHeader("CamelJGroupsRaftSetTimeout", ...)`).
 
-=== camel-jira
+=== camel-jira - potential breaking change
 
 The Exchange header constants in `JiraConstants` have been renamed to follow the
 Camel naming convention used across the rest of the component catalog. The Java
