@@ -27,6 +27,7 @@ import org.apache.camel.language.simple.functions.CollectionFunctionFactory;
 import org.apache.camel.language.simple.functions.HeaderFunctionFactory;
 import org.apache.camel.language.simple.functions.JoinFunctionFactory;
 import org.apache.camel.language.simple.functions.MathFunctionFactory;
+import org.apache.camel.language.simple.functions.MiscFunctionFactory;
 import org.apache.camel.language.simple.functions.RandomFunctionFactory;
 import org.apache.camel.language.simple.functions.SkipFunctionFactory;
 import org.apache.camel.language.simple.functions.StringFunctionFactory;
@@ -63,7 +64,8 @@ public final class SimpleFunctionDispatcher {
             new JoinFunctionFactory(),
             new MathFunctionFactory(),
             new StringFunctionFactory(),
-            new CollectionFunctionFactory());
+            new CollectionFunctionFactory(),
+            new MiscFunctionFactory());
 
     private static final List<Entry> EXPRESSION_ENTRIES = List.of(
             new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),
