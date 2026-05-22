@@ -41,15 +41,15 @@ public final class GridFsConstants {
     public static final String GRIDFS_FILE_KEY_UPLOAD_DATE = "uploadDate";
     public static final String PERSISTENT_TIMESTAMP_KEY = "timestamp";
     @Metadata(description = "Any additional metadata stored along with the file in JSON format.", javaType = "String")
-    public static final String GRIDFS_METADATA = "gridfs.metadata";
+    public static final String GRIDFS_METADATA = "CamelGridFsMetadata";
     @Metadata(label = "producer", description = "The operation to perform.", javaType = "String")
-    public static final String GRIDFS_OPERATION = "gridfs.operation";
+    public static final String GRIDFS_OPERATION = "CamelGridFsOperation";
     @Metadata(label = "producer", description = "The number of bytes per chunk for the uploaded file.", javaType = "Integer")
-    public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
+    public static final String GRIDFS_CHUNKSIZE = "CamelGridFsChunkSize";
     @Metadata(label = "producer", description = "The ObjectId of the file produced", javaType = "org.bson.types.ObjectId")
-    public static final String GRIDFS_FILE_ID_PRODUCED = "gridfs.fileid";
+    public static final String GRIDFS_FILE_ID_PRODUCED = "CamelGridFsFileId";
     @Metadata(label = "producer", description = "The ObjectId of the file.", javaType = "org.bson.types.ObjectId")
-    public static final String GRIDFS_OBJECT_ID = "gridfs.objectid";
+    public static final String GRIDFS_OBJECT_ID = "CamelGridFsObjectId";
 
     private GridFsConstants() {
     }
