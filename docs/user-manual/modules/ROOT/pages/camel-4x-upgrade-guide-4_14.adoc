@@ -368,7 +368,7 @@ component with the rest of the Camel component catalog. Routes that relied on re
 header names on inbound SNS messages can supply a custom `headerFilterStrategy` to restore the
 previous behaviour.
 
-=== camel-cxf
+=== camel-cxf - potential breaking change
 
 The Exchange header constants in `CxfConstants` (module `camel-cxf-common`, shared
 by `camel-cxf` and `camel-cxfrs`) have been renamed to follow the Camel naming
