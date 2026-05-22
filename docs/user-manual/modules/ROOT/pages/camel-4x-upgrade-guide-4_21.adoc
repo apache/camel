@@ -1090,6 +1090,63 @@ As a consequence, the generated Endpoint DSL header accessors on
 * `decryptionMaterial()` -> `pdfDecryptionMaterial()`
 * `filesToMerge()` -> `pdfFilesToMerge()`
 
+=== camel-elasticsearch / camel-opensearch
+
+The Exchange header constants in `ElasticsearchConstants` and
+`OpensearchConstants` have been renamed to follow the Camel naming convention
+used across the rest of the component catalog. The Java field names are
+unchanged; only the header string values have changed.
+
+`ElasticsearchConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ElasticsearchConstants.PARAM_OPERATION` | `operation` | `CamelElasticsearchOperation`
+| `ElasticsearchConstants.PARAM_INDEX_ID` | `indexId` | `CamelElasticsearchIndexId`
+| `ElasticsearchConstants.PARAM_INDEX_NAME` | `indexName` | `CamelElasticsearchIndexName`
+| `ElasticsearchConstants.PARAM_DOCUMENT_CLASS` | `documentClass` | `CamelElasticsearchDocumentClass`
+| `ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS` | `waitForActiveShards` | `CamelElasticsearchWaitForActiveShards`
+| `ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS` | `scrollKeepAliveMs` | `CamelElasticsearchScrollKeepAliveMs`
+| `ElasticsearchConstants.PARAM_SCROLL` | `useScroll` | `CamelElasticsearchUseScroll`
+| `ElasticsearchConstants.PARAM_SIZE` | `size` | `CamelElasticsearchSize`
+| `ElasticsearchConstants.PARAM_FROM` | `from` | `CamelElasticsearchFrom`
+| `ElasticsearchConstants.PARAM_DOCUMENT_MODE` | `enableDocumentOnlyMode` | `CamelElasticsearchEnableDocumentOnlyMode`
+|===
+
+`OpensearchConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `OpensearchConstants.PARAM_OPERATION` | `operation` | `CamelOpensearchOperation`
+| `OpensearchConstants.PARAM_INDEX_ID` | `indexId` | `CamelOpensearchIndexId`
+| `OpensearchConstants.PARAM_INDEX_NAME` | `indexName` | `CamelOpensearchIndexName`
+| `OpensearchConstants.PARAM_DOCUMENT_CLASS` | `documentClass` | `CamelOpensearchDocumentClass`
+| `OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS` | `waitForActiveShards` | `CamelOpensearchWaitForActiveShards`
+| `OpensearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS` | `scrollKeepAliveMs` | `CamelOpensearchScrollKeepAliveMs`
+| `OpensearchConstants.PARAM_SCROLL` | `useScroll` | `CamelOpensearchUseScroll`
+| `OpensearchConstants.PARAM_SIZE` | `size` | `CamelOpensearchSize`
+| `OpensearchConstants.PARAM_FROM` | `from` | `CamelOpensearchFrom`
+|===
+
+`ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT` and
+`OpensearchConstants.PROPERTY_SCROLL_OPENSEARCH_QUERY_COUNT` were already
+`Camel`-prefixed (`CamelElasticsearchScrollQueryCount` /
+`CamelOpenSearchScrollQueryCount`) and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, ...)`) continue to work
+without changes. Routes that set the header by its literal string value
+(for example `setHeader("indexName", ...)`) must be updated to use the
+new value (`setHeader("CamelElasticsearchIndexName", ...)`).
+
+The generated Endpoint DSL header accessors on
+`ElasticsearchHeaderNameBuilder` and `OpensearchHeaderNameBuilder` have
+been renamed accordingly (`operation()` -> `elasticsearchOperation()` /
+`opensearchOperation()`, `indexId()` -> `elasticsearchIndexId()` /
+`opensearchIndexId()`, etc.).
+
 === Jackson dataformat documentation pages renamed
 
 The Jackson 2.x and Jackson 3.x lines ship the same dataformat names (`jackson`, `jacksonXml`,
