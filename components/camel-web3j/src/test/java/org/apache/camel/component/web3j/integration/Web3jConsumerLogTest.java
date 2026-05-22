@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.web3j.Web3jConstants.ETH_LOG_OBSERVABLE;
-import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 
 @Disabled("Requires Ganache instance with few transactions")
 public class Web3jConsumerLogTest extends Web3jIntegrationTestSupport {
@@ -41,7 +40,7 @@ public class Web3jConsumerLogTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                     + OPERATION.toLowerCase() + "=" + ETH_LOG_OBSERVABLE + "&"
+                     + "operation" + "=" + ETH_LOG_OBSERVABLE + "&"
                      + "fromBlock=earliest&"
                      + "toBlock=latest&"
                      + "address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952")
