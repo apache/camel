@@ -3593,10 +3593,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code copyTo}.
+         * @return the name of the header {@code MailCopyTo}.
          */
-        public String copyTo() {
-            return "copyTo";
+        public String mailCopyTo() {
+            return "CamelMailCopyTo";
         }
         /**
          * After processing a mail message, it can be moved to a mail folder
@@ -3606,10 +3606,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code moveTo}.
+         * @return the name of the header {@code MailMoveTo}.
          */
-        public String moveTo() {
-            return "moveTo";
+        public String mailMoveTo() {
+            return "CamelMailMoveTo";
         }
         /**
          * Deletes the messages after they have been processed.
@@ -3618,10 +3618,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code delete}.
+         * @return the name of the header {@code MailDelete}.
          */
-        public String delete() {
-            return "delete";
+        public String mailDelete() {
+            return "CamelMailDelete";
         }
         /**
          * The message ID.
