@@ -27,12 +27,21 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 /**
- * Shared service for discovering running Camel processes and communicating with them via the file-based IPC protocol.
- * Delegates to {@link RuntimeHelper} and translates errors to {@link ToolCallException}.
+ * CDI service for discovering running Camel processes and communicating with them via the file-based IPC protocol.
+ * <p>
+ * This is a thin wrapper around {@link RuntimeHelper} that translates null returns and error conditions into
+ * {@link ToolCallException} instances suitable for MCP tool responses.
+ *
+ * @since 4.21
  */
 @ApplicationScoped
 public class RuntimeService {
 
+    /**
+     * Process information exposed to MCP tools.
+     *
+     * @since 4.21
+     */
     public record ProcessInfo(long pid, String name, String contextName) {
     }
 

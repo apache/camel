@@ -32,19 +32,39 @@ import org.apache.camel.util.json.Jsoner;
 
 /**
  * Shared helper for discovering running Camel processes and communicating with them via the file-based IPC protocol.
- * Uses the multi-client action file protocol: each request gets a unique ID, so concurrent callers don't interfere.
+ * <p>
+ * Camel JBang applications write status snapshots to {@code ~/.camel/{pid}-status.json}. Actions are requested by
+ * writing to {@code {pid}-action-{requestId}.json} and reading the response from {@code {pid}-output-{requestId}.json}.
+ * Each request gets a unique ID so concurrent callers (CLI, MCP server, etc.) don't interfere with each other.
+ * <p>
+ * This class is used by both the {@code camel ask} CLI command and the MCP server's {@code RuntimeService}.
+ *
+ * @since 4.21
  */
 public final class RuntimeHelper {
 
     private static final long ACTION_TIMEOUT_MS = 10_000;
     private static final long POLL_INTERVAL_MS = 100;
 
+    /**
+     * Information about a discovered running Camel process.
+     *
+     * @param pid         the OS process ID
+     * @param name        the application name (extracted from status or process info)
+     * @param contextName the Camel context name, or {@code null} if not available
+     *
+     * @since             4.21
+     */
     public record ProcessInfo(long pid, String name, String contextName) {
     }
 
     private RuntimeHelper() {
     }
 
+    /**
+     * Discovers all running Camel processes by scanning {@code ~/.camel/} for {@code {pid}-status.json} files and
+     * verifying each PID is still alive.
+     */
     public static List<ProcessInfo> discoverProcesses() {
         List<ProcessInfo> result = new ArrayList<>();
         Path camelDir = CommandLineHelper.getCamelDir();
@@ -82,6 +102,13 @@ public final class RuntimeHelper {
         return result;
     }
 
+    /**
+     * Finds a single Camel process matching the given name or PID. Returns {@code null} if no match is found or if
+     * multiple processes match. When {@code nameOrPid} is {@code null} and exactly one process is running, returns that
+     * process.
+     *
+     * @param nameOrPid a process name (with optional wildcard), a numeric PID string, or {@code null} for auto-detect
+     */
     public static ProcessInfo findProcess(String nameOrPid) {
         List<ProcessInfo> processes = discoverProcesses();
         if (processes.isEmpty()) {
@@ -113,11 +140,22 @@ public final class RuntimeHelper {
         return null;
     }
 
+    /**
+     * Reads the full status JSON for the given process.
+     *
+     * @return the parsed status object, or {@code null} if the status file does not exist or is unreadable
+     */
     public static JsonObject readStatus(long pid) {
         Path statusFile = CommandLineHelper.getCamelDir().resolve(pid + "-status.json");
         return readStatusFromFile(statusFile);
     }
 
+    /**
+     * Reads a specific section from the status JSON.
+     *
+     * @param  section the top-level key to extract (e.g., "context", "routes", "health")
+     * @return         the section value as a JSON string, or {@code "{}"} if absent
+     */
     public static String readStatusSection(long pid, String section) {
         JsonObject root = readStatus(pid);
         if (root == null) {
@@ -135,6 +173,15 @@ public final class RuntimeHelper {
         return "{}";
     }
 
+    /**
+     * Executes an action against a running Camel process using the file-based IPC protocol. Writes an action request
+     * file and polls for the output file within a timeout.
+     *
+     * @param  pid       the target process ID
+     * @param  action    the action name (e.g., "route", "top", "source")
+     * @param  configure optional callback to add extra fields to the request JSON
+     * @return           the raw response string, or a timeout message if no response was received
+     */
     public static String executeAction(long pid, String action, Consumer<JsonObject> configure) {
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         Path camelDir = CommandLineHelper.getCamelDir();
@@ -172,6 +219,9 @@ public final class RuntimeHelper {
         }
     }
 
+    /**
+     * Initiates a graceful shutdown of a running Camel application by deleting its PID file.
+     */
     public static String stopApplication(long pid) {
         Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(pid));
         if (Files.exists(pidFile)) {
