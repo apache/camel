@@ -292,7 +292,7 @@ public interface GoogleCloudVisionEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudVisionOperation}.
          */
         public String googleCloudVisionOperation() {
-            return "GoogleCloudVisionOperation";
+            return "CamelGoogleCloudVisionOperation";
         }
         /**
          * The response object resulting from the Google Cloud Vision API
@@ -307,7 +307,7 @@ public interface GoogleCloudVisionEndpointBuilderFactory {
          * GoogleCloudVisionResponseObject}.
          */
         public String googleCloudVisionResponseObject() {
-            return "GoogleCloudVisionResponseObject";
+            return "CamelGoogleCloudVisionResponseObject";
         }
     }
     static GoogleCloudVisionEndpointBuilder endpointBuilder(String componentName, String path) {

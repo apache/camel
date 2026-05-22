@@ -21,8 +21,8 @@ import org.apache.camel.spi.Metadata;
 public interface GoogleCloudVisionConstants {
     @Metadata(description = "The operation to perform",
               javaType = "org.apache.camel.component.google.vision.GoogleCloudVisionOperations")
-    String OPERATION = "GoogleCloudVisionOperation";
+    String OPERATION = "CamelGoogleCloudVisionOperation";
     @Metadata(description = "The response object resulting from the Google Cloud Vision API invocation",
               javaType = "com.google.cloud.vision.v1.AnnotateImageResponse")
-    String RESPONSE_OBJECT = "GoogleCloudVisionResponseObject";
+    String RESPONSE_OBJECT = "CamelGoogleCloudVisionResponseObject";
 }

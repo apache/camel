@@ -320,7 +320,7 @@ public interface GoogleCloudSpeechToTextEndpointBuilderFactory {
          * GoogleCloudSpeechToTextOperation}.
          */
         public String googleCloudSpeechToTextOperation() {
-            return "GoogleCloudSpeechToTextOperation";
+            return "CamelGoogleCloudSpeechToTextOperation";
         }
         /**
          * The response object resulting from the Google Cloud Speech-to-Text
@@ -335,7 +335,7 @@ public interface GoogleCloudSpeechToTextEndpointBuilderFactory {
          * GoogleCloudSpeechToTextResponseObject}.
          */
         public String googleCloudSpeechToTextResponseObject() {
-            return "GoogleCloudSpeechToTextResponseObject";
+            return "CamelGoogleCloudSpeechToTextResponseObject";
         }
     }
     static GoogleCloudSpeechToTextEndpointBuilder endpointBuilder(String componentName, String path) {
