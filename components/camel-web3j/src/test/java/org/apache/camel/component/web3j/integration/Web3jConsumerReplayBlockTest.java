@@ -21,7 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
 
 @Disabled("Requires Ganache instance with 10 transactions")
@@ -41,7 +40,7 @@ public class Web3jConsumerReplayBlockTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                     + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
+                     + "operation" + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
                      + "fromBlock=0&"
                      + "toBlock=2&"
                      + "fullTransactionObjects=false")
