@@ -53,7 +53,7 @@ public class DnsIpEndpointTest extends CamelTestSupport {
     void testNullIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         Exception e = assertThrows(Exception.class, () -> {
-            template.sendBodyAndHeader("hello", "dns.domain", null);
+            template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, null);
         });
         assertTrue(e.getCause() instanceof IllegalArgumentException);
         resultEndpoint.assertIsSatisfied();
@@ -63,7 +63,7 @@ public class DnsIpEndpointTest extends CamelTestSupport {
     void testEmptyIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         Exception e = assertThrows(Exception.class, () -> {
-            template.sendBodyAndHeader("hello", "dns.domain", "");
+            template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, "");
         });
         assertTrue(e.getCause() instanceof IllegalArgumentException);
         resultEndpoint.assertIsSatisfied();
@@ -76,7 +76,7 @@ public class DnsIpEndpointTest extends CamelTestSupport {
 
         resultEndpoint.expectedBodiesReceived("40.79.78.1");
 
-        template.sendBodyAndHeader("hello", "dns.domain", "www.apache.org");
+        template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, "www.apache.org");
         resultEndpoint.assertIsSatisfied();
     }
 }

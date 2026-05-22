@@ -73,7 +73,7 @@ include::partial$component-endpoint-headers.adoc[]
 This looks up a domain's IP. For example, _www.example.com_ resolves to
 192.0.32.10.
 
-The IP address to lookup must be provided in the header with key `"dns.domain"`.
+The IP address to lookup must be provided in the header with key `"CamelDnsDomain"`.
 
 === DNS lookup
 
@@ -87,7 +87,7 @@ The IP address to lookup must be provided in the header with key `"dns.domain"`.
 
 This returns a set of DNS records associated with a domain. +
  The name to lookup must be provided in the header with key
-`"dns.name"`.
+`"CamelDnsName"`.
 
 === DNS Dig
 
@@ -101,7 +101,7 @@ Dig is a Unix command-line utility to run DNS queries.
 </route>
 ----
 
-The query must be provided in the header with key `"dns.query"`.
+The query must be provided in the header with key `"CamelDnsName"`.
 
 
 === Dns Activation Policy
