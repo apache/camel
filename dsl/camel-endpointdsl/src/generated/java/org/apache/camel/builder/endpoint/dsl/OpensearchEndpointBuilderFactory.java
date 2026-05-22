@@ -721,10 +721,10 @@ public interface OpensearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code operation}.
+         * @return the name of the header {@code OpensearchOperation}.
          */
-        public String operation() {
-            return "operation";
+        public String opensearchOperation() {
+            return "CamelOpensearchOperation";
         }
         /**
          * The id of the indexed document.
@@ -733,10 +733,10 @@ public interface OpensearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code indexId}.
+         * @return the name of the header {@code OpensearchIndexId}.
          */
-        public String indexId() {
-            return "indexId";
+        public String opensearchIndexId() {
+            return "CamelOpensearchIndexId";
         }
         /**
          * The name of the index to act against.
@@ -745,10 +745,10 @@ public interface OpensearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code indexName}.
+         * @return the name of the header {@code OpensearchIndexName}.
          */
-        public String indexName() {
-            return "indexName";
+        public String opensearchIndexName() {
+            return "CamelOpensearchIndexName";
         }
         /**
          * The full qualified name of the class of the document to unmarshall.
@@ -758,10 +758,10 @@ public interface OpensearchEndpointBuilderFactory {
          * Default: ObjectNode
          * Group: producer
          * 
-         * @return the name of the header {@code documentClass}.
+         * @return the name of the header {@code OpensearchDocumentClass}.
          */
-        public String documentClass() {
-            return "documentClass";
+        public String opensearchDocumentClass() {
+            return "CamelOpensearchDocumentClass";
         }
         /**
          * The index creation waits for the write consistency number of shards
@@ -771,10 +771,10 @@ public interface OpensearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code waitForActiveShards}.
+         * @return the name of the header {@code OpensearchWaitForActiveShards}.
          */
-        public String waitForActiveShards() {
-            return "waitForActiveShards";
+        public String opensearchWaitForActiveShards() {
+            return "CamelOpensearchWaitForActiveShards";
         }
         /**
          * The starting index of the response.
@@ -783,10 +783,10 @@ public interface OpensearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code scrollKeepAliveMs}.
+         * @return the name of the header {@code OpensearchScrollKeepAliveMs}.
          */
-        public String scrollKeepAliveMs() {
-            return "scrollKeepAliveMs";
+        public String opensearchScrollKeepAliveMs() {
+            return "CamelOpensearchScrollKeepAliveMs";
         }
         /**
          * Set to true to enable scroll usage. When enabled, the body is
@@ -797,10 +797,10 @@ public interface OpensearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code useScroll}.
+         * @return the name of the header {@code OpensearchUseScroll}.
          */
-        public String useScroll() {
-            return "useScroll";
+        public String opensearchUseScroll() {
+            return "CamelOpensearchUseScroll";
         }
         /**
          * The size of the response.
@@ -809,10 +809,10 @@ public interface OpensearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code size}.
+         * @return the name of the header {@code OpensearchSize}.
          */
-        public String size() {
-            return "size";
+        public String opensearchSize() {
+            return "CamelOpensearchSize";
         }
         /**
          * The starting index of the response.
@@ -821,10 +821,10 @@ public interface OpensearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code from}.
+         * @return the name of the header {@code OpensearchFrom}.
          */
-        public String from() {
-            return "from";
+        public String opensearchFrom() {
+            return "CamelOpensearchFrom";
         }
     }
     static OpensearchEndpointBuilder endpointBuilder(String componentName, String path) {
