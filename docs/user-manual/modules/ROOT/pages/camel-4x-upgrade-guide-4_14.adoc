@@ -366,6 +366,43 @@ As a consequence, the generated Endpoint DSL header accessors on
 `Jt400HeaderNameBuilder` have been renamed: `kEY()` -> `jt400Key()` and
 `senderInformation()` -> `jt400SenderInformation()`.
 
+=== camel-mail - potential breaking change
+
+The consumer-side dispatch header constants in `MailConstants` that control
+post-processing of a consumed mail message used header values outside the
+`Camel` namespace (`copyTo`, `moveTo`, `delete`) and were therefore not
+filtered by the default `HeaderFilterStrategy`. They have been renamed to
+follow the Camel naming convention (companion to the CAMEL-23522
+`mail.smtp.*` hardening). The Java field names are unchanged; only the header
+string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `MailConstants.MAIL_COPY_TO` | `copyTo` | `CamelMailCopyTo`
+| `MailConstants.MAIL_MOVE_TO` | `moveTo` | `CamelMailMoveTo`
+| `MailConstants.MAIL_DELETE` | `delete` | `CamelMailDelete`
+|===
+
+The standard RFC 5322 message header constants (`MAIL_SUBJECT` = `Subject`,
+`MAIL_FROM` = `From`, `MAIL_TO` = `To`, `MAIL_CC` = `Cc`, `MAIL_BCC` = `Bcc`,
+`MAIL_REPLY_TO` = `Reply-To`, `MAIL_CONTENT_TYPE` = `contentType`) are
+**unchanged**, as they map directly to the corresponding email fields and
+renaming them would break mail interoperability.
+
+The equally-named `copyTo` and `moveTo` *endpoint URI options* on the mail
+consumer are also unchanged; only the Exchange header values are affected.
+
+Routes that reference the constants symbolically (for example
+`setHeader(MailConstants.MAIL_DELETE, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("delete", true)`) must be updated to use the new value
+(`setHeader("CamelMailDelete", true)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`MailHeaderNameBuilder` have been renamed: `copyTo()` -> `mailCopyTo()`,
+`moveTo()` -> `mailMoveTo()`, and `delete()` -> `mailDelete()`.
+
 == Upgrading from 4.14.5 to 4.14.6
 
 === camel-platform-http-main
