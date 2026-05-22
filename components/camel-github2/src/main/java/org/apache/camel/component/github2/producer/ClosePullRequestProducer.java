@@ -23,8 +23,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.kohsuke.github.GHPullRequest;
 
 /**
- * Producer endpoint that closes a pull request. The endpoint requires the "GitHubPullRequest" header, identifying the
- * pull request number (integer).
+ * Producer endpoint that closes a pull request. The endpoint requires the "CamelGitHubPullRequest" header, identifying
+ * the pull request number (integer).
  */
 public class ClosePullRequestProducer extends AbstractGitHub2Producer {
 

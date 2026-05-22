@@ -23,8 +23,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.kohsuke.github.GHIssue;
 
 /**
- * Producer endpoint that creates an issue. The endpoint requires the "GitHubIssueTitle" header, which sets the GitHub
- * issue title. The issue body content is set from the exchange message body.
+ * Producer endpoint that creates an issue. The endpoint requires the "CamelGitHubIssueTitle" header, which sets the
+ * GitHub issue title. The issue body content is set from the exchange message body.
  */
 public class CreateIssueProducer extends AbstractGitHub2Producer {
 
