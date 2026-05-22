@@ -1358,10 +1358,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueAssigneeId}.
+         * @return the name of the header {@code JiraIssueAssigneeId}.
          */
-        public String issueAssigneeId() {
-            return "IssueAssigneeId";
+        public String jiraIssueAssigneeId() {
+            return "CamelJiraIssueAssigneeId";
         }
         /**
          * The assignee's name of the issue.
@@ -1370,10 +1370,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueAssignee}.
+         * @return the name of the header {@code JiraIssueAssignee}.
          */
-        public String issueAssignee() {
-            return "IssueAssignee";
+        public String jiraIssueAssignee() {
+            return "CamelJiraIssueAssignee";
         }
         /**
          * The comma separated list of the issue's components.
@@ -1382,10 +1382,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueComponents}.
+         * @return the name of the header {@code JiraIssueComponents}.
          */
-        public String issueComponents() {
-            return "IssueComponents";
+        public String jiraIssueComponents() {
+            return "CamelJiraIssueComponents";
         }
         /**
          * The name of the updated field (i.e Status).
@@ -1394,10 +1394,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code IssueChanged}.
+         * @return the name of the header {@code JiraIssueChanged}.
          */
-        public String issueChanged() {
-            return "IssueChanged";
+        public String jiraIssueChanged() {
+            return "CamelJiraIssueChanged";
         }
         /**
          * The id of the issue.
@@ -1406,10 +1406,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code IssueKey}.
+         * @return the name of the header {@code JiraIssueKey}.
          */
-        public String issueKey() {
-            return "IssueKey";
+        public String jiraIssueKey() {
+            return "CamelJiraIssueKey";
         }
         /**
          * The priority's id of the issue.
@@ -1418,10 +1418,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssuePriorityId}.
+         * @return the name of the header {@code JiraIssuePriorityId}.
          */
-        public String issuePriorityId() {
-            return "IssuePriorityId";
+        public String jiraIssuePriorityId() {
+            return "CamelJiraIssuePriorityId";
         }
         /**
          * The priority's name of the issue.
@@ -1430,10 +1430,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssuePriorityName}.
+         * @return the name of the header {@code JiraIssuePriorityName}.
          */
-        public String issuePriorityName() {
-            return "IssuePriorityName";
+        public String jiraIssuePriorityName() {
+            return "CamelJiraIssuePriorityName";
         }
         /**
          * The project's id of the issue.
@@ -1442,10 +1442,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ProjectKey}.
+         * @return the name of the header {@code JiraIssueProjectKey}.
          */
-        public String projectKey() {
-            return "ProjectKey";
+        public String jiraIssueProjectKey() {
+            return "CamelJiraIssueProjectKey";
         }
         /**
          * The summary of the issue.
@@ -1454,10 +1454,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueSummary}.
+         * @return the name of the header {@code JiraIssueSummary}.
          */
-        public String issueSummary() {
-            return "IssueSummary";
+        public String jiraIssueSummary() {
+            return "CamelJiraIssueSummary";
         }
         /**
          * The transition id.
@@ -1466,10 +1466,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueTransitionId}.
+         * @return the name of the header {@code JiraIssueTransitionId}.
          */
-        public String issueTransitionId() {
-            return "IssueTransitionId";
+        public String jiraIssueTransitionId() {
+            return "CamelJiraIssueTransitionId";
         }
         /**
          * The type's id of the issue.
@@ -1478,10 +1478,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueTypeId}.
+         * @return the name of the header {@code JiraIssueTypeId}.
          */
-        public String issueTypeId() {
-            return "IssueTypeId";
+        public String jiraIssueTypeId() {
+            return "CamelJiraIssueTypeId";
         }
         /**
          * The type's name of the issue.
@@ -1490,10 +1490,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueTypeName}.
+         * @return the name of the header {@code JiraIssueTypeName}.
          */
-        public String issueTypeName() {
-            return "IssueTypeName";
+        public String jiraIssueTypeName() {
+            return "CamelJiraIssueTypeName";
         }
         /**
          * The list of all issue keys that are watched in the time of update.
@@ -1502,10 +1502,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code IssueWatchedIssues}.
+         * @return the name of the header {@code JiraIssueWatchedIssues}.
          */
-        public String issueWatchedIssues() {
-            return "IssueWatchedIssues";
+        public String jiraIssueWatchedIssues() {
+            return "CamelJiraIssueWatchedIssues";
         }
         /**
          * The comma separated list of watchers to add to the issue.
@@ -1514,10 +1514,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueWatchersAdd}.
+         * @return the name of the header {@code JiraIssueWatchersAdd}.
          */
-        public String issueWatchersAdd() {
-            return "IssueWatchersAdd";
+        public String jiraIssueWatchersAdd() {
+            return "CamelJiraIssueWatchersAdd";
         }
         /**
          * The watchers of the issue to remove.
@@ -1526,10 +1526,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code IssueWatchersRemove}.
+         * @return the name of the header {@code JiraIssueWatchersRemove}.
          */
-        public String issueWatchersRemove() {
-            return "IssueWatchersRemove";
+        public String jiraIssueWatchersRemove() {
+            return "CamelJiraIssueWatchersRemove";
         }
         /**
          * The id of the parent issue.
@@ -1538,10 +1538,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ParentIssueKey}.
+         * @return the name of the header {@code JiraParentIssueKey}.
          */
-        public String parentIssueKey() {
-            return "ParentIssueKey";
+        public String jiraParentIssueKey() {
+            return "CamelJiraParentIssueKey";
         }
         /**
          * The id of the child issue.
@@ -1550,10 +1550,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ChildIssueKey}.
+         * @return the name of the header {@code JiraChildIssueKey}.
          */
-        public String childIssueKey() {
-            return "ChildIssueKey";
+        public String jiraChildIssueKey() {
+            return "CamelJiraChildIssueKey";
         }
         /**
          * The type of link.
@@ -1562,10 +1562,10 @@ public interface JiraEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code linkType}.
+         * @return the name of the header {@code JiraLinkType}.
          */
-        public String linkType() {
-            return "linkType";
+        public String jiraLinkType() {
+            return "CamelJiraLinkType";
         }
         /**
          * The minutes spent.
@@ -1575,10 +1575,10 @@ public interface JiraEndpointBuilderFactory {
          * Default: -1
          * Group: producer
          * 
-         * @return the name of the header {@code minutesSpent}.
+         * @return the name of the header {@code JiraMinutesSpent}.
          */
-        public String minutesSpent() {
-            return "minutesSpent";
+        public String jiraMinutesSpent() {
+            return "CamelJiraMinutesSpent";
         }
     }
     static JiraEndpointBuilder endpointBuilder(String componentName, String path) {
