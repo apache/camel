@@ -131,7 +131,7 @@ class SolrPingAndSearchTest extends SolrTestSupport {
         assertFalse(returnedValues.contains("content1"));
         assertFalse(returnedValues.contains("content4"));
 
-        // we can also send the 2 filters by using the 'SolrParam.fq' header and passing an Iterable.
+        // we can also send the 2 filters by using the 'CamelSolrParam.fq' header and passing an Iterable.
         Map<String, Object> solrFilters = Map.of(HEADER_PARAM_PREFIX + "fq", List.of("-content:content2", "-content:content3"));
         sdl = executeSolrQuery("direct:search", "*:*", solrFilters).getResults();
 
