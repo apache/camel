@@ -71,6 +71,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "consumerQueueSize": getOrCreateConfiguration(target).setConsumerQueueSize(property(camelContext, int.class, value)); return true;
         case "deadlettertopic":
         case "deadLetterTopic": getOrCreateConfiguration(target).setDeadLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "enablebatchindexacknowledgment":
+        case "enableBatchIndexAcknowledgment": getOrCreateConfiguration(target).setEnableBatchIndexAcknowledgment(property(camelContext, boolean.class, value)); return true;
         case "enableretry":
         case "enableRetry": getOrCreateConfiguration(target).setEnableRetry(property(camelContext, boolean.class, value)); return true;
         case "hashingscheme":
@@ -180,6 +182,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "consumerQueueSize": return int.class;
         case "deadlettertopic":
         case "deadLetterTopic": return java.lang.String.class;
+        case "enablebatchindexacknowledgment":
+        case "enableBatchIndexAcknowledgment": return boolean.class;
         case "enableretry":
         case "enableRetry": return boolean.class;
         case "hashingscheme":
@@ -285,6 +289,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "consumerQueueSize": return getOrCreateConfiguration(target).getConsumerQueueSize();
         case "deadlettertopic":
         case "deadLetterTopic": return getOrCreateConfiguration(target).getDeadLetterTopic();
+        case "enablebatchindexacknowledgment":
+        case "enableBatchIndexAcknowledgment": return getOrCreateConfiguration(target).isEnableBatchIndexAcknowledgment();
         case "enableretry":
         case "enableRetry": return getOrCreateConfiguration(target).isEnableRetry();
         case "hashingscheme":
