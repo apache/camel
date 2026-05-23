@@ -68,7 +68,7 @@ public class WikipediaEndpointTest extends CamelTestSupport {
             }
         });
         Map<String, Object> headers = new HashMap<>();
-        headers.put("term", "monkey");
+        headers.put(DnsConstants.TERM, "monkey");
         template.sendBodyAndHeaders(null, headers);
         resultEndpoint.assertIsSatisfied();
     }

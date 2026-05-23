@@ -182,10 +182,10 @@ public interface DnsEndpointBuilderFactory {
          * 
          * Group: lookup dig
          * 
-         * @return the name of the header {@code dns.class}.
+         * @return the name of the header {@code DnsClass}.
          */
         public String dnsClass() {
-            return "dns.class";
+            return "CamelDnsClass";
         }
         /**
          * The name to lookup.
@@ -195,10 +195,10 @@ public interface DnsEndpointBuilderFactory {
          * Required: true
          * Group: lookup
          * 
-         * @return the name of the header {@code dns.name}.
+         * @return the name of the header {@code DnsName}.
          */
         public String dnsName() {
-            return "dns.name";
+            return "CamelDnsName";
         }
         /**
          * The domain name.
@@ -208,10 +208,10 @@ public interface DnsEndpointBuilderFactory {
          * Required: true
          * Group: ip
          * 
-         * @return the name of the header {@code dns.domain}.
+         * @return the name of the header {@code DnsDomain}.
          */
         public String dnsDomain() {
-            return "dns.domain";
+            return "CamelDnsDomain";
         }
         /**
          * The server in particular for the query. If none is given, the default
@@ -221,10 +221,10 @@ public interface DnsEndpointBuilderFactory {
          * 
          * Group: dig
          * 
-         * @return the name of the header {@code dns.server}.
+         * @return the name of the header {@code DnsServer}.
          */
         public String dnsServer() {
-            return "dns.server";
+            return "CamelDnsServer";
         }
         /**
          * The type of the lookup. Should match the values of
@@ -234,10 +234,10 @@ public interface DnsEndpointBuilderFactory {
          * 
          * Group: lookup dig
          * 
-         * @return the name of the header {@code dns.type}.
+         * @return the name of the header {@code DnsType}.
          */
         public String dnsType() {
-            return "dns.type";
+            return "CamelDnsType";
         }
         /**
          * The term.
@@ -247,10 +247,10 @@ public interface DnsEndpointBuilderFactory {
          * Required: true
          * Group: wikipedia
          * 
-         * @return the name of the header {@code term}.
+         * @return the name of the header {@code DnsTerm}.
          */
-        public String term() {
-            return "term";
+        public String dnsTerm() {
+            return "CamelDnsTerm";
         }
     }
     static DnsEndpointBuilder endpointBuilder(String componentName, String path) {

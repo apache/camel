@@ -44,7 +44,7 @@ public class DnsIpEndpointSpringTest extends CamelSpringTestSupport {
     void testNullIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         try {
-            template.sendBodyAndHeader("hello", "dns.domain", null);
+            template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, null);
             fail("Should have thrown exception");
         } catch (Exception t) {
             assertTrue(t.getCause() instanceof IllegalArgumentException);
@@ -56,7 +56,7 @@ public class DnsIpEndpointSpringTest extends CamelSpringTestSupport {
     void testEmptyIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(0);
         try {
-            template.sendBodyAndHeader("hello", "dns.domain", "");
+            template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, "");
             fail("Should have thrown exception");
         } catch (Exception t) {
             assertTrue(t.getCause() instanceof IllegalArgumentException);
@@ -71,7 +71,7 @@ public class DnsIpEndpointSpringTest extends CamelSpringTestSupport {
 
         resultEndpoint.expectedBodiesReceived("40.79.78.1");
 
-        template.sendBodyAndHeader("hello", "dns.domain", "www.apache.org");
+        template.sendBodyAndHeader("hello", DnsConstants.DNS_DOMAIN, "www.apache.org");
         resultEndpoint.assertIsSatisfied();
     }
 
