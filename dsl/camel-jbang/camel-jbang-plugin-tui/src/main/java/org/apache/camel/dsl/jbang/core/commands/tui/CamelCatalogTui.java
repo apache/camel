@@ -96,7 +96,7 @@ public class CamelCatalogTui extends CamelCommand {
 
         loadCatalog();
 
-        try (var tui = TuiRunner.create()) {
+        try (var tui = TuiBackendHelper.createTuiRunner()) {
             Signal.handle(new Signal("INT"), sig -> tui.quit());
             tui.run(this::handleEvent, this::render);
         }

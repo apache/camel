@@ -281,7 +281,7 @@ public class CamelMonitor extends CamelCommand {
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
 
-        try (var tui = TuiRunner.create()) {
+        try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
             ctx.runner = tui;
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
