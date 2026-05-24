@@ -49,7 +49,6 @@ import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
@@ -98,10 +97,7 @@ class ActionsPopup {
     private String docTitle;
     private int docScroll;
 
-    private boolean showMcpLog;
-    private List<TuiMcpServer.LogEntry> mcpLogEntries;
-    private int mcpLogSelected;
-    private int mcpLogDetailScroll;
+    private final McpLogPopup mcpLogPopup = new McpLogPopup();
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
     private final ClasspathPopup classpathPopup = new ClasspathPopup();
@@ -135,6 +131,7 @@ class ActionsPopup {
         this.mcpPort = port;
         this.mcpConnectedClient = connectedClient;
         this.mcpActivityLog = activityLog;
+        mcpLogPopup.setActivityLog(activityLog);
     }
 
     private int actionCount() {
@@ -143,7 +140,7 @@ class ActionsPopup {
 
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
-                || showMcpLog || doctorPopup.isVisible() || classpathPopup.isVisible()
+                || mcpLogPopup.isVisible() || doctorPopup.isVisible() || classpathPopup.isVisible()
                 || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
     }
 
@@ -158,7 +155,7 @@ class ActionsPopup {
         runOptionsForm.close();
         showDocPicker = false;
         showDocViewer = false;
-        showMcpLog = false;
+        mcpLogPopup.close();
         doctorPopup.close();
         classpathPopup.close();
         stopAllPopup.close();
@@ -174,24 +171,7 @@ class ActionsPopup {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
-        if (showMcpLog) {
-            if (ke.isCancel()) {
-                showMcpLog = false;
-            } else if (ke.isUp() || ke.isChar('k')) {
-                if (mcpLogEntries != null && !mcpLogEntries.isEmpty()) {
-                    mcpLogSelected = Math.max(0, mcpLogSelected - 1);
-                    mcpLogDetailScroll = 0;
-                }
-            } else if (ke.isDown() || ke.isChar('j')) {
-                if (mcpLogEntries != null && !mcpLogEntries.isEmpty()) {
-                    mcpLogSelected = Math.min(mcpLogEntries.size() - 1, mcpLogSelected + 1);
-                    mcpLogDetailScroll = 0;
-                }
-            } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                mcpLogDetailScroll = Math.max(0, mcpLogDetailScroll - 5);
-            } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                mcpLogDetailScroll += 5;
-            }
+        if (mcpLogPopup.handleKeyEvent(ke)) {
             return true;
         }
         if (showDocViewer) {
@@ -334,8 +314,8 @@ class ActionsPopup {
         if (showDocViewer) {
             renderDocViewer(frame, area);
         }
-        if (showMcpLog) {
-            renderMcpLog(frame, area);
+        if (mcpLogPopup.isVisible()) {
+            mcpLogPopup.render(frame, area);
         }
         if (doctorPopup.isVisible()) {
             doctorPopup.render(frame, area);
@@ -368,10 +348,8 @@ class ActionsPopup {
             doctorPopup.renderFooter(spans);
             return;
         }
-        if (showMcpLog) {
-            hint(spans, "↑↓", "select");
-            hint(spans, "PgUp/Dn", "scroll detail");
-            hintLast(spans, "Esc", "back");
+        if (mcpLogPopup.isVisible()) {
+            mcpLogPopup.renderFooter(spans);
             return;
         }
         if (showDocViewer) {
@@ -768,113 +746,7 @@ class ActionsPopup {
     }
 
     private void openMcpLog() {
-        mcpLogEntries = mcpActivityLog != null ? mcpActivityLog.get() : List.of();
-        mcpLogSelected = mcpLogEntries.isEmpty() ? 0 : mcpLogEntries.size() - 1;
-        mcpLogDetailScroll = 0;
-        showMcpLog = true;
-    }
-
-    private void renderMcpLog(Frame frame, Rect area) {
-        Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        if (mcpLogEntries == null || mcpLogEntries.isEmpty()) {
-            Block block = Block.builder()
-                    .borderType(BorderType.ROUNDED)
-                    .title(" MCP Log ")
-                    .titleBottom(Title.from(Line.from(
-                            Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
-                    .build();
-            frame.renderWidget(block, popup);
-            Rect inner = block.inner(popup);
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled("No MCP activity yet.", Style.EMPTY.dim()))), inner);
-            return;
-        }
-
-        int splitY = popup.top() + Math.max(3, (popup.height() * 2) / 5);
-        Rect masterArea = new Rect(popup.left(), popup.top(), popup.width(), splitY - popup.top());
-        Rect detailArea = new Rect(popup.left(), splitY, popup.width(), popup.bottom() - splitY);
-
-        // Master: log entry list
-        List<ListItem> items = new ArrayList<>();
-        for (TuiMcpServer.LogEntry entry : mcpLogEntries) {
-            Style levelStyle = switch (entry.level()) {
-                case CONNECT -> Style.EMPTY.fg(Color.GREEN);
-                case TOOL -> Style.EMPTY.fg(Color.CYAN);
-                case ERROR -> Style.EMPTY.fg(Color.LIGHT_RED);
-                default -> Style.EMPTY.fg(Color.GREEN);
-            };
-            String levelTag = switch (entry.level()) {
-                case CONNECT -> " CONNECT ";
-                case TOOL -> " TOOL    ";
-                case ERROR -> " ERROR   ";
-                default -> " INFO    ";
-            };
-            items.add(ListItem.from(Line.from(
-                    Span.styled(entry.timestamp(), Style.EMPTY.dim()),
-                    Span.styled(levelTag, levelStyle),
-                    Span.raw(entry.message()))));
-        }
-
-        ListState masterState = new ListState();
-        masterState.select(mcpLogSelected);
-        ListWidget list = ListWidget.builder()
-                .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSymbol("▸ ")
-                .scrollMode(ScrollMode.AUTO_SCROLL)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
-                        .title(" MCP Log ")
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, masterArea, masterState);
-
-        // Detail: request + response JSON
-        TuiMcpServer.LogEntry selected = mcpLogEntries.get(mcpLogSelected);
-        List<Line> detailLines = new ArrayList<>();
-        if (selected.requestBody() != null) {
-            detailLines.add(Line.from(Span.styled("▶ Request", Style.EMPTY.fg(Color.YELLOW).bold())));
-            addJsonLines(detailLines, selected.requestBody());
-            detailLines.add(Line.from(Span.raw("")));
-        }
-        if (selected.responseBody() != null) {
-            detailLines.add(Line.from(Span.styled("◀ Response", Style.EMPTY.fg(Color.GREEN).bold())));
-            addJsonLines(detailLines, selected.responseBody());
-        }
-        if (selected.requestBody() == null && selected.responseBody() == null) {
-            detailLines.add(Line.from(Span.styled("(no request/response data)", Style.EMPTY.dim())));
-        }
-
-        Block detailBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Detail ")
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" select │"),
-                        Span.styled(" PgUp/Dn", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
-                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
-                .build();
-        frame.renderWidget(detailBlock, detailArea);
-        Rect detailInner = detailBlock.inner(detailArea);
-
-        int visibleLines = detailInner.height();
-        int totalLines = detailLines.size();
-        int clampedScroll = Math.min(mcpLogDetailScroll, Math.max(0, totalLines - visibleLines));
-        int end = Math.min(clampedScroll + visibleLines, totalLines);
-        if (clampedScroll < end) {
-            List<Line> visible = detailLines.subList(clampedScroll, end);
-            frame.renderWidget(
-                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
-                    detailInner);
-        }
-    }
-
-    private static void addJsonLines(List<Line> lines, String json) {
-        String pretty = Jsoner.prettyPrint(json, 2);
-        for (String line : pretty.split("\n", -1)) {
-            lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
-        }
+        mcpLogPopup.open();
     }
 
     private void openClasspath() {
