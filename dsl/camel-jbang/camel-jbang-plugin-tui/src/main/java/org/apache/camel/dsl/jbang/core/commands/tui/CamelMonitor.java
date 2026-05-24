@@ -348,8 +348,9 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
             if (captionOverlay.isCaptionVisible()) {
-                captionOverlay.handleKeyEvent(ke);
-                return true;
+                if (captionOverlay.handleKeyEvent(ke)) {
+                    return true;
+                }
             }
             if (ke.hasCtrl() && ke.hasShift() && ke.isChar('t')) {
                 captionOverlay.openInline();
