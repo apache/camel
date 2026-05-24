@@ -1356,6 +1356,16 @@ for the embedded HTTP server:
 Both default to unset. When both are unset, JWT validation behaviour is unchanged (signature plus the
 default `exp` / `nbf` checks).
 
+=== camel-test
+
+`org.apache.camel.test.AvailablePortFinder.Port` now also implements
+`AfterEachCallback` and `BeforeAllCallback`. When the `Port` is registered as a
+non-static `@RegisterExtension` field, it is automatically released after each
+test method, instead of leaking until JVM exit. The previous behaviour for
+static `@RegisterExtension` fields (port reserved for the whole class, released
+on `afterAll`) is preserved. Tests that manually called `port.release()` from an
+`@AfterEach` method to work around CAMEL-21122 no longer need that workaround.
+
 === camel-mongodb-gridfs
 
 The Exchange header values exposed by `GridFsConstants` have been renamed to follow the standard
