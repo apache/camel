@@ -208,6 +208,6 @@ public class CallClientTest extends AbstractMiloServerTest {
 
     private static void doCall(final ProducerTemplate producerTemplate, final Object input) {
         // we always write synchronously since we do need the message order
-        producerTemplate.sendBodyAndHeader(input, "await", true);
+        producerTemplate.sendBodyAndHeader(input, "CamelMiloAwait", true);
     }
 }

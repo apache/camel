@@ -136,7 +136,7 @@ Example:
 ----
 from("direct:start")
     .setHeader("CamelMiloNodeIds", constant(Arrays.asList("nsu=urn:org:apache:camel;s=myitem1")))
-    .setHeader("await", constant(true)) // await: parameter "defaultAwaitWrites"
+    .setHeader("CamelMiloAwait", constant(true)) // CamelMiloAwait: parameter "defaultAwaitWrites"
         .enrich("milo-client:opc.tcp://localhost:4334", new AggregationStrategy() {
 
             @Override
