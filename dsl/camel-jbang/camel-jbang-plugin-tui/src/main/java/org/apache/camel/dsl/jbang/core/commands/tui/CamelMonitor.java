@@ -1677,16 +1677,26 @@ public class CamelMonitor extends CamelCommand {
         if (mcp && !recording) {
             String client = mcpServer != null ? mcpServer.getConnectedClient() : null;
             boolean active = mcpServer != null && mcpServer.isRecentActivity();
-            String dot = active ? " ●" : " ○";
-            String mcpLabel = client != null
-                    ? "MCP :" + mcpPort + " (" + client + ")"
-                    : "MCP :" + mcpPort;
+            String mcpLabel = "MCP :" + mcpPort;
+            String suffix;
+            Style labelStyle;
+            Style suffixStyle;
+            if (client != null) {
+                suffix = active ? " ●" : " ○";
+                mcpLabel += " (" + client + ")";
+                labelStyle = Style.EMPTY.fg(Color.GREEN);
+                suffixStyle = Style.EMPTY.fg(active ? Color.GREEN : Color.DARK_GRAY);
+            } else {
+                suffix = " ✗";
+                labelStyle = Style.EMPTY.dim();
+                suffixStyle = Style.EMPTY.fg(Color.RED);
+            }
             int hintsWidth = spans.stream().mapToInt(s -> s.width()).sum();
-            int mcpWidth = mcpLabel.length() + dot.length() + 1;
+            int mcpWidth = mcpLabel.length() + suffix.length() + 1;
             int gap = Math.max(1, area.width() - hintsWidth - mcpWidth);
             spans.add(Span.raw(" ".repeat(gap)));
-            spans.add(Span.styled(mcpLabel, Style.EMPTY.fg(client != null ? Color.GREEN : Color.CYAN)));
-            spans.add(Span.styled(dot, Style.EMPTY.fg(active ? Color.GREEN : Color.DARK_GRAY)));
+            spans.add(Span.styled(mcpLabel, labelStyle));
+            spans.add(Span.styled(suffix, suffixStyle));
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);

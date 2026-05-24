@@ -81,13 +81,21 @@ class TuiMcpServer {
     void start() throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", port), 0);
         server.createContext("/mcp", this::handleMcp);
+        server.setExecutor(java.util.concurrent.Executors.newCachedThreadPool(r -> {
+            Thread t = new Thread(r, "mcp-handler");
+            t.setDaemon(true);
+            return t;
+        }));
         server.start();
         log(LogLevel.INFO, "Server started on port " + port);
     }
 
     void stop() {
         if (server != null) {
-            server.stop(0);
+            server.stop(1);
+            if (server.getExecutor() instanceof java.util.concurrent.ExecutorService es) {
+                es.shutdownNow();
+            }
         }
     }
 
@@ -107,8 +115,8 @@ class TuiMcpServer {
     }
 
     String getConnectedClient() {
-        if (clientName != null && System.currentTimeMillis() - lastActivity < CLIENT_TIMEOUT_MS) {
-            return clientName;
+        if (System.currentTimeMillis() - lastActivity < CLIENT_TIMEOUT_MS) {
+            return clientName != null ? clientName : "unknown";
         }
         return null;
     }

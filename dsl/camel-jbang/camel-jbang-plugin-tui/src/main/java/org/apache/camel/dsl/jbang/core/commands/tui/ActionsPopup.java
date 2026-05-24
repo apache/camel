@@ -686,7 +686,7 @@ class ActionsPopup {
         String client = mcpConnectedClient != null ? mcpConnectedClient.get() : null;
         String status = client != null
                 ? "**Connected:** " + client
-                : "**Status:** Not connected";
+                : "**Status:** Waiting for connection";
         docContent = "# MCP Server\n\n"
                      + status + "\n\n"
                      + "The TUI has an embedded MCP (Model Context Protocol) server running at:\n\n"
