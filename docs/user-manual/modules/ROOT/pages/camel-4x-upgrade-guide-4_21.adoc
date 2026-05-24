@@ -510,7 +510,7 @@ The same pattern applies to HTTP-based bridges (`platform-http`/`jetty`/`netty
 -http`/`http` -> `cxf:`) and any other transport whose default
 `HeaderFilterStrategy` filters `Camel*` headers.
 
-=== camel-dns
+=== camel-dns - potential breaking change
 
 The Exchange header constants in `DnsConstants` have been renamed to follow the
 Camel naming convention used across the rest of the component catalog. The Java

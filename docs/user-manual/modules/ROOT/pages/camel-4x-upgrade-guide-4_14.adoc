@@ -523,3 +523,57 @@ their literal string value. Routes that reference the constant symbolically
 to work without changes. Routes that set the header by its literal string
 value (for example `setHeader("JGROUPS_DEST", ...)`) must be updated to use
 the new value (`setHeader("CamelJGroupsDest", ...)`).
+
+=== camel-dns - potential breaking change
+
+The Exchange header constants in `DnsConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `DnsConstants.DNS_CLASS`  | `dns.class`  | `CamelDnsClass`
+| `DnsConstants.DNS_NAME`   | `dns.name`   | `CamelDnsName`
+| `DnsConstants.DNS_DOMAIN` | `dns.domain` | `CamelDnsDomain`
+| `DnsConstants.DNS_SERVER` | `dns.server` | `CamelDnsServer`
+| `DnsConstants.DNS_TYPE`   | `dns.type`   | `CamelDnsType`
+| `DnsConstants.TERM`       | `term`       | `CamelDnsTerm`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(DnsConstants.DNS_SERVER, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("dns.server", ...)` or `setHeader("term", ...)`) must be updated to
+use the new value:
+
+[source,java]
+----
+// before
+from("direct:start")
+    .setHeader("dns.name", constant("www.example.com"))
+    .setHeader("dns.type", constant("A"))
+    .to("dns:lookup");
+
+// after
+from("direct:start")
+    .setHeader("CamelDnsName", constant("www.example.com"))
+    .setHeader("CamelDnsType", constant("A"))
+    .to("dns:lookup");
+----
+
+==== Behaviour change: cross-transport propagation of dns.* headers
+
+Because the renamed header values now begin with `Camel`, they are filtered by
+the standard transport `HeaderFilterStrategy` (`JmsHeaderFilterStrategy`,
+`HttpHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design
+— `Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (HTTP, JMS, ...) into a `dns:`
+producer and let the sender choose the DNS operation parameters via headers
+must therefore carry those parameters in non-`Camel`-prefixed application
+headers and map them to the corresponding `DnsConstants` value in the route
+between the transport `from` and the `dns:` `to`. Allowing untrusted senders
+to drive `DnsConstants.DNS_SERVER` (the recursive resolver target in
+`dns:dig`) without such a mapping step is not the intended use of the
+component.
