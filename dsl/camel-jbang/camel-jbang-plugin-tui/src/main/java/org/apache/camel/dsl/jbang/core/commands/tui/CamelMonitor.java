@@ -35,8 +35,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -58,6 +60,7 @@ import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.barchart.Bar;
@@ -212,6 +215,7 @@ public class CamelMonitor extends CamelCommand {
     private boolean recording;
     private TuiEventLog eventLog;
     private TuiMcpServer mcpServer;
+    private final Queue<PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
     private final List<KeyRecord> recentKeys = new ArrayList<>();
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
 
@@ -588,6 +592,12 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
+            PendingKey pk = pendingKeys.peek();
+            if (pk != null && now >= pk.fireAt()) {
+                pendingKeys.poll();
+                handleEvent(pk.event(), runner);
+                return true;
+            }
             actionsPopup.tick(now);
             captionOverlay.tick(now);
             if (recording && !recentKeys.isEmpty()) {
@@ -3095,6 +3105,86 @@ public class CamelMonitor extends CamelCommand {
                 .filter(i -> !i.vanishing)
                 .map(i -> i.name != null ? i.name : i.pid)
                 .toList();
+    }
+
+    int injectKeys(List<String> keys, int delayMs) {
+        long fireAt = System.currentTimeMillis();
+        int count = 0;
+        for (String key : keys) {
+            KeyEvent ke = parseKey(key);
+            if (ke != null) {
+                pendingKeys.add(new PendingKey(ke, fireAt));
+                fireAt += delayMs;
+                count++;
+            }
+        }
+        return count;
+    }
+
+    static KeyEvent parseKey(String key) {
+        if (key == null || key.isEmpty()) {
+            return null;
+        }
+
+        boolean ctrl = false;
+        boolean shift = false;
+        String remainder = key;
+        while (remainder.contains("+")) {
+            int plus = remainder.indexOf('+');
+            String mod = remainder.substring(0, plus).trim();
+            remainder = remainder.substring(plus + 1).trim();
+            if (mod.equalsIgnoreCase("Ctrl")) {
+                ctrl = true;
+            } else if (mod.equalsIgnoreCase("Shift")) {
+                shift = true;
+            }
+        }
+
+        KeyModifiers mods = KeyModifiers.of(ctrl, false, shift);
+
+        KeyCode code = switch (remainder.toLowerCase(Locale.ROOT)) {
+            case "enter", "return" -> KeyCode.ENTER;
+            case "esc", "escape" -> KeyCode.ESCAPE;
+            case "tab" -> KeyCode.TAB;
+            case "backspace" -> KeyCode.BACKSPACE;
+            case "delete", "del" -> KeyCode.DELETE;
+            case "up" -> KeyCode.UP;
+            case "down" -> KeyCode.DOWN;
+            case "left" -> KeyCode.LEFT;
+            case "right" -> KeyCode.RIGHT;
+            case "home" -> KeyCode.HOME;
+            case "end" -> KeyCode.END;
+            case "pageup", "pgup" -> KeyCode.PAGE_UP;
+            case "pagedown", "pgdn" -> KeyCode.PAGE_DOWN;
+            case "f1" -> KeyCode.F1;
+            case "f2" -> KeyCode.F2;
+            case "f3" -> KeyCode.F3;
+            case "f4" -> KeyCode.F4;
+            case "f5" -> KeyCode.F5;
+            case "f6" -> KeyCode.F6;
+            case "f7" -> KeyCode.F7;
+            case "f8" -> KeyCode.F8;
+            case "f9" -> KeyCode.F9;
+            case "f10" -> KeyCode.F10;
+            case "f11" -> KeyCode.F11;
+            case "f12" -> KeyCode.F12;
+            case "space" -> null;
+            default -> null;
+        };
+
+        if (code != null) {
+            return KeyEvent.ofKey(code, mods);
+        }
+        if ("space".equalsIgnoreCase(remainder)) {
+            return KeyEvent.ofChar(' ', mods);
+        }
+        if (remainder.length() == 1) {
+            return KeyEvent.ofChar(remainder.charAt(0), mods);
+        }
+        return null;
+    }
+
+    private record PendingKey(KeyEvent event, long fireAt) {
     }
 
 }

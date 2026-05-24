@@ -221,6 +221,17 @@ class TuiMcpServer {
                 Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health')"),
                         "integration", propDef("string", "Integration name or PID to select"))));
 
+        toolList.add(toolDef(
+                "tui_send_keys",
+                "Sends key presses to the TUI. Use this to control the TUI for recording demos. "
+                                 + "Keys are processed one per tick with the specified delay between them. "
+                                 + "Key names: Enter, Esc, Tab, Backspace, Delete, Up, Down, Left, Right, "
+                                 + "Home, End, PgUp, PgDn, Space, F1-F12, or any single character. "
+                                 + "Modifiers: Ctrl+x, Shift+x, Ctrl+Shift+x.",
+                Map.of("keys", propDef("array", "Array of key name strings to send"),
+                        "delay", propDef("integer", "Delay in milliseconds between keys (default 150)")),
+                List.of("keys")));
+
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
         return result;
@@ -247,6 +258,7 @@ class TuiMcpServer {
                 case "tui_get_state" -> callGetState();
                 case "tui_show_caption" -> callShowCaption(args);
                 case "tui_navigate" -> callNavigate(args);
+                case "tui_send_keys" -> callSendKeys(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -374,6 +386,27 @@ class TuiMcpServer {
         }
 
         return Jsoner.serialize(result);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String callSendKeys(Map<String, Object> args) {
+        Object keysArg = args.get("keys");
+        if (!(keysArg instanceof List)) {
+            return "Error: keys must be an array of strings";
+        }
+        List<String> keys = ((List<Object>) keysArg).stream()
+                .map(String::valueOf)
+                .toList();
+        if (keys.isEmpty()) {
+            return "Error: keys array is empty";
+        }
+        int delay = 150;
+        Object delayArg = args.get("delay");
+        if (delayArg instanceof Number n) {
+            delay = Math.max(50, n.intValue());
+        }
+        int sent = monitor.injectKeys(keys, delay);
+        return "Queued " + sent + " key(s) with " + delay + "ms delay";
     }
 
     private static JsonArray toJsonArray(List<String> list) {
