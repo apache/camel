@@ -29,7 +29,7 @@ public final class MiloConstants {
     public static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
     @Metadata(label = "producer", description = "The \"await\" setting for writes.", javaType = "Boolean",
               applicableFor = SCHEME_CLIENT)
-    public static final String HEADER_AWAIT = "await";
+    public static final String HEADER_AWAIT = "CamelMiloAwait";
 
     private MiloConstants() {
 
