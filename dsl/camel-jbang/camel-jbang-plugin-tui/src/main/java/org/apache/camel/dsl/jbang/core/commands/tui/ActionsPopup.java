@@ -699,7 +699,8 @@ class ActionsPopup {
                      + "| `tui_get_screen` | Returns the current screen content as text |\n"
                      + "| `tui_get_events` | Returns recent key presses and navigation events |\n"
                      + "| `tui_get_state` | Returns active tab, selected integration, etc. |\n"
-                     + "| `tui_show_caption` | Shows a message on the TUI screen |\n\n"
+                     + "| `tui_show_caption` | Shows a message on the TUI screen |\n"
+                     + "| `tui_navigate` | Switch tabs and select integrations |\n\n"
                      + "## Setup for Claude Code\n\n"
                      + "Run this command to connect Claude Code to the TUI:\n\n"
                      + "    claude mcp add --transport http camel-tui " + url + "\n\n"
@@ -720,7 +721,9 @@ class ActionsPopup {
                      + "- \"What tab am I on and what integration is selected?\"\n"
                      + "- \"What keys did I press in the last minute?\"\n"
                      + "- \"What color is the throughput chart?\"\n"
-                     + "- \"Show me a message on the TUI screen\"\n";
+                     + "- \"Show me a message on the TUI screen\"\n"
+                     + "- \"Switch to the Health tab\"\n"
+                     + "- \"Select the myApp integration\"\n";
         docTitle = "MCP Info";
         docScroll = 0;
         showDocViewer = true;

@@ -3060,4 +3060,41 @@ public class CamelMonitor extends CamelCommand {
         captionOverlay.showCaption(text);
     }
 
+    String navigateToTab(String tabName) {
+        for (int i = 0; i < TAB_NAMES.length; i++) {
+            if (TAB_NAMES[i].equalsIgnoreCase(tabName)) {
+                handleTabKey(i);
+                return TAB_NAMES[i];
+            }
+        }
+        return null;
+    }
+
+    String selectIntegration(String nameOrPid) {
+        List<IntegrationInfo> infos = data.get();
+        for (IntegrationInfo info : infos) {
+            if (info.vanishing) {
+                continue;
+            }
+            if (nameOrPid.equals(info.pid)
+                    || (info.name != null && info.name.equalsIgnoreCase(nameOrPid))) {
+                ctx.selectedPid = info.pid;
+                ctx.infraTableFocused = false;
+                return info.name != null ? info.name : info.pid;
+            }
+        }
+        return null;
+    }
+
+    List<String> getTabNames() {
+        return List.of(TAB_NAMES);
+    }
+
+    List<String> getIntegrationNames() {
+        return data.get().stream()
+                .filter(i -> !i.vanishing)
+                .map(i -> i.name != null ? i.name : i.pid)
+                .toList();
+    }
+
 }

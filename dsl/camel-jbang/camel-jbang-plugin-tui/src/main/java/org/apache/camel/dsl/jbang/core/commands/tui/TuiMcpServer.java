@@ -213,6 +213,13 @@ class TuiMcpServer {
                                     + "Supports \\n for newlines.",
                 Map.of("text", propDef("string", "The caption text to display")),
                 List.of("text")));
+        toolList.add(toolDef(
+                "tui_navigate",
+                "Navigates the TUI: switch tabs and/or select an integration. "
+                                + "Both parameters are optional — set whichever you want to change. "
+                                + "Tab names: Overview, Log, Routes, Consumers, Endpoints, HTTP, Health, Inspect, Circuit Breaker.",
+                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health')"),
+                        "integration", propDef("string", "Integration name or PID to select"))));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -239,6 +246,7 @@ class TuiMcpServer {
                 case "tui_get_events" -> callGetEvents(args);
                 case "tui_get_state" -> callGetState();
                 case "tui_show_caption" -> callShowCaption(args);
+                case "tui_navigate" -> callNavigate(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -331,6 +339,47 @@ class TuiMcpServer {
         }
         monitor.showCaption(text);
         return "Caption displayed: " + text;
+    }
+
+    private String callNavigate(Map<String, Object> args) {
+        JsonObject result = new JsonObject();
+        String tab = (String) args.get("tab");
+        String integration = (String) args.get("integration");
+
+        if (tab == null && integration == null) {
+            result.put("error", "Provide at least one of: tab, integration");
+            result.put("availableTabs", toJsonArray(monitor.getTabNames()));
+            result.put("availableIntegrations", toJsonArray(monitor.getIntegrationNames()));
+            return Jsoner.serialize(result);
+        }
+
+        if (integration != null) {
+            String selected = monitor.selectIntegration(integration);
+            if (selected != null) {
+                result.put("selectedIntegration", selected);
+            } else {
+                result.put("integrationError", "Not found: " + integration);
+                result.put("availableIntegrations", toJsonArray(monitor.getIntegrationNames()));
+            }
+        }
+
+        if (tab != null) {
+            String switched = monitor.navigateToTab(tab);
+            if (switched != null) {
+                result.put("activeTab", switched);
+            } else {
+                result.put("tabError", "Unknown tab: " + tab);
+                result.put("availableTabs", toJsonArray(monitor.getTabNames()));
+            }
+        }
+
+        return Jsoner.serialize(result);
+    }
+
+    private static JsonArray toJsonArray(List<String> list) {
+        JsonArray arr = new JsonArray();
+        arr.addAll(list);
+        return arr;
     }
 
     // --- JSON-RPC helpers ---
