@@ -62,7 +62,7 @@ class TuiMcpServer {
         ERROR
     }
 
-    record LogEntry(String timestamp, LogLevel level, String message) {
+    record LogEntry(String timestamp, LogLevel level, String message, String requestBody, String responseBody) {
     }
 
     private final int port;
@@ -104,7 +104,11 @@ class TuiMcpServer {
     }
 
     private synchronized void log(LogLevel level, String message) {
-        activityLog.add(new LogEntry(TIME_FMT.format(Instant.now()), level, message));
+        log(level, message, null, null);
+    }
+
+    private synchronized void log(LogLevel level, String message, String requestBody, String responseBody) {
+        activityLog.add(new LogEntry(TIME_FMT.format(Instant.now()), level, message, requestBody, responseBody));
         if (activityLog.size() > MAX_LOG_ENTRIES) {
             activityLog.remove(0);
         }
@@ -160,12 +164,37 @@ class TuiMcpServer {
             if (result == null) {
                 sendError(exchange, request, -32601, "Method not found: " + jsonrpcMethod);
             } else {
-                sendResult(exchange, request, result);
+                String responseJson = sendResult(exchange, request, result);
+                logMethodCall(jsonrpcMethod, request, body, responseJson);
             }
         } catch (Exception e) {
             exchange.sendResponseHeaders(500, -1);
         } finally {
             exchange.close();
+        }
+    }
+
+    private void logMethodCall(String jsonrpcMethod, JsonObject request, String requestBody, String responseBody) {
+        switch (jsonrpcMethod) {
+            case "initialize" -> {
+                JsonObject params = (JsonObject) request.get("params");
+                String name = "unknown";
+                if (params != null) {
+                    JsonObject clientInfo = (JsonObject) params.get("clientInfo");
+                    if (clientInfo != null && clientInfo.get("name") != null) {
+                        name = (String) clientInfo.get("name");
+                    }
+                }
+                log(LogLevel.CONNECT, "Client connected: " + name, requestBody, responseBody);
+            }
+            case "tools/call" -> {
+                JsonObject params = (JsonObject) request.get("params");
+                String toolName = params != null ? (String) params.get("name") : "unknown";
+                log(LogLevel.TOOL, "Tool call: " + toolName, requestBody, responseBody);
+            }
+            case "tools/list" -> log(LogLevel.INFO, "Tools listed", requestBody, responseBody);
+            case "ping" -> log(LogLevel.INFO, "Ping", requestBody, responseBody);
+            default -> log(LogLevel.INFO, jsonrpcMethod, requestBody, responseBody);
         }
     }
 
@@ -177,7 +206,6 @@ class TuiMcpServer {
                 clientName = (String) clientInfo.get("name");
             }
         }
-        log(LogLevel.CONNECT, "Client connected: " + (clientName != null ? clientName : "unknown"));
 
         JsonObject result = new JsonObject();
         result.put("protocolVersion", PROTOCOL_VERSION);
@@ -222,7 +250,7 @@ class TuiMcpServer {
                 Map.of("text", propDef("string", "The caption text to display"),
                         "duration", propDef("integer",
                                 "Auto-dismiss after this many seconds. Caption won't block key events. "
-                                                        + "If omitted, caption stays until dismissed by a key press.")),
+                                                       + "If omitted, caption stays until dismissed by a key press.")),
                 List.of("text")));
         toolList.add(toolDef(
                 "tui_navigate",
@@ -258,7 +286,6 @@ class TuiMcpServer {
         }
 
         lastToolCallTime = System.currentTimeMillis();
-        log(LogLevel.TOOL, "Tool call: " + toolName);
 
         String text;
         boolean isError = false;
@@ -436,12 +463,12 @@ class TuiMcpServer {
 
     // --- JSON-RPC helpers ---
 
-    private void sendResult(HttpExchange exchange, JsonObject request, JsonObject result) throws IOException {
+    private String sendResult(HttpExchange exchange, JsonObject request, JsonObject result) throws IOException {
         JsonObject response = new JsonObject();
         response.put("jsonrpc", "2.0");
         response.put("id", request.get("id"));
         response.put("result", result);
-        sendJson(exchange, 200, response);
+        return sendJson(exchange, 200, response);
     }
 
     private void sendError(HttpExchange exchange, JsonObject request, int code, String message) throws IOException {
@@ -456,13 +483,15 @@ class TuiMcpServer {
         sendJson(exchange, 200, response);
     }
 
-    private void sendJson(HttpExchange exchange, int status, JsonObject json) throws IOException {
-        byte[] bytes = Jsoner.serialize(json).getBytes(StandardCharsets.UTF_8);
+    private String sendJson(HttpExchange exchange, int status, JsonObject json) throws IOException {
+        String serialized = Jsoner.serialize(json);
+        byte[] bytes = serialized.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(status, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
         }
+        return serialized;
     }
 
     // --- Tool definition helpers ---
