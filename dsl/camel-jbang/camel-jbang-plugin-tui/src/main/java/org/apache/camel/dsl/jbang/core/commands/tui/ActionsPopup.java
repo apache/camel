@@ -44,6 +44,7 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -61,8 +62,9 @@ class ActionsPopup {
     private static final int ACTION_SHOW_KEYSTROKES = 4;
     private static final int ACTION_DOCTOR = 5;
     private static final int ACTION_CLASSPATH = 6;
-    private static final int ACTION_STOP_ALL = 7;
-    private static final int ACTION_COUNT = 8;
+    private static final int ACTION_MCP_INFO = 7;
+    private static final int ACTION_MCP_LOG = 8;
+    private static final int ACTION_STOP_ALL = 9;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -70,6 +72,10 @@ class ActionsPopup {
     private final Runnable toggleKeystrokes;
     private final Supplier<Boolean> keystrokesEnabled;
     private MonitorContext ctx;
+    private boolean mcpEnabled;
+    private int mcpPort;
+    private Supplier<String> mcpConnectedClient;
+    private Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog;
 
     private boolean showActionsMenu;
     private final ListState actionsMenuState = new ListState();
@@ -87,6 +93,7 @@ class ActionsPopup {
     private boolean showDocViewer;
     private boolean docViewerFromExampleBrowser;
     private String docContent;
+    private List<Line> docLines;
     private String docTitle;
     private int docScroll;
 
@@ -114,6 +121,18 @@ class ActionsPopup {
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    void setMcpEnabled(
+            boolean enabled, int port, Supplier<String> connectedClient, Supplier<List<TuiMcpServer.LogEntry>> activityLog) {
+        this.mcpEnabled = enabled;
+        this.mcpPort = port;
+        this.mcpConnectedClient = connectedClient;
+        this.mcpActivityLog = activityLog;
+    }
+
+    private int actionCount() {
+        return mcpEnabled ? 10 : 8;
     }
 
     boolean isVisible() {
@@ -230,31 +249,38 @@ class ActionsPopup {
             } else if (ke.isUp()) {
                 actionsMenuState.selectPrevious();
             } else if (ke.isDown()) {
-                actionsMenuState.selectNext(ACTION_COUNT);
+                actionsMenuState.selectNext(actionCount());
             } else if (ke.isConfirm()) {
                 Integer sel = actionsMenuState.selected();
                 if (sel != null) {
-                    if (sel == ACTION_RUN_EXAMPLE) {
+                    int action = resolveAction(sel);
+                    if (action == ACTION_RUN_EXAMPLE) {
                         openExampleBrowser();
-                    } else if (sel == ACTION_SHOW_DOCS) {
+                    } else if (action == ACTION_SHOW_DOCS) {
                         openDocPicker();
-                    } else if (sel == ACTION_SCREENSHOT) {
+                    } else if (action == ACTION_SCREENSHOT) {
                         showActionsMenu = false;
                         screenshotAction.run();
-                    } else if (sel == ACTION_SHOW_KEYSTROKES) {
+                    } else if (action == ACTION_SHOW_KEYSTROKES) {
                         showActionsMenu = false;
                         toggleKeystrokes.run();
-                    } else if (sel == ACTION_DOCTOR) {
+                    } else if (action == ACTION_DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
-                    } else if (sel == ACTION_CLASSPATH) {
+                    } else if (action == ACTION_CLASSPATH) {
                         showActionsMenu = false;
                         openClasspath();
-                    } else if (sel == ACTION_STOP_ALL) {
+                    } else if (action == ACTION_MCP_INFO) {
+                        showActionsMenu = false;
+                        openMcpInfo();
+                    } else if (action == ACTION_MCP_LOG) {
+                        showActionsMenu = false;
+                        openMcpLog();
+                    } else if (action == ACTION_STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
                         checkStopAllNotification();
-                    } else if (sel == ACTION_CAPTION) {
+                    } else if (action == ACTION_CAPTION) {
                         showActionsMenu = false;
                         captionOverlay.openInput();
                     }
@@ -352,8 +378,9 @@ class ActionsPopup {
     // ---- Rendering ----
 
     private void renderActionsMenu(Frame frame, Rect area) {
+        int count = actionCount();
         int popupW = 34;
-        int popupH = 2 + ACTION_COUNT;
+        int popupH = 2 + count;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -366,15 +393,21 @@ class ActionsPopup {
         String stopLabel = stopAllPopup.hasBothGroups()
                 ? "  🛑 Stop All..."
                 : "  🛑 Stop All";
+        List<ListItem> items = new ArrayList<>();
+        items.add(ListItem.from("  🐪 Run an example..."));
+        items.add(ListItem.from("  📖 Show Documentation"));
+        items.add(ListItem.from("  💬 Caption... (Ctrl+T)"));
+        items.add(ListItem.from("  📸 Take Screenshot"));
+        items.add(ListItem.from(keystrokeLabel));
+        items.add(ListItem.from("  🩺 Run Doctor"));
+        items.add(ListItem.from("  📦 Show Classpath"));
+        if (mcpEnabled) {
+            items.add(ListItem.from("  🤖 MCP Info"));
+            items.add(ListItem.from("  📋 MCP Log"));
+        }
+        items.add(ListItem.from(stopLabel));
         ListWidget list = ListWidget.builder()
-                .items(ListItem.from("  🐪 Run an example..."),
-                        ListItem.from("  📖 Show Documentation"),
-                        ListItem.from("  💬 Caption... (Ctrl+T)"),
-                        ListItem.from("  📸 Take Screenshot"),
-                        ListItem.from(keystrokeLabel),
-                        ListItem.from("  🩺 Run Doctor"),
-                        ListItem.from("  📦 Show Classpath"),
-                        ListItem.from(stopLabel))
+                .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
@@ -465,18 +498,32 @@ class ActionsPopup {
     private void renderDocViewer(Frame frame, Rect area) {
         Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
         frame.renderWidget(Clear.INSTANCE, popup);
-        MarkdownView view = MarkdownView.builder()
-                .source(docContent)
-                .scroll(docScroll)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
-                        .title(" " + docTitle + " ")
-                        .titleBottom(Title.from(Line.from(
-                                Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
-                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
-                        .build())
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" " + docTitle + " ")
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
+                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
-        frame.renderWidget(view, popup);
+        if (docLines != null) {
+            frame.renderWidget(block, popup);
+            Rect inner = block.inner(popup);
+            int visibleLines = inner.height();
+            int totalLines = docLines.size();
+            int clampedScroll = Math.min(docScroll, Math.max(0, totalLines - visibleLines));
+            int end = Math.min(clampedScroll + visibleLines, totalLines);
+            List<Line> visible = docLines.subList(clampedScroll, end);
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
+                    inner);
+        } else {
+            MarkdownView view = MarkdownView.builder()
+                    .source(docContent)
+                    .scroll(docScroll)
+                    .block(block)
+                    .build();
+            frame.renderWidget(view, popup);
+        }
     }
 
     private void renderDocPicker(Frame frame, Rect area) {
@@ -544,6 +591,7 @@ class ActionsPopup {
         if (ctx == null) {
             return;
         }
+        docLines = null;
         showDocPicker = false;
         try {
             Path outputFile = ctx.getOutputFile(info.pid);
@@ -601,6 +649,7 @@ class ActionsPopup {
         }
         if (content != null && !content.isEmpty()) {
             docContent = isAdoc ? DocHelper.asciidocToMarkdown(content) : content;
+            docLines = null;
             docTitle = name;
             docScroll = 0;
             showExampleBrowser = false;
@@ -622,6 +671,100 @@ class ActionsPopup {
         if (msg != null) {
             setNotification(msg, false);
         }
+    }
+
+    private int resolveAction(int index) {
+        if (!mcpEnabled && index >= ACTION_MCP_INFO) {
+            return index + 2;
+        }
+        return index;
+    }
+
+    private void openMcpInfo() {
+        docLines = null;
+        String url = "http://localhost:" + mcpPort + "/mcp";
+        String client = mcpConnectedClient != null ? mcpConnectedClient.get() : null;
+        String status = client != null
+                ? "**Connected:** " + client
+                : "**Status:** Not connected";
+        docContent = "# MCP Server\n\n"
+                     + status + "\n\n"
+                     + "The TUI has an embedded MCP (Model Context Protocol) server running at:\n\n"
+                     + "    " + url + "\n\n"
+                     + "This allows AI coding agents to observe your TUI session — see the screen,\n"
+                     + "follow your key presses, and understand what you're doing.\n\n"
+                     + "## Available Tools\n\n"
+                     + "| Tool | Description |\n"
+                     + "|------|-------------|\n"
+                     + "| `tui_get_screen` | Returns the current screen content as text |\n"
+                     + "| `tui_get_events` | Returns recent key presses and navigation events |\n"
+                     + "| `tui_get_state` | Returns active tab, selected integration, etc. |\n\n"
+                     + "## Setup for Claude Code\n\n"
+                     + "Run this command to connect Claude Code to the TUI:\n\n"
+                     + "    claude mcp add --transport http camel-tui " + url + "\n\n"
+                     + "Or add to your project's `.mcp.json`:\n\n"
+                     + "    {\n"
+                     + "      \"mcpServers\": {\n"
+                     + "        \"camel-tui\": {\n"
+                     + "          \"type\": \"http\",\n"
+                     + "          \"url\": \"" + url + "\"\n"
+                     + "        }\n"
+                     + "      }\n"
+                     + "    }\n\n"
+                     + "A `.mcp.json` file is auto-generated in the current directory while the TUI\n"
+                     + "is running with `--mcp` enabled. It is removed when the TUI exits.\n\n"
+                     + "## Usage Examples\n\n"
+                     + "Once connected, ask your AI agent:\n\n"
+                     + "- \"What's on my Camel TUI screen right now?\"\n"
+                     + "- \"What tab am I on and what integration is selected?\"\n"
+                     + "- \"What keys did I press in the last minute?\"\n"
+                     + "- \"What color is the throughput chart?\"\n";
+        docTitle = "MCP Info";
+        docScroll = 0;
+        showDocViewer = true;
+        docViewerFromExampleBrowser = false;
+    }
+
+    private void openMcpLog() {
+        List<TuiMcpServer.LogEntry> entries = mcpActivityLog != null ? mcpActivityLog.get() : List.of();
+        if (entries.isEmpty()) {
+            docContent = "No MCP activity yet.";
+            docLines = null;
+        } else {
+            docContent = null;
+            List<Line> lines = new ArrayList<>();
+            for (TuiMcpServer.LogEntry entry : entries) {
+                String levelTag;
+                Style levelStyle;
+                switch (entry.level()) {
+                    case CONNECT:
+                        levelTag = " CONNECT ";
+                        levelStyle = Style.EMPTY.fg(Color.GREEN);
+                        break;
+                    case TOOL:
+                        levelTag = " TOOL    ";
+                        levelStyle = Style.EMPTY.fg(Color.CYAN);
+                        break;
+                    case ERROR:
+                        levelTag = " ERROR   ";
+                        levelStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+                        break;
+                    default:
+                        levelTag = " INFO    ";
+                        levelStyle = Style.EMPTY.fg(Color.GREEN);
+                        break;
+                }
+                lines.add(Line.from(
+                        Span.styled(entry.timestamp(), Style.EMPTY.dim()),
+                        Span.styled(levelTag, levelStyle),
+                        Span.raw(entry.message())));
+            }
+            docLines = lines;
+        }
+        docTitle = "MCP Log";
+        docScroll = 0;
+        showDocViewer = true;
+        docViewerFromExampleBrowser = false;
     }
 
     private void openClasspath() {

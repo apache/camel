@@ -130,6 +130,15 @@ public class CamelMonitor extends CamelCommand {
                         arity = "0..1")
     String record;
 
+    @CommandLine.Option(names = { "--mcp" },
+                        description = "Enable embedded MCP server for AI agent access to the TUI")
+    boolean mcp;
+
+    @CommandLine.Option(names = { "--mcp-port" },
+                        description = "MCP server port (default: ${DEFAULT-VALUE})",
+                        defaultValue = "8123")
+    int mcpPort = 8123;
+
     // State
     private final AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(Collections.emptyList());
     private final AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(Collections.emptyList());
@@ -201,6 +210,8 @@ public class CamelMonitor extends CamelCommand {
     private volatile long screenshotMessageTime;
     private volatile boolean pendingScreenshot;
     private boolean recording;
+    private TuiEventLog eventLog;
+    private TuiMcpServer mcpServer;
     private final List<KeyRecord> recentKeys = new ArrayList<>();
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
 
@@ -281,6 +292,22 @@ public class CamelMonitor extends CamelCommand {
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
 
+        eventLog = new TuiEventLog(500);
+        Path mcpJsonFile = null;
+        if (mcp) {
+            mcpServer = new TuiMcpServer(mcpPort, this);
+            try {
+                mcpServer.start();
+                actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient, mcpServer::getActivityLog);
+                mcpJsonFile = writeMcpJson(mcpPort);
+            } catch (java.net.BindException e) {
+                System.err.println("MCP server failed to start: port " + mcpPort + " is already in use.");
+                System.err.println("Use --mcp-port to specify a different port, e.g.: camel tui --mcp --mcp-port 8124");
+                mcpServer = null;
+                mcp = false;
+            }
+        }
+
         try (var tui = TuiRunner.create()) {
             this.runner = tui;
             ctx.runner = tui;
@@ -291,6 +318,10 @@ public class CamelMonitor extends CamelCommand {
                     this::handleEvent,
                     this::render);
         } finally {
+            if (mcpServer != null) {
+                mcpServer.stop();
+            }
+            deleteMcpJson(mcpJsonFile);
             this.runner = null;
         }
         return 0;
@@ -300,6 +331,12 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
+            if (eventLog != null) {
+                String elabel = keyLabel(ke);
+                if (elabel != null) {
+                    eventLog.record(elabel, elabel);
+                }
+            }
             if (recording) {
                 String label = keyLabel(ke);
                 if (label != null) {
@@ -1623,6 +1660,21 @@ public class CamelMonitor extends CamelCommand {
             spans.addAll(keySpans);
         }
 
+        if (mcp && !recording) {
+            String client = mcpServer != null ? mcpServer.getConnectedClient() : null;
+            boolean active = mcpServer != null && mcpServer.isRecentActivity();
+            String dot = active ? " ●" : " ○";
+            String mcpLabel = client != null
+                    ? "MCP :" + mcpPort + " (" + client + ")"
+                    : "MCP :" + mcpPort;
+            int hintsWidth = spans.stream().mapToInt(s -> s.width()).sum();
+            int mcpWidth = mcpLabel.length() + dot.length() + 1;
+            int gap = Math.max(1, area.width() - hintsWidth - mcpWidth);
+            spans.add(Span.raw(" ".repeat(gap)));
+            spans.add(Span.styled(mcpLabel, Style.EMPTY.fg(client != null ? Color.GREEN : Color.CYAN)));
+            spans.add(Span.styled(dot, Style.EMPTY.fg(active ? Color.GREEN : Color.DARK_GRAY)));
+        }
+
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
@@ -2927,6 +2979,77 @@ public class CamelMonitor extends CamelCommand {
     }
 
     record VanishingInfraInfo(InfraInfo info, long startTime) {
+    }
+
+    // ---- MCP .mcp.json lifecycle ----
+
+    private static Path writeMcpJson(int port) {
+        Path path = Path.of(".mcp.json");
+        try {
+            String json = "{\n"
+                          + "  \"mcpServers\": {\n"
+                          + "    \"camel-tui\": {\n"
+                          + "      \"type\": \"http\",\n"
+                          + "      \"url\": \"http://localhost:" + port + "/mcp\"\n"
+                          + "    }\n"
+                          + "  }\n"
+                          + "}\n";
+            Files.writeString(path, json);
+            return path;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static void deleteMcpJson(Path path) {
+        if (path != null) {
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException e) {
+                // best effort
+            }
+        }
+    }
+
+    // ---- MCP accessor methods ----
+
+    private static final String[] TAB_NAMES = {
+            "Overview", "Log", "Routes", "Consumers", "Endpoints",
+            "HTTP", "Health", "Inspect", "Circuit Breaker"
+    };
+
+    Buffer getLastBuffer() {
+        return lastBuffer;
+    }
+
+    TuiEventLog getEventLog() {
+        return eventLog;
+    }
+
+    int getActiveTabIndex() {
+        return tabsState.selected();
+    }
+
+    String getActiveTabName() {
+        int idx = tabsState.selected();
+        return idx >= 0 && idx < TAB_NAMES.length ? TAB_NAMES[idx] : "Unknown";
+    }
+
+    String getSelectedPid() {
+        return ctx != null ? ctx.selectedPid : null;
+    }
+
+    String getSelectedIntegrationName() {
+        if (ctx == null) {
+            return null;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.name : null;
+    }
+
+    int getIntegrationCount() {
+        List<IntegrationInfo> list = data.get();
+        return (int) list.stream().filter(i -> !i.vanishing).count();
     }
 
 }
