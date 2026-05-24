@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -582,10 +583,10 @@ public final class PluginHelper {
     public static List<JsonObject> loadKnownPlugins() {
         try (InputStream is = PluginHelper.class.getClassLoader().getResourceAsStream("known-plugins.json")) {
             if (is != null) {
-                String text = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                String text = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                 JsonArray arr = (JsonArray) Jsoner.deserialize(text);
                 List<JsonObject> result = new ArrayList<>(arr.size());
-                String text = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                for (Object o : arr) {
                     if (o instanceof JsonObject jo) {
                         result.add(jo);
                     }
