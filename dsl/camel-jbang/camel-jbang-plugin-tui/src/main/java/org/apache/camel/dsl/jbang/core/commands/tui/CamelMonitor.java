@@ -347,6 +347,10 @@ public class CamelMonitor extends CamelCommand {
                 captionOverlay.handleKeyEvent(ke);
                 return true;
             }
+            if (ke.hasCtrl() && ke.hasShift() && ke.isChar('t')) {
+                captionOverlay.openInline();
+                return true;
+            }
             if (ke.hasCtrl() && ke.isChar('t')) {
                 captionOverlay.openInput();
                 return true;
@@ -3050,6 +3054,10 @@ public class CamelMonitor extends CamelCommand {
     int getIntegrationCount() {
         List<IntegrationInfo> list = data.get();
         return (int) list.stream().filter(i -> !i.vanishing).count();
+    }
+
+    void showCaption(String text) {
+        captionOverlay.showCaption(text);
     }
 
 }

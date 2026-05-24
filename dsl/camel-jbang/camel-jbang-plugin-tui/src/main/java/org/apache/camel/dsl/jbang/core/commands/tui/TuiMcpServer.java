@@ -206,6 +206,13 @@ class TuiMcpServer {
                 "Returns the current TUI navigation state: active tab, selected integration, "
                                  + "and integration count.",
                 Map.of()));
+        toolList.add(toolDef(
+                "tui_show_caption",
+                "Shows a caption message on the TUI screen with a typewriter animation. "
+                                    + "Use this to display messages to the user. "
+                                    + "Supports \\n for newlines.",
+                Map.of("text", propDef("string", "The caption text to display")),
+                List.of("text")));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -231,6 +238,7 @@ class TuiMcpServer {
                 case "tui_get_screen" -> callGetScreen(args);
                 case "tui_get_events" -> callGetEvents(args);
                 case "tui_get_state" -> callGetState();
+                case "tui_show_caption" -> callShowCaption(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -316,6 +324,15 @@ class TuiMcpServer {
         return Jsoner.serialize(result);
     }
 
+    private String callShowCaption(Map<String, Object> args) {
+        String text = (String) args.get("text");
+        if (text == null || text.isBlank()) {
+            return "Error: text is required";
+        }
+        monitor.showCaption(text);
+        return "Caption displayed: " + text;
+    }
+
     // --- JSON-RPC helpers ---
 
     private void sendResult(HttpExchange exchange, JsonObject request, JsonObject result) throws IOException {
@@ -350,12 +367,21 @@ class TuiMcpServer {
     // --- Tool definition helpers ---
 
     private JsonObject toolDef(String name, String description, Map<String, JsonObject> properties) {
+        return toolDef(name, description, properties, List.of());
+    }
+
+    private JsonObject toolDef(String name, String description, Map<String, JsonObject> properties, List<String> required) {
         JsonObject schema = new JsonObject();
         schema.put("type", "object");
         if (!properties.isEmpty()) {
             JsonObject props = new JsonObject();
             props.putAll(properties);
             schema.put("properties", props);
+        }
+        if (!required.isEmpty()) {
+            JsonArray req = new JsonArray();
+            req.addAll(required);
+            schema.put("required", req);
         }
 
         JsonObject tool = new JsonObject();

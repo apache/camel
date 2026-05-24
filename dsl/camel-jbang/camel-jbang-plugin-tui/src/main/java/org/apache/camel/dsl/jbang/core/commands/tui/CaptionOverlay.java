@@ -44,9 +44,14 @@ class CaptionOverlay {
     private static final long CHAR_DELAY_MS = 50;
     private static final long HOLD_DURATION_MS = 3000;
     private static final long FADE_DURATION_MS = 1000;
+    private static final long INLINE_IDLE_TIMEOUT_MS = 3000;
 
     private boolean showInput;
     private TextInputState inputState;
+
+    private boolean inlineMode;
+    private StringBuilder inlineBuffer;
+    private long inlineLastKeystroke;
 
     private String captionText;
     private long captionStartTime;
@@ -56,12 +61,16 @@ class CaptionOverlay {
         return showInput;
     }
 
+    boolean isInlineMode() {
+        return inlineMode;
+    }
+
     boolean isCaptionVisible() {
         return captionText != null;
     }
 
     boolean isVisible() {
-        return showInput || captionText != null;
+        return showInput || inlineMode || captionText != null;
     }
 
     void openInput() {
@@ -69,9 +78,26 @@ class CaptionOverlay {
         inputState = new TextInputState("");
     }
 
+    void openInline() {
+        inlineMode = true;
+        inlineBuffer = new StringBuilder();
+        inlineLastKeystroke = System.currentTimeMillis();
+        captionText = "";
+        captionStartTime = System.currentTimeMillis();
+        captionFullyTypedTime = 0;
+    }
+
+    void showCaption(String text) {
+        captionText = text;
+        captionStartTime = System.currentTimeMillis();
+        captionFullyTypedTime = 0;
+    }
+
     void close() {
         showInput = false;
         inputState = null;
+        inlineMode = false;
+        inlineBuffer = null;
         captionText = null;
         captionFullyTypedTime = 0;
     }
@@ -107,6 +133,22 @@ class CaptionOverlay {
             }
             return true;
         }
+        if (inlineMode) {
+            if (ke.isCancel() || ke.isConfirm()) {
+                finishInline();
+            } else if (ke.isDeleteBackward()) {
+                if (!inlineBuffer.isEmpty()) {
+                    inlineBuffer.deleteCharAt(inlineBuffer.length() - 1);
+                    captionText = inlineBuffer.toString();
+                    inlineLastKeystroke = System.currentTimeMillis();
+                }
+            } else if (ke.code() == KeyCode.CHAR) {
+                inlineBuffer.append(ke.character());
+                captionText = inlineBuffer.toString();
+                inlineLastKeystroke = System.currentTimeMillis();
+            }
+            return true;
+        }
         if (captionText != null) {
             captionText = null;
             captionFullyTypedTime = 0;
@@ -116,7 +158,12 @@ class CaptionOverlay {
     }
 
     void tick(long now) {
-        if (captionText == null) {
+        if (inlineMode && !inlineBuffer.isEmpty()
+                && now - inlineLastKeystroke > INLINE_IDLE_TIMEOUT_MS) {
+            finishInline();
+            return;
+        }
+        if (captionText == null || inlineMode) {
             return;
         }
         int totalChars = captionText.length();
@@ -132,9 +179,25 @@ class CaptionOverlay {
         }
     }
 
+    private void finishInline() {
+        inlineMode = false;
+        if (inlineBuffer.isEmpty()) {
+            captionText = null;
+            inlineBuffer = null;
+            return;
+        }
+        captionText = inlineBuffer.toString();
+        inlineBuffer = null;
+        captionFullyTypedTime = System.currentTimeMillis();
+    }
+
     void render(Frame frame, Rect area) {
         if (showInput) {
             renderInput(frame, area);
+            return;
+        }
+        if (inlineMode) {
+            renderInline(frame, area);
             return;
         }
         if (captionText != null) {
@@ -145,6 +208,9 @@ class CaptionOverlay {
     void renderFooter(List<Span> spans) {
         if (showInput) {
             hint(spans, "Enter", "show");
+            hintLast(spans, "Esc", "cancel");
+        } else if (inlineMode) {
+            hint(spans, "Enter", "finish");
             hintLast(spans, "Esc", "cancel");
         } else if (captionText != null) {
             hintLast(spans, "any key", "dismiss");
@@ -178,6 +244,34 @@ class CaptionOverlay {
                 .cursorStyle(Style.EMPTY.reversed())
                 .build();
         frame.renderStatefulWidget(textInput, inputArea, inputState);
+    }
+
+    private void renderInline(Frame frame, Rect area) {
+        Style style = Style.EMPTY.fg(Color.WHITE).bold();
+        String text = inlineBuffer != null ? inlineBuffer.toString() : "";
+        boolean cursorVisible = (System.currentTimeMillis() / 500) % 2 == 0;
+        String display = text + (cursorVisible ? "▌" : " ");
+
+        String[] parts = display.split("\\\\n", -1);
+        List<Line> lines = new ArrayList<>();
+        int maxWidth = 0;
+        for (String part : parts) {
+            lines.add(Line.from(Span.styled("  " + part + "  ", style)));
+            maxWidth = Math.max(maxWidth, part.length() + 4);
+        }
+
+        int captionW = Math.min(Math.max(maxWidth, 6), area.width() - 2);
+        int captionH = lines.size();
+        int captionX = area.left() + Math.max(0, (area.width() - captionW) / 2);
+        int captionY = area.top() + Math.max(0, (area.height() - captionH) / 2);
+        Rect captionArea = new Rect(
+                captionX, captionY, Math.min(captionW, area.width()),
+                Math.min(captionH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, captionArea);
+        frame.renderWidget(Paragraph.builder()
+                .text(Text.from(lines.toArray(Line[]::new)))
+                .build(), captionArea);
     }
 
     private void renderCaption(Frame frame, Rect area) {
