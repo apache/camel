@@ -2,7 +2,7 @@
   {
     "name": "forage",
     "command": "forage",
-    "description": "Utilities for working with Forage components",
+    "description": "Configure components via opinionated bean factories",
     "firstVersion": "4.10.0",
     "groupId": "io.kaoto.forage",
     "artifactId": "camel-jbang-plugin-forage",
