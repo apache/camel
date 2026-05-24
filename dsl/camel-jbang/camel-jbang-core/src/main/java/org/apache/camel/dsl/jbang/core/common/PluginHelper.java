@@ -585,7 +585,7 @@ public final class PluginHelper {
                 String text = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
                 JsonArray arr = (JsonArray) Jsoner.deserialize(text);
                 List<JsonObject> result = new ArrayList<>(arr.size());
-                for (Object o : arr) {
+                String text = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                     if (o instanceof JsonObject jo) {
                         result.add(jo);
                     }
