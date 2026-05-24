@@ -219,7 +219,10 @@ class TuiMcpServer {
                 "Shows a caption message on the TUI screen with a typewriter animation. "
                                     + "Use this to display messages to the user. "
                                     + "Supports \\n for newlines.",
-                Map.of("text", propDef("string", "The caption text to display")),
+                Map.of("text", propDef("string", "The caption text to display"),
+                        "duration", propDef("integer",
+                                "Auto-dismiss after this many seconds. Caption won't block key events. "
+                                                        + "If omitted, caption stays until dismissed by a key press.")),
                 List.of("text")));
         toolList.add(toolDef(
                 "tui_navigate",
@@ -356,6 +359,14 @@ class TuiMcpServer {
         String text = (String) args.get("text");
         if (text == null || text.isBlank()) {
             return "Error: text is required";
+        }
+        Object durationArg = args.get("duration");
+        if (durationArg instanceof Number n) {
+            int duration = n.intValue();
+            if (duration > 0) {
+                monitor.showCaption(text, duration);
+                return "Caption displayed (auto-dismiss in " + duration + "s): " + text;
+            }
         }
         monitor.showCaption(text);
         return "Caption displayed: " + text;

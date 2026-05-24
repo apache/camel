@@ -56,6 +56,7 @@ class CaptionOverlay {
     private String captionText;
     private long captionStartTime;
     private long captionFullyTypedTime;
+    private long captionAutoDismissTime;
 
     boolean isInputVisible() {
         return showInput;
@@ -91,6 +92,18 @@ class CaptionOverlay {
         captionText = text;
         captionStartTime = System.currentTimeMillis();
         captionFullyTypedTime = 0;
+        captionAutoDismissTime = 0;
+    }
+
+    void showCaption(String text, int durationSeconds) {
+        captionText = text;
+        captionStartTime = System.currentTimeMillis();
+        captionFullyTypedTime = 0;
+        if (durationSeconds > 0) {
+            captionAutoDismissTime = System.currentTimeMillis() + (durationSeconds * 1000L);
+        } else {
+            captionAutoDismissTime = 0;
+        }
     }
 
     void close() {
@@ -150,6 +163,9 @@ class CaptionOverlay {
             return true;
         }
         if (captionText != null) {
+            if (captionAutoDismissTime > 0) {
+                return false;
+            }
             captionText = null;
             captionFullyTypedTime = 0;
             return true;
@@ -166,6 +182,14 @@ class CaptionOverlay {
         if (captionText == null || inlineMode) {
             return;
         }
+
+        if (captionAutoDismissTime > 0 && now > captionAutoDismissTime) {
+            captionText = null;
+            captionFullyTypedTime = 0;
+            captionAutoDismissTime = 0;
+            return;
+        }
+
         int totalChars = captionText.length();
         long elapsed = now - captionStartTime;
         int charsToShow = (int) (elapsed / CHAR_DELAY_MS);
@@ -173,7 +197,9 @@ class CaptionOverlay {
         if (charsToShow >= totalChars && captionFullyTypedTime == 0) {
             captionFullyTypedTime = now;
         }
-        if (captionFullyTypedTime > 0 && now - captionFullyTypedTime > HOLD_DURATION_MS + FADE_DURATION_MS) {
+        if (captionAutoDismissTime == 0
+                && captionFullyTypedTime > 0
+                && now - captionFullyTypedTime > HOLD_DURATION_MS + FADE_DURATION_MS) {
             captionText = null;
             captionFullyTypedTime = 0;
         }

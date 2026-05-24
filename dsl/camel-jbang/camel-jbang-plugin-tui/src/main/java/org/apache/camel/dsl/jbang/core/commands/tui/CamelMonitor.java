@@ -3080,6 +3080,10 @@ public class CamelMonitor extends CamelCommand {
         captionOverlay.showCaption(text);
     }
 
+    void showCaption(String text, int durationSeconds) {
+        captionOverlay.showCaption(text, durationSeconds);
+    }
+
     String navigateToTab(String tabName) {
         for (int i = 0; i < TAB_NAMES.length; i++) {
             if (TAB_NAMES[i].equalsIgnoreCase(tabName)) {
