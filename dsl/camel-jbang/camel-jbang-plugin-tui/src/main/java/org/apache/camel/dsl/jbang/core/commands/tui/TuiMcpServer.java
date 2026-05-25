@@ -305,7 +305,8 @@ class TuiMcpServer {
                 "tui_tape_stop",
                 "Stop tape recording and return the generated VHS .tape content. "
                                  + "The tape can be replayed with camel monitor --record or charmbracelet/vhs.",
-                Map.of()));
+                Map.of("save", propDef("boolean",
+                        "If true, also save the tape to a local file (camel-tui-tape-<timestamp>.tape). Default false."))));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -336,7 +337,7 @@ class TuiMcpServer {
                 case "tui_get_options" -> callGetOptions();
                 case "tui_wait_for_idle" -> callWaitForIdle(args);
                 case "tui_tape_start" -> callTapeStart(args);
-                case "tui_tape_stop" -> callTapeStop();
+                case "tui_tape_stop" -> callTapeStop(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -645,7 +646,7 @@ class TuiMcpServer {
         return "Tape recording started" + (title != null ? ": " + title : "");
     }
 
-    private String callTapeStop() {
+    private String callTapeStop(Map<String, Object> args) {
         if (!monitor.isTapeRecording()) {
             return "No tape recording is active. Start one with tui_tape_start.";
         }
@@ -659,6 +660,18 @@ class TuiMcpServer {
         result.put("tape", tape);
         result.put("keyCount", keyCount);
         result.put("duration", TapeRecorder.formatSleep(durationMs));
+
+        boolean save = Boolean.TRUE.equals(args.get("save"));
+        if (save) {
+            String filename = "camel-tui-tape-" + System.currentTimeMillis() + ".tape";
+            try {
+                java.nio.file.Files.writeString(java.nio.file.Path.of(filename), tape);
+                result.put("file", filename);
+            } catch (java.io.IOException e) {
+                result.put("saveError", e.getMessage());
+            }
+        }
+
         return Jsoner.serialize(result);
     }
 

@@ -61,11 +61,12 @@ class ActionsPopup {
     private static final int ACTION_SCREENSHOT = 3;
     private static final int ACTION_SHOW_KEYSTROKES = 4;
     private static final int ACTION_TAPE_RECORDING = 5;
-    private static final int ACTION_DOCTOR = 6;
-    private static final int ACTION_CLASSPATH = 7;
-    private static final int ACTION_MCP_INFO = 8;
-    private static final int ACTION_MCP_LOG = 9;
-    private static final int ACTION_STOP_ALL = 10;
+    private static final int ACTION_TAPE_INSTRUCTIONS = 6;
+    private static final int ACTION_DOCTOR = 7;
+    private static final int ACTION_CLASSPATH = 8;
+    private static final int ACTION_MCP_INFO = 9;
+    private static final int ACTION_MCP_LOG = 10;
+    private static final int ACTION_STOP_ALL = 11;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -142,7 +143,7 @@ class ActionsPopup {
     }
 
     private int actionCount() {
-        return mcpEnabled ? 11 : 9;
+        return mcpEnabled ? 12 : 10;
     }
 
     boolean isVisible() {
@@ -191,6 +192,7 @@ class ActionsPopup {
         labels.add("Take Screenshot");
         labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
         labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
+        labels.add("Tape Recording Guide");
         labels.add("Run Doctor");
         labels.add("Show Classpath");
         if (mcpEnabled) {
@@ -331,6 +333,9 @@ class ActionsPopup {
                     } else if (action == ACTION_TAPE_RECORDING) {
                         showActionsMenu = false;
                         toggleTapeRecording.run();
+                    } else if (action == ACTION_TAPE_INSTRUCTIONS) {
+                        showActionsMenu = false;
+                        openTapeInstructions();
                     } else if (action == ACTION_DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
@@ -477,6 +482,7 @@ class ActionsPopup {
                 ? "  ⏹️  Stop Tape Recording (Ctrl+R)"
                 : "  ⏺️  Start Tape Recording (Ctrl+R)";
         items.add(ListItem.from(tapeLabel));
+        items.add(ListItem.from("  📄 Tape Recording Guide"));
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  📦 Show Classpath"));
         if (mcpEnabled) {
@@ -756,6 +762,40 @@ class ActionsPopup {
             return index + 2;
         }
         return index;
+    }
+
+    private void openTapeInstructions() {
+        docLines = null;
+        docContent = "# Tape Recording Guide\n\n"
+                     + "Record your live TUI session as a `.tape` file that captures keystrokes\n"
+                     + "with timing. The tape can be replayed or converted to an animated GIF.\n\n"
+                     + "## Starting and Stopping\n\n"
+                     + "- Press **Ctrl+R** to start/stop recording at any time\n"
+                     + "- Or use the **F2** actions menu → Start/Stop Tape Recording\n\n"
+                     + "When recording stops, the tape is saved to the current directory as\n"
+                     + "`camel-tui-tape-<timestamp>.tape`.\n\n"
+                     + "## Converting to Animated GIF\n\n"
+                     + "Install [VHS](https://github.com/charmbracelet/vhs) and run:\n\n"
+                     + "    brew install vhs\n"
+                     + "    vhs camel-tui-tape-12345.tape\n\n"
+                     + "This replays the keystrokes in a virtual terminal and produces an animated GIF.\n\n"
+                     + "## Customizing the Output\n\n"
+                     + "Edit the `.tape` file and add VHS directives at the top:\n\n"
+                     + "    Output demo.gif\n"
+                     + "    Set FontSize 14\n"
+                     + "    Set Width 1200\n"
+                     + "    Set Height 600\n\n"
+                     + "See the [VHS documentation](https://github.com/charmbracelet/vhs)\n"
+                     + "for all settings (font, dimensions, padding, themes).\n\n"
+                     + "## Tips\n\n"
+                     + "- **Ctrl+R** is not captured in the tape, keeping the script clean\n"
+                     + "- Natural pauses between keystrokes are preserved as `Sleep` commands\n"
+                     + "- Keep recordings focused — one workflow at a time works best\n"
+                     + "- You can also produce `.mp4`, `.webm`, or screenshots with VHS\n";
+        docTitle = "Tape Recording Guide";
+        docScroll = 0;
+        showDocViewer = true;
+        docViewerFromExampleBrowser = false;
     }
 
     private void openMcpInfo() {
