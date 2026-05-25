@@ -270,6 +270,22 @@ class TuiMcpServer {
                 Map.of("keys", propDef("array", "Array of key name strings to send"),
                         "delay", propDef("integer", "Delay in milliseconds between keys (default 150)")),
                 List.of("keys")));
+        toolList.add(toolDef(
+                "tui_get_options",
+                "Returns all available tabs and integrations. "
+                                   + "Use this to discover what tabs exist and which integrations are running "
+                                   + "before navigating. Also returns the current selection.",
+                Map.of()));
+        toolList.add(toolDef(
+                "tui_wait_for_idle",
+                "Waits for the TUI to render new frames after an action. "
+                                     + "Blocks until the specified number of new frames have been rendered, "
+                                     + "ensuring the action has been processed. "
+                                     + "Returns the screen content after settling. Use after tui_navigate or tui_send_keys.",
+                Map.of("timeout", propDef("integer",
+                        "Maximum wait time in milliseconds (default 5000, max 30000)"),
+                        "frames", propDef("integer",
+                                "Number of new frames to wait for (default 2)"))));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -297,6 +313,8 @@ class TuiMcpServer {
                 case "tui_show_caption" -> callShowCaption(args);
                 case "tui_navigate" -> callNavigate(args);
                 case "tui_send_keys" -> callSendKeys(args);
+                case "tui_get_options" -> callGetOptions();
+                case "tui_wait_for_idle" -> callWaitForIdle(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -453,6 +471,64 @@ class TuiMcpServer {
         }
         int sent = monitor.injectKeys(keys, delay);
         return "Queued " + sent + " key(s) with " + delay + "ms delay";
+    }
+
+    private String callGetOptions() {
+        JsonObject result = new JsonObject();
+        result.put("tabs", toJsonArray(monitor.getTabNames()));
+        result.put("activeTab", monitor.getActiveTabName());
+        result.put("activeTabIndex", monitor.getActiveTabIndex());
+        result.put("integrations", toJsonArray(monitor.getIntegrationNames()));
+        String selected = monitor.getSelectedIntegrationName();
+        if (selected != null) {
+            result.put("selectedIntegration", selected);
+        }
+        result.put("integrationCount", monitor.getIntegrationCount());
+        return Jsoner.serialize(result);
+    }
+
+    private String callWaitForIdle(Map<String, Object> args) {
+        int timeout = 5000;
+        Object timeoutArg = args.get("timeout");
+        if (timeoutArg instanceof Number n) {
+            timeout = Math.min(30_000, Math.max(500, n.intValue()));
+        }
+        int requiredFrames = 2;
+        Object framesArg = args.get("frames");
+        if (framesArg instanceof Number n) {
+            requiredFrames = Math.max(1, Math.min(10, n.intValue()));
+        }
+
+        long startGeneration = monitor.getRenderGeneration();
+        long start = System.currentTimeMillis();
+        long deadline = start + timeout;
+
+        while (System.currentTimeMillis() < deadline) {
+            long current = monitor.getRenderGeneration();
+            if (current >= startGeneration + requiredFrames) {
+                Buffer buf = monitor.getLastBuffer();
+                JsonObject result = new JsonObject();
+                result.put("settled", true);
+                result.put("waitedMs", System.currentTimeMillis() - start);
+                result.put("frames", current - startGeneration);
+                if (buf != null) {
+                    result.put("screen", ExportRequest.export(buf).text().toString());
+                }
+                return Jsoner.serialize(result);
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+
+        JsonObject result = new JsonObject();
+        result.put("settled", false);
+        result.put("waitedMs", System.currentTimeMillis() - start);
+        result.put("reason", "timeout");
+        return Jsoner.serialize(result);
     }
 
     private static JsonArray toJsonArray(List<String> list) {

@@ -209,6 +209,7 @@ public class CamelMonitor extends CamelCommand {
     private volatile long lastRefresh;
     private boolean showKillConfirm;
     private volatile Buffer lastBuffer;
+    private volatile long renderGeneration;
     private volatile String screenshotMessage;
     private volatile long screenshotMessageTime;
     private volatile boolean pendingScreenshot;
@@ -816,6 +817,7 @@ public class CamelMonitor extends CamelCommand {
         renderFooter(frame, mainChunks.get(5));
 
         lastBuffer = frame.buffer();
+        renderGeneration++;
 
         if (pendingScreenshot) {
             pendingScreenshot = false;
@@ -3045,6 +3047,10 @@ public class CamelMonitor extends CamelCommand {
 
     Buffer getLastBuffer() {
         return lastBuffer;
+    }
+
+    long getRenderGeneration() {
+        return renderGeneration;
     }
 
     TuiEventLog getEventLog() {
