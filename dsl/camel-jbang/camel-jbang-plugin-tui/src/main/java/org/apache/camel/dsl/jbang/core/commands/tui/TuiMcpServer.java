@@ -299,14 +299,15 @@ class TuiMcpServer {
                                 "Number of new frames to wait for (default 2)"))));
         toolList.add(toolDef(
                 "tui_tape_start",
-                "Start recording TUI interactions as a VHS .tape file for demo playback. "
+                "Start recording TUI interactions as a .tape file for demo playback. "
                                   + "All subsequent tui_send_keys calls will be captured as tape commands. "
-                                  + "Stop recording with tui_tape_stop to get the tape content.",
+                                  + "Stop recording with tui_tape_stop to get the tape content. "
+                                  + "Replay with: camel tui monitor --record=<file>.tape",
                 Map.of("title", propDef("string", "Description comment for the tape header"))));
         toolList.add(toolDef(
                 "tui_tape_stop",
-                "Stop tape recording and return the generated VHS .tape content. "
-                                 + "The tape can be replayed with camel monitor --record or charmbracelet/vhs.",
+                "Stop tape recording and return the generated .tape content. "
+                                 + "The tape can be replayed with: camel tui monitor --record=<file>.tape",
                 Map.of("save", propDef("boolean",
                         "If true, also save the tape to a local file (camel-tui-tape-<timestamp>.tape). Default false."))));
         toolList.add(toolDef(
@@ -710,7 +711,9 @@ class TuiMcpServer {
 
         boolean save = Boolean.TRUE.equals(args.get("save"));
         if (save) {
-            String filename = "camel-tui-tape-" + System.currentTimeMillis() + ".tape";
+            String timestamp = java.time.LocalDateTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+            String filename = "camel-tui-tape-" + timestamp + ".tape";
             try {
                 java.nio.file.Files.writeString(java.nio.file.Path.of(filename), tape);
                 result.put("file", filename);

@@ -40,6 +40,12 @@ class TapeRecorder {
             lines.add("# " + title);
             lines.add("");
         }
+        lines.add("Set WindowBar Colorful");
+        lines.add("Set Width 1200");
+        lines.add("Set Height 1200");
+        lines.add("Set CursorBlink false");
+        lines.add("Set Theme \"Aardvark Blue\"");
+        lines.add("");
         startTime = System.currentTimeMillis();
         lastEventTime = startTime;
         keyCount = 0;
@@ -155,7 +161,14 @@ class TapeRecorder {
 
     static String toTapeCommand(String key) {
         if (key.length() == 1) {
-            return null;
+            return switch (key) {
+                case "↑" -> "Up";
+                case "↓" -> "Down";
+                case "←" -> "Left";
+                case "→" -> "Right";
+                case "⌫" -> "Backspace";
+                default -> null;
+            };
         }
         String lower = key.toLowerCase(Locale.ROOT);
 

@@ -149,7 +149,7 @@ class ActionsPopup {
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
                 || mcpLogPopup.isVisible() || doctorPopup.isVisible() || classpathPopup.isVisible()
-                || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
+                || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
     }
 
     SelectionContext getSelectionContext() {
@@ -296,7 +296,7 @@ class ActionsPopup {
             }
             return true;
         }
-        if (captionOverlay.isInputVisible()) {
+        if (captionOverlay.isInlineMode()) {
             return captionOverlay.handleKeyEvent(ke);
         }
         if (classpathPopup.handleKeyEvent(ke)) {
@@ -354,7 +354,7 @@ class ActionsPopup {
                         checkStopAllNotification();
                     } else if (action == ACTION_CAPTION) {
                         showActionsMenu = false;
-                        captionOverlay.openInput();
+                        captionOverlay.openInline();
                     }
                 }
             }
@@ -391,13 +391,13 @@ class ActionsPopup {
         if (classpathPopup.isVisible()) {
             classpathPopup.render(frame, area);
         }
-        if (captionOverlay.isInputVisible()) {
+        if (captionOverlay.isInlineMode()) {
             captionOverlay.render(frame, area);
         }
     }
 
     void renderFooter(List<Span> spans) {
-        if (captionOverlay.isInputVisible()) {
+        if (captionOverlay.isInlineMode()) {
             captionOverlay.renderFooter(spans);
             return;
         }
@@ -475,7 +475,7 @@ class ActionsPopup {
         List<ListItem> items = new ArrayList<>();
         items.add(ListItem.from("  🐪 Run an example..."));
         items.add(ListItem.from("  📖 Show Documentation"));
-        items.add(ListItem.from("  💬 Caption... (Ctrl+T)"));
+        items.add(ListItem.from("  💬 Caption..."));
         items.add(ListItem.from("  📸 Take Screenshot"));
         items.add(ListItem.from(keystrokeLabel));
         String tapeLabel = tapeRecordingActive.get()
@@ -768,30 +768,27 @@ class ActionsPopup {
         docLines = null;
         docContent = "# Tape Recording Guide\n\n"
                      + "Record your live TUI session as a `.tape` file that captures keystrokes\n"
-                     + "with timing. The tape can be replayed or converted to an animated GIF.\n\n"
+                     + "with timing. The tape can be replayed inside the TUI to produce\n"
+                     + "an Asciinema `.cast` recording.\n\n"
                      + "## Starting and Stopping\n\n"
                      + "- Press **Ctrl+R** to start/stop recording at any time\n"
                      + "- Or use the **F2** actions menu → Start/Stop Tape Recording\n\n"
                      + "When recording stops, the tape is saved to the current directory as\n"
                      + "`camel-tui-tape-<timestamp>.tape`.\n\n"
+                     + "## Replaying a Tape\n\n"
+                     + "Replay the tape inside the TUI with the `--record` option:\n\n"
+                     + "    camel tui monitor --record=camel-tui-tape-20260525-153000.tape\n\n"
+                     + "This replays the keystrokes inside the live TUI and produces\n"
+                     + "an Asciinema `.cast` file.\n\n"
                      + "## Converting to Animated GIF\n\n"
-                     + "Install [VHS](https://github.com/charmbracelet/vhs) and run:\n\n"
-                     + "    brew install vhs\n"
-                     + "    vhs camel-tui-tape-12345.tape\n\n"
-                     + "This replays the keystrokes in a virtual terminal and produces an animated GIF.\n\n"
-                     + "## Customizing the Output\n\n"
-                     + "Edit the `.tape` file and add VHS directives at the top:\n\n"
-                     + "    Output demo.gif\n"
-                     + "    Set FontSize 14\n"
-                     + "    Set Width 1200\n"
-                     + "    Set Height 600\n\n"
-                     + "See the [VHS documentation](https://github.com/charmbracelet/vhs)\n"
-                     + "for all settings (font, dimensions, padding, themes).\n\n"
+                     + "Use `agg` to convert the `.cast` file to an animated GIF:\n\n"
+                     + "    brew install asciinema/tap/agg\n"
+                     + "    agg recording.cast demo.gif\n\n"
+                     + "Or upload to [asciinema.org](https://asciinema.org) for a shareable link.\n\n"
                      + "## Tips\n\n"
                      + "- **Ctrl+R** is not captured in the tape, keeping the script clean\n"
                      + "- Natural pauses between keystrokes are preserved as `Sleep` commands\n"
-                     + "- Keep recordings focused — one workflow at a time works best\n"
-                     + "- You can also produce `.mp4`, `.webm`, or screenshots with VHS\n";
+                     + "- Keep recordings focused — one workflow at a time works best\n";
         docTitle = "Tape Recording Guide";
         docScroll = 0;
         showDocViewer = true;

@@ -129,7 +129,7 @@ public class CamelMonitor extends CamelCommand {
     long refreshInterval = DEFAULT_REFRESH_MS;
 
     @CommandLine.Option(names = { "--record" },
-                        description = "Record a demo to an Asciinema .cast file using a TamboUI tape script",
+                        description = "Replay a .tape file inside the TUI and record to an Asciinema .cast file",
                         arity = "0..1")
     String record;
 
@@ -362,7 +362,7 @@ public class CamelMonitor extends CamelCommand {
                     tapeRecorder.recordKey(label);
                 }
             }
-            if (captionOverlay.isCaptionVisible()) {
+            if (captionOverlay.isVisible()) {
                 if (captionOverlay.handleKeyEvent(ke)) {
                     return true;
                 }
@@ -371,12 +371,8 @@ public class CamelMonitor extends CamelCommand {
                 recording = !recording;
                 return true;
             }
-            if (ke.hasCtrl() && ke.hasShift() && ke.isChar('t')) {
-                captionOverlay.openInline();
-                return true;
-            }
             if (ke.hasCtrl() && ke.isChar('t')) {
-                captionOverlay.openInput();
+                captionOverlay.openInline();
                 return true;
             }
             if (actionsPopup.isVisible()) {
@@ -3133,7 +3129,9 @@ public class CamelMonitor extends CamelCommand {
         if (tapeRecorder != null && tapeRecorder.isActive()) {
             String tape = tapeRecorder.stop();
             tapeRecorder = null;
-            String filename = "camel-tui-tape-" + System.currentTimeMillis() + ".tape";
+            String timestamp = java.time.LocalDateTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+            String filename = "camel-tui-tape-" + timestamp + ".tape";
             try {
                 java.nio.file.Files.writeString(java.nio.file.Path.of(filename), tape);
                 captionOverlay.showCaption("Tape saved: " + filename, 5);
