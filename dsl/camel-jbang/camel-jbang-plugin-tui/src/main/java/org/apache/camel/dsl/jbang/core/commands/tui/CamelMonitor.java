@@ -353,6 +353,10 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
             }
+            if (ke.hasCtrl() && ke.isChar('k')) {
+                recording = !recording;
+                return true;
+            }
             if (ke.hasCtrl() && ke.hasShift() && ke.isChar('t')) {
                 captionOverlay.openInline();
                 return true;
@@ -3086,6 +3090,10 @@ public class CamelMonitor extends CamelCommand {
 
     long getRenderGeneration() {
         return renderGeneration;
+    }
+
+    boolean isKeystrokesVisible() {
+        return recording;
     }
 
     TuiEventLog getEventLog() {

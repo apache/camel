@@ -243,7 +243,8 @@ class TuiMcpServer {
                 "tui_get_state",
                 "Returns the current TUI navigation state: active tab, selected integration, "
                                  + "and integration count. "
-                                 + "Includes a 'selection' field with structured metadata about the active list/table.",
+                                 + "Includes a 'selection' field with structured metadata about the active list/table. "
+                                 + "keystrokesVisible indicates if the keystroke overlay is on; toggle with Ctrl+K.",
                 Map.of()));
         toolList.add(toolDef(
                 "tui_show_caption",
@@ -421,6 +422,7 @@ class TuiMcpServer {
             result.put("selectedIntegration", name);
         }
         result.put("integrationCount", monitor.getIntegrationCount());
+        result.put("keystrokesVisible", monitor.isKeystrokesVisible());
         addSelectionContext(result);
         return Jsoner.serialize(result);
     }
