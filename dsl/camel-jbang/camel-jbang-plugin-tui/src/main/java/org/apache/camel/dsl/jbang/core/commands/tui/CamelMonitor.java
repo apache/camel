@@ -670,6 +670,9 @@ public class CamelMonitor extends CamelCommand {
         }
         if (ke.code() == KeyCode.CHAR) {
             String s = ke.string();
+            if (" ".equals(s)) {
+                return "Space";
+            }
             if (!s.isEmpty()) {
                 return s;
             }
@@ -1665,9 +1668,10 @@ public class CamelMonitor extends CamelCommand {
             renderOverviewFooter(spans);
         }
 
+        List<Span> rightSpans = new ArrayList<>();
+
         if (recording && !recentKeys.isEmpty()) {
             long now = System.currentTimeMillis();
-            List<Span> keySpans = new ArrayList<>();
             int maxKeys = Math.min(recentKeys.size(), 8);
             List<KeyRecord> visible = recentKeys.subList(recentKeys.size() - maxKeys, recentKeys.size());
             for (KeyRecord kr : visible) {
@@ -1675,16 +1679,14 @@ public class CamelMonitor extends CamelCommand {
                 Style style = age < 1000
                         ? Style.EMPTY.fg(Color.WHITE).bold().onBlue()
                         : Style.EMPTY.dim();
-                keySpans.add(Span.styled(" " + kr.label() + " ", style));
+                rightSpans.add(Span.styled(" " + kr.label() + " ", style));
             }
-            int hintsWidth = spans.stream().mapToInt(s -> s.width()).sum();
-            int keystrokeWidth = keySpans.stream().mapToInt(s -> s.width()).sum();
-            int gap = Math.max(1, area.width() - hintsWidth - keystrokeWidth);
-            spans.add(Span.raw(" ".repeat(gap)));
-            spans.addAll(keySpans);
         }
 
-        if (mcp && !recording) {
+        if (mcp) {
+            if (!rightSpans.isEmpty()) {
+                rightSpans.add(Span.raw("  "));
+            }
             String client = mcpServer != null ? mcpServer.getConnectedClient() : null;
             boolean active = mcpServer != null && mcpServer.isRecentActivity();
             String mcpLabel = "MCP :" + mcpPort;
@@ -1701,12 +1703,16 @@ public class CamelMonitor extends CamelCommand {
                 labelStyle = Style.EMPTY.dim();
                 suffixStyle = Style.EMPTY.fg(Color.RED);
             }
+            rightSpans.add(Span.styled(mcpLabel, labelStyle));
+            rightSpans.add(Span.styled(suffix, suffixStyle));
+        }
+
+        if (!rightSpans.isEmpty()) {
             int hintsWidth = spans.stream().mapToInt(s -> s.width()).sum();
-            int mcpWidth = mcpLabel.length() + suffix.length() + 1;
-            int gap = Math.max(1, area.width() - hintsWidth - mcpWidth);
+            int rightWidth = rightSpans.stream().mapToInt(s -> s.width()).sum();
+            int gap = Math.max(1, area.width() - hintsWidth - rightWidth);
             spans.add(Span.raw(" ".repeat(gap)));
-            spans.add(Span.styled(mcpLabel, labelStyle));
-            spans.add(Span.styled(suffix, suffixStyle));
+            spans.addAll(rightSpans);
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
