@@ -295,6 +295,17 @@ class TuiMcpServer {
                         "Maximum wait time in milliseconds (default 5000, max 30000)"),
                         "frames", propDef("integer",
                                 "Number of new frames to wait for (default 2)"))));
+        toolList.add(toolDef(
+                "tui_tape_start",
+                "Start recording TUI interactions as a VHS .tape file for demo playback. "
+                                  + "All subsequent tui_send_keys calls will be captured as tape commands. "
+                                  + "Stop recording with tui_tape_stop to get the tape content.",
+                Map.of("title", propDef("string", "Description comment for the tape header"))));
+        toolList.add(toolDef(
+                "tui_tape_stop",
+                "Stop tape recording and return the generated VHS .tape content. "
+                                 + "The tape can be replayed with camel monitor --record or charmbracelet/vhs.",
+                Map.of()));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -324,6 +335,8 @@ class TuiMcpServer {
                 case "tui_send_keys" -> callSendKeys(args);
                 case "tui_get_options" -> callGetOptions();
                 case "tui_wait_for_idle" -> callWaitForIdle(args);
+                case "tui_tape_start" -> callTapeStart(args);
+                case "tui_tape_stop" -> callTapeStop();
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -496,6 +509,11 @@ class TuiMcpServer {
         if (delayArg instanceof Number n) {
             delay = Math.max(80, n.intValue());
         }
+        TapeRecorder recorder = monitor.getTapeRecorder();
+        if (recorder != null && recorder.isActive()) {
+            recorder.recordKeys(keys, delay);
+        }
+
         boolean wait = Boolean.TRUE.equals(args.get("wait"));
         long beforeGen = wait ? monitor.getRenderGeneration() : 0;
         int sent = monitor.injectKeys(keys, delay);
@@ -618,6 +636,32 @@ class TuiMcpServer {
         return Jsoner.serialize(result);
     }
 
+    private String callTapeStart(Map<String, Object> args) {
+        if (monitor.isTapeRecording()) {
+            return "Tape recording is already active. Stop it first with tui_tape_stop.";
+        }
+        String title = args.get("title") instanceof String s ? s : null;
+        monitor.startTapeRecording(title);
+        return "Tape recording started" + (title != null ? ": " + title : "");
+    }
+
+    private String callTapeStop() {
+        if (!monitor.isTapeRecording()) {
+            return "No tape recording is active. Start one with tui_tape_start.";
+        }
+        TapeRecorder recorder = monitor.getTapeRecorder();
+        String tape = recorder.stop();
+        int keyCount = recorder.getKeyCount();
+        long durationMs = recorder.getDurationMs();
+        monitor.clearTapeRecorder();
+
+        JsonObject result = new JsonObject();
+        result.put("tape", tape);
+        result.put("keyCount", keyCount);
+        result.put("duration", TapeRecorder.formatSleep(durationMs));
+        return Jsoner.serialize(result);
+    }
+
     private static JsonArray toJsonArray(List<String> list) {
         JsonArray arr = new JsonArray();
         arr.addAll(list);
@@ -690,4 +734,5 @@ class TuiMcpServer {
         prop.put("description", description);
         return prop;
     }
+
 }

@@ -60,17 +60,20 @@ class ActionsPopup {
     private static final int ACTION_CAPTION = 2;
     private static final int ACTION_SCREENSHOT = 3;
     private static final int ACTION_SHOW_KEYSTROKES = 4;
-    private static final int ACTION_DOCTOR = 5;
-    private static final int ACTION_CLASSPATH = 6;
-    private static final int ACTION_MCP_INFO = 7;
-    private static final int ACTION_MCP_LOG = 8;
-    private static final int ACTION_STOP_ALL = 9;
+    private static final int ACTION_TAPE_RECORDING = 5;
+    private static final int ACTION_DOCTOR = 6;
+    private static final int ACTION_CLASSPATH = 7;
+    private static final int ACTION_MCP_INFO = 8;
+    private static final int ACTION_MCP_LOG = 9;
+    private static final int ACTION_STOP_ALL = 10;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
     private final Runnable screenshotAction;
     private final Runnable toggleKeystrokes;
     private final Supplier<Boolean> keystrokesEnabled;
+    private final Runnable toggleTapeRecording;
+    private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
     private boolean mcpEnabled;
     private int mcpPort;
@@ -112,13 +115,16 @@ class ActionsPopup {
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
                  Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
-                 Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled) {
+                 Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled,
+                 Runnable toggleTapeRecording, Supplier<Boolean> tapeRecordingActive) {
         this.runningNames = runningNames;
         this.integrations = integrations;
         this.captionOverlay = captionOverlay;
         this.screenshotAction = screenshotAction;
         this.toggleKeystrokes = toggleKeystrokes;
         this.keystrokesEnabled = keystrokesEnabled;
+        this.toggleTapeRecording = toggleTapeRecording;
+        this.tapeRecordingActive = tapeRecordingActive;
         this.stopAllPopup = new StopAllPopup(integrations, infraServices);
     }
 
@@ -136,7 +142,7 @@ class ActionsPopup {
     }
 
     private int actionCount() {
-        return mcpEnabled ? 10 : 8;
+        return mcpEnabled ? 11 : 9;
     }
 
     boolean isVisible() {
@@ -184,6 +190,7 @@ class ActionsPopup {
         labels.add("Caption...");
         labels.add("Take Screenshot");
         labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
+        labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
         labels.add("Run Doctor");
         labels.add("Show Classpath");
         if (mcpEnabled) {
@@ -321,6 +328,9 @@ class ActionsPopup {
                     } else if (action == ACTION_SHOW_KEYSTROKES) {
                         showActionsMenu = false;
                         toggleKeystrokes.run();
+                    } else if (action == ACTION_TAPE_RECORDING) {
+                        showActionsMenu = false;
+                        toggleTapeRecording.run();
                     } else if (action == ACTION_DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
@@ -443,7 +453,7 @@ class ActionsPopup {
 
     private void renderActionsMenu(Frame frame, Rect area) {
         int count = actionCount();
-        int popupW = 34;
+        int popupW = 40;
         int popupH = 2 + count;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
@@ -463,6 +473,10 @@ class ActionsPopup {
         items.add(ListItem.from("  💬 Caption... (Ctrl+T)"));
         items.add(ListItem.from("  📸 Take Screenshot"));
         items.add(ListItem.from(keystrokeLabel));
+        String tapeLabel = tapeRecordingActive.get()
+                ? "  ⏹️  Stop Tape Recording (Ctrl+R)"
+                : "  ⏺️  Start Tape Recording (Ctrl+R)";
+        items.add(ListItem.from(tapeLabel));
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  📦 Show Classpath"));
         if (mcpEnabled) {
@@ -767,7 +781,9 @@ class ActionsPopup {
                      + "| `tui_show_caption` | Shows a message on the TUI screen |\n"
                      + "| `tui_navigate` | Switch tabs and select integrations |\n"
                      + "| `tui_send_keys` | Send key presses to control the TUI |\n"
-                     + "| `tui_wait_for_idle` | Waits for the screen to settle after an action |\n\n"
+                     + "| `tui_wait_for_idle` | Waits for the screen to settle after an action |\n"
+                     + "| `tui_tape_start` | Start recording interactions as a VHS .tape file |\n"
+                     + "| `tui_tape_stop` | Stop recording and return the tape content |\n\n"
                      + "## Setup for Claude Code\n\n"
                      + "Run this command to connect Claude Code to the TUI:\n\n"
                      + "    claude mcp add --transport http camel-tui " + url + "\n\n"

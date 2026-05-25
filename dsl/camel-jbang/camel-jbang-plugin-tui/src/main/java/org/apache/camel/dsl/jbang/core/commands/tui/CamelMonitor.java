@@ -214,6 +214,7 @@ public class CamelMonitor extends CamelCommand {
     private volatile long screenshotMessageTime;
     private volatile boolean pendingScreenshot;
     private boolean recording;
+    private TapeRecorder tapeRecorder;
     private TuiEventLog eventLog;
     private TuiMcpServer mcpServer;
     private final Queue<PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
@@ -234,7 +235,9 @@ public class CamelMonitor extends CamelCommand {
             captionOverlay,
             () -> pendingScreenshot = true,
             () -> recording = !recording,
-            () -> recording);
+            () -> recording,
+            this::toggleTapeRecording,
+            () -> tapeRecorder != null && tapeRecorder.isActive());
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
@@ -346,6 +349,16 @@ public class CamelMonitor extends CamelCommand {
                 String label = keyLabel(ke);
                 if (label != null) {
                     recentKeys.add(new KeyRecord(label, System.currentTimeMillis()));
+                }
+            }
+            if (ke.hasCtrl() && ke.isChar('r')) {
+                toggleTapeRecording();
+                return true;
+            }
+            if (tapeRecorder != null && tapeRecorder.isActive()) {
+                String label = keyLabel(ke);
+                if (label != null) {
+                    tapeRecorder.recordKey(label);
                 }
             }
             if (captionOverlay.isCaptionVisible()) {
@@ -3094,6 +3107,41 @@ public class CamelMonitor extends CamelCommand {
 
     boolean isKeystrokesVisible() {
         return recording;
+    }
+
+    TapeRecorder getTapeRecorder() {
+        return tapeRecorder;
+    }
+
+    boolean isTapeRecording() {
+        return tapeRecorder != null && tapeRecorder.isActive();
+    }
+
+    void startTapeRecording(String title) {
+        tapeRecorder = new TapeRecorder();
+        tapeRecorder.start(title);
+    }
+
+    void clearTapeRecorder() {
+        tapeRecorder = null;
+    }
+
+    private void toggleTapeRecording() {
+        if (tapeRecorder != null && tapeRecorder.isActive()) {
+            String tape = tapeRecorder.stop();
+            tapeRecorder = null;
+            String filename = "camel-tui-tape-" + System.currentTimeMillis() + ".tape";
+            try {
+                java.nio.file.Files.writeString(java.nio.file.Path.of(filename), tape);
+                captionOverlay.showCaption("Tape saved: " + filename, 5);
+            } catch (java.io.IOException e) {
+                captionOverlay.showCaption("Failed to save tape: " + e.getMessage(), 5);
+            }
+        } else {
+            tapeRecorder = new TapeRecorder();
+            tapeRecorder.start(null);
+            captionOverlay.showCaption("Tape recording started", 3);
+        }
     }
 
     TuiEventLog getEventLog() {
