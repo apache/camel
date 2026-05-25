@@ -3129,6 +3129,24 @@ public class CamelMonitor extends CamelCommand {
         return actionsPopup.getActionLabels();
     }
 
+    SelectionContext getSelectionContext() {
+        SelectionContext popup = actionsPopup.getSelectionContext();
+        if (popup != null) {
+            return popup;
+        }
+        if (tabsState.selected() == TAB_OVERVIEW) {
+            List<IntegrationInfo> infos = sortedOverviewInfos();
+            if (infos.isEmpty()) {
+                return null;
+            }
+            List<String> items = infos.stream().map(i -> i.name != null ? i.name : i.pid).toList();
+            Integer sel = overviewTableState.selected();
+            return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Integrations");
+        }
+        MonitorTab tab = activeTab();
+        return tab != null ? tab.getSelectionContext() : null;
+    }
+
     List<String> getIntegrationNames() {
         return data.get().stream()
                 .filter(i -> !i.vanishing)

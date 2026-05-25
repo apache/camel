@@ -230,7 +230,9 @@ class TuiMcpServer {
                 "tui_get_screen",
                 "Returns the current TUI screen content as text. "
                                   + "Shows exactly what the user sees in their terminal. "
-                                  + "Use ansi=true to include ANSI color codes for color-related questions.",
+                                  + "Use ansi=true to include ANSI color codes for color-related questions. "
+                                  + "Also returns a 'selection' field with structured metadata about the active list/table "
+                                  + "(type, items, selectedIndex, totalItems, label) when available.",
                 Map.of("ansi", propDef("boolean", "Include ANSI color codes in the output (default false)"))));
         toolList.add(toolDef(
                 "tui_get_events",
@@ -240,7 +242,8 @@ class TuiMcpServer {
         toolList.add(toolDef(
                 "tui_get_state",
                 "Returns the current TUI navigation state: active tab, selected integration, "
-                                 + "and integration count.",
+                                 + "and integration count. "
+                                 + "Includes a 'selection' field with structured metadata about the active list/table.",
                 Map.of()));
         toolList.add(toolDef(
                 "tui_show_caption",
@@ -271,7 +274,8 @@ class TuiMcpServer {
                         "delay", propDef("integer",
                                 "Delay in milliseconds between keys (default 150, minimum 80)"),
                         "wait", propDef("boolean",
-                                "Wait for all keys to be processed and return the resulting screen (default false)")),
+                                "Wait for all keys to be processed and return the resulting screen "
+                                                   + "with selection metadata (default false)")),
                 List.of("keys")));
         toolList.add(toolDef(
                 "tui_get_options",
@@ -284,7 +288,8 @@ class TuiMcpServer {
                 "Waits for the TUI to render new frames after an action. "
                                      + "Blocks until the specified number of new frames have been rendered, "
                                      + "ensuring the action has been processed. "
-                                     + "Returns the screen content after settling. Use after tui_navigate or tui_send_keys.",
+                                     + "Returns the screen content with selection metadata after settling. "
+                                     + "Use after tui_navigate or tui_send_keys.",
                 Map.of("timeout", propDef("integer",
                         "Maximum wait time in milliseconds (default 5000, max 30000)"),
                         "frames", propDef("integer",
@@ -344,6 +349,21 @@ class TuiMcpServer {
         return result;
     }
 
+    private void addSelectionContext(JsonObject result) {
+        SelectionContext ctx = monitor.getSelectionContext();
+        if (ctx != null) {
+            JsonObject sel = new JsonObject();
+            sel.put("type", ctx.type());
+            sel.put("label", ctx.label());
+            sel.put("selectedIndex", ctx.selectedIndex());
+            sel.put("totalItems", ctx.totalItems());
+            JsonArray items = new JsonArray();
+            items.addAll(ctx.items());
+            sel.put("items", items);
+            result.put("selection", sel);
+        }
+    }
+
     private String callGetScreen(Map<String, Object> args) {
         Buffer buf = monitor.getLastBuffer();
         if (buf == null) {
@@ -358,6 +378,7 @@ class TuiMcpServer {
         result.put("screen", screen);
         result.put("width", buf.area().width());
         result.put("height", buf.area().height());
+        addSelectionContext(result);
         return Jsoner.serialize(result);
     }
 
@@ -400,6 +421,7 @@ class TuiMcpServer {
             result.put("selectedIntegration", name);
         }
         result.put("integrationCount", monitor.getIntegrationCount());
+        addSelectionContext(result);
         return Jsoner.serialize(result);
     }
 
@@ -508,6 +530,7 @@ class TuiMcpServer {
         if (buf != null) {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
+        addSelectionContext(result);
         return Jsoner.serialize(result);
     }
 
@@ -575,6 +598,7 @@ class TuiMcpServer {
                 if (buf != null) {
                     result.put("screen", ExportRequest.export(buf).text().toString());
                 }
+                addSelectionContext(result);
                 return Jsoner.serialize(result);
             }
             try {

@@ -144,6 +144,30 @@ class ActionsPopup {
                 || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
     }
 
+    SelectionContext getSelectionContext() {
+        if (showExampleBrowser && exampleCatalog != null) {
+            List<String> items = new ArrayList<>();
+            String currentLevel = null;
+            for (JsonObject ex : exampleCatalog) {
+                String level = ex.getStringOrDefault("level", "beginner");
+                if (!level.equals(currentLevel)) {
+                    currentLevel = level;
+                    items.add("── " + capitalize(level) + " ──");
+                }
+                items.add(ex.getStringOrDefault("name", ""));
+            }
+            int total = countExampleListItems();
+            Integer sel = exampleBrowserState.selected();
+            return new SelectionContext("list", items, sel != null ? sel : -1, total, "Examples");
+        }
+        if (showActionsMenu) {
+            List<String> items = getActionLabels();
+            Integer sel = actionsMenuState.selected();
+            return new SelectionContext("popup", items, sel != null ? sel : -1, items.size(), "Actions");
+        }
+        return null;
+    }
+
     List<String> getActionLabels() {
         List<String> labels = new ArrayList<>();
         labels.add("Run an example...");

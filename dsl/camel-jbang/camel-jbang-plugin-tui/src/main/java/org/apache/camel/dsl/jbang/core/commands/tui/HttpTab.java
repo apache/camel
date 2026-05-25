@@ -593,4 +593,18 @@ class HttpTab implements MonitorTab {
     private Style sortStyle(String column) {
         return MonitorContext.sortStyle(column, sort);
     }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        List<HttpEndpointInfo> visible = sortedVisibleEndpoints(info);
+        if (visible.isEmpty()) {
+            return null;
+        }
+        List<String> items = visible.stream()
+                .map(ep -> (ep.method != null ? ep.method : "") + " " + (ep.path != null ? ep.path : ""))
+                .toList();
+        Integer sel = tableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "HTTP");
+    }
 }
