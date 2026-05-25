@@ -244,6 +244,7 @@ class TuiMcpServer {
                 "Returns the current TUI navigation state: active tab, selected integration, "
                                  + "and integration count. "
                                  + "Includes a 'selection' field with structured metadata about the active list/table. "
+                                 + "captionVisible indicates if a caption overlay is on screen. "
                                  + "keystrokesVisible indicates if the keystroke overlay is on; toggle with Ctrl+K.",
                 Map.of()));
         toolList.add(toolDef(
@@ -260,7 +261,8 @@ class TuiMcpServer {
                 "tui_navigate",
                 "Navigates the TUI: switch tabs and/or select an integration. "
                                 + "Both parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Routes, Consumers, Endpoints, HTTP, Health, Inspect, Circuit Breaker.",
+                                + "Tab names: Overview, Log, Routes, Consumers, Endpoints, HTTP, Health, Inspect, Circuit Breaker. "
+                                + "Returns screen content and selection metadata after navigating.",
                 Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health')"),
                         "integration", propDef("string", "Integration name or PID to select"))));
 
@@ -307,6 +309,14 @@ class TuiMcpServer {
                                  + "The tape can be replayed with camel monitor --record or charmbracelet/vhs.",
                 Map.of("save", propDef("boolean",
                         "If true, also save the tape to a local file (camel-tui-tape-<timestamp>.tape). Default false."))));
+        toolList.add(toolDef(
+                "tui_sleep",
+                "Pauses for the specified duration. "
+                             + "When tape recording is active, inserts a Sleep command into the tape. "
+                             + "Use this to pace demos and wait for captions to dismiss.",
+                Map.of("seconds", propDef("integer",
+                        "Number of seconds to sleep (1-30)")),
+                List.of("seconds")));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -338,6 +348,7 @@ class TuiMcpServer {
                 case "tui_wait_for_idle" -> callWaitForIdle(args);
                 case "tui_tape_start" -> callTapeStart(args);
                 case "tui_tape_stop" -> callTapeStop(args);
+                case "tui_sleep" -> callSleep(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -437,6 +448,7 @@ class TuiMcpServer {
         }
         result.put("integrationCount", monitor.getIntegrationCount());
         result.put("keystrokesVisible", monitor.isKeystrokesVisible());
+        result.put("captionVisible", monitor.isCaptionVisible());
         addSelectionContext(result);
         return Jsoner.serialize(result);
     }
@@ -447,12 +459,20 @@ class TuiMcpServer {
             return "Error: text is required";
         }
         Object durationArg = args.get("duration");
+        int duration = 0;
         if (durationArg instanceof Number n) {
-            int duration = n.intValue();
-            if (duration > 0) {
-                monitor.showCaption(text, duration);
-                return "Caption displayed (auto-dismiss in " + duration + "s): " + text;
-            }
+            duration = n.intValue();
+        }
+
+        TapeRecorder recorder = monitor.getTapeRecorder();
+        if (recorder != null && recorder.isActive()) {
+            recorder.resetClock();
+            recorder.recordCaption(text, Math.max(duration, 0));
+        }
+
+        if (duration > 0) {
+            monitor.showCaption(text, duration);
+            return "Caption displayed (auto-dismiss in " + duration + "s): " + text;
         }
         monitor.showCaption(text);
         return "Caption displayed: " + text;
@@ -484,12 +504,38 @@ class TuiMcpServer {
             String switched = monitor.navigateToTab(tab);
             if (switched != null) {
                 result.put("activeTab", switched);
+                TapeRecorder recorder = monitor.getTapeRecorder();
+                if (recorder != null && recorder.isActive()) {
+                    recorder.resetClock();
+                    int tabIndex = monitor.getTabNames().indexOf(switched);
+                    if (tabIndex >= 0 && tabIndex < 9) {
+                        recorder.recordKey(String.valueOf(tabIndex + 1));
+                    }
+                }
             } else {
                 result.put("tabError", "Unknown tab: " + tab);
                 result.put("availableTabs", toJsonArray(monitor.getTabNames()));
             }
         }
 
+        long beforeGen = monitor.getRenderGeneration();
+        long deadline = System.currentTimeMillis() + 2000;
+        while (System.currentTimeMillis() < deadline) {
+            if (monitor.getRenderGeneration() >= beforeGen + 2) {
+                break;
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        Buffer buf = monitor.getLastBuffer();
+        if (buf != null) {
+            result.put("screen", ExportRequest.export(buf).text().toString());
+        }
+        addSelectionContext(result);
         return Jsoner.serialize(result);
     }
 
@@ -512,6 +558,7 @@ class TuiMcpServer {
         }
         TapeRecorder recorder = monitor.getTapeRecorder();
         if (recorder != null && recorder.isActive()) {
+            recorder.resetClock();
             recorder.recordKeys(keys, delay);
         }
 
@@ -673,6 +720,26 @@ class TuiMcpServer {
         }
 
         return Jsoner.serialize(result);
+    }
+
+    private String callSleep(Map<String, Object> args) {
+        Object secArg = args.get("seconds");
+        int seconds = secArg instanceof Number n ? n.intValue() : 3;
+        seconds = Math.max(1, Math.min(30, seconds));
+
+        TapeRecorder recorder = monitor.getTapeRecorder();
+        if (recorder != null && recorder.isActive()) {
+            recorder.resetClock();
+            recorder.recordSleep(seconds * 1000L);
+        }
+
+        try {
+            Thread.sleep(seconds * 1000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        return "Slept for " + seconds + "s";
     }
 
     private static JsonArray toJsonArray(List<String> list) {

@@ -96,6 +96,39 @@ class TapeRecorder {
         lastEventTime = now + (long) (keys.size() - 1) * delay;
     }
 
+    void recordSleep(long ms) {
+        if (!active) {
+            return;
+        }
+        lines.add("Sleep " + formatSleep(ms));
+        lastEventTime = System.currentTimeMillis();
+    }
+
+    void recordCaption(String text, int durationSeconds) {
+        if (!active) {
+            return;
+        }
+        // Normalize: convert real newlines and \n markers to \\n for tape
+        // (parseQuotedString interprets \\ as literal \, so \\n → typed \n)
+        String normalized = text.replace("\n", "\\n");
+        String escaped = normalized.replace("\\", "\\\\").replace("\"", "\\\"");
+        lines.add("Ctrl+t");
+        lines.add("Sleep 500ms");
+        lines.add("Type \"" + escaped + "\"");
+        lines.add("Enter");
+        if (durationSeconds > 0) {
+            lines.add("Sleep " + durationSeconds + "s");
+        }
+        lastEventTime = System.currentTimeMillis();
+    }
+
+    void resetClock() {
+        if (!active) {
+            return;
+        }
+        lastEventTime = System.currentTimeMillis();
+    }
+
     String stop() {
         active = false;
         return String.join("\n", lines) + "\n";

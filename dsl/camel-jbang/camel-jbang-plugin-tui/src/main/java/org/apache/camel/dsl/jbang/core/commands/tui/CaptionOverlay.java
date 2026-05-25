@@ -89,14 +89,14 @@ class CaptionOverlay {
     }
 
     void showCaption(String text) {
-        captionText = text;
+        captionText = text.replace("\\n", "\n");
         captionStartTime = System.currentTimeMillis();
         captionFullyTypedTime = 0;
         captionAutoDismissTime = 0;
     }
 
     void showCaption(String text, int durationSeconds) {
-        captionText = text;
+        captionText = text.replace("\\n", "\n");
         captionStartTime = System.currentTimeMillis();
         captionFullyTypedTime = 0;
         if (durationSeconds > 0) {
@@ -125,7 +125,7 @@ class CaptionOverlay {
                 showInput = false;
                 inputState = null;
                 if (!text.isEmpty()) {
-                    captionText = text;
+                    captionText = text.replace("\\n", "\n");
                     captionStartTime = System.currentTimeMillis();
                     captionFullyTypedTime = 0;
                 }
@@ -212,7 +212,7 @@ class CaptionOverlay {
             inlineBuffer = null;
             return;
         }
-        captionText = inlineBuffer.toString();
+        captionText = inlineBuffer.toString().replace("\\n", "\n");
         inlineBuffer = null;
         captionFullyTypedTime = System.currentTimeMillis();
     }
@@ -313,7 +313,7 @@ class CaptionOverlay {
             style = Style.EMPTY.dim();
         }
 
-        String[] parts = visible.split("\\\\n", -1);
+        String[] parts = visible.split("\n", -1);
         List<Line> lines = new ArrayList<>();
         int maxWidth = 0;
         for (String part : parts) {

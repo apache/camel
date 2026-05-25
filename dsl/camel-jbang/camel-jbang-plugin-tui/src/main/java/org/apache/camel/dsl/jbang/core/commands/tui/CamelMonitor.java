@@ -215,6 +215,7 @@ public class CamelMonitor extends CamelCommand {
     private volatile boolean pendingScreenshot;
     private boolean recording;
     private TapeRecorder tapeRecorder;
+    private boolean mcpInjectedKey;
     private TuiEventLog eventLog;
     private TuiMcpServer mcpServer;
     private final Queue<PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
@@ -355,7 +356,7 @@ public class CamelMonitor extends CamelCommand {
                 toggleTapeRecording();
                 return true;
             }
-            if (tapeRecorder != null && tapeRecorder.isActive()) {
+            if (tapeRecorder != null && tapeRecorder.isActive() && !mcpInjectedKey) {
                 String label = keyLabel(ke);
                 if (label != null) {
                     tapeRecorder.recordKey(label);
@@ -615,7 +616,9 @@ public class CamelMonitor extends CamelCommand {
             PendingKey pk;
             while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
                 pendingKeys.poll();
+                mcpInjectedKey = true;
                 handleEvent(pk.event(), runner);
+                mcpInjectedKey = false;
                 keyProcessed = true;
             }
             if (keyProcessed) {
@@ -3172,6 +3175,10 @@ public class CamelMonitor extends CamelCommand {
     int getIntegrationCount() {
         List<IntegrationInfo> list = data.get();
         return (int) list.stream().filter(i -> !i.vanishing).count();
+    }
+
+    boolean isCaptionVisible() {
+        return captionOverlay.isCaptionVisible();
     }
 
     void showCaption(String text) {
