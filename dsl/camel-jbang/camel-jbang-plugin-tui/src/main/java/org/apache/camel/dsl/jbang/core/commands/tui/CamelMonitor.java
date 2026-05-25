@@ -706,7 +706,10 @@ public class CamelMonitor extends CamelCommand {
 
     private void selectCurrentIntegration() {
         if (ctx.selectedPid != null) {
-            return;
+            if (findSelectedIntegration() != null || findSelectedInfra() != null) {
+                return;
+            }
+            ctx.selectedPid = null;
         }
         if (ctx.infraTableFocused) {
             List<InfraInfo> infras = infraData.get();
@@ -1834,6 +1837,28 @@ public class CamelMonitor extends CamelCommand {
             }
 
             data.set(infos);
+
+            // Clear stale selection when the selected integration is gone
+            if (ctx.selectedPid != null && !ctx.infraTableFocused) {
+                boolean stillAlive = infos.stream()
+                        .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
+                if (!stillAlive) {
+                    ctx.selectedPid = null;
+                }
+            }
+
+            // Auto-select a newly launched integration
+            String autoSelect = actionsPopup.getPendingAutoSelect();
+            if (autoSelect != null) {
+                for (IntegrationInfo info : infos) {
+                    if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
+                        ctx.selectedPid = info.pid;
+                        ctx.infraTableFocused = false;
+                        actionsPopup.clearPendingAutoSelect();
+                        break;
+                    }
+                }
+            }
 
             // Discover running infra services
             refreshInfraData();

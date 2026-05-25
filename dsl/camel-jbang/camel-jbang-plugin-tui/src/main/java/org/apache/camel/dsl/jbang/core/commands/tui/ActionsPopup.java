@@ -108,6 +108,7 @@ class ActionsPopup {
     private String launchNotification;
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
+    private volatile String pendingAutoSelect;
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
                  Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
@@ -166,6 +167,14 @@ class ActionsPopup {
             return new SelectionContext("popup", items, sel != null ? sel : -1, items.size(), "Actions");
         }
         return null;
+    }
+
+    String getPendingAutoSelect() {
+        return pendingAutoSelect;
+    }
+
+    void clearPendingAutoSelect() {
+        pendingAutoSelect = null;
     }
 
     List<String> getActionLabels() {
@@ -869,6 +878,7 @@ class ActionsPopup {
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
             pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
+            pendingAutoSelect = displayName;
             launchNotification = "Starting: " + displayName;
             launchNotificationError = false;
             launchNotificationExpiry = System.currentTimeMillis() + 5000;
@@ -1033,6 +1043,7 @@ class ActionsPopup {
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
             pendingLaunches.add(new PendingLaunch(exampleName, process, outputFile, System.currentTimeMillis()));
+            pendingAutoSelect = exampleName;
             launchNotification = "Starting: " + exampleName;
             launchNotificationError = false;
             launchNotificationExpiry = System.currentTimeMillis() + 5000;
