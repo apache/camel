@@ -28,6 +28,21 @@ your own code or tooling, add `org.jspecify:jspecify` explicitly to your project
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
+==== Virtual threads: `maxQueueSize` now honored in `threads()` EIP
+
+When virtual threads are enabled (`camel.threads.virtual.enabled=true`), the `threads()` EIP now honors `maxQueueSize`
+for backpressure. Previously, `maxQueueSize` was silently ignored and tasks were accepted unboundedly.
+
+The virtual thread executor is wrapped with a semaphore-based concurrency limit (`BoundedExecutorService`) that enforces
+a flat cap of `maxQueueSize` on delegated tasks. The `keepAliveTime` parameter is repurposed as the
+semaphore acquisition timeout (pool sizing parameters are not applicable to virtual threads).
+
+==== New `Block` rejected policy
+
+A new `Block` value has been added to `ThreadPoolRejectedPolicy`. With `Block`, the caller blocks indefinitely until
+capacity becomes available. This applies to both platform and virtual threads. The existing `CallerRuns` (default) and
+`Abort` policies are unchanged.
+
 The type converters for Java serialized objects with types `java.io.ObjectInput` and `java.io.ObjectOutput` has been removed.
 Java object serialization is a recurring source of security issues and therefore these converters has been removed.
 These converters are not used at all by Camel itself. To restore compatibility then end users can add these type converters back as custom converters in their own Camel applications.
@@ -66,6 +81,26 @@ auto-disables `contentCache` on resource-based components (such as `xslt`) whose
 `true`, so that edits to the resource file are picked up on the next message without restarting
 the route. Set `camel.component.<name>.contentCache=true` (or pass `?contentCache=true` on the
 URI) to opt back in to caching during dev mode.
+
+==== Unified `--packaging` option for `camel export`
+
+A new `--packaging` option has been added to `camel export` that works across all three runtimes
+(Camel Main, Spring Boot, and Quarkus). It replaces the Quarkus-specific `--quarkus-package-type`
+option, which is now deprecated.
+
+Accepted values:
+
+- `layered` or `fast-jar` — container-optimized packaging with separate dependency layers (default)
+- `fat-jar` or `uber-jar` — single executable JAR
+
+The default is `layered`, which produces Dockerfiles optimized for container image layer caching.
+Each runtime implements layered packaging using its native mechanism:
+
+- **Camel Main**: thin JAR with dependencies in a `lib/` folder
+- **Spring Boot**: multi-stage Dockerfile using Spring Boot's built-in layer extraction
+- **Quarkus**: fast-jar packaging (unchanged from the previous `--quarkus-package-type=fast-jar` default)
+
+The deprecated `--quarkus-package-type` option continues to work for backward compatibility.
 
 ==== Improved default `--quarkus-version`
 
