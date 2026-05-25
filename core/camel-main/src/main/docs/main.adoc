@@ -570,7 +570,7 @@ The camel.vault.cyberark supports 9 options, which are listed below.
 
 
 === Camel OpenTelemetry configurations
-The camel.opentelemetry supports 10 options, which are listed below.
+The camel.opentelemetry supports 11 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -583,13 +583,14 @@ The camel.opentelemetry supports 10 options, which are listed below.
 | *camel.opentelemetry2.enabled* | To enable OpenTelemetry 2 | false | boolean
 | *camel.opentelemetry2.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
 | *camel.opentelemetry2.excludePatterns* | Sets exclude pattern(s) that will disable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.opentelemetry2.includePatterns* | Sets include pattern(s) that will explicitly enable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. All processors included by default if nothing is specified. |  | String
 | *camel.opentelemetry2.instrumentationName* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
 | *camel.opentelemetry2.traceProcessors* | Setting this to true will create new telemetry spans for each Camel custom Processors. Use the excludePattern property to filter out Processors. | false | boolean
 |===
 
 
 === Camel OpenTelemetry 2 configurations
-The camel.opentelemetry2 supports 5 options, which are listed below.
+The camel.opentelemetry2 supports 6 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -597,19 +598,21 @@ The camel.opentelemetry2 supports 5 options, which are listed below.
 | *camel.opentelemetry2.enabled* | To enable OpenTelemetry 2 | false | boolean
 | *camel.opentelemetry2.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
 | *camel.opentelemetry2.excludePatterns* | Sets exclude pattern(s) that will disable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.opentelemetry2.includePatterns* | Sets include pattern(s) that will explicitly enable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. All processors included by default if nothing is specified. |  | String
 | *camel.opentelemetry2.instrumentationName* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
 | *camel.opentelemetry2.traceProcessors* | Setting this to true will create new telemetry spans for each Camel custom Processors. Use the excludePattern property to filter out Processors. | false | boolean
 |===
 
 
 === Camel Telemetry Dev configurations
-The camel.telemetryDev supports 4 options, which are listed below.
+The camel.telemetryDev supports 5 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.telemetryDev.enabled* | To enable TelemetryDev | false | boolean
 | *camel.telemetryDev.excludePatterns* | Sets exclude pattern(s) that will disable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.telemetryDev.includePatterns* | Sets include pattern(s) that will explicitly enable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. All processors included by default if nothing is specified. |  | String
 | *camel.telemetryDev.traceFormat* | The output format for traces. |  | String
 | *camel.telemetryDev.traceProcessors* | Setting this to true will create new telemetry spans for each Camel custom Processors. Use the excludePattern property to filter out Processors. | false | boolean
 |===

@@ -26,6 +26,7 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
         map.put("Enabled", boolean.class);
         map.put("Encoding", boolean.class);
         map.put("ExcludePatterns", java.lang.String.class);
+        map.put("IncludePatterns", java.lang.String.class);
         map.put("InstrumentationName", java.lang.String.class);
         map.put("TraceProcessors", boolean.class);
         ALL_OPTIONS = map;
@@ -41,6 +42,8 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
         case "encoding": target.setEncoding(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
         case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
+        case "includepatterns":
+        case "includePatterns": target.setIncludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "instrumentationname":
         case "instrumentationName": target.setInstrumentationName(property(camelContext, java.lang.String.class, value)); return true;
         case "traceprocessors":
@@ -63,6 +66,8 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
         case "encoding": return boolean.class;
         case "excludepatterns":
         case "excludePatterns": return java.lang.String.class;
+        case "includepatterns":
+        case "includePatterns": return java.lang.String.class;
         case "instrumentationname":
         case "instrumentationName": return java.lang.String.class;
         case "traceprocessors":
@@ -81,6 +86,8 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
         case "encoding": return target.isEncoding();
         case "excludepatterns":
         case "excludePatterns": return target.getExcludePatterns();
+        case "includepatterns":
+        case "includePatterns": return target.getIncludePatterns();
         case "instrumentationname":
         case "instrumentationName": return target.getInstrumentationName();
         case "traceprocessors":

@@ -25,6 +25,7 @@ public class TelemetryDevConfigurationPropertiesConfigurer extends org.apache.ca
         map.put("DisableCoreProcessors", java.lang.Boolean.class);
         map.put("Enabled", boolean.class);
         map.put("ExcludePatterns", java.lang.String.class);
+        map.put("IncludePatterns", java.lang.String.class);
         map.put("TraceFormat", java.lang.String.class);
         map.put("TraceProcessors", boolean.class);
         ALL_OPTIONS = map;
@@ -39,6 +40,8 @@ public class TelemetryDevConfigurationPropertiesConfigurer extends org.apache.ca
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
         case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
+        case "includepatterns":
+        case "includePatterns": target.setIncludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "traceformat":
         case "traceFormat": target.setTraceFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "traceprocessors":
@@ -60,6 +63,8 @@ public class TelemetryDevConfigurationPropertiesConfigurer extends org.apache.ca
         case "enabled": return boolean.class;
         case "excludepatterns":
         case "excludePatterns": return java.lang.String.class;
+        case "includepatterns":
+        case "includePatterns": return java.lang.String.class;
         case "traceformat":
         case "traceFormat": return java.lang.String.class;
         case "traceprocessors":
@@ -77,6 +82,8 @@ public class TelemetryDevConfigurationPropertiesConfigurer extends org.apache.ca
         case "enabled": return target.isEnabled();
         case "excludepatterns":
         case "excludePatterns": return target.getExcludePatterns();
+        case "includepatterns":
+        case "includePatterns": return target.getIncludePatterns();
         case "traceformat":
         case "traceFormat": return target.getTraceFormat();
         case "traceprocessors":

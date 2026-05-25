@@ -29,6 +29,8 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "disableCoreProcessors": target.setDisableCoreProcessors(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
         case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
+        case "includepatterns":
+        case "includePatterns": target.setIncludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "spanlifecyclemanager":
         case "spanLifecycleManager": target.setSpanLifecycleManager(property(camelContext, org.apache.camel.telemetry.SpanLifecycleManager.class, value)); return true;
         case "traceheadersinclusion":
@@ -48,6 +50,8 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "disableCoreProcessors": return boolean.class;
         case "excludepatterns":
         case "excludePatterns": return java.lang.String.class;
+        case "includepatterns":
+        case "includePatterns": return java.lang.String.class;
         case "spanlifecyclemanager":
         case "spanLifecycleManager": return org.apache.camel.telemetry.SpanLifecycleManager.class;
         case "traceheadersinclusion":
@@ -68,6 +72,8 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "disableCoreProcessors": return target.isDisableCoreProcessors();
         case "excludepatterns":
         case "excludePatterns": return target.getExcludePatterns();
+        case "includepatterns":
+        case "includePatterns": return target.getIncludePatterns();
         case "spanlifecyclemanager":
         case "spanLifecycleManager": return target.getSpanLifecycleManager();
         case "traceheadersinclusion":
