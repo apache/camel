@@ -249,13 +249,13 @@
                     <sourceDirectories>
                         <sourceDirectory>${project.basedir}/src/main/proto</sourceDirectory>
                     </sourceDirectories>
-                    <binaryMavenPlugins>
-                        <binaryMavenPlugin>
+                    <plugins>
+                        <plugin kind="binary-maven">
                             <groupId>io.grpc</groupId>
                             <artifactId>protoc-gen-grpc-java</artifactId>
                             <version>${grpc-version}</version>
-                        </binaryMavenPlugin>
-                    </binaryMavenPlugins>
+                        </plugin>
+                    </plugins>
                 </configuration>
                 <executions>
                     <execution>
