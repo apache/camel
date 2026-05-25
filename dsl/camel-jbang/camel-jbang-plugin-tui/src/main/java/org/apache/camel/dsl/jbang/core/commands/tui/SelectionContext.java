@@ -18,35 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
 
-import dev.tamboui.layout.Rect;
-import dev.tamboui.terminal.Frame;
-import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyEvent;
-
-/**
- * Interface for TUI monitor tabs. Each tab handles its own events, rendering, and footer hints.
- */
-interface MonitorTab {
-
-    boolean handleKeyEvent(KeyEvent ke);
-
-    boolean handleEscape();
-
-    void navigateUp();
-
-    void navigateDown();
-
-    void render(Frame frame, Rect area);
-
-    void renderFooter(List<Span> spans);
-
-    default void onTabSelected() {
-    }
-
-    default void onIntegrationChanged() {
-    }
-
-    default SelectionContext getSelectionContext() {
-        return null;
-    }
+record SelectionContext(
+        String type,
+        List<String> items,
+        int selectedIndex,
+        int totalItems,
+        String label) {
 }

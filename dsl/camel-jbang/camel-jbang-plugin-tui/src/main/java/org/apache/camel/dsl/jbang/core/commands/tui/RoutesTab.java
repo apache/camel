@@ -1606,4 +1606,17 @@ class RoutesTab implements MonitorTab {
     private static String objToString(Object o) {
         return o != null ? o.toString() : "";
     }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.routes.isEmpty()) {
+            return null;
+        }
+        List<RouteInfo> sorted = new ArrayList<>(info.routes);
+        sorted.sort(this::sortRoute);
+        List<String> items = sorted.stream().map(r -> r.routeId != null ? r.routeId : "").toList();
+        Integer sel = routeTableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Routes");
+    }
 }

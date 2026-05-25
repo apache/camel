@@ -44,6 +44,7 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -59,17 +60,26 @@ class ActionsPopup {
     private static final int ACTION_CAPTION = 2;
     private static final int ACTION_SCREENSHOT = 3;
     private static final int ACTION_SHOW_KEYSTROKES = 4;
-    private static final int ACTION_DOCTOR = 5;
-    private static final int ACTION_CLASSPATH = 6;
-    private static final int ACTION_STOP_ALL = 7;
-    private static final int ACTION_COUNT = 8;
+    private static final int ACTION_TAPE_RECORDING = 5;
+    private static final int ACTION_TAPE_INSTRUCTIONS = 6;
+    private static final int ACTION_DOCTOR = 7;
+    private static final int ACTION_CLASSPATH = 8;
+    private static final int ACTION_MCP_INFO = 9;
+    private static final int ACTION_MCP_LOG = 10;
+    private static final int ACTION_STOP_ALL = 11;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
     private final Runnable screenshotAction;
     private final Runnable toggleKeystrokes;
     private final Supplier<Boolean> keystrokesEnabled;
+    private final Runnable toggleTapeRecording;
+    private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
+    private boolean mcpEnabled;
+    private int mcpPort;
+    private Supplier<String> mcpConnectedClient;
+    private Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog;
 
     private boolean showActionsMenu;
     private final ListState actionsMenuState = new ListState();
@@ -87,8 +97,11 @@ class ActionsPopup {
     private boolean showDocViewer;
     private boolean docViewerFromExampleBrowser;
     private String docContent;
+    private List<Line> docLines;
     private String docTitle;
     private int docScroll;
+
+    private final McpLogPopup mcpLogPopup = new McpLogPopup();
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
     private final ClasspathPopup classpathPopup = new ClasspathPopup();
@@ -99,16 +112,20 @@ class ActionsPopup {
     private String launchNotification;
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
+    private volatile String pendingAutoSelect;
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
                  Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
-                 Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled) {
+                 Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled,
+                 Runnable toggleTapeRecording, Supplier<Boolean> tapeRecordingActive) {
         this.runningNames = runningNames;
         this.integrations = integrations;
         this.captionOverlay = captionOverlay;
         this.screenshotAction = screenshotAction;
         this.toggleKeystrokes = toggleKeystrokes;
         this.keystrokesEnabled = keystrokesEnabled;
+        this.toggleTapeRecording = toggleTapeRecording;
+        this.tapeRecordingActive = tapeRecordingActive;
         this.stopAllPopup = new StopAllPopup(integrations, infraServices);
     }
 
@@ -116,10 +133,74 @@ class ActionsPopup {
         this.ctx = ctx;
     }
 
+    void setMcpEnabled(
+            boolean enabled, int port, Supplier<String> connectedClient, Supplier<List<TuiMcpServer.LogEntry>> activityLog) {
+        this.mcpEnabled = enabled;
+        this.mcpPort = port;
+        this.mcpConnectedClient = connectedClient;
+        this.mcpActivityLog = activityLog;
+        mcpLogPopup.setActivityLog(activityLog);
+    }
+
+    private int actionCount() {
+        return mcpEnabled ? 12 : 10;
+    }
+
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
-                || doctorPopup.isVisible() || classpathPopup.isVisible()
-                || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
+                || mcpLogPopup.isVisible() || doctorPopup.isVisible() || classpathPopup.isVisible()
+                || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
+    }
+
+    SelectionContext getSelectionContext() {
+        if (showExampleBrowser && exampleCatalog != null) {
+            List<String> items = new ArrayList<>();
+            String currentLevel = null;
+            for (JsonObject ex : exampleCatalog) {
+                String level = ex.getStringOrDefault("level", "beginner");
+                if (!level.equals(currentLevel)) {
+                    currentLevel = level;
+                    items.add("── " + capitalize(level) + " ──");
+                }
+                items.add(ex.getStringOrDefault("name", ""));
+            }
+            int total = countExampleListItems();
+            Integer sel = exampleBrowserState.selected();
+            return new SelectionContext("list", items, sel != null ? sel : -1, total, "Examples");
+        }
+        if (showActionsMenu) {
+            List<String> items = getActionLabels();
+            Integer sel = actionsMenuState.selected();
+            return new SelectionContext("popup", items, sel != null ? sel : -1, items.size(), "Actions");
+        }
+        return null;
+    }
+
+    String getPendingAutoSelect() {
+        return pendingAutoSelect;
+    }
+
+    void clearPendingAutoSelect() {
+        pendingAutoSelect = null;
+    }
+
+    List<String> getActionLabels() {
+        List<String> labels = new ArrayList<>();
+        labels.add("Run an example...");
+        labels.add("Show Documentation");
+        labels.add("Caption...");
+        labels.add("Take Screenshot");
+        labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
+        labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
+        labels.add("Tape Recording Guide");
+        labels.add("Run Doctor");
+        labels.add("Show Classpath");
+        if (mcpEnabled) {
+            labels.add("MCP Info");
+            labels.add("MCP Log");
+        }
+        labels.add("Stop All");
+        return labels;
     }
 
     void open() {
@@ -133,6 +214,7 @@ class ActionsPopup {
         runOptionsForm.close();
         showDocPicker = false;
         showDocViewer = false;
+        mcpLogPopup.close();
         doctorPopup.close();
         classpathPopup.close();
         stopAllPopup.close();
@@ -148,6 +230,9 @@ class ActionsPopup {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
+        if (mcpLogPopup.handleKeyEvent(ke)) {
+            return true;
+        }
         if (showDocViewer) {
             if (ke.isCancel()) {
                 showDocViewer = false;
@@ -211,7 +296,7 @@ class ActionsPopup {
             }
             return true;
         }
-        if (captionOverlay.isInputVisible()) {
+        if (captionOverlay.isInlineMode()) {
             return captionOverlay.handleKeyEvent(ke);
         }
         if (classpathPopup.handleKeyEvent(ke)) {
@@ -230,33 +315,46 @@ class ActionsPopup {
             } else if (ke.isUp()) {
                 actionsMenuState.selectPrevious();
             } else if (ke.isDown()) {
-                actionsMenuState.selectNext(ACTION_COUNT);
+                actionsMenuState.selectNext(actionCount());
             } else if (ke.isConfirm()) {
                 Integer sel = actionsMenuState.selected();
                 if (sel != null) {
-                    if (sel == ACTION_RUN_EXAMPLE) {
+                    int action = resolveAction(sel);
+                    if (action == ACTION_RUN_EXAMPLE) {
                         openExampleBrowser();
-                    } else if (sel == ACTION_SHOW_DOCS) {
+                    } else if (action == ACTION_SHOW_DOCS) {
                         openDocPicker();
-                    } else if (sel == ACTION_SCREENSHOT) {
+                    } else if (action == ACTION_SCREENSHOT) {
                         showActionsMenu = false;
                         screenshotAction.run();
-                    } else if (sel == ACTION_SHOW_KEYSTROKES) {
+                    } else if (action == ACTION_SHOW_KEYSTROKES) {
                         showActionsMenu = false;
                         toggleKeystrokes.run();
-                    } else if (sel == ACTION_DOCTOR) {
+                    } else if (action == ACTION_TAPE_RECORDING) {
+                        showActionsMenu = false;
+                        toggleTapeRecording.run();
+                    } else if (action == ACTION_TAPE_INSTRUCTIONS) {
+                        showActionsMenu = false;
+                        openTapeInstructions();
+                    } else if (action == ACTION_DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
-                    } else if (sel == ACTION_CLASSPATH) {
+                    } else if (action == ACTION_CLASSPATH) {
                         showActionsMenu = false;
                         openClasspath();
-                    } else if (sel == ACTION_STOP_ALL) {
+                    } else if (action == ACTION_MCP_INFO) {
+                        showActionsMenu = false;
+                        openMcpInfo();
+                    } else if (action == ACTION_MCP_LOG) {
+                        showActionsMenu = false;
+                        openMcpLog();
+                    } else if (action == ACTION_STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
                         checkStopAllNotification();
-                    } else if (sel == ACTION_CAPTION) {
+                    } else if (action == ACTION_CAPTION) {
                         showActionsMenu = false;
-                        captionOverlay.openInput();
+                        captionOverlay.openInline();
                     }
                 }
             }
@@ -281,6 +379,9 @@ class ActionsPopup {
         if (showDocViewer) {
             renderDocViewer(frame, area);
         }
+        if (mcpLogPopup.isVisible()) {
+            mcpLogPopup.render(frame, area);
+        }
         if (doctorPopup.isVisible()) {
             doctorPopup.render(frame, area);
         }
@@ -290,13 +391,13 @@ class ActionsPopup {
         if (classpathPopup.isVisible()) {
             classpathPopup.render(frame, area);
         }
-        if (captionOverlay.isInputVisible()) {
+        if (captionOverlay.isInlineMode()) {
             captionOverlay.render(frame, area);
         }
     }
 
     void renderFooter(List<Span> spans) {
-        if (captionOverlay.isInputVisible()) {
+        if (captionOverlay.isInlineMode()) {
             captionOverlay.renderFooter(spans);
             return;
         }
@@ -310,6 +411,10 @@ class ActionsPopup {
         }
         if (doctorPopup.isVisible()) {
             doctorPopup.renderFooter(spans);
+            return;
+        }
+        if (mcpLogPopup.isVisible()) {
+            mcpLogPopup.renderFooter(spans);
             return;
         }
         if (showDocViewer) {
@@ -352,8 +457,9 @@ class ActionsPopup {
     // ---- Rendering ----
 
     private void renderActionsMenu(Frame frame, Rect area) {
-        int popupW = 34;
-        int popupH = 2 + ACTION_COUNT;
+        int count = actionCount();
+        int popupW = 40;
+        int popupH = 2 + count;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -366,15 +472,26 @@ class ActionsPopup {
         String stopLabel = stopAllPopup.hasBothGroups()
                 ? "  🛑 Stop All..."
                 : "  🛑 Stop All";
+        List<ListItem> items = new ArrayList<>();
+        items.add(ListItem.from("  🐪 Run an example..."));
+        items.add(ListItem.from("  📖 Show Documentation"));
+        items.add(ListItem.from("  💬 Caption..."));
+        items.add(ListItem.from("  📸 Take Screenshot"));
+        items.add(ListItem.from(keystrokeLabel));
+        String tapeLabel = tapeRecordingActive.get()
+                ? "  ⏹️  Stop Tape Recording (Ctrl+R)"
+                : "  ⏺️  Start Tape Recording (Ctrl+R)";
+        items.add(ListItem.from(tapeLabel));
+        items.add(ListItem.from("  📄 Tape Recording Guide"));
+        items.add(ListItem.from("  🩺 Run Doctor"));
+        items.add(ListItem.from("  📦 Show Classpath"));
+        if (mcpEnabled) {
+            items.add(ListItem.from("  🤖 MCP Info"));
+            items.add(ListItem.from("  📋 MCP Log"));
+        }
+        items.add(ListItem.from(stopLabel));
         ListWidget list = ListWidget.builder()
-                .items(ListItem.from("  🐪 Run an example..."),
-                        ListItem.from("  📖 Show Documentation"),
-                        ListItem.from("  💬 Caption... (Ctrl+T)"),
-                        ListItem.from("  📸 Take Screenshot"),
-                        ListItem.from(keystrokeLabel),
-                        ListItem.from("  🩺 Run Doctor"),
-                        ListItem.from("  📦 Show Classpath"),
-                        ListItem.from(stopLabel))
+                .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSymbol("")
                 .scrollMode(ScrollMode.NONE)
@@ -465,18 +582,32 @@ class ActionsPopup {
     private void renderDocViewer(Frame frame, Rect area) {
         Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
         frame.renderWidget(Clear.INSTANCE, popup);
-        MarkdownView view = MarkdownView.builder()
-                .source(docContent)
-                .scroll(docScroll)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
-                        .title(" " + docTitle + " ")
-                        .titleBottom(Title.from(Line.from(
-                                Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
-                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
-                        .build())
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" " + docTitle + " ")
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
+                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
                 .build();
-        frame.renderWidget(view, popup);
+        if (docLines != null) {
+            frame.renderWidget(block, popup);
+            Rect inner = block.inner(popup);
+            int visibleLines = inner.height();
+            int totalLines = docLines.size();
+            int clampedScroll = Math.min(docScroll, Math.max(0, totalLines - visibleLines));
+            int end = Math.min(clampedScroll + visibleLines, totalLines);
+            List<Line> visible = docLines.subList(clampedScroll, end);
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
+                    inner);
+        } else {
+            MarkdownView view = MarkdownView.builder()
+                    .source(docContent)
+                    .scroll(docScroll)
+                    .block(block)
+                    .build();
+            frame.renderWidget(view, popup);
+        }
     }
 
     private void renderDocPicker(Frame frame, Rect area) {
@@ -544,6 +675,7 @@ class ActionsPopup {
         if (ctx == null) {
             return;
         }
+        docLines = null;
         showDocPicker = false;
         try {
             Path outputFile = ctx.getOutputFile(info.pid);
@@ -601,6 +733,7 @@ class ActionsPopup {
         }
         if (content != null && !content.isEmpty()) {
             docContent = isAdoc ? DocHelper.asciidocToMarkdown(content) : content;
+            docLines = null;
             docTitle = name;
             docScroll = 0;
             showExampleBrowser = false;
@@ -622,6 +755,103 @@ class ActionsPopup {
         if (msg != null) {
             setNotification(msg, false);
         }
+    }
+
+    private int resolveAction(int index) {
+        if (!mcpEnabled && index >= ACTION_MCP_INFO) {
+            return index + 2;
+        }
+        return index;
+    }
+
+    private void openTapeInstructions() {
+        docLines = null;
+        docContent = "# Tape Recording Guide\n\n"
+                     + "Record your live TUI session as a `.tape` file that captures keystrokes\n"
+                     + "with timing. The tape can be replayed inside the TUI to produce\n"
+                     + "an Asciinema `.cast` recording.\n\n"
+                     + "## Starting and Stopping\n\n"
+                     + "- Press **Ctrl+R** to start/stop recording at any time\n"
+                     + "- Or use the **F2** actions menu → Start/Stop Tape Recording\n\n"
+                     + "When recording stops, the tape is saved to the current directory as\n"
+                     + "`camel-tui-tape-<timestamp>.tape`.\n\n"
+                     + "## Replaying a Tape\n\n"
+                     + "Replay the tape inside the TUI with the `--record` option:\n\n"
+                     + "    camel tui monitor --record=camel-tui-tape-20260525-153000.tape\n\n"
+                     + "This replays the keystrokes inside the live TUI and produces\n"
+                     + "an Asciinema `.cast` file.\n\n"
+                     + "## Converting to Animated GIF\n\n"
+                     + "Use `agg` to convert the `.cast` file to an animated GIF:\n\n"
+                     + "    brew install asciinema/tap/agg\n"
+                     + "    agg recording.cast demo.gif\n\n"
+                     + "Or upload to [asciinema.org](https://asciinema.org) for a shareable link.\n\n"
+                     + "## Tips\n\n"
+                     + "- **Ctrl+R** is not captured in the tape, keeping the script clean\n"
+                     + "- Natural pauses between keystrokes are preserved as `Sleep` commands\n"
+                     + "- Keep recordings focused — one workflow at a time works best\n";
+        docTitle = "Tape Recording Guide";
+        docScroll = 0;
+        showDocViewer = true;
+        docViewerFromExampleBrowser = false;
+    }
+
+    private void openMcpInfo() {
+        docLines = null;
+        String url = "http://localhost:" + mcpPort + "/mcp";
+        String client = mcpConnectedClient != null ? mcpConnectedClient.get() : null;
+        String status = client != null
+                ? "**Connected:** " + client
+                : "**Status:** Waiting for connection";
+        docContent = "# MCP Server\n\n"
+                     + status + "\n\n"
+                     + "The TUI has an embedded MCP (Model Context Protocol) server running at:\n\n"
+                     + "    " + url + "\n\n"
+                     + "This allows AI coding agents to observe your TUI session — see the screen,\n"
+                     + "follow your key presses, and understand what you're doing.\n\n"
+                     + "## Available Tools\n\n"
+                     + "| Tool | Description |\n"
+                     + "|------|-------------|\n"
+                     + "| `tui_get_screen` | Returns the current screen content as text |\n"
+                     + "| `tui_get_events` | Returns recent key presses and navigation events |\n"
+                     + "| `tui_get_state` | Returns active tab, selected integration, etc. |\n"
+                     + "| `tui_get_options` | Returns available tabs and integrations |\n"
+                     + "| `tui_show_caption` | Shows a message on the TUI screen |\n"
+                     + "| `tui_navigate` | Switch tabs and select integrations |\n"
+                     + "| `tui_send_keys` | Send key presses to control the TUI |\n"
+                     + "| `tui_wait_for_idle` | Waits for the screen to settle after an action |\n"
+                     + "| `tui_tape_start` | Start recording interactions as a VHS .tape file |\n"
+                     + "| `tui_tape_stop` | Stop recording and return the tape content |\n\n"
+                     + "## Setup for Claude Code\n\n"
+                     + "Run this command to connect Claude Code to the TUI:\n\n"
+                     + "    claude mcp add --transport http camel-tui " + url + "\n\n"
+                     + "Or add to your project's `.mcp.json`:\n\n"
+                     + "    {\n"
+                     + "      \"mcpServers\": {\n"
+                     + "        \"camel-tui\": {\n"
+                     + "          \"type\": \"http\",\n"
+                     + "          \"url\": \"" + url + "\"\n"
+                     + "        }\n"
+                     + "      }\n"
+                     + "    }\n\n"
+                     + "A `.mcp.json` file is auto-generated in the current directory while the TUI\n"
+                     + "is running with `--mcp` enabled. It is removed when the TUI exits.\n\n"
+                     + "## Usage Examples\n\n"
+                     + "Once connected, ask your AI agent:\n\n"
+                     + "- \"What's on my Camel TUI screen right now?\"\n"
+                     + "- \"What tab am I on and what integration is selected?\"\n"
+                     + "- \"What keys did I press in the last minute?\"\n"
+                     + "- \"What color is the throughput chart?\"\n"
+                     + "- \"Show me a message on the TUI screen\"\n"
+                     + "- \"Switch to the Health tab\"\n"
+                     + "- \"Select the myApp integration\"\n";
+        docTitle = "MCP Info";
+        docScroll = 0;
+        showDocViewer = true;
+        docViewerFromExampleBrowser = false;
+    }
+
+    private void openMcpLog() {
+        mcpLogPopup.open();
     }
 
     private void openClasspath() {
@@ -701,6 +931,7 @@ class ActionsPopup {
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
             pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
+            pendingAutoSelect = displayName;
             launchNotification = "Starting: " + displayName;
             launchNotificationError = false;
             launchNotificationExpiry = System.currentTimeMillis() + 5000;
@@ -865,6 +1096,7 @@ class ActionsPopup {
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
             pendingLaunches.add(new PendingLaunch(exampleName, process, outputFile, System.currentTimeMillis()));
+            pendingAutoSelect = exampleName;
             launchNotification = "Starting: " + exampleName;
             launchNotificationError = false;
             launchNotificationExpiry = System.currentTimeMillis() + 5000;

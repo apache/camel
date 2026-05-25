@@ -916,4 +916,36 @@ class HistoryTab implements MonitorTab {
         }
         return Line.from(result);
     }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        boolean tracerActive = !traces.get().isEmpty();
+        if (tracerActive) {
+            if (traceDetailView) {
+                List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
+                if (steps.isEmpty()) {
+                    return null;
+                }
+                List<String> items = steps.stream()
+                        .map(s -> s.nodeId != null ? s.nodeId : "")
+                        .toList();
+                Integer sel = traceStepTableState.selected();
+                return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Trace Steps");
+            }
+            List<String> exchangeIds = getTraceExchangeIds();
+            if (exchangeIds.isEmpty()) {
+                return null;
+            }
+            Integer sel = traceTableState.selected();
+            return new SelectionContext("table", exchangeIds, sel != null ? sel : -1, exchangeIds.size(), "Traces");
+        }
+        if (historyEntries.isEmpty()) {
+            return null;
+        }
+        List<String> items = historyEntries.stream()
+                .map(h -> h.exchangeId != null ? h.exchangeId : "")
+                .toList();
+        Integer sel = historyTableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "History");
+    }
 }

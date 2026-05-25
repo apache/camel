@@ -185,4 +185,20 @@ class HealthTab implements MonitorTab {
         }
         return info.healthChecks;
     }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        List<HealthCheckInfo> checks = new ArrayList<>(getFilteredHealthChecks(info));
+        if (checks.isEmpty()) {
+            return null;
+        }
+        checks.sort(this::sortHealth);
+        List<String> items = checks.stream().map(hc -> hc.name != null ? hc.name : "").toList();
+        Integer sel = tableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Health");
+    }
 }
