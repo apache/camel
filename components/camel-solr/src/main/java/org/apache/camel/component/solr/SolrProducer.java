@@ -69,7 +69,7 @@ public class SolrProducer extends DefaultAsyncProducer {
                 ? message.getHeader(SolrConstants.PARAM_REQUEST_HANDLER, String.class)
                 : configuration.getRequestHandler();
 
-        // Retrieve all SolrParams: SolrParams header and SolrParam.xxx headers
+        // Retrieve all SolrParams: SolrParams header and CamelSolrParam.xxx headers
         ModifiableSolrParams modifiableSolrParams = getAndGroupedSolrParams(message);
         boolean hasSolrParams = modifiableSolrParams.size() > 0;
 
@@ -130,7 +130,7 @@ public class SolrProducer extends DefaultAsyncProducer {
         ModifiableSolrParams modifiableSolrParams = solrParams instanceof ModifiableSolrParams
                 ? (ModifiableSolrParams) solrParams
                 : new ModifiableSolrParams(solrParams);
-        // add possible headers that start with "SolrParam." prefix
+        // add possible headers that start with "CamelSolrParam." prefix
         message.getHeaders().entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(SolrConstants.HEADER_PARAM_PREFIX))
                 .forEach(entry -> {

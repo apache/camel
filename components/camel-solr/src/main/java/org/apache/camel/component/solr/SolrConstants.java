@@ -42,8 +42,8 @@ public interface SolrConstants {
     @Metadata(description = "The content type is used to identify the type when inserting files.", javaType = "String")
     String PARAM_CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
-    String HEADER_FIELD_PREFIX = "SolrField.";
-    String HEADER_PARAM_PREFIX = "SolrParam.";
+    String HEADER_FIELD_PREFIX = "CamelSolrField.";
+    String HEADER_PARAM_PREFIX = "CamelSolrParam.";
 
     String PROPERTY_ACTION_CONTEXT = "SolrActionContext";
 
