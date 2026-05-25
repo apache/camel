@@ -309,10 +309,12 @@ routed to "X was not built to do Y" rather than re-argued case by case.
   untrusted upstream is the route author's responsibility at the trust
   boundary (`removeHeaders`, normalisation, allow-listing). See the third
   bullet under _Known limitations_.
-* *No shield against transitive-dependency CVEs that are not reachable
-  through a Camel-exposed code path.* If a JAR Camel pulls in has a CVE
-  and Camel never reaches the vulnerable code, the report belongs
-  upstream. See the third-party-dependency entry in _Out of scope_.
+* *No shield against transitive-dependency CVEs.* A CVE in a JAR Camel
+  pulls in is the upstream project's vulnerability; Camel fixes CVEs in
+  Camel code, not in third-party JARs. Camel may upgrade the dependency
+  to pick up an upstream fix, but the CVE itself is closed against the
+  upstream project. See the third-party-dependency entry in _Out of
+  scope_.
 * *No production guarantees under the non-default `dev` or `test`
   profile.* The dev console, debug and trace endpoints, the backlog
   debugger and verbose diagnostics are enabled, and the security policy
@@ -584,8 +586,10 @@ be closed as `not a vulnerability`.
   "MBean operation X executes code or sends to endpoint Y when invoked
   from a JMX or Jolokia connection" describes the documented contract,
   not a framework vulnerability.
-* *Vulnerabilities in third-party transitive dependencies that are not
-  reachable through any Camel-exposed code path.* See
+* *Vulnerabilities in third-party transitive dependencies.* Camel fixes
+  CVEs in Camel code, not in third-party JARs; the report belongs
+  upstream. Camel may upgrade the dependency to pick up an upstream fix,
+  but the CVE itself is closed against the upstream project. See
   https://github.com/apache/camel/blob/main/SECURITY.md[`SECURITY.md`] and the
   upstream project for the actual CVE.
 * *Self-XSS by an authenticated user* of a UI built on top of Camel.
@@ -680,9 +684,10 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
 
 * *"Component X depends on a JAR with CVE-Z, therefore Camel is
   vulnerable."* Out of scope per the transitive-dependency entry in
-  _Out of scope_, unless the report demonstrates a Camel-exposed code
-  path that reaches the vulnerable code. Default disposition is to
-  forward upstream.
+  _Out of scope_. Camel fixes CVEs in Camel code, not in third-party
+  JARs; the report belongs upstream. Camel may upgrade the dependency
+  to pick up an upstream fix, but the CVE itself is closed against the
+  upstream project.
 * *"`simple(...)`, `xpath(...)`, `groovy(...)`, `jexl(...)` or
   `mvel(...)` evaluates an untrusted expression."* The expression text
   is route-author code, not untrusted input. The framework is in scope
@@ -717,9 +722,9 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   to demonstrate a *custom* strategy that does not extend
   `DefaultHeaderFilterStrategy` and re-implements the matching without
   case-insensitivity - and the fix lives in that custom strategy.
-* *"The developer console, the backlog debugger, JMX, Jolokia or
-  `camel-management` exposes operations that execute code or read
-  `Exchange` state."* Management surfaces; the trust boundary is the
+* *"The developer console, the backlog debugger, the `Tracer` /
+  `BacklogTracer`, JMX, Jolokia or `camel-management` exposes
+  operations that execute code or read `Exchange` state."* Management surfaces; the trust boundary is the
   surface itself (JVM JMX authentication, the Jolokia restrictor, the
   network exposure of the management port), not the individual MBean
   method. See the management-surface entry in _Out of scope_ and the
