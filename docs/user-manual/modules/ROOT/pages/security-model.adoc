@@ -322,6 +322,16 @@ routed to "X was not built to do Y" rather than re-argued case by case.
   route and `Exchange` detail that it would not reveal under the default
   `prod` profile. See the profile entry in _Out of scope_ and
   `design/security.adoc`.
+* *No production-grade information-hiding guarantees under non-default
+  diagnostic log levels.* DEBUG and TRACE log levels are diagnostic, not
+  production, configurations; they are expected to log internal
+  `Exchange`, route and configuration detail that the default INFO,
+  WARN and ERROR levels do not. The project strives to avoid logging
+  sensitive data even at diagnostic levels where it makes sense, but
+  does not commit to redacting it. The default INFO, WARN and ERROR
+  levels are what the framework commits to keeping clean of sensitive
+  data; see the *Information disclosure of secrets or sensitive
+  Exchange state* class under _In-scope vulnerability classes_.
 * *No defence against the operator misconfiguring the deployment outside
   the framework's defaults.* `trustAllCertificates=true`,
   `hostnameVerificationEnabled=false`, `allowJavaSerializedObject=true`,
@@ -506,6 +516,13 @@ response.
 Historical examples: CVE-2023-34442 (`camel-jira` writing attachments to
 world-readable temp files), CVE-2024-22371 (`EventFactory` exposing sensitive
 Exchange data via a custom event).
+
+Judged against the default production log levels (INFO, WARN, ERROR);
+findings whose impact only manifests when the operator has enabled the
+diagnostic DEBUG or TRACE levels are out of scope, since those levels are
+operator-enabled diagnostic configurations expected to log internal
+`Exchange`, route and configuration detail (see the diagnostic-logging
+entry under _Known non-findings_).
 
 ==== Insecure defaults
 
@@ -732,6 +749,18 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
 * *"A finding only manifests under `camel.main.profile=dev` or
   `camel.main.profile=test`."* Non-default development-only
   configuration; out of scope per the profile entry in _Out of scope_.
+* *"`camel-FOO` logs the Exchange body, a header, or a configuration
+  value at DEBUG or TRACE level."* DEBUG and TRACE are diagnostic log
+  levels enabled explicitly by the operator; they are expected to
+  reveal internal `Exchange`, route and configuration detail that the
+  default INFO, WARN and ERROR levels do not. Information-disclosure
+  findings are judged against the default production log levels (see
+  the *Information disclosure of secrets or sensitive Exchange state*
+  class under _In-scope vulnerability classes_, and the
+  diagnostic-log-levels point under _Security properties not provided_).
+  The project strives to avoid logging sensitive data even at
+  diagnostic levels where it makes sense, but does not commit to
+  redacting it.
 * *"Component `camel-FOO` uses MD5 / SHA-1 / a non-cryptographic hash
   function."* Camel uses content hashing for non-security purposes such
   as idempotency keys, content-based routing identifiers, partitioner
