@@ -144,6 +144,23 @@ class ActionsPopup {
                 || stopAllPopup.isVisible() || captionOverlay.isInputVisible();
     }
 
+    List<String> getActionLabels() {
+        List<String> labels = new ArrayList<>();
+        labels.add("Run an example...");
+        labels.add("Show Documentation");
+        labels.add("Caption...");
+        labels.add("Take Screenshot");
+        labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
+        labels.add("Run Doctor");
+        labels.add("Show Classpath");
+        if (mcpEnabled) {
+            labels.add("MCP Info");
+            labels.add("MCP Log");
+        }
+        labels.add("Stop All");
+        return labels;
+    }
+
     void open() {
         showActionsMenu = true;
         actionsMenuState.select(0);

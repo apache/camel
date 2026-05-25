@@ -594,10 +594,14 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
-            PendingKey pk = pendingKeys.peek();
-            if (pk != null && now >= pk.fireAt()) {
+            boolean keyProcessed = false;
+            PendingKey pk;
+            while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
                 pendingKeys.poll();
                 handleEvent(pk.event(), runner);
+                keyProcessed = true;
+            }
+            if (keyProcessed) {
                 return true;
             }
             actionsPopup.tick(now);
@@ -3119,6 +3123,10 @@ public class CamelMonitor extends CamelCommand {
 
     List<String> getTabNames() {
         return List.of(TAB_NAMES);
+    }
+
+    List<String> getActionLabels() {
+        return actionsPopup.getActionLabels();
     }
 
     List<String> getIntegrationNames() {

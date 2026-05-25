@@ -262,13 +262,16 @@ class TuiMcpServer {
 
         toolList.add(toolDef(
                 "tui_send_keys",
-                "Sends key presses to the TUI. Use this to control the TUI for recording demos. "
-                                 + "Keys are processed one per tick with the specified delay between them. "
+                "Sends key presses to the TUI. A human is watching the screen, "
+                                 + "so keys should be paced naturally like a skilled user would type. "
                                  + "Key names: Enter, Esc, Tab, Backspace, Delete, Up, Down, Left, Right, "
                                  + "Home, End, PgUp, PgDn, Space, F1-F12, or any single character. "
                                  + "Modifiers: Ctrl+x, Shift+x, Ctrl+Shift+x.",
                 Map.of("keys", propDef("array", "Array of key name strings to send"),
-                        "delay", propDef("integer", "Delay in milliseconds between keys (default 150)")),
+                        "delay", propDef("integer",
+                                "Delay in milliseconds between keys (default 150, minimum 80)"),
+                        "wait", propDef("boolean",
+                                "Wait for all keys to be processed and return the resulting screen (default false)")),
                 List.of("keys")));
         toolList.add(toolDef(
                 "tui_get_options",
@@ -467,10 +470,45 @@ class TuiMcpServer {
         int delay = 150;
         Object delayArg = args.get("delay");
         if (delayArg instanceof Number n) {
-            delay = Math.max(50, n.intValue());
+            delay = Math.max(80, n.intValue());
         }
+        boolean wait = Boolean.TRUE.equals(args.get("wait"));
+        long beforeGen = wait ? monitor.getRenderGeneration() : 0;
         int sent = monitor.injectKeys(keys, delay);
-        return "Queued " + sent + " key(s) with " + delay + "ms delay";
+
+        if (!wait) {
+            return "Queued " + sent + " key(s) with " + delay + "ms delay";
+        }
+
+        long lastKeyFireAt = System.currentTimeMillis() + (long) (sent - 1) * delay;
+        long deadline = lastKeyFireAt + 5000;
+        long start = System.currentTimeMillis();
+
+        while (System.currentTimeMillis() < deadline) {
+            long now = System.currentTimeMillis();
+            if (now >= lastKeyFireAt) {
+                long gen = monitor.getRenderGeneration();
+                if (gen >= beforeGen + sent + 2) {
+                    break;
+                }
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+
+        Buffer buf = monitor.getLastBuffer();
+        JsonObject result = new JsonObject();
+        result.put("sent", sent);
+        result.put("delay", delay);
+        result.put("waitedMs", System.currentTimeMillis() - start);
+        if (buf != null) {
+            result.put("screen", ExportRequest.export(buf).text().toString());
+        }
+        return Jsoner.serialize(result);
     }
 
     private String callGetOptions() {
@@ -484,7 +522,30 @@ class TuiMcpServer {
             result.put("selectedIntegration", selected);
         }
         result.put("integrationCount", monitor.getIntegrationCount());
+
+        List<String> actions = monitor.getActionLabels();
+        JsonArray actionsArray = new JsonArray();
+        for (int i = 0; i < actions.size(); i++) {
+            JsonObject action = new JsonObject();
+            action.put("index", i);
+            action.put("label", actions.get(i));
+            action.put("keys", actionKeys(i, actions.size()));
+            actionsArray.add(action);
+        }
+        result.put("actions", actionsArray);
+        result.put("actionsHint",
+                "Press F2 to open the Actions menu, then use Down arrow to reach the item by index, then Enter to select.");
+
         return Jsoner.serialize(result);
+    }
+
+    private String actionKeys(int index, int totalActions) {
+        StringBuilder sb = new StringBuilder("F2");
+        for (int i = 0; i < index; i++) {
+            sb.append(",Down");
+        }
+        sb.append(",Enter");
+        return sb.toString();
     }
 
     private String callWaitForIdle(Map<String, Object> args) {
