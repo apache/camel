@@ -317,7 +317,8 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
-        try (var tui = TuiRunner.create()) {
+        var tui = TuiRunner.create();
+        try {
             this.runner = tui;
             ctx.runner = tui;
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
@@ -332,6 +333,24 @@ public class CamelMonitor extends CamelCommand {
             }
             deleteMcpJson(mcpJsonFile);
             this.runner = null;
+            // Workaround: on macOS, JLine's terminal close deadlocks in
+            // FileDescriptor.close0() while the reader thread is in native read0().
+            // Run close in a daemon thread so the JVM can exit even if it hangs.
+            // Remove when fixed upstream: https://github.com/tamboui/tamboui/pull/355
+            Thread closeThread = new Thread(() -> {
+                try {
+                    tui.close();
+                } catch (Exception e) {
+                    // best effort
+                }
+            }, "tui-close");
+            closeThread.setDaemon(true);
+            closeThread.start();
+            try {
+                closeThread.join(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
         return 0;
     }
