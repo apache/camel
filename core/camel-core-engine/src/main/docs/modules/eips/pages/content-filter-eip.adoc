@@ -127,14 +127,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: activemq:Input
-    steps:
-      - bean:
-          ref: myBeanName
-          method: doFilter
-      - to:
-          uri: activemq:Output
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - bean:
+            ref: myBeanName
+            method: doFilter
+        - to:
+            uri: activemq:Output
 ----
 ====
 
@@ -173,13 +174,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from: 
-    uri: activemq:Input
-    steps:
-      - setBody:
-          expression:
-            xpath: //foo:bar
-      - to:
-          uri: activemq:Output
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - setBody:
+            expression:
+              xpath: //foo:bar
+        - to:
+            uri: activemq:Output
 ----
 ====

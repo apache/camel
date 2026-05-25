@@ -52,14 +52,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:foo
-    steps:
-      - convertVariableTo:
-          name: foo
-          type: String
-      - log:
-          message: "The variable content: ${variable.foo}"
+- route:
+    from:
+      uri: seda:foo
+      steps:
+        - convertVariableTo:
+            name: foo
+            type: String
+        - log:
+            message: "The variable content: ${variable.foo}"
 ----
 ====
 
@@ -94,15 +95,16 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:foo
-    steps:
-      - convertVariableTo:
-          name: foo
-          toName: bar
-          type: String
-      - log:
-          message: "The variable content: ${variable.bar}"
+- route:
+    from:
+      uri: seda:foo
+      steps:
+        - convertVariableTo:
+            name: foo
+            toName: bar
+            type: String
+        - log:
+            message: "The variable content: ${variable.bar}"
 ----
 ====
 
@@ -147,13 +149,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:foo
-    steps:
-      - convertVariableTo:
-          name: ${variable.region}
-          type: String
-      - log:
-          message: "Order from EMEA: ${variable.emea}"
+- route:
+    from:
+      uri: seda:foo
+      steps:
+        - convertVariableTo:
+            name: ${variable.region}
+            type: String
+        - log:
+            message: "Order from EMEA: ${variable.emea}"
 ----
 ====

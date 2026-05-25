@@ -93,7 +93,8 @@ YAML::
 ----
 - intercept:
     steps:
-      - to: "log:hello"
+      - to:
+          uri: log:hello
 - route:
     from:
       uri: jms:queue:order
@@ -159,9 +160,12 @@ YAML::
 ----
 - intercept:
     onWhen:
-      simple: "${body} contains 'Hello'"
+      expression:
+        simple:
+          expression: "${body} contains 'Hello'"
     steps:
-      - to: "log:hello"
+      - to:
+          uri: log:hello
 - route:
     from:
       uri: jms:queue:order
@@ -273,9 +277,12 @@ YAML::
 ----
 - intercept:
     onWhen:
-      simple: "${body} contains 'Hello'"
+      expression:
+        simple:
+          expression: "${body} contains 'Hello'"
     steps:
-      - to: "log:test"
+      - to:
+          uri: log:test
       - stop: {}
 - route:
     from:
@@ -339,7 +346,8 @@ YAML::
 ----
 - interceptFrom:
     steps:
-      - to: "log:incoming"
+      - to:
+          uri: log:incoming
 - route:
     from:
       uri: jms:queue:order
@@ -398,7 +406,8 @@ YAML::
 - interceptFrom:
     uri: "jms*"
     steps:
-      - to: "log:incoming"
+      - to:
+          uri: log:incoming
 - route:
     from:
       uri: jms:queue:order
@@ -481,7 +490,8 @@ YAML::
 - interceptSendToEndpoint:
     uri: "kafka*"
     steps:
-      - to: "bean:beforeKafka"
+      - to:
+          uri: bean:beforeKafka
 - route:
     from:
       uri: jms:queue:order
@@ -539,7 +549,8 @@ YAML::
     uri: "kafka*"
     afterUri: "bean:afterKafka"
     steps:
-      - to: "bean:beforeKafka"
+      - to:
+          uri: bean:beforeKafka
 - route:
     from:
       uri: jms:queue:order
@@ -600,7 +611,8 @@ YAML::
     uri: "kafka*"
     skipSendToOriginalEndpoint: true
     steps:
-      - to: "mock:kafka"
+      - to:
+          uri: mock:kafka
 - route:
     from:
       uri: jms:queue:order
@@ -662,7 +674,9 @@ YAML::
     uri: "kafka*"
     skipSendToOriginalEndpoint: true
     onWhen:
-      simple: "${header.biztype} == 'TEST'"
+      expression:
+        simple:
+          expression: "${header.biztype} == 'TEST'"
     steps:
       - log:
           message: "TEST message detected - is NOT send to kafka"
@@ -721,7 +735,8 @@ YAML::
 - interceptSendToEndpoint:
     uri: "jms:queue:cheese"
     steps:
-      - to: "log:smelly"
+      - to:
+          uri: log:smelly
 ----
 ====
 
@@ -758,7 +773,8 @@ YAML::
 - interceptFrom:
     uri: "file:*"
     steps:
-      - to: "log:from-file"
+      - to:
+          uri: log:from-file
 ----
 ====
 
@@ -795,7 +811,8 @@ YAML::
 - interceptFrom:
     uri: "file:order/inbox/*"
     steps:
-      - to: "log:new-file-orders"
+      - to:
+          uri: log:new-file-orders
 ----
 ====
 
@@ -832,6 +849,7 @@ YAML::
 - interceptFrom:
     uri: "jms:queue:(gold|silver)"
     steps:
-      - to: "seda:handleFast"
+      - to:
+          uri: seda:handleFast
 ----
 ====
