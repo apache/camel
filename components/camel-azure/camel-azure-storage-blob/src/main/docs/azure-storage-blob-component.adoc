@@ -233,8 +233,10 @@ YAML::
         credentialType: SHARED_ACCOUNT_KEY
         accessKey: "RAW({{azure.accessKey}})"
       steps:
-        - log: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
-        - to: direct:processBlob
+        - log:
+            message: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
+        - to:
+            uri: direct:processBlob
 ----
 ====
 
@@ -272,8 +274,10 @@ YAML::
         credentialType: SHARED_ACCOUNT_KEY
         accessKey: "RAW({{azure.accessKey}})"
       steps:
-        - log: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
-        - to: direct:processBlob
+        - log:
+            message: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
+        - to:
+            uri: direct:processBlob
 ----
 ====
 
@@ -317,8 +321,10 @@ YAML::
         credentialType: SHARED_ACCOUNT_KEY
         accessKey: "RAW({{azure.accessKey}})"
       steps:
-        - log: "Processing: ${header.CamelAzureStorageBlobBlobName}"
-        - to: direct:processBlob
+        - log:
+            message: "Processing: ${header.CamelAzureStorageBlobBlobName}"
+        - to:
+            uri: direct:processBlob
 ----
 ====
 
@@ -530,9 +536,12 @@ YAML::
 - route:
     id: azure-blob-upload
     from:
-      uri: file://data?noop=true
+      uri: file://data
+      parameters:
+        noop: true
       steps:
-        - log: "Uploading file: ${header.CamelFileName}"
+        - log:
+            message: "Uploading file: ${header.CamelFileName}"
         - toD:
             uri: "azure-storage-blob://{{azure.account}}/{{azure.container}}"
             parameters:
@@ -542,7 +551,8 @@ YAML::
               maxConcurrency: 4          # 4 parallel uploads
               credentialType: SHARED_ACCOUNT_KEY
               accessKey: "RAW({{azure.accessKey}})"
-        - log: "Upload completed: ${header.CamelFileName}"
+        - log:
+            message: "Upload completed: ${header.CamelFileName}"
 ----
 ====
 

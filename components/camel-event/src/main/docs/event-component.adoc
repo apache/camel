@@ -381,26 +381,29 @@ Create a file called `event-monitor.yaml`:
 ----
 - route:
     from:
-      uri: "event:Route*"
+      uri: event:Route*
       steps:
-        - log: "Route event: ${header.CamelEventType} - route ${header.CamelEventRouteId}"
+        - log:
+            message: "Route event: ${header.CamelEventType} - route ${header.CamelEventRouteId}"
 
 - route:
     from:
-      uri: "event:ExchangeCompleted,ExchangeFailed"
+      uri: event:ExchangeCompleted,ExchangeFailed
       steps:
-        - log: "Exchange ${header.CamelEventExchangeId} on route ${header.CamelEventRouteId}: ${header.CamelEventType}"
+        - log:
+            message: "Exchange ${header.CamelEventExchangeId} on route ${header.CamelEventRouteId}: ${header.CamelEventType}"
 
 - route:
     id: myRoute
     from:
-      uri: "timer:tick"
+      uri: timer:tick
       parameters:
-        period: "5000"
+        period: 5000
       steps:
         - setBody:
             constant: "Hello from myRoute!"
-        - log: "${body}"
+        - log:
+            message: "${body}"
 ----
 
 Then run it:
