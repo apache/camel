@@ -47,7 +47,7 @@ public class ListEndpoint extends ProcessWatchCommand {
 
         @Override
         public Iterator<String> iterator() {
-            return List.of("pid", "name", "age", "total").iterator();
+            return List.of("pid", "name", "age", "total", "size").iterator();
         }
 
     }
@@ -56,7 +56,7 @@ public class ListEndpoint extends ProcessWatchCommand {
     String name = "*";
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeTotalCompletionCandidates.class,
-                        description = "Sort by pid, name, age or total", defaultValue = "pid")
+                        description = "Sort by pid, name, age, total, or size", defaultValue = "pid")
     String sort;
 
     @CommandLine.Option(names = { "--limit" },
@@ -256,7 +256,16 @@ public class ListEndpoint extends ProcessWatchCommand {
     }
 
     private static String sizeToString(long size) {
-        return size >= 0 ? Long.toString(size) : "-";
+        if (size < 0) {
+            return "-";
+        }
+        if (size < 1024) {
+            return size + " B";
+        } else if (size < 1024 * 1024) {
+            return String.format("%.1f KB", size / 1024.0);
+        } else {
+            return String.format("%.1f MB", size / (1024.0 * 1024.0));
+        }
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -275,6 +284,8 @@ public class ListEndpoint extends ProcessWatchCommand {
                 return Long.compare(o1.uptime, o2.uptime) * negate;
             case "total":
                 return Long.compare(Long.parseLong(o1.total), Long.parseLong(o2.total)) * negate;
+            case "size":
+                return Long.compare(o1.meanBodySize, o2.meanBodySize) * negate;
             default:
                 return 0;
         }
