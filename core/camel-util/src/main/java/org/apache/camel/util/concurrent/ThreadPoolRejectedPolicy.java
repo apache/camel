@@ -31,7 +31,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 public enum ThreadPoolRejectedPolicy {
 
     Abort,
-    CallerRuns;
+    CallerRuns,
+    Block;
 
     public RejectedExecutionHandler asRejectedExecutionHandler() {
         if (this == Abort) {
@@ -55,6 +56,25 @@ public enum ThreadPoolRejectedPolicy {
                 @Override
                 public String toString() {
                     return "CallerRuns";
+                }
+            };
+        } else if (this == Block) {
+            return new RejectedExecutionHandler() {
+                @Override
+                public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                    if (!executor.isShutdown()) {
+                        try {
+                            executor.getQueue().put(r);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            throw new RejectedExecutionException("Interrupted while waiting for queue space", e);
+                        }
+                    }
+                }
+
+                @Override
+                public String toString() {
+                    return "Block";
                 }
             };
         }

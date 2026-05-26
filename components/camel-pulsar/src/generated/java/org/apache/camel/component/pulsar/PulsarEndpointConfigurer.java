@@ -59,6 +59,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "consumerQueueSize": target.getPulsarConfiguration().setConsumerQueueSize(property(camelContext, int.class, value)); return true;
         case "deadlettertopic":
         case "deadLetterTopic": target.getPulsarConfiguration().setDeadLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "enablebatchindexacknowledgment":
+        case "enableBatchIndexAcknowledgment": target.getPulsarConfiguration().setEnableBatchIndexAcknowledgment(property(camelContext, boolean.class, value)); return true;
         case "enableretry":
         case "enableRetry": target.getPulsarConfiguration().setEnableRetry(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -158,6 +160,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "consumerQueueSize": return int.class;
         case "deadlettertopic":
         case "deadLetterTopic": return java.lang.String.class;
+        case "enablebatchindexacknowledgment":
+        case "enableBatchIndexAcknowledgment": return boolean.class;
         case "enableretry":
         case "enableRetry": return boolean.class;
         case "exceptionhandler":
@@ -258,6 +262,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "consumerQueueSize": return target.getPulsarConfiguration().getConsumerQueueSize();
         case "deadlettertopic":
         case "deadLetterTopic": return target.getPulsarConfiguration().getDeadLetterTopic();
+        case "enablebatchindexacknowledgment":
+        case "enableBatchIndexAcknowledgment": return target.getPulsarConfiguration().isEnableBatchIndexAcknowledgment();
         case "enableretry":
         case "enableRetry": return target.getPulsarConfiguration().isEnableRetry();
         case "exceptionhandler":

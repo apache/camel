@@ -53,7 +53,7 @@
   },
   "headers": {
     "CamelMiloNodeIds": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "List", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The node ids.", "constantName": "org.apache.camel.component.milo.MiloConstants#HEADER_NODE_IDS" },
-    "await": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The await setting for writes.", "constantName": "org.apache.camel.component.milo.MiloConstants#HEADER_AWAIT" }
+    "CamelMiloAwait": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The await setting for writes.", "constantName": "org.apache.camel.component.milo.MiloConstants#HEADER_AWAIT" }
   },
   "properties": {
     "endpointUri": { "index": 0, "kind": "path", "displayName": "Endpoint Uri", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The OPC UA server endpoint" },

@@ -372,4 +372,22 @@ class EndpointsTab implements MonitorTab {
                         .title(Title.from(chartTitle)).build())
                 .build(), rightArea);
     }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.endpoints.isEmpty()) {
+            return null;
+        }
+        List<EndpointInfo> sorted = new ArrayList<>(info.endpoints);
+        if (filter == 1) {
+            sorted.removeIf(ep -> !ep.remote);
+        } else if (filter == 2) {
+            sorted.removeIf(ep -> !ep.remote && !ep.stub);
+        }
+        sorted.sort(this::sortEndpoint);
+        List<String> items = sorted.stream().map(ep -> ep.uri != null ? ep.uri : "").toList();
+        Integer sel = tableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Endpoints");
+    }
 }

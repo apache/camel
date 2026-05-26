@@ -251,7 +251,8 @@ YAML::
       steps:
         - unmarshal:
             jaxb: {}
-        - to: "direct:out"
+        - to:
+            uri: direct:out
 ----
 ====
 

@@ -45,4 +45,8 @@ interface MonitorTab {
 
     default void onIntegrationChanged() {
     }
+
+    default SelectionContext getSelectionContext() {
+        return null;
+    }
 }

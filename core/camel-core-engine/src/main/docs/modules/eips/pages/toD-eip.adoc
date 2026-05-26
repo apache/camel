@@ -210,7 +210,9 @@ YAML::
       uri: direct:login
       steps:
         - toD:
-            uri: "http:myloginserver:8080/login?userid=${header.userName}"
+            uri: http:myloginserver:8080/login
+            parameters:
+              userid: "${header.userName}"
             cacheSize: 10
 ----
 ====
@@ -349,7 +351,9 @@ YAML::
       uri: direct:login
       steps:
         - toD:
-            uri: "http:myloginserver:8080/login?userid=${header.userName}"
+            uri: http:myloginserver:8080/login
+            parameters:
+              userid: "${header.userName}"
 ----
 ====
 

@@ -47,13 +47,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: jms:MyQueue
-    parameters:
-      concurrentConsumers: 5
-    steps:
-      - to:
-          uri: bean:someBean
+- route:
+    from:
+      uri: jms:MyQueue
+      parameters:
+        concurrentConsumers: 5
+      steps:
+        - to:
+            uri: bean:someBean
 ----
 ====
 
@@ -91,11 +92,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: "file://inbox?move=../backup-${date:now:yyyyMMdd}"
-    steps:
-      - to:
-          uri: bean:calculateBean
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        move: "../backup-${date:now:yyyyMMdd}"
+      steps:
+        - to:
+            uri: bean:calculateBean
 ----
 ====
 
@@ -147,13 +151,16 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: "file://inbox?move=../backup-${date:now:yyyyMMdd}"
-    steps:
-      - threads:
-          poolSize: 10
-      - to:
-          uri: bean:calculateBean
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        move: "../backup-${date:now:yyyyMMdd}"
+      steps:
+        - threads:
+            poolSize: 10
+        - to:
+            uri: bean:calculateBean
 ----
 ====
 

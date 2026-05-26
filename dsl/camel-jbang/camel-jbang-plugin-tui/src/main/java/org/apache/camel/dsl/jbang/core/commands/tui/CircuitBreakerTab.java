@@ -410,4 +410,17 @@ class CircuitBreakerTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED).build())
                 .build(), vSplit.get(2));
     }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.circuitBreakers.isEmpty()) {
+            return null;
+        }
+        List<CircuitBreakerInfo> sorted = new ArrayList<>(info.circuitBreakers);
+        sorted.sort(this::sortCb);
+        List<String> items = sorted.stream().map(cb -> cb.id != null ? cb.id : "").toList();
+        Integer sel = tableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Circuit Breakers");
+    }
 }

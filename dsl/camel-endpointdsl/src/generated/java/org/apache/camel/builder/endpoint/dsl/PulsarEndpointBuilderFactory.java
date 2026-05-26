@@ -299,6 +299,44 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * When enabled, allows each individual message in a batch to be
+         * acknowledged independently. By default Pulsar redelivers the entire
+         * batch when any single message in the batch is not acknowledged. This
+         * option also requires the Pulsar broker to be configured with
+         * acknowledgmentAtBatchIndexLevelEnabled=true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param enableBatchIndexAcknowledgment the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder enableBatchIndexAcknowledgment(boolean enableBatchIndexAcknowledgment) {
+            doSetProperty("enableBatchIndexAcknowledgment", enableBatchIndexAcknowledgment);
+            return this;
+        }
+        /**
+         * When enabled, allows each individual message in a batch to be
+         * acknowledged independently. By default Pulsar redelivers the entire
+         * batch when any single message in the batch is not acknowledged. This
+         * option also requires the Pulsar broker to be configured with
+         * acknowledgmentAtBatchIndexLevelEnabled=true.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param enableBatchIndexAcknowledgment the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder enableBatchIndexAcknowledgment(String enableBatchIndexAcknowledgment) {
+            doSetProperty("enableBatchIndexAcknowledgment", enableBatchIndexAcknowledgment);
+            return this;
+        }
+        /**
          * To enable retry letter topic mode. The default retry letter topic
          * uses this format: topicname-subscriptionname-RETRY.
          * 

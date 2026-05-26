@@ -35,8 +35,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -58,6 +60,7 @@ import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.barchart.Bar;
@@ -126,9 +129,18 @@ public class CamelMonitor extends CamelCommand {
     long refreshInterval = DEFAULT_REFRESH_MS;
 
     @CommandLine.Option(names = { "--record" },
-                        description = "Record a demo to an Asciinema .cast file using a TamboUI tape script",
+                        description = "Replay a .tape file inside the TUI and record to an Asciinema .cast file",
                         arity = "0..1")
     String record;
+
+    @CommandLine.Option(names = { "--mcp" },
+                        description = "Enable embedded MCP server for AI agent access to the TUI")
+    boolean mcp;
+
+    @CommandLine.Option(names = { "--mcp-port" },
+                        description = "MCP server port (default: ${DEFAULT-VALUE})",
+                        defaultValue = "8123")
+    int mcpPort = 8123;
 
     // State
     private final AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(Collections.emptyList());
@@ -197,10 +209,16 @@ public class CamelMonitor extends CamelCommand {
     private volatile long lastRefresh;
     private boolean showKillConfirm;
     private volatile Buffer lastBuffer;
+    private volatile long renderGeneration;
     private volatile String screenshotMessage;
     private volatile long screenshotMessageTime;
     private volatile boolean pendingScreenshot;
     private boolean recording;
+    private TapeRecorder tapeRecorder;
+    private boolean mcpInjectedKey;
+    private TuiEventLog eventLog;
+    private TuiMcpServer mcpServer;
+    private final Queue<PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
     private final List<KeyRecord> recentKeys = new ArrayList<>();
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
 
@@ -218,7 +236,9 @@ public class CamelMonitor extends CamelCommand {
             captionOverlay,
             () -> pendingScreenshot = true,
             () -> recording = !recording,
-            () -> recording);
+            () -> recording,
+            this::toggleTapeRecording,
+            () -> tapeRecorder != null && tapeRecorder.isActive());
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
@@ -281,6 +301,22 @@ public class CamelMonitor extends CamelCommand {
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
 
+        eventLog = new TuiEventLog(500);
+        Path mcpJsonFile = null;
+        if (mcp) {
+            mcpServer = new TuiMcpServer(mcpPort, this);
+            try {
+                mcpServer.start();
+                actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient, mcpServer::getActivityLog);
+                mcpJsonFile = writeMcpJson(mcpPort);
+            } catch (java.net.BindException e) {
+                System.err.println("MCP server failed to start: port " + mcpPort + " is already in use.");
+                System.err.println("Use --mcp-port to specify a different port, e.g.: camel tui --mcp --mcp-port 8124");
+                mcpServer = null;
+                mcp = false;
+            }
+        }
+
         try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
             ctx.runner = tui;
@@ -291,7 +327,29 @@ public class CamelMonitor extends CamelCommand {
                     this::handleEvent,
                     this::render);
         } finally {
+            if (mcpServer != null) {
+                mcpServer.stop();
+            }
+            deleteMcpJson(mcpJsonFile);
             this.runner = null;
+            // Workaround: on macOS, JLine's terminal close deadlocks in
+            // FileDescriptor.close0() while the reader thread is in native read0().
+            // Run close in a daemon thread so the JVM can exit even if it hangs.
+            // Remove when fixed upstream: https://github.com/tamboui/tamboui/pull/355
+            Thread closeThread = new Thread(() -> {
+                try {
+                    tui.close();
+                } catch (Exception e) {
+                    // best effort
+                }
+            }, "tui-close");
+            closeThread.setDaemon(true);
+            closeThread.start();
+            try {
+                closeThread.join(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
         return 0;
     }
@@ -300,18 +358,39 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
+            if (eventLog != null) {
+                String elabel = keyLabel(ke);
+                if (elabel != null) {
+                    eventLog.record(elabel, elabel);
+                }
+            }
             if (recording) {
                 String label = keyLabel(ke);
                 if (label != null) {
                     recentKeys.add(new KeyRecord(label, System.currentTimeMillis()));
                 }
             }
-            if (captionOverlay.isCaptionVisible()) {
-                captionOverlay.handleKeyEvent(ke);
+            if (ke.hasCtrl() && ke.isChar('r')) {
+                toggleTapeRecording();
+                return true;
+            }
+            if (tapeRecorder != null && tapeRecorder.isActive() && !mcpInjectedKey) {
+                String label = keyLabel(ke);
+                if (label != null) {
+                    tapeRecorder.recordKey(label);
+                }
+            }
+            if (captionOverlay.isVisible()) {
+                if (captionOverlay.handleKeyEvent(ke)) {
+                    return true;
+                }
+            }
+            if (ke.hasCtrl() && ke.isChar('k')) {
+                recording = !recording;
                 return true;
             }
             if (ke.hasCtrl() && ke.isChar('t')) {
-                captionOverlay.openInput();
+                captionOverlay.openInline();
                 return true;
             }
             if (actionsPopup.isVisible()) {
@@ -547,6 +626,18 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
+            boolean keyProcessed = false;
+            PendingKey pk;
+            while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
+                pendingKeys.poll();
+                mcpInjectedKey = true;
+                handleEvent(pk.event(), runner);
+                mcpInjectedKey = false;
+                keyProcessed = true;
+            }
+            if (keyProcessed) {
+                return true;
+            }
             actionsPopup.tick(now);
             captionOverlay.tick(now);
             if (recording && !recentKeys.isEmpty()) {
@@ -613,6 +704,9 @@ public class CamelMonitor extends CamelCommand {
         }
         if (ke.code() == KeyCode.CHAR) {
             String s = ke.string();
+            if (" ".equals(s)) {
+                return "Space";
+            }
             if (!s.isEmpty()) {
                 return s;
             }
@@ -649,7 +743,10 @@ public class CamelMonitor extends CamelCommand {
 
     private void selectCurrentIntegration() {
         if (ctx.selectedPid != null) {
-            return;
+            if (findSelectedIntegration() != null || findSelectedInfra() != null) {
+                return;
+            }
+            ctx.selectedPid = null;
         }
         if (ctx.infraTableFocused) {
             List<InfraInfo> infras = infraData.get();
@@ -764,6 +861,7 @@ public class CamelMonitor extends CamelCommand {
         renderFooter(frame, mainChunks.get(5));
 
         lastBuffer = frame.buffer();
+        renderGeneration++;
 
         if (pendingScreenshot) {
             pendingScreenshot = false;
@@ -1604,9 +1702,10 @@ public class CamelMonitor extends CamelCommand {
             renderOverviewFooter(spans);
         }
 
+        List<Span> rightSpans = new ArrayList<>();
+
         if (recording && !recentKeys.isEmpty()) {
             long now = System.currentTimeMillis();
-            List<Span> keySpans = new ArrayList<>();
             int maxKeys = Math.min(recentKeys.size(), 8);
             List<KeyRecord> visible = recentKeys.subList(recentKeys.size() - maxKeys, recentKeys.size());
             for (KeyRecord kr : visible) {
@@ -1614,13 +1713,40 @@ public class CamelMonitor extends CamelCommand {
                 Style style = age < 1000
                         ? Style.EMPTY.fg(Color.WHITE).bold().onBlue()
                         : Style.EMPTY.dim();
-                keySpans.add(Span.styled(" " + kr.label() + " ", style));
+                rightSpans.add(Span.styled(" " + kr.label() + " ", style));
             }
+        }
+
+        if (mcp) {
+            if (!rightSpans.isEmpty()) {
+                rightSpans.add(Span.raw("  "));
+            }
+            String client = mcpServer != null ? mcpServer.getConnectedClient() : null;
+            boolean active = mcpServer != null && mcpServer.isRecentActivity();
+            String mcpLabel = "MCP :" + mcpPort;
+            String suffix;
+            Style labelStyle;
+            Style suffixStyle;
+            if (client != null) {
+                suffix = active ? " ●" : " ○";
+                mcpLabel += " (" + client + ")";
+                labelStyle = Style.EMPTY.fg(Color.GREEN);
+                suffixStyle = Style.EMPTY.fg(active ? Color.GREEN : Color.DARK_GRAY);
+            } else {
+                suffix = " ✗";
+                labelStyle = Style.EMPTY.dim();
+                suffixStyle = Style.EMPTY.fg(Color.RED);
+            }
+            rightSpans.add(Span.styled(mcpLabel, labelStyle));
+            rightSpans.add(Span.styled(suffix, suffixStyle));
+        }
+
+        if (!rightSpans.isEmpty()) {
             int hintsWidth = spans.stream().mapToInt(s -> s.width()).sum();
-            int keystrokeWidth = keySpans.stream().mapToInt(s -> s.width()).sum();
-            int gap = Math.max(1, area.width() - hintsWidth - keystrokeWidth);
+            int rightWidth = rightSpans.stream().mapToInt(s -> s.width()).sum();
+            int gap = Math.max(1, area.width() - hintsWidth - rightWidth);
             spans.add(Span.raw(" ".repeat(gap)));
-            spans.addAll(keySpans);
+            spans.addAll(rightSpans);
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -1751,6 +1877,28 @@ public class CamelMonitor extends CamelCommand {
             }
 
             data.set(infos);
+
+            // Clear stale selection when the selected integration is gone
+            if (ctx.selectedPid != null && !ctx.infraTableFocused) {
+                boolean stillAlive = infos.stream()
+                        .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
+                if (!stillAlive) {
+                    ctx.selectedPid = null;
+                }
+            }
+
+            // Auto-select a newly launched integration
+            String autoSelect = actionsPopup.getPendingAutoSelect();
+            if (autoSelect != null) {
+                for (IntegrationInfo info : infos) {
+                    if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
+                        ctx.selectedPid = info.pid;
+                        ctx.infraTableFocused = false;
+                        actionsPopup.clearPendingAutoSelect();
+                        break;
+                    }
+                }
+            }
 
             // Discover running infra services
             refreshInfraData();
@@ -2927,6 +3075,273 @@ public class CamelMonitor extends CamelCommand {
     }
 
     record VanishingInfraInfo(InfraInfo info, long startTime) {
+    }
+
+    // ---- MCP .mcp.json lifecycle ----
+
+    private static Path writeMcpJson(int port) {
+        Path path = Path.of(".mcp.json");
+        try {
+            String json = "{\n"
+                          + "  \"mcpServers\": {\n"
+                          + "    \"camel-tui\": {\n"
+                          + "      \"type\": \"http\",\n"
+                          + "      \"url\": \"http://localhost:" + port + "/mcp\"\n"
+                          + "    }\n"
+                          + "  }\n"
+                          + "}\n";
+            Files.writeString(path, json);
+            return path;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static void deleteMcpJson(Path path) {
+        if (path != null) {
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException e) {
+                // best effort
+            }
+        }
+    }
+
+    // ---- MCP accessor methods ----
+
+    private static final String[] TAB_NAMES = {
+            "Overview", "Log", "Routes", "Consumers", "Endpoints",
+            "HTTP", "Health", "Inspect", "Circuit Breaker"
+    };
+
+    Buffer getLastBuffer() {
+        return lastBuffer;
+    }
+
+    long getRenderGeneration() {
+        return renderGeneration;
+    }
+
+    boolean isKeystrokesVisible() {
+        return recording;
+    }
+
+    TapeRecorder getTapeRecorder() {
+        return tapeRecorder;
+    }
+
+    boolean isTapeRecording() {
+        return tapeRecorder != null && tapeRecorder.isActive();
+    }
+
+    void startTapeRecording(String title) {
+        tapeRecorder = new TapeRecorder();
+        tapeRecorder.start(title);
+    }
+
+    void clearTapeRecorder() {
+        tapeRecorder = null;
+    }
+
+    private void toggleTapeRecording() {
+        if (tapeRecorder != null && tapeRecorder.isActive()) {
+            String tape = tapeRecorder.stop();
+            tapeRecorder = null;
+            String timestamp = java.time.LocalDateTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+            String filename = "camel-tui-tape-" + timestamp + ".tape";
+            try {
+                java.nio.file.Files.writeString(java.nio.file.Path.of(filename), tape);
+                captionOverlay.showCaption("Tape saved: " + filename, 5);
+            } catch (java.io.IOException e) {
+                captionOverlay.showCaption("Failed to save tape: " + e.getMessage(), 5);
+            }
+        } else {
+            tapeRecorder = new TapeRecorder();
+            tapeRecorder.start(null);
+            captionOverlay.showCaption("Tape recording started", 3);
+        }
+    }
+
+    TuiEventLog getEventLog() {
+        return eventLog;
+    }
+
+    int getActiveTabIndex() {
+        return tabsState.selected();
+    }
+
+    String getActiveTabName() {
+        int idx = tabsState.selected();
+        return idx >= 0 && idx < TAB_NAMES.length ? TAB_NAMES[idx] : "Unknown";
+    }
+
+    String getSelectedPid() {
+        return ctx != null ? ctx.selectedPid : null;
+    }
+
+    String getSelectedIntegrationName() {
+        if (ctx == null) {
+            return null;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null ? info.name : null;
+    }
+
+    int getIntegrationCount() {
+        List<IntegrationInfo> list = data.get();
+        return (int) list.stream().filter(i -> !i.vanishing).count();
+    }
+
+    boolean isCaptionVisible() {
+        return captionOverlay.isCaptionVisible();
+    }
+
+    void showCaption(String text) {
+        captionOverlay.showCaption(text);
+    }
+
+    void showCaption(String text, int durationSeconds) {
+        captionOverlay.showCaption(text, durationSeconds);
+    }
+
+    String navigateToTab(String tabName) {
+        for (int i = 0; i < TAB_NAMES.length; i++) {
+            if (TAB_NAMES[i].equalsIgnoreCase(tabName)) {
+                handleTabKey(i);
+                return TAB_NAMES[i];
+            }
+        }
+        return null;
+    }
+
+    String selectIntegration(String nameOrPid) {
+        List<IntegrationInfo> infos = data.get();
+        for (IntegrationInfo info : infos) {
+            if (info.vanishing) {
+                continue;
+            }
+            if (nameOrPid.equals(info.pid)
+                    || (info.name != null && info.name.equalsIgnoreCase(nameOrPid))) {
+                ctx.selectedPid = info.pid;
+                ctx.infraTableFocused = false;
+                return info.name != null ? info.name : info.pid;
+            }
+        }
+        return null;
+    }
+
+    List<String> getTabNames() {
+        return List.of(TAB_NAMES);
+    }
+
+    List<String> getActionLabels() {
+        return actionsPopup.getActionLabels();
+    }
+
+    SelectionContext getSelectionContext() {
+        SelectionContext popup = actionsPopup.getSelectionContext();
+        if (popup != null) {
+            return popup;
+        }
+        if (tabsState.selected() == TAB_OVERVIEW) {
+            List<IntegrationInfo> infos = sortedOverviewInfos();
+            if (infos.isEmpty()) {
+                return null;
+            }
+            List<String> items = infos.stream().map(i -> i.name != null ? i.name : i.pid).toList();
+            Integer sel = overviewTableState.selected();
+            return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Integrations");
+        }
+        MonitorTab tab = activeTab();
+        return tab != null ? tab.getSelectionContext() : null;
+    }
+
+    List<String> getIntegrationNames() {
+        return data.get().stream()
+                .filter(i -> !i.vanishing)
+                .map(i -> i.name != null ? i.name : i.pid)
+                .toList();
+    }
+
+    int injectKeys(List<String> keys, int delayMs) {
+        long fireAt = System.currentTimeMillis();
+        int count = 0;
+        for (String key : keys) {
+            KeyEvent ke = parseKey(key);
+            if (ke != null) {
+                pendingKeys.add(new PendingKey(ke, fireAt));
+                fireAt += delayMs;
+                count++;
+            }
+        }
+        return count;
+    }
+
+    static KeyEvent parseKey(String key) {
+        if (key == null || key.isEmpty()) {
+            return null;
+        }
+
+        boolean ctrl = false;
+        boolean shift = false;
+        String remainder = key;
+        while (remainder.contains("+")) {
+            int plus = remainder.indexOf('+');
+            String mod = remainder.substring(0, plus).trim();
+            remainder = remainder.substring(plus + 1).trim();
+            if (mod.equalsIgnoreCase("Ctrl")) {
+                ctrl = true;
+            } else if (mod.equalsIgnoreCase("Shift")) {
+                shift = true;
+            }
+        }
+
+        KeyModifiers mods = KeyModifiers.of(ctrl, false, shift);
+
+        KeyCode code = switch (remainder.toLowerCase(Locale.ROOT)) {
+            case "enter", "return" -> KeyCode.ENTER;
+            case "esc", "escape" -> KeyCode.ESCAPE;
+            case "tab" -> KeyCode.TAB;
+            case "backspace" -> KeyCode.BACKSPACE;
+            case "delete", "del" -> KeyCode.DELETE;
+            case "up" -> KeyCode.UP;
+            case "down" -> KeyCode.DOWN;
+            case "left" -> KeyCode.LEFT;
+            case "right" -> KeyCode.RIGHT;
+            case "home" -> KeyCode.HOME;
+            case "end" -> KeyCode.END;
+            case "pageup", "pgup" -> KeyCode.PAGE_UP;
+            case "pagedown", "pgdn" -> KeyCode.PAGE_DOWN;
+            case "f1" -> KeyCode.F1;
+            case "f2" -> KeyCode.F2;
+            case "f3" -> KeyCode.F3;
+            case "f4" -> KeyCode.F4;
+            case "f5" -> KeyCode.F5;
+            case "f6" -> KeyCode.F6;
+            case "f7" -> KeyCode.F7;
+            case "f8" -> KeyCode.F8;
+            case "f9" -> KeyCode.F9;
+            case "f10" -> KeyCode.F10;
+            case "f11" -> KeyCode.F11;
+            case "f12" -> KeyCode.F12;
+            case "space" -> null;
+            default -> null;
+        };
+
+        if (code != null) {
+            return KeyEvent.ofKey(code, mods);
+        }
+        if ("space".equalsIgnoreCase(remainder)) {
+            return KeyEvent.ofChar(' ', mods);
+        }
+        if (remainder.length() == 1) {
+            return KeyEvent.ofChar(remainder.charAt(0), mods);
+        }
+        return null;
+    }
+
+    private record PendingKey(KeyEvent event, long fireAt) {
     }
 
 }

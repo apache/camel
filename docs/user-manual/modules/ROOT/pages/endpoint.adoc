@@ -85,7 +85,9 @@ YAML::
 ----
 - route:
     from:
-      uri: file:messages/foo?sorter=#bean:mySpecialFileSorter
+      uri: file:messages/foo
+      parameters:
+        sorter: "#bean:mySpecialFileSorter"
       steps:
         - to:
             uri: jms:queue:foo
@@ -305,7 +307,10 @@ YAML::
       uri: file:inbox
       steps:
         - to:
-            uri: "ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})&binary=true"
+            uri: ftp:joe@myftpserver.com
+            parameters:
+              password: "RAW($simple{env:MY_FTP_PASSWORD})"
+              binary: true
 ----
 
 ====
@@ -353,7 +358,10 @@ YAML::
       uri: file:inbox
       steps:
         - to:
-            uri: "ftp:joe@myftpserver.com?password={{myFtpPassword}}&binary=true"
+            uri: ftp:joe@myftpserver.com
+            parameters:
+              password: "{{myFtpPassword}}"
+              binary: true
 ----
 ====
 

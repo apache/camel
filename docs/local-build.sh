@@ -17,8 +17,10 @@
 # limitations under the License.
 #
 
-CW=./../../camel-website
-LOCAL=./../camel
+CW="./../../camel-website"
 
-cd $CW || (echo 'camel-website not in expected location $CW' && exit)
-./antora-local-build.sh $LOCAL $*
+parent_path="${PWD%/*}"
+LOCAL="./../${parent_path##*/}"
+
+cd $CW || (echo "camel-website not in expected location $CW" && exit)
+./antora-local-build.sh "$LOCAL" "$@"

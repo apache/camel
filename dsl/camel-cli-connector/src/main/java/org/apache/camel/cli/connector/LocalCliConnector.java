@@ -272,12 +272,36 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     protected void actionTask() {
+        // scan for all action files: {pid}-action.json (legacy) and {pid}-action-{requestId}.json (multi-client)
+        File dir = lockFile.getParentFile();
+        String prefix = lockFile.getName() + "-action";
+        File[] actionFiles = dir.listFiles((d, name) -> name.startsWith(prefix) && name.endsWith(".json"));
+        if (actionFiles == null || actionFiles.length == 0) {
+            return;
+        }
+        for (File af : actionFiles) {
+            String suffix = af.getName().substring(prefix.length());
+            // suffix is either ".json" (legacy) or "-{requestId}.json" (multi-client)
+            String requestId = suffix.startsWith("-")
+                    ? suffix.substring(1, suffix.length() - 5)  // strip leading "-" and trailing ".json"
+                    : null;
+            File of = requestId != null
+                    ? new File(dir, lockFile.getName() + "-output-" + requestId + ".json")
+                    : this.outputFile;
+            processAction(af, of);
+        }
+    }
+
+    private void processAction(File af, File of) {
         String action = null;
+        File prevOutputFile = this.outputFile;
         try {
-            JsonObject root = loadAction();
+            JsonObject root = loadAction(af);
             if (root == null || root.isEmpty()) {
                 return;
             }
+            // set outputFile so all doAction* methods write to the correct file
+            this.outputFile = of;
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Action: {}", root);
@@ -342,13 +366,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionCliDebug(root);
             }
         } catch (Exception e) {
-            // ignore
-            LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : actionFile,
+            LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : af,
                     e.getMessage(),
                     e);
         } finally {
-            // action done so delete file
-            FileUtil.deleteFile(actionFile);
+            this.outputFile = prevOutputFile;
+            FileUtil.deleteFile(af);
         }
     }
 
@@ -1116,9 +1139,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     JsonObject loadAction() {
+        return loadAction(actionFile);
+    }
+
+    JsonObject loadAction(File file) {
         try {
-            if (actionFile != null && actionFile.exists()) {
-                FileInputStream fis = new FileInputStream(actionFile);
+            if (file != null && file.exists()) {
+                FileInputStream fis = new FileInputStream(file);
                 String text = IOHelper.loadText(fis);
                 IOHelper.close(fis);
                 if (!text.isEmpty()) {

@@ -60,13 +60,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:b
-    steps:
-      - removeHeaders:
-          pattern: "*"
-      - to:
-          uri: mock:result
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - removeHeaders:
+            pattern: "*"
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -100,12 +101,13 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:b
-    steps:
-      - removeHeaders: "Camel*"
-      - to:
-          uri: mock:result
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - removeHeaders: "Camel*"
+        - to:
+            uri: mock:result
 ----
 ====
 

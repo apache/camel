@@ -91,13 +91,15 @@ public class RouteDiagramTools {
         // headless rendering — required when running inside the MCP server
         System.setProperty("java.awt.headless", "true");
 
+        CapturingPrinter capturingPrinter = new CapturingPrinter();
         CamelJBangMain main = new CamelJBangMain()
-                .withPrinter(new Printer.QuietPrinter(new Printer.SystemOutPrinter()));
+                .withPrinter(capturingPrinter);
         CamelRouteDiagramAction action = new CamelRouteDiagramAction(main);
 
         try {
             int exit = action.renderSourceToFile(
-                    sourceFile, resolvedOutput, theme, filter,
+                    sourceFile, resolvedOutput, theme,
+                    filter != null && !filter.isBlank() ? filter : null,
                     width != null ? width : 0,
                     ignoreLoadingError != null && ignoreLoadingError,
                     fontSize != null ? fontSize : 12,
@@ -112,13 +114,13 @@ public class RouteDiagramTools {
                 String asciiContent = success ? Files.readString(out.toPath()) : null;
                 String message = success
                         ? "ASCII diagram generated (" + size + " bytes)"
-                        : "Failed to render diagram (exit code " + exit + ")";
+                        : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
                 return new RouteDiagramResult(success, resolvedOutput, size, message, asciiContent);
             }
 
             String message = success
                     ? "Diagram saved to: " + resolvedOutput
-                    : "Failed to render diagram (exit code " + exit + ")";
+                    : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
             return new RouteDiagramResult(success, resolvedOutput, size, message, null);
         } catch (Throwable e) {
             throw new ToolCallException(
@@ -131,5 +133,33 @@ public class RouteDiagramTools {
      */
     public record RouteDiagramResult(boolean success, String outputFile, long sizeBytes, String message,
             String asciiDiagram) {
+    }
+
+    static class CapturingPrinter implements Printer {
+        private final StringBuilder sb = new StringBuilder();
+
+        @Override
+        public void println() {
+            sb.append('\n');
+        }
+
+        @Override
+        public void println(String line) {
+            sb.append(line).append('\n');
+        }
+
+        @Override
+        public void print(String output) {
+            sb.append(output);
+        }
+
+        @Override
+        public void printf(String format, Object... args) {
+            sb.append(String.format(format, args));
+        }
+
+        String getOutput() {
+            return sb.toString().strip();
+        }
     }
 }
