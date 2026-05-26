@@ -40,7 +40,7 @@ include::spring-boot:partial$starter.adoc[]
 
 === Spring Boot context propagation
 
-The starter is in charge to autoconfigure the component. Additionally you will need to specify the concrete Propagation implementation by adding the dependency you wish to use (for example, `io.micrometer:micrometer-tracing-bridge-otel`, 'io.micrometer:micrometer-tracing-bridge-brave' or any other technology you wish to use). If none is provided, a "no-op" implementation will be defined as default.
+The starter is in charge to autoconfigure the component. Additionally you will need to specify the concrete Propagation implementation by adding the dependency you wish to use (for example, `io.micrometer:micrometer-tracing-bridge-otel`, `io.micrometer:micrometer-tracing-bridge-brave` or any other technology you wish to use). If none is provided, a "no-op" implementation will be defined as default.
 
 == Using with standalone Camel
 
@@ -121,7 +121,7 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
                 event -> {
                 },
                 new OtelBaggageManager(
-                        currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
+                        currentTraceContext, List.of(), List.of()));
         OtelPropagator otelPropagator = new OtelPropagator(propagators, otelTracer);
         getContext().getRegistry().bind("MicrometerObservabilityTracer", micrometerTracer);
         getContext().getRegistry().bind("OpentelemetryPropagators", otelPropagator);
@@ -134,8 +134,6 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 NOTE: this is an example that can be used as a reference. It may not work exactly as it is, since, the related dependency can change from version to version. You will need to check in details looking at the concrete implementation documentation.
 
 You can see that the configuration of this component may get a bit difficult, unless you are already familiar with the tracing technology you're going to implement.
-
-NOTE: an important thing to do is to include a `BaggageManager` specifying the baggage properties to include during context propagation. The field provided in the example, `MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG`, is necessary to handle consistency across asynchronous threads.
 
 === How to trace
 
@@ -173,3 +171,30 @@ public void process(Exchange exchange) throws Exception {
     mySpan.end();
 }
 ----
+
+=== Baggage customization
+
+`Baggage` is a way to attach key-value metadata to a request and carry it across service boundaries. In the context of telemetry technologies, baggage travels along with the context (like trace/span), but it's meant for custom data you define, not telemetry internals. Camel allows you to programmatically provide any `Baggage` information via Exchange property settings. Whenever the component finds a property defined as `CamelBaggage_xyz` it will consider it as a baggage variable named `xyz`. For example, in Java DSL:
+
+[source,java]
+----
+                from("direct:start")
+                        .setProperty("CamelBaggage_myValue", constant("1234"))
+                        .routeId("start")
+                        .log("A message")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // Baggage is available via the Micrometer Observability API
+                                String val = tracer.getBaggage("myValue").get();
+                            }
+                        })
+                        .to("log:info");
+----
+
+Any span executed after the `setProperty` will include a baggage variable named `myValue` with value `1234` which will be reflected in your telemetry result as well.
+
+NOTE: an important thing to do is to include a `BaggageManager` specifying the baggage properties to include during context propagation. You may require to configure those baggages fields you want to propagate across the boards.
+
+Any baggage setting defined externally (i.e., calling the Camel process into another external process where you're setting some baggage) is normally going to be propagated in Camel logic.
+
