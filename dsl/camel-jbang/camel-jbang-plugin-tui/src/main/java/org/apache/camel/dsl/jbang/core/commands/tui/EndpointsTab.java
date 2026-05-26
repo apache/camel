@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import dev.tamboui.layout.Constraint;
@@ -45,7 +46,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class EndpointsTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "component", "route", "dir", "total", "uri" };
+    private static final String[] SORT_COLUMNS = { "component", "route", "dir", "total", "body", "hdr", "uri" };
     private static final int MAX_CHART_POINTS = 60;
 
     private final MonitorContext ctx;
@@ -56,6 +57,8 @@ class EndpointsTab implements MonitorTab {
     private final Map<String, LinkedList<Long>> endpointRemoteOutHistory;
     private final Map<String, LinkedList<Long>> endpointRemoteStubInHistory;
     private final Map<String, LinkedList<Long>> endpointRemoteStubOutHistory;
+    private final Map<String, LinkedList<Long>> endpointInSizeHistory;
+    private final Map<String, LinkedList<Long>> endpointOutSizeHistory;
 
     private String sort = "route";
     private int sortIndex = 1;
@@ -69,7 +72,9 @@ class EndpointsTab implements MonitorTab {
                  Map<String, LinkedList<Long>> endpointRemoteInHistory,
                  Map<String, LinkedList<Long>> endpointRemoteOutHistory,
                  Map<String, LinkedList<Long>> endpointRemoteStubInHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteStubOutHistory) {
+                 Map<String, LinkedList<Long>> endpointRemoteStubOutHistory,
+                 Map<String, LinkedList<Long>> endpointInSizeHistory,
+                 Map<String, LinkedList<Long>> endpointOutSizeHistory) {
         this.ctx = ctx;
         this.endpointInHistory = endpointInHistory;
         this.endpointOutHistory = endpointOutHistory;
@@ -77,6 +82,8 @@ class EndpointsTab implements MonitorTab {
         this.endpointRemoteOutHistory = endpointRemoteOutHistory;
         this.endpointRemoteStubInHistory = endpointRemoteStubInHistory;
         this.endpointRemoteStubOutHistory = endpointRemoteStubOutHistory;
+        this.endpointInSizeHistory = endpointInSizeHistory;
+        this.endpointOutSizeHistory = endpointOutSizeHistory;
     }
 
     @Override
@@ -131,6 +138,9 @@ class EndpointsTab implements MonitorTab {
         }
         sortedEndpoints.sort(this::sortEndpoint);
 
+        boolean hasSize = info.endpoints.stream()
+                .anyMatch(ep -> ep.meanBodySize >= 0 || ep.meanHeadersSize >= 0);
+
         List<Row> rows = new ArrayList<>();
         for (EndpointInfo ep : sortedEndpoints) {
             String dir = ep.direction != null ? ep.direction : "";
@@ -145,51 +155,70 @@ class EndpointsTab implements MonitorTab {
                 default -> "↔ ";
             };
 
-            rows.add(Row.from(
-                    Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(ep.routeId != null ? ep.routeId : ""),
-                    Cell.from(Span.styled(arrow + dir, dirStyle)),
-                    rightCell(ep.hits > 0 ? String.valueOf(ep.hits) : "", 8),
-                    centerCell(ep.stub ? "x" : "", 6),
-                    centerCell(ep.remote ? "x" : "", 8),
-                    Cell.from(ep.uri != null ? ep.uri : "")));
+            List<Cell> cells = new ArrayList<>();
+            cells.add(Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Color.CYAN))));
+            cells.add(Cell.from(ep.routeId != null ? ep.routeId : ""));
+            cells.add(Cell.from(Span.styled(arrow + dir, dirStyle)));
+            cells.add(rightCell(ep.hits > 0 ? String.valueOf(ep.hits) : "", 8));
+            if (hasSize) {
+                cells.add(rightCell(sizeToString(ep.meanBodySize), 10));
+                cells.add(rightCell(sizeToString(ep.meanHeadersSize), 10));
+            }
+            cells.add(centerCell(ep.stub ? "x" : "", 6));
+            cells.add(centerCell(ep.remote ? "x" : "", 8));
+            cells.add(Cell.from(ep.uri != null ? ep.uri : ""));
+            rows.add(Row.from(cells));
         }
 
+        int emptyCols = hasSize ? 9 : 7;
         if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from("")));
+            List<Cell> emptyCells = new ArrayList<>();
+            emptyCells.add(Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())));
+            for (int i = 1; i < emptyCols; i++) {
+                emptyCells.add(Cell.from(""));
+            }
+            rows.add(Row.from(emptyCells));
         }
+
+        List<Cell> headerCells = new ArrayList<>();
+        headerCells.add(Cell.from(Span.styled(sortLabel("COMPONENT", "component"), sortStyle("component"))));
+        headerCells.add(Cell.from(Span.styled(sortLabel("ROUTE", "route"), sortStyle("route"))));
+        headerCells.add(Cell.from(Span.styled(sortLabel("DIR", "dir"), sortStyle("dir"))));
+        headerCells.add(rightCell(sortLabel("TOTAL", "total"), 8, sortStyle("total")));
+        if (hasSize) {
+            headerCells.add(rightCell(sortLabel("BODY", "body"), 10, sortStyle("body")));
+            headerCells.add(rightCell(sortLabel("HDR", "hdr"), 10, sortStyle("hdr")));
+        }
+        headerCells.add(centerCell("STUB", 6, Style.EMPTY.bold()));
+        headerCells.add(centerCell("REMOTE", 8, Style.EMPTY.bold()));
+        headerCells.add(Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri"))));
+
+        List<Constraint> widths = new ArrayList<>();
+        widths.add(Constraint.length(15));
+        widths.add(Constraint.length(20));
+        widths.add(Constraint.length(8));
+        widths.add(Constraint.length(8));
+        if (hasSize) {
+            widths.add(Constraint.length(10));
+            widths.add(Constraint.length(10));
+        }
+        widths.add(Constraint.length(6));
+        widths.add(Constraint.length(8));
+        widths.add(Constraint.fill());
 
         Table table = Table.builder()
                 .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("COMPONENT", "component"), sortStyle("component"))),
-                        Cell.from(Span.styled(sortLabel("ROUTE", "route"), sortStyle("route"))),
-                        Cell.from(Span.styled(sortLabel("DIR", "dir"), sortStyle("dir"))),
-                        rightCell(sortLabel("TOTAL", "total"), 8, sortStyle("total")),
-                        centerCell("STUB", 6, Style.EMPTY.bold()),
-                        centerCell("REMOTE", 8, Style.EMPTY.bold()),
-                        Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri")))))
-                .widths(
-                        Constraint.length(15),
-                        Constraint.length(20),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.fill())
+                .header(Row.from(headerCells))
+                .widths(widths.toArray(Constraint[]::new))
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Endpoints sort:" + sort
                                + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
                                + " ")
                         .build())
                 .build();
+
+        boolean hasSizeHistory = !endpointInSizeHistory.isEmpty()
+                && endpointInSizeHistory.values().stream().anyMatch(h -> h.stream().anyMatch(v -> v > 0));
 
         List<Rect> chunks = showChart
                 ? Layout.vertical().constraints(Constraint.fill(), Constraint.length(16)).split(area)
@@ -206,7 +235,16 @@ class EndpointsTab implements MonitorTab {
                     .filter(ep -> "out".equals(ep.direction) && matchesFilter(ep))
                     .mapToLong(ep -> ep.hits)
                     .sum();
-            renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid);
+
+            if (hasSizeHistory) {
+                List<Rect> chartSplit = Layout.horizontal()
+                        .constraints(Constraint.percentage(50), Constraint.percentage(50))
+                        .split(chunks.get(1));
+                renderEndpointFlow(frame, chartSplit.get(0), inTotal, outTotal, info.name, info.pid);
+                renderPayloadSizeChart(frame, chartSplit.get(1), info.pid);
+            } else {
+                renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid);
+            }
         }
     }
 
@@ -253,6 +291,8 @@ class EndpointsTab implements MonitorTab {
                 yield da.compareToIgnoreCase(db);
             }
             case "total" -> Long.compare(b.hits, a.hits);
+            case "body" -> Long.compare(b.meanBodySize, a.meanBodySize);
+            case "hdr" -> Long.compare(b.meanHeadersSize, a.meanHeadersSize);
             case "uri" -> {
                 String ua = a.uri != null ? a.uri : "";
                 String ub = b.uri != null ? b.uri : "";
@@ -371,6 +411,76 @@ class EndpointsTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(Title.from(chartTitle)).build())
                 .build(), rightArea);
+    }
+
+    private void renderPayloadSizeChart(Frame frame, Rect area, String pid) {
+        LinkedList<Long> inHist = endpointInSizeHistory.getOrDefault(pid, new LinkedList<>());
+        LinkedList<Long> outHist = endpointOutSizeHistory.getOrDefault(pid, new LinkedList<>());
+
+        int renderPoints = MAX_CHART_POINTS;
+        long[] inArr = new long[renderPoints];
+        long[] outArr = new long[renderPoints];
+        for (int i = 0; i < renderPoints; i++) {
+            int idx = inHist.size() - renderPoints + i;
+            if (idx >= 0) {
+                inArr[i] = inHist.get(idx);
+            }
+            idx = outHist.size() - renderPoints + i;
+            if (idx >= 0) {
+                outArr[i] = outHist.get(idx);
+            }
+        }
+        long curIn = inArr[renderPoints - 1];
+        long curOut = outArr[renderPoints - 1];
+
+        Line chartTitle = Line.from(
+                Span.styled("▬", Style.EMPTY.fg(Color.YELLOW)),
+                Span.raw(String.format(" in:%-8s ", sizeToString(curIn))),
+                Span.styled("▬", Style.EMPTY.fg(Color.MAGENTA)),
+                Span.raw(String.format(" out:%-8s avg body", sizeToString(curOut))));
+
+        frame.renderWidget(MirroredSparkline.builder()
+                .topData(inArr)
+                .bottomData(outArr)
+                .topStyle(Style.EMPTY.fg(Color.YELLOW))
+                .bottomStyle(Style.EMPTY.fg(Color.MAGENTA))
+                .yLabelFormatter(EndpointsTab::sizeToYLabel)
+                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
+                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(Title.from(chartTitle)).build())
+                .build(), area);
+    }
+
+    private static String sizeToYLabel(long size) {
+        if (size <= 0) {
+            return "0 B";
+        }
+        if (size < 1024) {
+            return size + "B";
+        } else if (size < 1024 * 1024) {
+            long kb = size / 1024;
+            return kb + "KB";
+        } else {
+            long mb = size / (1024 * 1024);
+            return mb + "MB";
+        }
+    }
+
+    static String sizeToString(long size) {
+        if (size < 0) {
+            return "-";
+        }
+        if (size == 0) {
+            return "0 B";
+        }
+        if (size < 1024) {
+            return size + " B";
+        } else if (size < 1024 * 1024) {
+            return String.format(Locale.US, "%.1f KB", size / 1024.0);
+        } else {
+            return String.format(Locale.US, "%.1f MB", size / (1024.0 * 1024.0));
+        }
     }
 
     @Override

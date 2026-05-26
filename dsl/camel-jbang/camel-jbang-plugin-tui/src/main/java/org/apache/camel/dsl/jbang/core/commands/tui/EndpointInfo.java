@@ -24,4 +24,10 @@ class EndpointInfo {
     long hits;
     boolean stub;
     boolean remote;
+    long minBodySize = -1;
+    long maxBodySize = -1;
+    long meanBodySize = -1;
+    long minHeadersSize = -1;
+    long maxHeadersSize = -1;
+    long meanHeadersSize = -1;
 }

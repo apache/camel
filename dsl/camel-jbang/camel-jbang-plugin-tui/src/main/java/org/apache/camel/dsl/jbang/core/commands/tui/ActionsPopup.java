@@ -66,7 +66,8 @@ class ActionsPopup {
     private static final int ACTION_CLASSPATH = 8;
     private static final int ACTION_MCP_INFO = 9;
     private static final int ACTION_MCP_LOG = 10;
-    private static final int ACTION_STOP_ALL = 11;
+    private static final int ACTION_RESET_STATS = 11;
+    private static final int ACTION_STOP_ALL = 12;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -74,6 +75,7 @@ class ActionsPopup {
     private final Runnable toggleKeystrokes;
     private final Supplier<Boolean> keystrokesEnabled;
     private final Runnable toggleTapeRecording;
+    private Runnable resetStatsAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
     private boolean mcpEnabled;
@@ -133,6 +135,10 @@ class ActionsPopup {
         this.ctx = ctx;
     }
 
+    void setResetStatsAction(Runnable resetStatsAction) {
+        this.resetStatsAction = resetStatsAction;
+    }
+
     void setMcpEnabled(
             boolean enabled, int port, Supplier<String> connectedClient, Supplier<List<TuiMcpServer.LogEntry>> activityLog) {
         this.mcpEnabled = enabled;
@@ -143,7 +149,7 @@ class ActionsPopup {
     }
 
     private int actionCount() {
-        return mcpEnabled ? 12 : 10;
+        return mcpEnabled ? 13 : 11;
     }
 
     boolean isVisible() {
@@ -195,6 +201,7 @@ class ActionsPopup {
         labels.add("Tape Recording Guide");
         labels.add("Run Doctor");
         labels.add("Show Classpath");
+        labels.add("Reset Stats");
         if (mcpEnabled) {
             labels.add("MCP Info");
             labels.add("MCP Log");
@@ -348,6 +355,11 @@ class ActionsPopup {
                     } else if (action == ACTION_MCP_LOG) {
                         showActionsMenu = false;
                         openMcpLog();
+                    } else if (action == ACTION_RESET_STATS) {
+                        showActionsMenu = false;
+                        if (resetStatsAction != null) {
+                            resetStatsAction.run();
+                        }
                     } else if (action == ACTION_STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
@@ -485,6 +497,7 @@ class ActionsPopup {
         items.add(ListItem.from("  📄 Tape Recording Guide"));
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  📦 Show Classpath"));
+        items.add(ListItem.from("  🔄 Reset Stats"));
         if (mcpEnabled) {
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));

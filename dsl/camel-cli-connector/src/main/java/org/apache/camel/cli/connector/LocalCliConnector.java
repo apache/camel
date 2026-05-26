@@ -74,6 +74,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.support.LoadOnDemandReloadStrategy;
 import org.apache.camel.support.MessageHelper;
@@ -917,6 +918,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             mcc.getManagedCamelContext().reset(true);
+        }
+        RuntimeEndpointRegistry reg = camelContext.getRuntimeEndpointRegistry();
+        if (reg != null) {
+            reg.reset();
         }
     }
 

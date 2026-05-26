@@ -179,6 +179,11 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LinkedList<long[]>> endpointRemoteStubSamples = new ConcurrentHashMap<>();
     private final Map<String, Long> previousEndpointRemoteStubTime = new ConcurrentHashMap<>();
 
+    // Endpoint payload size (mean body size) history per PID — for sparkline
+    private final Map<String, LinkedList<Long>> endpointInSizeHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> endpointOutSizeHistory = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousEndpointSizeTime = new ConcurrentHashMap<>();
+
     // Circuit breaker throughput history per PID/cbId (success + fail, one point per second)
     private final Map<String, LinkedList<Long>> cbSuccessHistory = new ConcurrentHashMap<>();
     private final Map<String, LinkedList<Long>> cbFailHistory = new ConcurrentHashMap<>();
@@ -285,6 +290,7 @@ public class CamelMonitor extends CamelCommand {
         // Create shared context and tab instances
         ctx = new MonitorContext(data, infraData);
         actionsPopup.setContext(ctx);
+        actionsPopup.setResetStatsAction(this::resetStats);
         logTab = new LogTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
@@ -292,7 +298,8 @@ public class CamelMonitor extends CamelCommand {
                 ctx,
                 endpointInHistory, endpointOutHistory,
                 endpointRemoteInHistory, endpointRemoteOutHistory,
-                endpointRemoteStubInHistory, endpointRemoteStubOutHistory);
+                endpointRemoteStubInHistory, endpointRemoteStubOutHistory,
+                endpointInSizeHistory, endpointOutSizeHistory);
         httpTab = new HttpTab(ctx);
         healthTab = new HealthTab(ctx);
         historyTab = new HistoryTab(ctx, traces, traceFilePositions);
@@ -1610,6 +1617,39 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    private void resetStats() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        String pid = info.pid;
+        JsonObject root = new JsonObject();
+        root.put("action", "reset-stats");
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+        // Clear local sparkline history — overview
+        throughputHistory.remove(pid);
+        failedHistory.remove(pid);
+        throughputSamples.remove(pid);
+        previousExchangesTime.remove(pid);
+        // Clear local sparkline history — endpoints
+        endpointInHistory.remove(pid);
+        endpointOutHistory.remove(pid);
+        endpointSamples.remove(pid);
+        previousEndpointTime.remove(pid);
+        endpointRemoteInHistory.remove(pid);
+        endpointRemoteOutHistory.remove(pid);
+        endpointRemoteSamples.remove(pid);
+        previousEndpointRemoteTime.remove(pid);
+        endpointRemoteStubInHistory.remove(pid);
+        endpointRemoteStubOutHistory.remove(pid);
+        endpointRemoteStubSamples.remove(pid);
+        previousEndpointRemoteStubTime.remove(pid);
+        endpointInSizeHistory.remove(pid);
+        endpointOutSizeHistory.remove(pid);
+        previousEndpointSizeTime.remove(pid);
+    }
+
     private void sendRouteCommand(String pid, String routeId, String command) {
         JsonObject root = new JsonObject();
         root.put("action", "route");
@@ -1840,6 +1880,10 @@ public class CamelMonitor extends CamelCommand {
                     endpointRemoteStubInHistory.remove(entry.getKey());
                     endpointRemoteStubOutHistory.remove(entry.getKey());
                     endpointRemoteStubSamples.remove(entry.getKey());
+
+                    endpointInSizeHistory.remove(entry.getKey());
+                    endpointOutSizeHistory.remove(entry.getKey());
+                    previousEndpointSizeTime.remove(entry.getKey());
                     previousEndpointRemoteStubTime.remove(entry.getKey());
                     cpuLoadAvg.remove(entry.getKey());
                     prevCpuSample.remove(entry.getKey());
@@ -2097,6 +2141,28 @@ public class CamelMonitor extends CamelCommand {
         recordEndpointSample(pid, now, inRemoteStub, outRemoteStub,
                 endpointRemoteStubSamples, previousEndpointRemoteStubTime,
                 endpointRemoteStubInHistory, endpointRemoteStubOutHistory);
+
+        // Record payload size snapshots (mean body size per direction)
+        long inMeanSize = info.endpoints.stream()
+                .filter(ep -> "in".equals(ep.direction) && ep.meanBodySize >= 0)
+                .mapToLong(ep -> ep.meanBodySize).max().orElse(0);
+        long outMeanSize = info.endpoints.stream()
+                .filter(ep -> "out".equals(ep.direction) && ep.meanBodySize >= 0)
+                .mapToLong(ep -> ep.meanBodySize).max().orElse(0);
+        Long lastSizeTime = previousEndpointSizeTime.get(pid);
+        if (lastSizeTime == null || now - lastSizeTime >= 1000) {
+            previousEndpointSizeTime.put(pid, now);
+            LinkedList<Long> inSizeHist = endpointInSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
+            inSizeHist.add(inMeanSize);
+            while (inSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
+                inSizeHist.remove(0);
+            }
+            LinkedList<Long> outSizeHist = endpointOutSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
+            outSizeHist.add(outMeanSize);
+            while (outSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
+                outSizeHist.remove(0);
+            }
+        }
     }
 
     private void recordEndpointSample(
@@ -2844,6 +2910,12 @@ public class CamelMonitor extends CamelCommand {
                     ep.hits = TuiHelper.objToLong(ej.get("hits"));
                     ep.stub = Boolean.TRUE.equals(ej.get("stub"));
                     ep.remote = !Boolean.FALSE.equals(ej.get("remote"));
+                    ep.minBodySize = TuiHelper.objToLong(ej.get("minBodySize"));
+                    ep.maxBodySize = TuiHelper.objToLong(ej.get("maxBodySize"));
+                    ep.meanBodySize = TuiHelper.objToLong(ej.get("meanBodySize"));
+                    ep.minHeadersSize = TuiHelper.objToLong(ej.get("minHeadersSize"));
+                    ep.maxHeadersSize = TuiHelper.objToLong(ej.get("maxHeadersSize"));
+                    ep.meanHeadersSize = TuiHelper.objToLong(ej.get("meanHeadersSize"));
                     // Extract component from URI (e.g., "timer://tick" -> "timer")
                     if (ep.uri != null) {
                         int idx = ep.uri.indexOf(':');
