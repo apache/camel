@@ -137,7 +137,7 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
                 Exchange exchange = createExchange();
                 // Set arguments as headers, filtered against declared parameters
                 for (Map.Entry<String, Object> entry : args.entrySet()) {
-                    if (!declaredParams.isEmpty() && !declaredParams.contains(entry.getKey())) {
+                    if (!declaredParams.contains(entry.getKey())) {
                         continue;
                     }
                     exchange.getMessage().setHeader(entry.getKey(), entry.getValue());
