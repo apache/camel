@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -262,9 +263,9 @@ public class ListEndpoint extends ProcessWatchCommand {
         if (size < 1024) {
             return size + " B";
         } else if (size < 1024 * 1024) {
-            return String.format("%.1f KB", size / 1024.0);
+            return String.format(Locale.US, "%.1f KB", size / 1024.0);
         } else {
-            return String.format("%.1f MB", size / (1024.0 * 1024.0));
+            return String.format(Locale.US, "%.1f MB", size / (1024.0 * 1024.0));
         }
     }
 

@@ -62,9 +62,6 @@ public class DefaultMessageSizeStrategy extends ServiceSupport implements CamelC
     @Override
     public long computeBodySize(Message message) {
         Object body = message.getBody();
-        if (body == null) {
-            return 0;
-        }
         if (body instanceof byte[] bytes) {
             return bytes.length;
         }
@@ -93,6 +90,9 @@ public class DefaultMessageSizeStrategy extends ServiceSupport implements CamelC
         Long cl = message.getHeader(Exchange.CONTENT_LENGTH, Long.class);
         if (cl != null && cl >= 0) {
             return cl;
+        }
+        if (body == null) {
+            return 0;
         }
         return -1;
     }
