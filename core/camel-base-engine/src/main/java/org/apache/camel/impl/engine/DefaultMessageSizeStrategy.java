@@ -61,60 +61,65 @@ public class DefaultMessageSizeStrategy extends ServiceSupport implements CamelC
 
     @Override
     public long computeBodySize(Message message) {
-        Object body = message.getBody();
-        if (body instanceof byte[] bytes) {
-            return bytes.length;
-        }
-        if (body instanceof String str) {
-            return str.getBytes(StandardCharsets.UTF_8).length;
-        }
-        if (body instanceof StreamCache sc) {
-            long len = sc.length();
-            return len > 0 ? len : -1;
-        }
-        if (body instanceof WrappedFile<?> wf) {
-            long len = wf.getFileLength();
-            return len > 0 ? len : -1;
-        }
-        if (body instanceof File f) {
-            return f.length();
-        }
-        if (body instanceof Path p) {
-            try {
-                return Files.size(p);
-            } catch (Exception e) {
-                return -1;
+        try {
+            Object body = message.getBody();
+            if (body instanceof byte[] bytes) {
+                return bytes.length;
             }
-        }
-        // fallback to Content-Length header (e.g. HTTP components where body is a stream)
-        Long cl = message.getHeader(Exchange.CONTENT_LENGTH, Long.class);
-        if (cl != null && cl >= 0) {
-            return cl;
-        }
-        if (body == null) {
-            return 0;
+            if (body instanceof String str) {
+                return str.getBytes(StandardCharsets.UTF_8).length;
+            }
+            if (body instanceof StreamCache sc) {
+                long len = sc.length();
+                return len > 0 ? len : -1;
+            }
+            if (body instanceof WrappedFile<?> wf) {
+                long len = wf.getFileLength();
+                return len > 0 ? len : -1;
+            }
+            if (body instanceof File f) {
+                return f.length();
+            }
+            if (body instanceof Path p) {
+                return Files.size(p);
+            }
+            // fallback to Content-Length header (e.g. HTTP components where body is a stream)
+            Long cl = message.getHeader(Exchange.CONTENT_LENGTH, Long.class);
+            if (cl != null && cl >= 0) {
+                return cl;
+            }
+            if (body == null) {
+                return 0;
+            }
+        } catch (Exception e) {
+            // ignore
         }
         return -1;
     }
 
     @Override
     public long computeHeadersSize(Message message) {
-        Map<String, Object> headers = message.getHeaders();
-        if (headers == null || headers.isEmpty()) {
-            return 0;
-        }
-        long total = 0;
-        for (Map.Entry<String, Object> entry : headers.entrySet()) {
-            String key = entry.getKey();
-            if (key != null) {
-                total += key.getBytes(StandardCharsets.UTF_8).length;
+        try {
+            Map<String, Object> headers = message.getHeaders();
+            if (headers == null || headers.isEmpty()) {
+                return 0;
             }
-            Object value = entry.getValue();
-            if (value != null) {
-                String s = value.toString();
-                total += s.getBytes(StandardCharsets.UTF_8).length;
+            long total = 0;
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                String key = entry.getKey();
+                if (key != null) {
+                    total += key.getBytes(StandardCharsets.UTF_8).length;
+                }
+                Object value = entry.getValue();
+                if (value != null) {
+                    String s = value.toString();
+                    total += s.getBytes(StandardCharsets.UTF_8).length;
+                }
             }
+            return total;
+        } catch (Exception e) {
+            // ignore
         }
-        return total;
+        return -1;
     }
 }

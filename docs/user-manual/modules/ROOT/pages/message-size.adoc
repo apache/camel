@@ -8,6 +8,13 @@ and outgoing (OUT) directions.
 Message size tracking is *disabled by default* and must be explicitly enabled.
 It also requires extended management statistics level.
 
+NOTE: Message size tracking is a *global* feature. When enabled, it applies to all endpoints
+in the CamelContext. There is no fine-grained control to enable or disable it per route or per endpoint.
+
+IMPORTANT: Streaming message bodies (such as `InputStream`) are only supported when
+xref:stream-caching.adoc[Stream Caching] is enabled. Without stream caching, the body size
+of streaming payloads cannot be determined and will be reported as -1 (unknown).
+
 == How it works
 
 When enabled, Camel computes message body and headers sizes using the `RuntimeEndpointRegistry`

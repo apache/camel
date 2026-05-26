@@ -719,8 +719,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether message size observation is enabled (default is false).
      *
-     * When enabled, Camel will compute the size of incoming message body and headers (in bytes) per route and make this
-     * available via JMX MBeans (min/max/mean body size and headers size).
+     * When enabled, Camel will compute the size of message body and headers (in bytes) per endpoint (for both IN and
+     * OUT directions) and make this available via JMX MBeans (min/max/mean body size and headers size).
      */
     public void setMessageSizeEnabled(boolean messageSizeEnabled) {
         this.messageSizeEnabled = messageSizeEnabled;
@@ -2204,8 +2204,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether message size observation is enabled (default is false).
      *
-     * When enabled, Camel will compute the size of incoming message body and headers (in bytes) per route and make this
-     * available via JMX MBeans (min/max/mean body size and headers size).
+     * When enabled, Camel will compute the size of message body and headers (in bytes) per endpoint (for both IN and
+     * OUT directions) and make this available via JMX MBeans (min/max/mean body size and headers size).
      */
     public T withMessageSizeEnabled(boolean messageSizeEnabled) {
         this.messageSizeEnabled = messageSizeEnabled;

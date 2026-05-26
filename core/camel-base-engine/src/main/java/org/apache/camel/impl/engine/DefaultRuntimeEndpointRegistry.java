@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
@@ -301,6 +302,10 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                         inputSizeStats.onHit(key, bodySize, headersSize);
                         exchange.setProperty(ExchangePropertyKey.MESSAGE_BODY_SIZE, bodySize);
                         exchange.setProperty(ExchangePropertyKey.MESSAGE_HEADERS_SIZE, headersSize);
+                        // reset stream cache so the body is re-readable during routing
+                        if (message.getBody() instanceof StreamCache sc) {
+                            sc.reset();
+                        }
                     }
                 }
             }
@@ -324,6 +329,10 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                         long bodySize = strategy.computeBodySize(message);
                         long headersSize = strategy.computeHeadersSize(message);
                         outputSizeStats.onHit(key, bodySize, headersSize);
+                        // reset stream cache so the body is re-readable when sending
+                        if (message.getBody() instanceof StreamCache sc) {
+                            sc.reset();
+                        }
                     }
                 }
             }
@@ -351,6 +360,10 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                                 long bodySize = strategy.computeBodySize(message);
                                 long headersSize = strategy.computeHeadersSize(message);
                                 outputSizeStats.onHit(key, bodySize, headersSize);
+                                // reset stream cache so the body is re-readable
+                                if (message.getBody() instanceof StreamCache sc) {
+                                    sc.reset();
+                                }
                             }
                         }
                     }
