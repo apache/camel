@@ -773,6 +773,13 @@ public interface Exchange extends VariableAware {
     String getFromRouteId();
 
     /**
+     * Returns the route group of the route that originated this message exchange, or <tt>null</tt> if the route has no
+     * group or if this exchange was not created by a route consumer.
+     */
+    @Nullable
+    String getFromRouteGroup();
+
+    /**
      * Returns the unit of work that this exchange belongs to; which may map to zero, one or more physical transactions
      */
     @Nullable
