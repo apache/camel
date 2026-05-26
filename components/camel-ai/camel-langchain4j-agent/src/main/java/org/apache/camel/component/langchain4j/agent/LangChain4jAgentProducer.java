@@ -215,12 +215,25 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                             JsonNode jsonNode = objectMapper.readValue(arguments, JsonNode.class);
                             jsonNode.fieldNames()
                                     .forEachRemaining(name -> {
-                                        if (!allowedParams.isEmpty() && !allowedParams.contains(name)) {
+                                        if (!allowedParams.contains(name)) {
                                             LOG.warn("Skipping undeclared tool argument '{}' for tool '{}'",
                                                     name, toolName);
                                             return;
                                         }
-                                        exchange.getMessage().setHeader(name, jsonNode.get(name));
+                                        JsonNode value = jsonNode.get(name);
+                                        Object headerValue;
+                                        if (value.isInt()) {
+                                            headerValue = value.intValue();
+                                        } else if (value.isLong()) {
+                                            headerValue = value.longValue();
+                                        } else if (value.isDouble()) {
+                                            headerValue = value.doubleValue();
+                                        } else if (value.isBoolean()) {
+                                            headerValue = value.booleanValue();
+                                        } else {
+                                            headerValue = value.asText();
+                                        }
+                                        exchange.getMessage().setHeader(name, headerValue);
                                     });
                         }
 

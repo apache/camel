@@ -185,7 +185,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                 JsonNode jsonNode = objectMapper.readValue(toolExecutionRequest.arguments(), JsonNode.class);
                 jsonNode.fieldNames()
                         .forEachRemaining(name -> {
-                            if (!allowedParams.isEmpty() && !allowedParams.contains(name)) {
+                            if (!allowedParams.contains(name)) {
                                 LOG.warn("Skipping undeclared tool argument '{}' for tool '{}'",
                                         name, toolName);
                                 return;
