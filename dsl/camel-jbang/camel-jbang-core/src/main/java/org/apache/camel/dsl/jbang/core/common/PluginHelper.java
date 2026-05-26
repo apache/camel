@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -50,6 +51,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
@@ -573,6 +575,37 @@ public final class PluginHelper {
         } catch (IOException e) {
             throw new RuntimeCamelException("Failed to save plugin configuration", e);
         }
+    }
+
+    /**
+     * Loads the list of known 3rd party plugins from the classpath resource known-plugins.json.
+     */
+    public static List<JsonObject> loadKnownPlugins() {
+        try (InputStream is = PluginHelper.class.getClassLoader().getResourceAsStream("known-plugins.json")) {
+            if (is != null) {
+                String text = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                JsonArray arr = (JsonArray) Jsoner.deserialize(text);
+                List<JsonObject> result = new ArrayList<>(arr.size());
+                for (Object o : arr) {
+                    if (o instanceof JsonObject jo) {
+                        result.add(jo);
+                    }
+                }
+                return result;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return List.of();
+    }
+
+    /**
+     * Finds a known 3rd party plugin by name (case-insensitive).
+     */
+    public static Optional<JsonObject> findKnownPlugin(String name) {
+        return loadKnownPlugins().stream()
+                .filter(p -> name.equalsIgnoreCase(p.getString("name")))
+                .findFirst();
     }
 
     public static void enable(PluginType pluginType) {

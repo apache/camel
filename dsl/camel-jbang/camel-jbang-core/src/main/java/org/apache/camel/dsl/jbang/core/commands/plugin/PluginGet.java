@@ -25,6 +25,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -59,7 +60,8 @@ public class PluginGet extends PluginBaseCommand {
                     = details.getStringOrDefault("description", "Plugin %s called with command %s".formatted(name, command));
             String repos = details.getString("repos");
 
-            rows.add(new Row(name, command, dependency, description, repos));
+            String vendor = resolveVendor(name);
+            rows.add(new Row(name, command, dependency, description, repos, vendor));
         });
 
         printRows(rows);
@@ -71,7 +73,7 @@ public class PluginGet extends PluginBaseCommand {
                     String dependency = "org.apache.camel:camel-jbang-plugin-%s".formatted(camelPlugin.getCommand());
                     rows.add(new Row(
                             camelPlugin.getName(), camelPlugin.getCommand(), dependency,
-                            camelPlugin.getDescription(), camelPlugin.getRepos()));
+                            camelPlugin.getDescription(), camelPlugin.getRepos(), camelPlugin.getVendor()));
                 }
             }
 
@@ -82,9 +84,39 @@ public class PluginGet extends PluginBaseCommand {
 
                 printRows(rows);
             }
+
+            rows.clear();
+            List<JsonObject> knownPlugins = PluginHelper.loadKnownPlugins();
+            for (JsonObject kp : knownPlugins) {
+                String kpName = kp.getString("name");
+                if (plugins.get(kpName) == null && PluginType.findByName(kpName).isEmpty()) {
+                    String dep = kp.getString("groupId") != null && kp.getString("artifactId") != null
+                            ? "%s:%s".formatted(kp.getString("groupId"), kp.getString("artifactId"))
+                            : kp.getStringOrDefault("dependency", "");
+                    rows.add(new Row(
+                            kpName, kp.getString("command"), dep,
+                            kp.getString("description"), kp.getString("repos"),
+                            kp.getStringOrDefault("vendor", "Community")));
+                }
+            }
+
+            if (!rows.isEmpty()) {
+                printer().println();
+                printer().println("Known 3rd party plugins:");
+                printer().println();
+
+                printRows(rows);
+            }
         }
 
         return 0;
+    }
+
+    private String resolveVendor(String name) {
+        return PluginType.findByName(name)
+                .map(PluginType::getVendor)
+                .or(() -> PluginHelper.findKnownPlugin(name).map(kp -> kp.getStringOrDefault("vendor", "Community")))
+                .orElse("");
     }
 
     private void printRows(List<Row> rows) {
@@ -94,6 +126,8 @@ public class PluginGet extends PluginBaseCommand {
                             .with(r -> r.name),
                     new Column().header("COMMAND").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.command),
+                    new Column().header("VENDOR").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                            .with(r -> r.vendor != null ? r.vendor : ""),
                     new Column().header("DEPENDENCY").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.dependency),
                     new Column().visible(repos).header("REPOSITORY").headerAlign(HorizontalAlign.LEFT)
@@ -105,6 +139,6 @@ public class PluginGet extends PluginBaseCommand {
         }
     }
 
-    private record Row(String name, String command, String dependency, String description, String repos) {
+    private record Row(String name, String command, String dependency, String description, String repos, String vendor) {
     }
 }
