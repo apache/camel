@@ -254,6 +254,9 @@ public final class DefaultConfigurationConfigurer {
             }
         }
 
+        // message size
+        camelContext.setMessageSize(config.isMessageSizeEnabled());
+
         if ("default".equals(config.getUuidGenerator())) {
             camelContext.setUuidGenerator(new DefaultUuidGenerator());
         } else if ("short".equals(config.getUuidGenerator())) {

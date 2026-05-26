@@ -72,6 +72,8 @@ public enum ExchangePropertyKey {
     INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED),
     LOOP_INDEX(Exchange.LOOP_INDEX),
     LOOP_SIZE(Exchange.LOOP_SIZE),
+    MESSAGE_BODY_SIZE(Exchange.MESSAGE_BODY_SIZE),
+    MESSAGE_HEADERS_SIZE(Exchange.MESSAGE_HEADERS_SIZE),
     MESSAGE_HISTORY(Exchange.MESSAGE_HISTORY),
     MULTICAST_COMPLETE(Exchange.MULTICAST_COMPLETE),
     MULTICAST_INDEX(Exchange.MULTICAST_INDEX),
@@ -190,6 +192,10 @@ public enum ExchangePropertyKey {
                 return LOOP_INDEX;
             case Exchange.LOOP_SIZE:
                 return LOOP_SIZE;
+            case Exchange.MESSAGE_BODY_SIZE:
+                return MESSAGE_BODY_SIZE;
+            case Exchange.MESSAGE_HEADERS_SIZE:
+                return MESSAGE_HEADERS_SIZE;
             case Exchange.MESSAGE_HISTORY:
                 return MESSAGE_HISTORY;
             case Exchange.MULTICAST_COMPLETE:

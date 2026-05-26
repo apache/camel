@@ -79,6 +79,7 @@
 ** xref:components:eips:intercept.adoc[Intercept]
 ** xref:jmx.adoc[JMX]
 ** xref:lifecycle.adoc[Camel Lifecycle]
+** xref:message-size.adoc[Message Size]
 ** xref:oncompletion.adoc[OnCompletion]
 ** xref:pluggable-class-resolvers.adoc[Pluggable Class Resolvers]
 ** xref:predicate.adoc[Predicates]

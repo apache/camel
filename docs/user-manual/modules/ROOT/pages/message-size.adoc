@@ -1,0 +1,133 @@
+= Message Size
+
+Camel can track the size of incoming message payloads (body and headers) during routing.
+This is useful for observability — understanding how large messages are, detecting payload bloat,
+and monitoring size trends over time.
+
+Message size tracking is *disabled by default* and must be explicitly enabled.
+
+== How it works
+
+When enabled, a `MessageSizeAdvice` runs in the routing pipeline for each processing step.
+It runs _after_ xref:stream-caching.adoc[Stream Caching] so that streamed payloads are safely cached
+before their size is computed.
+
+The advice computes the body size and the total headers size of the incoming message using a
+pluggable `MessageSizeStrategy`. The computed sizes are stored as exchange properties
+(`CamelMessageBodySize` and `CamelMessageHeadersSize`) and are available for the remainder of the route.
+
+Size statistics (min, max, mean) are collected per route and exposed via JMX.
+
+== Enabling Message Size
+
+[tabs]
+====
+
+Application Properties::
++
+[source,properties]
+----
+camel.main.messageSizeEnabled = true
+----
+
+Java::
++
+[source,java]
+----
+CamelContext context = ...
+context.setMessageSize(true);
+----
+
+====
+
+TIP: You can run Camel JBang: `camel doc main --filter=messageSize` from CLI to see message size options.
+
+== Default size computation
+
+The default `MessageSizeStrategy` computes body size using type-specific logic.
+If the body type is not recognized, it falls back to the `Content-Length` header (useful for HTTP components
+where the body is a stream). If size cannot be determined, it returns -1 and the exchange is not included
+in the size statistics.
+
+=== Body size
+
+[width="100%",cols="1m,3",options="header"]
+|===
+| Body type | Size computation
+| null | 0
+| byte[] | Array length
+| String | UTF-8 encoded byte length
+| StreamCache | `length()` method
+| WrappedFile | `getFileLength()` method (covers file, FTP, and similar components)
+| File | `length()` method
+| Path | `Files.size()`
+| Content-Length header | Fallback: uses the `Content-Length` message header value
+| Other | -1 (unknown, not tracked)
+|===
+
+=== Headers size
+
+The total headers size is computed by iterating all message headers and summing:
+
+* Each header key's UTF-8 byte length
+* Each header value's `toString()` UTF-8 byte length
+
+Returns 0 if there are no headers.
+
+== JMX statistics
+
+When JMX is enabled, the following attributes are available on route MBeans
+(under `org.apache.camel` domain, type `routes`):
+
+[width="100%",cols="1m,3",options="header"]
+|===
+| Attribute | Description
+| MinBodySize | Smallest body size observed (bytes)
+| MaxBodySize | Largest body size observed (bytes)
+| MeanBodySize | Average body size observed (bytes)
+| MinHeadersSize | Smallest total headers size observed (bytes)
+| MaxHeadersSize | Largest total headers size observed (bytes)
+| MeanHeadersSize | Average total headers size observed (bytes)
+|===
+
+These statistics are also included in `dumpStatsAsXml` and `dumpStatsAsJson` output
+when message size tracking is active.
+
+The statistics are reset when the route statistics are reset.
+
+== Exchange properties
+
+The computed sizes are available as exchange properties during routing.
+You can use them for logging, content-based routing, or custom processing:
+
+[source,java]
+----
+from("direct:start")
+    .log("Body size: ${exchangeProperty.CamelMessageBodySize} bytes")
+    .choice()
+        .when(exchangeProperty("CamelMessageBodySize").isGreaterThan(1048576))
+            .to("direct:largeMessage")
+        .otherwise()
+            .to("direct:normalMessage");
+----
+
+[width="100%",cols="1m,3",options="header"]
+|===
+| Property | Description
+| CamelMessageBodySize | Body size in bytes, or -1 if unknown
+| CamelMessageHeadersSize | Total headers size in bytes
+|===
+
+== Custom strategy
+
+You can provide a custom `MessageSizeStrategy` implementation for specialized sizing logic
+(for example, to handle application-specific body types):
+
+[source,java]
+----
+CamelContext context = ...
+context.setMessageSizeStrategy(new MyCustomMessageSizeStrategy());
+context.setMessageSize(true);
+----
+
+The strategy must implement `org.apache.camel.spi.MessageSizeStrategy`.

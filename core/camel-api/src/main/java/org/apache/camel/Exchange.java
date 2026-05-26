@@ -223,6 +223,8 @@ public interface Exchange extends VariableAware {
     String MESSAGE_HISTORY_HEADER_FORMAT = "CamelMessageHistoryHeaderFormat";
     String MESSAGE_HISTORY_OUTPUT_FORMAT = "CamelMessageHistoryOutputFormat";
     String MESSAGE_TIMESTAMP = "CamelMessageTimestamp";
+    String MESSAGE_BODY_SIZE = "CamelMessageBodySize";
+    String MESSAGE_HEADERS_SIZE = "CamelMessageHeadersSize";
     @Metadata(label = "multicast",
               description = "An index counter that increases for each Exchange being multicasted. The counter starts from 0.",
               javaType = "int")

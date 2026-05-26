@@ -83,6 +83,10 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "messageHistory": target.setMessageHistory(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "messagehistoryfactory":
         case "messageHistoryFactory": target.setMessageHistoryFactory(property(camelContext, org.apache.camel.spi.MessageHistoryFactory.class, value)); return true;
+        case "messagesize":
+        case "messageSize": target.setMessageSize(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "messagesizestrategy":
+        case "messageSizeStrategy": target.setMessageSizeStrategy(property(camelContext, org.apache.camel.spi.MessageSizeStrategy.class, value)); return true;
         case "modeline": target.setModeline(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "namestrategy":
         case "nameStrategy": target.setNameStrategy(property(camelContext, org.apache.camel.spi.CamelContextNameStrategy.class, value)); return true;
@@ -205,6 +209,10 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "messageHistory": return java.lang.Boolean.class;
         case "messagehistoryfactory":
         case "messageHistoryFactory": return org.apache.camel.spi.MessageHistoryFactory.class;
+        case "messagesize":
+        case "messageSize": return java.lang.Boolean.class;
+        case "messagesizestrategy":
+        case "messageSizeStrategy": return org.apache.camel.spi.MessageSizeStrategy.class;
         case "modeline": return java.lang.Boolean.class;
         case "namestrategy":
         case "nameStrategy": return org.apache.camel.spi.CamelContextNameStrategy.class;
@@ -328,6 +336,10 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "messageHistory": return target.isMessageHistory();
         case "messagehistoryfactory":
         case "messageHistoryFactory": return target.getMessageHistoryFactory();
+        case "messagesize":
+        case "messageSize": return target.isMessageSize();
+        case "messagesizestrategy":
+        case "messageSizeStrategy": return target.getMessageSizeStrategy();
         case "modeline": return target.isModeline();
         case "namestrategy":
         case "nameStrategy": return target.getNameStrategy();

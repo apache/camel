@@ -90,6 +90,24 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "First Exchange Failed ExchangeId")
     String getFirstExchangeFailureExchangeId();
 
+    @ManagedAttribute(description = "Min Body Size [bytes]")
+    long getMinBodySize();
+
+    @ManagedAttribute(description = "Max Body Size [bytes]")
+    long getMaxBodySize();
+
+    @ManagedAttribute(description = "Mean Body Size [bytes]")
+    long getMeanBodySize();
+
+    @ManagedAttribute(description = "Min Headers Size [bytes]")
+    long getMinHeadersSize();
+
+    @ManagedAttribute(description = "Max Headers Size [bytes]")
+    long getMaxHeadersSize();
+
+    @ManagedAttribute(description = "Mean Headers Size [bytes]")
+    long getMeanHeadersSize();
+
     @ManagedAttribute(description = "Statistics enabled")
     boolean isStatisticsEnabled();
 

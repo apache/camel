@@ -85,6 +85,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
+    private boolean messageSizeEnabled;
     private boolean typeConverterStatisticsEnabled;
     private boolean tracing;
     private boolean tracingStandby;
@@ -709,6 +710,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
         this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
+    }
+
+    public boolean isMessageSizeEnabled() {
+        return messageSizeEnabled;
+    }
+
+    /**
+     * Sets whether message size observation is enabled (default is false).
+     *
+     * When enabled, Camel will compute the size of incoming message body and headers (in bytes) per route and make this
+     * available via JMX MBeans (min/max/mean body size and headers size).
+     */
+    public void setMessageSizeEnabled(boolean messageSizeEnabled) {
+        this.messageSizeEnabled = messageSizeEnabled;
     }
 
     public boolean isTypeConverterStatisticsEnabled() {
@@ -2183,6 +2198,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
         this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether message size observation is enabled (default is false).
+     *
+     * When enabled, Camel will compute the size of incoming message body and headers (in bytes) per route and make this
+     * available via JMX MBeans (min/max/mean body size and headers size).
+     */
+    public T withMessageSizeEnabled(boolean messageSizeEnabled) {
+        this.messageSizeEnabled = messageSizeEnabled;
         return (T) this;
     }
 
