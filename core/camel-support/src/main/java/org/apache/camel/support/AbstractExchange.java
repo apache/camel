@@ -33,6 +33,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.Route;
 import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.VariableRepository;
@@ -610,6 +611,18 @@ abstract class AbstractExchange implements Exchange {
     @Override
     public String getFromRouteId() {
         return privateExtension.getFromRouteId();
+    }
+
+    @Override
+    public String getFromRouteGroup() {
+        String routeId = getFromRouteId();
+        if (routeId != null) {
+            Route route = getContext().getRoute(routeId);
+            if (route != null) {
+                return route.getGroup();
+            }
+        }
+        return null;
     }
 
     @Override
