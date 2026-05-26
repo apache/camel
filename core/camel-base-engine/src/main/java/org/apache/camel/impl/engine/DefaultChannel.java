@@ -262,10 +262,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             addAdvice(new StreamCachingAdvice(camelContext.getStreamCachingStrategy()));
         }
 
-        if (route.isMessageSize()) {
-            addAdvice(new MessageSizeAdvice(camelContext.getMessageSizeStrategy()));
-        }
-
         if (route.getDelayer() != null && route.getDelayer() > 0) {
             addAdvice(new DelayerAdvice(route.getDelayer()));
         }

@@ -17,18 +17,18 @@
 package org.apache.camel.management;
 
 import java.nio.charset.StandardCharsets;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
@@ -38,47 +38,73 @@ public class ManagedMessageSizeTest extends ManagementTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.setMessageSize(true);
+        context.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(true);
+        context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Extended);
         return context;
     }
 
     @Test
-    public void testMessageSize() throws Exception {
+    public void testMessageSizeOnEndpoints() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         String body1 = "Hello World";
-        template.sendBodyAndHeader("direct:start", body1, "myHeader", "myValue");
+        template.sendBodyAndHeader("seda:start", body1, "myHeader", "myValue");
 
         String body2 = "Bye World";
-        template.sendBodyAndHeader("direct:start", body2, "myHeader", "myValue");
+        template.sendBodyAndHeader("seda:start", body2, "myHeader", "myValue");
 
         assertMockEndpointsSatisfied();
 
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = getCamelObjectName(TYPE_ROUTE, "route1");
-
-        long minBody = (Long) mbeanServer.getAttribute(on, "MinBodySize");
-        long maxBody = (Long) mbeanServer.getAttribute(on, "MaxBodySize");
-        long meanBody = (Long) mbeanServer.getAttribute(on, "MeanBodySize");
-
         long body1Size = body1.getBytes(StandardCharsets.UTF_8).length;
         long body2Size = body2.getBytes(StandardCharsets.UTF_8).length;
-        long expectedMin = Math.min(body1Size, body2Size);
-        long expectedMax = Math.max(body1Size, body2Size);
-        long expectedMean = (body1Size + body2Size) / 2;
 
-        assertEquals(expectedMin, minBody);
-        assertEquals(expectedMax, maxBody);
-        assertEquals(expectedMean, meanBody);
+        List<RuntimeEndpointRegistry.Statistic> stats = context.getRuntimeEndpointRegistry().getEndpointStatistics();
 
-        long minHeaders = (Long) mbeanServer.getAttribute(on, "MinHeadersSize");
-        long maxHeaders = (Long) mbeanServer.getAttribute(on, "MaxHeadersSize");
-        long meanHeaders = (Long) mbeanServer.getAttribute(on, "MeanHeadersSize");
+        // find the input endpoint (seda:start, direction "in")
+        RuntimeEndpointRegistry.Statistic inputStat = stats.stream()
+                .filter(s -> "in".equals(s.getDirection()) && s.getUri().contains("seda://start"))
+                .findFirst()
+                .orElse(null);
 
-        assertTrue(minHeaders > 0, "MinHeadersSize should be positive");
-        assertTrue(maxHeaders > 0, "MaxHeadersSize should be positive");
-        assertTrue(meanHeaders > 0, "MeanHeadersSize should be positive");
-        // both messages have the same header, so min == max
-        assertEquals(minHeaders, maxHeaders);
+        assertNotNull(inputStat, "Should find input endpoint statistic");
+        assertEquals(2, inputStat.getHits());
+        assertEquals(Math.min(body1Size, body2Size), inputStat.getMinBodySize());
+        assertEquals(Math.max(body1Size, body2Size), inputStat.getMaxBodySize());
+        assertEquals((body1Size + body2Size) / 2, inputStat.getMeanBodySize());
+        assertTrue(inputStat.getMinHeadersSize() > 0, "MinHeadersSize should be positive");
+        assertTrue(inputStat.getMaxHeadersSize() > 0, "MaxHeadersSize should be positive");
+        assertTrue(inputStat.getMeanHeadersSize() > 0, "MeanHeadersSize should be positive");
+
+        // find the output endpoint (mock:result, direction "out")
+        RuntimeEndpointRegistry.Statistic outputStat = stats.stream()
+                .filter(s -> "out".equals(s.getDirection()) && s.getUri().contains("mock://result"))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(outputStat, "Should find output endpoint statistic");
+        assertEquals(2, outputStat.getHits());
+        assertEquals(Math.min(body1Size, body2Size), outputStat.getMinBodySize());
+        assertEquals(Math.max(body1Size, body2Size), outputStat.getMaxBodySize());
+    }
+
+    @Test
+    public void testExchangePropertiesSet() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        String body = "Hello World";
+        template.sendBody("seda:start", body);
+
+        assertMockEndpointsSatisfied();
+
+        long expectedBodySize = body.getBytes(StandardCharsets.UTF_8).length;
+        Long actualBodySize = getMockEndpoint("mock:result").getExchanges().get(0)
+                .getProperty("CamelMessageBodySize", Long.class);
+        assertEquals(expectedBodySize, actualBodySize);
+
+        Long actualHeadersSize = getMockEndpoint("mock:result").getExchanges().get(0)
+                .getProperty("CamelMessageHeadersSize", Long.class);
+        assertNotNull(actualHeadersSize, "Headers size should be set");
+        assertTrue(actualHeadersSize >= 0, "Headers size should be non-negative");
     }
 
     @Override
@@ -86,7 +112,7 @@ public class ManagedMessageSizeTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("route1")
+                from("seda:start").routeId("route1")
                         .to("mock:result");
             }
         };

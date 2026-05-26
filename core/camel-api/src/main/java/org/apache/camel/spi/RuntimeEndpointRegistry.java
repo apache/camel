@@ -54,6 +54,60 @@ public interface RuntimeEndpointRegistry extends StaticService {
          * {@link org.apache.camel.ManagementStatisticsLevel#Extended}.
          */
         long getHits();
+
+        /**
+         * Minimum message body size in bytes (-1 if not available)
+         *
+         * @since 4.21
+         */
+        default long getMinBodySize() {
+            return -1;
+        }
+
+        /**
+         * Maximum message body size in bytes (-1 if not available)
+         *
+         * @since 4.21
+         */
+        default long getMaxBodySize() {
+            return -1;
+        }
+
+        /**
+         * Mean message body size in bytes (-1 if not available)
+         *
+         * @since 4.21
+         */
+        default long getMeanBodySize() {
+            return -1;
+        }
+
+        /**
+         * Minimum message headers size in bytes (-1 if not available)
+         *
+         * @since 4.21
+         */
+        default long getMinHeadersSize() {
+            return -1;
+        }
+
+        /**
+         * Maximum message headers size in bytes (-1 if not available)
+         *
+         * @since 4.21
+         */
+        default long getMaxHeadersSize() {
+            return -1;
+        }
+
+        /**
+         * Mean message headers size in bytes (-1 if not available)
+         *
+         * @since 4.21
+         */
+        default long getMeanHeadersSize() {
+            return -1;
+        }
     }
 
     /**

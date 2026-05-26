@@ -26,8 +26,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.WrappedFile;
 import org.apache.camel.StreamCache;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 

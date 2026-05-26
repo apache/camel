@@ -52,7 +52,6 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.PooledObjectFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RoutePolicy;
@@ -1314,43 +1313,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         public int getOrder() {
             // we want stream caching first
             return Ordered.HIGHEST;
-        }
-    }
-
-    /**
-     * Advice for {@link org.apache.camel.spi.MessageSizeStrategy}
-     */
-    public static class MessageSizeAdvice implements CamelInternalProcessorAdvice, Ordered {
-
-        private final MessageSizeStrategy strategy;
-
-        public MessageSizeAdvice(MessageSizeStrategy strategy) {
-            this.strategy = strategy;
-        }
-
-        @Override
-        public Object before(Exchange exchange) throws Exception {
-            long bodySize = strategy.computeBodySize(exchange.getIn());
-            long headersSize = strategy.computeHeadersSize(exchange.getIn());
-            exchange.setProperty(ExchangePropertyKey.MESSAGE_BODY_SIZE, bodySize);
-            exchange.setProperty(ExchangePropertyKey.MESSAGE_HEADERS_SIZE, headersSize);
-            return null;
-        }
-
-        @Override
-        public void after(Exchange exchange, Object data) throws Exception {
-            // noop
-        }
-
-        @Override
-        public boolean hasState() {
-            return false;
-        }
-
-        @Override
-        public int getOrder() {
-            // after stream caching (HIGHEST) but before instrumentation (LOWEST - 2)
-            return Ordered.HIGHEST + 1;
         }
     }
 

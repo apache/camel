@@ -26,6 +26,8 @@ import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Message;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
@@ -34,8 +36,10 @@ import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.support.DefaultEndpointUtilizationStatistics;
+import org.apache.camel.support.EndpointSizeStatistics;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUCacheFactory;
@@ -54,8 +58,11 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     private int limit = 1000;
     private boolean enabled = true;
     private volatile boolean extended;
+    private volatile boolean messageSizeEnabled;
     private EndpointUtilizationStatistics inputUtilization;
     private EndpointUtilizationStatistics outputUtilization;
+    private EndpointSizeStatistics inputSizeStats;
+    private EndpointSizeStatistics outputSizeStats;
 
     @Override
     public boolean isEnabled() {
@@ -106,7 +113,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             String routeId = entry.getKey();
             for (String uri : entry.getValue()) {
                 Long hits = getHits(routeId, uri, inputUtilization);
-                answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", hits));
+                EndpointSizeStatistics.SizeStats sizeStats = getSizeStats(routeId, uri, inputSizeStats);
+                answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", hits, sizeStats));
             }
         }
 
@@ -115,7 +123,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             String routeId = entry.getKey();
             for (String uri : entry.getValue().keySet()) {
                 Long hits = getHits(routeId, uri, outputUtilization);
-                answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", hits));
+                EndpointSizeStatistics.SizeStats sizeStats = getSizeStats(routeId, uri, outputSizeStats);
+                answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", hits, sizeStats));
             }
         }
 
@@ -162,6 +171,12 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         if (outputUtilization != null) {
             outputUtilization.clear();
         }
+        if (inputSizeStats != null) {
+            inputSizeStats.clear();
+        }
+        if (outputSizeStats != null) {
+            outputSizeStats.clear();
+        }
     }
 
     @Override
@@ -188,6 +203,11 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         if (extended) {
             inputUtilization = new DefaultEndpointUtilizationStatistics(limit);
             outputUtilization = new DefaultEndpointUtilizationStatistics(limit);
+        }
+        messageSizeEnabled = extended && getCamelContext().isMessageSize() != null && getCamelContext().isMessageSize();
+        if (messageSizeEnabled) {
+            inputSizeStats = new EndpointSizeStatistics(limit);
+            outputSizeStats = new EndpointSizeStatistics(limit);
         }
         if (extended) {
             LOG.debug(
@@ -246,6 +266,9 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 String key = asUtilizationKey(routeId, uri);
                 if (key != null) {
                     inputUtilization.remove(key);
+                    if (messageSizeEnabled) {
+                        inputSizeStats.remove(key);
+                    }
                 }
                 if (rse.getRoute().getConsumer() != null) {
                     String consumerUri = rse.getRoute().getConsumer().getEndpoint().getEndpointUri();
@@ -253,24 +276,38 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                         String consumerKey = asUtilizationKey(routeId, consumerUri);
                         if (consumerKey != null) {
                             inputUtilization.remove(consumerKey);
+                            if (messageSizeEnabled) {
+                                inputSizeStats.remove(consumerKey);
+                            }
                         }
                     }
                 }
             }
         } else if (extended && event instanceof ExchangeCreatedEvent ece) {
             // we only capture details in extended mode
-            Endpoint endpoint = ece.getExchange().getFromEndpoint();
+            Exchange exchange = ece.getExchange();
+            Endpoint endpoint = exchange.getFromEndpoint();
             if (endpoint != null) {
-                String routeId = ece.getExchange().getFromRouteId();
+                String routeId = exchange.getFromRouteId();
                 String uri = endpoint.getEndpointUri();
                 String key = asUtilizationKey(routeId, uri);
                 if (key != null) {
                     inputUtilization.onHit(key);
+                    if (messageSizeEnabled) {
+                        Message message = exchange.getIn();
+                        MessageSizeStrategy strategy = getCamelContext().getMessageSizeStrategy();
+                        long bodySize = strategy.computeBodySize(message);
+                        long headersSize = strategy.computeHeadersSize(message);
+                        inputSizeStats.onHit(key, bodySize, headersSize);
+                        exchange.setProperty(ExchangePropertyKey.MESSAGE_BODY_SIZE, bodySize);
+                        exchange.setProperty(ExchangePropertyKey.MESSAGE_HEADERS_SIZE, headersSize);
+                    }
                 }
             }
         } else if (event instanceof ExchangeSendingEvent ese) {
             Endpoint endpoint = ese.getEndpoint();
-            String routeId = ExchangeHelper.getRouteId(ese.getExchange());
+            Exchange exchange = ese.getExchange();
+            String routeId = ExchangeHelper.getRouteId(exchange);
             String uri = endpoint.getEndpointUri();
 
             Map<String, String> uris = outputs.get(routeId);
@@ -281,6 +318,13 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 String key = asUtilizationKey(routeId, uri);
                 if (key != null) {
                     outputUtilization.onHit(key);
+                    if (messageSizeEnabled) {
+                        Message message = exchange.getIn();
+                        MessageSizeStrategy strategy = getCamelContext().getMessageSizeStrategy();
+                        long bodySize = strategy.computeBodySize(message);
+                        long headersSize = strategy.computeHeadersSize(message);
+                        outputSizeStats.onHit(key, bodySize, headersSize);
+                    }
                 }
             }
         } else if (event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent) {
@@ -301,6 +345,13 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                         String key = asUtilizationKey(routeId, uri);
                         if (key != null) {
                             outputUtilization.onHit(key);
+                            if (messageSizeEnabled) {
+                                Message message = exchange.getMessage();
+                                MessageSizeStrategy strategy = getCamelContext().getMessageSizeStrategy();
+                                long bodySize = strategy.computeBodySize(message);
+                                long headersSize = strategy.computeHeadersSize(message);
+                                outputSizeStats.onHit(key, bodySize, headersSize);
+                            }
                         }
                     }
                 }
@@ -323,6 +374,16 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                 || event instanceof RouteRemovedEvent;
     }
 
+    private EndpointSizeStatistics.SizeStats getSizeStats(String routeId, String uri, EndpointSizeStatistics statistics) {
+        if (messageSizeEnabled && statistics != null) {
+            String key = asUtilizationKey(routeId, uri);
+            if (key != null) {
+                return statistics.getStats(key);
+            }
+        }
+        return null;
+    }
+
     private static String asUtilizationKey(String routeId, String uri) {
         if (routeId == null || uri == null) {
             return null;
@@ -337,12 +398,15 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         private final String routeId;
         private final String direction;
         private final long hits;
+        private final EndpointSizeStatistics.SizeStats sizeStats;
 
-        private EndpointRuntimeStatistics(String uri, String routeId, String direction, long hits) {
+        private EndpointRuntimeStatistics(String uri, String routeId, String direction, long hits,
+                                          EndpointSizeStatistics.SizeStats sizeStats) {
             this.uri = uri;
             this.routeId = routeId;
             this.direction = direction;
             this.hits = hits;
+            this.sizeStats = sizeStats;
         }
 
         @Override
@@ -363,6 +427,36 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         @Override
         public long getHits() {
             return hits;
+        }
+
+        @Override
+        public long getMinBodySize() {
+            return sizeStats != null ? sizeStats.getMinBodySize() : -1;
+        }
+
+        @Override
+        public long getMaxBodySize() {
+            return sizeStats != null ? sizeStats.getMaxBodySize() : -1;
+        }
+
+        @Override
+        public long getMeanBodySize() {
+            return sizeStats != null ? sizeStats.getMeanBodySize() : -1;
+        }
+
+        @Override
+        public long getMinHeadersSize() {
+            return sizeStats != null ? sizeStats.getMinHeadersSize() : -1;
+        }
+
+        @Override
+        public long getMaxHeadersSize() {
+            return sizeStats != null ? sizeStats.getMaxHeadersSize() : -1;
+        }
+
+        @Override
+        public long getMeanHeadersSize() {
+            return sizeStats != null ? sizeStats.getMeanHeadersSize() : -1;
         }
     }
 }
