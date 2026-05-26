@@ -304,7 +304,20 @@ class EndpointsTab implements MonitorTab {
                 yield ra.compareToIgnoreCase(rb);
             }
         };
+        if (result == 0) {
+            result = directionOrder(a.direction) - directionOrder(b.direction);
+        }
         return sortReversed ? -result : result;
+    }
+
+    private static int directionOrder(String direction) {
+        if ("in".equals(direction)) {
+            return 0;
+        }
+        if ("out".equals(direction)) {
+            return 1;
+        }
+        return 2;
     }
 
     private void renderEndpointFlow(
