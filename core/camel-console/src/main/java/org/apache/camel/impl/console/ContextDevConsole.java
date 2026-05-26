@@ -22,8 +22,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.ContextEvents;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -53,6 +55,10 @@ public class ContextDevConsole extends AbstractDevConsole {
                 profile, CamelContextHelper.getUptime(getCamelContext())));
         if (getCamelContext().getDescription() != null) {
             sb.append(String.format("%n    %s", getCamelContext().getDescription()));
+        }
+        Clock startClock = getCamelContext().getClock().get(ContextEvents.START);
+        if (startClock != null) {
+            sb.append(String.format("%n    Started: %s", startClock.asDate()));
         }
         sb.append("\n");
 
@@ -135,7 +141,12 @@ public class ContextDevConsole extends AbstractDevConsole {
         root.put("version", getCamelContext().getVersion());
         root.put("state", getCamelContext().getStatus().name());
         root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
-        root.put("uptime", getCamelContext().getUptime().toMillis());
+        long uptimeMillis = getCamelContext().getUptime().toMillis();
+        Clock startClock = getCamelContext().getClock().get(ContextEvents.START);
+        if (startClock != null) {
+            root.put("startTimestamp", startClock.getCreated());
+        }
+        root.put("uptime", uptimeMillis);
         root.put("devMode", getCamelContext().hasService(ResourceReloadStrategy.class) != null);
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
