@@ -2858,6 +2858,10 @@ You would then also need to add the JAR dependency with Maven coordinates: `org.
 
 ==== Using a Spring Boot JDBC data source
 
+NOTE: The `spring.datasource.` configuration is intended for rapid prototyping with Camel JBang,
+and for users who plan to export to the Spring Boot runtime.
+It is not supported when exporting to the default Camel Main runtime or Camel Quarkus.
+
 In `application.properties` you can set up the datasource such as:
 
 [source,properties]
