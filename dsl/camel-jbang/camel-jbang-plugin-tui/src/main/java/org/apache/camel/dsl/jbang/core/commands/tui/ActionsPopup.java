@@ -923,6 +923,7 @@ class ActionsPopup {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
             cmd.add("--example=" + exampleName);
+            cmd.add("--logging-color=true");
             cmd.addAll(extraArgs);
             Path outputFile = Files.createTempFile("camel-example-", ".log");
             outputFile.toFile().deleteOnExit();
@@ -1089,6 +1090,7 @@ class ActionsPopup {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
             cmd.add("--example=" + exampleName);
+            cmd.add("--logging-color=true");
             Path outputFile = Files.createTempFile("camel-example-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
