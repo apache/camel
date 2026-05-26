@@ -124,6 +124,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -781,6 +782,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             if (processor instanceof RouteIdAware routeIdAware) {
                 routeIdAware.setRouteId(route.getRouteId());
             }
+            if (processor instanceof StepIdAware stepIdAware) {
+                StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(
+                        StepDefinition.class, output, true);
+                if (step != null) {
+                    stepIdAware.setStepId(step.idOrCreate(
+                            camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
+                }
+            }
 
             if (output instanceof Channel && processor == null) {
                 continue;
@@ -858,6 +867,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             }
             if (processor instanceof RouteIdAware routeIdAware) {
                 routeIdAware.setRouteId(route.getRouteId());
+            }
+            if (processor instanceof StepIdAware stepIdAware) {
+                StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(
+                        StepDefinition.class, definition, true);
+                if (step != null) {
+                    stepIdAware.setStepId(step.idOrCreate(
+                            camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
+                }
             }
 
             if (processor == null) {

@@ -64,6 +64,9 @@ public class ProducerDevConsole extends AbstractDevConsole {
                         if (mp.getRouteId() != null) {
                             sb.append(String.format("%n    Route Id: %s", mp.getRouteId()));
                         }
+                        if (mp.getStepId() != null) {
+                            sb.append(String.format("%n    Step Id: %s", mp.getStepId()));
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -100,6 +103,9 @@ public class ProducerDevConsole extends AbstractDevConsole {
                         jo.put("singleton", mp.isSingleton());
                         if (mp.getRouteId() != null) {
                             jo.put("routeId", mp.getRouteId());
+                        }
+                        if (mp.getStepId() != null) {
+                            jo.put("stepId", mp.getStepId());
                         }
                         list.add(jo);
                     }

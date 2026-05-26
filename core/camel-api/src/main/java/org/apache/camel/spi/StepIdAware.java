@@ -14,22 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.spi;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import org.jspecify.annotations.Nullable;
 
-public interface ManagedProducerMBean extends ManagedServiceMBean {
+/**
+ * To allow objects to be injected with the step id
+ * <p/>
+ * This allows access to the step id at runtime, to know which step its associated with.
+ *
+ * @since 4.21
+ */
+public interface StepIdAware {
 
-    @ManagedAttribute(description = "Step ID")
+    /**
+     * Gets the step id
+     *
+     * @since 4.21
+     */
+    @Nullable
     String getStepId();
 
-    @ManagedAttribute(description = "Endpoint URI", mask = true)
-    String getEndpointUri();
-
-    @ManagedAttribute(description = "Singleton")
-    boolean isSingleton();
-
-    @ManagedAttribute(description = "Whether this producer connects to remote or local systems")
-    boolean isRemoteEndpoint();
+    /**
+     * Sets the step id
+     *
+     * @param stepId the step id
+     * @since        4.21
+     */
+    void setStepId(String stepId);
 
 }

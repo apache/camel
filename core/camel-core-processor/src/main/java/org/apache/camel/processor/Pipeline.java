@@ -30,6 +30,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -42,7 +43,8 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step, reusing the same
  * message exchanges
  */
-public class Pipeline extends BaseProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+public class Pipeline extends BaseProcessorSupport
+        implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
 
@@ -54,6 +56,7 @@ public class Pipeline extends BaseProcessorSupport implements Navigate<Processor
 
     private String id;
     private String routeId;
+    private String stepId;
 
     private final class PipelineTask implements PooledExchangeTask, AsyncCallback {
 
@@ -242,6 +245,16 @@ public class Pipeline extends BaseProcessorSupport implements Navigate<Processor
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

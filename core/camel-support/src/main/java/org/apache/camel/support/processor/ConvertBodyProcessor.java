@@ -26,6 +26,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
@@ -38,9 +39,11 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * If the conversion fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
  */
-public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor, IdAware, RouteIdAware, DisabledAware {
+public class ConvertBodyProcessor extends ServiceSupport
+        implements AsyncProcessor, IdAware, RouteIdAware, StepIdAware, DisabledAware {
     private String id;
     private String routeId;
+    private String stepId;
     private boolean disabled;
     private final Class<?> type;
     private final String charset;
@@ -90,6 +93,16 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

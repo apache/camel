@@ -29,19 +29,22 @@ import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Processor for handling sagas.
  */
-public abstract class SagaProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public abstract class SagaProcessor extends BaseDelegateProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     protected final CamelSagaService sagaService;
     protected final CamelSagaStep step;
     protected final SagaCompletionMode completionMode;
     private String id;
     private String routeId;
+    private String stepId;
 
     protected SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
                             SagaCompletionMode completionMode, CamelSagaStep step) {
@@ -127,6 +130,16 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

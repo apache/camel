@@ -24,6 +24,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,13 @@ import org.slf4j.LoggerFactory;
  * Processor to handle do finally supporting asynchronous routing engine
  */
 public class FinallyProcessor extends BaseDelegateProcessorSupport
-        implements Traceable, IdAware, RouteIdAware, InterceptableProcessor {
+        implements Traceable, IdAware, RouteIdAware, StepIdAware, InterceptableProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(FinallyProcessor.class);
 
     private String id;
     private String routeId;
+    private String stepId;
 
     public FinallyProcessor(Processor processor) {
         super(processor);
@@ -95,6 +97,16 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

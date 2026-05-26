@@ -29,6 +29,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.Tokenizer;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 
@@ -36,13 +37,14 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
  * This implements the core processor for handling tokenization
  */
 public class TokenizerProcessor extends BaseProcessorSupport
-        implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware {
+        implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware, StepIdAware {
 
     private final AsyncProcessor processor;
     private final Tokenizer tokenizer;
     private CamelContext camelContext;
     private String id;
     private String routeId;
+    private String stepId;
 
     public TokenizerProcessor(Processor processor, Tokenizer tokenizer) {
         this.processor = AsyncProcessorConverterHelper.convert(processor);
@@ -101,5 +103,15 @@ public class TokenizerProcessor extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 }
