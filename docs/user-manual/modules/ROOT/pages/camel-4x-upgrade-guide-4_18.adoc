@@ -229,15 +229,42 @@ must therefore carry the value in a non-`Camel`-prefixed application header and
 map it to the appropriate `CamelSolrField.*` / `CamelSolrParam.*` header in the
 route between the transport `from` and the `solr:` `to`.
 
+=== camel-pdf - potential breaking change
+
+The Exchange header constants in `PdfHeaderConstants` have been renamed to
+follow the Camel naming convention used across the rest of the component
+catalog. The Java field names are unchanged; only the header string values
+have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `PdfHeaderConstants.PROTECTION_POLICY_HEADER_NAME` | `protection-policy` | `CamelPdfProtectionPolicy`
+| `PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME` | `pdf-document` | `CamelPdfDocument`
+| `PdfHeaderConstants.DECRYPTION_MATERIAL_HEADER_NAME` | `decryption-material` | `CamelPdfDecryptionMaterial`
+| `PdfHeaderConstants.FILES_TO_MERGE_HEADER_NAME` | `files-to-merge` | `CamelPdfFilesToMerge`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(PdfHeaderConstants.PDF_DOCUMENT_HEADER_NAME, ...)`) continue to
+work without changes. Routes that set the header by its literal string value
+(for example `setHeader("pdf-document", ...)`) must be updated to use the
+new value (`setHeader("CamelPdfDocument", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`PdfHeaderNameBuilder` have been renamed accordingly:
+
+* `protectionPolicy()` -> `pdfProtectionPolicy()`
+* `pdfDocument()` -> `pdfDocument()` (unchanged in name, returns the new value)
+* `decryptionMaterial()` -> `pdfDecryptionMaterial()`
+* `filesToMerge()` -> `pdfFilesToMerge()`
+
 === camel-web3j - potential breaking change
 
 The Exchange header constants in `Web3jConstants` have been renamed to follow the
 Camel naming convention used across the rest of the component catalog. The Java
 field names are unchanged; only the header string values have changed:
 
-[options="header"]
-|===
-| Constant | Previous value | New value
 | `Web3jConstants.ID` | `ID` | `CamelWeb3jId`
 | `Web3jConstants.OPERATION` | `OPERATION` | `CamelWeb3jOperation`
 | `Web3jConstants.AT_BLOCK` | `AT_BLOCK` | `CamelWeb3jAtBlock`
