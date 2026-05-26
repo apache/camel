@@ -1447,10 +1447,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ETH_HASHRATE}.
+         * @return the name of the header {@code Web3jEthHashrate}.
          */
-        public String ethHashrate() {
-            return "ETH_HASHRATE";
+        public String web3jEthHashrate() {
+            return "CamelWeb3jEthHashrate";
         }
         /**
          * The id.
@@ -1459,10 +1459,22 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ID}.
+         * @return the name of the header {@code Web3jId}.
          */
-        public String iD() {
-            return "ID";
+        public String web3jId() {
+            return "CamelWeb3jId";
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Web3jOperation}.
+         */
+        public String web3jOperation() {
+            return "CamelWeb3jOperation";
         }
         /**
          * The block number, or the string latest for the last mined block or
@@ -1472,10 +1484,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AT_BLOCK}.
+         * @return the name of the header {@code Web3jAtBlock}.
          */
-        public String atBlock() {
-            return "AT_BLOCK";
+        public String web3jAtBlock() {
+            return "CamelWeb3jAtBlock";
         }
         /**
          * Contract address.
@@ -1484,10 +1496,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ADDRESS}.
+         * @return the name of the header {@code Web3jAddress}.
          */
-        public String aDDRESS() {
-            return "ADDRESS";
+        public String web3jAddress() {
+            return "CamelWeb3jAddress";
         }
         /**
          * Contract address or a list of addresses.
@@ -1496,10 +1508,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ADDRESSES}.
+         * @return the name of the header {@code Web3jAddresses}.
          */
-        public String aDDRESSES() {
-            return "ADDRESSES";
+        public String web3jAddresses() {
+            return "CamelWeb3jAddresses";
         }
         /**
          * The address the transaction is send from.
@@ -1508,10 +1520,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code FROM_ADDRESS}.
+         * @return the name of the header {@code Web3jFromAddress}.
          */
-        public String fromAddress() {
-            return "FROM_ADDRESS";
+        public String web3jFromAddress() {
+            return "CamelWeb3jFromAddress";
         }
         /**
          * The address the transaction is directed to.
@@ -1520,10 +1532,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code TO_ADDRESS}.
+         * @return the name of the header {@code Web3jToAddress}.
          */
-        public String toAddress() {
-            return "TO_ADDRESS";
+        public String web3jToAddress() {
+            return "CamelWeb3jToAddress";
         }
         /**
          * The transaction index position withing a block.
@@ -1532,10 +1544,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code POSITION}.
+         * @return the name of the header {@code Web3jPosition}.
          */
-        public String pOSITION() {
-            return "POSITION";
+        public String web3jPosition() {
+            return "CamelWeb3jPosition";
         }
         /**
          * Hash of the block where this transaction was in.
@@ -1544,10 +1556,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code BLOCK_HASH}.
+         * @return the name of the header {@code Web3jBlockHash}.
          */
-        public String blockHash() {
-            return "BLOCK_HASH";
+        public String web3jBlockHash() {
+            return "CamelWeb3jBlockHash";
         }
         /**
          * The information about a transaction requested by transaction hash.
@@ -1556,10 +1568,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code TRANSACTION_HASH}.
+         * @return the name of the header {@code Web3jTransactionHash}.
          */
-        public String transactionHash() {
-            return "TRANSACTION_HASH";
+        public String web3jTransactionHash() {
+            return "CamelWeb3jTransactionHash";
         }
         /**
          * Message to sign by calculating an Ethereum specific signature.
@@ -1568,10 +1580,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code SHA3_HASH_OF_DATA_TO_SIGN}.
+         * @return the name of the header {@code Web3jSha3HashOfDataToSign}.
          */
-        public String sha3HashOfDataToSign() {
-            return "SHA3_HASH_OF_DATA_TO_SIGN";
+        public String web3jSha3HashOfDataToSign() {
+            return "CamelWeb3jSha3HashOfDataToSign";
         }
         /**
          * The signed transaction data for a new message call transaction or a
@@ -1581,10 +1593,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code SIGNED_TRANSACTION_DATA}.
+         * @return the name of the header {@code Web3jSignedTransactionData}.
          */
-        public String signedTransactionData() {
-            return "SIGNED_TRANSACTION_DATA";
+        public String web3jSignedTransactionData() {
+            return "CamelWeb3jSignedTransactionData";
         }
         /**
          * If true it returns the full transaction objects, if false only the
@@ -1594,10 +1606,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code FULL_TRANSACTION_OBJECTS}.
+         * @return the name of the header {@code Web3jFullTransactionObjects}.
          */
-        public String fullTransactionObjects() {
-            return "FULL_TRANSACTION_OBJECTS";
+        public String web3jFullTransactionObjects() {
+            return "CamelWeb3jFullTransactionObjects";
         }
         /**
          * The transactions/uncle index position in the block.
@@ -1606,10 +1618,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code INDEX}.
+         * @return the name of the header {@code Web3jIndex}.
          */
-        public String iNDEX() {
-            return "INDEX";
+        public String web3jIndex() {
+            return "CamelWeb3jIndex";
         }
         /**
          * The source code to compile.
@@ -1618,10 +1630,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code SOURCE_CODE}.
+         * @return the name of the header {@code Web3jSourceCode}.
          */
-        public String sourceCode() {
-            return "SOURCE_CODE";
+        public String web3jSourceCode() {
+            return "CamelWeb3jSourceCode";
         }
         /**
          * The filter id to use.
@@ -1630,10 +1642,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code FILTER_ID}.
+         * @return the name of the header {@code Web3jFilterId}.
          */
-        public String filterId() {
-            return "FILTER_ID";
+        public String web3jFilterId() {
+            return "CamelWeb3jFilterId";
         }
         /**
          * The local database name.
@@ -1642,10 +1654,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code DATABASE_NAME}.
+         * @return the name of the header {@code Web3jDatabaseName}.
          */
-        public String databaseName() {
-            return "DATABASE_NAME";
+        public String web3jDatabaseName() {
+            return "CamelWeb3jDatabaseName";
         }
         /**
          * The key name in the database.
@@ -1654,10 +1666,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code KEY_NAME}.
+         * @return the name of the header {@code Web3jKeyName}.
          */
-        public String keyName() {
-            return "KEY_NAME";
+        public String web3jKeyName() {
+            return "CamelWeb3jKeyName";
         }
         /**
          * The nonce found (64 bits) used for submitting a proof-of-work
@@ -1667,10 +1679,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code NONCE}.
+         * @return the name of the header {@code Web3jNonce}.
          */
-        public String nONCE() {
-            return "NONCE";
+        public String web3jNonce() {
+            return "CamelWeb3jNonce";
         }
         /**
          * The header's pow-hash (256 bits) used for submitting a proof-of-work
@@ -1680,10 +1692,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code HEADER_POW_HASH}.
+         * @return the name of the header {@code Web3jHeaderPowHash}.
          */
-        public String headerPowHash() {
-            return "HEADER_POW_HASH";
+        public String web3jHeaderPowHash() {
+            return "CamelWeb3jHeaderPowHash";
         }
         /**
          * The mix digest (256 bits) used for submitting a proof-of-work
@@ -1693,10 +1705,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code MIX_DIGEST}.
+         * @return the name of the header {@code Web3jMixDigest}.
          */
-        public String mixDigest() {
-            return "MIX_DIGEST";
+        public String web3jMixDigest() {
+            return "CamelWeb3jMixDigest";
         }
         /**
          * A random hexadecimal(32 bytes) ID identifying the client.
@@ -1705,10 +1717,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code CLIENT_ID}.
+         * @return the name of the header {@code Web3jClientId}.
          */
-        public String clientId() {
-            return "CLIENT_ID";
+        public String web3jClientId() {
+            return "CamelWeb3jClientId";
         }
         /**
          * Gas price used for each paid gas.
@@ -1717,10 +1729,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code GAS_PRICE}.
+         * @return the name of the header {@code Web3jGasPrice}.
          */
-        public String gasPrice() {
-            return "GAS_PRICE";
+        public String web3jGasPrice() {
+            return "CamelWeb3jGasPrice";
         }
         /**
          * The maximum gas allowed in this block.
@@ -1729,10 +1741,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code GAS_LIMIT}.
+         * @return the name of the header {@code Web3jGasLimit}.
          */
-        public String gasLimit() {
-            return "GAS_LIMIT";
+        public String web3jGasLimit() {
+            return "CamelWeb3jGasLimit";
         }
         /**
          * The value sent within a transaction.
@@ -1741,10 +1753,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code VALUE}.
+         * @return the name of the header {@code Web3jValue}.
          */
-        public String vALUE() {
-            return "VALUE";
+        public String web3jValue() {
+            return "CamelWeb3jValue";
         }
         /**
          * The compiled code of a contract OR the hash of the invoked method
@@ -1754,10 +1766,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code DATA}.
+         * @return the name of the header {@code Web3jData}.
          */
-        public String dATA() {
-            return "DATA";
+        public String web3jData() {
+            return "CamelWeb3jData";
         }
         /**
          * The block number, or the string latest for the last mined block or
@@ -1767,10 +1779,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code FROM_BLOCK}.
+         * @return the name of the header {@code Web3jFromBlock}.
          */
-        public String fromBlock() {
-            return "FROM_BLOCK";
+        public String web3jFromBlock() {
+            return "CamelWeb3jFromBlock";
         }
         /**
          * The block number, or the string latest for the last mined block or
@@ -1780,10 +1792,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code TO_BLOCK}.
+         * @return the name of the header {@code Web3jToBlock}.
          */
-        public String toBlock() {
-            return "TO_BLOCK";
+        public String web3jToBlock() {
+            return "CamelWeb3jToBlock";
         }
         /**
          * Topics are order-dependent. Each topic can also be a list of topics.
@@ -1793,10 +1805,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code TOPICS}.
+         * @return the name of the header {@code Web3jTopics}.
          */
-        public String tOPICS() {
-            return "TOPICS";
+        public String web3jTopics() {
+            return "CamelWeb3jTopics";
         }
         /**
          * The priority of a whisper message.
@@ -1805,10 +1817,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code PRIORITY}.
+         * @return the name of the header {@code Web3jPriority}.
          */
-        public String pRIORITY() {
-            return "PRIORITY";
+        public String web3jPriority() {
+            return "CamelWeb3jPriority";
         }
         /**
          * The time to live in seconds of a whisper message.
@@ -1817,10 +1829,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code TTL}.
+         * @return the name of the header {@code Web3jTtl}.
          */
-        public String tTL() {
-            return "TTL";
+        public String web3jTtl() {
+            return "CamelWeb3jTtl";
         }
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
@@ -1829,10 +1841,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code PRIVATE_FOR}.
+         * @return the name of the header {@code Web3jPrivateFor}.
          */
-        public String privateFor() {
-            return "PRIVATE_FOR";
+        public String web3jPrivateFor() {
+            return "CamelWeb3jPrivateFor";
         }
         /**
          * A transaction privateFrom.
@@ -1841,10 +1853,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code PRIVATE_FROM}.
+         * @return the name of the header {@code Web3jPrivateFrom}.
          */
-        public String privateFrom() {
-            return "PRIVATE_FROM";
+        public String web3jPrivateFrom() {
+            return "CamelWeb3jPrivateFrom";
         }
         /**
          * The error code.
@@ -1853,10 +1865,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ERROR_CODE}.
+         * @return the name of the header {@code Web3jErrorCode}.
          */
-        public String errorCode() {
-            return "ERROR_CODE";
+        public String web3jErrorCode() {
+            return "CamelWeb3jErrorCode";
         }
         /**
          * The error data.
@@ -1865,10 +1877,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ERROR_DATA}.
+         * @return the name of the header {@code Web3jErrorData}.
          */
-        public String errorData() {
-            return "ERROR_DATA";
+        public String web3jErrorData() {
+            return "CamelWeb3jErrorData";
         }
         /**
          * The error message.
@@ -1877,10 +1889,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ERROR_MESSAGE}.
+         * @return the name of the header {@code Web3jErrorMessage}.
          */
-        public String errorMessage() {
-            return "ERROR_MESSAGE";
+        public String web3jErrorMessage() {
+            return "CamelWeb3jErrorMessage";
         }
         /**
          * The status of the operation.
@@ -1889,10 +1901,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code status}.
+         * @return the name of the header {@code Web3jStatus}.
          */
-        public String status() {
-            return "status";
+        public String web3jStatus() {
+            return "CamelWeb3jStatus";
         }
         /**
          * The operation.
@@ -1901,10 +1913,10 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code operation}.
+         * @return the name of the header {@code Web3jHeaderOperation}.
          */
-        public String operation() {
-            return "operation";
+        public String web3jHeaderOperation() {
+            return "CamelWeb3jHeaderOperation";
         }
     }
     static Web3jEndpointBuilder endpointBuilder(String componentName, String path) {

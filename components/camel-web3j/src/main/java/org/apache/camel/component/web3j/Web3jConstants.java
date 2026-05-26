@@ -30,7 +30,7 @@ public interface Web3jConstants {
     String ETH_MINING = "ETH_MINING";
     @Metadata(label = "producer", description = "A hexadecimal string representation (32 bytes) of the hash rate.",
               javaType = "String")
-    String ETH_HASHRATE = "ETH_HASHRATE";
+    String ETH_HASHRATE = "CamelWeb3jEthHashrate";
     String ETH_GAS_PRICE = "ETH_GAS_PRICE";
     String ETH_ACCOUNTS = "ETH_ACCOUNTS";
     String ETH_BLOCK_NUMBER = "ETH_BLOCK_NUMBER";
@@ -98,111 +98,112 @@ public interface Web3jConstants {
     String REPLAY_TRANSACTIONS_OBSERVABLE = "REPLAY_TRANSACTIONS_OBSERVABLE";
 
     @Metadata(label = "producer", description = "The id", javaType = "Long")
-    String ID = "ID";
-    String OPERATION = "OPERATION";
+    String ID = "CamelWeb3jId";
+    @Metadata(label = "producer", description = "The operation to perform", javaType = "String")
+    String OPERATION = "CamelWeb3jOperation";
     String TRANSACTION = "TRANSACTION";
     /**
      * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined
      * transactions.
      */
     @Metadata(label = "producer", javaType = "String")
-    String AT_BLOCK = "AT_BLOCK";
+    String AT_BLOCK = "CamelWeb3jAtBlock";
     @Metadata(label = "producer", description = "Contract address.", javaType = "String")
-    String ADDRESS = "ADDRESS";
+    String ADDRESS = "CamelWeb3jAddress";
     @Metadata(label = "producer", description = "Contract address or a list of addresses.", javaType = "List<String>")
-    String ADDRESSES = "ADDRESSES";
+    String ADDRESSES = "CamelWeb3jAddresses";
     @Metadata(label = "producer", description = "The address the transaction is send from", javaType = "String")
-    String FROM_ADDRESS = "FROM_ADDRESS";
+    String FROM_ADDRESS = "CamelWeb3jFromAddress";
     @Metadata(label = "producer", description = "The address the transaction is directed to", javaType = "String")
-    String TO_ADDRESS = "TO_ADDRESS";
+    String TO_ADDRESS = "CamelWeb3jToAddress";
     @Metadata(label = "producer", description = "The transaction index position withing a block.", javaType = "String")
-    String POSITION = "POSITION";
+    String POSITION = "CamelWeb3jPosition";
     @Metadata(label = "producer", description = "Hash of the block where this transaction was in.", javaType = "String")
-    String BLOCK_HASH = "BLOCK_HASH";
+    String BLOCK_HASH = "CamelWeb3jBlockHash";
     @Metadata(label = "producer", description = "The information about a transaction requested by transaction hash.",
               javaType = "String")
-    String TRANSACTION_HASH = "TRANSACTION_HASH";
+    String TRANSACTION_HASH = "CamelWeb3jTransactionHash";
     @Metadata(label = "producer", description = "Message to sign by calculating an Ethereum specific signature.",
               javaType = "String")
-    String SHA3_HASH_OF_DATA_TO_SIGN = "SHA3_HASH_OF_DATA_TO_SIGN";
+    String SHA3_HASH_OF_DATA_TO_SIGN = "CamelWeb3jSha3HashOfDataToSign";
     @Metadata(label = "producer",
               description = "The signed transaction data for a new message call transaction or a contract creation for signed transactions.",
               javaType = "String")
-    String SIGNED_TRANSACTION_DATA = "SIGNED_TRANSACTION_DATA";
+    String SIGNED_TRANSACTION_DATA = "CamelWeb3jSignedTransactionData";
     @Metadata(label = "producer",
               description = "If true it returns the full transaction objects, if false only the hashes of the transactions.",
               javaType = "Boolean")
-    String FULL_TRANSACTION_OBJECTS = "FULL_TRANSACTION_OBJECTS";
+    String FULL_TRANSACTION_OBJECTS = "CamelWeb3jFullTransactionObjects";
     @Metadata(label = "producer", description = "The transactions/uncle index position in the block.", javaType = "String")
-    String INDEX = "INDEX";
+    String INDEX = "CamelWeb3jIndex";
     @Metadata(label = "producer", description = "The source code to compile.", javaType = "String")
-    String SOURCE_CODE = "SOURCE_CODE";
+    String SOURCE_CODE = "CamelWeb3jSourceCode";
     @Metadata(label = "producer", description = "The filter id to use.", javaType = "java.math.BigInteger")
-    String FILTER_ID = "FILTER_ID";
+    String FILTER_ID = "CamelWeb3jFilterId";
     @Metadata(label = "producer", description = "The local database name.", javaType = "String")
-    String DATABASE_NAME = "DATABASE_NAME";
+    String DATABASE_NAME = "CamelWeb3jDatabaseName";
     @Metadata(label = "producer", description = "The key name in the database.", javaType = "String")
-    String KEY_NAME = "KEY_NAME";
+    String KEY_NAME = "CamelWeb3jKeyName";
     @Metadata(label = "producer", description = "The nonce found (64 bits) used for submitting a proof-of-work solution.",
               javaType = "java.math.BigInteger")
-    String NONCE = "NONCE";
+    String NONCE = "CamelWeb3jNonce";
     @Metadata(label = "producer",
               description = "The header's pow-hash (256 bits) used for submitting a proof-of-work solution.",
               javaType = "String")
-    String HEADER_POW_HASH = "HEADER_POW_HASH";
+    String HEADER_POW_HASH = "CamelWeb3jHeaderPowHash";
     @Metadata(label = "producer", description = "The mix digest (256 bits) used for submitting a proof-of-work solution.",
               javaType = "String")
-    String MIX_DIGEST = "MIX_DIGEST";
+    String MIX_DIGEST = "CamelWeb3jMixDigest";
     @Metadata(label = "producer", description = "A random hexadecimal(32 bytes) ID identifying the client.",
               javaType = "String")
-    String CLIENT_ID = "CLIENT_ID";
+    String CLIENT_ID = "CamelWeb3jClientId";
     @Metadata(label = "producer", description = "Gas price used for each paid gas.", javaType = "java.math.BigInteger")
-    String GAS_PRICE = "GAS_PRICE";
+    String GAS_PRICE = "CamelWeb3jGasPrice";
     @Metadata(label = "producer", description = "The maximum gas allowed in this block.", javaType = "java.math.BigInteger")
-    String GAS_LIMIT = "GAS_LIMIT";
+    String GAS_LIMIT = "CamelWeb3jGasLimit";
     @Metadata(label = "producer", description = "The value sent within a transaction.", javaType = "java.math.BigInteger")
-    String VALUE = "VALUE";
+    String VALUE = "CamelWeb3jValue";
     @Metadata(label = "producer",
               description = "The compiled code of a contract OR the hash of the invoked method signature and encoded parameters.",
               javaType = "String")
-    String DATA = "DATA";
+    String DATA = "CamelWeb3jData";
     /**
      * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined
      * transactions.
      */
     @Metadata(label = "producer", javaType = "String")
-    String FROM_BLOCK = "FROM_BLOCK";
+    String FROM_BLOCK = "CamelWeb3jFromBlock";
     /**
      * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined
      * transactions.
      */
     @Metadata(label = "producer", javaType = "String")
-    String TO_BLOCK = "TO_BLOCK";
+    String TO_BLOCK = "CamelWeb3jToBlock";
     @Metadata(label = "producer", description = "Topics are order-dependent. Each topic can also be a list of topics. " +
                                                 "Specify multiple topics separated by comma.",
               javaType = "List<String>")
-    String TOPICS = "TOPICS";
+    String TOPICS = "CamelWeb3jTopics";
     @Metadata(label = "producer", description = "The priority of a whisper message.", javaType = "java.math.BigInteger")
-    String PRIORITY = "PRIORITY";
+    String PRIORITY = "CamelWeb3jPriority";
     @Metadata(label = "producer", description = "The time to live in seconds of a whisper message.",
               javaType = "java.math.BigInteger")
-    String TTL = "TTL";
+    String TTL = "CamelWeb3jTtl";
     @Metadata(label = "producer", description = "A transaction privateFor nodes with public keys in a Quorum network",
               javaType = "List<String>")
-    String PRIVATE_FOR = "PRIVATE_FOR";
+    String PRIVATE_FOR = "CamelWeb3jPrivateFor";
     @Metadata(label = "producer", description = "A transaction privateFrom",
               javaType = "String")
-    String PRIVATE_FROM = "PRIVATE_FROM";
+    String PRIVATE_FROM = "CamelWeb3jPrivateFrom";
 
     @Metadata(label = "producer", description = "The error code", javaType = "int")
-    String ERROR_CODE = "ERROR_CODE";
+    String ERROR_CODE = "CamelWeb3jErrorCode";
     @Metadata(label = "producer", description = "The error data", javaType = "String")
-    String ERROR_DATA = "ERROR_DATA";
+    String ERROR_DATA = "CamelWeb3jErrorData";
     @Metadata(label = "producer", description = "The error message", javaType = "String")
-    String ERROR_MESSAGE = "ERROR_MESSAGE";
+    String ERROR_MESSAGE = "CamelWeb3jErrorMessage";
 
     @Metadata(label = "consumer", description = "The status of the operation", javaType = "String")
-    String HEADER_STATUS = "status";
+    String HEADER_STATUS = "CamelWeb3jStatus";
     @Metadata(label = "consumer", description = "The operation", javaType = "String")
-    String HEADER_OPERATION = "operation";
+    String HEADER_OPERATION = "CamelWeb3jHeaderOperation";
 }
