@@ -44,13 +44,14 @@ public final class NettyHttpHelper {
 
     /**
      * Default {@link ObjectInputFilter} pattern applied when deserializing Java objects from HTTP responses with
-     * Content-Type {@code application/x-java-serialized-object}. Allows standard Java types and Apache Camel types and
-     * rejects everything else. Can be overridden per-endpoint via
+     * Content-Type {@code application/x-java-serialized-object}. Allows standard Java types and Apache Camel types,
+     * denies {@code java.net.**}, and applies JEP-290 graph-shape limits ({@code maxdepth}, {@code maxrefs},
+     * {@code maxbytes}) as defense-in-depth against resource-exhaustion payloads. Can be overridden per-endpoint via
      * {@link NettyHttpConfiguration#setDeserializationFilter(String)} or globally via the JVM system property
      * {@code jdk.serialFilter}.
      */
     static final String DEFAULT_DESERIALIZATION_FILTER
-            = "!java.net.**;java.**;javax.**;org.apache.camel.**;!*";
+            = "!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*";
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpHelper.class);
 

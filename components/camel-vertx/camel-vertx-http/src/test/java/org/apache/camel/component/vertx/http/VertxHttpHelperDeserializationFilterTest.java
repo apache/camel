@@ -29,8 +29,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxHttpHelperDeserializationFilterTest {
+
+    @Test
+    public void testDefaultFilterContainsGraphShapeLimits() {
+        String filter = VertxHttpHelper.DEFAULT_DESERIALIZATION_FILTER;
+        assertTrue(filter.contains("maxdepth="), "Expected maxdepth in filter: " + filter);
+        assertTrue(filter.contains("maxrefs="), "Expected maxrefs in filter: " + filter);
+        assertTrue(filter.contains("maxbytes="), "Expected maxbytes in filter: " + filter);
+    }
 
     @Test
     public void testDeserializeAllowlistedType() throws Exception {

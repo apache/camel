@@ -1485,3 +1485,48 @@ itself (property-source decryption at runtime) is unaffected.
 
 The components camel-paho is deprecated. There were no new release since 2020 of the Java client, last non-regulatory commit was in 2022.
 
+=== Tightened default ObjectInputFilter across deserialization sites - potential breaking change
+
+The in-code default `ObjectInputFilter` shipped by the following components now includes JEP-290 graph-shape limits
+(`maxdepth=20`, `maxrefs=10000`, `maxbytes=10485760`) in addition to the existing class allowlist:
+
+* `camel-infinispan` - `DefaultExchangeHolderUtils` (remote aggregation repository deserialization)
+* `camel-mina` - `MinaConverter` (on-the-wire object stream)
+* `camel-netty` - `NettyConverter` (on-the-wire object stream)
+* `camel-netty-http` - `NettyHttpHelper` (HTTP body deserialization when `transferException=true`)
+* `camel-vertx-http` - `VertxHttpHelper` (HTTP body deserialization)
+* `camel-leveldb` - `LevelDBAggregationRepository.deserializationFilter` default value
+* `camel-cassandraql` - `CassandraAggregationRepository.deserializationFilter` default value
+* `camel-consul` - `ConsulRegistry.deserializationFilter` default value
+* `camel-sql` - `JdbcAggregationRepository.deserializationFilter` default value
+
+The new defaults are:
+
+* `!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`
+  (camel-infinispan, camel-mina, camel-netty, camel-netty-http, camel-vertx-http)
+* `!java.net.**;java.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`
+  (camel-leveldb, camel-cassandraql, camel-consul, camel-sql)
+
+These limits provide defense-in-depth so that operators who have not set `-Djdk.serialFilter` still get
+sensible graph-shape limits out of the box. The class allowlist is unchanged.
+
+Operators retain the existing override paths:
+
+* The JVM-wide `-Djdk.serialFilter` system property takes precedence over the Camel default in every site
+  that ships one. Set it to a value that includes the structural clauses you want (or leave them out to
+  disable structural checks).
+* On the configurable repositories and endpoint configurations (`LevelDBAggregationRepository`,
+  `JdbcAggregationRepository`, `CassandraAggregationRepository`, `ConsulRegistry`, the netty-http /
+  vertx-http endpoint configuration), the existing `deserializationFilter` option accepts a fully custom
+  filter string and can be used to relax or further tighten the defaults per endpoint.
+
+Routes that legitimately deserialize very deep, very wide, or very large object graphs may need to either
+raise the structural limits via the `deserializationFilter` option or via `-Djdk.serialFilter`, or migrate
+off Java serialization entirely.
+
+Note that `camel-jms` and `camel-sjms` apply their filter as a post-deserialization class check (after
+the JMS provider has already decoded the payload). Graph-shape limits are therefore not meaningful in
+those sites and have not been added; DoS hardening on the JMS path must be configured at the JMS provider
+level (for example Artemis `deserializationAllowList`, ActiveMQ Classic `SERIALIZABLE_PACKAGES`) or via
+`-Djdk.serialFilter`.
+
