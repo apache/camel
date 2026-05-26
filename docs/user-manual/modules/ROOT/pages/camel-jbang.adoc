@@ -1259,7 +1259,7 @@ Supported plugins:
 Known 3rd party plugins:
 
  NAME        COMMAND  VENDOR     DEPENDENCY                                        DESCRIPTION
- forage      forage   Community  io.kaoto.forage:camel-jbang-plugin-forage         Utilities for working with Forage components
+ forage      forage   Community  io.kaoto.forage:camel-jbang-plugin-forage         Production ready Apache Camel components configurations via properties
  camel-kit   kit      Community  io.github.luigidemasi:camel-kit-jbang-plugin      Design Apache Camel Integrations with AI
 ----
 
