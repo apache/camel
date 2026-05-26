@@ -42,6 +42,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PollDynamicAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
@@ -66,7 +67,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * @see PollProcessor
  * @see Enricher
  */
-public class PollEnricher extends BaseProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+public class PollEnricher extends BaseProcessorSupport implements IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
 
@@ -77,6 +78,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     private HeadersMapFactory headersMapFactory;
     private String id;
     private String routeId;
+    private String stepId;
     private String variableReceive;
     private AggregationStrategy aggregationStrategy;
     private final Expression expression;
@@ -141,6 +143,16 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public PollDynamicAware getDynamicAware() {

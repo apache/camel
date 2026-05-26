@@ -38,6 +38,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -48,12 +49,13 @@ import org.slf4j.LoggerFactory;
  * Processor for wire tapping exchanges to an endpoint destination.
  */
 public class WireTapProcessor extends BaseProcessorSupport
-        implements Traceable, ShutdownAware, IdAware, RouteIdAware, CamelContextAware {
+        implements Traceable, ShutdownAware, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
 
     private String id;
     private String routeId;
+    private String stepId;
     private CamelContext camelContext;
     private final SendDynamicProcessor dynamicSendProcessor; // is only used for reporting statistics
     private final String uri;
@@ -143,6 +145,16 @@ public class WireTapProcessor extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

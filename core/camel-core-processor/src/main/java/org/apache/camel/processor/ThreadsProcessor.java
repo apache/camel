@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.Rejectable;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
@@ -49,12 +50,13 @@ import org.slf4j.LoggerFactory;
  * be free to process a new exchange, as its processing the current exchange.</li>
  * </ul>
  */
-public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware {
+public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThreadsProcessor.class);
 
     private String id;
     private String routeId;
+    private String stepId;
     private final CamelContext camelContext;
     private final ExecutorService executorService;
     private final ThreadPoolRejectedPolicy rejectedPolicy;
@@ -176,6 +178,16 @@ public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, R
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public ThreadPoolRejectedPolicy getRejectedPolicy() {

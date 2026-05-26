@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 
 /**
  * A <a href="http://camel.apache.org/delayer.html">Delayer</a> which delays processing the exchange until the correct
@@ -32,9 +33,10 @@ import org.apache.camel.spi.RouteIdAware;
  * <p/>
  * This implementation will block while waiting.
  */
-public class Delayer extends DelayProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class Delayer extends DelayProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private String routeId;
+    private String stepId;
     private String id;
     private Expression delay;
     private long delayValue;
@@ -68,6 +70,16 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

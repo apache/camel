@@ -37,6 +37,7 @@ import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.service.ServiceHelper;
@@ -61,12 +62,13 @@ import org.slf4j.LoggerFactory;
  * @see ResequencerEngine
  */
 public class StreamResequencer extends BaseProcessorSupport
-        implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+        implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
 
     private String id;
     private String routeId;
+    private String stepId;
     private final CamelContext camelContext;
     private final ExceptionHandler exceptionHandler;
     private final ResequencerEngine<Exchange> engine;
@@ -198,6 +200,16 @@ public class StreamResequencer extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override
