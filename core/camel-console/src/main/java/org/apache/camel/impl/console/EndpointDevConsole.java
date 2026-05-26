@@ -65,6 +65,14 @@ public class EndpointDevConsole extends AbstractDevConsole {
                     for (RuntimeEndpointRegistry.Statistic st : endpointStats) {
                         sb.append(String.format("%n    %s (remote: %s direction: %s, usage: %s)", uri, remote,
                                 st.getDirection(), st.getHits()));
+                        if (st.getMinBodySize() >= 0) {
+                            sb.append(String.format(" body: min/max/mean=%s/%s/%s",
+                                    st.getMinBodySize(), st.getMaxBodySize(), st.getMeanBodySize()));
+                        }
+                        if (st.getMinHeadersSize() >= 0) {
+                            sb.append(String.format(" headers: min/max/mean=%s/%s/%s",
+                                    st.getMinHeadersSize(), st.getMaxHeadersSize(), st.getMeanHeadersSize()));
+                        }
                     }
                 } else {
                     sb.append(String.format("%n    %s (remote: %s)", uri, remote));
@@ -110,6 +118,16 @@ public class EndpointDevConsole extends AbstractDevConsole {
                     jo.put("direction", st.getDirection());
                     jo.put("hits", st.getHits());
                     jo.put("routeId", st.getRouteId());
+                    if (st.getMinBodySize() >= 0) {
+                        jo.put("minBodySize", st.getMinBodySize());
+                        jo.put("maxBodySize", st.getMaxBodySize());
+                        jo.put("meanBodySize", st.getMeanBodySize());
+                    }
+                    if (st.getMinHeadersSize() >= 0) {
+                        jo.put("minHeadersSize", st.getMinHeadersSize());
+                        jo.put("maxHeadersSize", st.getMaxHeadersSize());
+                        jo.put("meanHeadersSize", st.getMeanHeadersSize());
+                    }
                     list.add(jo);
                 }
             } else {

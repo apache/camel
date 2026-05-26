@@ -75,6 +75,10 @@ public class ListEndpoint extends ProcessWatchCommand {
                         description = "Filter endpoints that must be higher than the given usage")
     long filterTotal;
 
+    @CommandLine.Option(names = { "--verbose" },
+                        description = "Show additional size statistics (min/max body and headers)")
+    boolean verbose;
+
     @CommandLine.Option(names = { "--short-uri" },
                         description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
@@ -119,6 +123,12 @@ public class ListEndpoint extends ProcessWatchCommand {
                                 row.remote = o.getBooleanOrDefault("remote", true);
                                 row.direction = o.getString("direction");
                                 row.total = o.getString("hits");
+                                row.meanBodySize = o.getLongOrDefault("meanBodySize", -1L);
+                                row.meanHeadersSize = o.getLongOrDefault("meanHeadersSize", -1L);
+                                row.minBodySize = o.getLongOrDefault("minBodySize", -1L);
+                                row.maxBodySize = o.getLongOrDefault("maxBodySize", -1L);
+                                row.minHeadersSize = o.getLongOrDefault("minHeadersSize", -1L);
+                                row.maxHeadersSize = o.getLongOrDefault("maxHeadersSize", -1L);
                                 row.uptime = extractSince(ph);
                                 row.age = TimeUtils.printSince(row.uptime);
                                 boolean add = true;
@@ -175,15 +185,36 @@ public class ListEndpoint extends ProcessWatchCommand {
                 jo.put("stub", r.stub);
                 jo.put("remote", r.remote);
                 jo.put("uri", r.endpoint);
+                if (r.meanBodySize >= 0) {
+                    jo.put("minBodySize", r.minBodySize);
+                    jo.put("maxBodySize", r.maxBodySize);
+                    jo.put("meanBodySize", r.meanBodySize);
+                }
+                if (r.meanHeadersSize >= 0) {
+                    jo.put("minHeadersSize", r.minHeadersSize);
+                    jo.put("maxHeadersSize", r.maxHeadersSize);
+                    jo.put("meanHeadersSize", r.meanHeadersSize);
+                }
                 return jo;
             }).collect(Collectors.toList())));
             return;
         }
+        boolean hasSize = rows.stream().anyMatch(r -> r.meanBodySize >= 0 || r.meanHeadersSize >= 0);
         // Flexible column: URI (90/140)
         // Fixed columns: PID(8)+NAME(30)+AGE(8)+DIR(3)+TOTAL(5)+STUB(4)+REMOTE(6) ~= 64
+        int fixedW = 64;
+        if (hasSize) {
+            // BODY-SIZE(9)+HDR-SIZE(8) = 17
+            fixedW += 17;
+        }
+        if (hasSize && verbose) {
+            // MIN-BODY(8)+MAX-BODY(8)+MIN-HDR(7)+MAX-HDR(7) = 30
+            fixedW += 30;
+        }
+        int numCols = 9 + (hasSize ? 2 : 0) + (hasSize && verbose ? 4 : 0);
         int tw = terminalWidth();
-        int uriW = TerminalWidthHelper.flexWidth(tw, 64, TerminalWidthHelper.noBorderOverhead(9), 20, 90);
-        int uriWideW = TerminalWidthHelper.flexWidth(tw, 64, TerminalWidthHelper.noBorderOverhead(9), 20, 140);
+        int uriW = TerminalWidthHelper.flexWidth(tw, fixedW, TerminalWidthHelper.noBorderOverhead(numCols), 20, 90);
+        int uriWideW = TerminalWidthHelper.flexWidth(tw, fixedW, TerminalWidthHelper.noBorderOverhead(numCols), 20, 140);
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -193,6 +224,18 @@ public class ListEndpoint extends ProcessWatchCommand {
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("STUB").dataAlign(HorizontalAlign.CENTER).with(r -> r.stub ? "x" : ""),
                 new Column().header("REMOTE").dataAlign(HorizontalAlign.CENTER).with(r -> r.remote ? "x" : ""),
+                new Column().header("BODY-SIZE").visible(hasSize).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> sizeToString(r.meanBodySize)),
+                new Column().header("HDR-SIZE").visible(hasSize).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> sizeToString(r.meanHeadersSize)),
+                new Column().header("MIN-BODY").visible(hasSize && verbose).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> sizeToString(r.minBodySize)),
+                new Column().header("MAX-BODY").visible(hasSize && verbose).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> sizeToString(r.maxBodySize)),
+                new Column().header("MIN-HDR").visible(hasSize && verbose).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> sizeToString(r.minHeadersSize)),
+                new Column().header("MAX-HDR").visible(hasSize && verbose).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> sizeToString(r.maxHeadersSize)),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(uriW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),
@@ -210,6 +253,10 @@ public class ListEndpoint extends ProcessWatchCommand {
             }
         }
         return u;
+    }
+
+    private static String sizeToString(long size) {
+        return size >= 0 ? Long.toString(size) : "-";
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -243,6 +290,12 @@ public class ListEndpoint extends ProcessWatchCommand {
         String total;
         boolean stub;
         boolean remote;
+        long meanBodySize = -1;
+        long meanHeadersSize = -1;
+        long minBodySize = -1;
+        long maxBodySize = -1;
+        long minHeadersSize = -1;
+        long maxHeadersSize = -1;
     }
 
 }
