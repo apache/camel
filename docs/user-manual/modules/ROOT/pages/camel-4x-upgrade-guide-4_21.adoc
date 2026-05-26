@@ -844,7 +844,7 @@ directions, aligning the component with the rest of the Camel component catalog.
 `Camel`-prefixed user-header names from Iggy messages can supply a custom `headerFilterStrategy`
 to restore the previous behaviour.
 
-=== camel-web3j
+=== camel-web3j - potential breaking change
 
 The Exchange header constants in `Web3jConstants` have been renamed to follow the
 Camel naming convention used across the rest of the component catalog. The Java
@@ -955,7 +955,7 @@ A new accessor `web3jOperation()` is also generated for `Web3jConstants.OPERATIO
 (the producer dispatch header). This constant did not appear in the catalog
 previously, so no DSL accessor renaming applies to it.
 
-=== camel-openstack
+=== camel-openstack - potential breaking change
 
 The Exchange header constants in `OpenstackConstants`, `KeystoneConstants`,
 `NovaConstants`, `CinderConstants`, `GlanceConstants`, `NeutronConstants`,
@@ -1095,7 +1095,7 @@ The generated Endpoint DSL header accessors on each component's
 `openstackOperation()`, `password()` -> `openstackKeystonePassword()`,
 `adminPassword()` -> `openstackNovaAdminPassword()`, etc.).
 
-=== camel-pdf
+=== camel-pdf - potential breaking change
 
 The Exchange header constants in `PdfHeaderConstants` have been renamed to
 follow the Camel naming convention used across the rest of the component
@@ -1125,7 +1125,7 @@ As a consequence, the generated Endpoint DSL header accessors on
 * `decryptionMaterial()` -> `pdfDecryptionMaterial()`
 * `filesToMerge()` -> `pdfFilesToMerge()`
 
-=== camel-elasticsearch / camel-opensearch
+=== camel-elasticsearch / camel-opensearch - potential breaking change
 
 The Exchange header constants in `ElasticsearchConstants` and
 `OpensearchConstants` have been renamed to follow the Camel naming convention
@@ -1182,7 +1182,7 @@ been renamed accordingly (`operation()` -> `elasticsearchOperation()` /
 `opensearchOperation()`, `indexId()` -> `elasticsearchIndexId()` /
 `opensearchIndexId()`, etc.).
 
-=== camel-github2
+=== camel-github2 - potential breaking change
 
 The producer-side Exchange header constants in `GitHub2Constants` have been
 renamed to follow the Camel naming convention used across the rest of the
@@ -1219,7 +1219,7 @@ NOTE: The deprecated `camel-github` component (the predecessor of
 `camel-github2`) was removed in Camel 4.21 (see the _camel-github removal_
 entry above), so the analogous rename does not apply there.
 
-=== camel-google-functions / camel-google-secret-manager / camel-google-vision / camel-google-text-to-speech / camel-google-speech-to-text
+=== camel-google-functions / camel-google-secret-manager / camel-google-vision / camel-google-text-to-speech / camel-google-speech-to-text - potential breaking change
 
 The Exchange header constants in these Google Cloud components carried a
 `GoogleCloud<Service>` / `GoogleSecretManager` prefix that is not in the
@@ -1259,7 +1259,7 @@ The generated Endpoint DSL header accessor names are unchanged (for example
 deriving the accessor name; the accessors now return the new `Camel`-prefixed
 values.
 
-=== camel-arangodb
+=== camel-arangodb - potential breaking change
 
 Two Exchange header constants in `ArangoDbConstants` that were not in the
 `Camel` namespace (and therefore not filtered by the default
@@ -1288,7 +1288,7 @@ As a consequence, the generated Endpoint DSL header accessors on
 `ArangoDbHeaderNameBuilder` have been renamed: `key()` -> `arangoDbKey()` and
 `resultClassType()` -> `arangoDbResultClassType()`.
 
-=== camel-jt400
+=== camel-jt400 - potential breaking change
 
 The two Exchange header constants in `Jt400Constants` that were not in the
 `Camel` namespace (and therefore not filtered by the default
@@ -1318,7 +1318,7 @@ As a consequence, the generated Endpoint DSL header accessors on
 `Jt400HeaderNameBuilder` have been renamed: `kEY()` -> `jt400Key()` and
 `senderInformation()` -> `jt400SenderInformation()`.
 
-=== camel-mail
+=== camel-mail - potential breaking change
 
 The consumer-side dispatch header constants in `MailConstants` that control
 post-processing of a consumed mail message used header values outside the
