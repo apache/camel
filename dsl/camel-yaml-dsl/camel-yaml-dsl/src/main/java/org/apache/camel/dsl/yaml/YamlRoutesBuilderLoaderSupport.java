@@ -58,6 +58,15 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         ctx.setCamelContext(getCamelContext());
         ctx.addResolvers(new CustomResolver(beansDeserializer));
         ctx.addResolvers(new ModelDeserializersResolver());
+        // check if compact notation warning is disabled
+        try {
+            String v = getCamelContext().resolvePropertyPlaceholders("{{?camel.main.yamlDslCompactNotationWarn}}");
+            if (v != null && "false".equalsIgnoreCase(v)) {
+                ctx.setCompactNotationWarn(false);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return ctx;
     }
 

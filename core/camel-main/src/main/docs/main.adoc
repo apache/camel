@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 131 options, which are listed below.
+The camel.main supports 132 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -155,6 +155,7 @@ The camel.main supports 131 options, which are listed below.
 | *camel.main.useMdcLogging* | To turn on MDC logging (deprecated, use camel-mdc component instead) | false | boolean
 | *camel.main.uuidGenerator* | UUID generator to use. default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter), off (turned off for exchanges - only intended for performance profiling) | default | String
 | *camel.main.virtualThreadsEnabled* | Whether to enable virtual threads when creating thread pools. When enabled, Camel will use virtual threads instead of platform threads for its thread pools. This can also be enabled via the JVM system property {code camel.threads.virtual.enabled=true} . This option must be read early during bootstrap, so it is set as a system property before thread pools are created. | false | boolean
+| *camel.main.yamlDslCompactNotationWarn* | Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel JBang to normalize existing routes: camel yaml normalize &lt;file&gt; | true | boolean
 |===
 
 

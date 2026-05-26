@@ -66,6 +66,8 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(security = "insecure:dev")
     private boolean devConsoleEnabled;
     private boolean modeline;
+    @Metadata(defaultValue = "true")
+    private boolean yamlDslCompactNotationWarn = true;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled = true;
     private String streamCachingAllowClasses;
@@ -497,6 +499,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setModeline(boolean modeline) {
         this.modeline = modeline;
+    }
+
+    public boolean isYamlDslCompactNotationWarn() {
+        return yamlDslCompactNotationWarn;
+    }
+
+    /**
+     * Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical
+     * (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel
+     * JBang to normalize existing routes: camel yaml normalize &lt;file&gt;
+     */
+    public void setYamlDslCompactNotationWarn(boolean yamlDslCompactNotationWarn) {
+        this.yamlDslCompactNotationWarn = yamlDslCompactNotationWarn;
     }
 
     public int getLogDebugMaxChars() {
@@ -1997,6 +2012,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withModeline(boolean modeline) {
         this.modeline = modeline;
+        return (T) this;
+    }
+
+    /**
+     * Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical
+     * (explicit/normalized) form.
+     */
+    public T withYamlDslCompactNotationWarn(boolean yamlDslCompactNotationWarn) {
+        this.yamlDslCompactNotationWarn = yamlDslCompactNotationWarn;
         return (T) this;
     }
 

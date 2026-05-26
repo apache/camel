@@ -153,6 +153,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("UseMdcLogging", boolean.class);
         map.put("UuidGenerator", java.lang.String.class);
         map.put("VirtualThreadsEnabled", boolean.class);
+        map.put("YamlDslCompactNotationWarn", boolean.class);
         ALL_OPTIONS = map;
     }
 
@@ -416,6 +417,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "uuidGenerator": target.setUuidGenerator(property(camelContext, java.lang.String.class, value)); return true;
         case "virtualthreadsenabled":
         case "virtualThreadsEnabled": target.setVirtualThreadsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "yamldslcompactnotationwarn":
+        case "yamlDslCompactNotationWarn": target.setYamlDslCompactNotationWarn(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -684,6 +687,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "uuidGenerator": return java.lang.String.class;
         case "virtualthreadsenabled":
         case "virtualThreadsEnabled": return boolean.class;
+        case "yamldslcompactnotationwarn":
+        case "yamlDslCompactNotationWarn": return boolean.class;
         default: return null;
         }
     }
@@ -948,6 +953,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "uuidGenerator": return target.getUuidGenerator();
         case "virtualthreadsenabled":
         case "virtualThreadsEnabled": return target.isVirtualThreadsEnabled();
+        case "yamldslcompactnotationwarn":
+        case "yamlDslCompactNotationWarn": return target.isYamlDslCompactNotationWarn();
         default: return null;
         }
     }

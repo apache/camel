@@ -34,6 +34,7 @@ import org.apache.camel.dsl.yaml.common.exception.UnknownNodeIdException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.constructor.StandardConstructor;
@@ -48,6 +49,8 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     private final Map<String, ConstructNode> constructors;
     private CamelContext camelContext;
     private Resource resource;
+    private boolean compactNotationWarn = true;
+    private boolean compactNotationWarned;
 
     public YamlDeserializationContext(LoadSettings settings) {
         super(settings);
@@ -73,6 +76,26 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     public void setResource(Resource resource) {
         this.resource = resource;
+    }
+
+    public boolean isCompactNotationWarn() {
+        return compactNotationWarn;
+    }
+
+    public void setCompactNotationWarn(boolean compactNotationWarn) {
+        this.compactNotationWarn = compactNotationWarn;
+    }
+
+    public void warnCompactNotationOnce(Logger log) {
+        if (compactNotationWarn && !compactNotationWarned) {
+            compactNotationWarned = true;
+            String loc = resource != null ? resource.getLocation() : "unknown";
+            log.warn("YAML DSL compact notation detected in: {}."
+                     + " It is recommended to use canonical/normalized YAML DSL notation"
+                     + " which is more tooling and AI friendly."
+                     + " Use Camel JBang to normalize: camel yaml normalize <file>",
+                    loc);
+        }
     }
 
     @Override

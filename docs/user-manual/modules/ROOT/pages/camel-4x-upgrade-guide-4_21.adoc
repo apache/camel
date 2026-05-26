@@ -189,6 +189,11 @@ A new `camel yaml normalize` command has been added to Camel JBang. It rewrites 
 classic (shorthand) form to the canonical (explicit) form. The `camel validate yaml` command also
 supports a new `--canonical` flag to validate against the canonical schema.
 
+Camel now logs a WARN message when YAML DSL routes use compact (shorthand) notation instead of
+the canonical form. This encourages adopting the canonical style which is more tooling and AI friendly.
+The warning is logged once per resource file. To disable this warning, set
+`camel.main.yamlDslCompactNotationWarn = false` in `application.properties`.
+
 === camel-kafka / Spring Boot
 
 When using `camel-kafka-starter` with Spring Boot, the standard `spring.kafka.*` properties are now automatically
