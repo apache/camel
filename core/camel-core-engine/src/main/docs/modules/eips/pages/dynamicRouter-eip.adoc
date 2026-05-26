@@ -67,14 +67,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:start
-    steps:
-      - dynamicRouter:
-          expression:
-            method:
-              beanType: com.foo.MySlipBean
-              method: slip
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - dynamicRouter:
+            expression:
+              method:
+                beanType: com.foo.MySlipBean
+                method: slip
 ----
 ====
 

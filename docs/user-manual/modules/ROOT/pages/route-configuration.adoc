@@ -262,10 +262,14 @@ And in the YAML routes you can assign which configurations to use:
     # refer to the route configuration by the id to use for this route
     routeConfigurationId: "yamlError"
     from:
-      uri: "timer:yaml?period=3s"
+      uri: timer:yaml
+      parameters:
+        period: 3s
       steps:
         - setBody:
-            simple: "Timer fired ${header.CamelTimerCounter} times"
+            expression:
+              simple:
+                expression: "Timer fired ${header.CamelTimerCounter} times"
         - to:
             uri: "log:yaml"
             parameters:

@@ -272,7 +272,9 @@ YAML::
       uri: direct:start
       steps:
         - to:
-            uri: "file:outbox?bufferSize={{buf}}"
+            uri: file:outbox
+            parameters:
+              bufferSize: "{{buf}}"
 ----
 ====
 
@@ -399,7 +401,9 @@ YAML::
       uri: direct:start
       steps:
         - to:
-            uri: "elasticsearch:foo?query={{myQuery?nested=false}}"
+            uri: elasticsearch:foo
+            parameters:
+              query: "{{myQuery?nested=false}}"
 ----
 ====
 
@@ -483,7 +487,10 @@ YAML::
       uri: direct:start
       steps:
         - to:
-            uri: "log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}"
+            uri: "log:{{cool.start}}"
+            parameters:
+              showBodyType: "false"
+              showExchangeId: "{{cool.showid}}"
         - to:
             uri: "mock:{{cool.result}}"
 ----
@@ -851,7 +858,9 @@ YAML::
         - choice:
             disabled: "{{boolean:region == 'EMEA'}}"
             when:
-            - simple: "${header.RetryAttempts} == null"
+            - expression:
+                simple:
+                  expression: "${header.RetryAttempts} == null"
               steps:
               - setProperty:
                   name: "HttpMessageMethod"
