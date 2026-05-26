@@ -171,6 +171,6 @@ public class WriteClientTest extends AbstractMiloServerTest {
 
     private static void sendValue(final ProducerTemplate producerTemplate, final Variant variant) {
         // we always write synchronously since we do need the message order
-        producerTemplate.sendBodyAndHeader(variant, "await", true);
+        producerTemplate.sendBodyAndHeader(variant, "CamelMiloAwait", true);
     }
 }

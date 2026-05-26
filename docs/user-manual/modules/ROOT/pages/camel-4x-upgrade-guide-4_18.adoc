@@ -717,3 +717,29 @@ between the transport `from` and the `cxf:` `to`:
 The same pattern applies to HTTP-based bridges (`platform-http`/`jetty`/`netty
 -http`/`http` -> `cxf:`) and any other transport whose default
 `HeaderFilterStrategy` filters `Camel*` headers.
+
+=== camel-milo - potential breaking change
+
+The `MiloConstants.HEADER_AWAIT` constant, which controls whether milo-client
+writes are awaited, used the header value `await` — outside the `Camel`
+namespace and therefore not filtered by the default `HeaderFilterStrategy`. It
+has been renamed to follow the Camel naming convention. The Java field name is
+unchanged; only the header string value has changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `MiloConstants.HEADER_AWAIT` | `await` | `CamelMiloAwait`
+|===
+
+`MiloConstants.HEADER_NODE_IDS` was already `Camel`-prefixed
+(`CamelMiloNodeIds`) and is unchanged.
+
+Routes that reference the constant symbolically (for example
+`setHeader(MiloConstants.HEADER_AWAIT, ...)`) continue to work without changes.
+Routes that set the header by its literal string value (for example
+`setHeader("await", ...)`) must be updated to use the new value
+(`setHeader("CamelMiloAwait", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessor `await()` on
+`MiloClientHeaderNameBuilder` has been renamed to `miloAwait()`.
