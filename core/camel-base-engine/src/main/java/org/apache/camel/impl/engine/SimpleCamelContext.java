@@ -69,6 +69,7 @@ import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
@@ -627,6 +628,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected StreamCachingStrategy createStreamCachingStrategy() {
         return new DefaultStreamCachingStrategy();
+    }
+
+    @Override
+    protected MessageSizeStrategy createMessageSizeStrategy() {
+        return new DefaultMessageSizeStrategy();
     }
 
     @Override

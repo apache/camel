@@ -39,6 +39,22 @@ public interface RuntimeConfiguration {
     Boolean isStreamCaching();
 
     /**
+     * Sets whether message size capturing is enabled or not (default is disabled).
+     *
+     * @param messageSize whether message size is enabled or not
+     * @since             4.21
+     */
+    void setMessageSize(Boolean messageSize);
+
+    /**
+     * Returns whether message size capturing is enabled.
+     *
+     * @return <tt>true</tt> if message size is enabled
+     * @since  4.21
+     */
+    Boolean isMessageSize();
+
+    /**
      * Returns whether tracing enabled
      *
      * To use tracing then either turn on tracing standby or enable tracing to make tracing possible.

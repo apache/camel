@@ -15,7 +15,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(149);
+        Map<String, String> map = new HashMap<>(151);
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
         map.put("AGGREGATED_CORRELATION_KEY", "CamelAggregatedCorrelationKey");
@@ -113,6 +113,8 @@ public class ExchangeConstantProvider {
         map.put("MAXIMUM_SIMPLE_CACHE_SIZE", "CamelMaximumSimpleCacheSize");
         map.put("MAXIMUM_TRANSFORMER_CACHE_SIZE", "CamelMaximumTransformerCacheSize");
         map.put("MAXIMUM_VALIDATOR_CACHE_SIZE", "CamelMaximumValidatorCacheSize");
+        map.put("MESSAGE_BODY_SIZE", "CamelMessageBodySize");
+        map.put("MESSAGE_HEADERS_SIZE", "CamelMessageHeadersSize");
         map.put("MESSAGE_HISTORY", "CamelMessageHistory");
         map.put("MESSAGE_HISTORY_HEADER_FORMAT", "CamelMessageHistoryHeaderFormat");
         map.put("MESSAGE_HISTORY_OUTPUT_FORMAT", "CamelMessageHistoryOutputFormat");

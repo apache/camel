@@ -96,6 +96,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("MainListeners", java.util.List.class);
         map.put("MdcLoggingKeysPattern", java.lang.String.class);
         map.put("MessageHistory", boolean.class);
+        map.put("MessageSizeEnabled", boolean.class);
         map.put("Modeline", boolean.class);
         map.put("Name", java.lang.String.class);
         map.put("ProducerTemplateCacheSize", int.class);
@@ -307,6 +308,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "mdcLoggingKeysPattern": target.setMdcLoggingKeysPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "messagehistory":
         case "messageHistory": target.setMessageHistory(property(camelContext, boolean.class, value)); return true;
+        case "messagesizeenabled":
+        case "messageSizeEnabled": target.setMessageSizeEnabled(property(camelContext, boolean.class, value)); return true;
         case "modeline": target.setModeline(property(camelContext, boolean.class, value)); return true;
         case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "producertemplatecachesize":
@@ -577,6 +580,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "mdcLoggingKeysPattern": return java.lang.String.class;
         case "messagehistory":
         case "messageHistory": return boolean.class;
+        case "messagesizeenabled":
+        case "messageSizeEnabled": return boolean.class;
         case "modeline": return boolean.class;
         case "name": return java.lang.String.class;
         case "producertemplatecachesize":
@@ -843,6 +848,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "mdcLoggingKeysPattern": return target.getMdcLoggingKeysPattern();
         case "messagehistory":
         case "messageHistory": return target.isMessageHistory();
+        case "messagesizeenabled":
+        case "messageSizeEnabled": return target.isMessageSizeEnabled();
         case "modeline": return target.isModeline();
         case "name": return target.getName();
         case "producertemplatecachesize":

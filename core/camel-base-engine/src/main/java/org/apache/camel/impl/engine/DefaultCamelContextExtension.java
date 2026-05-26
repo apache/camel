@@ -63,6 +63,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -127,6 +128,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ClassResolver classResolver;
     private volatile MessageHistoryFactory messageHistoryFactory;
     private volatile StreamCachingStrategy streamCachingStrategy;
+    private volatile MessageSizeStrategy messageSizeStrategy;
     private volatile InflightRepository inflightRepository;
     private volatile ErrorRegistry errorRegistry;
     private volatile UuidGenerator uuidGenerator;
@@ -863,6 +865,25 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
         this.streamCachingStrategy
                 = camelContext.getInternalServiceManager().addService(camelContext, streamCachingStrategy, true, false, true);
+    }
+
+    MessageSizeStrategy getMessageSizeStrategy() {
+        if (messageSizeStrategy == null) {
+            lock.lock();
+            try {
+                if (messageSizeStrategy == null) {
+                    setMessageSizeStrategy(camelContext.createMessageSizeStrategy());
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        return messageSizeStrategy;
+    }
+
+    void setMessageSizeStrategy(MessageSizeStrategy messageSizeStrategy) {
+        this.messageSizeStrategy
+                = camelContext.getInternalServiceManager().addService(camelContext, messageSizeStrategy, true, false, true);
     }
 
     InflightRepository getInflightRepository() {

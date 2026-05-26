@@ -99,6 +99,7 @@ public class ProfileConfigurer {
             config.setLoadStatisticsEnabled(true);
             config.setMessageHistory(true);
             config.setInflightRepositoryBrowseEnabled(true);
+            config.setMessageSizeEnabled(true);
             config.setEndpointRuntimeStatisticsEnabled(true);
             config.setJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
             config.setJmxUpdateRouteEnabled(true);

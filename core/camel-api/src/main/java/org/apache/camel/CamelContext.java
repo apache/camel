@@ -39,6 +39,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
@@ -1770,6 +1771,20 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Sets a custom {@link StreamCachingStrategy} to use.
      */
     void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy);
+
+    /**
+     * Gets the {@link MessageSizeStrategy} to use.
+     *
+     * @since 4.21
+     */
+    MessageSizeStrategy getMessageSizeStrategy();
+
+    /**
+     * Sets a custom {@link MessageSizeStrategy} to use.
+     *
+     * @since 4.21
+     */
+    void setMessageSizeStrategy(MessageSizeStrategy messageSizeStrategy);
 
     /**
      * Gets the {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use, or <tt>null</tt> if none is in use.

@@ -227,6 +227,24 @@
         ]
     },
     {
+        "name": "message-size",
+        "title": "Message Size",
+        "description": "Track message body and header sizes per endpoint",
+        "level": "beginner",
+        "tags": [
+            "observability",
+            "monitoring",
+            "seda"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "message-size.camel.yaml"
+        ]
+    },
+    {
         "name": "mqtt",
         "title": "MQTT",
         "description": "Receive MQTT events from an external MQTT broker",

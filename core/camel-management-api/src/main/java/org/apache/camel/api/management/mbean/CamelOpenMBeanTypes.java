@@ -108,11 +108,19 @@ public final class CamelOpenMBeanTypes {
     public static CompositeType listRuntimeEndpointsCompositeType() throws OpenDataException {
         return new CompositeType(
                 "endpoints", "Endpoints",
-                new String[] { "index", "url", "routeId", "direction", "static", "dynamic", "hits" },
-                new String[] { "Index", "Url", "Route Id", "Direction", "Static", "Dynamic", "Hits" },
+                new String[] {
+                        "index", "url", "routeId", "direction", "static", "dynamic", "hits",
+                        "minBodySize", "maxBodySize", "meanBodySize",
+                        "minHeadersSize", "maxHeadersSize", "meanHeadersSize" },
+                new String[] {
+                        "Index", "Url", "Route Id", "Direction", "Static", "Dynamic", "Hits",
+                        "Min Body Size", "Max Body Size", "Mean Body Size",
+                        "Min Headers Size", "Max Headers Size", "Mean Headers Size" },
                 new OpenType[] {
                         SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN,
-                        SimpleType.BOOLEAN, SimpleType.LONG });
+                        SimpleType.BOOLEAN, SimpleType.LONG,
+                        SimpleType.LONG, SimpleType.LONG, SimpleType.LONG,
+                        SimpleType.LONG, SimpleType.LONG, SimpleType.LONG });
     }
 
     public static TabularType listComponentsTabularType() throws OpenDataException {
