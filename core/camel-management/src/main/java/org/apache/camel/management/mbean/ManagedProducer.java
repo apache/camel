@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProducerMBean;
+import org.apache.camel.spi.StepIdAware;
 
 @ManagedResource(description = "Managed Producer")
 public class ManagedProducer extends ManagedService implements ManagedProducerMBean {
@@ -32,6 +33,14 @@ public class ManagedProducer extends ManagedService implements ManagedProducerMB
 
     public Producer getProducer() {
         return producer;
+    }
+
+    @Override
+    public String getStepId() {
+        if (producer instanceof StepIdAware sia) {
+            return sia.getStepId();
+        }
+        return null;
     }
 
     @Override

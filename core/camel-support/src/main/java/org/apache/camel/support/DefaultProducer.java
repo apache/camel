@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -27,12 +28,13 @@ import org.slf4j.LoggerFactory;
 /**
  * A default implementation of {@link Producer} for implementation inheritance.
  */
-public abstract class DefaultProducer extends ServiceSupport implements Producer {
+public abstract class DefaultProducer extends ServiceSupport implements Producer, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProducer.class);
 
     private transient String producerToString;
     private final Endpoint endpoint;
+    private String stepId;
 
     protected DefaultProducer(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -61,6 +63,16 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     @Override
     public boolean isSingleton() {
         return endpoint.isSingleton();
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override
