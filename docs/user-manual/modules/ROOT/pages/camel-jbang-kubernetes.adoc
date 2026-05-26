@@ -696,10 +696,14 @@ to run the Camel application on Kubernetes.
 
 [source,yaml]
 ----
-- from:
-    uri: knative:event/camel.evt.type?name=my-broker
-    steps:
-      - to: log:info
+- route:
+    from:
+      uri: knative:event/camel.evt.type
+      parameters:
+        name: my-broker
+      steps:
+        - to:
+            uri: log:info
 ----
 
 The route consumes Knative events of type `camel.evt.type`.
@@ -773,10 +777,12 @@ The Camel route that connects to a Knative channel in order to receive events lo
 
 [source,yaml]
 ----
-- from:
-    uri: knative:channel/my-channel
-    steps:
-      - to: log:info
+- route:
+    from:
+      uri: knative:channel/my-channel
+      steps:
+        - to:
+            uri: log:info
 ----
 
 The Knative channel is referenced by its name.
@@ -853,12 +859,16 @@ The following route produces events on a Knative broker:
 
 [source, yaml]
 ----
-- from:
-    uri: timer:tick
-    steps:
-      - setBody:
-          constant: Hello Camel !!!
-      - to: knative:event/camel.evt.type?name=my-broker
+- route:
+    from:
+      uri: timer:tick
+      steps:
+        - setBody:
+            constant: Hello Camel !!!
+        - to:
+            uri: knative:event/camel.evt.type
+            parameters:
+              name: my-broker
 ----
 
 The route produces events of type `camel.evt.type` and pushes the events to the broker named `my-broker`.

@@ -245,4 +245,17 @@ class ConsumersTab implements MonitorTab {
         String s3 = ci.sinceLastFailed != null ? ci.sinceLastFailed : "-";
         return s1 + "/" + s2 + "/" + s3;
     }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.consumers.isEmpty()) {
+            return null;
+        }
+        List<ConsumerInfo> sorted = new ArrayList<>(info.consumers);
+        sorted.sort(this::sortConsumer);
+        List<String> items = sorted.stream().map(c -> c.id != null ? c.id : "").toList();
+        Integer sel = tableState.selected();
+        return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Consumers");
+    }
 }

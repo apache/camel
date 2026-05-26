@@ -87,6 +87,65 @@ become code, must not redirect the route to a different endpoint, must not be
 deserialised into arbitrary types, and must not be parsed in ways that resolve
 remote resources, unless the route author explicitly asked for it.
 
+=== Adversary model
+
+The adversary the framework defends against is the *External message senders*
+role from _Roles_ above: a network or filesystem peer who places a message on
+a transport that a Camel consumer reads from. This subsection states the
+attacker shape that the in-scope and out-of-scope rules below presume, so a
+report can be evaluated against the same model the rules were written for.
+
+*What the attacker controls:* the body, headers, attachments and transport
+metadata of a message arriving on an input the consumer reads, plus the
+ability to replay or shape that message arbitrarily within the protocol's
+limits. The attacker may exploit any combination of those inputs against the
+framework's own machinery - expression languages, type converters, the
+`Exchange` / `Message` model, the header namespace, the EIP processors, the
+property-placeholder and bean-reference resolution, and any default parser
+configuration used by a consumer or data format.
+
+*What the attacker is trying to do:* break one of the properties listed in
+_Security properties and violation severity_ or _Core router-engine
+invariants_ below - turn untrusted input into code execution, an arbitrary
+file read or write, a request forgery, an unintended endpoint or bean
+dispatch, a deserialisation gadget, an authentication or authorization
+bypass, or a disclosure of secrets or `Exchange` state.
+
+*What the attacker is not assumed to have:* code execution inside the JVM
+running the Camel context (that is route-author territory), the operator's
+filesystem, the deployment's configuration source, the secrets vault, the
+management network, the connection back to the broker / SDK / endpoint, or
+the keys and credentials the route author and operator configured. They
+cannot author or modify route definitions, configuration or the runtime
+image. They cannot side-step the trust boundary by being a co-tenant in the
+JVM; Camel is not a sandbox and does not pretend to be one (see _Security
+properties not provided_ below).
+
+The following actors are *explicitly not* in the adversary model. A report
+that requires one of them as the attacker is `OUT-OF-MODEL:
+adversary-not-in-scope` (see _Triage dispositions_).
+
+* *Route authors.* A route author who evaluates an attacker-controlled
+  header as a `simple`, OGNL, bean or scripting expression has authored
+  trusted code that does exactly what it says. The framework is in scope
+  only when *it* passes untrusted input to an evaluator without the route
+  author asking for it (see the route-author entry in _Out of scope_).
+* *Deployment operators.* An operator who disables TLS verification,
+  enables Java serialisation, picks a relaxed profile, or exposes a
+  management surface to the public network has signed up for the
+  consequences. Misconfiguration is operator territory unless the
+  framework's default exposed it.
+* *Network peers reaching a management surface.* `camel-management`, the
+  developer console, `camel-jolokia` and JMX are administrative APIs whose
+  trust boundary is the management surface itself (JVM JMX authentication,
+  the Jolokia restrictor policy, the network exposure of the management
+  port), not the individual MBean method. See the management-surface entry
+  in _Out of scope_.
+* *Authors of transitive third-party dependencies.* A CVE in a JAR Camel
+  pulls in but does not reach through any Camel-exposed code path is the
+  upstream project's vulnerability. See the third-party-dependency entry
+  in _Out of scope_.
+
 == Vulnerability scope
 
 A report is in scope when it demonstrates that the framework, in a default or
@@ -213,6 +272,116 @@ input, or wired an untrusted source straight through without
 _Out of scope_, not a framework vulnerability - the same line the rest of this
 model draws between the route plus its configuration and the data flowing
 through it.
+
+=== Security properties not provided
+
+The complement of _Security properties and violation severity_ and _Core
+router-engine invariants_ above: properties the framework does *not* claim,
+and well-known attack classes it does *not* defend against on its own.
+Listing them is what lets the in-scope / out-of-scope rules below work as a
+closed set rather than an "everything else is also a vulnerability" reading.
+A report whose entire claim is "feature X failed to do Y" can then be
+routed to "X was not built to do Y" rather than re-argued case by case.
+
+* *No sandboxing of the route or the JVM running it.* Route authors execute
+  arbitrary Java in `.bean()`, `.process()` and class references; evaluate
+  arbitrary expressions in `simple`, `groovy`, `jexl`, `mvel`, `xpath`,
+  `ognl`; reach any class on the classpath; and configure any component
+  option. Camel does not constrain what route code is allowed to do
+  (see the route-author entry in _Roles_).
+* *No availability guarantee under attacker-influenced volume or resource
+  cost.* The engine does not throttle, bound aggregation, cap recursion
+  or limit per-`Exchange` memory. Operators apply `throttle`,
+  `circuitBreaker`, `resilience4j` and JVM limits; algorithmic-complexity
+  attacks in third-party parsers (XML billion-laughs, ReDoS in
+  route-author regex, decompression amplification in zip / gzip / brotli
+  inputs) are out of scope unless Camel exposes the parser in a way that
+  bypasses the library's own limits. See the denial-of-service entry in
+  _Out of scope_ and the unbounded-resource row in _Core router-engine
+  invariants_.
+* *No automatic sanitisation of application-level semantic headers.* The
+  framework's automatic header filtering is scoped to the internal
+  `Camel*` / `org.apache.camel.*` namespace only. Application-level
+  headers that components consume as part of their documented header
+  contract - `To`, `Cc`, `Bcc`, `Subject`, `From` in `camel-mail`;
+  arbitrary HTTP header names; JMS properties; AMQP, MQTT, CoAP and Kafka
+  headers - are passed through intentionally. Sanitising them against an
+  untrusted upstream is the route author's responsibility at the trust
+  boundary (`removeHeaders`, normalisation, allow-listing). See the third
+  bullet under _Known limitations_.
+* *No shield against transitive-dependency CVEs.* A CVE in a JAR Camel
+  pulls in is the upstream project's vulnerability; Camel fixes CVEs in
+  Camel code, not in third-party JARs. Camel may upgrade the dependency
+  to pick up an upstream fix, but the CVE itself is closed against the
+  upstream project. See the third-party-dependency entry in _Out of
+  scope_.
+* *No production guarantees under the non-default `dev` or `test`
+  profile.* The dev console, debug and trace endpoints, the backlog
+  debugger and verbose diagnostics are enabled, and the security policy
+  default relaxes from `fail` to `warn`. Camel may reveal configuration,
+  route and `Exchange` detail that it would not reveal under the default
+  `prod` profile. See the profile entry in _Out of scope_ and
+  `design/security.adoc`.
+* *No production-grade information-hiding guarantees under non-default
+  diagnostic log levels.* DEBUG and TRACE log levels are diagnostic, not
+  production, configurations; they are expected to log internal
+  `Exchange`, route and configuration detail that the default INFO,
+  WARN and ERROR levels do not. The project strives to avoid logging
+  sensitive data even at diagnostic levels where it makes sense, but
+  does not commit to redacting it. The default INFO, WARN and ERROR
+  levels are what the framework commits to keeping clean of sensitive
+  data; see the *Information disclosure of secrets or sensitive
+  Exchange state* class under _In-scope vulnerability classes_.
+* *No defence against the operator misconfiguring the deployment outside
+  the framework's defaults.* `trustAllCertificates=true`,
+  `hostnameVerificationEnabled=false`, `allowJavaSerializedObject=true`,
+  `transferException=true`, exposing the management surface on a public
+  network, placing the aggregation-repository store on a writeable share -
+  all are operator decisions. The framework is in scope only when the
+  *default* shipped the risky behaviour. See the explicit-opt-in entry
+  in _Out of scope_.
+* *No constant-time, side-channel-resistant comparison or cryptographic
+  primitives.* Equality of headers, tokens and identifiers uses
+  general-purpose Java comparison. Route-author code that compares a
+  shared secret against an untrusted input is responsible for using a
+  constant-time comparator; Camel does not provide one.
+
+==== False-friend properties
+
+Features that *look like* a security property and are sometimes mistaken
+for one. Each is documented here so that a report whose claim rests on
+the misunderstanding can be closed against the correct contract.
+
+* *`DefaultHeaderFilterStrategy` is an internal-namespace filter, not an
+  application-header sanitiser.* It filters the `Camel*` /
+  `org.apache.camel.*` namespace case-insensitively, which is what
+  contains the internal-dispatch family (the CVE-2025-27636 class). It
+  does not, and cannot, strip the application-level headers a component
+  reads as semantic input. Route authors who need application-header
+  sanitisation must do it explicitly at the trust boundary.
+* *`removeHeaders("Camel*")` strips the internal-dispatch headers, not
+  every untrusted-origin header.* It is the recommended trust-boundary
+  hygiene against the internal-header dispatch class (see _Deployment
+  hardening_), and it is necessary; it is not, on its own, sufficient
+  to sanitise the application headers a downstream component will trust.
+* *The security policy enforcement framework is a configuration linter,
+  not a runtime sandbox.* The four categories (`secret`, `insecure:ssl`,
+  `insecure:serialization`, `insecure:dev`) detect insecure configuration
+  at bootstrap time and emit a warning or fail startup under the `prod`
+  profile. They do not intercept runtime data or enforce a policy on a
+  per-`Exchange` basis. See `design/security.adoc`.
+* *Component deprecation is not a security boundary.* A `(deprecated)`
+  component still ships in a supported release and remains in limited
+  scope (see _Deprecated and removed components_). Deprecation marks a
+  removal path with a documented migration; it does not by itself reduce
+  the trust boundary or imply the component is unsafe to receive a fix.
+* *TLS by default is not peer authentication.* Components that default
+  to TLS for transport (HTTP, AMQP, MQTT, Kafka, JMS) protect the wire
+  from passive observers and trivial man-in-the-middle. They do not, on
+  their own, validate that the peer is the one the route intended to
+  talk to; that requires an `SSLContextParameters` with a trust store
+  and hostname verification configured by the operator (see _Deployment
+  hardening_).
 
 === In-scope vulnerability classes
 
@@ -348,6 +517,13 @@ Historical examples: CVE-2023-34442 (`camel-jira` writing attachments to
 world-readable temp files), CVE-2024-22371 (`EventFactory` exposing sensitive
 Exchange data via a custom event).
 
+Judged against the default production log levels (INFO, WARN, ERROR);
+findings whose impact only manifests when the operator has enabled the
+diagnostic DEBUG or TRACE levels are out of scope, since those levels are
+operator-enabled diagnostic configurations expected to log internal
+`Exchange`, route and configuration detail (see the diagnostic-logging
+entry under _Known non-findings_).
+
 ==== Insecure defaults
 
 A component shipping with a security-relevant option enabled by default - Java
@@ -427,8 +603,10 @@ be closed as `not a vulnerability`.
   "MBean operation X executes code or sends to endpoint Y when invoked
   from a JMX or Jolokia connection" describes the documented contract,
   not a framework vulnerability.
-* *Vulnerabilities in third-party transitive dependencies that are not
-  reachable through any Camel-exposed code path.* See
+* *Vulnerabilities in third-party transitive dependencies.* Camel fixes
+  CVEs in Camel code, not in third-party JARs; the report belongs
+  upstream. Camel may upgrade the dependency to pick up an upstream fix,
+  but the CVE itself is closed against the upstream project. See
   https://github.com/apache/camel/blob/main/SECURITY.md[`SECURITY.md`] and the
   upstream project for the actual CVE.
 * *Self-XSS by an authenticated user* of a UI built on top of Camel.
@@ -509,6 +687,179 @@ they are, the change is announced through the normal upgrade-guide channel.
   Kafka-client behaviour; cloud SDK components inherit the SDK's TLS and auth
   defaults. A report against Camel must show the Camel framework, not the underlying
   client, is the cause.
+
+=== Known non-findings
+
+Patterns that automated scanners, AI-assisted analysers and human
+reviewers repeatedly report against Camel that are *not* framework
+vulnerabilities under this model. Each entry names the recurring claim,
+cites the section of this document that discharges it, and where
+appropriate states the suppression shape. This list is the
+highest-leverage input for an automated triage pass; it can be fed back
+to a scanner verbatim as a negative prompt or suppression configuration.
+Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
+
+* *"Component X depends on a JAR with CVE-Z, therefore Camel is
+  vulnerable."* Out of scope per the transitive-dependency entry in
+  _Out of scope_. Camel fixes CVEs in Camel code, not in third-party
+  JARs; the report belongs upstream. Camel may upgrade the dependency
+  to pick up an upstream fix, but the CVE itself is closed against the
+  upstream project.
+* *"`simple(...)`, `xpath(...)`, `groovy(...)`, `jexl(...)` or
+  `mvel(...)` evaluates an untrusted expression."* The expression text
+  is route-author code, not untrusted input. The framework is in scope
+  only when *it* passes an `Exchange` body, header or property to an
+  evaluator without the route author placing an expression there - the
+  first invariant under _Core router-engine invariants_. Otherwise this
+  is the route-author entry in _Out of scope_.
+* *"`.bean(...)`, `.process(...)`, `Runtime.exec(...)` or a `Class`
+  reference allows RCE."* These are route-author primitives by design.
+  Route code is trusted code; see the route-author entry in _Out of
+  scope_ and the route-author row in _Roles_.
+* *"A `Camel*` / `org.apache.camel.*` header controls dispatch, therefore
+  the consumer is vulnerable."* Bean-based dispatch via internal headers
+  is the public contract for letting a route control component behaviour;
+  see the second bullet under _Known limitations_. A finding is in scope
+  only when a *consumer* promotes an untrusted-origin value into that
+  namespace without an effective `HeaderFilterStrategy` - the
+  Camel-header / bean-dispatch class under _In-scope vulnerability
+  classes_.
+* *"Application-level header X (`To`, `Subject`, HTTP `X-...`, JMS
+  property, AMQP / MQTT / CoAP / Kafka header) is not stripped, therefore
+  the consumer is vulnerable."* Application-level headers are part of
+  each component's documented header contract and are intentionally
+  passed through; the framework filters only the internal `Camel*`
+  namespace. See the third bullet under _Known limitations_ and the
+  application-headers point under _Security properties not provided_.
+  The route author sanitises at the trust boundary.
+* *"`DefaultHeaderFilterStrategy` can be bypassed by changing the case
+  (`caMEL`, `CAMEL`)."* The default strategy is case-insensitive out of
+  the box (`Camel`, `CAMEL` and `caMEL` are filtered identically); see
+  the third bullet under _Known limitations_. A finding here would have
+  to demonstrate a *custom* strategy that does not extend
+  `DefaultHeaderFilterStrategy` and re-implements the matching without
+  case-insensitivity - and the fix lives in that custom strategy.
+* *"The developer console, the backlog debugger, the `Tracer` /
+  `BacklogTracer`, JMX, Jolokia or `camel-management` exposes
+  operations that execute code or read `Exchange` state."* Management surfaces; the trust boundary is the
+  surface itself (JVM JMX authentication, the Jolokia restrictor, the
+  network exposure of the management port), not the individual MBean
+  method. See the management-surface entry in _Out of scope_ and the
+  error-handling row in _Core router-engine invariants_.
+* *"A finding only manifests under `camel.main.profile=dev` or
+  `camel.main.profile=test`."* Non-default development-only
+  configuration; out of scope per the profile entry in _Out of scope_.
+* *"`camel-FOO` logs the Exchange body, a header, or a configuration
+  value at DEBUG or TRACE level."* DEBUG and TRACE are diagnostic log
+  levels enabled explicitly by the operator; they are expected to
+  reveal internal `Exchange`, route and configuration detail that the
+  default INFO, WARN and ERROR levels do not. Information-disclosure
+  findings are judged against the default production log levels (see
+  the *Information disclosure of secrets or sensitive Exchange state*
+  class under _In-scope vulnerability classes_, and the
+  diagnostic-log-levels point under _Security properties not provided_).
+  The project strives to avoid logging sensitive data even at
+  diagnostic levels where it makes sense, but does not commit to
+  redacting it.
+* *"Component `camel-FOO` uses MD5 / SHA-1 / a non-cryptographic hash
+  function."* Camel uses content hashing for non-security purposes such
+  as idempotency keys, content-based routing identifiers, partitioner
+  selection and cache keys. A finding requires the use to be a security
+  primitive (authentication, integrity check, secret derivation,
+  signature), not a routing or identification primitive. See the
+  constant-time-comparison point under _Security properties not
+  provided_.
+* *"A deprecated component still ships and has a CVE."* Deprecated
+  components are in limited scope; the primary remediation is the
+  documented migration to the supported replacement, not necessarily a
+  fix in the deprecated component. See _Deprecated and removed
+  components_.
+* *"An option `allowJavaSerializedObject=true`,
+  `transferException=true`, `mapJmsMessage=true`,
+  `trustAllCertificates=true` or `hostnameVerificationEnabled=false`
+  enables an unsafe behaviour."* Documented opt-ins; the operator has
+  explicitly accepted the consequence. See the explicit-opt-in entry in
+  _Out of scope_.
+* *"A finding lands in a `core/camel-*` module."* Routed first against
+  _Core router-engine invariants_. If the engine upheld every listed
+  invariant and the violation arises only because a route author
+  authored an expression or route over untrusted input, or wired an
+  untrusted source straight through without `removeHeaders("Camel*")`,
+  the disposition is the route-author position in _Out of scope_.
+
+=== Triage dispositions
+
+The closed set of outcomes a vulnerability report, scanner finding or
+AI-assisted review can receive when judged against this model. Each
+disposition cites the section that licenses it, so the triage response is
+"see _Section X_ of this document" rather than ad-hoc prose. A finding
+that does not fit any of the dispositions below is `MODEL-GAP`, and the
+correct response is to revise the model (extend _In-scope vulnerability
+classes_, _Out of scope_, _Known limitations_ or _Security properties
+not provided_), not to close the report ad hoc.
+
+[cols="2,3,2",options="header"]
+|===
+| Disposition | Meaning | Licensed by
+
+| `VALID`
+| Violates a property the framework claims, via the adversary defined in
+  _Adversary model_ and an input the model marks untrusted. Fixed in a
+  coordinated release; published as a CVE advisory.
+| _Security properties and violation severity_, _Core router-engine
+  invariants_, _In-scope vulnerability classes_, _Adversary model_
+
+| `VALID-HARDENING`
+| No claimed property is violated, but a recurring misuse or scanner
+  pattern makes the framework elect to harden the default or add a
+  defence-in-depth check at maintainer discretion. Reported privately;
+  typically shipped without a CVE; documented in the upgrade guide.
+| _Known limitations_, _Guidance for component authors and reviewers_
+
+| `OUT-OF-MODEL: trusted-input`
+| Requires control over an input the model marks trusted (route DSL,
+  configuration property, operator-controlled file).
+| _Trust model_ (_Roles_, _Trust boundaries_)
+
+| `OUT-OF-MODEL: adversary-not-in-scope`
+| Requires an attacker capability the adversary model excludes (route
+  author, deployment operator, management-surface network peer, author
+  of a transitive third-party dependency).
+| _Adversary model_
+
+| `OUT-OF-MODEL: unsupported-component`
+| The affected component has been removed in supported releases, or the
+  finding is against example or sample code outside the framework's
+  shipped surface.
+| _Deprecated and removed components_
+
+| `OUT-OF-MODEL: non-default-build`
+| Only manifests under a non-default profile (`camel.main.profile = dev`
+  or `test`), an explicit opt-in option
+  (`allowJavaSerializedObject=true`, `transferException=true`,
+  `trustAllCertificates=true`, `hostnameVerificationEnabled=false`,
+  `mapJmsMessage=true`) or another documented opt-in.
+| _Out of scope_ (profile and explicit-opt-in entries),
+  `design/security.adoc`
+
+| `BY-DESIGN: property-disclaimed`
+| Concerns a property the framework explicitly does not provide -
+  DoS / resource bounds, JVM sandboxing, application-level header
+  sanitisation, transitive-dependency CVEs, constant-time comparison,
+  protection from operator misconfiguration outside framework defaults.
+| _Security properties not provided_, _Out of scope_
+
+| `KNOWN-NON-FINDING`
+| Matches a documented recurring false-positive pattern.
+| _Known non-findings_
+
+| `MODEL-GAP`
+| Does not fit any disposition above. Triggers a revision of this
+  document (a new in-scope class, a new out-of-scope entry, a new
+  known limitation or a new disclaimed property) rather than an
+  ad-hoc call on the report.
+| _Reporting a vulnerability_ (PMC review), upgrade-guide entry
+|===
 
 == Deployment hardening
 

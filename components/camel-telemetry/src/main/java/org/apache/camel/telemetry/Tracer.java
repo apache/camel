@@ -55,6 +55,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
      * Component configuration
      */
     private String excludePatterns;
+    private String includePatterns;
     private boolean traceProcessors;
     private boolean disableCoreProcessors;
     private boolean traceHeadersInclusion;
@@ -87,6 +88,15 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
 
     public void setExcludePatterns(String excludePatterns) {
         this.excludePatterns = excludePatterns;
+    }
+
+    @ManagedAttribute
+    public String getIncludePatterns() {
+        return includePatterns;
+    }
+
+    public void setIncludePatterns(String includePatterns) {
+        this.includePatterns = includePatterns;
     }
 
     @ManagedAttribute
@@ -185,6 +195,13 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         camelContext.getRoutePolicyFactories().remove(this);
     }
 
+    public boolean match(String endpointUri, CamelContext context) {
+        boolean included = includePatterns == null || include(endpointUri, context);
+        boolean excluded = exclude(endpointUri, context);
+
+        return included && !excluded;
+    }
+
     public boolean exclude(String endpointUri, CamelContext context) {
         if (endpointUri != null && excludePatterns != null) {
             for (String pattern : excludePatterns.split(",")) {
@@ -194,6 +211,20 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 }
             }
         }
+        return false;
+    }
+
+    public boolean include(String endpointUri, CamelContext context) {
+        if (endpointUri != null && includePatterns != null) {
+            for (String pattern : includePatterns.split(",")) {
+                pattern = pattern.trim();
+
+                if (EndpointHelper.matchEndpoint(context, endpointUri, pattern)) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -210,16 +241,16 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         public void notify(CamelEvent event) throws Exception {
             try {
                 if (event instanceof CamelEvent.ExchangeSendingEvent ese) {
-                    if (exclude(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
-                        LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
-                    } else {
+                    if (match(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
                         beginEventSpan(ese.getExchange(), ese.getEndpoint(), Op.EVENT_SENT);
+                    } else {
+                        LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
                     }
                 } else if (event instanceof CamelEvent.ExchangeSentEvent ese) {
-                    if (exclude(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
-                        LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
-                    } else {
+                    if (match(ese.getEndpoint().getEndpointUri(), ese.getExchange().getContext())) {
                         endEventSpan(ese.getExchange(), ese.getEndpoint());
+                    } else {
+                        LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", ese.getEndpoint());
                     }
                 }
             } catch (Exception t) {
@@ -233,10 +264,10 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
             try {
-                if (exclude(route.getEndpoint().getEndpointUri(), exchange.getContext())) {
-                    LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", route.getEndpoint());
-                } else {
+                if (match(route.getEndpoint().getEndpointUri(), exchange.getContext())) {
                     beginEventSpan(exchange, route.getEndpoint(), Op.EVENT_RECEIVED);
+                } else {
+                    LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", route.getEndpoint());
                 }
             } catch (Exception t) {
                 LOG.warn("Tracing: Failed to capture tracing data. This exception is ignored.", t);
@@ -246,10 +277,10 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {
             try {
-                if (exclude(route.getEndpoint().getEndpointUri(), exchange.getContext())) {
-                    LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", route.getEndpoint());
-                } else {
+                if (match(route.getEndpoint().getEndpointUri(), exchange.getContext())) {
                     endEventSpan(exchange, route.getEndpoint());
+                } else {
+                    LOG.debug("Tracing: endpoint {} is explicitly excluded, skipping.", route.getEndpoint());
                 }
             } catch (Exception t) {
                 LOG.warn("Tracing: Failed to capture tracing data. This exception is ignored.", t);

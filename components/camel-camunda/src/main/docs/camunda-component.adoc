@@ -149,7 +149,7 @@ YAML::
         - setBody:
             simple: '{"process_id":"processId","variables":${body}}'
         - to:
-            uri: "camunda://startProcess"
+            uri: camunda://startProcess
 ----
 
 XML::
@@ -220,7 +220,7 @@ YAML::
         - setBody:
             simple: '{"process_instance_key": 123}'
         - to:
-            uri: "camunda://cancelProcess"
+            uri: camunda://cancelProcess
 ----
 
 XML::
@@ -268,7 +268,7 @@ YAML::
         - setBody:
             simple: '{"name":"MessageName","correlation_key":"messageKey","time_to_live":100,"variables":{}}'
         - to:
-            uri: "camunda://publishMessage"
+            uri: camunda://publishMessage
 ----
 
 XML::
@@ -313,7 +313,7 @@ YAML::
             name: CamelCamundaResourceName
             simple: "process.bpmn"
         - to:
-            uri: "camunda://deployResource"
+            uri: camunda://deployResource
 ----
 
 XML::
@@ -378,7 +378,10 @@ YAML::
 ----
 - route:
     from:
-      uri: "camunda://worker?jobType=myJobType&timeout=20"
+      uri: camunda://worker
+      parameters:
+        jobType: myJobType
+        timeout: 20
       steps:
         - log:
             message: "Received job ${header.CamelCamundaJobKey}"
@@ -417,7 +420,10 @@ YAML::
 ----
 - route:
     from:
-      uri: "camunda://worker?jobType=myJobType&timeout=20"
+      uri: camunda://worker
+      parameters:
+        jobType: myJobType
+        timeout: 20
       steps:
         - setBody:
             constant:
@@ -464,7 +470,10 @@ YAML::
 ----
 - route:
     from:
-      uri: "camunda://worker?jobType=myJobType&timeout=20"
+      uri: camunda://worker
+      parameters:
+        jobType: myJobType
+        timeout: 20
       steps:
         - setHeader:
             name: CamelCamundaErrorCode
@@ -473,7 +482,7 @@ YAML::
             name: CamelCamundaErrorMessage
             simple: "Data validation failed"
         - to:
-            uri: "camunda://throwError"
+            uri: camunda://throwError
 ----
 
 XML::

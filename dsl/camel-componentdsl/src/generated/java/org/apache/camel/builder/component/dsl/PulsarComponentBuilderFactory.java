@@ -287,6 +287,27 @@ public interface PulsarComponentBuilderFactory {
     
         
         /**
+         * When enabled, allows each individual message in a batch to be
+         * acknowledged independently. By default Pulsar redelivers the entire
+         * batch when any single message in the batch is not acknowledged. This
+         * option also requires the Pulsar broker to be configured with
+         * acknowledgmentAtBatchIndexLevelEnabled=true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param enableBatchIndexAcknowledgment the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder enableBatchIndexAcknowledgment(boolean enableBatchIndexAcknowledgment) {
+            doSetProperty("enableBatchIndexAcknowledgment", enableBatchIndexAcknowledgment);
+            return this;
+        }
+    
+        
+        /**
          * To enable retry letter topic mode. The default retry letter topic
          * uses this format: topicname-subscriptionname-RETRY.
          * 
@@ -966,6 +987,7 @@ public interface PulsarComponentBuilderFactory {
             case "consumerNamePrefix": getOrCreateConfiguration((PulsarComponent) component).setConsumerNamePrefix((java.lang.String) value); return true;
             case "consumerQueueSize": getOrCreateConfiguration((PulsarComponent) component).setConsumerQueueSize((int) value); return true;
             case "deadLetterTopic": getOrCreateConfiguration((PulsarComponent) component).setDeadLetterTopic((java.lang.String) value); return true;
+            case "enableBatchIndexAcknowledgment": getOrCreateConfiguration((PulsarComponent) component).setEnableBatchIndexAcknowledgment((boolean) value); return true;
             case "enableRetry": getOrCreateConfiguration((PulsarComponent) component).setEnableRetry((boolean) value); return true;
             case "keySharedPolicy": getOrCreateConfiguration((PulsarComponent) component).setKeySharedPolicy((java.lang.String) value); return true;
             case "maxRedeliverCount": getOrCreateConfiguration((PulsarComponent) component).setMaxRedeliverCount((java.lang.Integer) value); return true;

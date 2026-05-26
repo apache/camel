@@ -99,8 +99,11 @@ public class Shell extends CamelCommand {
         }
 
         try (org.jline.shell.Shell shell = builder.build()) {
+            EnvironmentHelper.setActiveTerminal(shell.terminal());
             printBanner(shell, camelVersion, colorEnabled);
             shell.run();
+        } finally {
+            EnvironmentHelper.setActiveTerminal(null);
         }
         return 0;
     }

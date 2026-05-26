@@ -66,7 +66,9 @@ YAML::
       - name: "myPeriod"
         defaultValue: "3s"
     from:
-      uri: "timer:{{name}}?period={{myPeriod}}"
+      uri: "timer:{{name}}"
+      parameters:
+        period: "{{myPeriod}}"
       steps:
         - setBody:
             expression:
@@ -159,14 +161,18 @@ Notice how we use `?` in the replyTo option below:
 ----
 - route:
     from:
-      uri: "timer:{{name}}?period={{myPeriod}}"
+      uri: "timer:{{name}}"
+      parameters:
+        period: "{{myPeriod}}"
       steps:
         - setBody:
             expression:
               simple:
                 expression: "{{greeting}} ${body}"
         - to:
-            uri: "jms:myqueue?replyTo={{?replyToQueue}}"
+            uri: "jms:myqueue"
+            parameters:
+              replyTo: "{{?replyToQueue}}"
 ----
 ====
 
@@ -940,7 +946,9 @@ Notice how the Groovy code can be inlined directly in the route template in DSL 
       uri: direct:s3-store
       steps:
         - to:
-            uri: "aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"
+            uri: "aws2-s3:{{bucket}}"
+            parameters:
+              amazonS3Client: "#{{myClient}}"
 ----
 ====
 
@@ -1006,7 +1014,9 @@ and can be omitted. For example in this example as we inject the bean via its be
       uri: direct:s3-store
       steps:
         - to:
-            uri: "aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"
+            uri: "aws2-s3:{{bucket}}"
+            parameters:
+              amazonS3Client: "#{{myClient}}"
 ----
 ====
 
@@ -1114,7 +1124,9 @@ YAML::
       uri: direct:s3-store
       steps:
         - to:
-            uri: "aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"
+            uri: "aws2-s3:{{bucket}}"
+            parameters:
+              amazonS3Client: "#{{myClient}}"
 ----
 ====
 
@@ -1194,7 +1206,9 @@ YAML::
       uri: direct:s3-store
       steps:
         - to:
-            uri: "aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}"
+            uri: "aws2-s3:{{bucket}}"
+            parameters:
+              amazonS3Client: "#{{myClient}}"
 ----
 ====
 

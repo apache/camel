@@ -59,9 +59,10 @@ Which means you will se a WARN being logged.
         deadLetterUri: log:dead?level=WARN
     id: myRoute
     from:
-      uri: "kamelet:my-error-source/source"
+      uri: kamelet:my-error-source/source
       steps:
-        - log: "${body}"
+        - log:
+            message: "${body}"
 ----
 
 For sink kamelets then error handling also allows to perform retries.
@@ -79,11 +80,12 @@ So suppose you have the following route:
           redeliveryDelay: "5000"
     id: myRoute
     from:
-      uri: "direct:start"
+      uri: direct:start
       steps:
         - to:
-            uri: "kamelet:my-error-sink/sink"
-        - log: "${body}"
+            uri: kamelet:my-error-sink/sink
+        - log:
+            message: "${body}"
 ----
 
 Then notice the error handler has been configured to do redeliveries up till 5 times with 5 sec delay between.
@@ -121,9 +123,12 @@ spec:
   - "camel:kamelet"
   template:
     from:
-      uri: "kamelet:source"
+      uri: kamelet:source
       steps:
-      - to: "kamelet:log-sink?level={{log-level}}"
+      - to:
+          uri: kamelet:log-sink
+          parameters:
+            level: "{{log-level}}"
 ----
 
 According to the specification, this Kamelet expects a parameter, _log-level_ which we will use as a further parameter for the downstream call to the `log-sink` Kamelet.
@@ -132,14 +137,18 @@ The usage of this Kamelet into a Camel route is going to be the same as any othe
 
 [source,yaml]
 ----
-- from:
-    uri: "timer:yaml"
-    parameters:
-      period: "5000"
+- route:
+    from:
+      uri: timer:yaml
+      parameters:
+        period: "5000"
     steps:
       - setBody:
           simple: "Hello Camel from ${routeId}"
-      - to: "kamelet:nested-sink?log-level=INFO"
+      - to:
+          uri: kamelet:nested-sink
+          parameters:
+            log-level: INFO
 ----
 
 WARNING: beware of any potential circular reference you may introduce when using chain of Kamelets, in which case, the runtime will likely be idle consuming a high amount of resources.

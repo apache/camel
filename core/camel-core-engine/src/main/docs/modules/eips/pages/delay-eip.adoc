@@ -52,14 +52,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:b
-    steps:
-      - delay:
-          expression:
-            constant: 1000
-      - to:
-          uri: mock:result
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - delay:
+            expression:
+              constant: "1000"
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -111,14 +112,16 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:b
-    steps:
-      - delay:
-          expression:
-            simple: "${random(1000,5000)}"
-      - to:
-          uri: mock:result
+- route:
+    from:
+      uri: seda:b
+      steps:
+        - delay:
+            expression:
+              simple:
+                expression: "${random(1000,5000)}"
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -221,14 +224,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: activemq:queue:foo
-    steps:
-      - delay:
-          expression:
-            constant: 1000
-          asyncDelayed: true
-      - to:
-          uri: activemq:aDelayedQueue
+- route:
+    from:
+      uri: activemq:queue:foo
+      steps:
+        - delay:
+            expression:
+              constant: "1000"
+            asyncDelayed: true
+        - to:
+            uri: activemq:aDelayedQueue
 ----
 ====

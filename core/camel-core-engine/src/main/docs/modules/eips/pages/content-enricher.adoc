@@ -51,13 +51,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: activemq:My.Queue
-    steps:
-      - to:
-          uri: velocity:com/acme/MyResponse.vm
-      - to:
-          uri: activemq:Another.Queue
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: velocity:com/acme/MyResponse.vm
+        - to:
+            uri: activemq:Another.Queue
 ----
 ====
 
@@ -229,14 +230,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: activemq:Input
-    steps:
-      - bean:
-          ref: myBeanName
-          method: doTransform
-      - to:
-          uri: activemq:Output
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - bean:
+            ref: myBeanName
+            method: doTransform
+        - to:
+            uri: activemq:Output
 ----
 ====
 

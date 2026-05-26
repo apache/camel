@@ -1441,13 +1441,15 @@ And to use the kamelet, you could create the following route:
 
 [source,yaml]
 ----
-- from:
-    uri: "kamelet:cheese-source"
-    parameters:
-      period: "2000"
-      message: "Hello World"
-    steps:
-      - log: "${body}"
+- route:
+    from:
+      uri: kamelet:cheese-source
+      parameters:
+        period: "2000"
+        message: "Hello World"
+      steps:
+        - log:
+            message: "${body}"
 ----
 
 If you want to create a sink kamelet, then you just name it with sink as follows (based on log sink):
@@ -1461,13 +1463,15 @@ You can then change the route to use the wine kamelet as follows:
 
 [source,yaml]
 ----
-- from:
-    uri: "kamelet:cheese-source"
-    parameters:
-      period: "2000"
-      message: "Hello World"
-    steps:
-      - to: "kamelet:wine-sink"
+- route:
+    from:
+      uri: kamelet:cheese-source
+      parameters:
+        period: "2000"
+        message: "Hello World"
+      steps:
+        - to:
+            uri: kamelet:wine-sink
 ----
 
 If you want to create a new Kamelet based on an existing Kamelet, for example, to create a new sink based on the existing MySQL:
@@ -2612,11 +2616,12 @@ running on port 8080. For example, the following route in a file named `server.y
 
 [source,yaml]
 ----
-- from:
-    uri: "platform-http:/hello"
-    steps:
-      - set-body:
-          constant: "Hello World"
+- route:
+    from:
+      uri: platform-http:/hello
+      steps:
+        - set-body:
+            constant: "Hello World"
 ----
 
 Can be run with

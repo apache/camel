@@ -31,18 +31,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
 
 /**
- * MCP Tools for browsing Camel JBang examples from the
- * <a href="https://github.com/apache/camel-jbang-examples">camel-jbang-examples</a> repository.
- * <p>
- * Provides two tools:
- * <ul>
- * <li>{@code camel_catalog_examples} — list and filter available examples by name, tag, or difficulty level</li>
- * <li>{@code camel_catalog_example_file} — read the content of a specific file from a bundled example, or get a GitHub
- * URL for non-bundled ones</li>
- * </ul>
- * Uses {@link ExampleHelper} for catalog loading, filtering, and file retrieval.
- *
- * @since 4.21
+ * MCP Tools for browsing Camel JBang examples.
  */
 @ApplicationScoped
 public class ExampleTools {

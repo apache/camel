@@ -210,7 +210,9 @@ YAML::
       uri: direct:report
       steps:
         - pollEnrich:
-            uri: aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf
+            expression:
+              constant:
+                expression: "aws-s3:xavier-dev?amazonS3Client=#s3client&deleteAfterRead=false&fileName=report-file.pdf"
 ----
 ====
 
