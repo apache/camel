@@ -96,10 +96,10 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:embeddings"
+      uri: direct:embeddings
     steps:
       - to:
-          uri: "langchain4j-embeddings:test"
+          uri: langchain4j-embeddings:test
           parameters:
             embeddingModel: "#embeddingModel"
 ----
@@ -174,10 +174,10 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:embeddings"
+      uri: direct:embeddings
     steps:
       - to:
-          uri: "langchain4j-embeddings:test"
+          uri: langchain4j-embeddings:test
           parameters:
             embeddingModel: "#myEmbeddingModel"
 ----
@@ -211,9 +211,10 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:store"
+      uri: direct:store
     steps:
-      - to: "langchain4j-embeddings:embed"
+      - to:
+          uri: langchain4j-embeddings:embed
       - setHeader:
           name: CamelQdrantAction
           constant: UPSERT
@@ -222,7 +223,8 @@ YAML::
           constant: 1
       - transform:
           dataType: "qdrant:embeddings"
-      - to: "qdrant:myCollection"
+      - to:
+          uri: qdrant:myCollection
 ----
 ====
 
@@ -251,9 +253,10 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:search"
+      uri: direct:search
     steps:
-      - to: "langchain4j-embeddings:embed"
+      - to:
+          uri: langchain4j-embeddings:embed
       - transform:
           dataType: "qdrant:embeddings"
       - setHeader:
@@ -262,7 +265,8 @@ YAML::
       - setHeader:
           name: CamelQdrantIncludePayload
           constant: true
-      - to: "qdrant:myCollection"
+      - to:
+          uri: qdrant:myCollection
       - transform:
           dataType: "qdrant:rag"
 ----
@@ -291,15 +295,17 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:store"
+      uri: direct:store
     steps:
-      - to: "langchain4j-embeddings:embed"
+      - to:
+          uri: langchain4j-embeddings:embed
       - setHeader:
           name: CamelPgVectorAction
           constant: UPSERT
       - transform:
           dataType: "pgvector:embeddings"
-      - to: "pgvector:myCollection"
+      - to:
+          uri: pgvector:myCollection
 ----
 ====
 
@@ -325,15 +331,17 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:search"
+      uri: direct:search
     steps:
-      - to: "langchain4j-embeddings:embed"
+      - to:
+          uri: langchain4j-embeddings:embed
       - transform:
           dataType: "pgvector:embeddings"
       - setHeader:
           name: CamelPgVectorAction
           constant: SIMILARITY_SEARCH
-      - to: "pgvector:myCollection"
+      - to:
+          uri: pgvector:myCollection
       - transform:
           dataType: "pgvector:rag"
 ----
@@ -364,16 +372,26 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:store"
+      uri: direct:store
     steps:
-      - to: "langchain4j-embeddings:embed"
-      - to: "langchain4j-embeddingstore:myStore?action=ADD"
+      - to:
+          uri: langchain4j-embeddings:embed
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: ADD
 
 - route:
     from:
-      uri: "direct:search"
+      uri: direct:search
     steps:
-      - to: "langchain4j-embeddings:embed"
-      - to: "langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&returnTextContent=true"
+      - to:
+          uri: langchain4j-embeddings:embed
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: SEARCH
+            maxResults: 5
+            returnTextContent: true
 ----
 ====

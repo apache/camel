@@ -609,9 +609,9 @@ YAML::
 ----
 - route:
     from:
-      uri: "kafka:topic"
+      uri: kafka:topic
       parameters:
-        groupId: "myGroup"
+        groupId: myGroup
         pollTimeoutMs: 1000
         batching: true
         maxPollRecords: 10
@@ -619,8 +619,9 @@ YAML::
         autoCommitEnable: true
     steps:
       - process:
-          ref: "batchProcessor"
-      - to: "mock:result"
+          ref: batchProcessor
+      - to:
+          uri: mock:result
 ----
 
 Processor Implementation::
@@ -704,25 +705,26 @@ YAML::
 ----
 - route:
     on-exception:
-      - exception: "java.lang.Exception"
+      - exception: java.lang.Exception
         handled: false
         steps:
           - process:
-              ref: "errorCommitProcessor"
+              ref: errorCommitProcessor
     from:
-      uri: "kafka:topic"
+      uri: kafka:topic
       parameters:
-        groupId: "myGroup"
+        groupId: myGroup
         batching: true
         breakOnFirstError: true
         autoCommitEnable: false
         allowManualCommit: true
     steps:
       - process:
-          ref: "batchProcessorManual"
+          ref: batchProcessorManual
       - process:
-          ref: "successCommitProcessor"
-      - to: "mock:result"
+          ref: successCommitProcessor
+      - to:
+          uri: mock:result
 ----
 
 Processor Implementations::

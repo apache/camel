@@ -69,11 +69,16 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: file:inputDir?noop=true
+- route:
+    from:
+      uri: file:inputDir
+      parameters:
+        noop: true
     steps:
-      - to: smooks:smooks-config.xml
-      - to: jms:queue:order
+      - to:
+          uri: smooks:smooks-config.xml
+      - to:
+          uri: jms:queue:order
 ----
 ====
 
