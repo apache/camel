@@ -19,6 +19,8 @@ public class Web3jProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrateg
     public Object invoke(Object obj, String key, Exchange exchange, AsyncCallback callback) throws Exception {
         org.apache.camel.component.web3j.Web3jProducer target = (org.apache.camel.component.web3j.Web3jProducer) obj;
         switch (key) {
+        case "camelweb3jethhashrate":
+        case "CamelWeb3jEthHashrate": target.ethHashrate(exchange.getMessage()); return null;
         case "db_get_hex":
         case "DB_GET_HEX": target.dbGetHex(exchange.getMessage()); return null;
         case "db_get_string":
@@ -87,8 +89,6 @@ public class Web3jProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrateg
         case "ETH_GET_UNCLE_COUNT_BY_BLOCK_NUMBER": target.ethGetUncleCountByBlockNumber(exchange.getMessage()); return null;
         case "eth_get_work":
         case "ETH_GET_WORK": target.ethGetWork(exchange.getMessage()); return null;
-        case "eth_hashrate":
-        case "ETH_HASHRATE": target.ethHashrate(exchange.getMessage()); return null;
         case "eth_mining":
         case "ETH_MINING": target.ethMining(exchange.getMessage()); return null;
         case "eth_new_block_filter":

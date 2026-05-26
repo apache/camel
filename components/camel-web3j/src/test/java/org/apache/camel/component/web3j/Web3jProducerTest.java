@@ -953,7 +953,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(getUrl() + OPERATION.toLowerCase() + "=" + Web3jConstants.WEB3_CLIENT_VERSION);
+                        .to(getUrl() + "operation" + "=" + Web3jConstants.WEB3_CLIENT_VERSION);
             }
         };
     }
