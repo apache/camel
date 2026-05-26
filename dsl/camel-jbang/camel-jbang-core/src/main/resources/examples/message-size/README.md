@@ -31,7 +31,7 @@ $ camel get endpoint --verbose
 To sort endpoints by body size (largest first):
 
 ```sh
-$ camel get endpoint --sort -size
+$ camel get endpoint --sort=-size
 ```
 
 ### How it works

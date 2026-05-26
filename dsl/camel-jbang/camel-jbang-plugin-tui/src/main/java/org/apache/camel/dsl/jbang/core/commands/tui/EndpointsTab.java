@@ -48,6 +48,9 @@ class EndpointsTab implements MonitorTab {
 
     private static final String[] SORT_COLUMNS = { "component", "route", "dir", "total", "body", "hdr", "uri" };
     private static final int MAX_CHART_POINTS = 60;
+    private static final int CHART_ALL = 0;
+    private static final int CHART_SINGLE = 1;
+    private static final int CHART_OFF = 2;
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
@@ -59,12 +62,14 @@ class EndpointsTab implements MonitorTab {
     private final Map<String, LinkedList<Long>> endpointRemoteStubOutHistory;
     private final Map<String, LinkedList<Long>> endpointInSizeHistory;
     private final Map<String, LinkedList<Long>> endpointOutSizeHistory;
+    private final Map<String, LinkedList<Long>> perEndpointInHistory;
+    private final Map<String, LinkedList<Long>> perEndpointOutHistory;
 
     private String sort = "route";
     private int sortIndex = 1;
     private boolean sortReversed;
     private int filter;
-    private boolean showChart = true;
+    private int chartMode = CHART_ALL;
 
     EndpointsTab(MonitorContext ctx,
                  Map<String, LinkedList<Long>> endpointInHistory,
@@ -74,7 +79,9 @@ class EndpointsTab implements MonitorTab {
                  Map<String, LinkedList<Long>> endpointRemoteStubInHistory,
                  Map<String, LinkedList<Long>> endpointRemoteStubOutHistory,
                  Map<String, LinkedList<Long>> endpointInSizeHistory,
-                 Map<String, LinkedList<Long>> endpointOutSizeHistory) {
+                 Map<String, LinkedList<Long>> endpointOutSizeHistory,
+                 Map<String, LinkedList<Long>> perEndpointInHistory,
+                 Map<String, LinkedList<Long>> perEndpointOutHistory) {
         this.ctx = ctx;
         this.endpointInHistory = endpointInHistory;
         this.endpointOutHistory = endpointOutHistory;
@@ -84,6 +91,8 @@ class EndpointsTab implements MonitorTab {
         this.endpointRemoteStubOutHistory = endpointRemoteStubOutHistory;
         this.endpointInSizeHistory = endpointInSizeHistory;
         this.endpointOutSizeHistory = endpointOutSizeHistory;
+        this.perEndpointInHistory = perEndpointInHistory;
+        this.perEndpointOutHistory = perEndpointOutHistory;
     }
 
     @Override
@@ -103,7 +112,7 @@ class EndpointsTab implements MonitorTab {
             return true;
         }
         if (ke.isCharIgnoreCase('a')) {
-            showChart = !showChart;
+            chartMode = (chartMode + 1) % 3;
             return true;
         }
         return false;
@@ -116,10 +125,21 @@ class EndpointsTab implements MonitorTab {
 
     @Override
     public void navigateUp() {
+        tableState.selectPrevious();
     }
 
     @Override
     public void navigateDown() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            List<EndpointInfo> filtered = new ArrayList<>(info.endpoints);
+            if (filter == 1) {
+                filtered.removeIf(ep -> !ep.remote);
+            } else if (filter == 2) {
+                filtered.removeIf(ep -> !ep.remote && !ep.stub);
+            }
+            tableState.selectNext(filtered.size());
+        }
     }
 
     @Override
@@ -210,6 +230,8 @@ class EndpointsTab implements MonitorTab {
                 .rows(rows)
                 .header(Row.from(headerCells))
                 .widths(widths.toArray(Constraint[]::new))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Endpoints sort:" + sort
                                + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
@@ -220,6 +242,7 @@ class EndpointsTab implements MonitorTab {
         boolean hasSizeHistory = !endpointInSizeHistory.isEmpty()
                 && endpointInSizeHistory.values().stream().anyMatch(h -> h.stream().anyMatch(v -> v > 0));
 
+        boolean showChart = chartMode != CHART_OFF;
         List<Rect> chunks = showChart
                 ? Layout.vertical().constraints(Constraint.fill(), Constraint.length(16)).split(area)
                 : List.of(area);
@@ -227,23 +250,36 @@ class EndpointsTab implements MonitorTab {
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
 
         if (showChart) {
-            long inTotal = info.endpoints.stream()
-                    .filter(ep -> "in".equals(ep.direction) && matchesFilter(ep))
-                    .mapToLong(ep -> ep.hits)
-                    .sum();
-            long outTotal = info.endpoints.stream()
-                    .filter(ep -> "out".equals(ep.direction) && matchesFilter(ep))
-                    .mapToLong(ep -> ep.hits)
-                    .sum();
+            // Determine selected endpoint URI for single-endpoint chart
+            String selectedUri = null;
+            if (chartMode == CHART_SINGLE) {
+                Integer sel = tableState.selected();
+                if (sel != null && sel >= 0 && sel < sortedEndpoints.size()) {
+                    selectedUri = sortedEndpoints.get(sel).uri;
+                }
+            }
 
-            if (hasSizeHistory) {
-                List<Rect> chartSplit = Layout.horizontal()
-                        .constraints(Constraint.percentage(50), Constraint.percentage(50))
-                        .split(chunks.get(1));
-                renderEndpointFlow(frame, chartSplit.get(0), inTotal, outTotal, info.name, info.pid);
-                renderPayloadSizeChart(frame, chartSplit.get(1), info.pid);
+            if (chartMode == CHART_SINGLE && selectedUri != null) {
+                renderSingleEndpointChart(frame, chunks.get(1), selectedUri, info);
             } else {
-                renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid);
+                long inTotal = info.endpoints.stream()
+                        .filter(ep -> "in".equals(ep.direction) && matchesFilter(ep))
+                        .mapToLong(ep -> ep.hits)
+                        .sum();
+                long outTotal = info.endpoints.stream()
+                        .filter(ep -> "out".equals(ep.direction) && matchesFilter(ep))
+                        .mapToLong(ep -> ep.hits)
+                        .sum();
+
+                if (hasSizeHistory) {
+                    List<Rect> chartSplit = Layout.horizontal()
+                            .constraints(Constraint.percentage(50), Constraint.percentage(50))
+                            .split(chunks.get(1));
+                    renderEndpointFlow(frame, chartSplit.get(0), inTotal, outTotal, info.name, info.pid);
+                    renderPayloadSizeChart(frame, chartSplit.get(1), info.pid);
+                } else {
+                    renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid);
+                }
             }
         }
     }
@@ -251,10 +287,16 @@ class EndpointsTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
+        hint(spans, "↑↓", "navigate");
         hint(spans, "s", "sort");
         String[] filterLabels = { "all", "remote", "remote+stub" };
         hint(spans, "f", "filter [" + filterLabels[filter] + "]");
-        hint(spans, "a", "chart " + (showChart ? "[all]" : "[off]"));
+        String chartLabel = switch (chartMode) {
+            case CHART_ALL -> "[all]";
+            case CHART_SINGLE -> "[single]";
+            default -> "[off]";
+        };
+        hint(spans, "a", "chart " + chartLabel);
         hint(spans, "1-9", "tabs");
     }
 
@@ -424,6 +466,115 @@ class EndpointsTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(Title.from(chartTitle)).build())
                 .build(), rightArea);
+    }
+
+    private void renderSingleEndpointChart(Frame frame, Rect area, String selectedUri, IntegrationInfo info) {
+        long inTotal = info.endpoints.stream()
+                .filter(ep -> "in".equals(ep.direction) && selectedUri.equals(ep.uri))
+                .mapToLong(ep -> ep.hits)
+                .sum();
+        long outTotal = info.endpoints.stream()
+                .filter(ep -> "out".equals(ep.direction) && selectedUri.equals(ep.uri))
+                .mapToLong(ep -> ep.hits)
+                .sum();
+
+        List<Rect> hSplit = Layout.horizontal()
+                .constraints(Constraint.length(38), Constraint.fill())
+                .split(area);
+
+        // Flow diagram with endpoint URI as label
+        int w = Math.max(10, hSplit.get(0).width() - 2);
+        String label = selectedUri;
+        if (CharWidth.of(label) > 20) {
+            label = CharWidth.truncateWithEllipsis(label, 20, CharWidth.TruncatePosition.END);
+        }
+        String box = "[ " + label + " ]";
+        int boxLen = CharWidth.of(box);
+        int sideLen = Math.max(4, (w - boxLen - 2) / 2);
+        String arm = "─".repeat(Math.max(1, sideLen - 1));
+        String arrowStr = arm + "►";
+        String inStr = String.valueOf(inTotal);
+        String outStr = String.valueOf(outTotal);
+        int inPad = Math.max(0, sideLen - inStr.length());
+        int centerGap = boxLen + 2;
+        int outPad = Math.max(0, sideLen - outStr.length());
+        int inLabelPad = (sideLen - 2) / 2;
+        int outLabelPad = (sideLen - 3) / 2;
+        String inLabelStr = " ".repeat(inLabelPad) + "in" + " ".repeat(sideLen - inLabelPad - 2);
+        String outLabelStr = " ".repeat(outLabelPad) + "out";
+
+        Style inStyle = Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN));
+        Style outStyle = Style.EMPTY.fg(Color.CYAN);
+        Style dimStyle = Style.EMPTY.dim();
+
+        List<Line> flowLines = new ArrayList<>();
+        flowLines.add(Line.from(Span.raw("")));
+        flowLines.add(Line.from(Span.raw("")));
+        flowLines.add(Line.from(
+                Span.styled(" ".repeat(inPad) + inStr, inTotal > 0 ? inStyle : dimStyle),
+                Span.raw(" ".repeat(centerGap)),
+                Span.styled(outStr + " ".repeat(outPad), outTotal > 0 ? outStyle : dimStyle)));
+        flowLines.add(Line.from(
+                Span.styled(arrowStr, inStyle),
+                Span.raw(" "),
+                Span.styled(box, Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(" "),
+                Span.styled(arrowStr, outStyle)));
+        flowLines.add(Line.from(
+                Span.styled(inLabelStr, inStyle.dim()),
+                Span.raw(" ".repeat(centerGap)),
+                Span.styled(outLabelStr, outStyle.dim())));
+
+        frame.renderWidget(Paragraph.builder()
+                .text(dev.tamboui.text.Text.from(flowLines))
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Flow ").build())
+                .build(), hSplit.get(0));
+
+        // Per-endpoint sparkline
+        String key = info.pid + "|" + selectedUri;
+        LinkedList<Long> inHist = perEndpointInHistory.getOrDefault(key, new LinkedList<>());
+        LinkedList<Long> outHist = perEndpointOutHistory.getOrDefault(key, new LinkedList<>());
+
+        int renderPoints = MAX_CHART_POINTS;
+        long[] inArr = new long[renderPoints];
+        long[] outArr = new long[renderPoints];
+        for (int i = 0; i < renderPoints; i++) {
+            int idx = inHist.size() - renderPoints + i;
+            if (idx >= 0) {
+                inArr[i] = inHist.get(idx);
+            }
+            idx = outHist.size() - renderPoints + i;
+            if (idx >= 0) {
+                outArr[i] = outHist.get(idx);
+            }
+        }
+        long curIn = inArr[renderPoints - 1];
+        long curOut = outArr[renderPoints - 1];
+
+        String uriLabel = selectedUri;
+        if (CharWidth.of(uriLabel) > 30) {
+            uriLabel = CharWidth.truncateWithEllipsis(uriLabel, 30, CharWidth.TruncatePosition.END);
+        }
+
+        Line chartTitle = Line.from(
+                Span.raw(" ["),
+                Span.styled(uriLabel, Style.EMPTY.fg(Color.YELLOW)),
+                Span.raw("] "),
+                Span.styled("▬", Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN))),
+                Span.raw(String.format(" in:%-4d ", curIn)),
+                Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
+                Span.raw(String.format(" out:%-4d msg/s", curOut)));
+
+        frame.renderWidget(MirroredSparkline.builder()
+                .topData(inArr)
+                .bottomData(outArr)
+                .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
+                .bottomStyle(Style.EMPTY.fg(Color.CYAN))
+                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
+                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(Title.from(chartTitle)).build())
+                .build(), hSplit.get(1));
     }
 
     private void renderPayloadSizeChart(Frame frame, Rect area, String pid) {

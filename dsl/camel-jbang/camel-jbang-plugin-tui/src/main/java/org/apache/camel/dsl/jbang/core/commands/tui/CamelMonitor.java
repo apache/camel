@@ -184,6 +184,12 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LinkedList<Long>> endpointOutSizeHistory = new ConcurrentHashMap<>();
     private final Map<String, Long> previousEndpointSizeTime = new ConcurrentHashMap<>();
 
+    // Per-endpoint in/out rate history — keyed by pid + "|" + uri
+    private final Map<String, LinkedList<Long>> perEndpointInHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> perEndpointOutHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<long[]>> perEndpointSamples = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousPerEndpointTime = new ConcurrentHashMap<>();
+
     // Circuit breaker throughput history per PID/cbId (success + fail, one point per second)
     private final Map<String, LinkedList<Long>> cbSuccessHistory = new ConcurrentHashMap<>();
     private final Map<String, LinkedList<Long>> cbFailHistory = new ConcurrentHashMap<>();
@@ -299,7 +305,8 @@ public class CamelMonitor extends CamelCommand {
                 endpointInHistory, endpointOutHistory,
                 endpointRemoteInHistory, endpointRemoteOutHistory,
                 endpointRemoteStubInHistory, endpointRemoteStubOutHistory,
-                endpointInSizeHistory, endpointOutSizeHistory);
+                endpointInSizeHistory, endpointOutSizeHistory,
+                perEndpointInHistory, perEndpointOutHistory);
         httpTab = new HttpTab(ctx);
         healthTab = new HealthTab(ctx);
         historyTab = new HistoryTab(ctx, traces, traceFilePositions);
@@ -1648,6 +1655,11 @@ public class CamelMonitor extends CamelCommand {
         endpointInSizeHistory.remove(pid);
         endpointOutSizeHistory.remove(pid);
         previousEndpointSizeTime.remove(pid);
+        String perEpPrefix = pid + "|";
+        perEndpointInHistory.keySet().removeIf(k -> k.startsWith(perEpPrefix));
+        perEndpointOutHistory.keySet().removeIf(k -> k.startsWith(perEpPrefix));
+        perEndpointSamples.keySet().removeIf(k -> k.startsWith(perEpPrefix));
+        previousPerEndpointTime.keySet().removeIf(k -> k.startsWith(perEpPrefix));
     }
 
     private void sendRouteCommand(String pid, String routeId, String command) {
@@ -1887,11 +1899,16 @@ public class CamelMonitor extends CamelCommand {
                     previousEndpointRemoteStubTime.remove(entry.getKey());
                     cpuLoadAvg.remove(entry.getKey());
                     prevCpuSample.remove(entry.getKey());
-                    String vanishPid = entry.getKey() + "/";
-                    cbSuccessHistory.keySet().removeIf(k -> k.startsWith(vanishPid));
-                    cbFailHistory.keySet().removeIf(k -> k.startsWith(vanishPid));
-                    cbThroughputSamples.keySet().removeIf(k -> k.startsWith(vanishPid));
-                    previousCbTime.keySet().removeIf(k -> k.startsWith(vanishPid));
+                    String vanishCbPrefix = entry.getKey() + "/";
+                    cbSuccessHistory.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
+                    cbFailHistory.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
+                    cbThroughputSamples.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
+                    previousCbTime.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
+                    String vanishEpPrefix = entry.getKey() + "|";
+                    perEndpointInHistory.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
+                    perEndpointOutHistory.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
+                    perEndpointSamples.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
+                    previousPerEndpointTime.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
                     ghost.vanishing = true;
@@ -2162,6 +2179,27 @@ public class CamelMonitor extends CamelCommand {
             while (outSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
                 outSizeHist.remove(0);
             }
+        }
+
+        // Per-endpoint rate history (keyed by pid|uri)
+        Map<String, long[]> perUri = new LinkedHashMap<>();
+        for (EndpointInfo ep : info.endpoints) {
+            if (ep.uri == null) {
+                continue;
+            }
+            long[] inOut = perUri.computeIfAbsent(ep.uri, k -> new long[2]);
+            if ("in".equals(ep.direction)) {
+                inOut[0] += ep.hits;
+            } else if ("out".equals(ep.direction)) {
+                inOut[1] += ep.hits;
+            }
+        }
+        for (Map.Entry<String, long[]> entry : perUri.entrySet()) {
+            String key = pid + "|" + entry.getKey();
+            long[] inOut = entry.getValue();
+            recordEndpointSample(key, now, inOut[0], inOut[1],
+                    perEndpointSamples, previousPerEndpointTime,
+                    perEndpointInHistory, perEndpointOutHistory);
         }
     }
 
