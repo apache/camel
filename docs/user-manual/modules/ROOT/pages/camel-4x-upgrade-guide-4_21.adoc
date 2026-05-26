@@ -1486,6 +1486,34 @@ link:https://github.com/jasypt/jasypt/releases/tag/jasypt-1.9.3[jasypt-1.9.3 dis
 the same workflow and let us drop the duplicate implementation maintained inside `camel-jasypt`. The component
 itself (property-source decryption at runtime) is unaffected.
 
+=== camel-langchain4j-tools / camel-langchain4j-agent / camel-spring-ai-tools
+
+Tool argument headers are now filtered against the tool's declared parameter schema. When the LLM returns
+a tool call, only JSON field names that match a declared `parameter.<name>` are set as Exchange headers.
+Undeclared field names are logged at WARN level and skipped.
+
+This is a breaking change for tools defined without explicit `parameter.*` declarations. Previously, all
+LLM-provided argument field names were set as Exchange headers without filtering. Now, tools with no
+declared parameters will have zero argument headers set from the LLM tool call.
+
+For example, a tool defined as:
+
+[source,java]
+----
+from("langchain4j-tools:test1?tags=user&description=Does not really do anything")
+----
+
+will no longer receive any LLM-provided arguments as headers. To restore argument flow, declare the
+expected parameters explicitly:
+
+[source,java]
+----
+from("langchain4j-tools:test1?tags=user&description=Query user by number&parameter.number=integer")
+----
+
+Additionally, `camel-langchain4j-agent` now extracts primitive values (`int`, `long`, `double`, `boolean`,
+`String`) from tool arguments instead of setting raw `JsonNode` objects as headers.
+
 === Deprecation of camel-paho
 
 The components camel-paho is deprecated. There were no new release since 2020 of the Java client, last non-regulatory commit was in 2022.
