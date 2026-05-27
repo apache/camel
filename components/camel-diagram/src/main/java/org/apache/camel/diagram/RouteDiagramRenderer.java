@@ -323,8 +323,18 @@ public class RouteDiagramRenderer {
             }
         }
 
+        // find the last highlighted node (for FAIL mode box highlighting)
+        LayoutNode lastHighlightedNode = null;
+        if (highlightedNodeIds != null && highlightStyle == RouteDiagramHelper.HighlightStyle.FAIL) {
+            for (LayoutNode ln : lr.nodes) {
+                if (isHighlighted(ln, highlightedNodeIds)) {
+                    lastHighlightedNode = ln;
+                }
+            }
+        }
+
         for (LayoutNode ln : lr.nodes) {
-            drawNode(g, ln, colors);
+            drawNode(g, ln, colors, ln == lastHighlightedNode);
         }
     }
 
@@ -417,14 +427,19 @@ public class RouteDiagramRenderer {
         drawArrowFromMerge(g, to, colors, false, null);
     }
 
-    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors) {
+    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors, boolean highlightFail) {
         Color color = getNodeColor(node.type, colors);
 
         g.setColor(color);
         g.fillRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
-        g.setColor(color.brighter());
-        g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        if (highlightFail) {
+            g.setColor(HIGHLIGHT_FAIL_COLOR);
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
+        } else {
+            g.setColor(color.brighter());
+            g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        }
         g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
         g.setColor(colors.getText());

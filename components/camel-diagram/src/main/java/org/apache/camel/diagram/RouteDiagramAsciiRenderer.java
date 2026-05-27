@@ -180,6 +180,16 @@ public class RouteDiagramAsciiRenderer {
         }
         drawText(grid, labelRow, toCol(PADDING), label);
 
+        // find the last highlighted node (for FAIL mode box highlighting)
+        LayoutNode lastHighlightedNode = null;
+        if (highlightedNodeIds != null && highlightStyle == RouteDiagramHelper.HighlightStyle.FAIL) {
+            for (LayoutNode ln : lr.nodes) {
+                if (isHighlighted(ln, highlightedNodeIds)) {
+                    lastHighlightedNode = ln;
+                }
+            }
+        }
+
         for (LayoutNode ln : lr.nodes) {
             if (ln.treeNode != null && RouteDiagramLayoutEngine.hasScope(ln.treeNode)) {
                 drawScopeBox(grid, ln);
@@ -201,6 +211,19 @@ public class RouteDiagramAsciiRenderer {
 
         for (LayoutNode ln : lr.nodes) {
             drawNode(grid, ln);
+            if (ln == lastHighlightedNode) {
+                recordNodeHighlight(grid, ln);
+            }
+        }
+    }
+
+    private void recordNodeHighlight(char[][] grid, LayoutNode node) {
+        int col = toCol(node.x);
+        int row = toRow(node.y);
+        int height = 2 + rewrapText(node, boxWidth - 4).size();
+        // highlight the entire box (top border, sides, bottom border)
+        for (int r = row; r < row + height && r < grid.length; r++) {
+            counterPositions.add(new CounterPos(r, col, boxWidth, CounterType.HIGHLIGHT_FAIL));
         }
     }
 
