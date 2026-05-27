@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,12 +29,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
@@ -45,11 +42,9 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
-import org.apache.camel.language.simple.myconverter.MyCustomDate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.VariableRepository;
@@ -61,10 +56,7 @@ import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -146,16 +138,6 @@ public class SimpleTest extends LanguageTestSupport {
         // should not be possible
         assertNull(context.resolveLanguage("simple").createExpression("${header.bar}").evaluate(exchange, Date.class));
         assertNull(context.resolveLanguage("simple").createExpression("${header.unknown}").evaluate(exchange, String.class));
-    }
-
-    @Test
-    public void testRefExpression() {
-        assertExpressionResultInstanceOf("${ref:myAnimal}", Animal.class);
-
-        assertExpression("${ref:myAnimal}", "Donkey");
-        assertExpression("${ref:unknown}", null);
-        assertExpression("Hello ${ref:myAnimal}", "Hello Donkey");
-        assertExpression("Hello ${ref:unknown}", "Hello ");
     }
 
     @Test
@@ -331,46 +313,6 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.setProperty("medal", "gold");
         assertExpression("${exchangeProperty.medal}", "gold");
         assertExpression("${exchangeProperty:medal}", "gold");
-    }
-
-    @Test
-    @ResourceLock(Resources.SYSTEM_PROPERTIES)
-    public void testSimpleSystemPropertyExpressions() {
-        System.setProperty("who", "I was here");
-        assertExpression("${sys.who}", "I was here");
-    }
-
-    @Test
-    public void testSimpleSystemEnvironmentExpressions() {
-        String path = System.getenv("PATH");
-        if (path != null) {
-            assertExpression("${sysenv.PATH}", path);
-            assertExpression("${sysenv:PATH}", path);
-            assertExpression("${env.PATH}", path);
-            assertExpression("${env:PATH}", path);
-        }
-    }
-
-    @Test
-    public void testSimpleSystemEnvironmentExpressionsIfDash() {
-        String foo = System.getenv("FOO_SERVICE_HOST");
-        if (foo != null) {
-            assertExpression("${sysenv.FOO-SERVICE-HOST}", foo);
-            assertExpression("${sysenv:FOO-SERVICE-HOST}", foo);
-            assertExpression("${env.FOO-SERVICE-HOST}", foo);
-            assertExpression("${env:FOO-SERVICE-HOST}", foo);
-        }
-    }
-
-    @Test
-    public void testSimpleSystemEnvironmentExpressionsIfLowercase() {
-        String path = System.getenv("PATH");
-        if (path != null) {
-            assertExpression("${sysenv.path}", path);
-            assertExpression("${sysenv:path}", path);
-            assertExpression("${env.path}", path);
-            assertExpression("${env:path}", path);
-        }
     }
 
     @Test
@@ -623,108 +565,6 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testDateExpressions() {
-        Calendar inHeaderCalendar = Calendar.getInstance();
-        inHeaderCalendar.set(1974, Calendar.APRIL, 20);
-        exchange.getIn().setHeader("birthday", inHeaderCalendar.getTime());
-
-        Calendar propertyCalendar = Calendar.getInstance();
-        propertyCalendar.set(1976, Calendar.JUNE, 22);
-        exchange.setProperty("birthday", propertyCalendar.getTime());
-
-        assertExpression("${date:header.birthday}", inHeaderCalendar.getTime());
-        assertExpression("${date:header.birthday:yyyyMMdd}", "19740420");
-        assertExpression("${date:header.birthday+24h:yyyyMMdd}", "19740421");
-
-        // long
-        assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime().getTime());
-        // date
-        assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime());
-        assertExpression("${date:exchangeProperty.birthday:yyyyMMdd}", "19760622");
-        assertExpression("${date:exchangeProperty.birthday+24h:yyyyMMdd}", "19760623");
-
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> assertExpression("${date:yyyyMMdd}", "19740420"),
-                "Should thrown an exception");
-
-        assertEquals("Command not supported for dateExpression: yyyyMMdd", e.getMessage());
-    }
-
-    @Test
-    public void testDateAndTimeExpressions() {
-        Calendar cal = Calendar.getInstance();
-        cal.set(1974, Calendar.APRIL, 20, 8, 55, 47);
-        cal.set(Calendar.MILLISECOND, 123);
-        exchange.getIn().setHeader("birthday", cal.getTime());
-
-        assertExpression("${date:header.birthday - 10s:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T08:55:37:123");
-        assertExpression("${date:header.birthday:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T08:55:47:123");
-    }
-
-    @Test
-    public void testDateWithConverterExpressions() {
-        exchange.getIn().setHeader("birthday", new MyCustomDate(1974, Calendar.APRIL, 20));
-        exchange.setProperty("birthday", new MyCustomDate(1974, Calendar.APRIL, 20));
-        exchange.getIn().setHeader("other", new ArrayList<>());
-
-        assertExpression("${date:header.birthday:yyyyMMdd}", "19740420");
-        assertExpression("${date:exchangeProperty.birthday:yyyyMMdd}", "19740420");
-
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> assertExpression("${date:header.other:yyyyMMdd}", "19740420"),
-                "Should thrown an exception");
-
-        assertEquals("Cannot find Date/long object at command: header.other", e.getMessage());
-    }
-
-    @Test
-    public void testDateWithTimezone() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        cal.set(1974, Calendar.APRIL, 20, 8, 55, 47);
-        cal.set(Calendar.MILLISECOND, 123);
-        exchange.getIn().setHeader("birthday", cal.getTime());
-
-        assertExpression("${date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T08:55:47:123");
-        assertExpression("${date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T00:55:47:123");
-    }
-
-    @Test
-    public void testDateNow() {
-        Object out = evaluateExpression("${date:now}", null);
-        assertNotNull(out);
-        assertIsInstanceOf(Date.class, out);
-
-        out = evaluateExpression("${date:now:hh:mm:ss a}", null);
-        assertNotNull(out);
-        out = evaluateExpression("${date:now:hh:mm:ss}", null);
-        assertNotNull(out);
-        out = evaluateExpression("${date:now-2h:hh:mm:ss}", null);
-        assertNotNull(out);
-    }
-
-    @Test
-    public void testDateMillis() {
-        Object out = evaluateExpression("${date:millis}", null);
-        assertNotNull(out);
-        assertIsInstanceOf(Long.class, out);
-    }
-
-    @Test
-    public void testDateExchangeCreated() {
-        Object out
-                = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", ("" + exchange.getClock().getCreated()).getClass());
-        assertNotNull(out);
-    }
-
-    @Test
-    public void testDatePredicates() {
-        assertPredicate("${date:now} < ${date:now+60s}");
-        assertPredicate("${date:now-5s} < ${date:now}");
-        assertPredicate("${date:now+5s} > ${date:now}");
-    }
-
-    @Test
     public void testLanguagesInContext() {
         // evaluate so we know there is 1 language in the context
         assertExpression("${id}", exchange.getIn().getMessageId());
@@ -811,21 +651,6 @@ public class SimpleTest extends LanguageTestSupport {
         assertNotNull(out);
         assertIsInstanceOf(IllegalArgumentException.class, out);
         assertEquals("Just testing", out.getMessage());
-    }
-
-    @Test
-    public void testMessageAs() {
-        // should be false as message is default
-        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).hasAttachments}", false);
-        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments}", false);
-
-        MyAttachmentMessage msg = new MyAttachmentMessage(exchange);
-        msg.setBody("<hello id='m123'>world!</hello>");
-        exchange.setMessage(msg);
-
-        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).hasAttachments}", true);
-        assertPredicate("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments}", true);
-        assertExpression("${messageAs(org.apache.camel.language.simple.MyAttachmentMessage).size}", "42");
     }
 
     @Test
@@ -1865,31 +1690,6 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testTypeConstant() {
-        assertExpression("${type:org.apache.camel.Exchange.FILE_NAME}", Exchange.FILE_NAME);
-        assertExpression("${type:org.apache.camel.ExchangePattern.InOut}", ExchangePattern.InOut);
-
-        // non existing fields
-        Exception e1 = assertThrows(Exception.class,
-                () -> assertExpression("${type:org.apache.camel.ExchangePattern.}", null),
-                "Should throw exception");
-
-        assertIsInstanceOf(ClassNotFoundException.class, e1.getCause());
-
-        Exception e2 = assertThrows(Exception.class,
-                () -> assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null),
-                "Should throw exception");
-
-        assertIsInstanceOf(ClassNotFoundException.class, e2.getCause());
-    }
-
-    @Test
-    public void testTypeConstantInnerClass() {
-        assertExpression("${type:org.apache.camel.language.simple.Constants$MyInnerStuff.FOO}", 123);
-        assertExpression("${type:org.apache.camel.language.simple.Constants.BAR}", 456);
-    }
-
-    @Test
     public void testStringArrayLength() {
         exchange.getIn().setBody(new String[] { "foo", "bar" });
         assertExpression("${body[0]}", "foo");
@@ -2343,22 +2143,6 @@ public class SimpleTest extends LanguageTestSupport {
     public void testParenthesisReplace() {
         exchange.getIn().setBody("Hello (( World (((( Again");
         assertExpression("${body.replace(\"((\", \"--\").replace(\"((((\", \"----\")}", "Hello -- World ---- Again");
-    }
-
-    @Test
-    public void testPropertiesExist() {
-        PropertiesComponent pc = context.getPropertiesComponent();
-
-        assertExpression("${propertiesExist:myKey}", "false");
-        assertExpression("${propertiesExist:!myKey}", "true");
-        assertPredicate("${propertiesExist:myKey}", false);
-        assertPredicate("${propertiesExist:!myKey}", true);
-
-        pc.addInitialProperty("myKey", "abc");
-        assertExpression("${propertiesExist:myKey}", "true");
-        assertExpression("${propertiesExist:!myKey}", "false");
-        assertPredicate("${propertiesExist:myKey}", true);
-        assertPredicate("${propertiesExist:!myKey}", false);
     }
 
     @Test
@@ -3169,57 +2953,6 @@ public class SimpleTest extends LanguageTestSupport {
         assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${newEmpty(}", null));
         assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${newEmpty}", null));
         assertThrows(IllegalArgumentException.class, () -> evaluateExpression("${newEmpty(unknownType)}", null));
-    }
-
-    @Test
-    public void testPretty() {
-        assertExpression(exchange, "${pretty('Hello')}", "Hello");
-        assertExpression(exchange, "${pretty(${body})}", "<hello id=\"m123\">\n</hello>");
-
-        exchange.getMessage().setBody("{\"name\": \"Jack\", \"id\": 123}");
-        assertExpression(exchange, "${pretty(${body})}", "{\n\t\"name\": \"Jack\",\n\t\"id\": 123\n}\n");
-    }
-
-    @Test
-    public void testToJson() {
-        // string body is returned as-is
-        exchange.getMessage().setBody("Hello");
-        assertExpression(exchange, "${toJson(${body})}", "Hello");
-        assertExpression(exchange, "${toJsonBody}", "Hello");
-
-        // map body is serialized to JSON
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("name", "Jack");
-        map.put("id", 123);
-        exchange.getMessage().setBody(map);
-        assertExpression(exchange, "${toJson(${body})}", "{\"name\":\"Jack\",\"id\":123}");
-        assertExpression(exchange, "${toJsonBody}", "{\"name\":\"Jack\",\"id\":123}");
-        // pretty mode
-        String pretty = Jsoner.prettyPrint("{\"name\":\"Jack\",\"id\":123}");
-        assertExpression(exchange, "${toPrettyJson(${body})}", pretty);
-        assertExpression(exchange, "${toPrettyJsonBody}", pretty);
-
-        // list body is serialized to JSON array
-        exchange.getMessage().setBody(List.of("a", "b", "c"));
-        assertExpression(exchange, "${toJson(${body})}", "[\"a\",\"b\",\"c\"]");
-        // pretty mode
-        pretty = Jsoner.prettyPrint("[\"a\",\"b\",\"c\"]");
-        assertExpression(exchange, "${toPrettyJson(${body})}", pretty);
-        assertExpression(exchange, "${toPrettyJsonBody}", pretty);
-
-        // null body
-        exchange.getMessage().setBody(null);
-        assertExpression(exchange, "${toJsonBody}", null);
-        assertExpression(exchange, "${toJson(${body})}", null);
-        // pretty mode
-        assertExpression(exchange, "${toPrettyJsonBody}", null);
-        assertExpression(exchange, "${toPrettyJson(${body})}", null);
-
-        // toJson with a header expression
-        exchange.getMessage().setHeader("myNum", 42);
-        assertExpression(exchange, "${toJson(${header.myNum})}", "42");
-        // pretty mode
-        assertExpression(exchange, "${toPrettyJson(${header.myNum})}", "42");
     }
 
     @Test
