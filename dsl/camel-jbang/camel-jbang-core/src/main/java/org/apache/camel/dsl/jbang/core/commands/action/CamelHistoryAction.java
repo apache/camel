@@ -391,16 +391,13 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 return 1;
             }
 
-            // add route and from node IDs for each route that has highlighted nodes
-            // (the history trace only has processor nodeIds, not the structural route/from nodes)
+            // add structural parent node IDs for each route that has highlighted nodes
+            // (the history trace only has processor nodeIds, not structural route/from
+            // or scope EIP nodes like circuitBreaker, filter, split, doTry, etc.)
             for (RouteInfo route : routes) {
                 boolean routeHasHighlight = route.nodes.stream().anyMatch(n -> n.id != null && nodeIds.contains(n.id));
                 if (routeHasHighlight) {
-                    for (RouteDiagramLayoutEngine.NodeInfo node : route.nodes) {
-                        if (node.id != null && ("route".equals(node.type) || "from".equals(node.type))) {
-                            nodeIds.add(node.id);
-                        }
-                    }
+                    addParentNodes(route.nodes, nodeIds);
                 }
             }
 
@@ -460,6 +457,33 @@ public class CamelHistoryAction extends ActionWatchCommand {
             return 0;
         } finally {
             PathUtils.deleteFile(outputFile);
+        }
+    }
+
+    private static void addParentNodes(List<RouteDiagramLayoutEngine.NodeInfo> nodes, Set<String> nodeIds) {
+        // walk the flat node list and add any parent node whose children contain highlighted nodes
+        // this bridges gaps in the arrow chain for scope EIPs (circuitBreaker, filter, split, etc.)
+        // and structural nodes (route, from)
+        for (int i = 0; i < nodes.size(); i++) {
+            RouteDiagramLayoutEngine.NodeInfo node = nodes.get(i);
+            if (node.id == null || nodeIds.contains(node.id)) {
+                continue;
+            }
+            // check if any child (higher level following this node) is highlighted
+            boolean hasHighlightedChild = false;
+            for (int j = i + 1; j < nodes.size(); j++) {
+                RouteDiagramLayoutEngine.NodeInfo child = nodes.get(j);
+                if (child.level <= node.level) {
+                    break;
+                }
+                if (child.id != null && nodeIds.contains(child.id)) {
+                    hasHighlightedChild = true;
+                    break;
+                }
+            }
+            if (hasHighlightedChild) {
+                nodeIds.add(node.id);
+            }
         }
     }
 
