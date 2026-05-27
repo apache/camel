@@ -844,6 +844,9 @@ class HistoryTab implements MonitorTab {
                 int w = l.width();
                 contentHeight += Math.max(1, (w + visibleWidth - 1) / visibleWidth);
             }
+            // word-wrap breaks at word boundaries which can produce more lines
+            // than char-based math; add padding so last section is always reachable
+            contentHeight += visibleHeight;
         } else {
             contentHeight = lines.size();
         }

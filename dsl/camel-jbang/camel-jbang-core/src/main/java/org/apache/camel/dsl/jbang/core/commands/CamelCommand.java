@@ -119,6 +119,10 @@ public abstract class CamelCommand implements Callable<Integer> {
         return CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
     }
 
+    public Path getErrorFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-error.json");
+    }
+
     public Path getReceiveFile(String pid) {
         return CommandLineHelper.getCamelDir().resolve(pid + "-receive.json");
     }

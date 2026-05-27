@@ -35,22 +35,30 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class ErrorsTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "age", "route", "exception" };
+    private static final String[] SORT_COLUMNS = { "id", "age", "route", "node", "exception" };
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
     private final ScrollbarState detailScrollState = new ScrollbarState();
-    private String sort = "age";
+    private String sort = "id";
     private int sortIndex;
     private boolean sortReversed;
+    private static final String[] HANDLED_FILTER = { "all", "true", "false" };
+    private int handledIndex;
+    private String handledFilter = "all";
     private int detailScroll;
     private int detailHScroll;
     private boolean wordWrap = true;
+    private boolean showProperties;
+    private boolean showVariables;
+    private boolean showHeaders = true;
+    private boolean showBody = true;
 
     ErrorsTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -78,6 +86,35 @@ class ErrorsTab implements MonitorTab {
         }
         if (ke.isCharIgnoreCase('w')) {
             wordWrap = !wordWrap;
+            return true;
+        }
+        if (ke.isCharIgnoreCase('f')) {
+            handledIndex = (handledIndex + 1) % HANDLED_FILTER.length;
+            handledFilter = HANDLED_FILTER[handledIndex];
+            return true;
+        }
+        if (ke.isCharIgnoreCase('p')) {
+            showProperties = !showProperties;
+            return true;
+        }
+        if (ke.isCharIgnoreCase('v')) {
+            showVariables = !showVariables;
+            return true;
+        }
+        if (ke.isCharIgnoreCase('h')) {
+            showHeaders = !showHeaders;
+            return true;
+        }
+        if (ke.isCharIgnoreCase('b')) {
+            showBody = !showBody;
+            return true;
+        }
+        if (ke.isHome()) {
+            detailScroll = 0;
+            return true;
+        }
+        if (ke.isEnd()) {
+            detailScroll = Integer.MAX_VALUE;
             return true;
         }
         if (ke.isPageUp()) {
@@ -113,8 +150,7 @@ class ErrorsTab implements MonitorTab {
     @Override
     public void navigateDown() {
         detailScroll = 0;
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        tableState.selectNext(info != null ? info.errors.size() : 0);
+        tableState.selectNext(filteredSize());
     }
 
     @Override
@@ -125,8 +161,7 @@ class ErrorsTab implements MonitorTab {
             return;
         }
 
-        List<ErrorInfo> sorted = new ArrayList<>(info.errors);
-        sorted.sort(this::sortError);
+        List<ErrorInfo> sorted = applyFilter(info.errors);
 
         List<Row> rows = new ArrayList<>();
         for (ErrorInfo ei : sorted) {
@@ -138,6 +173,7 @@ class ErrorsTab implements MonitorTab {
             String shortException = shortExceptionType(ei.exceptionType);
 
             rows.add(Row.from(
+                    Cell.from(ei.exchangeId != null ? ei.exchangeId : ""),
                     Cell.from(ago),
                     Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(ei.nodeId != null ? ei.nodeId : ""),
@@ -150,7 +186,7 @@ class ErrorsTab implements MonitorTab {
             rows.add(Row.from(
                     Cell.from(Span.styled("No errors captured", Style.EMPTY.dim())),
                     Cell.from(""), Cell.from(""), Cell.from(""),
-                    Cell.from(""), Cell.from("")));
+                    Cell.from(""), Cell.from(""), Cell.from("")));
         }
 
         ErrorInfo selectedError = null;
@@ -161,20 +197,22 @@ class ErrorsTab implements MonitorTab {
         boolean showDetail = selectedError != null;
         List<Rect> chunks = showDetail
                 ? Layout.vertical()
-                        .constraints(Constraint.length(Math.min(sorted.size() + 3, 12)), Constraint.fill())
+                        .constraints(Constraint.length(13), Constraint.length(1), Constraint.fill())
                         .split(area)
                 : List.of(area);
 
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
+                        Cell.from(Span.styled(sortLabel("ID", "id"), sortStyle("id"))),
                         Cell.from(Span.styled(sortLabel("AGO", "age"), sortStyle("age"))),
                         Cell.from(Span.styled(sortLabel("ROUTE", "route"), sortStyle("route"))),
-                        Cell.from(Span.styled("NODE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled(sortLabel("NODE", "node"), sortStyle("node"))),
                         Cell.from(Span.styled("HANDLED", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("EXCEPTION", "exception"), sortStyle("exception"))),
                         Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
                 .widths(
+                        Constraint.length(38),
                         Constraint.length(8),
                         Constraint.length(20),
                         Constraint.length(20),
@@ -189,7 +227,7 @@ class ErrorsTab implements MonitorTab {
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
 
         if (showDetail) {
-            renderDetail(frame, chunks.get(1), selectedError);
+            renderDetail(frame, chunks.get(2), selectedError);
         }
     }
 
@@ -197,9 +235,18 @@ class ErrorsTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "↑↓", "navigate");
+        hint(spans, "PgUp/Dn", "scroll detail");
+        if (!wordWrap) {
+            hint(spans, "←→", "h-scroll");
+        }
+        hint(spans, "Home/End", "top/end");
         hint(spans, "s", "sort");
-        hint(spans, "w", "wrap");
-        hint(spans, "PgUp/Dn", "scroll");
+        hint(spans, "f", "handled [" + handledFilter + "]");
+        hint(spans, "p", "properties [" + (showProperties ? "on" : "off") + "]");
+        hint(spans, "v", "variables [" + (showVariables ? "on" : "off") + "]");
+        hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
+        hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
+        hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
         hint(spans, "1-0", "tabs");
     }
 
@@ -216,10 +263,22 @@ class ErrorsTab implements MonitorTab {
             StringBuilder sb = new StringBuilder();
             sb.append(ei.exceptionType);
             if (ei.exceptionMessage != null) {
-                sb.append(": ").append(ei.exceptionMessage);
+                String msg = ei.exceptionMessage;
+                try {
+                    msg = Jsoner.unescape(msg);
+                } catch (Exception e) {
+                    // ignore
+                }
+                sb.append(": ").append(msg);
             }
             if (ei.stackTrace != null) {
-                sb.append("\n").append(ei.stackTrace);
+                String st = ei.stackTrace;
+                try {
+                    st = Jsoner.unescape(st);
+                } catch (Exception e) {
+                    // ignore
+                }
+                sb.append("\n").append(st);
             }
             exception = sb.toString();
         }
@@ -229,24 +288,24 @@ class ErrorsTab implements MonitorTab {
         if (ei.messageHistory != null && ei.messageHistory.length > 0) {
             lines.add(Line.from(Span.styled(" Message History:", Style.EMPTY.fg(Color.MAGENTA).bold())));
             for (String step : ei.messageHistory) {
-                lines.add(Line.from(Span.raw("   " + step)));
+                lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(step))));
             }
             lines.add(Line.from(Span.raw("")));
         }
 
-        // variables, properties, headers
-        if (!ei.variables.isEmpty()) {
-            HistoryTab.addKvLines(lines, " Variables:", ei.variables, ei.variableTypes);
+        // exchange properties, variables, headers, body
+        if (showProperties && !ei.properties.isEmpty()) {
+            HistoryTab.addKvLines(lines, " Exchange Properties:", ei.properties, ei.propertyTypes);
         }
-        if (!ei.properties.isEmpty()) {
-            HistoryTab.addKvLines(lines, " Properties:", ei.properties, ei.propertyTypes);
+        if (showVariables && !ei.variables.isEmpty()) {
+            HistoryTab.addKvLines(lines, " Exchange Variables:", ei.variables, ei.variableTypes);
         }
-        if (!ei.headers.isEmpty()) {
+        if (showHeaders && !ei.headers.isEmpty()) {
             HistoryTab.addKvLines(lines, " Headers:", ei.headers, ei.headerTypes);
         }
-
-        // body
-        HistoryTab.addBodyLines(lines, ei.body, ei.bodyType);
+        if (showBody) {
+            HistoryTab.addBodyLines(lines, ei.body, ei.bodyType);
+        }
 
         int[] scroll = { detailScroll };
         int[] hScroll = { detailHScroll };
@@ -265,7 +324,9 @@ class ErrorsTab implements MonitorTab {
 
     private int sortError(ErrorInfo a, ErrorInfo b) {
         int result = switch (sort) {
+            case "id" -> compareStr(a.exchangeId, b.exchangeId);
             case "route" -> compareStr(a.routeId, b.routeId);
+            case "node" -> compareStr(a.nodeId, b.nodeId);
             case "exception" -> compareStr(a.exceptionType, b.exceptionType);
             default -> Long.compare(b.timestamp, a.timestamp); // newest first
         };
@@ -289,12 +350,33 @@ class ErrorsTab implements MonitorTab {
         if (info == null || info.errors.isEmpty()) {
             return null;
         }
-        List<ErrorInfo> sorted = new ArrayList<>(info.errors);
-        sorted.sort(this::sortError);
-        List<String> items = sorted.stream()
+        List<ErrorInfo> filtered = applyFilter(info.errors);
+        List<String> items = filtered.stream()
                 .map(e -> e.exchangeId != null ? e.exchangeId : "")
                 .toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Errors");
+    }
+
+    private List<ErrorInfo> applyFilter(List<ErrorInfo> errors) {
+        List<ErrorInfo> list = new ArrayList<>(errors);
+        list.sort(this::sortError);
+        if (!"all".equals(handledFilter)) {
+            boolean filterVal = "true".equals(handledFilter);
+            list.removeIf(e -> e.handled != filterVal);
+        }
+        return list;
+    }
+
+    private int filteredSize() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return 0;
+        }
+        if ("all".equals(handledFilter)) {
+            return info.errors.size();
+        }
+        boolean filterVal = "true".equals(handledFilter);
+        return (int) info.errors.stream().filter(e -> e.handled == filterVal).count();
     }
 }

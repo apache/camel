@@ -736,6 +736,15 @@ public class CamelMonitor extends CamelCommand {
         if (tab == TAB_CIRCUIT_BREAKER) {
             circuitBreakerTab.onTabSelected();
         }
+        if (tab == TAB_ERRORS && ctx.selectedPid != null) {
+            try {
+                long pid = Long.parseLong(ctx.selectedPid);
+                refreshErrorData(List.of(pid));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+            errorsTab.onTabSelected();
+        }
         tabsState.select(tab);
         return true;
     }
@@ -1035,7 +1044,7 @@ public class CamelMonitor extends CamelCommand {
             } else if (cbCount > 0) {
                 badgeTexts[TAB_CIRCUIT_BREAKER] = "(" + cbCount + ")";
             }
-            int errorCount = hasSelection ? sel.errors.size() : 0;
+            int errorCount = hasSelection ? sel.errorCount : 0;
             if (errorCount > 0) {
                 badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
                 badgeStyles[TAB_ERRORS] = red;
@@ -2010,6 +2019,11 @@ public class CamelMonitor extends CamelCommand {
                         logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
                     }
                 }
+            }
+
+            // Refresh error data only when the Errors tab is visible
+            if (tabsState.selected() == TAB_ERRORS) {
+                refreshErrorData(pids);
             }
 
             // Refresh trace data only when the Inspect tab is visible
@@ -3009,58 +3023,10 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
-        // Parse errors from error registry
+        // Parse error count from error registry (full error data is loaded on demand by ErrorsTab)
         JsonObject errorsObj = (JsonObject) root.get("errors");
         if (errorsObj != null) {
-            JsonArray errorList = (JsonArray) errorsObj.get("errors");
-            if (errorList != null) {
-                for (Object e : errorList) {
-                    JsonObject ej = (JsonObject) e;
-                    ErrorInfo ei = new ErrorInfo();
-                    ei.routeId = ej.getString("routeId");
-                    ei.nodeId = ej.getString("nodeId");
-                    ei.exchangeId = ej.getString("exchangeId");
-                    ei.handled = ej.getBooleanOrDefault("handled", false);
-                    Long ts = ej.getLong("timestamp");
-                    if (ts != null) {
-                        ei.timestamp = ts;
-                    }
-                    ei.location = ej.getString("location");
-                    ei.threadName = ej.getString("threadName");
-                    Long elapsed = ej.getLong("elapsed");
-                    if (elapsed != null) {
-                        ei.elapsed = elapsed;
-                    }
-                    ei.endpointUri = ej.getString("endpointUri");
-                    ei.fromEndpointUri = ej.getString("fromEndpointUri");
-                    // exception
-                    JsonObject ex = (JsonObject) ej.get("exception");
-                    if (ex != null) {
-                        ei.exceptionType = ex.getString("type");
-                        ei.exceptionMessage = ex.getString("message");
-                        ei.stackTrace = ex.getString("stackTrace");
-                    }
-                    // message history
-                    Object mhObj = ej.get("messageHistory");
-                    if (mhObj instanceof JsonArray mhArr) {
-                        ei.messageHistory = new String[mhArr.size()];
-                        for (int i = 0; i < mhArr.size(); i++) {
-                            ei.messageHistory[i] = mhArr.get(i).toString();
-                        }
-                    }
-                    // message (body, headers)
-                    JsonObject msg = (JsonObject) ej.get("message");
-                    if (msg != null) {
-                        ei.body = msg.getString("body");
-                        ei.bodyType = msg.getString("bodyType");
-                        parseKvArray(msg.getCollection("headers"), ei.headers, ei.headerTypes);
-                    }
-                    // exchange properties and variables
-                    parseKvArray(ej.getCollection("exchangeProperties"), ei.properties, ei.propertyTypes);
-                    parseKvArray(ej.getCollection("exchangeVariables"), ei.variables, ei.variableTypes);
-                    info.errors.add(ei);
-                }
-            }
+            info.errorCount = errorsObj.getIntegerOrDefault("size", 0);
         }
 
         // Parse REST DSL services
@@ -3189,6 +3155,93 @@ public class CamelMonitor extends CamelCommand {
                     types.put(key, type);
                 }
             }
+        }
+    }
+
+    private JsonObject loadErrorFile(long pid) {
+        return TuiHelper.loadStatus(pid, this::getErrorFile);
+    }
+
+    private void refreshErrorData(List<Long> pids) {
+        IntegrationInfo sel = findSelectedIntegration();
+        if (sel == null) {
+            return;
+        }
+        try {
+            long pid = Long.parseLong(sel.pid);
+            JsonObject root = loadErrorFile(pid);
+            if (root == null) {
+                return;
+            }
+            JsonArray errorList = (JsonArray) root.get("errors");
+            if (errorList == null) {
+                return;
+            }
+            List<ErrorInfo> parsed = new ArrayList<>();
+            for (Object e : errorList) {
+                JsonObject ej = (JsonObject) e;
+                ErrorInfo ei = new ErrorInfo();
+                ei.routeId = ej.getString("routeId");
+                ei.nodeId = ej.getString("nodeId");
+                ei.exchangeId = ej.getString("exchangeId");
+                ei.handled = Boolean.TRUE.equals(ej.get("handled"));
+                Long ts = ej.getLong("timestamp");
+                if (ts != null) {
+                    ei.timestamp = ts;
+                }
+                ei.location = ej.getString("location");
+                ei.threadName = ej.getString("threadName");
+                Long elapsed = ej.getLong("elapsed");
+                if (elapsed != null) {
+                    ei.elapsed = elapsed;
+                }
+                ei.endpointUri = ej.getString("endpointUri");
+                ei.fromEndpointUri = ej.getString("fromEndpointUri");
+                // exception
+                JsonObject ex = (JsonObject) ej.get("exception");
+                if (ex != null) {
+                    ei.exceptionType = ex.getString("type");
+                    ei.exceptionMessage = ex.getString("message");
+                    ei.stackTrace = ex.getString("stackTrace");
+                }
+                // message history
+                Object mhObj = ej.get("messageHistory");
+                if (mhObj instanceof JsonArray mhArr) {
+                    ei.messageHistory = new String[mhArr.size()];
+                    for (int i = 0; i < mhArr.size(); i++) {
+                        ei.messageHistory[i] = mhArr.get(i).toString();
+                    }
+                }
+                // message (body, headers)
+                JsonObject msg = (JsonObject) ej.get("message");
+                if (msg != null) {
+                    Object bodyObj = msg.get("body");
+                    if (bodyObj instanceof JsonObject bodyJson) {
+                        ei.body = bodyJson.getString("value");
+                        ei.bodyType = bodyJson.getString("type");
+                    } else if (bodyObj != null) {
+                        ei.body = bodyObj.toString();
+                    }
+                    JsonArray hdrs = msg.getCollection("headers");
+                    if (hdrs != null) {
+                        parseKvArray(hdrs, ei.headers, ei.headerTypes);
+                    }
+                }
+                // exchange properties and variables
+                JsonArray props = ej.getCollection("exchangeProperties");
+                if (props != null) {
+                    parseKvArray(props, ei.properties, ei.propertyTypes);
+                }
+                JsonArray vars = ej.getCollection("exchangeVariables");
+                if (vars != null) {
+                    parseKvArray(vars, ei.variables, ei.variableTypes);
+                }
+                parsed.add(ei);
+            }
+            sel.errors.clear();
+            sel.errors.addAll(parsed);
+        } catch (Exception e) {
+            // ignore
         }
     }
 
