@@ -232,7 +232,7 @@ public class ListError extends ProcessWatchCommand {
                         // exception
                         JsonObject cause = r.rawJson.getMap("exception");
                         String data = tableHelper.getDataAsTable(
-                                r.exchangeId, null, null, null, null, msg, cause);
+                                r.exchangeId, "", null, null, null, msg, cause);
                         if (data != null && !data.isEmpty()) {
                             printer().print(data);
                         }
