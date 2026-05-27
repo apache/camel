@@ -314,7 +314,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudFunctionsOperation}.
          */
         public String googleCloudFunctionsOperation() {
-            return "GoogleCloudFunctionsOperation";
+            return "CamelGoogleCloudFunctionsOperation";
         }
         /**
          * The name of the function (as defined in source code) that will be
@@ -328,7 +328,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * GoogleCloudFunctionsEntryPoint}.
          */
         public String googleCloudFunctionsEntryPoint() {
-            return "GoogleCloudFunctionsEntryPoint";
+            return "CamelGoogleCloudFunctionsEntryPoint";
         }
         /**
          * The runtime in which to run the function. Possible values are:
@@ -343,7 +343,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * @return the name of the header {@code GoogleCloudFunctionsRuntime}.
          */
         public String googleCloudFunctionsRuntime() {
-            return "GoogleCloudFunctionsRuntime";
+            return "CamelGoogleCloudFunctionsRuntime";
         }
         /**
          * The Google Cloud Storage URL, starting with gs://, pointing to the
@@ -358,7 +358,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * GoogleCloudFunctionsSourceArchiveUrl}.
          */
         public String googleCloudFunctionsSourceArchiveUrl() {
-            return "GoogleCloudFunctionsSourceArchiveUrl";
+            return "CamelGoogleCloudFunctionsSourceArchiveUrl";
         }
         /**
          * The response object resulting from the Google Functions Client
@@ -372,7 +372,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * GoogleCloudFunctionsResponseObject}.
          */
         public String googleCloudFunctionsResponseObject() {
-            return "GoogleCloudFunctionsResponseObject";
+            return "CamelGoogleCloudFunctionsResponseObject";
         }
     }
     static GoogleCloudFunctionsEndpointBuilder endpointBuilder(String componentName, String path) {

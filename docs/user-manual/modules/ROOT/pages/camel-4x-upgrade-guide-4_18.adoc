@@ -464,6 +464,51 @@ been renamed accordingly (`operation()` -> `elasticsearchOperation()` /
 
 
 
+=== camel-google-functions / camel-google-secret-manager - potential breaking change
+
+The Exchange header constants in `GoogleCloudFunctionsConstants` and
+`GoogleSecretManagerConstants` that carried a `GoogleCloudFunctions` /
+`GoogleSecretManager` prefix are not in the `Camel` namespace and were
+therefore not filtered by the default `HeaderFilterStrategy`. They have been
+renamed to add the `Camel` prefix. The Java field names are unchanged; only
+the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `GoogleCloudFunctionsConstants.OPERATION` | `GoogleCloudFunctionsOperation` | `CamelGoogleCloudFunctionsOperation`
+| `GoogleCloudFunctionsConstants.ENTRY_POINT` | `GoogleCloudFunctionsEntryPoint` | `CamelGoogleCloudFunctionsEntryPoint`
+| `GoogleCloudFunctionsConstants.RUNTIME` | `GoogleCloudFunctionsRuntime` | `CamelGoogleCloudFunctionsRuntime`
+| `GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL` | `GoogleCloudFunctionsSourceArchiveUrl` | `CamelGoogleCloudFunctionsSourceArchiveUrl`
+| `GoogleCloudFunctionsConstants.RESPONSE_OBJECT` | `GoogleCloudFunctionsResponseObject` | `CamelGoogleCloudFunctionsResponseObject`
+| `GoogleSecretManagerConstants.OPERATION` | `GoogleSecretManagerOperation` | `CamelGoogleSecretManagerOperation`
+|===
+
+The `GoogleSecretManagerConstants.SECRET_ID`, `VERSION_ID` and `REPLICATION`
+constants were already `Camel`-prefixed and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(GoogleCloudFunctionsConstants.OPERATION, ...)`) continue to work
+without changes. Routes that set the header by its literal string value (for
+example `setHeader("GoogleCloudFunctionsOperation", ...)`) must be updated to
+use the new value (`setHeader("CamelGoogleCloudFunctionsOperation", ...)`).
+
+The generated Endpoint DSL header accessor names are unchanged (for example
+`googleCloudFunctionsOperation()`), since the `Camel` prefix is stripped when
+deriving the accessor name; the accessors now return the new `Camel`-prefixed
+values.
+
+NOTE: The companion rename for `camel-google-vision`, `camel-google-text-to-speech`
+and `camel-google-speech-to-text` from the same main-branch PR (#23467) is
+**not** backported to 4.18.x because those components were added after the
+4.18.x branch point and do not exist on this maintenance branch.
+
+
+
+
+
+
+
 === camel-web3j - potential breaking change
 
 The Exchange header constants in `Web3jConstants` have been renamed to follow the
