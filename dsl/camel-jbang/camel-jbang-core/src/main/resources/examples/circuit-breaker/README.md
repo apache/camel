@@ -22,3 +22,26 @@ how the state of the circuit breaker changes from closed to open due to many fai
 ```sh
 camel get circuit-breaker --watch
 ```
+
+## Inspecting errors
+
+Because the circuit breaker triggers exceptions, you can use `camel get error` to inspect
+captured routing errors:
+
+```sh
+camel get error
+```
+
+This shows a summary table with PID, route, node, exchange ID, exception type and message.
+
+To see full details of the last error (body, headers, variables, properties, exception and message history):
+
+```sh
+camel get error --last
+```
+
+You can also pick a specific error by its exchange ID:
+
+```sh
+camel get error --id=<exchangeId> --detail
+```
