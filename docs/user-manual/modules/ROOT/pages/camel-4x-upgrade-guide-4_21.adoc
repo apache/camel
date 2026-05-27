@@ -1568,3 +1568,11 @@ those sites and have not been added; DoS hardening on the JMS path must be confi
 level (for example Artemis `deserializationAllowList`, ActiveMQ Classic `SERIALIZABLE_PACKAGES`) or via
 `-Djdk.serialFilter`.
 
+=== camel-azure-storage-blob
+
+A new container-level operation `listBlobVersions` has been added. It returns one `BlobItem`
+per version of every blob in the container, each carrying its own `versionId` and
+`isCurrentVersion` flag, so the full version history can be inspected. Requires versioning to be
+enabled on the storage account. The same `prefix`, `regex` and `maxResultsPerPage` filters as
+`listBlobs` are honoured.
+

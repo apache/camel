@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.azure.storage.blob.models.BlobItem;
+import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.models.PublicAccessType;
@@ -49,6 +50,25 @@ public class BlobContainerOperations {
 
     public BlobOperationResponse listBlobs(final Exchange exchange) {
         final ListBlobsOptions listBlobOptions = configurationProxy.getListBlobOptions(exchange);
+        final Duration timeout = configurationProxy.getTimeout(exchange);
+        final String regex = configurationProxy.getRegex(exchange);
+        List<BlobItem> blobs = client.listBlobs(listBlobOptions, timeout);
+        if (ObjectHelper.isEmpty(regex)) {
+            return BlobOperationResponse.create(blobs);
+        }
+        List<BlobItem> filteredBlobs = blobs.stream()
+                .filter(x -> x.getName().matches(regex))
+                .collect(Collectors.toCollection(LinkedList<BlobItem>::new));
+        return BlobOperationResponse.create(filteredBlobs);
+    }
+
+    public BlobOperationResponse listBlobVersions(final Exchange exchange) {
+        final ListBlobsOptions listBlobOptions = configurationProxy.getListBlobOptions(exchange);
+        final BlobListDetails details = listBlobOptions.getDetails() != null
+                ? listBlobOptions.getDetails() : new BlobListDetails();
+        details.setRetrieveVersions(true);
+        listBlobOptions.setDetails(details);
+
         final Duration timeout = configurationProxy.getTimeout(exchange);
         final String regex = configurationProxy.getRegex(exchange);
         List<BlobItem> blobs = client.listBlobs(listBlobOptions, timeout);
