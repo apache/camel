@@ -84,11 +84,11 @@ class ExportMainJkubeTest {
                 model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib and jkube plugin
-        Assertions.assertEquals(5, model.getBuild().getPlugins().size());
-        Plugin p = model.getBuild().getPlugins().get(3);
+        Assertions.assertEquals(7, model.getBuild().getPlugins().size());
+        Plugin p = model.getBuild().getPlugins().get(5);
         Assertions.assertEquals("com.google.cloud.tools", p.getGroupId());
         Assertions.assertEquals("jib-maven-plugin", p.getArtifactId());
-        p = model.getBuild().getPlugins().get(4);
+        p = model.getBuild().getPlugins().get(6);
         Assertions.assertEquals("org.eclipse.jkube", p.getGroupId());
         Assertions.assertEquals("kubernetes-maven-plugin", p.getArtifactId());
         Assertions.assertEquals("1.19.0", p.getVersion());

@@ -194,9 +194,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Mixin
     protected QuarkusPlatformMixin quarkusPlatform;
 
+    @Deprecated
     @CommandLine.Option(names = { "--quarkus-package-type" },
-                        description = "Quarkus package type (uber-jar or fast-jar)",
-                        defaultValue = "fast-jar")
+                        description = "Deprecated: Quarkus always uses fast-jar (layered) packaging",
+                        defaultValue = "fast-jar",
+                        hidden = true)
     protected String quarkusPackageType = "fast-jar";
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
