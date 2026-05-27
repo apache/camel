@@ -65,6 +65,9 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertTrue(entry.getException() instanceof IllegalArgumentException);
         assertTrue(entry.getUid() > 0);
         assertNotNull(entry.getProcessingThreadName());
+        assertEquals("direct://start", entry.getFromEndpointUri());
+        assertTrue(entry.getRouteUptime() >= 0, "Route uptime should be non-negative");
+        assertTrue(entry.getElapsed() >= 0, "Elapsed time should be non-negative");
     }
 
     @Test
@@ -234,6 +237,9 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertNotNull(json.get("exchangeId"));
         assertNotNull(json.get("exception"));
         assertNotNull(json.get("message"));
+        assertEquals("direct://start", json.get("fromEndpointUri"));
+        assertTrue((long) json.get("routeUptime") >= 0);
+        assertTrue((long) json.get("elapsed") >= 0);
     }
 
     @Override
