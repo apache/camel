@@ -79,6 +79,10 @@ public class ListError extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
+    @CommandLine.Option(names = { "--detail" },
+                        description = "Show full details of each error entry")
+    boolean detail;
+
     @CommandLine.Option(names = { "--last" },
                         description = "Show only the last (newest) error with full details")
     boolean last;
@@ -96,6 +100,9 @@ public class ListError extends ProcessWatchCommand {
 
         if (last) {
             limit = 1;
+            detail = true;
+        }
+        if (detail) {
             show = "all";
         }
 

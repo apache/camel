@@ -20,6 +20,7 @@ camel get error [options]
 |===
 | Option | Description | Default | Type
 | `--ago` | Filter by time window, e.g. 60s, 5m, 1h |  | String
+| `--detail` | Show full details of each error entry |  | boolean
 | `--exception` | Filter by exception type (substring match) |  | String
 | `--handled` | Filter by handled status (true or false) |  | String
 | `--id` | Filter by exchange ID |  | String
