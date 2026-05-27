@@ -29,10 +29,10 @@ public final class ArangoDbConstants {
               javaType = "java.lang.Boolean", defaultValue = "false")
     public static final String MULTI_DELETE = "CamelArangoDbMultiDelete";
     @Metadata(description = "The Arango key to use for the operation.", javaType = "java.lang.String")
-    public static final String ARANGO_KEY = "key";
+    public static final String ARANGO_KEY = "CamelArangoDbKey";
     @Metadata(description = "The type of the result of the operation.", javaType = "java.lang.Class",
               defaultValue = "BaseDocument.class or BaseEdgeDocument.class")
-    public static final String RESULT_CLASS_TYPE = "ResultClassType";
+    public static final String RESULT_CLASS_TYPE = "CamelArangoDbResultClassType";
     @Metadata(description = "The AQL query to execute.", javaType = "java.lang.String")
     public static final String AQL_QUERY = "CamelArangoDbAqlQuery";
     @Metadata(description = "The key/value pairs defining the variables to bind the query to.",

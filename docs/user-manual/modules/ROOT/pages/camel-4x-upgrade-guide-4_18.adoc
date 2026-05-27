@@ -259,6 +259,36 @@ As a consequence, the generated Endpoint DSL header accessors on
 * `decryptionMaterial()` -> `pdfDecryptionMaterial()`
 * `filesToMerge()` -> `pdfFilesToMerge()`
 
+=== camel-arangodb - potential breaking change
+
+Two Exchange header constants in `ArangoDbConstants` that were not in the
+`Camel` namespace (and therefore not filtered by the default
+`HeaderFilterStrategy`) have been renamed to follow the Camel naming
+convention. The Java field names are unchanged; only the header string values
+have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ArangoDbConstants.ARANGO_KEY` | `key` | `CamelArangoDbKey`
+| `ArangoDbConstants.RESULT_CLASS_TYPE` | `ResultClassType` | `CamelArangoDbResultClassType`
+|===
+
+The remaining constants (`MULTI_UPDATE`, `MULTI_INSERT`, `MULTI_DELETE`,
+`AQL_QUERY`, `AQL_QUERY_BIND_PARAMETERS`, `AQL_QUERY_OPTIONS`) were already
+`Camel`-prefixed and are unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(ArangoDbConstants.ARANGO_KEY, ...)`) continue to work without
+changes. Routes that set the header by its literal string value (for example
+`setHeader("key", ...)`) must be updated to use the new value
+(`setHeader("CamelArangoDbKey", ...)`).
+
+As a consequence, the generated Endpoint DSL header accessors on
+`ArangoDbHeaderNameBuilder` have been renamed: `key()` -> `arangoDbKey()` and
+`resultClassType()` -> `arangoDbResultClassType()`.
+
+
 === camel-web3j - potential breaking change
 
 The Exchange header constants in `Web3jConstants` have been renamed to follow the
