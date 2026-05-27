@@ -110,13 +110,13 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_OVERVIEW = 0;
     private static final int TAB_LOG = 1;
     private static final int TAB_ROUTES = 2;
-    private static final int TAB_CONSUMERS = 3;
-    private static final int TAB_ENDPOINTS = 4;
-    private static final int TAB_HTTP = 5;
-    private static final int TAB_HEALTH = 6;
-    private static final int TAB_HISTORY = 7;
+    private static final int TAB_ENDPOINTS = 3;
+    private static final int TAB_HTTP = 4;
+    private static final int TAB_HEALTH = 5;
+    private static final int TAB_HISTORY = 6;
+    private static final int TAB_ERRORS = 7;
     private static final int TAB_CIRCUIT_BREAKER = 8;
-    private static final int TAB_ERRORS = 9;
+    private static final int TAB_CONSUMERS = 9;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -445,25 +445,25 @@ public class CamelMonitor extends CamelCommand {
                     return handleTabKey(TAB_ROUTES);
                 }
                 if (ke.isChar('4')) {
-                    return handleTabKey(TAB_CONSUMERS);
-                }
-                if (ke.isChar('5')) {
                     return handleTabKey(TAB_ENDPOINTS);
                 }
-                if (ke.isChar('6')) {
+                if (ke.isChar('5')) {
                     return handleTabKey(TAB_HTTP);
                 }
-                if (ke.isChar('7')) {
+                if (ke.isChar('6')) {
                     return handleTabKey(TAB_HEALTH);
                 }
-                if (ke.isChar('8')) {
+                if (ke.isChar('7')) {
                     return handleTabKey(TAB_HISTORY);
+                }
+                if (ke.isChar('8')) {
+                    return handleTabKey(TAB_ERRORS);
                 }
                 if (ke.isChar('9')) {
                     return handleTabKey(TAB_CIRCUIT_BREAKER);
                 }
                 if (ke.isChar('0')) {
-                    return handleTabKey(TAB_ERRORS);
+                    return handleTabKey(TAB_CONSUMERS);
                 }
             }
 
@@ -976,13 +976,13 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(" 1 Overview "),
                 Line.from(" 2 Log "),
                 Line.from(routesTab.isTopMode() ? " 3  Top  " : " 3 Route "),
-                Line.from(" 4 Consumer "),
-                Line.from(" 5 Endpoint "),
-                Line.from(" 6 HTTP "),
-                Line.from(" 7 Health "),
-                Line.from(" 8 Inspect "),
+                Line.from(" 4 Endpoint "),
+                Line.from(" 5 HTTP "),
+                Line.from(" 6 Health "),
+                Line.from(" 7 Inspect "),
+                Line.from(" 8 Errors "),
                 Line.from(" 9 Circuit Breaker "),
-                Line.from(" 0 Errors "),
+                Line.from(" 0 Consumer "),
         };
 
         Tabs tabs = Tabs.builder()
@@ -3345,8 +3345,8 @@ public class CamelMonitor extends CamelCommand {
     // ---- MCP accessor methods ----
 
     private static final String[] TAB_NAMES = {
-            "Overview", "Log", "Routes", "Consumers", "Endpoints",
-            "HTTP", "Health", "Inspect", "Circuit Breaker", "Errors"
+            "Overview", "Log", "Routes", "Endpoints",
+            "HTTP", "Health", "Inspect", "Errors", "Circuit Breaker", "Consumers"
     };
 
     Buffer getLastBuffer() {
