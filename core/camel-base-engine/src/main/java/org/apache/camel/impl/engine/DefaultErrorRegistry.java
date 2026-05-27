@@ -107,9 +107,13 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             return;
         }
 
+        // for correlated copy exchanges (e.g., created by circuit breaker, multicast, splitter)
+        // use the original exchange ID so the error is tracked under the parent exchange
+        String correlationId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+
         long uid = uidCounter.incrementAndGet();
         long timestamp = System.currentTimeMillis();
-        String exchangeId = exchange.getExchangeId();
+        String exchangeId = correlationId != null ? correlationId : exchange.getExchangeId();
         String routeId = exchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, String.class);
         if (routeId == null) {
             routeId = exchange.getFromRouteId();
@@ -177,10 +181,20 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                 endpointUri, toNode, stepId, fromEndpointUri, routeUptime, elapsed,
                 threadName, data, exception, handled, messageHistory);
 
-        // deduplicate: if the same exchange already has an entry, replace it
-        // (this happens with circuit breaker where the inner failure is handled first,
-        // then the outer error handler captures the same exchange again)
-        entries.removeIf(e -> exchangeId.equals(e.getExchangeId()));
+        // deduplicate by exchange ID:
+        // - correlated copy (inner): has more specific node info (e.g., throwException inside circuit breaker),
+        //   so it replaces any existing entry for the same original exchange
+        // - original exchange (outer): if already captured from a correlated copy, skip it
+        //   since the copy has more specific info about where the error actually occurred
+        if (correlationId != null) {
+            entries.removeIf(e -> exchangeId.equals(e.getExchangeId()));
+        } else {
+            for (BacklogErrorEventMessage e : entries) {
+                if (exchangeId.equals(e.getExchangeId())) {
+                    return;
+                }
+            }
+        }
         entries.addFirst(entry);
         evict();
     }
