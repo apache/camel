@@ -28,6 +28,35 @@ your own code or tooling, add `org.jspecify:jspecify` explicitly to your project
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
+==== Error Registry SPI changes
+
+The `ErrorRegistry` SPI has been enhanced to capture rich exchange data snapshots at error time,
+following the same pattern as BacklogTracer. The following breaking changes apply:
+
+- The `org.apache.camel.spi.ErrorRegistryEntry` interface has been removed and replaced by `BacklogErrorEventMessage`,
+  which extends a new `BacklogEventMessage` base interface shared with `BacklogTracerEventMessage`.
+- The `ErrorRegistryView.browse()` methods now return `Collection<BacklogErrorEventMessage>` instead of
+  `Collection<ErrorRegistryEntry>`.
+- The `stackTraceEnabled` option on `ErrorRegistry` has been removed. The full `Throwable` is now always captured.
+- Error registry configuration properties have moved from `camel.main.errorRegistryXxx` to the grouped
+  `camel.errorRegistry.*` prefix. The old flat properties (`camel.main.errorRegistryEnabled`,
+  `camel.main.errorRegistryMaximumEntries`, `camel.main.errorRegistryTimeToLiveSeconds`,
+  `camel.main.errorRegistryStackTraceEnabled`) are removed.
+
+New configuration properties under `camel.errorRegistry.*`:
+
+[options="header"]
+|===
+| Old property | New property
+| `camel.main.errorRegistryEnabled` | `camel.errorRegistry.enabled`
+| `camel.main.errorRegistryMaximumEntries` | `camel.errorRegistry.maximumEntries`
+| `camel.main.errorRegistryTimeToLiveSeconds` | `camel.errorRegistry.timeToLiveSeconds`
+| `camel.main.errorRegistryStackTraceEnabled` | _(removed, always captures full exception)_
+|===
+
+New capture options: `bodyMaxChars`, `bodyIncludeStreams`, `bodyIncludeFiles`,
+`includeExchangeProperties`, `includeExchangeVariables` — matching the BacklogTracer configuration.
+
 ==== Virtual threads: `maxQueueSize` now honored in `threads()` EIP
 
 When virtual threads are enabled (`camel.threads.virtual.enabled=true`), the `threads()` EIP now honors `maxQueueSize`

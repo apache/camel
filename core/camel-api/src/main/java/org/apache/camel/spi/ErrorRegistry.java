@@ -23,15 +23,16 @@ import org.apache.camel.StaticService;
 /**
  * A registry which captures exceptions that occurred during message routing and stores them in memory.
  * <p/>
- * This is an opt-in feature that must be enabled. When enabled, the registry captures error snapshots (exception type,
- * message, stack trace) without retaining references to the original exchange or exception objects.
+ * This is an opt-in feature that must be enabled. When enabled, the registry captures error snapshots including
+ * exception details, exchange data (headers, body, properties, variables), and routing context — without retaining
+ * references to the original exchange objects.
  * <p/>
  * The registry has a configurable maximum capacity and time-to-live to prevent unbounded memory growth and stale data.
  * <p/>
  * The registry itself implements {@link ErrorRegistryView} for global scope, and scoped views for individual routes can
  * be obtained via {@link #forRoute(String)}.
  *
- * @see   ErrorRegistryEntry
+ * @see   BacklogErrorEventMessage
  * @see   ErrorRegistryView
  * @since 4.19
  */
@@ -85,13 +86,65 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
      */
     void setTimeToLive(Duration timeToLive);
 
-    /**
-     * Whether stack trace capture is enabled
-     */
-    boolean isStackTraceEnabled();
+    // -- Exchange data capture options --
 
     /**
-     * Sets whether to capture stack traces. This is enabled by default.
+     * Maximum number of characters to keep for the message body (to prevent storing very big payloads).
      */
-    void setStackTraceEnabled(boolean stackTraceEnabled);
+    int getBodyMaxChars();
+
+    /**
+     * Sets the maximum number of characters to keep for the message body.
+     * <p/>
+     * The default value is 32768 (32kb).
+     */
+    void setBodyMaxChars(int bodyMaxChars);
+
+    /**
+     * Whether to include message body from streams.
+     */
+    boolean isBodyIncludeStreams();
+
+    /**
+     * Sets whether to include message body from streams.
+     * <p/>
+     * This is by default disabled because reading from a stream is a destructive operation.
+     */
+    void setBodyIncludeStreams(boolean bodyIncludeStreams);
+
+    /**
+     * Whether to include message body from files.
+     */
+    boolean isBodyIncludeFiles();
+
+    /**
+     * Sets whether to include message body from files.
+     * <p/>
+     * This is by default enabled.
+     */
+    void setBodyIncludeFiles(boolean bodyIncludeFiles);
+
+    /**
+     * Whether to include exchange properties in the captured error data.
+     */
+    boolean isIncludeExchangeProperties();
+
+    /**
+     * Sets whether to include exchange properties.
+     * <p/>
+     * This is by default enabled.
+     */
+    void setIncludeExchangeProperties(boolean includeExchangeProperties);
+
+    /**
+     * Whether to include exchange variables in the captured error data.
+     */
+    boolean isIncludeExchangeVariables();
+
+    /**
+     * Sets whether to include exchange variables.
+     * <p/>
+     * This is by default enabled.
+     */
+    void setIncludeExchangeVariables(boolean includeExchangeVariables);
 }
