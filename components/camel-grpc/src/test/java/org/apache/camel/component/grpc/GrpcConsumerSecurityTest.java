@@ -65,6 +65,10 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
     private PingPongGrpc.PingPongStub jwtCorrectAsyncStub;
     private PingPongGrpc.PingPongStub jwtIncorrectAsyncStub;
 
+    private int getRoutePort(String routeId) {
+        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
+    }
+
     @BeforeEach
     public void startGrpcChannels() throws SSLException {
         String correctJwtToken = JwtHelper.createJwtToken(JwtAlgorithm.HMAC256, GRPC_JWT_CORRECT_SECRET, null, null);
@@ -77,9 +81,9 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
         Assumptions.assumeTrue(sslContext instanceof OpenSslClientContext || sslContext instanceof JdkSslContext);
 
-        int tlsPort = ((GrpcConsumer) context.getRoute("grpc-tls").getConsumer()).getLocalPort();
-        int jwtCorrectPort = ((GrpcConsumer) context.getRoute("grpc-jwt-correct").getConsumer()).getLocalPort();
-        int jwtIncorrectPort = ((GrpcConsumer) context.getRoute("grpc-jwt-incorrect").getConsumer()).getLocalPort();
+        int tlsPort = getRoutePort("grpc-tls");
+        int jwtCorrectPort = getRoutePort("grpc-jwt-correct");
+        int jwtIncorrectPort = getRoutePort("grpc-jwt-incorrect");
 
         tlsChannel = NettyChannelBuilder.forAddress("localhost", tlsPort)
                 .sslContext(sslContext)

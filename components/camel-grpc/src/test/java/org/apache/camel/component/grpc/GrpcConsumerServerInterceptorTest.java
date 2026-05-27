@@ -52,13 +52,17 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
     private PingPongGrpc.PingPongBlockingStub interceptBlockingStub;
     private PingPongGrpc.PingPongBlockingStub nointerceptBlockingStub;
 
+    private int getRoutePort(String routeId) {
+        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
+    }
+
     @BeforeEach
     public void startGrpcChannels() {
         interceptRequestChannel = ManagedChannelBuilder
-                .forAddress("localhost", ((GrpcConsumer) context.getRoute("grpc-intercept").getConsumer()).getLocalPort())
+                .forAddress("localhost", getRoutePort("grpc-intercept"))
                 .usePlaintext().build();
         nointerceptRequestChannel = ManagedChannelBuilder
-                .forAddress("localhost", ((GrpcConsumer) context.getRoute("grpc-no-intercept").getConsumer()).getLocalPort())
+                .forAddress("localhost", getRoutePort("grpc-no-intercept"))
                 .usePlaintext().build();
         interceptBlockingStub = PingPongGrpc.newBlockingStub(interceptRequestChannel);
         nointerceptBlockingStub = PingPongGrpc.newBlockingStub(nointerceptRequestChannel);

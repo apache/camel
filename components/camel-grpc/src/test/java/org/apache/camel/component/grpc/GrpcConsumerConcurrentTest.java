@@ -56,9 +56,13 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
         return idCounter.get();
     }
 
+    private int getRoutePort(String routeId) {
+        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
+    }
+
     @Test
     public void testAsyncWithConcurrentThreads() {
-        int asyncPort = ((GrpcConsumer) context.getRoute("grpc-async").getConsumer()).getLocalPort();
+        int asyncPort = getRoutePort("grpc-async");
         RunnableAssert ra = new RunnableAssert("foo") {
 
             @Override
@@ -100,7 +104,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
     @Test
     public void testHeadersWithConcurrentThreads() {
-        int headersPort = ((GrpcConsumer) context.getRoute("grpc-headers").getConsumer()).getLocalPort();
+        int headersPort = getRoutePort("grpc-headers");
         RunnableAssert ra = new RunnableAssert("foo") {
 
             @Override

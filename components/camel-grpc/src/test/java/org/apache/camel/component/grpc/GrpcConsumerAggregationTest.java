@@ -50,13 +50,17 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     private PingPongGrpc.PingPongStub nonBlockingStub;
     private PingPongGrpc.PingPongStub asyncNonBlockingStub;
 
+    private int getRoutePort(String routeId) {
+        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
+    }
+
     @BeforeEach
     public void startGrpcChannels() {
         syncRequestChannel = ManagedChannelBuilder
-                .forAddress("localhost", ((GrpcConsumer) context.getRoute("grpc-sync").getConsumer()).getLocalPort())
+                .forAddress("localhost", getRoutePort("grpc-sync"))
                 .usePlaintext().build();
         asyncRequestChannel = ManagedChannelBuilder
-                .forAddress("localhost", ((GrpcConsumer) context.getRoute("grpc-async").getConsumer()).getLocalPort())
+                .forAddress("localhost", getRoutePort("grpc-async"))
                 .usePlaintext().build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
         nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);

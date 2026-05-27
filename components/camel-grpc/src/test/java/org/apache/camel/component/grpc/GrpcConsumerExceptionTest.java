@@ -48,9 +48,13 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     private PingPongGrpc.PingPongBlockingStub blockingStub;
     private PingPongGrpc.PingPongStub nonBlockingStub;
 
+    private int getRoutePort(String routeId) {
+        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
+    }
+
     @BeforeEach
     public void startGrpcChannels() {
-        int port = ((GrpcConsumer) context.getRoute("grpc-exception").getConsumer()).getLocalPort();
+        int port = getRoutePort("grpc-exception");
         syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", port).usePlaintext().build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
         nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);

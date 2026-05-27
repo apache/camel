@@ -48,13 +48,17 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
     private PingPongGrpc.PingPongStub asyncOnNextStub;
     private PingPongGrpc.PingPongStub asyncOnCompletedStub;
 
+    private int getRoutePort(String routeId) {
+        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
+    }
+
     @BeforeEach
     public void startGrpcChannels() {
         asyncOnNextChannel = ManagedChannelBuilder
-                .forAddress("localhost", ((GrpcConsumer) context.getRoute("grpc-on-next").getConsumer()).getLocalPort())
+                .forAddress("localhost", getRoutePort("grpc-on-next"))
                 .usePlaintext().build();
         asyncOnCompletedChannel = ManagedChannelBuilder
-                .forAddress("localhost", ((GrpcConsumer) context.getRoute("grpc-on-completed").getConsumer()).getLocalPort())
+                .forAddress("localhost", getRoutePort("grpc-on-completed"))
                 .usePlaintext().build();
         asyncOnNextStub = PingPongGrpc.newStub(asyncOnNextChannel);
         asyncOnCompletedStub = PingPongGrpc.newStub(asyncOnCompletedChannel);
