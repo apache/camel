@@ -28,21 +28,21 @@ public final class KeystoneConstants extends OpenstackConstants {
     public static final String GROUPS = "groups";
 
     @Metadata(description = "The description.", javaType = "String")
-    public static final String DESCRIPTION = "description";
+    public static final String DESCRIPTION = "CamelOpenstackKeystoneDescription";
     @Metadata(label = "group project user", description = "ID of the domain.", javaType = "String")
-    public static final String DOMAIN_ID = "domainId";
+    public static final String DOMAIN_ID = "CamelOpenstackKeystoneDomainId";
     @Metadata(label = "project", description = "The parent project ID.", javaType = "String")
-    public static final String PARENT_ID = "parentId";
+    public static final String PARENT_ID = "CamelOpenstackKeystoneParentId";
 
     @Metadata(label = "user", description = "User's password.", javaType = "String")
-    public static final String PASSWORD = "password";
+    public static final String PASSWORD = "CamelOpenstackKeystonePassword";
     @Metadata(label = "user", description = "User's email.", javaType = "String")
-    public static final String EMAIL = "email";
+    public static final String EMAIL = "CamelOpenstackKeystoneEmail";
 
     @Metadata(label = "group", description = "ID of the user.", javaType = "String")
-    public static final String USER_ID = "userId";
+    public static final String USER_ID = "CamelOpenstackKeystoneUserId";
     @Metadata(label = "group", description = "ID of the group.", javaType = "String")
-    public static final String GROUP_ID = "groupId";
+    public static final String GROUP_ID = "CamelOpenstackKeystoneGroupId";
 
     public static final String ADD_USER_TO_GROUP = "addUserToGroup";
     public static final String CHECK_GROUP_USER = "checkUserGroup";

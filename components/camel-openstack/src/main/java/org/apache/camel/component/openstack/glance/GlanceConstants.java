@@ -22,21 +22,21 @@ import org.apache.camel.spi.Metadata;
 public final class GlanceConstants extends OpenstackConstants {
 
     @Metadata(description = "The number of flavor VCPU.", javaType = "org.openstack4j.model.image.DiskFormat")
-    public static final String DISK_FORMAT = "diskFormat";
+    public static final String DISK_FORMAT = "CamelOpenstackGlanceDiskFormat";
     @Metadata(description = "Size of RAM.", javaType = "org.openstack4j.model.image.ContainerFormat")
-    public static final String CONTAINER_FORMAT = "containerFormat";
+    public static final String CONTAINER_FORMAT = "CamelOpenstackGlanceContainerFormat";
     @Metadata(description = "Image owner.", javaType = "String")
-    public static final String OWNER = "owner";
+    public static final String OWNER = "CamelOpenstackGlanceOwner";
     @Metadata(description = "Is public.", javaType = "Boolean")
-    public static final String IS_PUBLIC = "isPublic";
+    public static final String IS_PUBLIC = "CamelOpenstackGlanceIsPublic";
     @Metadata(description = "Minimum ram.", javaType = "Long")
-    public static final String MIN_RAM = "minRam";
+    public static final String MIN_RAM = "CamelOpenstackGlanceMinRam";
     @Metadata(description = "Minimum disk.", javaType = "Long")
-    public static final String MIN_DISK = "minDisk";
+    public static final String MIN_DISK = "CamelOpenstackGlanceMinDisk";
     @Metadata(description = "Size.", javaType = "Long")
-    public static final String SIZE = "size";
+    public static final String SIZE = "CamelOpenstackGlanceSize";
     @Metadata(description = "Checksum.", javaType = "String")
-    public static final String CHECKSUM = "checksum";
+    public static final String CHECKSUM = "CamelOpenstackGlanceChecksum";
 
     public static final String RESERVE = "reserve";
     public static final String UPLOAD = "upload";
