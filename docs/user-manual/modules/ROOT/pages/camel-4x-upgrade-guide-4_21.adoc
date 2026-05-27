@@ -157,6 +157,12 @@ the matching `*_doc` tool. The default `limit` for `camel_catalog_components` an
 `camel_catalog_dataformats` is also lowered from 50 to 20; pass an explicit `limit` to restore the
 previous behaviour.
 
+==== camel-jbang plugin commands
+
+The `camel plugin get --all` option is deprecated. Use the new `camel plugin list` command instead,
+which lists all available plugins (installed, bundled, and known 3rd party).
+The `camel plugin get` command now only shows installed plugins.
+
 ==== camel-jbang plugins
 
 Plugins are now loaded lazily. Built-in commands that do not consume plugins

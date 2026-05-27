@@ -31,10 +31,12 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
-                     description = "Display available plugins", sortOptions = false, showDefaultValues = true)
+                     description = "Get installed plugins", sortOptions = false, showDefaultValues = true)
 public class PluginGet extends PluginBaseCommand {
 
-    @CommandLine.Option(names = { "--all" }, defaultValue = "false", description = "Display all available plugins")
+    @Deprecated
+    @CommandLine.Option(names = { "--all" }, hidden = true, defaultValue = "false",
+                        description = "DEPRECATED: use 'camel plugin list' instead")
     public boolean all;
 
     @CommandLine.Option(names = { "--repos" }, defaultValue = "false", description = "Display maven repository column")
@@ -46,6 +48,12 @@ public class PluginGet extends PluginBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (all) {
+            PluginList delegate = new PluginList(getMain());
+            delegate.repos = this.repos;
+            return delegate.doCall();
+        }
+
         List<Row> rows = new ArrayList<>();
 
         JsonObject plugins = loadConfig().getMap("plugins");
@@ -64,50 +72,11 @@ public class PluginGet extends PluginBaseCommand {
             rows.add(new Row(name, command, dependency, description, repos, vendor));
         });
 
-        printRows(rows);
-
-        if (all) {
-            rows.clear();
-            for (PluginType camelPlugin : PluginType.values()) {
-                if (plugins.get(camelPlugin.getName()) == null) {
-                    String dependency = "org.apache.camel:camel-jbang-plugin-%s".formatted(camelPlugin.getCommand());
-                    rows.add(new Row(
-                            camelPlugin.getName(), camelPlugin.getCommand(), dependency,
-                            camelPlugin.getDescription(), camelPlugin.getRepos(), camelPlugin.getVendor()));
-                }
-            }
-
-            if (!rows.isEmpty()) {
-                printer().println();
-                printer().println("Supported plugins:");
-                printer().println();
-
-                printRows(rows);
-            }
-
-            rows.clear();
-            List<JsonObject> knownPlugins = PluginHelper.loadKnownPlugins();
-            for (JsonObject kp : knownPlugins) {
-                String kpName = kp.getString("name");
-                if (plugins.get(kpName) == null && PluginType.findByName(kpName).isEmpty()) {
-                    String dep = kp.getString("groupId") != null && kp.getString("artifactId") != null
-                            ? "%s:%s".formatted(kp.getString("groupId"), kp.getString("artifactId"))
-                            : kp.getStringOrDefault("dependency", "");
-                    rows.add(new Row(
-                            kpName, kp.getString("command"), dep,
-                            kp.getString("description"), kp.getString("repos"),
-                            kp.getStringOrDefault("vendor", "Community")));
-                }
-            }
-
-            if (!rows.isEmpty()) {
-                printer().println();
-                printer().println("Known 3rd party plugins:");
-                printer().println();
-
-                printRows(rows);
-            }
+        if (!rows.isEmpty()) {
+            printer().println("Installed plugins:");
+            printer().println();
         }
+        printRows(rows);
 
         return 0;
     }
@@ -119,7 +88,7 @@ public class PluginGet extends PluginBaseCommand {
                 .orElse("");
     }
 
-    private void printRows(List<Row> rows) {
+    protected void printRows(List<Row> rows) {
         if (!rows.isEmpty()) {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("NAME").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
@@ -134,11 +103,11 @@ public class PluginGet extends PluginBaseCommand {
                             .dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.repos),
                     new Column().header("DESCRIPTION").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .maxWidth(80, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.description))));
         }
     }
 
-    private record Row(String name, String command, String dependency, String description, String repos, String vendor) {
+    record Row(String name, String command, String dependency, String description, String repos, String vendor) {
     }
 }
