@@ -126,6 +126,27 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         String toNode = exchange.getExchangeExtension().getHistoryNodeId();
         String location = exchange.getExchangeExtension().getHistoryNodeSource();
 
+        // capture step id (set by Step EIP)
+        String stepId = exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
+
+        // capture from endpoint URI
+        String fromEndpointUri = null;
+        if (exchange.getFromEndpoint() != null) {
+            fromEndpointUri = exchange.getFromEndpoint().getEndpointUri();
+        }
+
+        // capture route uptime
+        long routeUptime = 0;
+        if (routeId != null) {
+            org.apache.camel.Route r = exchange.getContext().getRoute(routeId);
+            if (r != null) {
+                routeUptime = r.getUptimeMillis();
+            }
+        }
+
+        // capture exchange elapsed time
+        long elapsed = exchange.getClock().elapsed();
+
         // capture exchange data snapshot
         JsonObject data = MessageHelper.dumpAsJSonObject(
                 exchange.getMessage(),
@@ -140,7 +161,8 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
 
         DefaultBacklogErrorEventMessage entry = new DefaultBacklogErrorEventMessage(
                 uid, timestamp, location, routeId, fromRouteId, routeGroup, exchangeId,
-                endpointUri, toNode, threadName, data, exception, handled, messageHistory);
+                endpointUri, toNode, stepId, fromEndpointUri, routeUptime, elapsed,
+                threadName, data, exception, handled, messageHistory);
 
         entries.addFirst(entry);
         evict();
@@ -375,6 +397,10 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         private final String exchangeId;
         private final String endpointUri;
         private final String toNode;
+        private final String stepId;
+        private final String fromEndpointUri;
+        private final long routeUptime;
+        private final long elapsed;
         private final String threadName;
         private final JsonObject data;
         private final Throwable exception;
@@ -387,7 +413,9 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         DefaultBacklogErrorEventMessage(
                                         long uid, long timestamp, String location, String routeId, String fromRouteId,
                                         String routeGroup,
-                                        String exchangeId, String endpointUri, String toNode, String threadName,
+                                        String exchangeId, String endpointUri, String toNode,
+                                        String stepId, String fromEndpointUri, long routeUptime, long elapsed,
+                                        String threadName,
                                         JsonObject data, Throwable exception, boolean handled, String[] messageHistory) {
             this.uid = uid;
             this.timestamp = timestamp;
@@ -398,6 +426,10 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             this.exchangeId = exchangeId;
             this.endpointUri = endpointUri;
             this.toNode = toNode;
+            this.stepId = stepId;
+            this.fromEndpointUri = fromEndpointUri;
+            this.routeUptime = routeUptime;
+            this.elapsed = elapsed;
             this.threadName = threadName;
             this.data = data;
             this.exception = exception;
@@ -448,6 +480,26 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         @Override
         public String getToNode() {
             return toNode;
+        }
+
+        @Override
+        public String getStepId() {
+            return stepId;
+        }
+
+        @Override
+        public String getFromEndpointUri() {
+            return fromEndpointUri;
+        }
+
+        @Override
+        public long getRouteUptime() {
+            return routeUptime;
+        }
+
+        @Override
+        public long getElapsed() {
+            return elapsed;
         }
 
         @Override
@@ -537,6 +589,14 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             if (toNode != null) {
                 jo.put("nodeId", toNode);
             }
+            if (stepId != null) {
+                jo.put("stepId", stepId);
+            }
+            if (fromEndpointUri != null) {
+                jo.put("fromEndpointUri", fromEndpointUri);
+            }
+            jo.put("routeUptime", routeUptime);
+            jo.put("elapsed", elapsed);
             jo.put("threadName", threadName);
             jo.put("handled", handled);
             // message data

@@ -35,6 +35,37 @@ public interface BacklogErrorEventMessage extends BacklogEventMessage {
     String getRouteGroup();
 
     /**
+     * The id of the Step EIP the exchange was inside when the error occurred, or {@code null} if the exchange was not
+     * inside a Step EIP.
+     *
+     * @since 4.21
+     */
+    @Nullable
+    String getStepId();
+
+    /**
+     * The URI of the route's consumer (from) endpoint where the exchange originated.
+     *
+     * @since 4.21
+     */
+    @Nullable
+    String getFromEndpointUri();
+
+    /**
+     * The uptime of the route (in milliseconds) at the time the error was captured.
+     *
+     * @since 4.21
+     */
+    long getRouteUptime();
+
+    /**
+     * The elapsed processing time of the exchange (in milliseconds) from creation until the error was captured.
+     *
+     * @since 4.21
+     */
+    long getElapsed();
+
+    /**
      * The actual exception that caused the error. This is the live {@link Throwable} instance, not a serialized copy.
      */
     Throwable getException();
