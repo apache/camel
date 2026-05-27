@@ -50,7 +50,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     private final AtomicLong uidCounter = new AtomicLong();
     private volatile boolean enabled;
     private volatile int maximumEntries = 100;
-    private volatile Duration timeToLive = Duration.ofHours(1);
+    private volatile Duration timeToLive = Duration.ZERO;
     private volatile int bodyMaxChars = 32 * 1024;
     private volatile boolean bodyIncludeStreams;
     private volatile boolean bodyIncludeFiles = true;
@@ -224,13 +224,15 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         while (entries.size() > maximumEntries) {
             entries.pollLast();
         }
-        Instant cutoff = Instant.now().minus(timeToLive);
-        while (!entries.isEmpty()) {
-            BacklogErrorEventMessage last = entries.peekLast();
-            if (last != null && Instant.ofEpochMilli(last.getTimestamp()).isBefore(cutoff)) {
-                entries.pollLast();
-            } else {
-                break;
+        if (!timeToLive.isZero() && !timeToLive.isNegative()) {
+            Instant cutoff = Instant.now().minus(timeToLive);
+            while (!entries.isEmpty()) {
+                BacklogErrorEventMessage last = entries.peekLast();
+                if (last != null && Instant.ofEpochMilli(last.getTimestamp()).isBefore(cutoff)) {
+                    entries.pollLast();
+                } else {
+                    break;
+                }
             }
         }
     }

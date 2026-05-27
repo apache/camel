@@ -82,7 +82,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
     /**
      * Sets the time-to-live for error entries. Entries older than this duration are evicted.
      * <p/>
-     * The default value is 1 hour.
+     * The default value is 0 (disabled). Set to a positive duration to enable time-based eviction.
      */
     void setTimeToLive(Duration timeToLive);
 
