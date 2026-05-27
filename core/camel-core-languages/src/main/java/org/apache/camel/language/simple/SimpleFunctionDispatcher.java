@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.functions.BeanFunctionFactory;
 import org.apache.camel.language.simple.functions.BodyFunctionFactory;
 import org.apache.camel.language.simple.functions.CollateFunctionFactory;
 import org.apache.camel.language.simple.functions.CollectionFunctionFactory;
@@ -79,7 +80,8 @@ public final class SimpleFunctionDispatcher {
             new TypeFunctionFactory(),
             new DateFunctionFactory(),
             new MessageFunctionFactory(),
-            new OutputFunctionFactory());
+            new OutputFunctionFactory(),
+            new BeanFunctionFactory());
 
     private static final List<Entry> EXPRESSION_ENTRIES = List.of(
             new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),

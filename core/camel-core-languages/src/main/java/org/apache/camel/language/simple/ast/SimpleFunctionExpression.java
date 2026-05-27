@@ -16,12 +16,10 @@
  */
 package org.apache.camel.language.simple.ast;
 
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionDispatcher;
@@ -30,14 +28,12 @@ import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.functions.DirectFunctionFactory;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
-import org.apache.camel.spi.Language;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
-import org.apache.camel.util.URISupport;
 
 /**
  * Represents one of built-in functions of the <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -188,61 +184,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (fileExpression != null) {
                 return fileExpression;
             }
-        }
-
-        // bean: prefix
-        remainder = ifStartsWithReturnRemainder("bean:", function);
-        if (remainder != null) {
-            Language bean = camelContext.resolveLanguage("bean");
-            String ref = remainder;
-            Object method = null;
-            Object scope = null;
-
-            // we support different syntax for bean function
-            if (remainder.contains("?method=") || remainder.contains("?scope=")) {
-                ref = StringHelper.before(remainder, "?");
-                String query = StringHelper.after(remainder, "?");
-                try {
-                    Map<String, Object> map = URISupport.parseQuery(query);
-                    method = map.get("method");
-                    scope = map.get("scope");
-                } catch (URISyntaxException e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
-            } else {
-                //first check case :: because of my.own.Bean::method
-                int doubleColonIndex = remainder.indexOf("::");
-                //need to check that not inside params
-                int beginOfParameterDeclaration = remainder.indexOf('(');
-                if (doubleColonIndex > 0 && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
-                    ref = remainder.substring(0, doubleColonIndex);
-                    method = remainder.substring(doubleColonIndex + 2);
-                } else {
-                    int idx = remainder.indexOf('.');
-                    if (idx > 0) {
-                        ref = remainder.substring(0, idx);
-                        method = remainder.substring(idx + 1);
-                    }
-                }
-            }
-
-            Class<?> type = null;
-            if (ref != null && ref.startsWith("type:")) {
-                try {
-                    type = camelContext.getClassResolver().resolveMandatoryClass(ref.substring(5));
-                    ref = null;
-                } catch (ClassNotFoundException e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
-            }
-
-            // there are parameters then map them into properties
-            Object[] properties = new Object[7];
-            properties[3] = type;
-            properties[4] = ref;
-            properties[2] = method;
-            properties[5] = scope;
-            return bean.createExpression(null, properties);
         }
 
         // miscellaneous and other built-in functions
@@ -420,50 +361,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
             return createCodeFileExpression(remainder);
-        }
-
-        // bean: prefix
-        remainder = ifStartsWithReturnRemainder("bean:", function);
-        if (remainder != null) {
-            String ref = remainder;
-            Object method = null;
-            Object scope = null;
-
-            // we support different syntax for bean function
-            if (remainder.contains("?method=") || remainder.contains("?scope=")) {
-                ref = StringHelper.before(remainder, "?");
-                String query = StringHelper.after(remainder, "?");
-                try {
-                    Map<String, Object> map = URISupport.parseQuery(query);
-                    method = map.get("method");
-                    scope = map.get("scope");
-                } catch (URISyntaxException e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
-            } else {
-                //first check case :: because of my.own.Bean::method
-                int doubleColonIndex = remainder.indexOf("::");
-                //need to check that not inside params
-                int beginOfParameterDeclaration = remainder.indexOf('(');
-                if (doubleColonIndex > 0 && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
-                    ref = remainder.substring(0, doubleColonIndex);
-                    method = remainder.substring(doubleColonIndex + 2);
-                } else {
-                    int idx = remainder.indexOf('.');
-                    if (idx > 0) {
-                        ref = remainder.substring(0, idx);
-                        method = remainder.substring(idx + 1);
-                    }
-                }
-            }
-            ref = ref.trim();
-            if (method != null && scope != null) {
-                return "bean(exchange, bean, \"" + ref + "\", \"" + method + "\", \"" + scope + "\")";
-            } else if (method != null) {
-                return "bean(exchange, bean, \"" + ref + "\", \"" + method + "\", null)";
-            } else {
-                return "bean(exchange, bean, \"" + ref + "\", null, null)";
-            }
         }
 
         // miscellaneous and other built-in functions
