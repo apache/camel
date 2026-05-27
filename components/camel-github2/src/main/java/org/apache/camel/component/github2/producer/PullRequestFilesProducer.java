@@ -27,7 +27,7 @@ import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHPullRequestFileDetail;
 
 /**
- * Producer endpoint that gets the list of files in a pull request. The endpoint requires the "GitHubPullRequest"
+ * Producer endpoint that gets the list of files in a pull request. The endpoint requires the "CamelGitHubPullRequest"
  * header, identifying the pull request number (integer).
  */
 public class PullRequestFilesProducer extends AbstractGitHub2Producer {
