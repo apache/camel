@@ -68,6 +68,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertEquals("direct://start", entry.getFromEndpointUri());
         assertTrue(entry.getRouteUptime() >= 0, "Route uptime should be non-negative");
         assertTrue(entry.getElapsed() >= 0, "Elapsed time should be non-negative");
+        assertNotNull(entry.getToNode(), "Node id should be captured from message history");
     }
 
     @Test
@@ -165,6 +166,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertFalse(entry.isHandled());
         assertEquals("java.lang.IllegalArgumentException", entry.getExceptionType());
         assertEquals("Unhandled error", entry.getExceptionMessage());
+        assertNotNull(entry.getToNode(), "Node id should be captured for unhandled errors");
     }
 
     @Test
@@ -221,6 +223,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertTrue(json.contains("\"handled\""));
         assertTrue(json.contains("\"exception\""));
         assertTrue(json.contains("\"message\""));
+        assertTrue(json.contains("\"nodeId\""), "JSON should contain nodeId");
     }
 
     @Test
@@ -237,6 +240,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertNotNull(json.get("exchangeId"));
         assertNotNull(json.get("exception"));
         assertNotNull(json.get("message"));
+        assertNotNull(json.get("nodeId"), "JSON map should contain nodeId");
         assertEquals("direct://start", json.get("fromEndpointUri"));
         assertTrue((long) json.get("routeUptime") >= 0);
         assertTrue((long) json.get("elapsed") >= 0);

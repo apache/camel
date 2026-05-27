@@ -35,6 +35,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.ErrorRegistryView;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;
@@ -94,6 +95,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         return !enabled;
     }
 
+    @SuppressWarnings("unchecked")
     private void capture(Exchange exchange, boolean handled) {
         Throwable exception;
         if (handled) {
@@ -122,9 +124,20 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         }
         String endpointUri = exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT, String.class);
 
-        // capture node location from exchange extension
-        String toNode = exchange.getExchangeExtension().getHistoryNodeId();
-        String location = exchange.getExchangeExtension().getHistoryNodeSource();
+        // capture node id and location from the last message history entry
+        // (the historyNodeId on the exchange extension is cleared after the node finishes processing,
+        // so by the time the error event fires it is always null)
+        String toNode = null;
+        String location = null;
+        List<MessageHistory> history
+                = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history != null && !history.isEmpty()) {
+            MessageHistory last = history.get(history.size() - 1);
+            if (last.getNode() != null) {
+                toNode = last.getNode().getId();
+                location = LoggerHelper.getLineNumberLoggerName(last.getNode());
+            }
+        }
 
         // capture step id (set by Step EIP)
         String stepId = exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
