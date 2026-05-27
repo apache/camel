@@ -136,7 +136,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
         if (remainder != null) {
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, index);
+                throw new SimpleParserException("Valid syntax: ${exception.OGNL} was: " + function, index);
             }
             return "exception(exchange)" + ognlCodeMethods(remainder, null);
         }

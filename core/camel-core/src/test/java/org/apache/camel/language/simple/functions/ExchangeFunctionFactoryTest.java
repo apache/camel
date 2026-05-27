@@ -129,6 +129,12 @@ public class ExchangeFunctionFactoryTest extends AbstractSimpleFunctionFactoryTe
     }
 
     @Test
+    public void testCreateCodeExceptionInvalidOgnl() {
+        assertThrows(SimpleParserException.class,
+                () -> createFactory().createCode(context, "exception[bad", 0));
+    }
+
+    @Test
     public void testCreateCodeExceptionAs() {
         assertEquals("exceptionAs(exchange, IllegalArgumentException.class)",
                 createCode("exceptionAs(IllegalArgumentException)"));
