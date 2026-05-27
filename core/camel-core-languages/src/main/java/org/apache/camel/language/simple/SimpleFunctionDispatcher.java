@@ -24,13 +24,19 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.functions.BodyFunctionFactory;
 import org.apache.camel.language.simple.functions.CollateFunctionFactory;
 import org.apache.camel.language.simple.functions.CollectionFunctionFactory;
+import org.apache.camel.language.simple.functions.DateFunctionFactory;
 import org.apache.camel.language.simple.functions.HeaderFunctionFactory;
 import org.apache.camel.language.simple.functions.JoinFunctionFactory;
 import org.apache.camel.language.simple.functions.MathFunctionFactory;
+import org.apache.camel.language.simple.functions.MessageFunctionFactory;
 import org.apache.camel.language.simple.functions.MiscFunctionFactory;
+import org.apache.camel.language.simple.functions.OutputFunctionFactory;
+import org.apache.camel.language.simple.functions.PropertiesFunctionFactory;
 import org.apache.camel.language.simple.functions.RandomFunctionFactory;
 import org.apache.camel.language.simple.functions.SkipFunctionFactory;
 import org.apache.camel.language.simple.functions.StringFunctionFactory;
+import org.apache.camel.language.simple.functions.SystemFunctionFactory;
+import org.apache.camel.language.simple.functions.TypeFunctionFactory;
 import org.apache.camel.language.simple.functions.VariableFunctionFactory;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.ResolverHelper;
@@ -65,7 +71,13 @@ public final class SimpleFunctionDispatcher {
             new MathFunctionFactory(),
             new StringFunctionFactory(),
             new CollectionFunctionFactory(),
-            new MiscFunctionFactory());
+            new MiscFunctionFactory(),
+            new SystemFunctionFactory(),
+            new PropertiesFunctionFactory(),
+            new TypeFunctionFactory(),
+            new DateFunctionFactory(),
+            new MessageFunctionFactory(),
+            new OutputFunctionFactory());
 
     private static final List<Entry> EXPRESSION_ENTRIES = List.of(
             new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),
@@ -81,19 +93,6 @@ public final class SimpleFunctionDispatcher {
             new Entry("camel-base64", SimpleFunctionDispatcher::isBase64Function));
 
     private SimpleFunctionDispatcher() {
-    }
-
-    /**
-     * Migrated as-is from main; not currently called. Candidate for removal once all Simple functions are extracted
-     * into dedicated {@link SimpleLanguageFunctionFactory} implementations (CAMEL-22894).
-     */
-    @Deprecated(forRemoval = true)
-    public static Expression tryCreate(CamelContext camelContext, String function, int index) {
-        Expression answer = tryCreateBuiltIn(camelContext, function, index);
-        if (answer != null) {
-            return answer;
-        }
-        return tryCreateExternal(camelContext, function, index);
     }
 
     public static Expression tryCreateBuiltIn(CamelContext camelContext, String function, int index) {
@@ -118,19 +117,6 @@ public final class SimpleFunctionDispatcher {
             }
         }
         return null;
-    }
-
-    /**
-     * Migrated as-is from main; not currently called. Candidate for removal once all Simple functions are extracted
-     * into dedicated {@link SimpleLanguageFunctionFactory} implementations (CAMEL-22894).
-     */
-    @Deprecated(forRemoval = true)
-    public static String tryCreateCode(CamelContext camelContext, String function, int index) {
-        String code = tryCreateCodeBuiltIn(camelContext, function, index);
-        if (code != null) {
-            return code;
-        }
-        return tryCreateCodeExternal(camelContext, function, index);
     }
 
     public static String tryCreateCodeBuiltIn(CamelContext camelContext, String function, int index) {

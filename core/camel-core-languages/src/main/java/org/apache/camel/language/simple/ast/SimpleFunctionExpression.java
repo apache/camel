@@ -112,12 +112,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return answer;
         }
 
-        // message first
-        answer = createSimpleExpressionMessage(camelContext, function, strict);
-        if (answer != null) {
-            return answer;
-        }
-
         // custom functions
         answer = createSimpleCustomFunction(camelContext, function, strict);
         if (answer != null) {
@@ -177,25 +171,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
 
-        // system property
-        remainder = ifStartsWithReturnRemainder("sys.", function);
-        if (remainder != null) {
-            return ExpressionBuilder.systemPropertyExpression(remainder);
-        }
-        remainder = ifStartsWithReturnRemainder("sysenv.", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("sysenv:", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("env.", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("env:", function);
-        }
-        if (remainder != null) {
-            return ExpressionBuilder.systemEnvironmentExpression(remainder);
-        }
-
         // exchange OGNL
         remainder = ifStartsWithReturnRemainder("exchange", function);
         if (remainder != null) {
@@ -204,41 +179,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${exchange.OGNL} was: " + function, token.getIndex());
             }
             return SimpleExpressionBuilder.exchangeOgnlExpression(remainder);
-        }
-
-        // pretty
-        remainder = ifStartsWithReturnRemainder("pretty(", function);
-        if (remainder != null) {
-            String exp = StringHelper.beforeLast(remainder, ")");
-            if (exp == null) {
-                throw new SimpleParserException("Valid syntax: ${pretty(exp)} was: " + function, token.getIndex());
-            }
-            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
-            return ExpressionBuilder.prettyExpression(inlined);
-        }
-
-        // toJson
-        remainder = ifStartsWithReturnRemainder("toJson(", function);
-        if (remainder != null) {
-            String exp = StringHelper.beforeLast(remainder, ")");
-            if (exp == null) {
-                throw new SimpleParserException("Valid syntax: ${toJson(exp)} was: " + function, token.getIndex());
-            }
-            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
-            return ExpressionBuilder.toJsonExpression(inlined, false);
-        }
-        // toPrettyJson
-        remainder = ifStartsWithReturnRemainder("toPrettyJson(", function);
-        if (remainder != null) {
-            String exp = StringHelper.beforeLast(remainder, ")");
-            if (exp == null) {
-                throw new SimpleParserException("Valid syntax: ${toPrettyJson(exp)} was: " + function, token.getIndex());
-            }
-            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
-            return ExpressionBuilder.toJsonExpression(inlined, true);
         }
 
         // file: prefix
@@ -254,28 +194,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (fileExpression != null) {
                 return fileExpression;
             }
-        }
-
-        // date: prefix
-        remainder = ifStartsWithReturnRemainder("date:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 2);
-            if (parts.length == 1) {
-                return SimpleExpressionBuilder.dateExpression(parts[0]);
-            } else if (parts.length == 2) {
-                return SimpleExpressionBuilder.dateExpression(parts[0], parts[1]);
-            }
-        }
-
-        // date-with-timezone: prefix
-        remainder = ifStartsWithReturnRemainder("date-with-timezone:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 3);
-            if (parts.length < 3) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
-            }
-            return SimpleExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
         }
 
         // bean: prefix
@@ -333,51 +251,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return bean.createExpression(null, properties);
         }
 
-        // properties-exist: prefix
-        remainder = ifStartsWithReturnRemainder("propertiesExist:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 2);
-            if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${propertiesExist:key} was: " + function, token.getIndex());
-            }
-            String key = parts[0];
-            boolean negate = key != null && key.startsWith("!");
-            if (negate) {
-                key = key.substring(1);
-            }
-            return ExpressionBuilder.propertiesComponentExist(key, negate);
-        }
-
-        // properties: prefix
-        remainder = ifStartsWithReturnRemainder("properties:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 2);
-            if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
-            }
-            String defaultValue = null;
-            if (parts.length >= 2) {
-                defaultValue = parts[1];
-            }
-            String key = parts[0];
-            return ExpressionBuilder.propertiesComponentExpression(key, defaultValue);
-        }
-
-        // ref: prefix
-        remainder = ifStartsWithReturnRemainder("ref:", function);
-        if (remainder != null) {
-            return ExpressionBuilder.refExpression(remainder);
-        }
-
-        // type: prefix
-        remainder = ifStartsWithReturnRemainder("type:", function);
-        if (remainder != null) {
-            Expression exp = SimpleExpressionBuilder.typeExpression(remainder);
-            exp.init(camelContext);
-            // we want to cache this expression, so we won't re-evaluate it as the type/constant won't change
-            return SimpleExpressionBuilder.cacheExpression(exp);
-        }
-
         // miscellaneous and other built-in functions
         Expression builtIn = SimpleFunctionDispatcher.tryCreateBuiltIn(camelContext, function, token.getIndex());
         if (builtIn != null) {
@@ -410,31 +283,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else {
             return null;
         }
-    }
-
-    private Expression createSimpleExpressionMessage(CamelContext camelContext, String function, boolean strict) {
-        // messageAs
-        String remainder = ifStartsWithReturnRemainder("messageAs(", function);
-        if (remainder != null) {
-            String type = StringHelper.before(remainder, ")");
-            if (type == null) {
-                throw new SimpleParserException("Valid syntax: ${messageAs(type)} was: " + function, token.getIndex());
-            }
-            type = StringHelper.removeQuotes(type);
-            remainder = StringHelper.after(remainder, ")");
-
-            if (ObjectHelper.isNotEmpty(remainder)) {
-                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
-                if (invalid) {
-                    throw new SimpleParserException("Valid syntax: ${messageAs(type).OGNL} was: " + function, token.getIndex());
-                }
-                return SimpleExpressionBuilder.messageOgnlExpression(type, remainder);
-            } else {
-                return ExpressionBuilder.messageExpression(type);
-            }
-        }
-
-        return null;
     }
 
     private Expression createSimpleCustomFunction(CamelContext camelContext, String function, boolean strict) {
@@ -657,25 +505,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "exception(exchange)" + ognlCodeMethods(remainder, null);
         }
 
-        // system property
-        remainder = ifStartsWithReturnRemainder("sys.", function);
-        if (remainder != null) {
-            return "sys(\"" + remainder + "\")";
-        }
-        remainder = ifStartsWithReturnRemainder("sysenv.", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("sysenv:", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("env.", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("env:", function);
-        }
-        if (remainder != null) {
-            return "sysenv(\"" + remainder + "\")";
-        }
-
         // exchange OGNL
         remainder = ifStartsWithReturnRemainder("exchange", function);
         if (remainder != null) {
@@ -690,31 +519,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
             return createCodeFileExpression(remainder);
-        }
-
-        if ("date:millis".equals(function)) {
-            return "System.currentTimeMillis()";
-        }
-        // date: prefix
-        remainder = ifStartsWithReturnRemainder("date:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 2);
-            if (parts.length == 1) {
-                return "date(exchange, \"" + parts[0] + "\")";
-            } else if (parts.length == 2) {
-                return "date(exchange, \"" + parts[0] + "\", null, \"" + parts[1] + "\")";
-            }
-        }
-
-        // date-with-timezone: prefix
-        remainder = ifStartsWithReturnRemainder("date-with-timezone:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 3);
-            if (parts.length < 3) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
-            }
-            return "date(exchange, \"" + parts[0] + "\", \"" + parts[1] + "\", \"" + parts[2] + "\")";
         }
 
         // bean: prefix
@@ -758,49 +562,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return "bean(exchange, bean, \"" + ref + "\", \"" + method + "\", null)";
             } else {
                 return "bean(exchange, bean, \"" + ref + "\", null, null)";
-            }
-        }
-
-        // properties: prefix
-        remainder = ifStartsWithReturnRemainder("properties:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 2);
-            if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
-            }
-            String defaultValue = null;
-            if (parts.length >= 2) {
-                defaultValue = parts[1];
-            }
-            String key = parts[0];
-            key = key.trim();
-            if (defaultValue != null) {
-                return "properties(exchange, \"" + key + "\", \"" + defaultValue.trim() + "\")";
-            } else {
-                return "properties(exchange, \"" + key + "\")";
-            }
-        }
-
-        // ref: prefix
-        remainder = ifStartsWithReturnRemainder("ref:", function);
-        if (remainder != null) {
-            return "ref(exchange, \"" + remainder + "\")";
-        }
-
-        // type: prefix
-        remainder = ifStartsWithReturnRemainder("type:", function);
-        if (remainder != null) {
-            int pos = remainder.lastIndexOf('.');
-            String type = pos != -1 ? remainder.substring(0, pos) : remainder;
-            String field = pos != -1 ? remainder.substring(pos + 1) : null;
-            if (!type.endsWith(".class")) {
-                type += ".class";
-            }
-            type = type.replace('$', '.');
-            if (field != null) {
-                return "type(exchange, " + type + ", \"" + field + "\")";
-            } else {
-                return "type(exchange, " + type + ")";
             }
         }
 
