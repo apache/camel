@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
@@ -28,23 +26,26 @@ import io.grpc.ServerInterceptor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("grpc")
 public class GrpcComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GrpcComponent.class);
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         GrpcConfiguration config = new GrpcConfiguration();
         config = parseConfiguration(config, uri);
 
-        boolean dynamicPort = config.getPort() == 0;
-        if (dynamicPort) {
-            int port = allocatePort();
-            config.setPort(port);
-            uri = uri.replace("//" + config.getHost() + ":0/", "//" + config.getHost() + ":" + port + "/");
+        if (config.getPort() == 0 && !uri.contains("hash=")) {
+            LOG.warn("gRPC endpoint configured with port=0 (dynamic port). "
+                     + "If multiple routes use the same URI, add a unique 'hash' query parameter "
+                     + "to each route to avoid endpoint collisions, e.g. grpc://localhost:0/service?hash=1");
         }
 
-        Endpoint endpoint = new GrpcEndpoint(uri, this, config, dynamicPort);
+        Endpoint endpoint = new GrpcEndpoint(uri, this, config);
         setProperties(endpoint, parameters);
         if (config.isAutoDiscoverClientInterceptors()) {
             checkAndSetRegistryClientInterceptors(config);
@@ -69,12 +70,6 @@ public class GrpcComponent extends DefaultComponent {
         Set<ClientInterceptor> clientInterceptors = getCamelContext().getRegistry().findByType(ClientInterceptor.class);
         if (!clientInterceptors.isEmpty()) {
             configuration.setClientInterceptors(new ArrayList<>(clientInterceptors));
-        }
-    }
-
-    private static int allocatePort() throws IOException {
-        try (ServerSocket ss = new ServerSocket(0)) {
-            return ss.getLocalPort();
         }
     }
 
