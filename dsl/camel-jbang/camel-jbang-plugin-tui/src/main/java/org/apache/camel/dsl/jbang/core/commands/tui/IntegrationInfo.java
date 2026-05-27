@@ -62,6 +62,8 @@ class IntegrationInfo {
     final List<HealthCheckInfo> healthChecks = new ArrayList<>();
     final List<EndpointInfo> endpoints = new ArrayList<>();
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
+    int errorCount;
+    final List<ErrorInfo> errors = new ArrayList<>();
     final List<HttpEndpointInfo> httpEndpoints = new ArrayList<>();
     String httpServer;
     String readmeFiles;

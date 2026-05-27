@@ -131,9 +131,9 @@ public class ListError extends ProcessWatchCommand {
                         }
                         String pid = Long.toString(ph.pid());
 
-                        JsonObject errors = (JsonObject) root.get("errors");
-                        if (errors != null) {
-                            JsonArray arr = (JsonArray) errors.get("errors");
+                        JsonObject errorRoot = loadErrorFile(ph.pid());
+                        if (errorRoot != null) {
+                            JsonArray arr = (JsonArray) errorRoot.get("errors");
                             if (arr != null) {
                                 for (Object o : arr) {
                                     JsonObject jo = (JsonObject) o;
