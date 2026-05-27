@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceTimeoutException;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -41,9 +40,6 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
     static final int READ_TIMEOUT = 500;
 
     @RegisterExtension
-    AvailablePortFinder.Port mllpClientPort = AvailablePortFinder.find();
-
-    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://result")
@@ -54,9 +50,10 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(mllpClientPort.getPort());
 
-        portBlocker = new ServerSocket(mllpClient.getMllpPort());
+        // Bind to port 0 to get an OS-assigned port atomically, then close and reuse that port
+        portBlocker = new ServerSocket(0);
+        mllpClient.setMllpPort(portBlocker.getLocalPort());
 
         assertTrue(portBlocker.isBound());
     }
