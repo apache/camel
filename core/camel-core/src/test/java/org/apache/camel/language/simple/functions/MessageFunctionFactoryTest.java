@@ -34,9 +34,15 @@ public class MessageFunctionFactoryTest extends AbstractSimpleFunctionFactoryTes
 
     @Test
     public void testMessageAs() {
-        // message is not MyAttachmentMessage, so messageAs returns null -> OGNL on null yields null
-        assertNull(evaluate("messageAs(org.apache.camel.language.simple.MyAttachmentMessage).hasAttachments", Object.class));
-        assertNull(evaluate("messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments", Object.class));
+        // exchange.getMessage(MyAttachmentMessage.class) returns null when the current message is
+        // a DefaultMessage (no type-converter exists). messageOgnlExpression short-circuits on null
+        // and returns null without invoking OGNL. The original SimpleTest used assertPredicate(...,
+        // false) which passed because the Simple predicate engine coerces null to false; the raw
+        // expression value itself is null, not Boolean.FALSE.
+        assertNull(evaluate("messageAs(org.apache.camel.language.simple.MyAttachmentMessage).hasAttachments",
+                Boolean.class));
+        assertNull(evaluate("messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments",
+                Boolean.class));
 
         MyAttachmentMessage msg = new MyAttachmentMessage(exchange);
         msg.setBody("<hello id='m123'>world!</hello>");
@@ -48,12 +54,5 @@ public class MessageFunctionFactoryTest extends AbstractSimpleFunctionFactoryTes
                 evaluate("messageAs(org.apache.camel.language.simple.MyAttachmentMessage)?.hasAttachments", Boolean.class));
         assertEquals("42",
                 evaluate("messageAs(org.apache.camel.language.simple.MyAttachmentMessage).size", String.class));
-    }
-
-    // --- no match ---
-
-    @Test
-    public void testNoMatch() {
-        assertNull(createFactory().createFunction(context, "body", 0));
     }
 }

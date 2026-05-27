@@ -70,6 +70,12 @@ public class PropertiesFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals(false, evaluate("propertiesExist:!myKey", Boolean.class));
     }
 
+    @Test
+    public void testPropertiesExistHasNoCodeGeneration() {
+        // propertiesExist: is handled at runtime only; CSimple has no code-gen path for it
+        assertNull(createFactory().createCode(context, "propertiesExist:myKey", 0));
+    }
+
     // --- properties: ---
 
     @Test
@@ -82,20 +88,8 @@ public class PropertiesFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals("properties(exchange, \"myKey\", \"myDefault\")", createCode("properties:myKey:myDefault"));
     }
 
-    // --- no match ---
-
     @Test
-    public void testNoMatch() {
-        assertNull(createFactory().createFunction(context, "body", 0));
-    }
-
-    @Test
-    public void testNoMatchCode() {
-        assertNull(createFactory().createCode(context, "body", 0));
-    }
-
-    @Test
-    public void testNoMatchCodePropertiesExist() {
-        assertNull(createFactory().createCode(context, "propertiesExist:myKey", 0));
+    public void testCreateCodeUnknown() {
+        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }

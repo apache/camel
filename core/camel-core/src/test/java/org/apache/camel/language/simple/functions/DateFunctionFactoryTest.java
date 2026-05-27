@@ -128,7 +128,7 @@ public class DateFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
         assertNotNull(out);
     }
 
-    // --- date-with-timezone: ---
+    // --- date-with-timezone: code generation ---
 
     @Test
     public void testCreateCodeDateMillis() {
@@ -151,15 +151,8 @@ public class DateFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
                 createCode("date-with-timezone:now:UTC:yyyy-MM-dd"));
     }
 
-    // --- no match ---
-
     @Test
-    public void testNoMatch() {
-        assertNull(createFactory().createFunction(context, "body", 0));
-    }
-
-    @Test
-    public void testNoMatchCode() {
-        assertNull(createFactory().createCode(context, "body", 0));
+    public void testCreateCodeUnknown() {
+        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }

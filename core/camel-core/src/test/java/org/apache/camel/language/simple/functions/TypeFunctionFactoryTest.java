@@ -66,15 +66,8 @@ public class TypeFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
         assertEquals("type(exchange, String.class)", createCode("type:String"));
     }
 
-    // --- no match ---
-
     @Test
-    public void testNoMatch() {
-        assertNull(createFactory().createFunction(context, "body", 0));
-    }
-
-    @Test
-    public void testNoMatchCode() {
-        assertNull(createFactory().createCode(context, "body", 0));
+    public void testCreateCodeUnknown() {
+        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }

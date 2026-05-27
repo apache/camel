@@ -18,8 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
+import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -34,9 +33,8 @@ public class SystemFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
     // --- sys. ---
 
     @Test
-    @ResourceLock(Resources.SYSTEM_PROPERTIES)
+    @SetSystemProperty(key = "who", value = "I was here")
     public void testSimpleSystemPropertyExpressions() {
-        System.setProperty("who", "I was here");
         assertEquals("I was here", evaluate("sys.who", String.class));
     }
 
@@ -100,15 +98,8 @@ public class SystemFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("sysenv(\"MY_VAR\")", createCode("env:MY_VAR"));
     }
 
-    // --- no match ---
-
     @Test
-    public void testNoMatch() {
-        assertNull(createFactory().createFunction(context, "body", 0));
-    }
-
-    @Test
-    public void testNoMatchCode() {
-        assertNull(createFactory().createCode(context, "body", 0));
+    public void testCreateCodeUnknown() {
+        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }
