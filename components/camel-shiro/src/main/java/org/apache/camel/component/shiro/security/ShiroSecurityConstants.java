@@ -21,9 +21,9 @@ package org.apache.camel.component.shiro.security;
  */
 public final class ShiroSecurityConstants {
 
-    public static final String SHIRO_SECURITY_TOKEN = "SHIRO_SECURITY_TOKEN";
-    public static final String SHIRO_SECURITY_USERNAME = "SHIRO_SECURITY_USERNAME";
-    public static final String SHIRO_SECURITY_PASSWORD = "SHIRO_SECURITY_PASSWORD";
+    public static final String SHIRO_SECURITY_TOKEN = "CamelShiroSecurityToken";
+    public static final String SHIRO_SECURITY_USERNAME = "CamelShiroSecurityUsername";
+    public static final String SHIRO_SECURITY_PASSWORD = "CamelShiroSecurityPassword";
 
     private ShiroSecurityConstants() {
     }
