@@ -321,16 +321,21 @@ public class Export extends ExportBaseCommand {
         model.put("Version", ids[2]);
         model.put("AppJar", ids[1] + "-" + ids[2] + ".jar");
 
-        String ftlName = "Dockerfile" + javaVersion + ".ftl";
+        String ftlName = getDockerfileTemplateName() + javaVersion + ".ftl";
         String context;
         try {
             context = TemplateHelper.processTemplate(ftlName, model);
         } catch (IOException e) {
             // fallback to JDK 21 template
+            String fallback = getDockerfileTemplateName() + "21.ftl";
             printer().printf("No Dockerfile template for Java %s, falling back to Java 21 template%n", javaVersion);
-            context = TemplateHelper.processTemplate("Dockerfile21.ftl", model);
+            context = TemplateHelper.processTemplate(fallback, model);
         }
         Files.writeString(docker.resolve("Dockerfile"), context);
+    }
+
+    protected String getDockerfileTemplateName() {
+        return "Dockerfile";
     }
 
     // Copy the readme.md into the same Maven project root directory.
