@@ -118,12 +118,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return answer;
         }
 
-        // custom languages
-        answer = createSimpleCustomLanguage(function, strict);
-        if (answer != null) {
-            return answer;
-        }
-
         // camelContext OGNL
         String remainder = ifStartsWithReturnRemainder("camelContext", function);
         if (remainder != null) {
@@ -312,99 +306,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 param = "${body}";
             }
             return SimpleExpressionBuilder.customFunction(key, param);
-        }
-
-        return null;
-    }
-
-    private Expression createSimpleCustomLanguage(String function, boolean strict) {
-        // jq
-        String remainder = ifStartsWithReturnRemainder("jq(", function);
-        if (remainder != null) {
-            String exp = StringHelper.beforeLast(remainder, ")");
-            if (exp == null) {
-                throw new SimpleParserException("Valid syntax: ${jq(exp)} was: " + function, token.getIndex());
-            }
-            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
-                    || exp.startsWith("variable:")) {
-                String input = StringHelper.before(exp, ",");
-                exp = StringHelper.after(exp, ",");
-                if (input != null) {
-                    input = input.trim();
-                }
-                if (exp != null) {
-                    exp = exp.trim();
-                }
-                return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
-            }
-            return ExpressionBuilder.languageExpression("jq", exp);
-        }
-        // simple-jsonpath
-        remainder = ifStartsWithReturnRemainder("simpleJsonpath(", function);
-        if (remainder != null) {
-            String exp = StringHelper.beforeLast(remainder, ")");
-            if (exp == null) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${simpleJsonpath(exp)} was: " + function, token.getIndex());
-            }
-            String input = null;
-            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
-                    || exp.startsWith("variable:")) {
-                input = StringHelper.before(exp, ",");
-                exp = StringHelper.after(exp, ",");
-                if (input != null) {
-                    input = input.trim();
-                }
-                if (exp != null) {
-                    exp = exp.trim();
-                }
-            }
-            return SimpleExpressionBuilder.simpleJsonPathExpression(input, exp);
-        }
-        // jsonpath
-        remainder = ifStartsWithReturnRemainder("jsonpath(", function);
-        if (remainder != null) {
-            String exp = StringHelper.beforeLast(remainder, ")");
-            if (exp == null) {
-                throw new SimpleParserException("Valid syntax: ${jsonpath(exp)} was: " + function, token.getIndex());
-            }
-            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
-                    || exp.startsWith("variable:")) {
-                String input = StringHelper.before(exp, ",");
-                exp = StringHelper.after(exp, ",");
-                if (input != null) {
-                    input = input.trim();
-                }
-                if (exp != null) {
-                    exp = exp.trim();
-                }
-                return ExpressionBuilder.singleInputLanguageExpression("jsonpath", exp, input);
-            }
-            return ExpressionBuilder.languageExpression("jsonpath", exp);
-        }
-        remainder = ifStartsWithReturnRemainder("xpath(", function);
-        if (remainder != null) {
-            String exp = StringHelper.beforeLast(remainder, ")");
-            if (exp == null) {
-                throw new SimpleParserException("Valid syntax: ${xpath(exp)} was: " + function, token.getIndex());
-            }
-            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
-                    || exp.startsWith("variable:")) {
-                String input = StringHelper.before(exp, ",");
-                exp = StringHelper.after(exp, ",");
-                if (input != null) {
-                    input = input.trim();
-                }
-                if (exp != null) {
-                    exp = exp.trim();
-                }
-                return ExpressionBuilder.singleInputLanguageExpression("xpath", exp, input);
-            }
-            return ExpressionBuilder.languageExpression("xpath", exp);
         }
 
         return null;

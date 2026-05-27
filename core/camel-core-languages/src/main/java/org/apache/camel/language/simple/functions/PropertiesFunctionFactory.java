@@ -18,7 +18,6 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -64,9 +63,6 @@ public final class PropertiesFunctionFactory implements SimpleLanguageFunctionFa
         String remainder = ifStartsWithReturnRemainder("properties:", function);
         if (remainder != null) {
             String[] parts = remainder.split(":", 2);
-            if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, index);
-            }
             String key = parts[0].trim();
             if (parts.length >= 2) {
                 return "properties(exchange, \"" + key + "\", \"" + parts[1].trim() + "\")";
