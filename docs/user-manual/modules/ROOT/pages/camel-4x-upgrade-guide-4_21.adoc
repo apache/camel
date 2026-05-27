@@ -855,6 +855,33 @@ directions, aligning the component with the rest of the Camel component catalog.
 `Camel`-prefixed user-header names from Iggy messages can supply a custom `headerFilterStrategy`
 to restore the previous behaviour.
 
+=== camel-shiro - potential breaking change
+
+The three Exchange header constants in `ShiroSecurityConstants` that drive
+Shiro authentication used header values outside the `Camel` namespace
+(`SHIRO_SECURITY_TOKEN`, `SHIRO_SECURITY_USERNAME`, `SHIRO_SECURITY_PASSWORD`)
+and were therefore not filtered by the default `HeaderFilterStrategy`. They
+have been renamed to follow the Camel naming convention. The Java field names
+are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ShiroSecurityConstants.SHIRO_SECURITY_TOKEN` | `SHIRO_SECURITY_TOKEN` | `CamelShiroSecurityToken`
+| `ShiroSecurityConstants.SHIRO_SECURITY_USERNAME` | `SHIRO_SECURITY_USERNAME` | `CamelShiroSecurityUsername`
+| `ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD` | `SHIRO_SECURITY_PASSWORD` | `CamelShiroSecurityPassword`
+|===
+
+These headers carry credentials and a serialized authentication token, so
+filtering them at transport boundaries by default is particularly important.
+
+Routes that reference the constants symbolically (for example
+`setHeader(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, ...)`) continue to
+work without changes. Routes that set the header by its literal string value
+(for example `setHeader("SHIRO_SECURITY_USERNAME", ...)`) must be updated to
+use the new value (`setHeader("CamelShiroSecurityUsername", ...)`).
+
+
 === camel-web3j - potential breaking change
 
 The Exchange header constants in `Web3jConstants` have been renamed to follow the
