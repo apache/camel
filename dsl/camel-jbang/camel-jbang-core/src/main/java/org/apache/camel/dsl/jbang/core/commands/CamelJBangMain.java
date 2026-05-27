@@ -48,6 +48,7 @@ import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginGet;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginList;
 import org.apache.camel.dsl.jbang.core.commands.process.*;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateCommand;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateList;
@@ -185,7 +186,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("plugin", new CommandLine(new PluginCommand(this))
                         .addSubcommand("add", new CommandLine(new PluginAdd(this)))
                         .addSubcommand("delete", new CommandLine(new PluginDelete(this)))
-                        .addSubcommand("get", new CommandLine(new PluginGet(this))))
+                        .addSubcommand("get", new CommandLine(new PluginGet(this)))
+                        .addSubcommand("list", new CommandLine(new PluginList(this))))
                 .addSubcommand("ps", new CommandLine(new ListProcess(this)))
                 .addSubcommand("run", new CommandLine(new Run(this)))
                 .addSubcommand("sbom", new CommandLine(new SBOMGenerator(this)))

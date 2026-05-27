@@ -20,7 +20,8 @@ camel plugin [options]
 | Subcommand | Description
 | xref:jbang-commands/camel-jbang-plugin-add.adoc[add] | Add new plugin
 | xref:jbang-commands/camel-jbang-plugin-delete.adoc[delete] | Removes a plugin
-| xref:jbang-commands/camel-jbang-plugin-get.adoc[get] | Display available plugins
+| xref:jbang-commands/camel-jbang-plugin-get.adoc[get] | Get installed plugins
+| xref:jbang-commands/camel-jbang-plugin-list.adoc[list] | List all available plugins
 |===
 
 
