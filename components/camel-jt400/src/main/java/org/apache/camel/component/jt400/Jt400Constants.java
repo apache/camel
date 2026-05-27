@@ -26,11 +26,11 @@ public interface Jt400Constants {
                             +
                             "*Message queues: The job identifier of the sending job",
               javaType = "String")
-    String SENDER_INFORMATION = "SENDER_INFORMATION";
+    String SENDER_INFORMATION = "CamelJt400SenderInformation";
 
     // Used only for keyed data queue support
     @Metadata(description = "The data queue key.", javaType = "String or byte[]")
-    String KEY = "KEY";
+    String KEY = "CamelJt400Key";
 
     // Used only for message queue support
     @Metadata(label = "consumer", description = "The message received", javaType = "com.ibm.as400.access.QueuedMessage")
