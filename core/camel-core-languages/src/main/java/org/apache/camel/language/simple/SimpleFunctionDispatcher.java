@@ -32,6 +32,7 @@ import org.apache.camel.language.simple.functions.MessageFunctionFactory;
 import org.apache.camel.language.simple.functions.MiscFunctionFactory;
 import org.apache.camel.language.simple.functions.OutputFunctionFactory;
 import org.apache.camel.language.simple.functions.PropertiesFunctionFactory;
+import org.apache.camel.language.simple.functions.QueryLanguageFunctionFactory;
 import org.apache.camel.language.simple.functions.RandomFunctionFactory;
 import org.apache.camel.language.simple.functions.SkipFunctionFactory;
 import org.apache.camel.language.simple.functions.StringFunctionFactory;
@@ -71,6 +72,7 @@ public final class SimpleFunctionDispatcher {
             new MathFunctionFactory(),
             new StringFunctionFactory(),
             new CollectionFunctionFactory(),
+            new QueryLanguageFunctionFactory(),
             new MiscFunctionFactory(),
             new SystemFunctionFactory(),
             new PropertiesFunctionFactory(),
