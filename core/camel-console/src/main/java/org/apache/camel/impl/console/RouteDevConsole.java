@@ -170,6 +170,11 @@ public class RouteDevConsole extends AbstractDevConsole {
                 String ago = TimeUtils.printSince(last.getTime());
                 sb.append(String.format("%n    Since Last Completed: %s", ago));
             }
+            last = mrb.getLastExchangeFailureHandledTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                sb.append(String.format("%n    Since Last Failure Handled: %s", ago));
+            }
             last = mrb.getLastExchangeFailureTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
@@ -494,6 +499,10 @@ public class RouteDevConsole extends AbstractDevConsole {
         last = mrb.getLastExchangeCompletedTimestamp();
         if (last != null) {
             stats.put("lastCompletedExchangeTimestamp", last.getTime());
+        }
+        last = mrb.getLastExchangeFailureHandledTimestamp();
+        if (last != null) {
+            stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
         }
         last = mrb.getLastExchangeFailureTimestamp();
         if (last != null) {
