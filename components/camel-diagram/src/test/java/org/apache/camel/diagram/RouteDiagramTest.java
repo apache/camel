@@ -1308,7 +1308,7 @@ class RouteDiagramTest {
     }
 
     @Test
-    void testAsciiDiagramHighlightOnlyTargetedNodes() {
+    void testAsciiDiagramHighlightArrowBetweenNodes() {
         RouteInfo route = new RouteInfo();
         route.routeId = "route1";
         route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
@@ -1318,7 +1318,31 @@ class RouteDiagramTest {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
         LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
 
-        // only highlight from1, not to1 or to2
+        // highlight from1 and to1 — the arrow between them should be highlighted
+        Set<String> highlighted = Set.of("from1", "to1");
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
+        renderer.renderDiagram(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                highlighted, HighlightStyle.SUCCESS);
+
+        long highlightCount = renderer.getCounterPositions().stream()
+                .filter(cp -> cp.type() == RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_SUCCESS)
+                .count();
+        assertTrue(highlightCount > 0, "Should have highlight positions for arrow between from1 and to1");
+    }
+
+    @Test
+    void testAsciiDiagramNoHighlightForSingleNode() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+        route.nodes.add(nodeWithId("to", "log:b", 1, "to2"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        // only from1 highlighted — no arrow between two highlighted nodes
         Set<String> highlighted = Set.of("from1");
         RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
         renderer.renderDiagram(
@@ -1328,7 +1352,7 @@ class RouteDiagramTest {
         long highlightCount = renderer.getCounterPositions().stream()
                 .filter(cp -> cp.type() == RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_SUCCESS)
                 .count();
-        assertTrue(highlightCount > 0, "Should have highlight positions for from1");
+        assertEquals(0, highlightCount, "No arrow highlight when only one endpoint is highlighted");
     }
 
     @Test
@@ -1431,13 +1455,13 @@ class RouteDiagramTest {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
         LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
 
-        Set<String> highlighted = Set.of("from1");
+        Set<String> highlighted = Set.of("from1", "to1");
         RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), true);
         String ansi = renderer.renderDiagramAnsi(
                 List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
                 highlighted, HighlightStyle.SUCCESS);
 
-        assertTrue(ansi.contains("\033[32m"), "Unicode mode should also apply ANSI highlight colors");
+        assertTrue(ansi.contains("\033[32m"), "Unicode mode should also apply ANSI highlight colors on arrows");
         assertTrue(ansi.contains("┌"), "Should still use Unicode box-drawing characters");
     }
 

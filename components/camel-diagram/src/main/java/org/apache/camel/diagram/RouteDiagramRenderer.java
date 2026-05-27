@@ -324,7 +324,7 @@ public class RouteDiagramRenderer {
         }
 
         for (LayoutNode ln : lr.nodes) {
-            drawNode(g, ln, colors, highlightedNodeIds, highlightStyle);
+            drawNode(g, ln, colors);
         }
     }
 
@@ -417,22 +417,14 @@ public class RouteDiagramRenderer {
         drawArrowFromMerge(g, to, colors, false, null);
     }
 
-    private void drawNode(
-            Graphics2D g, LayoutNode node, DiagramColors colors,
-            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
+    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors) {
         Color color = getNodeColor(node.type, colors);
 
         g.setColor(color);
         g.fillRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
-        boolean highlighted = highlightedNodeIds != null && isHighlighted(node, highlightedNodeIds);
-        if (highlighted) {
-            g.setColor(highlightColor(highlightStyle));
-            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
-        } else {
-            g.setColor(color.brighter());
-            g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
-        }
+        g.setColor(color.brighter());
+        g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
         g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
         g.setColor(colors.getText());
@@ -456,10 +448,6 @@ public class RouteDiagramRenderer {
             int textX = node.x + (nodeWidth - fm.stringWidth(text)) / 2;
             g.drawString(text, textX, startY + i * lineHeight);
         }
-    }
-
-    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors) {
-        drawNode(g, node, colors, null, null);
     }
 
     private void drawArrow(

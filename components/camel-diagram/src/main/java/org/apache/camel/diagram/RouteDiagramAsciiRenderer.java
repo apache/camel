@@ -188,20 +188,24 @@ public class RouteDiagramAsciiRenderer {
 
         for (LayoutNode ln : lr.nodes) {
             if (ln.parentNode != null) {
+                boolean highlightArrow = highlightedNodeIds != null
+                        && isHighlighted(ln, highlightedNodeIds)
+                        && isHighlighted(ln.parentNode, highlightedNodeIds);
                 if (ln.connectFromMerge) {
-                    drawMergeArrow(grid, ln);
+                    drawMergeArrow(grid, ln, highlightArrow, highlightStyle);
                 } else {
-                    drawArrow(grid, ln.parentNode, ln);
+                    drawArrow(grid, ln.parentNode, ln, highlightArrow, highlightStyle);
                 }
             }
         }
 
         for (LayoutNode ln : lr.nodes) {
             drawNode(grid, ln);
-            if (highlightedNodeIds != null && ln.id != null && highlightedNodeIds.contains(ln.id)) {
-                recordHighlightPositions(grid, ln, highlightStyle);
-            }
         }
+    }
+
+    private static boolean isHighlighted(LayoutNode node, Set<String> highlightedNodeIds) {
+        return node.id != null && highlightedNodeIds.contains(node.id);
     }
 
     private void drawRoute(char[][] grid, LayoutRoute lr) {
@@ -251,24 +255,13 @@ public class RouteDiagramAsciiRenderer {
         }
     }
 
-    private void recordHighlightPositions(
-            char[][] grid, LayoutNode node, RouteDiagramHelper.HighlightStyle style) {
-        int col = toCol(node.x);
-        int row = toRow(node.y);
-        int innerWidth = boxWidth - 4;
-        List<String> lines = rewrapText(node, innerWidth);
-        int height = 2 + lines.size();
-
-        CounterType ct = style == RouteDiagramHelper.HighlightStyle.FAIL
-                ? CounterType.HIGHLIGHT_FAIL
-                : CounterType.HIGHLIGHT_SUCCESS;
-
-        for (int r = row; r < row + height && r < grid.length; r++) {
-            counterPositions.add(new CounterPos(r, col, boxWidth, ct));
-        }
+    private void drawArrow(char[][] grid, LayoutNode from, LayoutNode to) {
+        drawArrow(grid, from, to, false, null);
     }
 
-    private void drawArrow(char[][] grid, LayoutNode from, LayoutNode to) {
+    private void drawArrow(
+            char[][] grid, LayoutNode from, LayoutNode to,
+            boolean highlighted, RouteDiagramHelper.HighlightStyle highlightStyle) {
         int fromCx = centerCol(from);
         int fromBottom = toRow(from.y) + boxHeight(from);
         int toCx = centerCol(to);
@@ -279,10 +272,19 @@ public class RouteDiagramAsciiRenderer {
         boolean dashed = metrics && total == 0;
 
         drawArrowPath(grid, fromCx, fromBottom, toCx, toTop, dashed);
+        if (highlighted) {
+            recordArrowHighlight(fromCx, fromBottom, toCx, toTop, highlightStyle);
+        }
         drawCounters(grid, toCx, toTop, stat);
     }
 
     private void drawMergeArrow(char[][] grid, LayoutNode to) {
+        drawMergeArrow(grid, to, false, null);
+    }
+
+    private void drawMergeArrow(
+            char[][] grid, LayoutNode to,
+            boolean highlighted, RouteDiagramHelper.HighlightStyle highlightStyle) {
         int fromCx = toCol(to.mergeCx);
         int fromRow = toRow(to.mergeY);
         int toCx = centerCol(to);
@@ -293,7 +295,35 @@ public class RouteDiagramAsciiRenderer {
         boolean dashed = metrics && total == 0;
 
         drawArrowPath(grid, fromCx, fromRow, toCx, toTop, dashed);
+        if (highlighted) {
+            recordArrowHighlight(fromCx, fromRow, toCx, toTop, highlightStyle);
+        }
         drawCounters(grid, toCx, toTop, stat);
+    }
+
+    private void recordArrowHighlight(
+            int fromCx, int fromRow, int toCx, int toRow,
+            RouteDiagramHelper.HighlightStyle style) {
+        CounterType ct = style == RouteDiagramHelper.HighlightStyle.FAIL
+                ? CounterType.HIGHLIGHT_FAIL
+                : CounterType.HIGHLIGHT_SUCCESS;
+
+        if (fromCx == toCx) {
+            for (int r = fromRow; r < toRow; r++) {
+                counterPositions.add(new CounterPos(r, fromCx, 1, ct));
+            }
+        } else {
+            int midRow = fromRow + (toRow - fromRow) / 2;
+            for (int r = fromRow; r <= midRow; r++) {
+                counterPositions.add(new CounterPos(r, fromCx, 1, ct));
+            }
+            int minC = Math.min(fromCx, toCx);
+            int maxC = Math.max(fromCx, toCx);
+            counterPositions.add(new CounterPos(midRow, minC, maxC - minC + 1, ct));
+            for (int r = midRow; r < toRow; r++) {
+                counterPositions.add(new CounterPos(r, toCx, 1, ct));
+            }
+        }
     }
 
     private StatInfo resolveStatInfo(LayoutNode to) {
