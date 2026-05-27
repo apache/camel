@@ -16,13 +16,16 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.BacklogErrorEventMessage;
 import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -44,14 +47,27 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
      */
     public static final String STACK_TRACE = "stackTrace";
 
+    /**
+     * Filter by exception type (case-insensitive substring match)
+     */
+    public static final String EXCEPTION = "exception";
+
+    /**
+     * Filter by time window as duration string (e.g. "60s", "5m", "1h"). Only entries within this window are included.
+     */
+    public static final String AGO = "ago";
+
+    /**
+     * Filter by handled status ("true" or "false")
+     */
+    public static final String HANDLED = "handled";
+
     public ErrorRegistryConsole() {
         super("camel", "errors", "Error Registry", "Display captured routing errors");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        String routeId = (String) options.get(ROUTE_ID);
-        int max = parseLimit(options);
         boolean includeStackTrace = "true".equals(options.get(STACK_TRACE));
 
         StringBuilder sb = new StringBuilder();
@@ -60,12 +76,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         sb.append(String.format("%n    Enabled: %s", registry.isEnabled()));
         sb.append(String.format("%n    Size: %s", registry.size()));
 
-        Collection<BacklogErrorEventMessage> entries;
-        if (routeId != null) {
-            entries = registry.forRoute(routeId).browse(max);
-        } else {
-            entries = registry.browse(max);
-        }
+        List<BacklogErrorEventMessage> entries = fetchAndFilter(registry, options);
 
         for (BacklogErrorEventMessage entry : entries) {
             sb.append(String.format("%n    %s (route: %s, node: %s, endpoint: %s, handled: %s)",
@@ -94,8 +105,6 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        String routeId = (String) options.get(ROUTE_ID);
-        int max = parseLimit(options);
         boolean includeStackTrace = "true".equals(options.get(STACK_TRACE));
 
         JsonObject root = new JsonObject();
@@ -106,12 +115,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         root.put("maximumEntries", registry.getMaximumEntries());
         root.put("timeToLive", registry.getTimeToLive().toString());
 
-        Collection<BacklogErrorEventMessage> entries;
-        if (routeId != null) {
-            entries = registry.forRoute(routeId).browse(max);
-        } else {
-            entries = registry.browse(max);
-        }
+        List<BacklogErrorEventMessage> entries = fetchAndFilter(registry, options);
 
         final JsonArray list = new JsonArray();
         for (BacklogErrorEventMessage entry : entries) {
@@ -128,6 +132,51 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         root.put("errors", list);
 
         return root;
+    }
+
+    private static List<BacklogErrorEventMessage> fetchAndFilter(ErrorRegistry registry, Map<String, Object> options) {
+        String routeId = (String) options.get(ROUTE_ID);
+        String exceptionFilter = (String) options.get(EXCEPTION);
+        String agoFilter = (String) options.get(AGO);
+        String handledFilter = (String) options.get(HANDLED);
+        int max = parseLimit(options);
+
+        // fetch all entries (route-scoped if requested), apply filters, then limit
+        Collection<BacklogErrorEventMessage> all;
+        if (routeId != null) {
+            all = registry.forRoute(routeId).browse();
+        } else {
+            all = registry.browse();
+        }
+
+        long agoCutoff = -1;
+        if (agoFilter != null) {
+            try {
+                long millis = TimeUtils.toMilliSeconds(agoFilter);
+                agoCutoff = System.currentTimeMillis() - millis;
+            } catch (Exception e) {
+                // ignore invalid ago value
+            }
+        }
+
+        List<BacklogErrorEventMessage> result = new ArrayList<>();
+        for (BacklogErrorEventMessage entry : all) {
+            if (agoCutoff > 0 && entry.getTimestamp() < agoCutoff) {
+                continue;
+            }
+            if (exceptionFilter != null
+                    && !entry.getExceptionType().toLowerCase().contains(exceptionFilter.toLowerCase())) {
+                continue;
+            }
+            if (handledFilter != null && !String.valueOf(entry.isHandled()).equals(handledFilter)) {
+                continue;
+            }
+            result.add(entry);
+            if (max > 0 && max < Integer.MAX_VALUE && result.size() >= max) {
+                break;
+            }
+        }
+        return result;
     }
 
     private static int parseLimit(Map<String, Object> options) {

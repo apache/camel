@@ -1384,6 +1384,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("groovy", json);
                     }
                 }
+                DevConsole dc26 = dcr.resolveById("errors");
+                if (dc26 != null) {
+                    JsonObject json = (JsonObject) dc26.call(DevConsole.MediaType.JSON,
+                            Map.of("stackTrace", "true"));
+                    if (json != null && !json.isEmpty()) {
+                        root.put("errors", json);
+                    }
+                }
             }
             // various details
             JsonObject mem = collectMemory();
