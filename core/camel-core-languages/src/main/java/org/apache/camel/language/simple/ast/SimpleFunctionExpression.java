@@ -32,7 +32,6 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 /**
  * Represents one of built-in functions of the <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -107,12 +106,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return answer;
         }
 
-        // custom functions
-        answer = createSimpleCustomFunction(camelContext, function, strict);
-        if (answer != null) {
-            return answer;
-        }
-
         // file: prefix
         String remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
@@ -140,7 +133,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return external;
         }
 
-        // it may be a custom function
+        // it may be a custom function registered without the function(...) wrapper
         String name = StringHelper.before(function, "(", function);
         if (PluginHelper.getSimpleFunctionRegistry(camelContext).getFunction(name) != null) {
             String after = StringHelper.after(function, "(");
@@ -149,7 +142,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             } else {
                 function = "function(" + name + "," + after;
             }
-            Expression exp = createSimpleCustomFunction(camelContext, function, strict);
+            Expression exp = SimpleFunctionDispatcher.tryCreateBuiltIn(camelContext, function, token.getIndex());
             if (exp != null) {
                 return exp;
             }
@@ -160,38 +153,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else {
             return null;
         }
-    }
-
-    private Expression createSimpleCustomFunction(CamelContext camelContext, String function, boolean strict) {
-        String remainder = ifStartsWithReturnRemainder("function(", function);
-        if (remainder != null) {
-            String key;
-            String param = null;
-            String values = StringHelper.beforeLast(remainder, ")");
-            if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${function(name)} or ${function(name,exp)} was: " + function,
-                        token.getIndex());
-            }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-            if (tokens.length < 1 || tokens.length > 2) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${function(name)} or ${function(name,exp)} was: " + function,
-                        token.getIndex());
-            }
-            key = StringHelper.removeQuotes(tokens[0]);
-            key = key.trim();
-            if (tokens.length == 2) {
-                param = tokens[1];
-                param = StringHelper.removeLeadingAndEndingQuotes(param.trim());
-            }
-            if (param == null) {
-                param = "${body}";
-            }
-            return SimpleExpressionBuilder.customFunction(key, param);
-        }
-
-        return null;
     }
 
     private Expression createSimpleFileExpression(String remainder, boolean strict) {
