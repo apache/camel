@@ -37,7 +37,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class ConsumersTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "id", "status", "type", "inflight", "total", "uri" };
+    private static final String[] SORT_COLUMNS = { "id", "status", "type", "inflight", "polls", "uri" };
 
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
@@ -131,7 +131,7 @@ class ConsumersTab implements MonitorTab {
                         Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
                         Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),
-                        rightCell(sortLabel("TOTAL", "total"), 8, sortStyle("total")),
+                        rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
                         rightCell("PERIOD", 10, Style.EMPTY.bold()),
                         Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri")))))
@@ -179,7 +179,7 @@ class ConsumersTab implements MonitorTab {
                 yield ta.compareToIgnoreCase(tb);
             }
             case "inflight" -> Integer.compare(b.inflight, a.inflight);
-            case "total" -> {
+            case "polls" -> {
                 long la = a.totalCounter != null ? a.totalCounter : 0;
                 long lb = b.totalCounter != null ? b.totalCounter : 0;
                 yield Long.compare(lb, la);

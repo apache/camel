@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
+import java.util.function.LongFunction;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -107,6 +108,7 @@ public final class MirroredSparkline implements Widget {
     private final Sparkline.BarSet barSet;
     private final boolean showYAxis;
     private final String[] xLabels;
+    private final LongFunction<String> yLabelFormatter;
 
     private MirroredSparkline(Builder builder) {
         this.topData = builder.topData;
@@ -118,6 +120,7 @@ public final class MirroredSparkline implements Widget {
         this.barSet = builder.barSet;
         this.showYAxis = builder.showYAxis;
         this.xLabels = builder.xLabels;
+        this.yLabelFormatter = builder.yLabelFormatter;
     }
 
     /**
@@ -168,12 +171,10 @@ public final class MirroredSparkline implements Widget {
 
             if (showYAxis) {
                 String label;
-                if (r == 0) {
-                    label = effectiveMax > 9999 ? "999+" : String.format("%4d", effectiveMax);
+                if (r == 0 || r == chartBodyRows - 1) {
+                    label = formatYLabel(effectiveMax);
                 } else if (r == centerRow) {
                     label = "   0";
-                } else if (r == chartBodyRows - 1) {
-                    label = effectiveMax > 9999 ? "999+" : String.format("%4d", effectiveMax);
                 } else {
                     label = "    ";
                 }
@@ -251,6 +252,17 @@ public final class MirroredSparkline implements Widget {
         }
     }
 
+    private String formatYLabel(long value) {
+        if (yLabelFormatter != null) {
+            String s = yLabelFormatter.apply(value);
+            if (s.length() >= Y_LABEL_WIDTH) {
+                return s.substring(0, Y_LABEL_WIDTH);
+            }
+            return " ".repeat(Y_LABEL_WIDTH - s.length()) + s;
+        }
+        return value > 9999 ? "999+" : String.format("%4d", value);
+    }
+
     private long computeMax() {
         if (max != null) {
             return Math.max(1, max);
@@ -278,6 +290,7 @@ public final class MirroredSparkline implements Widget {
         private Sparkline.BarSet barSet = Sparkline.BarSet.NINE_LEVELS;
         private boolean showYAxis = true;
         private String[] xLabels;
+        private LongFunction<String> yLabelFormatter;
 
         private Builder() {
         }
@@ -415,6 +428,19 @@ public final class MirroredSparkline implements Widget {
          */
         public Builder xLabels(String... labels) {
             this.xLabels = labels != null ? labels.clone() : null;
+            return this;
+        }
+
+        /**
+         * Sets a custom formatter for Y-axis max labels. The function receives the max value and should return a short
+         * string (up to 4 chars). When not set, values are formatted as integers with {@code 999+} for values above
+         * 9999.
+         *
+         * @param  formatter the formatter function
+         * @return           this builder
+         */
+        public Builder yLabelFormatter(LongFunction<String> formatter) {
+            this.yLabelFormatter = formatter;
             return this;
         }
 
