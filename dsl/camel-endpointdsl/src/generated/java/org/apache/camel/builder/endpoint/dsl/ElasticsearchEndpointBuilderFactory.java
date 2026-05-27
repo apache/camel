@@ -728,10 +728,10 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code operation}.
+         * @return the name of the header {@code ElasticsearchOperation}.
          */
-        public String operation() {
-            return "operation";
+        public String elasticsearchOperation() {
+            return "CamelElasticsearchOperation";
         }
         /**
          * The id of the indexed document.
@@ -740,10 +740,10 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code indexId}.
+         * @return the name of the header {@code ElasticsearchIndexId}.
          */
-        public String indexId() {
-            return "indexId";
+        public String elasticsearchIndexId() {
+            return "CamelElasticsearchIndexId";
         }
         /**
          * The name of the index to act against.
@@ -752,10 +752,10 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code indexName}.
+         * @return the name of the header {@code ElasticsearchIndexName}.
          */
-        public String indexName() {
-            return "indexName";
+        public String elasticsearchIndexName() {
+            return "CamelElasticsearchIndexName";
         }
         /**
          * The full qualified name of the class of the document to unmarshall.
@@ -765,10 +765,10 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Default: ObjectNode
          * Group: producer
          * 
-         * @return the name of the header {@code documentClass}.
+         * @return the name of the header {@code ElasticsearchDocumentClass}.
          */
-        public String documentClass() {
-            return "documentClass";
+        public String elasticsearchDocumentClass() {
+            return "CamelElasticsearchDocumentClass";
         }
         /**
          * The index creation waits for the write consistency number of shards
@@ -778,10 +778,11 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code waitForActiveShards}.
+         * @return the name of the header {@code
+         * ElasticsearchWaitForActiveShards}.
          */
-        public String waitForActiveShards() {
-            return "waitForActiveShards";
+        public String elasticsearchWaitForActiveShards() {
+            return "CamelElasticsearchWaitForActiveShards";
         }
         /**
          * The starting index of the response.
@@ -790,10 +791,11 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code scrollKeepAliveMs}.
+         * @return the name of the header {@code
+         * ElasticsearchScrollKeepAliveMs}.
          */
-        public String scrollKeepAliveMs() {
-            return "scrollKeepAliveMs";
+        public String elasticsearchScrollKeepAliveMs() {
+            return "CamelElasticsearchScrollKeepAliveMs";
         }
         /**
          * Set to true to enable scroll usage.
@@ -802,10 +804,10 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code useScroll}.
+         * @return the name of the header {@code ElasticsearchUseScroll}.
          */
-        public String useScroll() {
-            return "useScroll";
+        public String elasticsearchUseScroll() {
+            return "CamelElasticsearchUseScroll";
         }
         /**
          * The size of the response.
@@ -814,10 +816,10 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code size}.
+         * @return the name of the header {@code ElasticsearchSize}.
          */
-        public String size() {
-            return "size";
+        public String elasticsearchSize() {
+            return "CamelElasticsearchSize";
         }
         /**
          * The starting index of the response.
@@ -826,10 +828,10 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code from}.
+         * @return the name of the header {@code ElasticsearchFrom}.
          */
-        public String from() {
-            return "from";
+        public String elasticsearchFrom() {
+            return "CamelElasticsearchFrom";
         }
         /**
          * Indicates whether the body of the message contains only documents.
@@ -839,10 +841,11 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Default: false
          * Group: producer
          * 
-         * @return the name of the header {@code enableDocumentOnlyMode}.
+         * @return the name of the header {@code
+         * ElasticsearchEnableDocumentOnlyMode}.
          */
-        public String enableDocumentOnlyMode() {
-            return "enableDocumentOnlyMode";
+        public String elasticsearchEnableDocumentOnlyMode() {
+            return "CamelElasticsearchEnableDocumentOnlyMode";
         }
     }
     static ElasticsearchEndpointBuilder endpointBuilder(String componentName, String path) {
