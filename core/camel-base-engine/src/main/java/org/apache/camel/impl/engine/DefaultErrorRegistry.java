@@ -177,6 +177,10 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                 endpointUri, toNode, stepId, fromEndpointUri, routeUptime, elapsed,
                 threadName, data, exception, handled, messageHistory);
 
+        // deduplicate: if the same exchange already has an entry, replace it
+        // (this happens with circuit breaker where the inner failure is handled first,
+        // then the outer error handler captures the same exchange again)
+        entries.removeIf(e -> exchangeId.equals(e.getExchangeId()));
         entries.addFirst(entry);
         evict();
     }
