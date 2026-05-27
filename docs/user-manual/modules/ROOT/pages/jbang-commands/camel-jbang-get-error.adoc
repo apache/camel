@@ -25,6 +25,7 @@ camel get error [options]
 | `--json` | Output in JSON Format |  | boolean
 | `--last` | Show only the last (newest) error with full details |  | boolean
 | `--limit` | Maximum number of entries to display |  | int
+| `--logging-color` | Use colored logging | true | boolean
 | `--route` | Filter by route ID |  | String
 | `--show` | Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace, or 'all' for all sections |  | String
 | `--sort` | Sort by pid, name or age | pid | String
