@@ -95,7 +95,7 @@ public class SlackProducer extends DefaultAsyncProducer {
             callback.done(true);
         }
 
-        return false;
+        return true;
     }
 
     private ChatPostMessageResponse sendLegacySlackMessage(SlackMessage slackMessage) throws IOException, SlackApiException {
@@ -145,7 +145,7 @@ public class SlackProducer extends DefaultAsyncProducer {
             callback.done(true);
         }
 
-        return false;
+        return true;
     }
 
     private Message addEndPointOptions(Message slackMessage) {
