@@ -229,10 +229,11 @@ public class ListError extends ProcessWatchCommand {
                         if (ev != null) {
                             msg.put("exchangeVariables", ev);
                         }
+                        String exchangePattern = msg.getString("exchangePattern");
                         // exception
                         JsonObject cause = r.rawJson.getMap("exception");
                         String data = tableHelper.getDataAsTable(
-                                r.exchangeId, "", null, null, null, msg, cause);
+                                r.exchangeId, exchangePattern, null, null, null, msg, cause);
                         if (data != null && !data.isEmpty()) {
                             printer().print(data);
                         }
