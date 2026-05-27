@@ -18,6 +18,7 @@ package org.apache.camel.opentelemetry2;
 
 import java.util.concurrent.CompletableFuture;
 
+import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.context.Scope;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -62,8 +63,9 @@ public class TraceProcessorsOtelInterceptStrategy implements InterceptStrategy {
             Span activeSpan = spanStorage.peek(exchange);
             if (activeSpan != null) {
                 OpenTelemetrySpanAdapter otelSpan = (OpenTelemetrySpanAdapter) activeSpan;
+                Baggage baggage = getBaggageFromProperties(otelSpan.getBaggage(), exchange);
                 try (Scope scope = otelSpan.getSpan().makeCurrent();
-                     Scope baggageScope = otelSpan.getBaggage().makeCurrent()) {
+                     Scope baggageScope = baggage.makeCurrent()) {
                     processor.process(exchange);
                 }
             } else {
@@ -76,8 +78,9 @@ public class TraceProcessorsOtelInterceptStrategy implements InterceptStrategy {
             Span activeSpan = spanStorage.peek(exchange);
             if (activeSpan != null) {
                 OpenTelemetrySpanAdapter otelSpan = (OpenTelemetrySpanAdapter) activeSpan;
+                Baggage baggage = getBaggageFromProperties(otelSpan.getBaggage(), exchange);
                 try (Scope scope = otelSpan.getSpan().makeCurrent();
-                     Scope baggageScope = otelSpan.getBaggage().makeCurrent()) {
+                     Scope baggageScope = baggage.makeCurrent()) {
                     return processor.process(exchange, doneSync -> {
                         callback.done(doneSync);
                     });
@@ -96,6 +99,28 @@ public class TraceProcessorsOtelInterceptStrategy implements InterceptStrategy {
             process(exchange, callback);
             return callback.getFuture();
         }
+    }
+
+    // We inspect the exchange in order to find any baggage variable
+    private Baggage getBaggageFromProperties(Baggage baggage, Exchange exchange) {
+        for (String propertyKey : exchange.getProperties().keySet()) {
+            String key = getBaggageVar(propertyKey);
+            if (key != null) {
+                String value = exchange.getProperty(propertyKey) == null
+                        ? null : exchange.getProperty(propertyKey).toString();
+                baggage = baggage.toBuilder().put(key, value).build();
+            }
+        }
+
+        return baggage;
+    }
+
+    private String getBaggageVar(String key) {
+        if (key == null || !key.startsWith(org.apache.camel.telemetry.Tracer.BAGGAGE_PROPERTY)) {
+            return null;
+        }
+
+        return key.substring(org.apache.camel.telemetry.Tracer.BAGGAGE_PROPERTY.length());
     }
 
 }
