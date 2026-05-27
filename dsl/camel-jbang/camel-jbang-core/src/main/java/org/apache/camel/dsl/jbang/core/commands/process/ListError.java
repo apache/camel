@@ -68,20 +68,37 @@ public class ListError extends ProcessWatchCommand {
     int limit;
 
     @CommandLine.Option(names = { "--show" },
-                        description = "Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace")
+                        description = "Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace, or 'all' for all sections")
     String show;
+
+    @CommandLine.Option(names = { "--last" },
+                        description = "Show only the last (newest) error with full details")
+    boolean last;
 
     public ListError(CamelJBangMain main) {
         super(main);
     }
 
+    private static final Set<String> ALL_SECTIONS
+            = Set.of("body", "headers", "properties", "variables", "history", "stackTrace");
+
     @Override
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        Set<String> showSet = show != null
-                ? Arrays.stream(show.split(",")).map(String::trim).collect(Collectors.toSet())
-                : Set.of();
+        if (last) {
+            limit = 1;
+            show = "all";
+        }
+
+        Set<String> showSet;
+        if ("all".equals(show)) {
+            showSet = ALL_SECTIONS;
+        } else if (show != null) {
+            showSet = Arrays.stream(show.split(",")).map(String::trim).collect(Collectors.toSet());
+        } else {
+            showSet = Set.of();
+        }
 
         List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
