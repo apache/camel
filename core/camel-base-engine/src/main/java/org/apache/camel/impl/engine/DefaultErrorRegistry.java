@@ -35,6 +35,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.ErrorRegistryView;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;
@@ -94,6 +95,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         return !enabled;
     }
 
+    @SuppressWarnings("unchecked")
     private void capture(Exchange exchange, boolean handled) {
         Throwable exception;
         if (handled) {
@@ -105,9 +107,13 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             return;
         }
 
+        // for correlated copy exchanges (e.g., created by circuit breaker, multicast, splitter)
+        // use the original exchange ID so the error is tracked under the parent exchange
+        String correlationId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+
         long uid = uidCounter.incrementAndGet();
         long timestamp = System.currentTimeMillis();
-        String exchangeId = exchange.getExchangeId();
+        String exchangeId = correlationId != null ? correlationId : exchange.getExchangeId();
         String routeId = exchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, String.class);
         if (routeId == null) {
             routeId = exchange.getFromRouteId();
@@ -122,9 +128,20 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         }
         String endpointUri = exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT, String.class);
 
-        // capture node location from exchange extension
-        String toNode = exchange.getExchangeExtension().getHistoryNodeId();
-        String location = exchange.getExchangeExtension().getHistoryNodeSource();
+        // capture node id and location from the last message history entry
+        // (the historyNodeId on the exchange extension is cleared after the node finishes processing,
+        // so by the time the error event fires it is always null)
+        String toNode = null;
+        String location = null;
+        List<MessageHistory> history
+                = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history != null && !history.isEmpty()) {
+            MessageHistory last = history.get(history.size() - 1);
+            if (last.getNode() != null) {
+                toNode = last.getNode().getId();
+                location = LoggerHelper.getLineNumberLoggerName(last.getNode());
+            }
+        }
 
         // capture step id (set by Step EIP)
         String stepId = exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
@@ -164,6 +181,20 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                 endpointUri, toNode, stepId, fromEndpointUri, routeUptime, elapsed,
                 threadName, data, exception, handled, messageHistory);
 
+        // deduplicate by exchange ID:
+        // - correlated copy (inner): has more specific node info (e.g., throwException inside circuit breaker),
+        //   so it replaces any existing entry for the same original exchange
+        // - original exchange (outer): if already captured from a correlated copy, skip it
+        //   since the copy has more specific info about where the error actually occurred
+        if (correlationId != null) {
+            entries.removeIf(e -> exchangeId.equals(e.getExchangeId()));
+        } else {
+            for (BacklogErrorEventMessage e : entries) {
+                if (exchangeId.equals(e.getExchangeId())) {
+                    return;
+                }
+            }
+        }
         entries.addFirst(entry);
         evict();
     }
@@ -599,8 +630,20 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             jo.put("elapsed", elapsed);
             jo.put("threadName", threadName);
             jo.put("handled", handled);
-            // message data
-            jo.put("message", data.getMap("message"));
+            // message data (body, headers)
+            Map<String, Object> msg = data.getMap("message");
+            jo.put("message", msg);
+            // exchange properties and variables are inside the "message" data snapshot
+            if (msg != null) {
+                Object props = msg.get("exchangeProperties");
+                if (props != null) {
+                    jo.put("exchangeProperties", props);
+                }
+                Object vars = msg.get("exchangeVariables");
+                if (vars != null) {
+                    jo.put("exchangeVariables", vars);
+                }
+            }
             // exception
             if (exception != null) {
                 try {

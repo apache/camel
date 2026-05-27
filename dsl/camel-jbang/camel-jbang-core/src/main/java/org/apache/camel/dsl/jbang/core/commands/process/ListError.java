@@ -27,6 +27,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
@@ -63,25 +64,56 @@ public class ListError extends ProcessWatchCommand {
                         description = "Filter by handled status (true or false)")
     String handled;
 
+    @CommandLine.Option(names = { "--id" },
+                        description = "Filter by exchange ID")
+    String id;
+
     @CommandLine.Option(names = { "--limit" },
                         description = "Maximum number of entries to display")
     int limit;
 
     @CommandLine.Option(names = { "--show" },
-                        description = "Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace")
+                        description = "Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace, or 'all' for all sections")
     String show;
+
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    boolean loggingColor = true;
+
+    @CommandLine.Option(names = { "--detail" },
+                        description = "Show full details of each error entry")
+    boolean detail;
+
+    @CommandLine.Option(names = { "--last" },
+                        description = "Show only the last (newest) error with full details")
+    boolean last;
 
     public ListError(CamelJBangMain main) {
         super(main);
     }
 
+    private static final Set<String> ALL_SECTIONS
+            = Set.of("body", "headers", "properties", "variables", "history", "stackTrace");
+
     @Override
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        Set<String> showSet = show != null
-                ? Arrays.stream(show.split(",")).map(String::trim).collect(Collectors.toSet())
-                : Set.of();
+        if (last) {
+            limit = 1;
+            detail = true;
+        }
+        if (detail) {
+            show = "all";
+        }
+
+        Set<String> showSet;
+        if ("all".equals(show)) {
+            showSet = ALL_SECTIONS;
+        } else if (show != null) {
+            showSet = Arrays.stream(show.split(",")).map(String::trim).collect(Collectors.toSet());
+        } else {
+            showSet = Set.of();
+        }
 
         List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
@@ -117,25 +149,14 @@ public class ListError extends ProcessWatchCommand {
                                         row.timestamp = ts;
                                     }
                                     row.location = jo.getString("location");
+                                    row.rawJson = jo;
 
                                     // extract exception info
                                     JsonObject ex = (JsonObject) jo.get("exception");
                                     if (ex != null) {
                                         row.exceptionType = ex.getString("type");
                                         row.exceptionMessage = ex.getString("message");
-                                        row.stackTrace = extractStackTrace(ex);
                                     }
-
-                                    // extract message data
-                                    JsonObject msg = (JsonObject) jo.get("message");
-                                    if (msg != null) {
-                                        row.body = msg.get("body") != null ? msg.get("body").toString() : null;
-                                        row.headers = msg.get("headers");
-                                    }
-
-                                    // exchange properties and variables
-                                    row.properties = jo.get("exchangeProperties");
-                                    row.variables = jo.get("exchangeVariables");
 
                                     // message history
                                     Object mhObj = jo.get("messageHistory");
@@ -167,19 +188,8 @@ public class ListError extends ProcessWatchCommand {
 
         if (!display.isEmpty()) {
             if (jsonOutput) {
-                printer().println(Jsoner.serialize(display.stream().map(r -> {
-                    JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
-                    jo.put("name", r.name);
-                    jo.put("age", getAge(r));
-                    jo.put("route", r.routeId);
-                    jo.put("nodeId", r.nodeId);
-                    jo.put("exchangeId", r.exchangeId);
-                    jo.put("handled", r.handled);
-                    jo.put("exception", r.exceptionType);
-                    jo.put("message", r.exceptionMessage);
-                    return jo;
-                }).collect(Collectors.toList())));
+                // dump the raw JSON from the error entries
+                printer().println(Jsoner.serialize(display.stream().map(r -> r.rawJson).collect(Collectors.toList())));
             } else {
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, display, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
@@ -188,6 +198,8 @@ public class ListError extends ProcessWatchCommand {
                                 .with(r -> r.name),
                         new Column().header("AGO").dataAlign(HorizontalAlign.RIGHT)
                                 .with(this::getAge),
+                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
+                                .with(r -> r.exchangeId),
                         new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.routeId),
@@ -203,34 +215,44 @@ public class ListError extends ProcessWatchCommand {
                                 .maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.exceptionMessage))));
 
-                // show detail sections
+                // show detail sections using MessageTableHelper
                 if (!showSet.isEmpty()) {
+                    MessageTableHelper tableHelper = new MessageTableHelper();
+                    tableHelper.setLoggingColor(loggingColor);
+                    tableHelper.setPretty(true);
+                    tableHelper.setShowExchangeProperties(showSet.contains("properties"));
+                    tableHelper.setShowExchangeVariables(showSet.contains("variables"));
+                    tableHelper.setShowHeaders(showSet.contains("headers") || showSet.contains("body"));
+
                     for (Row r : display) {
                         printer().println();
-                        printer().printf("    Exchange: %s (route: %s, node: %s)%n",
-                                r.exchangeId, r.routeId, r.nodeId);
-                        if (showSet.contains("body") && r.body != null) {
-                            printer().printf("    Body:%n      %s%n", r.body);
+                        // build the message root for MessageTableHelper
+                        JsonObject msg = r.rawJson.getMap("message");
+                        if (msg == null) {
+                            msg = new JsonObject();
                         }
-                        if (showSet.contains("headers") && r.headers != null) {
-                            printer().printf("    Headers: %s%n", r.headers);
+                        // promote exchange properties/variables into the message root
+                        Object ep = r.rawJson.get("exchangeProperties");
+                        if (ep != null) {
+                            msg.put("exchangeProperties", ep);
                         }
-                        if (showSet.contains("properties") && r.properties != null) {
-                            printer().printf("    Properties: %s%n", r.properties);
+                        Object ev = r.rawJson.get("exchangeVariables");
+                        if (ev != null) {
+                            msg.put("exchangeVariables", ev);
                         }
-                        if (showSet.contains("variables") && r.variables != null) {
-                            printer().printf("    Variables: %s%n", r.variables);
+                        String exchangePattern = msg.getString("exchangePattern");
+                        // exception
+                        JsonObject cause = r.rawJson.getMap("exception");
+                        String data = tableHelper.getDataAsTable(
+                                r.exchangeId, exchangePattern, null, null, null, msg, cause);
+                        if (data != null && !data.isEmpty()) {
+                            printer().print(data);
                         }
+                        // message history
                         if (showSet.contains("history") && r.messageHistory != null) {
-                            printer().printf("    Message History:%n");
+                            printer().println("History");
                             for (String step : r.messageHistory) {
-                                printer().printf("      %s%n", step);
-                            }
-                        }
-                        if (showSet.contains("stackTrace") && r.stackTrace != null) {
-                            printer().printf("    Stack Trace:%n");
-                            for (String line : r.stackTrace) {
-                                printer().printf("      %s%n", line);
+                                printer().printf("  %s%n", step);
                             }
                         }
                     }
@@ -242,6 +264,9 @@ public class ListError extends ProcessWatchCommand {
     }
 
     private boolean matchesFilters(Row row) {
+        if (id != null && !id.equals(row.exchangeId)) {
+            return false;
+        }
         if (route != null && !route.equals(row.routeId)) {
             return false;
         }
@@ -284,18 +309,6 @@ public class ListError extends ProcessWatchCommand {
         return type;
     }
 
-    private static String[] extractStackTrace(JsonObject ex) {
-        Object st = ex.get("stackTrace");
-        if (st instanceof JsonArray arr) {
-            String[] result = new String[arr.size()];
-            for (int i = 0; i < arr.size(); i++) {
-                result[i] = arr.get(i).toString();
-            }
-            return result;
-        }
-        return null;
-    }
-
     protected int sortRow(Row o1, Row o2) {
         String s = sort;
         int negate = 1;
@@ -326,12 +339,8 @@ public class ListError extends ProcessWatchCommand {
         String location;
         String exceptionType;
         String exceptionMessage;
-        String[] stackTrace;
-        String body;
-        Object headers;
-        Object properties;
-        Object variables;
         String[] messageHistory;
+        JsonObject rawJson;
 
         Row copy() {
             try {

@@ -68,6 +68,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertEquals("direct://start", entry.getFromEndpointUri());
         assertTrue(entry.getRouteUptime() >= 0, "Route uptime should be non-negative");
         assertTrue(entry.getElapsed() >= 0, "Elapsed time should be non-negative");
+        assertNotNull(entry.getToNode(), "Node id should be captured from message history");
     }
 
     @Test
@@ -165,6 +166,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertFalse(entry.isHandled());
         assertEquals("java.lang.IllegalArgumentException", entry.getExceptionType());
         assertEquals("Unhandled error", entry.getExceptionMessage());
+        assertNotNull(entry.getToNode(), "Node id should be captured for unhandled errors");
     }
 
     @Test
@@ -208,6 +210,30 @@ public class ErrorRegistryTest extends ContextTestSupport {
     }
 
     @Test
+    public void testErrorRegistryCapturesVariablesPropertiesHeaders() throws Exception {
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+        template.sendBody("direct:withData", "Test Body");
+        assertMockEndpointsSatisfied();
+
+        BacklogErrorEventMessage entry = context.getErrorRegistry().browse().iterator().next();
+
+        // verify in toJSon output
+        String json = entry.toJSon(2);
+        assertTrue(json.contains("myVar"), "JSON should contain variable name");
+        assertTrue(json.contains("varValue"), "JSON should contain variable value");
+        assertTrue(json.contains("myProp"), "JSON should contain property name");
+        assertTrue(json.contains("propValue"), "JSON should contain property value");
+        assertTrue(json.contains("myHeader"), "JSON should contain header name");
+        assertTrue(json.contains("headerValue"), "JSON should contain header value");
+
+        // verify in asJSon map
+        Map<String, Object> map = entry.asJSon();
+        assertNotNull(map.get("exchangeVariables"), "JSON map should contain exchangeVariables");
+        assertNotNull(map.get("exchangeProperties"), "JSON map should contain exchangeProperties");
+        assertNotNull(map.get("message"), "JSON map should contain message with headers");
+    }
+
+    @Test
     public void testErrorRegistryToJson() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
@@ -221,6 +247,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertTrue(json.contains("\"handled\""));
         assertTrue(json.contains("\"exception\""));
         assertTrue(json.contains("\"message\""));
+        assertTrue(json.contains("\"nodeId\""), "JSON should contain nodeId");
     }
 
     @Test
@@ -237,6 +264,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertNotNull(json.get("exchangeId"));
         assertNotNull(json.get("exception"));
         assertNotNull(json.get("message"));
+        assertNotNull(json.get("nodeId"), "JSON map should contain nodeId");
         assertEquals("direct://start", json.get("fromEndpointUri"));
         assertTrue((long) json.get("routeUptime") >= 0);
         assertTrue((long) json.get("elapsed") >= 0);
@@ -264,6 +292,12 @@ public class ErrorRegistryTest extends ContextTestSupport {
 
                 from("direct:fail").routeId("failRoute")
                         .throwException(new IllegalArgumentException("Endpoint error"));
+
+                from("direct:withData").routeId("dataRoute")
+                        .setVariable("myVar", constant("varValue"))
+                        .setProperty("myProp", constant("propValue"))
+                        .setHeader("myHeader", constant("headerValue"))
+                        .throwException(new IllegalArgumentException("Data error"));
             }
         };
     }
