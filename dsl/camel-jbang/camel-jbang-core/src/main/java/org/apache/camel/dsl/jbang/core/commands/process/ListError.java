@@ -64,6 +64,10 @@ public class ListError extends ProcessWatchCommand {
                         description = "Filter by handled status (true or false)")
     String handled;
 
+    @CommandLine.Option(names = { "--id" },
+                        description = "Filter by exchange ID")
+    String id;
+
     @CommandLine.Option(names = { "--limit" },
                         description = "Maximum number of entries to display")
     int limit;
@@ -253,6 +257,9 @@ public class ListError extends ProcessWatchCommand {
     }
 
     private boolean matchesFilters(Row row) {
+        if (id != null && !id.equals(row.exchangeId)) {
+            return false;
+        }
         if (route != null && !route.equals(row.routeId)) {
             return false;
         }
