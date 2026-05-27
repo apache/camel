@@ -16,8 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.awt.image.BufferedImage;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,14 +30,28 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
+import org.apache.camel.diagram.RouteDiagramHelper;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.diagram.RouteDiagramRenderer;
+import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+import org.jline.terminal.impl.TerminalGraphics;
+import org.jline.terminal.impl.TerminalGraphicsManager;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -87,6 +105,14 @@ public class ListError extends ProcessWatchCommand {
                         description = "Show only the last (newest) error with full details")
     boolean last;
 
+    @CommandLine.Option(names = { "--diagram" },
+                        description = "Display a route diagram with the error path highlighted")
+    boolean diagram;
+
+    @CommandLine.Option(names = { "--theme" }, defaultValue = "unicode",
+                        description = "Diagram color theme (ascii, unicode, dark, light, transparent, or custom)")
+    String theme = "unicode";
+
     public ListError(CamelJBangMain main) {
         super(main);
     }
@@ -98,6 +124,10 @@ public class ListError extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
+        if (diagram) {
+            System.setProperty("java.awt.headless", "true");
+            last = true;
+        }
         if (last) {
             limit = 1;
             detail = true;
@@ -187,6 +217,16 @@ public class ListError extends ProcessWatchCommand {
         }
 
         if (!display.isEmpty()) {
+            // diagram mode: render route diagram with error path highlighted
+            if (diagram) {
+                Row row = display.get(0);
+                if (row.messageHistory == null || row.messageHistory.length == 0) {
+                    printer().println("No message history available for this error (enable message history in Camel)");
+                    return 1;
+                }
+                return doDiagramCall(Long.parseLong(row.pid), row);
+            }
+
             if (jsonOutput) {
                 // dump the raw JSON from the error entries
                 printer().println(Jsoner.serialize(display.stream().map(r -> r.rawJson).collect(Collectors.toList())));
@@ -263,6 +303,171 @@ public class ListError extends ProcessWatchCommand {
         return 0;
     }
 
+    private Integer doDiagramCall(long pid, Row row) throws Exception {
+        // extract node IDs and route order from message history
+        Set<String> nodeIds = new LinkedHashSet<>();
+        Set<String> routeOrderSet = new LinkedHashSet<>();
+        for (String step : row.messageHistory) {
+            // format: routeId[nodeId] or routeId[nodeId] (elapsed ms)
+            int open = step.indexOf('[');
+            int close = step.indexOf(']');
+            if (open > 0 && close > open) {
+                String routeId = step.substring(0, open);
+                String nodeId = step.substring(open + 1, close);
+                if (nodeId != null && !nodeId.isEmpty()) {
+                    nodeIds.add(nodeId);
+                }
+                if (routeId != null && !routeId.isEmpty()) {
+                    routeOrderSet.add(routeId);
+                }
+            }
+        }
+
+        if (nodeIds.isEmpty()) {
+            printer().println("No node IDs found in error message history");
+            return 1;
+        }
+
+        RouteDiagramHelper.HighlightStyle hlStyle = RouteDiagramHelper.HighlightStyle.FAIL;
+
+        // request route structure from the running process
+        String pidStr = Long.toString(pid);
+        Path outputFile = getOutputFile(pidStr);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject action = new JsonObject();
+        action.put("action", "route-structure");
+        action.put("filter", "*");
+        action.put("brief", false);
+        action.put("metric", false);
+        Path actionFile = getActionFile(pidStr);
+        try {
+            Files.writeString(actionFile, action.toJson());
+        } catch (Exception e) {
+            // ignore
+        }
+
+        JsonObject structureJson = waitForJsonResponse(outputFile);
+        if (structureJson == null) {
+            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+            return 1;
+        }
+
+        try {
+            List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(structureJson);
+            if (routes.isEmpty()) {
+                printer().println("No routes found");
+                return 1;
+            }
+
+            // add structural parent node IDs for each route that has highlighted nodes
+            for (RouteInfo ri : routes) {
+                boolean routeHasHighlight = ri.nodes.stream().anyMatch(n -> n.id != null && nodeIds.contains(n.id));
+                if (routeHasHighlight) {
+                    addParentNodes(ri.nodes, nodeIds);
+                }
+            }
+
+            // filter and order routes by highlighted path
+            RouteDiagramHelper.HighlightInfo highlightInfo
+                    = new RouteDiagramHelper.HighlightInfo(nodeIds, new ArrayList<>(routeOrderSet), hlStyle);
+            routes = RouteDiagramHelper.filterAndOrderRoutes(routes, highlightInfo);
+            if (routes.isEmpty()) {
+                printer().println("No routes contain highlighted nodes from error history");
+                return 1;
+            }
+
+            // layout
+            RouteDiagramLayoutEngine engine
+                    = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
+
+            List<LayoutRoute> layoutRoutes = new ArrayList<>();
+            int currentY = RouteDiagramLayoutEngine.PADDING;
+            for (RouteInfo ri : routes) {
+                LayoutRoute lr = engine.layoutRoute(ri, currentY);
+                layoutRoutes.add(lr);
+                currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+            }
+
+            boolean textMode = isTextTheme();
+            if (textMode) {
+                RouteDiagramAsciiRenderer asciiRenderer
+                        = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme());
+                String ascii = asciiRenderer.renderDiagramAnsi(layoutRoutes, currentY, nodeIds, hlStyle);
+                printer().println(ascii);
+            } else {
+                DiagramColors colors = DiagramColors.parse(theme);
+                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                        engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(), false);
+
+                BufferedImage image;
+                try {
+                    image = renderer.renderDiagram(layoutRoutes, currentY, colors, nodeIds, hlStyle);
+                } catch (IllegalStateException e) {
+                    printer().println(e.getMessage());
+                    return 1;
+                }
+
+                try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
+                    TerminalGraphics tg = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
+                    if (tg == null) {
+                        printer().println(
+                                "Terminal does not support graphics. Use --theme=ascii or --theme=unicode for text output.");
+                        return 1;
+                    }
+                    TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions().preserveAspectRatio(true);
+                    tg.displayImage(terminal, image, opts);
+                    terminal.writer().println();
+                    terminal.flush();
+                }
+            }
+            return 0;
+        } finally {
+            PathUtils.deleteFile(outputFile);
+        }
+    }
+
+    private static void addParentNodes(List<RouteDiagramLayoutEngine.NodeInfo> nodes, Set<String> nodeIds) {
+        for (int i = 0; i < nodes.size(); i++) {
+            RouteDiagramLayoutEngine.NodeInfo node = nodes.get(i);
+            if (node.id == null || nodeIds.contains(node.id)) {
+                continue;
+            }
+            boolean hasHighlightedChild = false;
+            for (int j = i + 1; j < nodes.size(); j++) {
+                RouteDiagramLayoutEngine.NodeInfo child = nodes.get(j);
+                if (child.level <= node.level) {
+                    break;
+                }
+                if (child.id != null && nodeIds.contains(child.id)) {
+                    hasHighlightedChild = true;
+                    break;
+                }
+            }
+            if (hasHighlightedChild) {
+                nodeIds.add(node.id);
+            }
+        }
+    }
+
+    private static JsonObject waitForJsonResponse(Path outputFile) {
+        StopWatch watch = new StopWatch();
+        while (watch.taken() < 5000) {
+            try {
+                Thread.sleep(100);
+                if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
+                    String text = Files.readString(outputFile);
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return null;
+    }
+
     private boolean matchesFilters(Row row) {
         if (id != null && !id.equals(row.exchangeId)) {
             return false;
@@ -296,6 +501,14 @@ public class ListError extends ProcessWatchCommand {
             return TimeUtils.printSince(r.timestamp);
         }
         return "";
+    }
+
+    private boolean isTextTheme() {
+        return "ascii".equalsIgnoreCase(theme) || "unicode".equalsIgnoreCase(theme);
+    }
+
+    private boolean isUnicodeTheme() {
+        return "unicode".equalsIgnoreCase(theme);
     }
 
     private static String shortExceptionType(String type) {
