@@ -718,8 +718,13 @@ public class CamelMonitor extends CamelCommand {
             logTab.onTabSelected();
         }
         if (tab == TAB_HISTORY && ctx.selectedPid != null) {
-            refreshHistoryData(List.of(Long.parseLong(ctx.selectedPid)));
-            refreshTraceData(List.of(Long.parseLong(ctx.selectedPid)));
+            try {
+                long pid = Long.parseLong(ctx.selectedPid);
+                refreshHistoryData(List.of(pid));
+                refreshTraceData(List.of(pid));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
             historyTab.onTabSelected();
         }
         if (tab == TAB_CIRCUIT_BREAKER) {
@@ -2397,12 +2402,12 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Derive status from done/failed booleans
-        Boolean done = (Boolean) json.get("done");
-        Boolean failed = (Boolean) json.get("failed");
-        entry.failed = Boolean.TRUE.equals(failed);
+        boolean done = Boolean.TRUE.equals(json.get("done"));
+        boolean failed = Boolean.TRUE.equals(json.get("failed"));
+        entry.failed = failed;
         if (entry.failed) {
             entry.status = "Failed";
-        } else if (Boolean.TRUE.equals(done)) {
+        } else if (done) {
             entry.status = "Done";
         } else {
             entry.status = "Processing";
@@ -2910,7 +2915,7 @@ public class CamelMonitor extends CamelCommand {
                     ci.className = cj.getString("class");
                     ci.scheduled = Boolean.TRUE.equals(cj.get("scheduled"));
                     ci.inflight = cj.getIntegerOrDefault("inflight", 0);
-                    ci.polling = (Boolean) cj.get("polling");
+                    ci.polling = Boolean.TRUE.equals(cj.get("polling"));
                     ci.totalCounter = cj.getLong("totalCounter");
                     ci.delay = cj.getLong("delay");
                     ci.period = cj.getLong("period");
