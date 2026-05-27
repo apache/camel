@@ -81,7 +81,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Use ascii/unicode for plain text output. "
                                       + "Can also be set via DIAGRAM_COLORS env var.",
-                        defaultValue = "transparent")
+                        defaultValue = "unicode")
     String theme;
 
     @CommandLine.Option(names = { "--font-size" },
