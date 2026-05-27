@@ -630,8 +630,20 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             jo.put("elapsed", elapsed);
             jo.put("threadName", threadName);
             jo.put("handled", handled);
-            // message data
-            jo.put("message", data.getMap("message"));
+            // message data (body, headers)
+            Map<String, Object> msg = data.getMap("message");
+            jo.put("message", msg);
+            // exchange properties and variables are inside the "message" data snapshot
+            if (msg != null) {
+                Object props = msg.get("exchangeProperties");
+                if (props != null) {
+                    jo.put("exchangeProperties", props);
+                }
+                Object vars = msg.get("exchangeVariables");
+                if (vars != null) {
+                    jo.put("exchangeVariables", vars);
+                }
+            }
             // exception
             if (exception != null) {
                 try {
