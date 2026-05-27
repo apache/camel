@@ -560,7 +560,7 @@ The same MCP server provides both catalog and runtime capabilities.
 === Prerequisites
 
 * https://www.jbang.dev/[JBang] installed and on your PATH
-* https://camel.apache.org/manual/camel-jbang.html[Camel JBang] installed (`jbang app install camel@apache/camel`)
+* manual/camel-jbang.html[Camel JBang] installed (`jbang app install camel@apache/camel`)
 * An MCP-capable AI tool (Claude Code, VS Code with Copilot, JetBrains AI, etc.) configured as shown in the <<Setup>> section above
 
 === Step 1: Ask the AI to build a route
