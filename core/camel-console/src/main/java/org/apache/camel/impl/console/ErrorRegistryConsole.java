@@ -19,8 +19,8 @@ package org.apache.camel.impl.console;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.camel.spi.BacklogErrorEventMessage;
 import org.apache.camel.spi.ErrorRegistry;
-import org.apache.camel.spi.ErrorRegistryEntry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
@@ -60,27 +60,31 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         sb.append(String.format("%n    Enabled: %s", registry.isEnabled()));
         sb.append(String.format("%n    Size: %s", registry.size()));
 
-        Collection<ErrorRegistryEntry> entries;
+        Collection<BacklogErrorEventMessage> entries;
         if (routeId != null) {
             entries = registry.forRoute(routeId).browse(max);
         } else {
             entries = registry.browse(max);
         }
 
-        for (ErrorRegistryEntry entry : entries) {
-            sb.append(String.format("%n    %s (route: %s, endpoint: %s, handled: %s, type: %s, message: %s, timestamp: %s)",
-                    entry.exchangeId(), entry.routeId(), entry.endpointUri(),
-                    entry.handled(), entry.exceptionType(), entry.exceptionMessage(),
-                    entry.timestamp()));
-            if (entry.messageHistory() != null) {
+        for (BacklogErrorEventMessage entry : entries) {
+            sb.append(String.format("%n    %s (route: %s, node: %s, endpoint: %s, handled: %s)",
+                    entry.getExchangeId(), entry.getRouteId(), entry.getToNode(), entry.getEndpointUri(),
+                    entry.isHandled()));
+            sb.append(String.format("%n      Exception: %s - %s",
+                    entry.getExceptionType(), entry.getExceptionMessage()));
+            sb.append(String.format("%n      Timestamp: %s, Thread: %s",
+                    entry.getTimestamp(), entry.getProcessingThreadName()));
+            if (entry.getMessageHistory() != null) {
                 sb.append(String.format("%n      Message History:"));
-                for (String step : entry.messageHistory()) {
+                for (String step : entry.getMessageHistory()) {
                     sb.append(String.format("%n        %s", step));
                 }
             }
-            if (includeStackTrace && entry.stackTrace() != null) {
-                for (String line : entry.stackTrace()) {
-                    sb.append(String.format("%n        %s", line));
+            if (includeStackTrace) {
+                sb.append(String.format("%n      Stack Trace:"));
+                for (StackTraceElement ste : entry.getException().getStackTrace()) {
+                    sb.append(String.format("%n        %s", ste));
                 }
             }
         }
@@ -101,9 +105,8 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         root.put("size", registry.size());
         root.put("maximumEntries", registry.getMaximumEntries());
         root.put("timeToLive", registry.getTimeToLive().toString());
-        root.put("stackTraceEnabled", registry.isStackTraceEnabled());
 
-        Collection<ErrorRegistryEntry> entries;
+        Collection<BacklogErrorEventMessage> entries;
         if (routeId != null) {
             entries = registry.forRoute(routeId).browse(max);
         } else {
@@ -111,28 +114,14 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         }
 
         final JsonArray list = new JsonArray();
-        for (ErrorRegistryEntry entry : entries) {
-            JsonObject jo = new JsonObject();
-            jo.put("exchangeId", entry.exchangeId());
-            jo.put("routeId", entry.routeId());
-            jo.put("endpointUri", entry.endpointUri());
-            jo.put("timestamp", entry.timestamp().toString());
-            jo.put("handled", entry.handled());
-            jo.put("exceptionType", entry.exceptionType());
-            jo.put("exceptionMessage", entry.exceptionMessage());
-            if (entry.messageHistory() != null) {
-                JsonArray history = new JsonArray();
-                for (String step : entry.messageHistory()) {
-                    history.add(step);
+        for (BacklogErrorEventMessage entry : entries) {
+            JsonObject jo = (JsonObject) entry.asJSon();
+            if (!includeStackTrace) {
+                // remove stack trace from the exception sub-object to keep output concise
+                Object ex = jo.get("exception");
+                if (ex instanceof JsonObject exObj) {
+                    exObj.remove("stackTrace");
                 }
-                jo.put("messageHistory", history);
-            }
-            if (includeStackTrace && entry.stackTrace() != null) {
-                JsonArray stackTrace = new JsonArray();
-                for (String line : entry.stackTrace()) {
-                    stackTrace.add(line);
-                }
-                jo.put("stackTrace", stackTrace);
             }
             list.add(jo);
         }

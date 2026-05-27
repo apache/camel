@@ -30,8 +30,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedErrorRegistryMBean;
+import org.apache.camel.spi.BacklogErrorEventMessage;
 import org.apache.camel.spi.ErrorRegistry;
-import org.apache.camel.spi.ErrorRegistryEntry;
 
 @ManagedResource(description = "Managed ErrorRegistry")
 public class ManagedErrorRegistry extends ManagedService implements ManagedErrorRegistryMBean {
@@ -83,13 +83,53 @@ public class ManagedErrorRegistry extends ManagedService implements ManagedError
     }
 
     @Override
-    public boolean isStackTraceEnabled() {
-        return errorRegistry.isStackTraceEnabled();
+    public int getBodyMaxChars() {
+        return errorRegistry.getBodyMaxChars();
     }
 
     @Override
-    public void setStackTraceEnabled(boolean stackTraceEnabled) {
-        errorRegistry.setStackTraceEnabled(stackTraceEnabled);
+    public void setBodyMaxChars(int bodyMaxChars) {
+        errorRegistry.setBodyMaxChars(bodyMaxChars);
+    }
+
+    @Override
+    public boolean isBodyIncludeStreams() {
+        return errorRegistry.isBodyIncludeStreams();
+    }
+
+    @Override
+    public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
+        errorRegistry.setBodyIncludeStreams(bodyIncludeStreams);
+    }
+
+    @Override
+    public boolean isBodyIncludeFiles() {
+        return errorRegistry.isBodyIncludeFiles();
+    }
+
+    @Override
+    public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
+        errorRegistry.setBodyIncludeFiles(bodyIncludeFiles);
+    }
+
+    @Override
+    public boolean isIncludeExchangeProperties() {
+        return errorRegistry.isIncludeExchangeProperties();
+    }
+
+    @Override
+    public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
+        errorRegistry.setIncludeExchangeProperties(includeExchangeProperties);
+    }
+
+    @Override
+    public boolean isIncludeExchangeVariables() {
+        return errorRegistry.isIncludeExchangeVariables();
+    }
+
+    @Override
+    public void setIncludeExchangeVariables(boolean includeExchangeVariables) {
+        errorRegistry.setIncludeExchangeVariables(includeExchangeVariables);
     }
 
     @Override
@@ -112,24 +152,26 @@ public class ManagedErrorRegistry extends ManagedService implements ManagedError
         errorRegistry.clear();
     }
 
-    private static TabularData browseEntries(Collection<ErrorRegistryEntry> entries) {
+    private static TabularData browseEntries(Collection<BacklogErrorEventMessage> entries) {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listErrorRegistryTabularType());
-            for (ErrorRegistryEntry entry : entries) {
+            for (BacklogErrorEventMessage entry : entries) {
                 CompositeType ct = CamelOpenMBeanTypes.listErrorRegistryCompositeType();
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "exchangeId", "routeId", "endpointUri", "timestamp",
+                                "exchangeId", "routeId", "routeGroup", "nodeId", "endpointUri", "timestamp",
                                 "handled", "exceptionType", "exceptionMessage" },
                         new Object[] {
-                                entry.exchangeId(),
-                                entry.routeId(),
-                                entry.endpointUri(),
-                                entry.timestamp().toString(),
-                                entry.handled(),
-                                entry.exceptionType(),
-                                entry.exceptionMessage() });
+                                entry.getExchangeId(),
+                                entry.getRouteId(),
+                                entry.getRouteGroup(),
+                                entry.getToNode(),
+                                entry.getEndpointUri(),
+                                String.valueOf(entry.getTimestamp()),
+                                entry.isHandled(),
+                                entry.getExceptionType(),
+                                entry.getExceptionMessage() });
                 answer.put(data);
             }
             return answer;

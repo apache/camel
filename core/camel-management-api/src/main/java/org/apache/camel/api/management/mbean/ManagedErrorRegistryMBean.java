@@ -44,11 +44,35 @@ public interface ManagedErrorRegistryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Time-to-live in seconds for error entries")
     void setTimeToLiveSeconds(long seconds);
 
-    @ManagedAttribute(description = "Whether stack trace capture is enabled")
-    boolean isStackTraceEnabled();
+    @ManagedAttribute(description = "Maximum number of characters for the message body")
+    int getBodyMaxChars();
 
-    @ManagedAttribute(description = "Whether stack trace capture is enabled")
-    void setStackTraceEnabled(boolean stackTraceEnabled);
+    @ManagedAttribute(description = "Maximum number of characters for the message body")
+    void setBodyMaxChars(int bodyMaxChars);
+
+    @ManagedAttribute(description = "Whether to include stream-based message bodies")
+    boolean isBodyIncludeStreams();
+
+    @ManagedAttribute(description = "Whether to include stream-based message bodies")
+    void setBodyIncludeStreams(boolean bodyIncludeStreams);
+
+    @ManagedAttribute(description = "Whether to include file-based message bodies")
+    boolean isBodyIncludeFiles();
+
+    @ManagedAttribute(description = "Whether to include file-based message bodies")
+    void setBodyIncludeFiles(boolean bodyIncludeFiles);
+
+    @ManagedAttribute(description = "Whether to include exchange properties")
+    boolean isIncludeExchangeProperties();
+
+    @ManagedAttribute(description = "Whether to include exchange properties")
+    void setIncludeExchangeProperties(boolean includeExchangeProperties);
+
+    @ManagedAttribute(description = "Whether to include exchange variables")
+    boolean isIncludeExchangeVariables();
+
+    @ManagedAttribute(description = "Whether to include exchange variables")
+    void setIncludeExchangeVariables(boolean includeExchangeVariables);
 
     @ManagedOperation(description = "Browse all error entries")
     TabularData browse();

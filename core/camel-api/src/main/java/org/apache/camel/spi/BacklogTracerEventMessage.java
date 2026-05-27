@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 4.0
  */
-public interface BacklogTracerEventMessage {
+public interface BacklogTracerEventMessage extends BacklogEventMessage {
 
     String ROOT_TAG = "backlogTracerEventMessage";
     String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
