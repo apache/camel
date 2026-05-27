@@ -29,14 +29,13 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GrpcProxyAsyncSyncTest extends CamelTestSupport {
+public class GrpcProxyAsyncSyncTest extends GrpcTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProxyAsyncSyncTest.class);
 
@@ -61,12 +60,8 @@ public class GrpcProxyAsyncSyncTest extends CamelTestSupport {
 
     @BeforeEach
     public void beforeEach() {
-        channel = ManagedChannelBuilder.forAddress("localhost", getRoutePort()).usePlaintext().build();
+        channel = ManagedChannelBuilder.forAddress("localhost", getRoutePort("grpc-consumer")).usePlaintext().build();
         stub = PingPongGrpc.newStub(channel);
-    }
-
-    private int getRoutePort() {
-        return ((GrpcConsumer) context.getRoute("grpc-consumer").getConsumer()).getLocalPort();
     }
 
     @AfterEach

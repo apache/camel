@@ -25,7 +25,6 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.CamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GrpcConsumerExceptionTest extends CamelTestSupport {
+public class GrpcConsumerExceptionTest extends GrpcTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerExceptionTest.class);
 
@@ -47,10 +46,6 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     private ManagedChannel syncRequestChannel;
     private PingPongGrpc.PingPongBlockingStub blockingStub;
     private PingPongGrpc.PingPongStub nonBlockingStub;
-
-    private int getRoutePort(String routeId) {
-        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
-    }
 
     @BeforeEach
     public void startGrpcChannels() {

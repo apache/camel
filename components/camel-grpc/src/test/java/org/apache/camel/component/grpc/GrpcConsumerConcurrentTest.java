@@ -29,7 +29,6 @@ import io.grpc.stub.StreamObserver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GrpcConsumerConcurrentTest extends CamelTestSupport {
+public class GrpcConsumerConcurrentTest extends GrpcTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerConcurrentTest.class);
 
     private static final int CONCURRENT_THREAD_COUNT = 30;
@@ -54,10 +53,6 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
     public static Integer getId() {
         return idCounter.get();
-    }
-
-    private int getRoutePort(String routeId) {
-        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
     }
 
     @Test

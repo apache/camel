@@ -34,7 +34,6 @@ import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
 import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
 import org.apache.camel.component.grpc.auth.jwt.JwtHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GrpcConsumerSecurityTest extends CamelTestSupport {
+public class GrpcConsumerSecurityTest extends GrpcTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerSecurityTest.class);
 
@@ -64,10 +63,6 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
     private PingPongGrpc.PingPongStub tlsAsyncStub;
     private PingPongGrpc.PingPongStub jwtCorrectAsyncStub;
     private PingPongGrpc.PingPongStub jwtIncorrectAsyncStub;
-
-    private int getRoutePort(String routeId) {
-        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
-    }
 
     @BeforeEach
     public void startGrpcChannels() throws SSLException {

@@ -21,7 +21,6 @@ import java.util.List;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
+public class GrpcConsumerServerInterceptorTest extends GrpcTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerServerInterceptorTest.class);
 
@@ -51,10 +50,6 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
     private ManagedChannel nointerceptRequestChannel;
     private PingPongGrpc.PingPongBlockingStub interceptBlockingStub;
     private PingPongGrpc.PingPongBlockingStub nointerceptBlockingStub;
-
-    private int getRoutePort(String routeId) {
-        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
-    }
 
     @BeforeEach
     public void startGrpcChannels() {

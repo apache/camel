@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RouteControlledStreamObserverTest extends CamelTestSupport {
+public class RouteControlledStreamObserverTest extends GrpcTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerAggregationTest.class);
 
@@ -51,10 +50,6 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
     private PingPongGrpc.PingPongBlockingStub blockingStub;
     private PingPongGrpc.PingPongStub nonBlockingStub;
     private PingPongGrpc.PingPongStub asyncNonBlockingStub;
-
-    private int getRoutePort(String routeId) {
-        return ((GrpcConsumer) context.getRoute(routeId).getConsumer()).getLocalPort();
-    }
 
     @BeforeEach
     public void startGrpcChannels() {
