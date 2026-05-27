@@ -104,7 +104,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_ENDPOINT_CHART_POINTS = 60;
     private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 9;
+    private static final int NUM_TABS = 10;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
@@ -116,6 +116,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_HEALTH = 6;
     private static final int TAB_HISTORY = 7;
     private static final int TAB_CIRCUIT_BREAKER = 8;
+    private static final int TAB_ERRORS = 9;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -263,6 +264,7 @@ public class CamelMonitor extends CamelCommand {
     private HealthTab healthTab;
     private HistoryTab historyTab;
     private CircuitBreakerTab circuitBreakerTab;
+    private ErrorsTab errorsTab;
 
     private ClassLoader classLoader;
 
@@ -311,6 +313,7 @@ public class CamelMonitor extends CamelCommand {
         healthTab = new HealthTab(ctx);
         historyTab = new HistoryTab(ctx, traces, traceFilePositions);
         circuitBreakerTab = new CircuitBreakerTab(ctx, cbSuccessHistory, cbFailHistory);
+        errorsTab = new ErrorsTab(ctx);
 
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
@@ -458,6 +461,9 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (ke.isChar('9')) {
                     return handleTabKey(TAB_CIRCUIT_BREAKER);
+                }
+                if (ke.isChar('0')) {
+                    return handleTabKey(TAB_ERRORS);
                 }
             }
 
@@ -967,6 +973,7 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(" 7 Health "),
                 Line.from(" 8 Inspect "),
                 Line.from(" 9 Circuit Breaker "),
+                Line.from(" 0 Errors "),
         };
 
         Tabs tabs = Tabs.builder()
@@ -986,7 +993,7 @@ public class CamelMonitor extends CamelCommand {
             int badgeY = area.y();
             int dividerW = CharWidth.of(" | ");
 
-            String[] badgeTexts = { "", "", "", "", "", "", "", "", "" };
+            String[] badgeTexts = { "", "", "", "", "", "", "", "", "", "" };
             Style[] badgeStyles = new Style[labels.length];
             Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
             Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
@@ -1028,6 +1035,11 @@ public class CamelMonitor extends CamelCommand {
             } else if (cbCount > 0) {
                 badgeTexts[TAB_CIRCUIT_BREAKER] = "(" + cbCount + ")";
             }
+            int errorCount = hasSelection ? sel.errors.size() : 0;
+            if (errorCount > 0) {
+                badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
+                badgeStyles[TAB_ERRORS] = red;
+            }
 
             int tabX = 0;
             for (int i = 0; i < labels.length; i++) {
@@ -1068,6 +1080,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_HEALTH -> healthTab;
             case TAB_HISTORY -> historyTab;
             case TAB_HTTP -> httpTab;
+            case TAB_ERRORS -> errorsTab;
             default -> null;
         };
     }
@@ -2996,6 +3009,60 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
+        // Parse errors from error registry
+        JsonObject errorsObj = (JsonObject) root.get("errors");
+        if (errorsObj != null) {
+            JsonArray errorList = (JsonArray) errorsObj.get("errors");
+            if (errorList != null) {
+                for (Object e : errorList) {
+                    JsonObject ej = (JsonObject) e;
+                    ErrorInfo ei = new ErrorInfo();
+                    ei.routeId = ej.getString("routeId");
+                    ei.nodeId = ej.getString("nodeId");
+                    ei.exchangeId = ej.getString("exchangeId");
+                    ei.handled = ej.getBooleanOrDefault("handled", false);
+                    Long ts = ej.getLong("timestamp");
+                    if (ts != null) {
+                        ei.timestamp = ts;
+                    }
+                    ei.location = ej.getString("location");
+                    ei.threadName = ej.getString("threadName");
+                    Long elapsed = ej.getLong("elapsed");
+                    if (elapsed != null) {
+                        ei.elapsed = elapsed;
+                    }
+                    ei.endpointUri = ej.getString("endpointUri");
+                    ei.fromEndpointUri = ej.getString("fromEndpointUri");
+                    // exception
+                    JsonObject ex = (JsonObject) ej.get("exception");
+                    if (ex != null) {
+                        ei.exceptionType = ex.getString("type");
+                        ei.exceptionMessage = ex.getString("message");
+                        ei.stackTrace = ex.getString("stackTrace");
+                    }
+                    // message history
+                    Object mhObj = ej.get("messageHistory");
+                    if (mhObj instanceof JsonArray mhArr) {
+                        ei.messageHistory = new String[mhArr.size()];
+                        for (int i = 0; i < mhArr.size(); i++) {
+                            ei.messageHistory[i] = mhArr.get(i).toString();
+                        }
+                    }
+                    // message (body, headers)
+                    JsonObject msg = (JsonObject) ej.get("message");
+                    if (msg != null) {
+                        ei.body = msg.getString("body");
+                        ei.bodyType = msg.getString("bodyType");
+                        parseKvArray(msg.getCollection("headers"), ei.headers, ei.headerTypes);
+                    }
+                    // exchange properties and variables
+                    parseKvArray(ej.getCollection("exchangeProperties"), ei.properties, ei.propertyTypes);
+                    parseKvArray(ej.getCollection("exchangeVariables"), ei.variables, ei.variableTypes);
+                    info.errors.add(ei);
+                }
+            }
+        }
+
         // Parse REST DSL services
         JsonObject restsObj = (JsonObject) root.get("rests");
         if (restsObj != null) {
@@ -3107,6 +3174,24 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static void parseKvArray(JsonArray arr, Map<String, Object> values, Map<String, String> types) {
+        if (arr == null) {
+            return;
+        }
+        for (Object o : arr) {
+            JsonObject jo = (JsonObject) o;
+            String key = jo.getString("key");
+            if (key != null) {
+                values.put(key, jo.get("value"));
+                String type = jo.getString("type");
+                if (type != null) {
+                    types.put(key, type);
+                }
+            }
+        }
+    }
+
     // ---- Helpers ----
 
     private IntegrationInfo findSelectedIntegration() {
@@ -3208,7 +3293,7 @@ public class CamelMonitor extends CamelCommand {
 
     private static final String[] TAB_NAMES = {
             "Overview", "Log", "Routes", "Consumers", "Endpoints",
-            "HTTP", "Health", "Inspect", "Circuit Breaker"
+            "HTTP", "Health", "Inspect", "Circuit Breaker", "Errors"
     };
 
     Buffer getLastBuffer() {
