@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
@@ -129,9 +130,37 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                         // Parse JSON arguments if provided
                         String arguments = toolExecutionRequest.arguments();
                         if (arguments != null && !arguments.trim().isEmpty()) {
+                            // Get declared parameters from tool specification to filter incoming fields
+                            Set<String> declaredParams = Set.of();
+                            JsonObjectSchema paramSchema = toolSpecification.parameters();
+                            if (paramSchema != null && paramSchema.properties() != null) {
+                                declaredParams = paramSchema.properties().keySet();
+                            }
+                            final Set<String> allowedParams = declaredParams;
+
                             JsonNode jsonNode = objectMapper.readValue(arguments, JsonNode.class);
                             jsonNode.fieldNames()
-                                    .forEachRemaining(name -> exchange.getMessage().setHeader(name, jsonNode.get(name)));
+                                    .forEachRemaining(name -> {
+                                        if (!allowedParams.contains(name)) {
+                                            LOG.warn("Skipping undeclared tool argument '{}' for tool '{}'",
+                                                    name, toolName);
+                                            return;
+                                        }
+                                        JsonNode value = jsonNode.get(name);
+                                        Object headerValue;
+                                        if (value.isInt()) {
+                                            headerValue = value.intValue();
+                                        } else if (value.isLong()) {
+                                            headerValue = value.longValue();
+                                        } else if (value.isDouble()) {
+                                            headerValue = value.doubleValue();
+                                        } else if (value.isBoolean()) {
+                                            headerValue = value.booleanValue();
+                                        } else {
+                                            headerValue = value.asText();
+                                        }
+                                        exchange.getMessage().setHeader(name, headerValue);
+                                    });
                         }
 
                         // Set the tool name as a header for route identification

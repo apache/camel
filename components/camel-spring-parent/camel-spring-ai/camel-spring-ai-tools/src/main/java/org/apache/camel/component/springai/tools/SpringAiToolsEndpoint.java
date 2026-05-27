@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -120,12 +121,23 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
         final SpringAiToolsConsumer springAiToolsConsumer = new SpringAiToolsConsumer(this, processor);
         configureConsumer(springAiToolsConsumer);
 
+        // Get declared parameter names to filter incoming arguments
+        final Set<String> declaredParams;
+        if (parameters != null && !parameters.isEmpty()) {
+            declaredParams = parseParameterMetadata(parameters).keySet();
+        } else {
+            declaredParams = Set.of();
+        }
+
         // Create a function that executes the Camel route
         java.util.function.Function<java.util.Map<String, Object>, String> function = args -> {
             try {
                 org.apache.camel.Exchange exchange = createExchange();
-                // Set arguments as headers
+                // Set arguments as headers, filtered against declared parameters
                 for (java.util.Map.Entry<String, Object> entry : args.entrySet()) {
+                    if (!declaredParams.contains(entry.getKey())) {
+                        continue;
+                    }
                     exchange.getMessage().setHeader(entry.getKey(), entry.getValue());
                 }
 

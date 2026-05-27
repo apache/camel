@@ -13,6 +13,30 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.2 to 4.18.3
 
+=== camel-langchain4j-tools / camel-langchain4j-agent / camel-spring-ai-tools
+
+LLM tool argument field names are now filtered against the tool's declared parameter schema
+before being set as Exchange headers. Only arguments whose field names match a declared
+`parameter.<name>` are propagated; undeclared fields are logged at WARN level and skipped.
+
+This is a security hardening measure to prevent prompt-injection attacks from injecting
+arbitrary Camel control headers (such as `CamelFileName`, `CamelSqlQuery`, `CamelHttpUri`)
+via crafted tool call arguments.
+
+**Action required:** If your tool consumer routes rely on LLM-provided arguments being set as
+Exchange headers, you must explicitly declare those parameters in the endpoint URI. For example:
+
+[source,java]
+----
+// Before (all LLM arguments become headers — vulnerable):
+from("langchain4j-tools:myTool?tags=mytag&description=My tool")
+
+// After (only declared parameters become headers):
+from("langchain4j-tools:myTool?tags=mytag&description=My tool&parameter.city=string&parameter.country=string")
+----
+
+Tools that already declare their parameters via `parameter.<name>=<type>` are unaffected.
+
 === camel-aws-bedrock
 
 The `applyGuardrail` producer operation now reads the guardrail identifier from a new dedicated header
