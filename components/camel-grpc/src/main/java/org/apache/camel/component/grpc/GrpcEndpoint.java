@@ -39,12 +39,19 @@ public class GrpcEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GrpcConfiguration configuration;
 
+    private final boolean dynamicPort;
     private String serviceName;
     private String servicePackage;
 
-    public GrpcEndpoint(String uri, GrpcComponent component, GrpcConfiguration config) {
+    public GrpcEndpoint(String uri, GrpcComponent component, GrpcConfiguration config, boolean dynamicPort) {
         super(uri, component);
         this.configuration = config;
+        this.dynamicPort = dynamicPort;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return !dynamicPort;
     }
 
     public GrpcConfiguration getConfiguration() {

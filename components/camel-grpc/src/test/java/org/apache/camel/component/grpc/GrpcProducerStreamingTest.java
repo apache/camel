@@ -28,8 +28,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +40,18 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerStreamingTest.class);
 
-    private static Server grpcServer;
-    private static PingPongImpl pingPongServer;
+    private Server grpcServer;
+    private PingPongImpl pingPongServer;
 
-    @BeforeEach
-    public void startGrpcServer() throws Exception {
+    @Override
+    protected void setupResources() throws Exception {
         pingPongServer = new PingPongImpl();
         grpcServer = ServerBuilder.forPort(0).addService(pingPongServer).build().start();
         LOG.info("gRPC server started on port {}", grpcServer.getPort());
     }
 
-    @AfterEach
-    public void stopGrpcServer() {
+    @Override
+    protected void cleanupResources() {
         if (grpcServer != null) {
             grpcServer.shutdown();
             LOG.info("gRPC server stopped");

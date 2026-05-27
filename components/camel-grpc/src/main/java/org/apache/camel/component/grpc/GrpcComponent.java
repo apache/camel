@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
@@ -35,7 +37,14 @@ public class GrpcComponent extends DefaultComponent {
         GrpcConfiguration config = new GrpcConfiguration();
         config = parseConfiguration(config, uri);
 
-        Endpoint endpoint = new GrpcEndpoint(uri, this, config);
+        boolean dynamicPort = config.getPort() == 0;
+        if (dynamicPort) {
+            int port = allocatePort();
+            config.setPort(port);
+            uri = uri.replace("//" + config.getHost() + ":0/", "//" + config.getHost() + ":" + port + "/");
+        }
+
+        Endpoint endpoint = new GrpcEndpoint(uri, this, config, dynamicPort);
         setProperties(endpoint, parameters);
         if (config.isAutoDiscoverClientInterceptors()) {
             checkAndSetRegistryClientInterceptors(config);
@@ -60,6 +69,12 @@ public class GrpcComponent extends DefaultComponent {
         Set<ClientInterceptor> clientInterceptors = getCamelContext().getRegistry().findByType(ClientInterceptor.class);
         if (!clientInterceptors.isEmpty()) {
             configuration.setClientInterceptors(new ArrayList<>(clientInterceptors));
+        }
+    }
+
+    private static int allocatePort() throws IOException {
+        try (ServerSocket ss = new ServerSocket(0)) {
+            return ss.getLocalPort();
         }
     }
 
