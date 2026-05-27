@@ -1490,6 +1490,10 @@ have been renamed accordingly:
 * `gridfsObjectid()` -> `gridFsObjectId()`
 * `gridfsFileid()` -> `gridFsFileId()`
 
+=== camel-jooq - dbcp
+
+The `commons-dbcp` dependency has been removed. Even if is a very common usage with it, this is only a test dependency. In case, you are relying on it, you will need to add it to you project dependency. Note that, for our tests and examples, we migrated to use `commons-dbcp2`.
+
 === Deprecation of camel-ironmq
 
 The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017
