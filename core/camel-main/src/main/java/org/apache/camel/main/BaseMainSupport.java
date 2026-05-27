@@ -3105,10 +3105,11 @@ public abstract class BaseMainSupport extends BaseService {
                     String k = entry.getKey().toString();
                     Object v = entry.getValue();
                     Object dv = propertyPlaceholders.getDefaultValue(k);
-                    // skip logging configurations that are using default-value
-                    // or a kamelet that uses templateId as a parameter
+                    // skip logging configurations that are using default-value,
+                    // a kamelet that uses templateId as a parameter,
+                    // or internal camel-jbang properties
                     boolean same = ObjectHelper.equal(v, dv);
-                    boolean skip = "templateId".equals(k);
+                    boolean skip = "templateId".equals(k) || k.startsWith("camel.jbang.");
                     if (!same && !skip) {
                         if (header) {
                             LOG.info("Property-placeholders summary");
