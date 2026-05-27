@@ -19,7 +19,10 @@ package org.apache.camel.diagram;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.camel.diagram.RouteDiagramHelper.HighlightInfo;
+import org.apache.camel.diagram.RouteDiagramHelper.HighlightStyle;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
@@ -30,6 +33,7 @@ import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -1130,6 +1134,313 @@ class RouteDiagramTest {
         assertTrue(result.contains("log:a"));
     }
 
+    // --- Highlight tests ---
+
+    @Test
+    void testParseMessageHistorySuccess() {
+        String[] history = {
+                "route1[from1] (0 ms)",
+                "route1[log1] (5 ms)",
+                "route2[to1] (10 ms)"
+        };
+        HighlightInfo info = RouteDiagramHelper.parseMessageHistory(history, HighlightStyle.SUCCESS);
+
+        assertEquals(Set.of("from1", "log1", "to1"), info.getNodeIds());
+        assertEquals(List.of("route1", "route2"), info.getRouteOrder());
+        assertEquals(HighlightStyle.SUCCESS, info.getStyle());
+    }
+
+    @Test
+    void testParseMessageHistoryFail() {
+        String[] history = {
+                "route1[node1] (0 ms)",
+                "route1[node2] (5 ms)"
+        };
+        HighlightInfo info = RouteDiagramHelper.parseMessageHistory(history, HighlightStyle.FAIL);
+
+        assertEquals(Set.of("node1", "node2"), info.getNodeIds());
+        assertEquals(HighlightStyle.FAIL, info.getStyle());
+    }
+
+    @Test
+    void testParseMessageHistoryNull() {
+        HighlightInfo info = RouteDiagramHelper.parseMessageHistory(null, HighlightStyle.SUCCESS);
+
+        assertTrue(info.getNodeIds().isEmpty());
+        assertTrue(info.getRouteOrder().isEmpty());
+    }
+
+    @Test
+    void testParseMessageHistoryEmpty() {
+        HighlightInfo info = RouteDiagramHelper.parseMessageHistory(new String[0], HighlightStyle.SUCCESS);
+
+        assertTrue(info.getNodeIds().isEmpty());
+        assertTrue(info.getRouteOrder().isEmpty());
+    }
+
+    @Test
+    void testParseMessageHistoryDuplicateNodes() {
+        String[] history = {
+                "route1[node1] (0 ms)",
+                "route1[node1] (5 ms)",
+                "route1[node2] (10 ms)"
+        };
+        HighlightInfo info = RouteDiagramHelper.parseMessageHistory(history, HighlightStyle.SUCCESS);
+
+        assertEquals(2, info.getNodeIds().size());
+        assertTrue(info.getNodeIds().contains("node1"));
+        assertTrue(info.getNodeIds().contains("node2"));
+    }
+
+    @Test
+    void testParseMessageHistoryRouteOrder() {
+        String[] history = {
+                "routeA[n1] (0 ms)",
+                "routeB[n2] (5 ms)",
+                "routeA[n3] (10 ms)",
+                "routeC[n4] (15 ms)"
+        };
+        HighlightInfo info = RouteDiagramHelper.parseMessageHistory(history, HighlightStyle.SUCCESS);
+
+        assertEquals(List.of("routeA", "routeB", "routeC"), info.getRouteOrder());
+    }
+
+    @Test
+    void testFilterAndOrderRoutesNullHighlight() {
+        List<RouteInfo> routes = List.of(routeWithNodeIds("r1", "n1", "n2"));
+        List<RouteInfo> result = RouteDiagramHelper.filterAndOrderRoutes(routes, null);
+
+        assertEquals(1, result.size());
+        assertEquals("r1", result.get(0).routeId);
+    }
+
+    @Test
+    void testFilterAndOrderRoutesFiltersNonHighlighted() {
+        RouteInfo r1 = routeWithNodeIds("route1", "n1", "n2");
+        RouteInfo r2 = routeWithNodeIds("route2", "n3", "n4");
+        RouteInfo r3 = routeWithNodeIds("route3", "n5", "n6");
+
+        HighlightInfo highlight = new HighlightInfo(
+                Set.of("n1", "n3"), List.of("route2", "route1"), HighlightStyle.SUCCESS);
+
+        List<RouteInfo> result = RouteDiagramHelper.filterAndOrderRoutes(List.of(r1, r2, r3), highlight);
+
+        assertEquals(2, result.size());
+        assertEquals("route2", result.get(0).routeId);
+        assertEquals("route1", result.get(1).routeId);
+    }
+
+    @Test
+    void testFilterAndOrderRoutesEmptyHighlight() {
+        RouteInfo r1 = routeWithNodeIds("route1", "n1");
+
+        HighlightInfo highlight = new HighlightInfo(Set.of(), List.of(), HighlightStyle.SUCCESS);
+
+        List<RouteInfo> result = RouteDiagramHelper.filterAndOrderRoutes(List.of(r1), highlight);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testNodeIdPropagatedToLayoutNode() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals("from1", lr.nodes.get(0).id);
+        assertEquals("to1", lr.nodes.get(1).id);
+    }
+
+    @Test
+    void testNodeIdNullSafe() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertNull(lr.nodes.get(0).id);
+    }
+
+    @Test
+    void testAsciiDiagramHighlightSuccess() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+        route.nodes.add(nodeWithId("to", "log:b", 1, "to2"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        Set<String> highlighted = Set.of("from1", "to1");
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
+        String ansi = renderer.renderDiagramAnsi(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                highlighted, HighlightStyle.SUCCESS);
+
+        assertTrue(ansi.contains("\033[32m"), "Should contain green ANSI code for success highlight");
+        assertTrue(ansi.contains("\033[0m"), "Should contain ANSI reset code");
+        assertFalse(ansi.contains("\033[31m"), "Should not contain red ANSI code for success style");
+    }
+
+    @Test
+    void testAsciiDiagramHighlightFail() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        Set<String> highlighted = Set.of("from1", "to1");
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
+        String ansi = renderer.renderDiagramAnsi(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                highlighted, HighlightStyle.FAIL);
+
+        assertTrue(ansi.contains("\033[31m"), "Should contain red ANSI code for fail highlight");
+    }
+
+    @Test
+    void testAsciiDiagramHighlightOnlyTargetedNodes() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+        route.nodes.add(nodeWithId("to", "log:b", 1, "to2"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        // only highlight from1, not to1 or to2
+        Set<String> highlighted = Set.of("from1");
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
+        renderer.renderDiagram(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                highlighted, HighlightStyle.SUCCESS);
+
+        long highlightCount = renderer.getCounterPositions().stream()
+                .filter(cp -> cp.type() == RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_SUCCESS)
+                .count();
+        assertTrue(highlightCount > 0, "Should have highlight positions for from1");
+    }
+
+    @Test
+    void testAsciiDiagramNoHighlightWithoutIds() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
+        renderer.renderDiagram(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                null, null);
+
+        long highlightCount = renderer.getCounterPositions().stream()
+                .filter(cp -> cp.type() == RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_SUCCESS
+                        || cp.type() == RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_FAIL)
+                .count();
+        assertEquals(0, highlightCount, "Should have no highlight positions when no IDs provided");
+    }
+
+    @Test
+    void testRenderDiagramWithHighlightSuccess() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+        route.nodes.add(nodeWithId("to", "log:b", 1, "to2"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        DiagramColors colors = DiagramColors.parse("dark");
+        Set<String> highlighted = Set.of("from1", "to1");
+        BufferedImage image = renderer.renderDiagram(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                colors, highlighted, HighlightStyle.SUCCESS);
+
+        assertNotNull(image);
+        assertTrue(image.getWidth() > 0);
+        assertTrue(image.getHeight() > 0);
+    }
+
+    @Test
+    void testRenderDiagramWithHighlightFail() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        DiagramColors colors = DiagramColors.parse("dark");
+        Set<String> highlighted = Set.of("from1", "to1");
+        BufferedImage image = renderer.renderDiagram(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                colors, highlighted, HighlightStyle.FAIL);
+
+        assertNotNull(image);
+        assertTrue(image.getWidth() > 0);
+    }
+
+    @Test
+    void testRenderDiagramHighlightNullPassthrough() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        DiagramColors colors = DiagramColors.parse("dark");
+        BufferedImage image = renderer.renderDiagram(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                colors, null, null);
+
+        assertNotNull(image);
+    }
+
+    @Test
+    void testUnicodeDiagramHighlight() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithId("from", "timer:tick", 0, "from1"));
+        route.nodes.add(nodeWithId("to", "log:a", 1, "to1"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        Set<String> highlighted = Set.of("from1");
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), true);
+        String ansi = renderer.renderDiagramAnsi(
+                List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP,
+                highlighted, HighlightStyle.SUCCESS);
+
+        assertTrue(ansi.contains("\033[32m"), "Unicode mode should also apply ANSI highlight colors");
+        assertTrue(ansi.contains("┌"), "Should still use Unicode box-drawing characters");
+    }
+
     private static NodeInfo node(String type, String code, int level) {
         return node(type, code, level, null);
     }
@@ -1150,5 +1461,22 @@ class RouteDiagramTest {
         stat.exchangesFailed = failed;
         n.stat = stat;
         return n;
+    }
+
+    private static NodeInfo nodeWithId(String type, String code, int level, String id) {
+        NodeInfo n = node(type, code, level);
+        n.id = id;
+        return n;
+    }
+
+    private static RouteInfo routeWithNodeIds(String routeId, String... nodeIds) {
+        RouteInfo route = new RouteInfo();
+        route.routeId = routeId;
+        for (int i = 0; i < nodeIds.length; i++) {
+            NodeInfo n = node(i == 0 ? "from" : "to", "endpoint" + i, i == 0 ? 0 : 1);
+            n.id = nodeIds[i];
+            route.nodes.add(n);
+        }
+        return route;
     }
 }
