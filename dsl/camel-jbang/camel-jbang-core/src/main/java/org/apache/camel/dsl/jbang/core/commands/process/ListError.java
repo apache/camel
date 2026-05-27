@@ -205,6 +205,8 @@ public class ListError extends ProcessWatchCommand {
                                 .with(r -> r.name),
                         new Column().header("AGO").dataAlign(HorizontalAlign.RIGHT)
                                 .with(this::getAge),
+                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
+                                .with(r -> r.exchangeId),
                         new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.routeId),
