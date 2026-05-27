@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
@@ -47,6 +48,10 @@ public class RouteDiagramRenderer {
     private static final float BORDER_STROKE_WIDTH = 1.0f * SCALE;
     private static final int LABEL_TEXT_BASELINE = 14 * SCALE;
     public static final int MAX_IMAGE_DIMENSION = 16384;
+
+    private static final float HIGHLIGHT_STROKE_WIDTH = 3.0f * SCALE;
+    private static final Color HIGHLIGHT_SUCCESS_COLOR = new Color(0x43a047);
+    private static final Color HIGHLIGHT_FAIL_COLOR = new Color(0xe53935);
 
     private static final float[] DASH_PATTERN = { 10f, 5f }; // 10 pixels on, 5 pixels off
     private static final Stroke DASHED_STROKE = new BasicStroke(
@@ -218,6 +223,41 @@ public class RouteDiagramRenderer {
         }
     }
 
+    public BufferedImage renderDiagram(
+            List<LayoutRoute> layoutRoutes, int totalHeight, DiagramColors colors,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
+        int imgWidth = layoutRoutes.stream().mapToInt(lr -> lr.maxX).max().orElse(400) + PADDING;
+        int imgHeight = totalHeight + PADDING;
+
+        if (imgWidth > MAX_IMAGE_DIMENSION || imgHeight > MAX_IMAGE_DIMENSION) {
+            throw new IllegalStateException(
+                    "Diagram too large (" + imgWidth / SCALE + "x" + imgHeight / SCALE
+                                            + " logical pixels). Use --filter to narrow the routes displayed.");
+        }
+
+        int imageType = colors.getBg() == null ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+        BufferedImage image = new BufferedImage(imgWidth, imgHeight, imageType);
+        Graphics2D g = image.createGraphics();
+        try {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+            if (colors.getBg() != null) {
+                g.setColor(colors.getBg());
+                g.fillRect(0, 0, imgWidth, imgHeight);
+            }
+
+            for (LayoutRoute lr : layoutRoutes) {
+                drawRoute(g, lr, colors, highlightedNodeIds, highlightStyle);
+            }
+        } finally {
+            g.dispose();
+        }
+        return image;
+    }
+
     public BufferedImage renderDiagram(List<LayoutRoute> layoutRoutes, int totalHeight, DiagramColors colors) {
         int imgWidth = layoutRoutes.stream().mapToInt(lr -> lr.maxX).max().orElse(400) + PADDING;
         int imgHeight = totalHeight + PADDING;
@@ -251,7 +291,9 @@ public class RouteDiagramRenderer {
         return image;
     }
 
-    private void drawRoute(Graphics2D g, LayoutRoute lr, DiagramColors colors) {
+    private void drawRoute(
+            Graphics2D g, LayoutRoute lr, DiagramColors colors,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
         g.setColor(colors.getRouteLabel());
         g.setFont(new Font("SansSerif", Font.BOLD, fontSizeLabel));
         String label = lr.routeId;
@@ -270,17 +312,34 @@ public class RouteDiagramRenderer {
 
         for (LayoutNode ln : lr.nodes) {
             if (ln.parentNode != null) {
+                boolean highlightArrow = highlightedNodeIds != null
+                        && isHighlighted(ln, highlightedNodeIds)
+                        && isHighlighted(ln.parentNode, highlightedNodeIds);
                 if (ln.connectFromMerge) {
-                    drawArrowFromMerge(g, ln, colors);
+                    drawArrowFromMerge(g, ln, colors, highlightArrow, highlightStyle);
                 } else {
-                    drawArrow(g, ln.parentNode, ln, colors);
+                    drawArrow(g, ln.parentNode, ln, colors, highlightArrow, highlightStyle);
                 }
             }
         }
 
         for (LayoutNode ln : lr.nodes) {
-            drawNode(g, ln, colors);
+            drawNode(g, ln, colors, highlightedNodeIds, highlightStyle);
         }
+    }
+
+    private void drawRoute(Graphics2D g, LayoutRoute lr, DiagramColors colors) {
+        drawRoute(g, lr, colors, null, null);
+    }
+
+    private static boolean isHighlighted(LayoutNode node, Set<String> highlightedNodeIds) {
+        return node.id != null && highlightedNodeIds.contains(node.id);
+    }
+
+    private static Color highlightColor(RouteDiagramHelper.HighlightStyle style) {
+        return style == RouteDiagramHelper.HighlightStyle.FAIL
+                ? HIGHLIGHT_FAIL_COLOR
+                : HIGHLIGHT_SUCCESS_COLOR;
     }
 
     private void drawScopeBox(Graphics2D g, LayoutNode scopeNode, DiagramColors colors) {
@@ -308,17 +367,24 @@ public class RouteDiagramRenderer {
                 ? node.y - SCOPE_BOX_PAD : node.y;
     }
 
-    private void drawArrowFromMerge(Graphics2D g, LayoutNode to, DiagramColors colors) {
+    private void drawArrowFromMerge(
+            Graphics2D g, LayoutNode to, DiagramColors colors,
+            boolean highlighted, RouteDiagramHelper.HighlightStyle highlightStyle) {
         var stat = to.treeNode.info.stat;
         long total = stat != null ? stat.exchangesTotal : 0;
         long failed = stat != null ? stat.exchangesFailed : 0;
         long ok = total - failed;
 
-        g.setColor(colors.getArrow());
-        if (!metrics || total > 0) {
-            g.setStroke(new BasicStroke(STROKE_WIDTH));
+        if (highlighted) {
+            g.setColor(highlightColor(highlightStyle));
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
         } else {
-            g.setStroke(DASHED_STROKE);
+            g.setColor(colors.getArrow());
+            if (!metrics || total > 0) {
+                g.setStroke(new BasicStroke(STROKE_WIDTH));
+            } else {
+                g.setStroke(DASHED_STROKE);
+            }
         }
 
         int toCx = to.x + nodeWidth / 2;
@@ -347,14 +413,26 @@ public class RouteDiagramRenderer {
         }
     }
 
-    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors) {
+    private void drawArrowFromMerge(Graphics2D g, LayoutNode to, DiagramColors colors) {
+        drawArrowFromMerge(g, to, colors, false, null);
+    }
+
+    private void drawNode(
+            Graphics2D g, LayoutNode node, DiagramColors colors,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
         Color color = getNodeColor(node.type, colors);
 
         g.setColor(color);
         g.fillRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
-        g.setColor(color.brighter());
-        g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        boolean highlighted = highlightedNodeIds != null && isHighlighted(node, highlightedNodeIds);
+        if (highlighted) {
+            g.setColor(highlightColor(highlightStyle));
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
+        } else {
+            g.setColor(color.brighter());
+            g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
+        }
         g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
         g.setColor(colors.getText());
@@ -380,21 +458,31 @@ public class RouteDiagramRenderer {
         }
     }
 
-    private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
+    private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors) {
+        drawNode(g, node, colors, null, null);
+    }
+
+    private void drawArrow(
+            Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors,
+            boolean highlighted, RouteDiagramHelper.HighlightStyle highlightStyle) {
         var stat = metrics ? to.treeNode.info.stat : null;
         if (metrics && BRANCH_CHILD_TYPES.contains(to.type) && !to.treeNode.children.isEmpty()) {
-            // grab stat from first child (for example choice to have counters for when/otherwise)
             stat = to.treeNode.children.get(0).info.stat;
         }
         long total = stat != null ? stat.exchangesTotal : 0;
         long failed = stat != null ? stat.exchangesFailed : 0;
         long ok = total - failed;
 
-        g.setColor(colors.getArrow());
-        if (!metrics || total > 0) {
-            g.setStroke(new BasicStroke(STROKE_WIDTH));
+        if (highlighted) {
+            g.setColor(highlightColor(highlightStyle));
+            g.setStroke(new BasicStroke(HIGHLIGHT_STROKE_WIDTH));
         } else {
-            g.setStroke(DASHED_STROKE);
+            g.setColor(colors.getArrow());
+            if (!metrics || total > 0) {
+                g.setStroke(new BasicStroke(STROKE_WIDTH));
+            } else {
+                g.setStroke(DASHED_STROKE);
+            }
         }
 
         int fromCx = from.x + nodeWidth / 2;
@@ -421,6 +509,10 @@ public class RouteDiagramRenderer {
             int width = g.getFontMetrics().stringWidth("" + failed);
             g.drawString("" + failed, toCx - 2 - fontSizeNode - width, toTy - 2 - fontSizeNode);
         }
+    }
+
+    private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
+        drawArrow(g, from, to, colors, false, null);
     }
 
     private void drawArrowHead(Graphics2D g, int x, int y) {

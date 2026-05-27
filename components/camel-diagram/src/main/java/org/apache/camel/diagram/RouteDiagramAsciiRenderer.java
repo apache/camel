@@ -19,6 +19,7 @@ package org.apache.camel.diagram;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
@@ -62,7 +63,9 @@ public class RouteDiagramAsciiRenderer {
 
     public enum CounterType {
         OK,
-        FAIL
+        FAIL,
+        HIGHLIGHT_SUCCESS,
+        HIGHLIGHT_FAIL
     }
 
     public record CounterPos(int row, int col, int length, CounterType type) {
@@ -91,8 +94,19 @@ public class RouteDiagramAsciiRenderer {
         return counterPositions;
     }
 
+    public String renderDiagramAnsi(
+            List<LayoutRoute> layoutRoutes, int totalHeight,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
+        String plain = renderDiagram(layoutRoutes, totalHeight, highlightedNodeIds, highlightStyle);
+        return applyAnsiColors(plain);
+    }
+
     public String renderDiagramAnsi(List<LayoutRoute> layoutRoutes, int totalHeight) {
         String plain = renderDiagram(layoutRoutes, totalHeight);
+        return applyAnsiColors(plain);
+    }
+
+    private String applyAnsiColors(String plain) {
         if (counterPositions.isEmpty()) {
             return plain;
         }
@@ -104,12 +118,37 @@ public class RouteDiagramAsciiRenderer {
                     String before = line.substring(0, cp.col);
                     String counter = line.substring(cp.col, cp.col + cp.length);
                     String after = line.substring(cp.col + cp.length);
-                    String color = cp.type == CounterType.OK ? "\033[32m" : "\033[31m";
+                    String color;
+                    switch (cp.type) {
+                        case OK, HIGHLIGHT_SUCCESS -> color = "\033[32m";
+                        default -> color = "\033[31m";
+                    }
                     lines[cp.row] = before + color + counter + "\033[0m" + after;
                 }
             }
         }
         return String.join("\n", lines);
+    }
+
+    public String renderDiagram(
+            List<LayoutRoute> layoutRoutes, int totalHeight,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
+        counterPositions.clear();
+        int maxPixelX = layoutRoutes.stream()
+                .mapToInt(lr -> lr.maxX).max().orElse(nodeWidth) + PADDING;
+        int gridWidth = toCol(maxPixelX) + boxWidth + 4;
+        int gridHeight = totalHeight / Y_SCALE + 20;
+
+        char[][] grid = new char[gridHeight][gridWidth];
+        for (char[] row : grid) {
+            Arrays.fill(row, ' ');
+        }
+
+        for (LayoutRoute lr : layoutRoutes) {
+            drawRoute(grid, lr, highlightedNodeIds, highlightStyle);
+        }
+
+        return gridToString(grid);
     }
 
     public String renderDiagram(List<LayoutRoute> layoutRoutes, int totalHeight) {
@@ -131,7 +170,9 @@ public class RouteDiagramAsciiRenderer {
         return gridToString(grid);
     }
 
-    private void drawRoute(char[][] grid, LayoutRoute lr) {
+    private void drawRoute(
+            char[][] grid, LayoutRoute lr,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
         int labelRow = toRow(lr.labelY);
         String label = lr.routeId;
         if (lr.source != null && !lr.source.isEmpty()) {
@@ -157,7 +198,14 @@ public class RouteDiagramAsciiRenderer {
 
         for (LayoutNode ln : lr.nodes) {
             drawNode(grid, ln);
+            if (highlightedNodeIds != null && ln.id != null && highlightedNodeIds.contains(ln.id)) {
+                recordHighlightPositions(grid, ln, highlightStyle);
+            }
         }
+    }
+
+    private void drawRoute(char[][] grid, LayoutRoute lr) {
+        drawRoute(grid, lr, null, null);
     }
 
     private void drawNode(char[][] grid, LayoutNode node) {
@@ -200,6 +248,23 @@ public class RouteDiagramAsciiRenderer {
             }
             int textCol = col + 2 + Math.max(0, (innerWidth - text.length()) / 2);
             drawText(grid, r, textCol, text);
+        }
+    }
+
+    private void recordHighlightPositions(
+            char[][] grid, LayoutNode node, RouteDiagramHelper.HighlightStyle style) {
+        int col = toCol(node.x);
+        int row = toRow(node.y);
+        int innerWidth = boxWidth - 4;
+        List<String> lines = rewrapText(node, innerWidth);
+        int height = 2 + lines.size();
+
+        CounterType ct = style == RouteDiagramHelper.HighlightStyle.FAIL
+                ? CounterType.HIGHLIGHT_FAIL
+                : CounterType.HIGHLIGHT_SUCCESS;
+
+        for (int r = row; r < row + height && r < grid.length; r++) {
+            counterPositions.add(new CounterPos(r, col, boxWidth, ct));
         }
     }
 

@@ -22,6 +22,8 @@ camel cmd route-diagram [options]
 | `--box-width` | Node box width in logical pixels | 180 | int
 | `--filter` | Filter route by filename or route id |  | String
 | `--font-size` | Font size in logical pixels for node text | 12 | int
+| `--highlight` | Comma-separated node IDs to highlight in the diagram |  | String
+| `--highlight-style` | Highlight style: success (green) or fail (red) | success | String
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
 | `--metric` | Whether to include live metrics (only possible for running Camel application) | true | boolean
 | `--node-label` | What text to display in diagram nodes: code, description, or both (default) | both | String
