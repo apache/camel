@@ -245,6 +245,10 @@ public class ConsumerDevConsole extends AbstractDevConsole {
         if (last != null) {
             stats.put("lastCompletedExchangeTimestamp", last.getTime());
         }
+        last = mr.getLastExchangeFailureHandledTimestamp();
+        if (last != null) {
+            stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
+        }
         last = mr.getLastExchangeFailureTimestamp();
         if (last != null) {
             stats.put("lastFailedExchangeTimestamp", last.getTime());

@@ -117,6 +117,11 @@ public class ContextDevConsole extends AbstractDevConsole {
                     String ago = TimeUtils.printSince(last.getTime());
                     sb.append(String.format("%n    Since Last Completed: %s", ago));
                 }
+                last = mb.getLastExchangeFailureHandledTimestamp();
+                if (last != null) {
+                    String ago = TimeUtils.printSince(last.getTime());
+                    sb.append(String.format("%n    Since Last Failure Handled: %s", ago));
+                }
                 last = mb.getLastExchangeFailureTimestamp();
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());
@@ -193,6 +198,10 @@ public class ContextDevConsole extends AbstractDevConsole {
                 last = mb.getLastExchangeCompletedTimestamp();
                 if (last != null) {
                     stats.put("lastCompletedExchangeTimestamp", last.getTime());
+                }
+                last = mb.getLastExchangeFailureHandledTimestamp();
+                if (last != null) {
+                    stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
                 }
                 last = mb.getLastExchangeFailureTimestamp();
                 if (last != null) {

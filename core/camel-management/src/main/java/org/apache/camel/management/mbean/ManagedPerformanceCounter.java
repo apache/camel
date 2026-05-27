@@ -53,6 +53,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private Statistic lastExchangeCreatedTimestamp;
     private Statistic lastExchangeCompletedTimestamp;
     private String lastExchangeCompletedExchangeId;
+    private Statistic lastExchangeFailureHandledTimestamp;
     private Statistic lastExchangeFailureTimestamp;
     private String lastExchangeFailureExchangeId;
     private boolean statisticsEnabled = true;
@@ -79,6 +80,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         this.firstExchangeFailureTimestamp = new StatisticValue();
         this.lastExchangeCreatedTimestamp = new StatisticValue();
         this.lastExchangeCompletedTimestamp = new StatisticValue();
+        this.lastExchangeFailureHandledTimestamp = new StatisticValue();
         this.lastExchangeFailureTimestamp = new StatisticValue();
     }
 
@@ -104,6 +106,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         lastExchangeCreatedTimestamp.reset();
         lastExchangeCompletedTimestamp.reset();
         lastExchangeCompletedExchangeId = null;
+        lastExchangeFailureHandledTimestamp.reset();
         lastExchangeFailureTimestamp.reset();
         lastExchangeFailureExchangeId = null;
     }
@@ -213,6 +216,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
+    public Date getLastExchangeFailureHandledTimestamp() {
+        long value = lastExchangeFailureHandledTimestamp.getValue();
+        return value > 0 ? new Date(value) : null;
+    }
+
+    @Override
     public Date getLastExchangeFailureTimestamp() {
         long value = lastExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
@@ -261,6 +270,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
         if (ExchangeHelper.isFailureHandled(exchange)) {
             failuresHandled.increment();
+            lastExchangeFailureHandledTimestamp.updateValue(System.currentTimeMillis());
         }
         if (exchange.isExternalRedelivered()) {
             externalRedeliveries.increment();
@@ -349,6 +359,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             sb.append(String.format(" lastExchangeCompletedTimestamp=\"%s\"",
                     dateAsString(lastExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" lastExchangeCompletedExchangeId=\"%s\"", nullSafe(lastExchangeCompletedExchangeId)));
+            sb.append(String.format(" lastExchangeFailureHandledTimestamp=\"%s\"",
+                    dateAsString(lastExchangeFailureHandledTimestamp.getValue())));
             sb.append(String.format(" lastExchangeFailureTimestamp=\"%s\"",
                     dateAsString(lastExchangeFailureTimestamp.getValue())));
             sb.append(String.format(" lastExchangeFailureExchangeId=\"%s\"", nullSafe(lastExchangeFailureExchangeId)));
@@ -389,6 +401,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             jo.put("lastExchangeCreatedTimestamp", lastExchangeCreatedTimestamp.getValue());
             jo.put("lastExchangeCompletedTimestamp", lastExchangeCompletedTimestamp.getValue());
             jo.put("lastExchangeCompletedExchangeId", lastExchangeCompletedExchangeId);
+            jo.put("lastExchangeFailureHandledTimestamp", lastExchangeFailureHandledTimestamp.getValue());
             jo.put("lastExchangeFailureTimestamp", lastExchangeFailureTimestamp.getValue());
             jo.put("lastExchangeFailureExchangeId", lastExchangeFailureExchangeId);
         }
