@@ -42,6 +42,15 @@ include::partial$component-endpoint-headers.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== DFDL Schemas
+
+Many DFDL schemas are freely available at https://github.com/DFDLSchemas[DFDLSchemas on GitHub] including:
+
+- https://github.com/DFDLSchemas/EDIFACT[UN/EDIFACT] — models UN/EDIFACT interchanges (ISO 9735) including Supply Chain messages (ORDERS, INVOIC, DESADV, etc.)
+- https://github.com/DFDLSchemas/NACHA[NACHA] — ACH payment transactions
+- https://github.com/DFDLSchemas/HL7-v2.7[HL7] — healthcare messaging
+- https://github.com/DFDLSchemas/PCAP[PCAP] — network packet capture
+
 == Using DFDL endpoints
 
 The following format is an example of using DFDL to convert an EDI message to an XML using `X12-837P-dfdl.xsd` DFDL schema file.
