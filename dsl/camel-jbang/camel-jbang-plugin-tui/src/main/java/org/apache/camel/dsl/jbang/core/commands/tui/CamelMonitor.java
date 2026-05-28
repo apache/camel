@@ -423,6 +423,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (ctx.selectedPid != null) {
                     ctx.selectedPid = null;
+                    ctx.lastSelectedName = null;
                     return true;
                 }
                 return true;
@@ -792,6 +793,7 @@ public class CamelMonitor extends CamelCommand {
         }
         if (newPid != null && !newPid.equals(ctx.selectedPid)) {
             ctx.selectedPid = newPid;
+            ctx.lastSelectedName = null;
             resetIntegrationTabState();
         }
     }
@@ -805,6 +807,7 @@ public class CamelMonitor extends CamelCommand {
         }
         if (newPid != null && !newPid.equals(ctx.selectedPid)) {
             ctx.selectedPid = newPid;
+            ctx.lastSelectedName = null;
             resetIntegrationTabState();
         }
     }
@@ -1953,6 +1956,13 @@ public class CamelMonitor extends CamelCommand {
                 boolean stillAlive = infos.stream()
                         .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
                 if (!stillAlive) {
+                    // Remember the name for auto-reselect when the integration restarts
+                    IntegrationInfo gone = infos.stream()
+                            .filter(i -> ctx.selectedPid.equals(i.pid))
+                            .findFirst().orElse(null);
+                    if (gone != null) {
+                        ctx.lastSelectedName = gone.name;
+                    }
                     ctx.selectedPid = null;
                 }
             }
@@ -1964,7 +1974,19 @@ public class CamelMonitor extends CamelCommand {
                     if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
                         ctx.selectedPid = info.pid;
                         ctx.infraTableFocused = false;
+                        ctx.lastSelectedName = null;
                         actionsPopup.clearPendingAutoSelect();
+                        break;
+                    }
+                }
+            }
+
+            // Auto-reselect by remembered name when the integration restarts
+            if (ctx.selectedPid == null && ctx.lastSelectedName != null && !ctx.infraTableFocused) {
+                for (IntegrationInfo info : infos) {
+                    if (!info.vanishing && ctx.lastSelectedName.equalsIgnoreCase(info.name)) {
+                        ctx.selectedPid = info.pid;
+                        ctx.lastSelectedName = null;
                         break;
                     }
                 }
