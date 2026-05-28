@@ -343,6 +343,7 @@ public class CamelMonitor extends CamelCommand {
         try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
             ctx.runner = tui;
+            actionsPopup.setScheduler(tui.scheduler());
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -511,6 +512,9 @@ public class CamelMonitor extends CamelCommand {
 
             // F2 opens actions menu (global)
             if (ke.isKey(KeyCode.F2)) {
+                if (tabsState.selected() == TAB_ROUTES && routesTab != null) {
+                    actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
+                }
                 actionsPopup.open();
                 return true;
             }

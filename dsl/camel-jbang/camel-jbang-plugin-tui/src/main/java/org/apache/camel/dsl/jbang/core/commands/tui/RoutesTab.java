@@ -843,6 +843,19 @@ class RoutesTab implements MonitorTab {
 
     // ---- Route actions ----
 
+    String selectedRouteId() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.routes.isEmpty()) {
+            return null;
+        }
+        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
+        sortedRoutes.sort(this::sortRoute);
+        Integer sel = routeTableState.selected();
+        RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
+                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
+        return route.routeId;
+    }
+
     private String selectedRouteState() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null || info.routes.isEmpty()) {
