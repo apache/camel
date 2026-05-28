@@ -268,6 +268,44 @@ work without changes. Routes that set the header by its literal string value
 (for example `setHeader("SHIRO_SECURITY_USERNAME", ...)`) must be updated to
 use the new value (`setHeader("CamelShiroSecurityUsername", ...)`).
 
+Because the three header values are now in the `Camel*` namespace, transports
+that filter Camel-internal headers by default (JMS, CXF, HTTP, etc.) will
+strip the serialized Shiro authentication token before publishing. This is
+the intended behavior for untrusted producers. Trusted Shiro-over-transport
+routes that previously relied on the token surviving the boundary must opt
+those three headers back in via a custom `HeaderFilterStrategy`, for example:
+
+[source,java]
+----
+public class ShiroFriendlyJmsHeaderFilterStrategy extends JmsHeaderFilterStrategy {
+    @Override
+    public boolean applyFilterToCamelHeaders(String name, Object value, Exchange ex) {
+        if (isShiroSecurityHeader(name)) {
+            return false;
+        }
+        return super.applyFilterToCamelHeaders(name, value, ex);
+    }
+
+    @Override
+    public boolean applyFilterToExternalHeaders(String name, Object value, Exchange ex) {
+        if (isShiroSecurityHeader(name)) {
+            return false;
+        }
+        return super.applyFilterToExternalHeaders(name, value, ex);
+    }
+
+    private static boolean isShiroSecurityHeader(String name) {
+        return ShiroSecurityConstants.SHIRO_SECURITY_TOKEN.equalsIgnoreCase(name)
+                || ShiroSecurityConstants.SHIRO_SECURITY_USERNAME.equalsIgnoreCase(name)
+                || ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD.equalsIgnoreCase(name);
+    }
+}
+
+jmsComponent.setHeaderFilterStrategy(new ShiroFriendlyJmsHeaderFilterStrategy());
+----
+
+A worked example is in `ShiroOverJmsTest` in the `camel-itest` module.
+
 == Upgrading from 4.14.5 to 4.14.6
 
 === camel-platform-http-main
