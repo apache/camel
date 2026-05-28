@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.util.ObjectHelper;
 
 public class ValueToKey {
@@ -47,7 +48,7 @@ public class ValueToKey {
             }
         }
 
-        ex.getMessage().setHeader("kafka.KEY", key);
+        ex.getMessage().setHeader(KafkaConstants.KEY, key);
     }
 
     boolean filterNames(String fieldName, List<String> splittedFields) {

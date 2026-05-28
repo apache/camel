@@ -1448,6 +1448,98 @@ Routes that set the header by its literal string value (for example
 As a consequence, the generated Endpoint DSL header accessor `await()` on
 `MiloClientHeaderNameBuilder` has been renamed to `miloAwait()`.
 
+=== camel-kafka - potential breaking change
+
+The Exchange header constants in `KafkaConstants` used header values in the
+lowercase / dotted `kafka.*` namespace, outside the `Camel` namespace, and
+were therefore not filtered by the default `HeaderFilterStrategy` on
+upstream HTTP / REST consumers. They have been renamed to follow the Camel
+naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `KafkaConstants.PARTITION_KEY` | `kafka.PARTITION_KEY` | `CamelKafkaPartitionKey`
+| `KafkaConstants.PARTITION` | `kafka.PARTITION` | `CamelKafkaPartition`
+| `KafkaConstants.KEY` | `kafka.KEY` | `CamelKafkaKey`
+| `KafkaConstants.TOPIC` | `kafka.TOPIC` | `CamelKafkaTopic`
+| `KafkaConstants.OVERRIDE_TOPIC` | `kafka.OVERRIDE_TOPIC` | `CamelKafkaOverrideTopic`
+| `KafkaConstants.OFFSET` | `kafka.OFFSET` | `CamelKafkaOffset`
+| `KafkaConstants.HEADERS` | `kafka.HEADERS` | `CamelKafkaHeaders`
+| `KafkaConstants.LAST_RECORD_BEFORE_COMMIT` | `kafka.LAST_RECORD_BEFORE_COMMIT` | `CamelKafkaLastRecordBeforeCommit`
+| `KafkaConstants.LAST_POLL_RECORD` | `kafka.LAST_POLL_RECORD` | `CamelKafkaLastPollRecord`
+| `KafkaConstants.TIMESTAMP` | `kafka.TIMESTAMP` | `CamelKafkaTimestamp`
+| `KafkaConstants.OVERRIDE_TIMESTAMP` | `kafka.OVERRIDE_TIMESTAMP` | `CamelKafkaOverrideTimestamp`
+| `KafkaConstants.KAFKA_RECORD_META` | `kafka.RECORD_META` | `CamelKafkaRecordMeta`
+|===
+
+`KafkaConstants.MANUAL_COMMIT` was already `Camel`-prefixed
+(`CamelKafkaManualCommit`) and is unchanged. The non-header constants in the
+class (`KAFKA_DEFAULT_ENCODER`, `KAFKA_STRING_ENCODER`,
+`KAFKA_DEFAULT_SERIALIZER`, `KAFKA_DEFAULT_DESERIALIZER`,
+`PARTITIONER_RANGE_ASSIGNOR`, `KAFKA_SUBSCRIBE_ADAPTER`) are not Exchange
+headers and are unchanged.
+
+`KafkaConstants.OVERRIDE_TOPIC` and `KafkaConstants.OVERRIDE_TIMESTAMP` are
+producer-read headers consulted by `KafkaProducer.evaluateTopic()` and the
+timestamp override path. The rename also closes the cross-transport
+propagation gap where these headers, in their previous `kafka.*` form,
+would pass through `HttpHeaderFilterStrategy` (which only filters the
+`Camel` prefix) on an upstream HTTP / REST consumer wired to a Kafka
+producer in the same route. With the new `CamelKafka*` values, the default
+filter strategy strips them at the transport boundary.
+
+Routes that reference the constants symbolically (for example
+`setHeader(KafkaConstants.OVERRIDE_TOPIC, ...)` or
+`${headers[KafkaConstants.TOPIC]}` via the symbolic name) continue to work
+without changes. Routes that set or read the headers by their literal
+string values (for example `setHeader("kafka.OVERRIDE_TOPIC", ...)` or
+Simple expressions such as `${headers[kafka.TOPIC]}`) must be updated to
+use the new values:
+
+[source,java]
+----
+// before
+from("platform-http:/api/events")
+    .setHeader("kafka.OVERRIDE_TOPIC", constant("events.topic"))
+    .to("kafka:default?brokers=localhost:9092");
+
+// after
+from("platform-http:/api/events")
+    .setHeader(KafkaConstants.OVERRIDE_TOPIC, constant("events.topic"))
+    .to("kafka:default?brokers=localhost:9092");
+----
+
+A route that bridges an untrusted HTTP / REST consumer to a Kafka producer
+should also continue to apply the standard transport-boundary mitigation,
+which now also covers the kafka headers:
+
+[source,java]
+----
+from("platform-http:/api/events")
+    .removeHeaders("Camel*")
+    .to("kafka:default?brokers=localhost:9092");
+----
+
+The bundled Kafka Connect-style transformers under
+`org.apache.camel.component.kafka.transform` (`RegexRouter`,
+`TimestampRouter`, `MessageTimestampRouter`, `ValueToKey`) have been
+updated to use the renamed `KafkaConstants` values internally and are
+unaffected at the call site.
+
+The local copies of these constants in
+`org.apache.camel.tracing.decorators.KafkaSpanDecorator` (deprecated since
+4.19.0) and `org.apache.camel.telemetry.decorators.KafkaSpanDecorator` have
+been kept in sync with the new values so that Kafka span tagging continues
+to work for routes that have migrated to the new header names.
+
+The generated Endpoint DSL header accessors on
+`KafkaEndpointBuilderFactory$KafkaHeaderNameBuilder` (for example
+`kafkaOverrideTopic()`, `kafkaTopic()`, `kafkaPartitionKey()`) keep their
+method names; only the returned string value reflects the new
+`CamelKafka*` convention.
+
 === Jackson dataformat documentation pages renamed
 
 The Jackson 2.x and Jackson 3.x lines ship the same dataformat names (`jackson`, `jacksonXml`,
