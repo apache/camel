@@ -89,8 +89,9 @@ public class ProducerTest extends CamelTestSupport {
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql-stored:SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers" + ".num2},OUT INTEGER resultofsub)")
-                    .to("mock:query");
+                        .to("sql-stored:SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers"
+                            + ".num2},OUT INTEGER resultofsub)")
+                        .to("mock:query");
             }
         };
     }
