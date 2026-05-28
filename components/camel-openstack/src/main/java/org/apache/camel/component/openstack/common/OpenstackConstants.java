@@ -33,15 +33,15 @@ public class OpenstackConstants {
     public static final String SCHEME_SWIFT = "openstack-swift";
 
     @Metadata(description = "The operation to perform.", javaType = "String")
-    public static final String OPERATION = "operation";
+    public static final String OPERATION = "CamelOpenstackOperation";
     @Metadata(description = "The ID.", javaType = "String")
-    public static final String ID = "ID";
+    public static final String ID = "CamelOpenstackId";
     @Metadata(description = "The name.", javaType = "String")
-    public static final String NAME = "name";
+    public static final String NAME = "CamelOpenstackName";
     @Metadata(description = "The description.", javaType = "String", applicableFor = { SCHEME_CINDER })
-    public static final String DESCRIPTION = "description";
+    public static final String DESCRIPTION = "CamelOpenstackDescription";
     @Metadata(description = "The image properties.", javaType = "Map<String, String>", applicableFor = SCHEME_GLANCE)
-    public static final String PROPERTIES = "properties";
+    public static final String PROPERTIES = "CamelOpenstackProperties";
 
     public static final String CREATE = "create";
     public static final String UPDATE = "update";
