@@ -28,6 +28,7 @@ class IntegrationInfo {
     String javaVersion;
     String javaVendor;
     String javaVmName;
+    String directory;
     String profile;
     boolean devMode;
     String ready;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
@@ -37,8 +38,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -220,6 +223,9 @@ public class CamelMonitor extends CamelCommand {
 
     private volatile long lastRefresh;
     private boolean showKillConfirm;
+    private String monitorNotification;
+    private boolean monitorNotificationError;
+    private long monitorNotificationExpiry;
     private volatile Buffer lastBuffer;
     private volatile long renderGeneration;
     private volatile String screenshotMessage;
@@ -622,6 +628,11 @@ public class CamelMonitor extends CamelCommand {
                 showKillConfirm = true;
                 return true;
             }
+            // Overview tab: cold restart (stop + re-launch) for selected integration
+            if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !ctx.infraTableFocused) {
+                restartSelectedProcess();
+                return true;
+            }
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                 return true;
@@ -917,6 +928,15 @@ public class CamelMonitor extends CamelCommand {
             titleSpans.add(Span.raw("  "));
             Style style = actionsPopup.notificationError() ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
             titleSpans.add(Span.styled(actionsPopup.notification(), style));
+        }
+        if (monitorNotification != null) {
+            if (System.currentTimeMillis() > monitorNotificationExpiry) {
+                monitorNotification = null;
+            } else {
+                titleSpans.add(Span.raw("  "));
+                Style style = monitorNotificationError ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+                titleSpans.add(Span.styled(monitorNotification, style));
+            }
         }
         Line titleLine = Line.from(titleSpans);
 
@@ -1654,6 +1674,123 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    private void restartSelectedProcess() {
+        if (ctx.selectedPid == null || ctx.infraTableFocused) {
+            return;
+        }
+        long pid;
+        try {
+            pid = Long.parseLong(ctx.selectedPid);
+        } catch (NumberFormatException e) {
+            return;
+        }
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+        if (ph == null) {
+            return;
+        }
+
+        // capture command line before stopping
+        Optional<String> cmdOpt = ph.info().command();
+        Optional<String[]> argsOpt = ph.info().arguments();
+        Optional<String> cmdLineOpt = ph.info().commandLine();
+
+        String name = info.name;
+        String directory = info.directory;
+
+        // remember name so the restarted process gets auto-selected
+        ctx.lastSelectedName = name;
+
+        // stop gracefully
+        ph.destroy();
+        setNotification("Restarting: " + name, false);
+
+        // re-launch in background after process terminates
+        if (runner != null) {
+            runner.scheduler().execute(() -> {
+                try {
+                    // wait for termination (max 10 seconds, then force kill)
+                    CompletableFuture<ProcessHandle> exitFuture = ph.onExit().toCompletableFuture();
+                    try {
+                        exitFuture.get(10, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        ph.destroyForcibly();
+                        Thread.sleep(500);
+                    }
+
+                    // build command
+                    List<String> cmd = new ArrayList<>();
+                    if (cmdOpt.isPresent() && argsOpt.isPresent() && argsOpt.get().length > 0) {
+                        cmd.add(cmdOpt.get());
+                        Collections.addAll(cmd, argsOpt.get());
+                    } else if (cmdLineOpt.isPresent()) {
+                        cmd.addAll(parseCommandLine(cmdLineOpt.get()));
+                    }
+
+                    if (cmd.isEmpty()) {
+                        runner.runOnRenderThread(
+                                () -> setNotification("Cannot restart: command line not available", true));
+                        return;
+                    }
+
+                    ProcessBuilder pb = new ProcessBuilder(cmd);
+                    if (directory != null) {
+                        pb.directory(new File(directory));
+                    }
+                    pb.redirectErrorStream(true);
+                    Path outputFile = Files.createTempFile("camel-restart-", ".log");
+                    outputFile.toFile().deleteOnExit();
+                    pb.redirectOutput(outputFile.toFile());
+                    pb.start();
+
+                    runner.runOnRenderThread(() -> setNotification("Restarted: " + name, false));
+                } catch (Exception e) {
+                    runner.runOnRenderThread(
+                            () -> setNotification("Restart failed: " + e.getMessage(), true));
+                }
+            });
+        }
+    }
+
+    private void setNotification(String message, boolean error) {
+        monitorNotification = message;
+        monitorNotificationError = error;
+        monitorNotificationExpiry = System.currentTimeMillis() + 5000;
+    }
+
+    static List<String> parseCommandLine(String commandLine) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+        boolean escaped = false;
+
+        for (int i = 0; i < commandLine.length(); i++) {
+            char c = commandLine.charAt(i);
+            if (escaped) {
+                current.append(c);
+                escaped = false;
+            } else if (c == '\\') {
+                escaped = true;
+            } else if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ' ' && !inQuotes) {
+                if (!current.isEmpty()) {
+                    tokens.add(current.toString());
+                    current.setLength(0);
+                }
+            } else {
+                current.append(c);
+            }
+        }
+        if (!current.isEmpty()) {
+            tokens.add(current.toString());
+        }
+        return tokens;
+    }
+
     private void resetStats() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
@@ -1845,6 +1982,9 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         if (ctx.selectedPid != null) {
+            if (!ctx.infraTableFocused) {
+                hint(spans, "r", "restart");
+            }
             hint(spans, "x", "stop");
             hint(spans, "X", "kill");
         }
@@ -2779,6 +2919,7 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
         }
+        info.directory = runtime != null ? runtime.getString("directory") : null;
         info.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
         info.javaVendor = runtime != null ? runtime.getString("javaVendor") : null;
         info.javaVmName = runtime != null ? runtime.getString("javaVmName") : null;
