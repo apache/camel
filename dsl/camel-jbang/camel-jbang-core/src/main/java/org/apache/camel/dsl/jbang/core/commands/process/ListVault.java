@@ -37,7 +37,10 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "vault",
-         description = "List secrets from security vaults", sortOptions = false, showDefaultValues = true)
+         description = "List secrets from security vaults", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get vault" })
 public class ListVault extends ProcessWatchCommand {
 
     public static class PidNameCompletionCandidates implements Iterable<String> {

@@ -20,7 +20,11 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine.Command;
 
 @Command(name = "processor", description = "Top performing processors",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel top processor",
+                 "  camel top processor --watch" })
 public class CamelProcessorTop extends CamelProcessorStatus {
 
     public CamelProcessorTop(CamelJBangMain main) {

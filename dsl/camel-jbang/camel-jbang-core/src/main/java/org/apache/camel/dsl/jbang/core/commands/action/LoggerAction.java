@@ -37,7 +37,11 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "logger",
-                     description = "List or change logging levels", sortOptions = false, showDefaultValues = true)
+                     description = "List or change logging levels", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd logger",
+                             "  camel cmd logger --logging-level=DEBUG --logger=org.apache.camel" })
 public class LoggerAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

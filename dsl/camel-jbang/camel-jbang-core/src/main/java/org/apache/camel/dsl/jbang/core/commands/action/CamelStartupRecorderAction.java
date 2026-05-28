@@ -36,7 +36,10 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "startup-recorder",
-                     description = "Display startup recording", sortOptions = false, showDefaultValues = true)
+                     description = "Display startup recording", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd startup-recorder" })
 public class CamelStartupRecorderAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

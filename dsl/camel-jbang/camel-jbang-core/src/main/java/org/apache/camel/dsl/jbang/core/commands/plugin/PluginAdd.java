@@ -27,7 +27,10 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "add",
-                     description = "Add new plugin", sortOptions = false, showDefaultValues = true)
+                     description = "Add new plugin", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel plugin add --command=my-cmd --gav=com.foo:bar:1.0" })
 public class PluginAdd extends PluginBaseCommand {
 
     @CommandLine.Parameters(description = "The Camel plugin to add",

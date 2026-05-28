@@ -40,7 +40,11 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 
 @Command(name = "context",
          description = "Top status of Camel integrations",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel top context",
+                 "  camel top context --watch" })
 public class CamelContextTop extends ProcessWatchCommand {
 
     public static class PidNameMemAgeCompletionCandidates implements Iterable<String> {

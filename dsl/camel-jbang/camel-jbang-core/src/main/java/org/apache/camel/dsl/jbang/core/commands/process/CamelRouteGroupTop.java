@@ -27,7 +27,11 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine.Command;
 
 @Command(name = "group", description = "Top performing route groups",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel top group",
+                 "  camel top group --watch" })
 public class CamelRouteGroupTop extends CamelRouteGroupStatus {
 
     public CamelRouteGroupTop(CamelJBangMain main) {

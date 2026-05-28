@@ -26,7 +26,10 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "list",
-                     description = "List all available plugins", sortOptions = false, showDefaultValues = true)
+                     description = "List all available plugins", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel plugin list" })
 public class PluginList extends PluginGet {
 
     public PluginList(CamelJBangMain main) {

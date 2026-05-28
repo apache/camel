@@ -38,7 +38,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "service",
-         description = "Get services of Camel integrations", sortOptions = false, showDefaultValues = true)
+         description = "Get services of Camel integrations", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get service",
+                 "  camel get service --metadata" })
 public class ListService extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
