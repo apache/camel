@@ -91,6 +91,7 @@ class HistoryTab implements MonitorTab {
     private boolean historyWordWrap = true;
     private int historyDetailScroll;
     private int historyDetailHScroll;
+    volatile boolean historyRefreshRequested;
 
     HistoryTab(MonitorContext ctx,
                AtomicReference<List<TraceEntry>> traces,
@@ -229,6 +230,7 @@ class HistoryTab implements MonitorTab {
                 historyEntries = Collections.emptyList();
                 historyDetailScroll = 0;
                 historyDetailHScroll = 0;
+                historyRefreshRequested = true;
                 return true;
             }
         }
