@@ -21,7 +21,10 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "stop-group",
-                     description = "Stop Camel route groups", sortOptions = false, showDefaultValues = true)
+                     description = "Stop Camel route groups", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd stop-group myGroup" })
 public class CamelRouteGroupStopAction extends CamelRouteAction {
 
     public CamelRouteGroupStopAction(CamelJBangMain main) {

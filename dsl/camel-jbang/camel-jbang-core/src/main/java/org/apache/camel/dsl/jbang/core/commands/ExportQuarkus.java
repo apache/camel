@@ -319,15 +319,14 @@ class ExportQuarkus extends Export {
     protected void copyDockerFiles(String buildDir) throws Exception {
         Path dockerSrc = Path.of(buildDir).resolve("src/main/docker");
         if ("uber-jar".equals(quarkusPackageType)) {
-            // For uber-jar, the generic Dockerfile works as-is
             super.copyDockerFiles(buildDir);
         } else {
-            // For fast-jar, use a Quarkus-specific JVM Dockerfile
             Files.createDirectories(dockerSrc);
-            InputStream is
-                    = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
-            if (is != null) {
-                PathUtils.copyFromStream(is, dockerSrc.resolve("Dockerfile"), true);
+            try (InputStream is
+                    = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm")) {
+                if (is != null) {
+                    PathUtils.copyFromStream(is, dockerSrc.resolve("Dockerfile"), false);
+                }
             }
         }
 
@@ -339,9 +338,11 @@ class ExportQuarkus extends Export {
 
         // Quarkus-specific Dockerfiles for native builds
         for (String dockerfile : List.of("Dockerfile.native", "Dockerfile.native-micro")) {
-            InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/" + dockerfile);
-            if (is != null) {
-                PathUtils.copyFromStream(is, dockerSrc.resolve(dockerfile), true);
+            try (InputStream is
+                    = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/" + dockerfile)) {
+                if (is != null) {
+                    PathUtils.copyFromStream(is, dockerSrc.resolve(dockerfile), false);
+                }
             }
         }
     }

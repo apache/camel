@@ -37,7 +37,11 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "properties", description = "List configuration properties", sortOptions = false, showDefaultValues = true)
+@Command(name = "properties", description = "List configuration properties", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get properties",
+                 "  camel get properties --verbose" })
 public class ListProperties extends ProcessWatchCommand {
 
     public static class PidNameKeyCompletionCandidates implements Iterable<String> {

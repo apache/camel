@@ -41,7 +41,11 @@ import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLICommand;
 
-@CommandLine.Command(name = "run", description = "Run an external service", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(name = "run", description = "Run an external service", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel infra run kafka",
+                             "  camel infra run kafka --background" })
 public class InfraRun extends InfraBaseCommand {
 
     @CommandLine.Spec

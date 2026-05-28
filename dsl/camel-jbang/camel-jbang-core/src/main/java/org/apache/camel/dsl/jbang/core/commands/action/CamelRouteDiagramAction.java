@@ -22,7 +22,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -78,7 +81,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Use ascii/unicode for plain text output. "
                                       + "Can also be set via DIAGRAM_COLORS env var.",
-                        defaultValue = "transparent")
+                        defaultValue = "unicode")
     String theme;
 
     @CommandLine.Option(names = { "--font-size" },
@@ -97,6 +100,14 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     @CommandLine.Option(names = { "--metric" }, defaultValue = "true",
                         description = "Whether to include live metrics (only possible for running Camel application)")
     boolean metric;
+
+    @CommandLine.Option(names = { "--highlight" },
+                        description = "Comma-separated node IDs to highlight in the diagram")
+    String highlight;
+
+    @CommandLine.Option(names = { "--highlight-style" },
+                        description = "Highlight style: success (green) or fail (red)", defaultValue = "success")
+    String highlightStyle;
 
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
@@ -198,6 +209,23 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                 return 1;
             }
 
+            // parse highlight info
+            Set<String> highlightedNodeIds = null;
+            RouteDiagramHelper.HighlightStyle hlStyle = null;
+            RouteDiagramHelper.HighlightInfo highlightInfo = null;
+            if (highlight != null && !highlight.isBlank()) {
+                highlightedNodeIds = new LinkedHashSet<>(Arrays.asList(highlight.split(",")));
+                hlStyle = "fail".equalsIgnoreCase(highlightStyle)
+                        ? RouteDiagramHelper.HighlightStyle.FAIL
+                        : RouteDiagramHelper.HighlightStyle.SUCCESS;
+                highlightInfo = new RouteDiagramHelper.HighlightInfo(highlightedNodeIds, List.of(), hlStyle);
+                routes = RouteDiagramHelper.filterAndOrderRoutes(routes, highlightInfo);
+                if (routes.isEmpty()) {
+                    printer().println("No routes contain highlighted nodes");
+                    return 1;
+                }
+            }
+
             NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
 
@@ -212,7 +240,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             if (isTextTheme()) {
                 RouteDiagramAsciiRenderer asciiRenderer
                         = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme(), pid > 0 && metric);
-                String ascii = asciiRenderer.renderDiagramAnsi(layoutRoutes, currentY);
+                String ascii = asciiRenderer.renderDiagramAnsi(layoutRoutes, currentY, highlightedNodeIds, hlStyle);
 
                 if (output != null) {
                     String fileName = output.endsWith(".png")
@@ -237,7 +265,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
                 BufferedImage image;
                 try {
-                    image = renderer.renderDiagram(layoutRoutes, currentY, colors);
+                    image = renderer.renderDiagram(layoutRoutes, currentY, colors, highlightedNodeIds, hlStyle);
                 } catch (IllegalStateException e) {
                     printer().println(e.getMessage());
                     return 1;

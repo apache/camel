@@ -29,7 +29,10 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "ps", description = "Displays running services", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel infra ps" })
 public class InfraPs extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Service name", arity = "0..1")

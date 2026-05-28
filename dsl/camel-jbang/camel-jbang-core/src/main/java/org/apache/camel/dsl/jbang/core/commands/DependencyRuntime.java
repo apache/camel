@@ -32,7 +32,10 @@ import org.apache.maven.model.Repository;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "runtime", description = "Display Camel runtime and version for given Maven project",
-                     sortOptions = false, showDefaultValues = true)
+                     sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel dependency runtime" })
 public class DependencyRuntime extends CamelCommand {
 
     @CommandLine.Parameters(description = "The pom.xml to analyze", arity = "1", paramLabel = "<pom.xml>")

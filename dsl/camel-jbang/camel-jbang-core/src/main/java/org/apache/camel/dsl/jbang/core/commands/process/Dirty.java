@@ -27,7 +27,11 @@ import picocli.CommandLine;
 import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.getCamelDir;
 
 @CommandLine.Command(name = "dirty",
-                     description = "Check if there are dirty files from previous Camel runs that did not terminate gracefully")
+                     description = "Check if there are dirty files from previous Camel runs that did not terminate gracefully",
+                     footer = {
+                             "%nExamples:",
+                             "  camel dirty",
+                             "  camel dirty --clean" })
 public class Dirty extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--clean" }, defaultValue = "false",

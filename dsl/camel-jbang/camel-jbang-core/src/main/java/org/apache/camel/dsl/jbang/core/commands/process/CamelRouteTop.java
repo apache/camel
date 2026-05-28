@@ -28,7 +28,11 @@ import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Top performing routes",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel top route",
+                 "  camel top route --watch" })
 public class CamelRouteTop extends CamelRouteStatus {
 
     public CamelRouteTop(CamelJBangMain main) {

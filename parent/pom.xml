@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.44.13</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.44.14</aws-java-sdk2-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.37</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -175,9 +175,9 @@
         <jakarta-transaction-api-version>2.0.1</jakarta-transaction-api-version>
         <jakarta-jws-api-version>3.0.0</jakarta-jws-api-version>
         <jaxb-core-version>4.0.5</jaxb-core-version>
-        <jaxb-impl-version>4.0.8</jaxb-impl-version>
+        <jaxb-impl-version>4.0.9</jaxb-impl-version>
         <jaxb-osgi-version>4.0.5</jaxb-osgi-version>
-        <jaxb-xjc-version>4.0.8</jaxb-xjc-version>
+        <jaxb-xjc-version>4.0.9</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.8</jaxb-jxc-version>
         <gmavenplus-plugin-version>4.3.1</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.47.0</google-auth-library-oauth2-http-version>
@@ -348,7 +348,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.4</log4j2-version>
-        <logback-version>1.5.32</logback-version>
+        <logback-version>1.5.33</logback-version>
         <lucene-version>9.12.3</lucene-version>
         <littleproxy-version>2.7.0</littleproxy-version>
         <lz4-java-version>1.11.0</lz4-java-version>
@@ -389,7 +389,7 @@
         <minio-version>8.6.0</minio-version>
         <mockito-version>5.23.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
-        <mongo-java-driver-version>5.7.0</mongo-java-driver-version>
+        <mongo-java-driver-version>5.7.1</mongo-java-driver-version>
         <msal4j-version>1.24.1</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
@@ -495,7 +495,7 @@
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp5-version>5.3.2</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
-        <sshd-version>2.17.1</sshd-version>
+        <sshd-version>2.18.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
         <stripe-java-version>32.1.0</stripe-java-version>
         <swagger-java-version>1.6.10</swagger-java-version>
