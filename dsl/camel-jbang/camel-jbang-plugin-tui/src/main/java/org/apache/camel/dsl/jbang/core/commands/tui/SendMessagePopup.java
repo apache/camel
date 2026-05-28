@@ -244,10 +244,10 @@ class SendMessagePopup {
                 .borderType(BorderType.ROUNDED)
                 .title(title)
                 .titleBottom(Title.from(Line.from(
-                        Span.styled(" Enter", Style.EMPTY.fg(Color.DARK_GRAY)),
-                        Span.styled(" send  ", Style.EMPTY.dim()),
-                        Span.styled("Esc", Style.EMPTY.fg(Color.DARK_GRAY)),
-                        Span.styled(" close ", Style.EMPTY.dim()))))
+                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE),
+                        Span.raw(" send │"),
+                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE),
+                        Span.raw(" close "))))
                 .build();
         frame.renderWidget(block, popup);
 
