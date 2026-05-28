@@ -1,0 +1,19 @@
+- route:
+    id: welcome
+    from:
+      uri: timer:welcome
+      parameters:
+        repeatCount: 1
+      steps:
+        - setBody:
+            constant: "Welcome! Open the TUI (camel tui) and press F2 → Send Message to say hello."
+        - log: "${body}"
+
+- route:
+    id: greet
+    from:
+      uri: direct:greet
+      steps:
+        - log: "Received: ${body}"
+        - setBody:
+            simple: "Hello ${body}!"

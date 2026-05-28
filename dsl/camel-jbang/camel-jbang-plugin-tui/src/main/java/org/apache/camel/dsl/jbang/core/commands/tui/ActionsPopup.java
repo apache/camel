@@ -56,20 +56,27 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLa
 
 class ActionsPopup {
 
-    private static final int ACTION_RUN_EXAMPLE = 0;
-    private static final int ACTION_SHOW_DOCS = 1;
-    private static final int ACTION_CAPTION = 2;
-    private static final int ACTION_SCREENSHOT = 3;
-    private static final int ACTION_SHOW_KEYSTROKES = 4;
-    private static final int ACTION_TAPE_RECORDING = 5;
-    private static final int ACTION_TAPE_INSTRUCTIONS = 6;
-    private static final int ACTION_DOCTOR = 7;
-    private static final int ACTION_CLASSPATH = 8;
-    private static final int ACTION_MCP_INFO = 9;
-    private static final int ACTION_MCP_LOG = 10;
-    private static final int ACTION_SEND_MESSAGE = 11;
-    private static final int ACTION_RESET_STATS = 12;
-    private static final int ACTION_STOP_ALL = 13;
+    // Group 1: User Actions
+    private static final int ACTION_SEND_MESSAGE = 0;
+    private static final int ACTION_RUN_EXAMPLE = 1;
+    private static final int ACTION_SHOW_DOCS = 2;
+    // Group 2: Diagnostics
+    private static final int ACTION_DOCTOR = 3;
+    private static final int ACTION_CLASSPATH = 4;
+    private static final int ACTION_RESET_STATS = 5;
+    private static final int ACTION_STOP_ALL = 6;
+    // Group 3: Recording & Presentation
+    private static final int ACTION_SCREENSHOT = 7;
+    private static final int ACTION_TAPE_RECORDING = 8;
+    private static final int ACTION_TAPE_INSTRUCTIONS = 9;
+    private static final int ACTION_CAPTION = 10;
+    private static final int ACTION_SHOW_KEYSTROKES = 11;
+    // Group 4: MCP
+    private static final int ACTION_MCP_INFO = 12;
+    private static final int ACTION_MCP_LOG = 13;
+
+    private static final int[] GROUP_SIZES = { 3, 4, 5 };
+    private static final int MCP_GROUP_SIZE = 2;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -161,8 +168,61 @@ class ActionsPopup {
         mcpLogPopup.setActivityLog(activityLog);
     }
 
-    private int actionCount() {
-        return mcpEnabled ? 14 : 12;
+    private int visualActionCount() {
+        if (mcpEnabled) {
+            // 3 + 4 + 5 + 2 actions = 14, plus 3 dividers = 17
+            return 14 + 3;
+        } else {
+            // 3 + 4 + 5 actions = 12, plus 2 dividers = 14
+            return 12 + 2;
+        }
+    }
+
+    private boolean isDividerIndex(int visualIndex) {
+        int pos = 0;
+        for (int i = 0; i < GROUP_SIZES.length; i++) {
+            pos += GROUP_SIZES[i];
+            if (visualIndex == pos) {
+                return true;
+            }
+            pos++;
+        }
+        if (mcpEnabled) {
+            pos += MCP_GROUP_SIZE;
+        }
+        return false;
+    }
+
+    private int resolveAction(int visualIndex) {
+        int dividers = 0;
+        int pos = 0;
+        int groupCount = mcpEnabled ? GROUP_SIZES.length + 1 : GROUP_SIZES.length;
+        for (int i = 0; i < groupCount; i++) {
+            int gs = i < GROUP_SIZES.length ? GROUP_SIZES[i] : MCP_GROUP_SIZE;
+            pos += gs;
+            if (visualIndex < pos + dividers) {
+                break;
+            }
+            if (i < groupCount - 1) {
+                dividers++;
+                pos++;
+            }
+        }
+        return visualIndex - dividers;
+    }
+
+    private void navigateActionsMenu(int direction) {
+        int total = visualActionCount();
+        Integer current = actionsMenuState.selected();
+        int next = (current != null ? current : 0) + direction;
+        next = Math.max(0, Math.min(next, total - 1));
+        while (isDividerIndex(next) && next > 0 && next < total - 1) {
+            next += direction;
+        }
+        next = Math.max(0, Math.min(next, total - 1));
+        if (!isDividerIndex(next)) {
+            actionsMenuState.select(next);
+        }
     }
 
     boolean isVisible() {
@@ -190,7 +250,7 @@ class ActionsPopup {
         if (showActionsMenu) {
             List<String> items = getActionLabels();
             Integer sel = actionsMenuState.selected();
-            return new SelectionContext("popup", items, sel != null ? sel : -1, items.size(), "Actions");
+            return new SelectionContext("popup", items, sel != null ? sel : -1, visualActionCount(), "Actions");
         }
         return null;
     }
@@ -205,22 +265,29 @@ class ActionsPopup {
 
     List<String> getActionLabels() {
         List<String> labels = new ArrayList<>();
+        // Group 1: User Actions
+        labels.add("Send Message");
         labels.add("Run an example...");
         labels.add("Show Documentation");
-        labels.add("Caption...");
-        labels.add("Take Screenshot");
-        labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
-        labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
-        labels.add("Tape Recording Guide");
+        labels.add("───");
+        // Group 2: Diagnostics
         labels.add("Run Doctor");
         labels.add("Show Classpath");
+        labels.add("Reset Stats");
+        labels.add("Stop All");
+        labels.add("───");
+        // Group 3: Recording & Presentation
+        labels.add("Take Screenshot");
+        labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
+        labels.add("Tape Recording Guide");
+        labels.add("Caption...");
+        labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
+        // Group 4: MCP
         if (mcpEnabled) {
+            labels.add("───");
             labels.add("MCP Info");
             labels.add("MCP Log");
         }
-        labels.add("Send Message");
-        labels.add("Reset Stats");
-        labels.add("Stop All");
         return labels;
     }
 
@@ -349,9 +416,9 @@ class ActionsPopup {
             if (ke.isCancel()) {
                 showActionsMenu = false;
             } else if (ke.isUp()) {
-                actionsMenuState.selectPrevious();
+                navigateActionsMenu(-1);
             } else if (ke.isDown()) {
-                actionsMenuState.selectNext(actionCount());
+                navigateActionsMenu(1);
             } else if (ke.isConfirm()) {
                 Integer sel = actionsMenuState.selected();
                 if (sel != null) {
@@ -504,7 +571,7 @@ class ActionsPopup {
     // ---- Rendering ----
 
     private void renderActionsMenu(Frame frame, Rect area) {
-        int count = actionCount();
+        int count = visualActionCount();
         int popupW = 40;
         int popupH = 2 + count;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
@@ -512,6 +579,7 @@ class ActionsPopup {
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
+        String divider = "  ─────────────────────────────────";
         // extra space after ⌨️ because it renders narrower than other emoji
         String keystrokeLabel = keystrokesEnabled.get()
                 ? "  ⌨️  Hide Keystrokes"
@@ -519,26 +587,34 @@ class ActionsPopup {
         String stopLabel = stopAllPopup.hasBothGroups()
                 ? "  🛑 Stop All..."
                 : "  🛑 Stop All";
-        List<ListItem> items = new ArrayList<>();
-        items.add(ListItem.from("  🐪 Run an example..."));
-        items.add(ListItem.from("  📖 Show Documentation"));
-        items.add(ListItem.from("  💬 Caption..."));
-        items.add(ListItem.from("  📸 Take Screenshot"));
-        items.add(ListItem.from(keystrokeLabel));
         String tapeLabel = tapeRecordingActive.get()
                 ? "  ⏹️  Stop Tape Recording (Ctrl+R)"
                 : "  ⏺️  Start Tape Recording (Ctrl+R)";
-        items.add(ListItem.from(tapeLabel));
-        items.add(ListItem.from("  📄 Tape Recording Guide"));
+
+        List<ListItem> items = new ArrayList<>();
+        // Group 1: User Actions
+        items.add(ListItem.from("  📩 Send Message"));
+        items.add(ListItem.from("  🐪 Run an example..."));
+        items.add(ListItem.from("  📖 Show Documentation"));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        // Group 2: Diagnostics
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  📦 Show Classpath"));
+        items.add(ListItem.from("  🔄 Reset Stats"));
+        items.add(ListItem.from(stopLabel));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        // Group 3: Recording & Presentation
+        items.add(ListItem.from("  📸 Take Screenshot"));
+        items.add(ListItem.from(tapeLabel));
+        items.add(ListItem.from("  📄 Tape Recording Guide"));
+        items.add(ListItem.from("  💬 Caption..."));
+        items.add(ListItem.from(keystrokeLabel));
+        // Group 4: MCP
         if (mcpEnabled) {
+            items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));
         }
-        items.add(ListItem.from("  📩 Send Message"));
-        items.add(ListItem.from("  🔄 Reset Stats"));
-        items.add(ListItem.from(stopLabel));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
@@ -804,13 +880,6 @@ class ActionsPopup {
         if (msg != null) {
             setNotification(msg, false);
         }
-    }
-
-    private int resolveAction(int index) {
-        if (!mcpEnabled && index >= ACTION_MCP_INFO) {
-            return index + 2;
-        }
-        return index;
     }
 
     private void openSendMessage() {
