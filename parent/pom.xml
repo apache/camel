@@ -518,7 +518,7 @@
         <velocity-version>2.4.1</velocity-version>
         <vertx-version>4.5.27</vertx-version>
         <weaviate-client-version>5.5.0</weaviate-client-version>
-        <web3j-version>5.0.0</web3j-version>
+        <web3j-version>5.0.3</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
         <wiremock-version>3.13.2</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
