@@ -36,7 +36,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
@@ -48,20 +47,7 @@
         </dependency>
 
         <!-- test dependencies -->
-        <!-- derby used for stored procedure tests -->
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>10.16.1.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>10.16.1.1</version>
-            <scope>test</scope>
-        </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit6</artifactId>
             <scope>test</scope>
@@ -83,11 +69,10 @@
             <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- H2 used for stored procedure tests -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${h2-version}</version>
+	    <version>${h2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -96,17 +81,23 @@
             <version>${hsqldb-version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- MariaDB4j only used for SQL stored function tests -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>2.4.240</version>
+            <groupId>ch.vorburger.mariaDB4j</groupId>
+            <artifactId>mariaDB4j</artifactId>
+            <version>${mariadb4j-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>${mariadb-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-
             <!-- generate source code from grammar for the stored procedure component -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -126,11 +117,13 @@
                         </goals>
                     </execution>
                 </executions>
-	    </plugin>
+            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
+                        <!-- This is necessary when debugging tests to enable HSQLDB to find
+                             the classes in the classpath. -->
                         <hsqldb.method_class_names>org.apache.camel.component.sql.stored.*</hsqldb.method_class_names>
                     </systemPropertyVariables>
                 </configuration>

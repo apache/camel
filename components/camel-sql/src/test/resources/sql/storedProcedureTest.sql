@@ -15,11 +15,29 @@
 -- limitations under the License.
 --
 
--- H2 stored procedures that return ResultSet instead of using OUT parameters
--- These reference Java methods that have been adapted for H2
+-- HSQLDB stored procedures using PARAMETER STYLE JAVA with OUT parameters
+-- These reference Java methods from TestStoredProcedure class
 
-CREATE ALIAS SUBNUMBERS FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.subnumbers';
-CREATE ALIAS NILADIC FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.niladic';
-CREATE ALIAS BATCHFN FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.batchfn';
-CREATE ALIAS INOUTDEMO FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.inoutdemo';
-CREATE ALIAS SUBNUMBERS_FUNCTION FOR 'org.apache.camel.component.sql.stored.H2StoredProcedures.subnumbersFunction';
+CREATE PROCEDURE SUBNUMBERS(IN param1 INTEGER, IN param2 INTEGER, OUT param3 INTEGER)
+LANGUAGE JAVA
+PARAMETER STYLE JAVA
+NO SQL
+EXTERNAL NAME 'CLASSPATH:org.apache.camel.component.sql.stored.TestStoredProcedure.subnumbers';
+
+CREATE PROCEDURE NILADIC()
+LANGUAGE JAVA
+PARAMETER STYLE JAVA
+NO SQL
+EXTERNAL NAME 'CLASSPATH:org.apache.camel.component.sql.stored.TestStoredProcedure.niladic';
+
+CREATE PROCEDURE BATCHFN(IN param1 VARCHAR(100))
+LANGUAGE JAVA
+PARAMETER STYLE JAVA
+NO SQL
+EXTERNAL NAME 'CLASSPATH:org.apache.camel.component.sql.stored.TestStoredProcedure.batchfn';
+
+CREATE PROCEDURE INOUTDEMO(IN param1 INTEGER, INOUT param2 INTEGER, OUT param3 INTEGER)
+LANGUAGE JAVA
+PARAMETER STYLE JAVA
+NO SQL
+EXTERNAL NAME 'CLASSPATH:org.apache.camel.component.sql.stored.TestStoredProcedure.inoutdemo';

@@ -30,20 +30,10 @@ public final class TestStoredProcedure {
     private TestStoredProcedure() {
     }
 
-    public static void subnumbers(int val1, int val2, int[] ret) {
-        LOG.info("calling addnumbers:{} + {}", val1, val2);
+    /** HSQLDB style requires Integer instead of int for the return value. */
+    public static void subnumbers(int val1, int val2, Integer[] ret) {
+        LOG.info("calling subnumbers:{} - {}", val1, val2);
         ret[0] = val1 - val2;
-    }
-
-    public static void subnumbersHSQL(int val1, int val2, Integer[] ret) {
-        LOG.info("calling subnumbersHSQL:{} + {}", val1, val2);
-        ret[0] = val1 - val2;
-    }
-
-    public static int subnumbers2(int val1, int val2) {
-        LOG.info("calling subnumbers2:{} + {}", val1, val2);
-        System.out.println("calling subnumbers2: " + val1 + ", " + val2);
-        return val1 - val2;
     }
 
     public static void batchfn(String val1) {
@@ -58,21 +48,10 @@ public final class TestStoredProcedure {
         LOG.info("nilacid called");
     }
 
-    public static void inoutdemo(int in1, int[] inout1, int[] out1) {
+    /** HSQLDB style requires Integer instead of int for the out parameters. */
+    public static void inoutdemo(int in1, Integer[] inout1, Integer[] out1) {
         LOG.info("calling inoutdemo: {}, {}", inout1[0], out1[0]);
         inout1[0] = 1;
         out1[0] = 2;
-    }
-
-    public static void inoutdemoHSQL(int in1, Integer[] inout1, Integer[] out1) {
-        LOG.info("calling inoutdemo: {}, {}", inout1[0], out1[0]);
-        inout1[0] = 1;
-        out1[0] = 2;
-    }
-
-    public static int inoutdemo2(int[] inout1, int in1) {
-        LOG.info("calling inoutdemo: {}, {}", inout1[0]);
-        inout1[0] = 1;
-        return 2;
     }
 }

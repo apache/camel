@@ -15,7 +15,10 @@
 -- limitations under the License.
 --
 
-create table projects (id integer primary key IDENTITY, project varchar(10), license varchar(5), description varchar(1000) default null, processed boolean);
-insert into projects (project, license, description, processed) values ('Camel', 'ASF', '', false);
-insert into projects (project, license, description, processed) values ('AMQ', 'ASF', '', false);
-insert into projects (project, license, description, processed) values ('Linux', 'XXX', '', false);
+-- MariaDB/MySQL stored procedures and functions (SQL-based; no Java EXTERNAL NAME)
+-- Statement separator is $$ (see SqlFunctionDataSourceTest ResourceDatabasePopulator)
+-- MariaDB4J does not support calling Java methods from the SQL stored procedure or function.
+DROP FUNCTION IF EXISTS SUBNUMBERS_FUNCTION$$
+CREATE FUNCTION SUBNUMBERS_FUNCTION(param1 INT, param2 INT) RETURNS INT
+DETERMINISTIC
+  RETURN param1 - param2$$

@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregate.jdbc;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.h2.jdbcx.JdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ public class JdbcLoopTransactedSplitterStackSizeTest extends AbstractJdbcAggrega
     private int total = 500;
 
     private static final String DSNAME = "ds";
-    private static JdbcDataSource ds;
+    private static JDBCDataSource ds;
     private static PlatformTransactionManager txManager;
     private static SpringTransactionPolicy txPolicy;
 
@@ -57,7 +57,7 @@ public class JdbcLoopTransactedSplitterStackSizeTest extends AbstractJdbcAggrega
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        ds = H2Db.init(DSNAME);
+        ds = HsqlDb.init(DSNAME);
 
         txManager = new DataSourceTransactionManager(ds);
 
@@ -75,7 +75,7 @@ public class JdbcLoopTransactedSplitterStackSizeTest extends AbstractJdbcAggrega
 
     @AfterAll
     public static void tearDownOnce() {
-        H2Db.close("ds");
+        HsqlDb.close("ds");
     }
 
     @Test
@@ -141,21 +141,23 @@ public class JdbcLoopTransactedSplitterStackSizeTest extends AbstractJdbcAggrega
         return depth;
     }
 
-    private static class H2Db {
+    private static class HsqlDb {
 
-        public static JdbcDataSource init(String db) {
-            JdbcDataSource ds = new JdbcDataSource();
-            ds.setURL("jdbc:h2:mem:" + db + ";DB_CLOSE_DELAY=-1");
+        public static JDBCDataSource init(String db) {
+            JDBCDataSource ds = new JDBCDataSource();
+            ds.setUrl("jdbc:hsqldb:mem:" + db);
+            ds.setUser("sa");
+            ds.setPassword("");
             return ds;
         }
 
         public static void close(String dbName) {
-            // H2 in-memory databases are automatically cleaned up
+            // HSQLDB in-memory databases are automatically cleaned up
             // when all connections are closed
         }
 
         private static void deleteDatabaseFiles(String dbName) {
-            // No files to delete for in-memory H2
+            // No files to delete for in-memory HSQLDB
         }
     }
 }
