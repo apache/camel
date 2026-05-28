@@ -19,8 +19,10 @@ package org.apache.camel.itest.shiro;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.jms.JmsHeaderFilterStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.shiro.security.ShiroSecurityConstants;
 import org.apache.camel.component.shiro.security.ShiroSecurityPolicy;
@@ -61,7 +63,40 @@ public class ShiroOverJmsTest extends CamelTestSupport {
 
         amq.setCamelContext(context);
 
+        // After CAMEL-23592 the Shiro security headers live in the CamelShiroSecurity* namespace,
+        // which the default JmsHeaderFilterStrategy filters at the transport boundary. For a
+        // trusted Shiro-over-JMS route, the operator must opt those three headers back in.
+        amq.setHeaderFilterStrategy(new ShiroFriendlyJmsHeaderFilterStrategy());
+
         registry.bind("jms", amq);
+    }
+
+    /**
+     * Allows the three Shiro security headers (token, username, password) to cross the JMS transport boundary while
+     * still filtering every other Camel-internal header.
+     */
+    private static final class ShiroFriendlyJmsHeaderFilterStrategy extends JmsHeaderFilterStrategy {
+        @Override
+        public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
+            if (isShiroSecurityHeader(headerName)) {
+                return false;
+            }
+            return super.applyFilterToCamelHeaders(headerName, headerValue, exchange);
+        }
+
+        @Override
+        public boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange) {
+            if (isShiroSecurityHeader(headerName)) {
+                return false;
+            }
+            return super.applyFilterToExternalHeaders(headerName, headerValue, exchange);
+        }
+
+        private static boolean isShiroSecurityHeader(String headerName) {
+            return ShiroSecurityConstants.SHIRO_SECURITY_TOKEN.equalsIgnoreCase(headerName)
+                    || ShiroSecurityConstants.SHIRO_SECURITY_USERNAME.equalsIgnoreCase(headerName)
+                    || ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD.equalsIgnoreCase(headerName);
+        }
     }
 
     @Override
