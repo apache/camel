@@ -1637,3 +1637,56 @@ per version of every blob in the container, each carrying its own `versionId` an
 enabled on the storage account. The same `prefix`, `regex` and `maxResultsPerPage` filters as
 `listBlobs` are honoured.
 
+=== camel-irc - potential breaking change
+
+The Exchange header constants in `IrcConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java
+field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `IrcConstants.IRC_MESSAGE_TYPE`     | `irc.messageType`     | `CamelIrcMessageType`
+| `IrcConstants.IRC_TARGET`           | `irc.target`          | `CamelIrcTarget`
+| `IrcConstants.IRC_SEND_TO`          | `irc.sendTo`          | `CamelIrcSendTo`
+| `IrcConstants.IRC_USER_KICKED`      | `irc.user.kicked`     | `CamelIrcUserKicked`
+| `IrcConstants.IRC_USER_HOST`        | `irc.user.host`       | `CamelIrcUserHost`
+| `IrcConstants.IRC_USER_NICK`        | `irc.user.nick`       | `CamelIrcUserNick`
+| `IrcConstants.IRC_USER_SERVERNAME`  | `irc.user.servername` | `CamelIrcUserServername`
+| `IrcConstants.IRC_USER_USERNAME`    | `irc.user.username`   | `CamelIrcUserUsername`
+| `IrcConstants.IRC_NUM`              | `irc.num`             | `CamelIrcNum`
+| `IrcConstants.IRC_VALUE`            | `irc.value`           | `CamelIrcValue`
+|===
+
+Routes that reference the constant symbolically (for example
+`header(IrcConstants.IRC_SEND_TO)` or
+`setHeader(IrcConstants.IRC_TARGET, ...)`) continue to work without changes.
+Routes that set or read the header by its literal string value (for example
+`setHeader("irc.sendTo", ...)`) must be updated to use the new value:
+
+[source,java]
+----
+// before
+template.sendBodyAndHeader("irc:bot@irc.server.org/#chan", "hello",
+    "irc.sendTo", "#otherchan");
+
+// after
+template.sendBodyAndHeader("irc:bot@irc.server.org/#chan", "hello",
+    "CamelIrcSendTo", "#otherchan");
+----
+
+==== Behaviour change: cross-transport propagation of irc.* headers
+
+Because the renamed header values now begin with `Camel`, they are filtered by
+the standard transport `HeaderFilterStrategy` (`JmsHeaderFilterStrategy`,
+`HttpHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design
+— `Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (HTTP, JMS, ...) into an `irc:`
+producer and let the sender choose the IRC destination via the `irc.sendTo`
+header must therefore carry that value in a non-`Camel`-prefixed application
+header and map it to `IrcConstants.IRC_SEND_TO` in the route between the
+transport `from` and the `irc:` `to`. Allowing untrusted senders to drive
+`IrcConstants.IRC_SEND_TO` without such a mapping step is not the intended use
+of the component.
+
