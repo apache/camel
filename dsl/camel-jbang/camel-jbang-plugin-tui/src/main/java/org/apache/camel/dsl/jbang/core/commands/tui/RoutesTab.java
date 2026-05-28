@@ -19,23 +19,16 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import dev.tamboui.image.Image;
 import dev.tamboui.image.ImageData;
-import dev.tamboui.image.ImageScaling;
-import dev.tamboui.image.capability.TerminalImageCapabilities;
-import dev.tamboui.image.protocol.ImageProtocol;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
-import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -50,9 +43,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
-import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
-import org.apache.camel.diagram.RouteDiagramLayoutEngine;
-import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -81,27 +71,11 @@ class RoutesTab implements MonitorTab {
     private final TableState processorTableState = new TableState();
     private final TableState routeHeaderTableState = new TableState();
 
-    // Diagram state
-    private boolean showDiagram;
-    private boolean diagramTextMode;
+    // Diagram support (shared rendering/loading logic)
+    private final DiagramSupport diagram = new DiagramSupport();
     private boolean diagramAllRoutes;
     private boolean diagramMetrics = true;
-    private List<RouteDiagramAsciiRenderer.CounterPos> diagramCounterPositions = Collections.emptyList();
-    private Set<Integer> diagramRouteTitleRows = Collections.emptySet();
-    private List<String> diagramLines = Collections.emptyList();
-    private int diagramScroll;
-    private int diagramScrollX;
-    private final ScrollbarState diagramVScrollState = new ScrollbarState();
-    private final ScrollbarState diagramHScrollState = new ScrollbarState();
     private String diagramRouteId;
-    private ImageData diagramImageData;
-    private ImageData diagramFullImageData;
-    private ImageProtocol diagramProtocol;
-    private int diagramCropX = -1;
-    private int diagramCropY = -1;
-    private int diagramCropW = -1;
-    private int diagramCropH = -1;
-    private final AtomicBoolean diagramLoading = new AtomicBoolean(false);
 
     // Source viewer state
     private boolean showSource;
@@ -122,11 +96,11 @@ class RoutesTab implements MonitorTab {
     }
 
     boolean isShowDiagram() {
-        return showDiagram;
+        return diagram.isShowDiagram();
     }
 
     boolean isDiagramTextMode() {
-        return diagramTextMode;
+        return diagram.isDiagramTextMode();
     }
 
     boolean isDiagramMetrics() {
@@ -142,11 +116,11 @@ class RoutesTab implements MonitorTab {
     }
 
     ImageData getDiagramFullImageData() {
-        return diagramFullImageData;
+        return diagram.getFullImageData();
     }
 
     boolean hasImageDiagram() {
-        return diagramFullImageData != null;
+        return diagram.getFullImageData() != null;
     }
 
     @Override
@@ -180,49 +154,21 @@ class RoutesTab implements MonitorTab {
             return true;
         }
 
-        // Diagram scrolling and controls
-        if (showDiagram) {
-            if (ke.isUp()) {
-                diagramScroll = Math.max(0, diagramScroll - 1);
-                return true;
-            }
-            if (ke.isDown()) {
-                diagramScroll++;
-                return true;
-            }
-            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                diagramScroll = Math.max(0, diagramScroll - 20);
-                return true;
-            }
-            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                diagramScroll += 20;
-                return true;
-            }
-            if (ke.isLeft()) {
-                diagramScrollX = Math.max(0, diagramScrollX - 1);
-                return true;
-            }
-            if (ke.isRight()) {
-                diagramScrollX++;
-                return true;
-            }
-            if (ke.isHome()) {
-                diagramScroll = 0;
-                diagramScrollX = 0;
-                return true;
-            }
-            if (ke.isEnd()) {
-                diagramScroll = Integer.MAX_VALUE;
-                return true;
-            }
+        // Diagram scrolling
+        if (diagram.handleScrollKeys(ke)) {
+            return true;
+        }
+
+        // Diagram-specific controls (only when diagram is showing)
+        if (diagram.isShowDiagram()) {
             if (ke.isCharIgnoreCase('m')) {
                 diagramMetrics = !diagramMetrics;
-                diagramLoading.set(false);
+                diagram.endLoad();
                 loadDiagramForSelectedRoute();
                 return true;
             }
-            if (!diagramTextMode && ke.isKey(KeyCode.F5)) {
-                diagramLoading.set(false);
+            if (!diagram.isDiagramTextMode() && ke.isKey(KeyCode.F5)) {
+                diagram.endLoad();
                 loadDiagramForSelectedRoute();
                 return true;
             }
@@ -251,39 +197,25 @@ class RoutesTab implements MonitorTab {
         }
 
         // Toggle top mode (only when not in source or diagram view)
-        if (!showSource && !showDiagram && ke.isCharIgnoreCase('t')) {
+        if (!showSource && !diagram.isShowDiagram() && ke.isCharIgnoreCase('t')) {
             routeTopMode = !routeTopMode;
             return true;
         }
 
         // Toggle all routes diagram flag
-        if (!showSource && !showDiagram && ke.isCharIgnoreCase('a')) {
+        if (!showSource && !diagram.isShowDiagram() && ke.isCharIgnoreCase('a')) {
             diagramAllRoutes = !diagramAllRoutes;
             return true;
         }
 
         // Image diagram toggle
         if (ke.isChar('d')) {
-            if (showDiagram) {
-                showDiagram = false;
-                diagramImageData = null;
-                diagramFullImageData = null;
-            } else {
-                diagramTextMode = false;
-                loadDiagramForSelectedRoute();
-            }
+            diagram.toggleImageDiagram(this::loadDiagramForSelectedRoute);
             return true;
         }
         // Text diagram toggle
         if (ke.isChar('D')) {
-            if (showDiagram) {
-                showDiagram = false;
-                diagramImageData = null;
-                diagramFullImageData = null;
-            } else {
-                diagramTextMode = true;
-                loadDiagramForSelectedRoute();
-            }
+            diagram.toggleTextDiagram(this::loadDiagramForSelectedRoute);
             return true;
         }
 
@@ -298,13 +230,13 @@ class RoutesTab implements MonitorTab {
         }
 
         // Route start/stop
-        if (!showSource && !showDiagram && ke.isChar('p')) {
+        if (!showSource && !diagram.isShowDiagram() && ke.isChar('p')) {
             toggleRouteStartStop();
             return true;
         }
 
         // Route suspend/resume
-        if (!showSource && !showDiagram && ke.isChar('P') && selectedRouteSupportsSuspension()) {
+        if (!showSource && !diagram.isShowDiagram() && ke.isChar('P') && selectedRouteSupportsSuspension()) {
             toggleRouteSuspendResume();
             return true;
         }
@@ -318,13 +250,7 @@ class RoutesTab implements MonitorTab {
             showSource = false;
             return true;
         }
-        if (showDiagram) {
-            showDiagram = false;
-            diagramImageData = null;
-            diagramFullImageData = null;
-            return true;
-        }
-        return false;
+        return diagram.handleEscape();
     }
 
     @Override
@@ -345,12 +271,7 @@ class RoutesTab implements MonitorTab {
         sourceTitle = null;
         sourceScroll = 0;
         sourceScrollX = 0;
-        showDiagram = false;
-        diagramImageData = null;
-        diagramFullImageData = null;
-        diagramLines = Collections.emptyList();
-        diagramScroll = 0;
-        diagramScrollX = 0;
+        diagram.reset();
         routeTableState.select(0);
     }
 
@@ -373,16 +294,16 @@ class RoutesTab implements MonitorTab {
         }
 
         // Fullscreen diagram mode
-        if (showDiagram && (diagramTextMode ? !diagramLines.isEmpty() : diagramFullImageData != null)) {
+        if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
+            String title = diagram.isDiagramTextMode() ? "" : " Diagram [" + diagramRouteId + "] ";
             if (diagramAllRoutes) {
-                renderDiagram(frame, area);
+                diagram.renderDiagram(frame, area, title);
             } else {
-                // Split: route info header (4 rows) + diagram (fill)
                 List<Rect> fullChunks = Layout.vertical()
                         .constraints(Constraint.length(4), Constraint.fill())
                         .split(area);
                 renderRouteHeader(frame, fullChunks.get(0), info);
-                renderDiagram(frame, fullChunks.get(1));
+                diagram.renderDiagram(frame, fullChunks.get(1), title);
             }
             return;
         }
@@ -524,8 +445,9 @@ class RoutesTab implements MonitorTab {
         frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
 
         // Bottom panel: diagram or processors
-        if (showDiagram && (diagramImageData != null || !diagramLines.isEmpty())) {
-            renderDiagram(frame, chunks.get(1));
+        if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
+            String title = diagram.isDiagramTextMode() ? "" : " Diagram [" + diagramRouteId + "] ";
+            diagram.renderDiagram(frame, chunks.get(1), title);
         } else {
             Integer selectedRoute = routeTableState.selected();
             if (selectedRoute != null && selectedRoute >= 0 && selectedRoute < sortedRoutes.size()) {
@@ -551,13 +473,9 @@ class RoutesTab implements MonitorTab {
             hint(spans, "↑↓←→", "scroll");
             hint(spans, "PgUp/PgDn", "page");
             hintLast(spans, "Home/End", "top/bottom");
-        } else if (showDiagram) {
-            String closeKey = diagramTextMode ? "D" : "d";
-            hint(spans, closeKey + "/Esc", "close");
-            hint(spans, "↑↓←→", "scroll");
-            hint(spans, "PgUp/PgDn", "page");
-            hint(spans, "Home/End", "top/bottom");
-            if (diagramMetrics && !diagramTextMode) {
+        } else if (diagram.isShowDiagram()) {
+            diagram.renderFooterHints(spans);
+            if (diagramMetrics && !diagram.isDiagramTextMode()) {
                 hint(spans, "m", "metrics [on]");
                 hintLast(spans, "F5", "refresh counters");
             } else {
@@ -593,11 +511,8 @@ class RoutesTab implements MonitorTab {
         }
     }
 
-    /**
-     * Refreshes the text diagram when metrics auto-update is active. Called from tick handler.
-     */
     void refreshDiagramIfNeeded() {
-        if (showDiagram && diagramTextMode && diagramMetrics) {
+        if (diagram.isShowDiagram() && diagram.isDiagramTextMode() && diagramMetrics) {
             loadDiagramForSelectedRoute();
         }
     }
@@ -844,270 +759,6 @@ class RoutesTab implements MonitorTab {
         }
     }
 
-    private void renderDiagram(Frame frame, Rect area) {
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(diagramTextMode ? "" : " Diagram [" + diagramRouteId + "] ")
-                .build();
-
-        if (diagramFullImageData != null) {
-            renderImageDiagram(frame, area, block);
-            return;
-        }
-
-        // Compute max width for horizontal scrolling
-        int maxWidth = 0;
-        for (String line : diagramLines) {
-            maxWidth = Math.max(maxWidth, CharWidth.of(line));
-        }
-
-        Rect inner = block.inner(area);
-        // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
-        int visibleLines = Math.max(1, inner.height() - 1);
-        int visibleCols = Math.max(1, inner.width() - 1);
-
-        int maxVScroll = Math.max(0, diagramLines.size() - visibleLines);
-        int maxHScroll = Math.max(0, maxWidth - visibleCols);
-        diagramScroll = Math.min(diagramScroll, maxVScroll);
-        diagramScrollX = Math.min(diagramScrollX, maxHScroll);
-
-        // Build visible lines with horizontal offset applied
-        List<Line> lines = new ArrayList<>();
-        int end = Math.min(diagramScroll + visibleLines, diagramLines.size());
-        for (int i = diagramScroll; i < end; i++) {
-            String line = diagramLines.get(i);
-            if (diagramScrollX > 0) {
-                line = diagramScrollX < line.length() ? line.substring(diagramScrollX) : "";
-            }
-            lines.add(styleDiagramLine(line, i, diagramScrollX));
-        }
-
-        // Layout: outer block wraps everything, inner splits content + scrollbars
-        frame.renderWidget(block, area);
-
-        // Vertical layout inside the block: [content row (fill), horizontal scrollbar (1 row)]
-        List<Rect> vChunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        // Horizontal layout for content row: [text (fill), vertical scrollbar (1 col)]
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(vChunks.get(0));
-
-        // Render diagram text
-        Paragraph paragraph = Paragraph.builder()
-                .text(Text.from(lines))
-                .build();
-        frame.renderWidget(paragraph, hChunks.get(0));
-
-        // Render vertical scrollbar
-        diagramVScrollState.contentLength(diagramLines.size());
-        diagramVScrollState.viewportContentLength(visibleLines);
-        diagramVScrollState.position(diagramScroll);
-        frame.renderStatefulWidget(
-                Scrollbar.builder().build(),
-                hChunks.get(1), diagramVScrollState);
-
-        // Render horizontal scrollbar
-        if (maxWidth > visibleCols) {
-            diagramHScrollState.contentLength(maxWidth);
-            diagramHScrollState.viewportContentLength(visibleCols);
-            diagramHScrollState.position(diagramScrollX);
-            frame.renderStatefulWidget(
-                    Scrollbar.horizontal(),
-                    vChunks.get(1), diagramHScrollState);
-        }
-    }
-
-    private void renderImageDiagram(Frame frame, Rect area, Block block) {
-        int imgW = diagramFullImageData.width();
-        int imgH = diagramFullImageData.height();
-
-        Rect inner = block.inner(area);
-        // Convert cell area to pixel viewport using protocol resolution
-        int pxPerCol = diagramProtocol.resolution().widthMultiplier();
-        int pxPerRow = diagramProtocol.resolution().heightMultiplier();
-        // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
-        int viewCols = Math.max(1, inner.width() - 1);
-        int viewRows = Math.max(1, inner.height() - 1);
-        int viewW = viewCols * pxPerCol;
-        int viewH = viewRows * pxPerRow;
-
-        // Scroll units are in cells; convert to pixels for clamping
-        int maxScrollY = Math.max(0, (imgH - viewH + pxPerRow - 1) / pxPerRow);
-        int maxScrollX = Math.max(0, (imgW - viewW + pxPerCol - 1) / pxPerCol);
-        diagramScroll = Math.min(diagramScroll, maxScrollY);
-        diagramScrollX = Math.min(diagramScrollX, maxScrollX);
-
-        int cropX = Math.min(diagramScrollX * pxPerCol, imgW);
-        int cropY = Math.min(diagramScroll * pxPerRow, imgH);
-        int cropW = Math.min(viewW, imgW - cropX);
-        int cropH = Math.min(viewH, imgH - cropY);
-
-        if (cropW > 0 && cropH > 0) {
-            if (cropX != diagramCropX || cropY != diagramCropY
-                    || cropW != diagramCropW || cropH != diagramCropH) {
-                diagramImageData = diagramFullImageData.crop(cropX, cropY, cropW, cropH);
-                diagramCropX = cropX;
-                diagramCropY = cropY;
-                diagramCropW = cropW;
-                diagramCropH = cropH;
-            }
-        } else if (diagramImageData != diagramFullImageData) {
-            diagramImageData = diagramFullImageData;
-        }
-
-        // Render the outer block border
-        frame.renderWidget(block, area);
-
-        // Vertical layout inside the block: [image+vscrollbar (fill), hscrollbar (1 row)]
-        List<Rect> vChunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        // Horizontal layout: [image (fill), vertical scrollbar (1 col)]
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(vChunks.get(0));
-
-        // Render cropped image
-        Image img = Image.builder()
-                .data(diagramImageData)
-                .protocol(diagramProtocol)
-                .scaling(ImageScaling.FIT)
-                .build();
-        frame.renderWidget(img, hChunks.get(0));
-
-        // Render vertical scrollbar
-        int totalRows = (imgH + pxPerRow - 1) / pxPerRow;
-        diagramVScrollState.contentLength(totalRows);
-        diagramVScrollState.viewportContentLength(viewRows);
-        diagramVScrollState.position(diagramScroll);
-        frame.renderStatefulWidget(
-                Scrollbar.builder().build(),
-                hChunks.get(1), diagramVScrollState);
-
-        // Render horizontal scrollbar
-        if (imgW > viewW) {
-            int totalCols = (imgW + pxPerCol - 1) / pxPerCol;
-            diagramHScrollState.contentLength(totalCols);
-            diagramHScrollState.viewportContentLength(viewCols);
-            diagramHScrollState.position(diagramScrollX);
-            frame.renderStatefulWidget(
-                    Scrollbar.horizontal(),
-                    vChunks.get(1), diagramHScrollState);
-        }
-    }
-
-    // ---- Diagram styling ----
-
-    private Line styleDiagramLine(String text, int row, int scrollX) {
-        if (diagramRouteTitleRows.contains(row)) {
-            return Line.from(Span.styled(text, Style.EMPTY.fg(Color.WHITE).bold()));
-        }
-
-        // Build counter color ranges for this row
-        List<int[]> counterRanges = new ArrayList<>();
-        for (RouteDiagramAsciiRenderer.CounterPos cp : diagramCounterPositions) {
-            if (cp.row() == row) {
-                int start = cp.col() - scrollX;
-                int end = start + cp.length();
-                if (end > 0 && start < text.length()) {
-                    start = Math.max(0, start);
-                    end = Math.min(end, text.length());
-                    int colorFlag = cp.type() == RouteDiagramAsciiRenderer.CounterType.OK ? 1 : 2;
-                    counterRanges.add(new int[] { start, end, colorFlag });
-                }
-            }
-        }
-
-        List<Span> spans = new ArrayList<>();
-        int idx = 0;
-        while (idx < text.length()) {
-            int open = text.indexOf('[', idx);
-            if (open < 0) {
-                addStyledSegment(spans, text, idx, text.length(), counterRanges, Color.WHITE);
-                break;
-            }
-            int close = text.indexOf(']', open);
-            if (close < 0) {
-                addStyledSegment(spans, text, idx, text.length(), counterRanges, Color.WHITE);
-                break;
-            }
-            if (open > idx) {
-                addStyledSegment(spans, text, idx, open, counterRanges, Color.GRAY);
-            }
-            String tag = text.substring(open + 1, close);
-            Color tagColor = getDiagramNodeColor(tag);
-            spans.add(Span.styled("[" + tag + "]", Style.EMPTY.fg(tagColor).bold()));
-
-            int afterTag = close + 1;
-            int nextOpen = text.indexOf('[', afterTag);
-            int labelEnd = nextOpen >= 0 ? nextOpen : text.length();
-            if (afterTag < labelEnd) {
-                addStyledSegment(spans, text, afterTag, labelEnd, counterRanges, Color.WHITE);
-            }
-            idx = labelEnd;
-        }
-        return Line.from(spans);
-    }
-
-    private void addStyledSegment(
-            List<Span> spans, String text, int from, int to, List<int[]> counterRanges, Color defaultColor) {
-        int pos = from;
-        while (pos < to) {
-            int[] cr = findNextCounterRange(counterRanges, pos, to);
-            if (cr != null) {
-                if (pos < cr[0]) {
-                    spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(defaultColor)));
-                }
-                int counterEnd = Math.min(cr[1], to);
-                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.LIGHT_RED;
-                spans.add(Span.styled(text.substring(cr[0], counterEnd), Style.EMPTY.fg(counterColor).bold()));
-                pos = counterEnd;
-            } else {
-                spans.add(Span.styled(text.substring(pos, to), Style.EMPTY.fg(defaultColor)));
-                pos = to;
-            }
-        }
-    }
-
-    private static int[] findNextCounterRange(List<int[]> ranges, int pos, int limit) {
-        int[] best = null;
-        for (int[] range : ranges) {
-            if (range[1] > pos && range[0] < limit) {
-                int start = Math.max(range[0], pos);
-                if (best == null || start < best[0]) {
-                    best = new int[] { start, range[1], range[2] };
-                }
-            }
-        }
-        return best;
-    }
-
-    private Color getDiagramNodeColor(String type) {
-        if (type == null) {
-            return Color.GRAY;
-        }
-        return switch (type) {
-            case "from" -> Color.GREEN;
-            case "to", "toD", "wireTap", "enrich", "pollEnrich" -> Color.CYAN;
-            case "choice", "when", "otherwise" -> Color.YELLOW;
-            case "marshal", "unmarshal", "transform", "setBody", "setHeader", "setProperty",
-                    "convertBodyTo", "removeHeader", "removeHeaders", "removeProperty", "removeProperties" ->
-                Color.CYAN;
-            case "bean", "process", "log", "script", "delay" -> Color.MAGENTA;
-            case "filter", "split", "aggregate", "multicast", "recipientList",
-                    "routingSlip", "dynamicRouter", "loadBalance",
-                    "circuitBreaker", "saga", "doTry", "doCatch", "doFinally",
-                    "onException", "onCompletion", "intercept",
-                    "loop", "resequence", "throttle", "kamelet", "pipeline", "threads" ->
-                Color.rgb(0x89, 0x57, 0xE5);
-            default -> Color.GRAY;
-        };
-    }
-
     // ---- Sorting ----
 
     private int sortRoute(RouteInfo a, RouteInfo b) {
@@ -1231,7 +882,6 @@ class RoutesTab implements MonitorTab {
         Integer sel = routeTableState.selected();
         RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
                 ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        // Started -> stop; Stopped or Suspended -> start
         String command = "Started".equals(route.state) ? "stop" : "start";
         sendRouteCommand(ctx.selectedPid, route.routeId, command);
     }
@@ -1249,7 +899,6 @@ class RoutesTab implements MonitorTab {
         Integer sel = routeTableState.selected();
         RouteInfo route = (sel != null && sel >= 0 && sel < sortedRoutes.size())
                 ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        // Started -> suspend; Suspended -> resume; Stopped -> start
         String command = switch (route.state != null ? route.state : "") {
             case "Started" -> "suspend";
             case "Suspended" -> "resume";
@@ -1273,13 +922,13 @@ class RoutesTab implements MonitorTab {
         if (ctx.selectedPid == null || ctx.runner == null) {
             return;
         }
-        if (!diagramLoading.compareAndSet(false, true)) {
+        if (!diagram.beginLoad()) {
             return;
         }
 
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null || info.routes.isEmpty()) {
-            diagramLoading.set(false);
+            diagram.endLoad();
             return;
         }
 
@@ -1294,196 +943,19 @@ class RoutesTab implements MonitorTab {
             selectedRoute = sortedRoutes.get(0);
         }
 
-        // Capture state needed by the background thread
         String pid = ctx.selectedPid;
-        boolean textMode = diagramTextMode;
+        boolean textMode = diagram.isDiagramTextMode();
         boolean showMetrics = diagramMetrics;
         String routeId = diagramAllRoutes ? null : selectedRoute.routeId;
 
-        boolean initialLoad = !showDiagram;
-        if (initialLoad) {
-            diagramRouteId = routeId != null ? routeId : "all";
-            diagramLines = List.of("(Loading diagram...)");
-            diagramImageData = null;
-            diagramFullImageData = null;
-            showDiagram = true;
-            diagramScroll = 0;
-            diagramScrollX = 0;
-        }
+        diagramRouteId = routeId != null ? routeId : "all";
+        diagram.setLoadingPlaceholder();
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                loadDiagramInBackground(pid, textMode, routeId, showMetrics);
+                diagram.loadRouteDiagramInBackground(ctx, pid, textMode, routeId, showMetrics);
             } finally {
-                diagramLoading.set(false);
-            }
-        });
-    }
-
-    private void loadDiagramInBackground(String pid, boolean textMode, String routeId, boolean metrics) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "route-structure");
-        root.put("filter", "*");
-        root.put("brief", false);
-        root.put("metric", true);
-
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
-
-        if (jo == null) {
-            applyDiagramResult(routeId, List.of("(No response from integration)"), null, null, null);
-            return;
-        }
-
-        JsonArray arr = (JsonArray) jo.get("routes");
-        if (arr == null) {
-            applyDiagramResult(routeId, List.of("(No routes in response)"), null, null, null);
-            return;
-        }
-
-        List<RouteDiagramLayoutEngine.RouteInfo> diagramRoutes = new ArrayList<>();
-        for (int i = 0; i < arr.size(); i++) {
-            JsonObject o = (JsonObject) arr.get(i);
-            String rid = objToString(o.get("routeId"));
-            if (routeId != null && !routeId.equals(rid)) {
-                continue;
-            }
-            RouteDiagramLayoutEngine.RouteInfo route = new RouteDiagramLayoutEngine.RouteInfo();
-            route.routeId = rid;
-            List<JsonObject> lines = o.getCollection("code");
-            if (lines != null) {
-                for (JsonObject line : lines) {
-                    RouteDiagramLayoutEngine.NodeInfo node = new RouteDiagramLayoutEngine.NodeInfo();
-                    node.type = objToString(line.get("type"));
-                    node.code = Jsoner.unescape(objToString(line.get("code")));
-                    Integer level = line.getInteger("level");
-                    node.level = level != null ? level : 0;
-                    JsonObject stats = (JsonObject) line.get("statistics");
-                    if (stats != null) {
-                        RouteDiagramLayoutEngine.StatInfo stat = new RouteDiagramLayoutEngine.StatInfo();
-                        stat.exchangesTotal = stats.getLongOrDefault("exchangesTotal", 0);
-                        stat.exchangesFailed = stats.getLongOrDefault("exchangesFailed", 0);
-                        node.stat = stat;
-                    }
-                    route.nodes.add(node);
-                }
-            }
-            diagramRoutes.add(route);
-        }
-
-        if (textMode) {
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                    RouteDiagramLayoutEngine.NodeLabelMode.CODE);
-
-            List<String> result = new ArrayList<>();
-            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
-            Set<Integer> titleRows = new HashSet<>();
-
-            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
-                // Add separator between routes
-                if (!result.isEmpty()) {
-                    result.add("");
-                    result.add("");
-                }
-
-                int titleRow = result.size();
-
-                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, RouteDiagramLayoutEngine.PADDING);
-                RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
-                        RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
-                String ascii = asciiRenderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
-                List<RouteDiagramAsciiRenderer.CounterPos> origPositions = asciiRenderer.getCounterPositions();
-
-                // Strip empty lines and remap counter positions
-                String[] rawLines = ascii.split("\n", -1);
-                int[] rowMapping = new int[rawLines.length];
-                int baseRow = result.size();
-                int newRow = baseRow;
-                for (int i = 0; i < rawLines.length; i++) {
-                    if (!rawLines[i].isEmpty()) {
-                        rowMapping[i] = newRow++;
-                        result.add(rawLines[i]);
-                    } else {
-                        rowMapping[i] = -1;
-                    }
-                }
-                for (RouteDiagramAsciiRenderer.CounterPos cp : origPositions) {
-                    if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
-                        positions.add(new RouteDiagramAsciiRenderer.CounterPos(
-                                rowMapping[cp.row()], cp.col(), cp.length(), cp.type()));
-                    }
-                }
-                titleRows.add(titleRow);
-            }
-
-            applyDiagramResult(routeId, result, null, null, null, positions, titleRows);
-        } else {
-            TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
-            if (caps.supportsNativeImages()) {
-                RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
-                List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
-                int totalHeight = 0;
-                for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
-                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, totalHeight);
-                    layoutRoutes.add(lr);
-                    totalHeight = lr.maxY;
-                }
-                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                        engine.getNodeWidth(), RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * RouteDiagramLayoutEngine.SCALE,
-                        metrics);
-                RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
-                java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
-                ImageData fullImage = ImageData.fromBufferedImage(image);
-                ImageData resized = fullImage.resize(fullImage.width() / 2, fullImage.height() / 2);
-                ImageProtocol protocol = caps.bestProtocol();
-                applyDiagramResult(routeId, Collections.emptyList(), resized, resized, protocol);
-            } else {
-                applyDiagramResult(routeId, List.of(
-                        "(Terminal does not support image rendering)",
-                        "(Press Shift+D for text diagram)"), null, null, null);
-            }
-        }
-    }
-
-    private void applyDiagramResult(
-            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol) {
-        applyDiagramResult(routeId, lines, imageData, fullImageData, protocol, Collections.emptyList(),
-                Collections.emptySet());
-    }
-
-    private void applyDiagramResult(
-            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol,
-            List<RouteDiagramAsciiRenderer.CounterPos> positions, Set<Integer> titleRows) {
-        if (ctx.runner == null) {
-            return;
-        }
-        ctx.runner.runOnRenderThread(() -> {
-            boolean wasShowing = showDiagram;
-            diagramRouteId = routeId != null ? routeId : "all";
-            diagramLines = lines;
-            diagramCounterPositions = positions;
-            diagramRouteTitleRows = titleRows;
-            diagramImageData = imageData;
-            diagramFullImageData = fullImageData;
-            diagramProtocol = protocol;
-            if (!wasShowing) {
-                diagramScroll = 0;
-                diagramScrollX = 0;
-                diagramCropX = -1;
-                diagramCropY = -1;
-                diagramCropW = -1;
-                diagramCropH = -1;
-            }
-            // Only restore showDiagram if user hasn't cancelled via Esc while loading
-            if (wasShowing) {
-                showDiagram = true;
+                diagram.endLoad();
             }
         });
     }
@@ -1595,7 +1067,7 @@ class RoutesTab implements MonitorTab {
         }
         ctx.runner.runOnRenderThread(() -> {
             if (!showSource) {
-                return; // user cancelled via Esc while loading
+                return;
             }
             sourceTitle = location != null ? routeId + "  " + location : routeId;
             sourceLines = lines;

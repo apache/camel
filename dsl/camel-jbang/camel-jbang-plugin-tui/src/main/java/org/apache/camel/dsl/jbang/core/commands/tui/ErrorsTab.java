@@ -35,6 +35,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
@@ -60,6 +61,8 @@ class ErrorsTab implements MonitorTab {
     private boolean showHeaders = true;
     private boolean showBody = true;
 
+    private final DiagramSupport diagram = new DiagramSupport();
+
     ErrorsTab(MonitorContext ctx) {
         this.ctx = ctx;
     }
@@ -74,6 +77,19 @@ class ErrorsTab implements MonitorTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (diagram.handleScrollKeys(ke)) {
+            return true;
+        }
+
+        if (ke.isChar('d')) {
+            diagram.toggleImageDiagram(this::loadDiagramForSelectedError);
+            return true;
+        }
+        if (ke.isChar('D')) {
+            diagram.toggleTextDiagram(this::loadDiagramForSelectedError);
+            return true;
+        }
+
         if (ke.isChar('s')) {
             sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
             sort = SORT_COLUMNS[sortIndex];
@@ -138,7 +154,7 @@ class ErrorsTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
-        return false;
+        return diagram.handleEscape();
     }
 
     @Override
@@ -158,6 +174,11 @@ class ErrorsTab implements MonitorTab {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
+            return;
+        }
+
+        if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
+            diagram.renderDiagram(frame, area, " Error Diagram ");
             return;
         }
 
@@ -233,21 +254,27 @@ class ErrorsTab implements MonitorTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "navigate");
-        hint(spans, "PgUp/Dn", "scroll detail");
-        if (!wordWrap) {
-            hint(spans, "←→", "h-scroll");
+        if (diagram.isShowDiagram()) {
+            diagram.renderFooterHints(spans);
+        } else {
+            hint(spans, "Esc", "back");
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "PgUp/Dn", "scroll detail");
+            if (!wordWrap) {
+                hint(spans, "←→", "h-scroll");
+            }
+            hint(spans, "Home/End", "top/end");
+            hint(spans, "s", "sort");
+            hint(spans, "d", "diagram");
+            hint(spans, "D", "text diagram");
+            hint(spans, "f", "handled [" + handledFilter + "]");
+            hint(spans, "p", "properties [" + (showProperties ? "on" : "off") + "]");
+            hint(spans, "v", "variables [" + (showVariables ? "on" : "off") + "]");
+            hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
+            hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
+            hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
+            hint(spans, "1-0", "tabs");
         }
-        hint(spans, "Home/End", "top/end");
-        hint(spans, "s", "sort");
-        hint(spans, "f", "handled [" + handledFilter + "]");
-        hint(spans, "p", "properties [" + (showProperties ? "on" : "off") + "]");
-        hint(spans, "v", "variables [" + (showVariables ? "on" : "off") + "]");
-        hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
-        hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
-        hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
-        hint(spans, "1-0", "tabs");
     }
 
     private void renderDetail(Frame frame, Rect area, ErrorInfo ei) {
@@ -378,5 +405,48 @@ class ErrorsTab implements MonitorTab {
         }
         boolean filterVal = "true".equals(handledFilter);
         return (int) info.errors.stream().filter(e -> e.handled == filterVal).count();
+    }
+
+    // ---- Diagram ----
+
+    private void loadDiagramForSelectedError() {
+        if (ctx.selectedPid == null || ctx.runner == null) {
+            return;
+        }
+        if (!diagram.beginLoad()) {
+            return;
+        }
+
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.errors.isEmpty()) {
+            diagram.endLoad();
+            return;
+        }
+
+        List<ErrorInfo> sorted = applyFilter(info.errors);
+        Integer sel = tableState.selected();
+        ErrorInfo selectedError = null;
+        if (sel != null && sel >= 0 && sel < sorted.size()) {
+            selectedError = sorted.get(sel);
+        }
+        if (selectedError == null || selectedError.messageHistory == null || selectedError.messageHistory.length == 0) {
+            diagram.endLoad();
+            return;
+        }
+
+        String pid = ctx.selectedPid;
+        boolean textMode = diagram.isDiagramTextMode();
+        String[] messageHistory = selectedError.messageHistory;
+
+        diagram.setLoadingPlaceholder();
+
+        ctx.runner.scheduler().execute(() -> {
+            try {
+                diagram.loadHighlightedDiagramInBackground(
+                        ctx, pid, textMode, messageHistory, RouteDiagramHelper.HighlightStyle.FAIL);
+            } finally {
+                diagram.endLoad();
+            }
+        });
     }
 }

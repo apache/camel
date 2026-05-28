@@ -141,7 +141,8 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
 
     private static BufferedImage renderImage(
             List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth,
-            String nodeLabel, boolean metrics) {
+            String nodeLabel, boolean metrics,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
         RouteDiagramRenderer renderer = new RouteDiagramRenderer(
                 nodeWidth * RouteDiagramLayoutEngine.SCALE, fontSize * RouteDiagramLayoutEngine.SCALE, metrics);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
@@ -159,11 +160,18 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         }
         theme = theme.toLowerCase();
         RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse(theme);
-        return renderer.renderDiagram(layoutRoutes, currentY, colors);
+        return renderer.renderDiagram(layoutRoutes, currentY, colors, highlightedNodeIds, highlightStyle);
+    }
+
+    private static BufferedImage renderImage(
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth,
+            String nodeLabel, boolean metrics) {
+        return renderImage(routes, theme, fontSize, nodeWidth, nodeLabel, metrics, null, null);
     }
 
     private static String renderAscii(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode) {
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode,
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                 nodeWidth, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                 RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
@@ -178,7 +186,12 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
 
         RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(
                 nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode);
-        return renderer.renderDiagram(layoutRoutes, currentY);
+        return renderer.renderDiagram(layoutRoutes, currentY, highlightedNodeIds, highlightStyle);
+    }
+
+    private static String renderAscii(
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode) {
+        return renderAscii(routes, nodeWidth, nodeLabel, unicode, null, null);
     }
 
 }
