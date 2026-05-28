@@ -37,14 +37,15 @@ import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 class SendMessagePopup {
 
     private static final int FIELD_ROUTE = 0;
     private static final int FIELD_BODY = 1;
-    private static final int FIELD_MODE = 2;
-    private static final int FIELD_COUNT = 3;
+    private static final int FIELD_HEADERS = 2;
+    private static final int FIELD_MODE = 3;
 
     private boolean visible;
     private boolean sending;
@@ -57,6 +58,10 @@ class SendMessagePopup {
     private boolean inOut;
     private String resultMessage;
     private boolean resultError;
+
+    private List<HeaderEntry> headers;
+    private int selectedHeader;
+    private boolean editingHeaderKey;
 
     boolean isVisible() {
         return visible;
@@ -76,6 +81,9 @@ class SendMessagePopup {
         this.resultMessage = null;
         this.resultError = false;
         this.sending = false;
+        this.headers = null;
+        this.selectedHeader = 0;
+        this.editingHeaderKey = true;
         this.visible = true;
     }
 
@@ -99,7 +107,13 @@ class SendMessagePopup {
         }
         if (selectedField == FIELD_BODY) {
             if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
-                selectedField = FIELD_MODE;
+                if (hasHeaders()) {
+                    selectedField = FIELD_HEADERS;
+                    selectedHeader = 0;
+                    editingHeaderKey = true;
+                } else {
+                    selectedField = FIELD_MODE;
+                }
                 return true;
             }
             if (ke.isUp()) {
@@ -108,7 +122,7 @@ class SendMessagePopup {
                 }
                 return true;
             }
-            handleTextInput(ke);
+            handleTextInput(ke, bodyState);
             return true;
         }
         if (selectedField == FIELD_ROUTE) {
@@ -130,6 +144,9 @@ class SendMessagePopup {
             }
             return true;
         }
+        if (selectedField == FIELD_HEADERS) {
+            return handleHeaderKeyEvent(ke);
+        }
         if (selectedField == FIELD_MODE) {
             if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
                 if (routes.size() > 1) {
@@ -140,7 +157,17 @@ class SendMessagePopup {
                 return true;
             }
             if (ke.isUp()) {
-                selectedField = FIELD_BODY;
+                if (hasHeaders()) {
+                    selectedField = FIELD_HEADERS;
+                    selectedHeader = headers.size() - 1;
+                    editingHeaderKey = false;
+                } else {
+                    selectedField = FIELD_BODY;
+                }
+                return true;
+            }
+            if (ke.isChar('+')) {
+                addHeader();
                 return true;
             }
             if (ke.isLeft() || ke.isRight() || ke.code() == KeyCode.CHAR) {
@@ -150,6 +177,101 @@ class SendMessagePopup {
             return true;
         }
         return true;
+    }
+
+    private boolean handleHeaderKeyEvent(KeyEvent ke) {
+        HeaderEntry current = headers.get(selectedHeader);
+        TextInputState activeInput = editingHeaderKey ? current.keyInput : current.valueInput;
+
+        if (ke.isChar('+')) {
+            addHeader();
+            return true;
+        }
+        if (ke.isKey(KeyCode.TAB) || ke.isDown()) {
+            if (editingHeaderKey) {
+                editingHeaderKey = false;
+            } else if (selectedHeader < headers.size() - 1) {
+                selectedHeader++;
+                editingHeaderKey = true;
+            } else {
+                selectedField = FIELD_MODE;
+            }
+            return true;
+        }
+        if (ke.isUp()) {
+            if (editingHeaderKey) {
+                if (selectedHeader > 0) {
+                    selectedHeader--;
+                    editingHeaderKey = false;
+                } else {
+                    selectedField = FIELD_BODY;
+                }
+            } else {
+                editingHeaderKey = true;
+            }
+            return true;
+        }
+        if (ke.isDeleteBackward()) {
+            if (editingHeaderKey && current.keyInput.text().isEmpty()) {
+                headers.remove(selectedHeader);
+                if (headers.isEmpty()) {
+                    headers = null;
+                    selectedField = FIELD_BODY;
+                } else if (selectedHeader >= headers.size()) {
+                    selectedHeader = headers.size() - 1;
+                }
+                return true;
+            }
+            activeInput.deleteBackward();
+            return true;
+        }
+        if (ke.isDeleteForward()) {
+            activeInput.deleteForward();
+            return true;
+        }
+        if (ke.isLeft()) {
+            if (!editingHeaderKey && activeInput.cursorPosition() == 0) {
+                editingHeaderKey = true;
+            } else {
+                activeInput.moveCursorLeft();
+            }
+            return true;
+        }
+        if (ke.isRight()) {
+            if (editingHeaderKey && activeInput.cursorPosition() == activeInput.text().length()) {
+                editingHeaderKey = false;
+            } else {
+                activeInput.moveCursorRight();
+            }
+            return true;
+        }
+        if (ke.isHome()) {
+            activeInput.moveCursorToStart();
+            return true;
+        }
+        if (ke.isEnd()) {
+            activeInput.moveCursorToEnd();
+            return true;
+        }
+        if (ke.code() == KeyCode.CHAR) {
+            activeInput.insert(ke.character());
+            return true;
+        }
+        return true;
+    }
+
+    private void addHeader() {
+        if (headers == null) {
+            headers = new ArrayList<>();
+        }
+        headers.add(new HeaderEntry(new TextInputState(""), new TextInputState("")));
+        selectedField = FIELD_HEADERS;
+        selectedHeader = headers.size() - 1;
+        editingHeaderKey = true;
+    }
+
+    private boolean hasHeaders() {
+        return headers != null && !headers.isEmpty();
     }
 
     void doSend(MonitorContext ctx, ScheduledExecutorService scheduler) {
@@ -165,6 +287,7 @@ class SendMessagePopup {
         String endpoint = route.routeId;
         String mep = inOut ? "InOut" : "InOnly";
         String targetPid = pid;
+        List<HeaderEntry> hdrs = headers != null ? new ArrayList<>(headers) : null;
 
         scheduler.execute(() -> {
             try {
@@ -178,6 +301,23 @@ class SendMessagePopup {
                 root.put("exchangePattern", mep);
                 root.put("pollTimeout", 20000);
                 root.put("poll", false);
+
+                if (hdrs != null && !hdrs.isEmpty()) {
+                    JsonArray arr = new JsonArray();
+                    for (HeaderEntry he : hdrs) {
+                        String k = he.keyInput.text().trim();
+                        String v = he.valueInput.text();
+                        if (!k.isEmpty()) {
+                            JsonObject jo = new JsonObject();
+                            jo.put("key", k);
+                            jo.put("value", v);
+                            arr.add(jo);
+                        }
+                    }
+                    if (!arr.isEmpty()) {
+                        root.put("headers", arr);
+                    }
+                }
 
                 Path actionFile = ctx.getActionFile(targetPid);
                 PathUtils.writeTextSafely(root.toJson(), actionFile);
@@ -227,8 +367,10 @@ class SendMessagePopup {
             return;
         }
 
-        int popupW = Math.min(62, area.width() - 4);
-        int popupH = routes.size() > 1 ? 14 : 12;
+        int headerCount = hasHeaders() ? headers.size() : 0;
+        int popupW = Math.min(80, area.width() - 4);
+        int baseH = routes.size() > 1 ? 14 : 12;
+        int popupH = baseH + (headerCount > 0 ? headerCount + 1 : 0);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -244,6 +386,8 @@ class SendMessagePopup {
                 .borderType(BorderType.ROUNDED)
                 .title(title)
                 .titleBottom(Title.from(Line.from(
+                        Span.styled(" +", MonitorContext.HINT_KEY_STYLE),
+                        Span.raw(" header │"),
                         Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE),
                         Span.raw(" send │"),
                         Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE),
@@ -289,6 +433,68 @@ class SendMessagePopup {
                     Span.styled(text.isEmpty() ? "—" : text, style))), bodyArea);
         }
 
+        // Headers section
+        if (hasHeaders()) {
+            row++;
+            int keyW = Math.min(20, fieldW / 3);
+            int valW = fieldW - keyW - 3;
+            for (int i = 0; i < headers.size(); i++) {
+                row++;
+                boolean isSelected = selectedField == FIELD_HEADERS && selectedHeader == i;
+                String label = i == 0 ? "Hdrs:" : "";
+                renderLabel(frame, innerX, row, labelW, label,
+                        isSelected || (i == 0 && selectedField == FIELD_HEADERS));
+
+                HeaderEntry he = headers.get(i);
+                int fieldX = innerX + labelW;
+
+                // Key field
+                Rect keyArea = new Rect(fieldX, row, keyW, 1);
+                if (isSelected && editingHeaderKey && !sending) {
+                    TextInput keyInput = TextInput.builder()
+                            .cursorStyle(Style.EMPTY.reversed())
+                            .build();
+                    frame.renderStatefulWidget(keyInput, keyArea, he.keyInput);
+                } else {
+                    String keyText = he.keyInput.text();
+                    Style keyStyle;
+                    if (keyText.isEmpty()) {
+                        keyStyle = Style.EMPTY.dim();
+                        keyText = "<key>";
+                    } else {
+                        keyStyle = isSelected ? Style.EMPTY.bold() : Style.EMPTY;
+                    }
+                    frame.renderWidget(Paragraph.from(Line.from(
+                            Span.styled(keyText, keyStyle))), keyArea);
+                }
+
+                // Separator
+                Rect sepArea = new Rect(fieldX + keyW, row, 3, 1);
+                frame.renderWidget(Paragraph.from(Line.from(
+                        Span.styled(" : ", Style.EMPTY.dim()))), sepArea);
+
+                // Value field
+                Rect valArea = new Rect(fieldX + keyW + 3, row, valW, 1);
+                if (isSelected && !editingHeaderKey && !sending) {
+                    TextInput valInput = TextInput.builder()
+                            .cursorStyle(Style.EMPTY.reversed())
+                            .build();
+                    frame.renderStatefulWidget(valInput, valArea, he.valueInput);
+                } else {
+                    String valText = he.valueInput.text();
+                    Style valStyle;
+                    if (valText.isEmpty()) {
+                        valStyle = Style.EMPTY.dim();
+                        valText = "<value>";
+                    } else {
+                        valStyle = isSelected ? Style.EMPTY.bold() : Style.EMPTY;
+                    }
+                    frame.renderWidget(Paragraph.from(Line.from(
+                            Span.styled(valText, valStyle))), valArea);
+                }
+            }
+        }
+
         // Mode toggle
         row += 2;
         renderLabel(frame, innerX, row, labelW, "Mode:", selectedField == FIELD_MODE);
@@ -330,21 +536,21 @@ class SendMessagePopup {
         return 0;
     }
 
-    private void handleTextInput(KeyEvent ke) {
+    private void handleTextInput(KeyEvent ke, TextInputState state) {
         if (ke.isDeleteBackward()) {
-            bodyState.deleteBackward();
+            state.deleteBackward();
         } else if (ke.isDeleteForward()) {
-            bodyState.deleteForward();
+            state.deleteForward();
         } else if (ke.isLeft()) {
-            bodyState.moveCursorLeft();
+            state.moveCursorLeft();
         } else if (ke.isRight()) {
-            bodyState.moveCursorRight();
+            state.moveCursorRight();
         } else if (ke.isHome()) {
-            bodyState.moveCursorToStart();
+            state.moveCursorToStart();
         } else if (ke.isEnd()) {
-            bodyState.moveCursorToEnd();
+            state.moveCursorToEnd();
         } else if (ke.code() == KeyCode.CHAR) {
-            bodyState.insert(ke.character());
+            state.insert(ke.character());
         }
     }
 
@@ -375,5 +581,8 @@ class SendMessagePopup {
             return null;
         }
         return obj.toString();
+    }
+
+    record HeaderEntry(TextInputState keyInput, TextInputState valueInput) {
     }
 }
