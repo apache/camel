@@ -410,7 +410,25 @@ The MCP server requires https://www.jbang.dev/[JBang] to be installed and availa
 
 === Claude Code
 
-Add the following to your project's `.mcp.json` (or `~/.claude/mcp.json` for global configuration):
+==== Install as a plugin (recommended)
+
+Claude Code can install the Camel MCP server from the marketplace defined in the `apache/camel`
+repository, so you do not have to edit any configuration file by hand. JBang must still be installed
+and available on your PATH.
+
+[source,bash]
+----
+claude plugin marketplace add apache/camel
+claude plugin install camel-mcp@camel-marketplace
+----
+
+The first command registers the marketplace; the second installs the `camel-mcp` plugin, which ships
+the MCP server configuration. The server is launched on demand over STDIO via JBang.
+
+==== Manual configuration
+
+Alternatively, add the following to your project's `.mcp.json` (or `~/.claude/mcp.json` for global
+configuration):
 
 [source,json]
 ----

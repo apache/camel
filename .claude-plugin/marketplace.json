@@ -1,0 +1,16 @@
+{
+  "name": "camel-marketplace",
+  "description": "Apache Camel plugins for Claude Code, including the Camel MCP server.",
+  "owner": {
+    "name": "Apache Camel",
+    "email": "dev@camel.apache.org",
+    "url": "https://camel.apache.org"
+  },
+  "plugins": [
+    {
+      "name": "camel-mcp",
+      "source": "./plugins/camel-mcp",
+      "description": "Apache Camel MCP server: exposes the Camel Catalog plus specialized tools (catalog exploration, route and YAML DSL validation, security hardening, error diagnosis, dependency check, OpenAPI contract-first scaffolding, and version-to-version migration) to AI coding assistants over the Model Context Protocol. Requires JBang on the PATH."
+    }
+  ]
+}
