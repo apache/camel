@@ -33,7 +33,10 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "copy",
                      description = "Copies all Camel dependencies required to run to a specific directory", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel dependency copy --output-directory=lib/" })
 public class DependencyCopy extends DependencyList {
 
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");

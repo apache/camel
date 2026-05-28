@@ -32,7 +32,10 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "load",
                      description = "Loads new source files into an existing Camel", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd load --source=myRoute.yaml" })
 public class CamelLoadAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

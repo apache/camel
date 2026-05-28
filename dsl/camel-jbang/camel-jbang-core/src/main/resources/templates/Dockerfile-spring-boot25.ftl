@@ -34,27 +34,34 @@
 #
 
 ####
-# This Dockerfile is used in order to build a container that runs the Camel application
-# using layered packaging for optimized container image caching.
+# Multi-stage layered Dockerfile for Spring Boot (container-optimized).
+#
+# Uses Spring Boot's built-in layer extraction to produce optimized Docker layers.
+# Dependencies (most stable) are copied first, application code (most volatile) last.
 #
 # ./mvnw clean package
 # docker build -f src/main/docker/Dockerfile -t [=ArtifactId]:[=Version] .
 # docker run -it [=ArtifactId]:[=Version]
 #
-# Dependencies are copied first (changes infrequently - cached layer),
-# then the application JAR (changes frequently - small layer).
-#
 ###
-FROM registry.access.redhat.com/ubi9/openjdk-25:1.24
 
-# Copy dependencies first for better layer caching
-COPY --chown=185 target/lib/ /deployments/lib/
-# Copy application JAR (the .original is the thin JAR before repackaging)
-COPY --chown=185 target/[=AppJar].original /deployments/[=AppJar]
+# Stage 1: Extract Spring Boot layers
+FROM registry.access.redhat.com/ubi9/openjdk-25:1.24 AS builder
+WORKDIR /builder
+COPY target/[=AppJar] application.jar
+RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
+
+# Stage 2: Build the optimized image
+FROM registry.access.redhat.com/ubi9/openjdk-25-runtime:1.24
+
+COPY --from=builder --chown=185 /builder/extracted/dependencies/ /deployments/
+COPY --from=builder --chown=185 /builder/extracted/spring-boot-loader/ /deployments/
+COPY --from=builder --chown=185 /builder/extracted/snapshot-dependencies/ /deployments/
+COPY --from=builder --chown=185 /builder/extracted/application/ /deployments/
 
 # Uncomment to expose any given port
 # EXPOSE 8080
 USER 185
-ENV JAVA_APP_JAR="/deployments/[=AppJar]"
+WORKDIR /deployments
 
-ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
+ENTRYPOINT ["java", "-jar", "application.jar"]

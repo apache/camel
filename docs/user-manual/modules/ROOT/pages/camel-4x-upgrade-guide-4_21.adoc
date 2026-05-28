@@ -111,25 +111,25 @@ auto-disables `contentCache` on resource-based components (such as `xslt`) whose
 the route. Set `camel.component.<name>.contentCache=true` (or pass `?contentCache=true` on the
 URI) to opt back in to caching during dev mode.
 
-==== Unified `--packaging` option for `camel export`
+==== Container-optimized layered Docker packaging for `camel export`
 
-A new `--packaging` option has been added to `camel export` that works across all three runtimes
-(Camel Main, Spring Boot, and Quarkus). It replaces the Quarkus-specific `--quarkus-package-type`
-option, which is now deprecated.
+The `camel export` command now generates Dockerfiles optimized for container image layer caching
+across all three runtimes. Previously, Camel Main and Spring Boot exports produced a single-layer
+fat JAR Dockerfile; now each runtime uses a layered approach where dependencies (stable) and
+application code (volatile) are in separate Docker layers.
 
-Accepted values:
-
-- `layered` or `fast-jar` — container-optimized packaging with separate dependency layers (default)
-- `fat-jar` or `uber-jar` — single executable JAR
-
-The default is `layered`, which produces Dockerfiles optimized for container image layer caching.
 Each runtime implements layered packaging using its native mechanism:
 
-- **Camel Main**: thin JAR with dependencies in a `lib/` folder
-- **Spring Boot**: multi-stage Dockerfile using Spring Boot's built-in layer extraction
-- **Quarkus**: fast-jar packaging (unchanged from the previous `--quarkus-package-type=fast-jar` default)
+- **Camel Main**: the generated POM now includes `maven-jar-plugin` (with classpath manifest) and
+  `maven-dependency-plugin:copy-dependencies`. The Dockerfile copies `target/lib/` first (cached
+  dependency layer), then the thin `.original` JAR (small application layer).
+- **Spring Boot**: a multi-stage Dockerfile using Spring Boot's `jarmode=tools extract --layers`
+  to split the fat JAR into 4 Docker layers (dependencies, spring-boot-loader,
+  snapshot-dependencies, application).
+- **Quarkus**: unchanged — already uses fast-jar packaging with a 4-layer Dockerfile.
 
-The deprecated `--quarkus-package-type` option continues to work for backward compatibility.
+The Quarkus-specific `--quarkus-package-type` option is now deprecated and hidden from help output.
+Quarkus exports always use fast-jar (layered) packaging.
 
 ==== Improved default `--quarkus-version`
 

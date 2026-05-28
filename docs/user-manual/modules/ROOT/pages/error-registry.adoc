@@ -30,7 +30,7 @@ camel.errorRegistry.enabled = true
 | Option | Default | Type | Description
 | `camel.errorRegistry.enabled` | `false` | boolean | Whether the error registry is enabled.
 | `camel.errorRegistry.maximumEntries` | `100` | int | Maximum number of error entries to keep. When exceeded, the oldest entries are evicted.
-| `camel.errorRegistry.timeToLiveSeconds` | `3600` | int | Time-to-live for error entries in seconds. Entries older than this are evicted.
+| `camel.errorRegistry.timeToLiveSeconds` | `0` | int | Time-to-live for error entries in seconds. Entries older than this are evicted. The default value is 0 (disabled).
 | `camel.errorRegistry.bodyMaxChars` | `32768` | int | Maximum number of characters for the message body in the snapshot.
 | `camel.errorRegistry.bodyIncludeStreams` | `false` | boolean | Whether to include stream-based message bodies.
 | `camel.errorRegistry.bodyIncludeFiles` | `true` | boolean | Whether to include file-based message bodies.

@@ -37,7 +37,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "platform-http",
-         description = "Get embedded HTTP services of Camel integrations", sortOptions = false, showDefaultValues = true)
+         description = "Get embedded HTTP services of Camel integrations", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get platform-http",
+                 "  camel get platform-http --all" })
 public class ListPlatformHttp extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

@@ -25,7 +25,10 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "other",
                      description = "List miscellaneous components from the Camel Catalog", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel catalog other" })
 public class CatalogOther extends CatalogBaseCommand {
 
     public CatalogOther(CamelJBangMain main) {

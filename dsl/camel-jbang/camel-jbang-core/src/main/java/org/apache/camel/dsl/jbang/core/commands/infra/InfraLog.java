@@ -35,7 +35,10 @@ import org.apache.commons.io.input.TailerListener;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "log", description = "Displays external service logs", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel infra log kafka" })
 public class InfraLog extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Service name", arity = "0..2")

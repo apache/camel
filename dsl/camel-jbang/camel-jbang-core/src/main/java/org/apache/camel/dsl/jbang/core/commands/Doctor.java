@@ -31,7 +31,10 @@ import org.apache.camel.util.StringHelper;
 import picocli.CommandLine.Command;
 
 @Command(name = "doctor", description = "Checks the environment and reports potential issues",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel doctor" })
 public class Doctor extends CamelCommand {
 
     public Doctor(CamelJBangMain main) {

@@ -32,8 +32,8 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
     private boolean enabled;
     @Metadata(defaultValue = "100")
     private int maximumEntries = 100;
-    @Metadata(defaultValue = "3600")
-    private int timeToLiveSeconds = 3600;
+    @Metadata(defaultValue = "0")
+    private int timeToLiveSeconds;
     @Metadata(label = "advanced", defaultValue = "32768")
     private int bodyMaxChars = 32 * 1024;
     @Metadata
@@ -86,7 +86,8 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
     }
 
     /**
-     * The time-to-live in seconds for error entries. Entries older than this are evicted.
+     * The time-to-live in seconds for error entries. Entries older than this are evicted. The default value is 0
+     * (disabled).
      */
     public void setTimeToLiveSeconds(int timeToLiveSeconds) {
         this.timeToLiveSeconds = timeToLiveSeconds;

@@ -25,7 +25,10 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get", description = "Displays current Camel version", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel version get" })
 public class VersionGet extends CamelCommand {
 
     @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
