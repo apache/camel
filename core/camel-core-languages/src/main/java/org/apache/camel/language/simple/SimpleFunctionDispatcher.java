@@ -25,7 +25,9 @@ import org.apache.camel.language.simple.functions.BeanFunctionFactory;
 import org.apache.camel.language.simple.functions.BodyFunctionFactory;
 import org.apache.camel.language.simple.functions.CollateFunctionFactory;
 import org.apache.camel.language.simple.functions.CollectionFunctionFactory;
+import org.apache.camel.language.simple.functions.CustomFunctionFactory;
 import org.apache.camel.language.simple.functions.DateFunctionFactory;
+import org.apache.camel.language.simple.functions.ExchangeFunctionFactory;
 import org.apache.camel.language.simple.functions.HeaderFunctionFactory;
 import org.apache.camel.language.simple.functions.JoinFunctionFactory;
 import org.apache.camel.language.simple.functions.MathFunctionFactory;
@@ -66,6 +68,8 @@ public final class SimpleFunctionDispatcher {
             new BodyFunctionFactory(),
             new HeaderFunctionFactory(),
             new VariableFunctionFactory(),
+            new ExchangeFunctionFactory(),
+            new CustomFunctionFactory(),
             new RandomFunctionFactory(),
             new SkipFunctionFactory(),
             new CollateFunctionFactory(),
