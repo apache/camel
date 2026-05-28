@@ -36,7 +36,11 @@ import picocli.CommandLine.Command;
 import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
 @Command(name = "route-dump", description = "Dump Camel route in XML or YAML format", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel cmd route-dump",
+                 "  camel cmd route-dump --format=yaml" })
 public class CamelRouteDumpAction extends ActionBaseCommand {
 
     public static class NameIdCompletionCandidates implements Iterable<String> {

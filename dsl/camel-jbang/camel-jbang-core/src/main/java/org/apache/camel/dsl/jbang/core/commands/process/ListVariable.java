@@ -35,7 +35,11 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "variable", description = "List variables of Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(name = "variable", description = "List variables of Camel integrations", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get variable",
+                 "  camel get variable --watch" })
 public class ListVariable extends ProcessWatchCommand {
 
     public static class PidNameKeyCompletionCandidates implements Iterable<String> {

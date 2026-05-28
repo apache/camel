@@ -36,7 +36,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "groovy", description = "Groovy Sources used of Camel integrations", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get groovy",
+                 "  camel get groovy --watch" })
 public class ListGroovy extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

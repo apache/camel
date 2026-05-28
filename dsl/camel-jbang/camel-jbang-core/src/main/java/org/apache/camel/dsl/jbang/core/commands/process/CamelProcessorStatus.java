@@ -41,7 +41,12 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "processor", description = "Get status of Camel processors",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get processor",
+                 "  camel get processor --source",
+                 "  camel get processor --watch" })
 public class CamelProcessorStatus extends ProcessWatchCommand {
 
     public static class PidNameCompletionCandidates implements Iterable<String> {

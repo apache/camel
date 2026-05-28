@@ -42,7 +42,10 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "update",
                      description = "Updates dependencies in Maven pom.xml or Java source files (JBang style)",
                      sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel dependency update" })
 public class DependencyUpdate extends DependencyList {
 
     @CommandLine.Parameters(description = "Maven pom.xml or Java source files (JBang Style with //DEPS) to have dependencies updated."

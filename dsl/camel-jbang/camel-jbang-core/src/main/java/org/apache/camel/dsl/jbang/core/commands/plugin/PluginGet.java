@@ -31,7 +31,11 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
-                     description = "Get installed plugins", sortOptions = false, showDefaultValues = true)
+                     description = "Get installed plugins", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel plugin get",
+                             "  camel plugin get --all" })
 public class PluginGet extends PluginBaseCommand {
 
     @Deprecated

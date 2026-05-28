@@ -37,7 +37,10 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "expression",
                      description = "Evaluates Camel expression", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd expression --language=simple --exp='${body}'" })
 public class EvalExpressionCommand extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

@@ -38,7 +38,12 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "endpoint", description = "Get usage of Camel endpoints", sortOptions = false, showDefaultValues = true)
+@Command(name = "endpoint", description = "Get usage of Camel endpoints", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get endpoint",
+                 "  camel get endpoint --filter=kafka*",
+                 "  camel get endpoint --watch" })
 public class ListEndpoint extends ProcessWatchCommand {
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {

@@ -21,7 +21,10 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "disable-processor",
-                     description = "Disable Camel processor", sortOptions = false, showDefaultValues = true)
+                     description = "Disable Camel processor", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd disable-processor myId" })
 public class CamelProcessorDisableAction extends CamelProcessorAction {
 
     public CamelProcessorDisableAction(CamelJBangMain main) {

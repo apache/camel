@@ -84,7 +84,10 @@ import picocli.CommandLine;
  * @see org.apache.camel.dsl.jbang.core.commands.CamelJBangMain
  */
 @CommandLine.Command(name = "list",
-                     description = "List available update versions for Camel and its runtime variants")
+                     description = "List available update versions for Camel and its runtime variants",
+                     footer = {
+                             "%nExamples:",
+                             "  camel update list" })
 public class UpdateList extends CamelCommand {
 
     @CommandLine.Option(names = { "--repo", "--repos" },

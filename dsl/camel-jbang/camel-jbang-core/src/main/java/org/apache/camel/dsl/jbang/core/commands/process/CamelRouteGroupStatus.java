@@ -38,7 +38,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route-group", description = "Get status of Camel route groups",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get route-group",
+                 "  camel get route-group --watch" })
 public class CamelRouteGroupStatus extends ProcessWatchCommand {
 
     public static class PidNameAgeGroupCompletionCandidates implements Iterable<String> {

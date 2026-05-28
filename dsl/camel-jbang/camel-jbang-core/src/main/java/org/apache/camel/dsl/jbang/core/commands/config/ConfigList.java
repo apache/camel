@@ -21,7 +21,11 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel config list",
+                             "  camel config list --global" })
 public class ConfigList extends CamelCommand {
 
     @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")

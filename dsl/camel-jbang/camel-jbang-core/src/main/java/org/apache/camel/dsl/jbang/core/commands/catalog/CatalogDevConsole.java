@@ -24,7 +24,10 @@ import org.apache.camel.tooling.model.DevConsoleModel;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "dev-console",
-                     description = "List dev-consoles from the Camel Catalog", sortOptions = false, showDefaultValues = true)
+                     description = "List dev-consoles from the Camel Catalog", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel catalog dev-console" })
 public class CatalogDevConsole extends CatalogBaseCommand {
 
     public CatalogDevConsole(CamelJBangMain main) {

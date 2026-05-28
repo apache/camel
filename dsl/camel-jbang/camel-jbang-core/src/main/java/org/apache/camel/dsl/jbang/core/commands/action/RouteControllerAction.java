@@ -39,7 +39,10 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route-controller", description = "List status of route controller",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel cmd route-controller" })
 public class RouteControllerAction extends ActionWatchCommand {
 
     public static class IdStateCompletionCandidates implements Iterable<String> {
