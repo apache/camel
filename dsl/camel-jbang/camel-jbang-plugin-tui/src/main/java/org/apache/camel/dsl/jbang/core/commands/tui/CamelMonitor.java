@@ -64,6 +64,7 @@ import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.barchart.Bar;
@@ -639,6 +640,12 @@ public class CamelMonitor extends CamelCommand {
             }
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (event instanceof PasteEvent pe) {
+            if (actionsPopup.isVisible()) {
+                actionsPopup.handlePaste(pe.text());
                 return true;
             }
         }

@@ -274,6 +274,32 @@ class SendMessagePopup {
         return headers != null && !headers.isEmpty();
     }
 
+    void handlePaste(String text) {
+        if (!visible || sending || text == null || text.isEmpty()) {
+            return;
+        }
+        TextInputState target = activeTextInput();
+        if (target != null) {
+            for (int i = 0; i < text.length(); i++) {
+                char ch = text.charAt(i);
+                if (ch != '\n' && ch != '\r') {
+                    target.insert(ch);
+                }
+            }
+        }
+    }
+
+    private TextInputState activeTextInput() {
+        if (selectedField == FIELD_BODY) {
+            return bodyState;
+        }
+        if (selectedField == FIELD_HEADERS && hasHeaders()) {
+            HeaderEntry he = headers.get(selectedHeader);
+            return editingHeaderKey ? he.keyInput : he.valueInput;
+        }
+        return null;
+    }
+
     void doSend(MonitorContext ctx, ScheduledExecutorService scheduler) {
         if (!visible || sending || ctx == null || scheduler == null) {
             return;

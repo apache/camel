@@ -251,6 +251,12 @@ class ActionsPopup {
         return launchNotificationError;
     }
 
+    void handlePaste(String text) {
+        if (sendMessagePopup.isVisible()) {
+            sendMessagePopup.handlePaste(text);
+        }
+    }
+
     boolean handleKeyEvent(KeyEvent ke) {
         if (sendMessagePopup.isVisible()) {
             if (ke.isConfirm()) {
