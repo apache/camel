@@ -35,6 +35,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-nano.adoc[camel nano] | Nano editor to edit file
 | xref:jbang-commands/camel-jbang-plugin.adoc[camel plugin] | Manage plugins that add sub-commands to this CLI
 | xref:jbang-commands/camel-jbang-ps.adoc[camel ps] | List running Camel integrations
+| xref:jbang-commands/camel-jbang-restart.adoc[camel restart] | Restarts running Camel integrations (stop + re-launch)
 | xref:jbang-commands/camel-jbang-run.adoc[camel run] | Run as local Camel integration
 | xref:jbang-commands/camel-jbang-sbom.adoc[camel sbom] | Generate a CycloneDX or SPDX SBOM for a specific project
 | xref:jbang-commands/camel-jbang-script.adoc[camel script] | Run Camel integration as shell script for terminal scripting
