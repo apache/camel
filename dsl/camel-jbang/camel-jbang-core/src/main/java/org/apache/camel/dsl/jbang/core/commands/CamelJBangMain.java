@@ -190,6 +190,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("get", new CommandLine(new PluginGet(this)))
                         .addSubcommand("list", new CommandLine(new PluginList(this))))
                 .addSubcommand("ps", new CommandLine(new ListProcess(this)))
+                .addSubcommand("restart", new CommandLine(new RestartProcess(this)))
                 .addSubcommand("run", new CommandLine(new Run(this)))
                 .addSubcommand("sbom", new CommandLine(new SBOMGenerator(this)))
                 .addSubcommand("script", new CommandLine(new Script(this)))
