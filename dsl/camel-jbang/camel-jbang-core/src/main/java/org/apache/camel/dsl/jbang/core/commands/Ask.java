@@ -114,6 +114,7 @@ public class Ask extends CamelCommand {
 
     private long targetPid;
     private CamelCatalog catalog;
+    private List<JsonObject> commandMetadataCache;
 
     public Ask(CamelJBangMain main) {
         super(main);
@@ -753,6 +754,9 @@ public class Ask extends CamelCommand {
 
     @SuppressWarnings("unchecked")
     private List<JsonObject> loadCommandMetadata() {
+        if (commandMetadataCache != null) {
+            return commandMetadataCache;
+        }
         try (InputStream is = getClass().getClassLoader()
                 .getResourceAsStream("META-INF/camel-jbang-commands-metadata.json")) {
             if (is == null) {
@@ -762,10 +766,11 @@ public class Ask extends CamelCommand {
             JsonObject root = (JsonObject) Jsoner.deserialize(json);
             Object commands = root.get("commands");
             if (commands instanceof Collection<?>) {
-                return ((Collection<Object>) commands).stream()
+                commandMetadataCache = ((Collection<Object>) commands).stream()
                         .filter(JsonObject.class::isInstance)
                         .map(JsonObject.class::cast)
                         .toList();
+                return commandMetadataCache;
             }
         } catch (Exception e) {
             // ignore
@@ -904,7 +909,7 @@ public class Ask extends CamelCommand {
             return "Error: CLI not available";
         }
 
-        String[] cmdArgs = command.trim().split("\\s+");
+        String[] cmdArgs = tokenizeCommand(command.trim());
 
         // capture output by temporarily swapping the Printer on main
         StringBuilder captured = new StringBuilder();
@@ -933,6 +938,8 @@ public class Ask extends CamelCommand {
         // also capture PicoCLI's own output (usage/help text)
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
+        PrintWriter originalOut = commandLine.getOut();
+        PrintWriter originalErr = commandLine.getErr();
         commandLine.setOut(pw);
         commandLine.setErr(pw);
 
@@ -953,7 +960,36 @@ public class Ask extends CamelCommand {
             return "Error executing command: " + e.getMessage();
         } finally {
             getMain().setOut(originalPrinter);
+            commandLine.setOut(originalOut);
+            commandLine.setErr(originalErr);
         }
+    }
+
+    static String[] tokenizeCommand(String command) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inSingleQuote = false;
+        boolean inDoubleQuote = false;
+
+        for (int i = 0; i < command.length(); i++) {
+            char c = command.charAt(i);
+            if (c == '\'' && !inDoubleQuote) {
+                inSingleQuote = !inSingleQuote;
+            } else if (c == '"' && !inSingleQuote) {
+                inDoubleQuote = !inDoubleQuote;
+            } else if (Character.isWhitespace(c) && !inSingleQuote && !inDoubleQuote) {
+                if (!current.isEmpty()) {
+                    tokens.add(current.toString());
+                    current.setLength(0);
+                }
+            } else {
+                current.append(c);
+            }
+        }
+        if (!current.isEmpty()) {
+            tokens.add(current.toString());
+        }
+        return tokens.toArray(String[]::new);
     }
 
     // ---- File tools ----
