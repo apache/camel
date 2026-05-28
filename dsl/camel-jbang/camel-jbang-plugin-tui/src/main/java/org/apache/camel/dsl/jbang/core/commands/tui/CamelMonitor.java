@@ -64,6 +64,7 @@ import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.barchart.Bar;
@@ -343,6 +344,7 @@ public class CamelMonitor extends CamelCommand {
         try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
             ctx.runner = tui;
+            actionsPopup.setScheduler(tui.scheduler());
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -511,6 +513,9 @@ public class CamelMonitor extends CamelCommand {
 
             // F2 opens actions menu (global)
             if (ke.isKey(KeyCode.F2)) {
+                if (tabsState.selected() == TAB_ROUTES && routesTab != null) {
+                    actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
+                }
                 actionsPopup.open();
                 return true;
             }
@@ -635,6 +640,12 @@ public class CamelMonitor extends CamelCommand {
             }
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (event instanceof PasteEvent pe) {
+            if (actionsPopup.isVisible()) {
+                actionsPopup.handlePaste(pe.text());
                 return true;
             }
         }
@@ -2188,8 +2199,12 @@ public class CamelMonitor extends CamelCommand {
                 refreshErrorData(pids);
             }
 
-            // Refresh trace data only when the Inspect tab is visible
+            // Refresh trace data only when the History tab is visible
             if (tabsState.selected() == TAB_HISTORY) {
+                if (historyTab.historyRefreshRequested) {
+                    historyTab.historyRefreshRequested = false;
+                    refreshHistoryData(pids);
+                }
                 refreshTraceData(pids);
             }
         } catch (Exception e) {

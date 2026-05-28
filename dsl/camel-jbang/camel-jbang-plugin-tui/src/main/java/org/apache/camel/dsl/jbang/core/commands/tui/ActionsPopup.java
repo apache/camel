@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -66,8 +67,9 @@ class ActionsPopup {
     private static final int ACTION_CLASSPATH = 8;
     private static final int ACTION_MCP_INFO = 9;
     private static final int ACTION_MCP_LOG = 10;
-    private static final int ACTION_RESET_STATS = 11;
-    private static final int ACTION_STOP_ALL = 12;
+    private static final int ACTION_SEND_MESSAGE = 11;
+    private static final int ACTION_RESET_STATS = 12;
+    private static final int ACTION_STOP_ALL = 13;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -107,14 +109,17 @@ class ActionsPopup {
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
     private final ClasspathPopup classpathPopup = new ClasspathPopup();
+    private final SendMessagePopup sendMessagePopup = new SendMessagePopup();
     private final StopAllPopup stopAllPopup;
     private final CaptionOverlay captionOverlay;
+    private ScheduledExecutorService scheduler;
 
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private String launchNotification;
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
     private volatile String pendingAutoSelect;
+    private String preSelectedRouteId;
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
                  Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
@@ -135,6 +140,14 @@ class ActionsPopup {
         this.ctx = ctx;
     }
 
+    void setScheduler(ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    void setPreSelectedRouteId(String routeId) {
+        this.preSelectedRouteId = routeId;
+    }
+
     void setResetStatsAction(Runnable resetStatsAction) {
         this.resetStatsAction = resetStatsAction;
     }
@@ -149,13 +162,13 @@ class ActionsPopup {
     }
 
     private int actionCount() {
-        return mcpEnabled ? 13 : 11;
+        return mcpEnabled ? 14 : 12;
     }
 
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
                 || mcpLogPopup.isVisible() || doctorPopup.isVisible() || classpathPopup.isVisible()
-                || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
+                || sendMessagePopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
     }
 
     SelectionContext getSelectionContext() {
@@ -201,11 +214,12 @@ class ActionsPopup {
         labels.add("Tape Recording Guide");
         labels.add("Run Doctor");
         labels.add("Show Classpath");
-        labels.add("Reset Stats");
         if (mcpEnabled) {
             labels.add("MCP Info");
             labels.add("MCP Log");
         }
+        labels.add("Send Message");
+        labels.add("Reset Stats");
         labels.add("Stop All");
         return labels;
     }
@@ -224,6 +238,7 @@ class ActionsPopup {
         mcpLogPopup.close();
         doctorPopup.close();
         classpathPopup.close();
+        sendMessagePopup.close();
         stopAllPopup.close();
         captionOverlay.close();
     }
@@ -236,7 +251,21 @@ class ActionsPopup {
         return launchNotificationError;
     }
 
+    void handlePaste(String text) {
+        if (sendMessagePopup.isVisible()) {
+            sendMessagePopup.handlePaste(text);
+        }
+    }
+
     boolean handleKeyEvent(KeyEvent ke) {
+        if (sendMessagePopup.isVisible()) {
+            if (ke.isConfirm()) {
+                sendMessagePopup.doSend(ctx, scheduler);
+            } else {
+                sendMessagePopup.handleKeyEvent(ke);
+            }
+            return true;
+        }
         if (mcpLogPopup.handleKeyEvent(ke)) {
             return true;
         }
@@ -355,6 +384,9 @@ class ActionsPopup {
                     } else if (action == ACTION_MCP_LOG) {
                         showActionsMenu = false;
                         openMcpLog();
+                    } else if (action == ACTION_SEND_MESSAGE) {
+                        showActionsMenu = false;
+                        openSendMessage();
                     } else if (action == ACTION_RESET_STATS) {
                         showActionsMenu = false;
                         if (resetStatsAction != null) {
@@ -402,6 +434,9 @@ class ActionsPopup {
         }
         if (classpathPopup.isVisible()) {
             classpathPopup.render(frame, area);
+        }
+        if (sendMessagePopup.isVisible()) {
+            sendMessagePopup.render(frame, area);
         }
         if (captionOverlay.isInlineMode()) {
             captionOverlay.render(frame, area);
@@ -497,11 +532,12 @@ class ActionsPopup {
         items.add(ListItem.from("  📄 Tape Recording Guide"));
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  📦 Show Classpath"));
-        items.add(ListItem.from("  🔄 Reset Stats"));
         if (mcpEnabled) {
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));
         }
+        items.add(ListItem.from("  📩 Send Message"));
+        items.add(ListItem.from("  🔄 Reset Stats"));
         items.add(ListItem.from(stopLabel));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
@@ -775,6 +811,40 @@ class ActionsPopup {
             return index + 2;
         }
         return index;
+    }
+
+    private void openSendMessage() {
+        if (ctx == null) {
+            return;
+        }
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            List<IntegrationInfo> ints = integrations.get();
+            List<IntegrationInfo> alive = ints.stream().filter(i -> !i.vanishing && i.pid != null).toList();
+            if (alive.size() == 1) {
+                pid = alive.get(0).pid;
+            }
+        }
+        if (pid == null) {
+            setNotification("Select an integration first", true);
+            return;
+        }
+        IntegrationInfo info = findIntegration(pid);
+        if (info == null || info.routes.isEmpty()) {
+            setNotification("No routes available", true);
+            return;
+        }
+        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId);
+        preSelectedRouteId = null;
+    }
+
+    private IntegrationInfo findIntegration(String pid) {
+        for (IntegrationInfo i : integrations.get()) {
+            if (pid.equals(i.pid)) {
+                return i;
+            }
+        }
+        return null;
     }
 
     private void openTapeInstructions() {
