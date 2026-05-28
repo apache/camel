@@ -226,6 +226,9 @@ class HistoryTab implements MonitorTab {
                 return true;
             }
             if (ke.isKey(KeyCode.F5)) {
+                historyEntries = Collections.emptyList();
+                historyDetailScroll = 0;
+                historyDetailHScroll = 0;
                 return true;
             }
         }

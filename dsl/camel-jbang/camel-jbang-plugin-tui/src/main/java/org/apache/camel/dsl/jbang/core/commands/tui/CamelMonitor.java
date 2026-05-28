@@ -2199,8 +2199,9 @@ public class CamelMonitor extends CamelCommand {
                 refreshErrorData(pids);
             }
 
-            // Refresh trace data only when the Inspect tab is visible
+            // Refresh history and trace data only when the History tab is visible
             if (tabsState.selected() == TAB_HISTORY) {
+                refreshHistoryData(pids);
                 refreshTraceData(pids);
             }
         } catch (Exception e) {
