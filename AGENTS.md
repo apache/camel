@@ -83,6 +83,16 @@ When creating a PR, **always identify and request reviews** from the most releva
 - All code must pass formatting checks (`mvn formatter:format impsort:sort`) before pushing.
 - All generated files must be regenerated and committed (CI checks for uncommitted changes).
 
+### Quality Expectations
+
+- Even if static analysis is not executed during contribution validation, contributions should avoid introducing new static code analysis issues such as:
+  - code smells
+  - maintainability regressions
+  - CWE (Common Weakness Enumeration)
+  - Top OWASP vulnerabilities and security flows
+  - Avoid usage of deprecated code
+- Changes should aim to preserve or improve overall code quality.
+
 ### Asynchronous Testing: Use Awaitility Instead of Thread.sleep
 
 Do **NOT** use `Thread.sleep()` in test code. It leads to flaky, slow, and non-deterministic tests.
