@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Registry to cache transformers in memory.
@@ -44,6 +45,7 @@ public interface TransformerRegistry extends Map<TransformerKey, Transformer>, S
      * @param  key a key represents the from/to data types to transform
      * @return     {@link Transformer} if matched, otherwise null
      */
+    @Nullable
     Transformer resolveTransformer(TransformerKey key);
 
     /**

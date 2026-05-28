@@ -41,7 +41,11 @@ public class DefaultContextPluginManager implements PluginManager {
         }
         if (extension instanceof Supplier supplier) {
             extension = supplier.get();
-            addContextPlugin(type, (T) extension);
+            if (extension != null) {
+                addContextPlugin(type, (T) extension);
+            } else {
+                extensions.remove(type);
+            }
         }
         return (T) extension;
     }

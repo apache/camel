@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * A factory for creating {@link Expression}
+ *
+ * @since 3.0
  */
 @FunctionalInterface
 public interface ExpressionFactory {

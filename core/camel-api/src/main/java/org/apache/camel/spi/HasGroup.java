@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A simple marker interface for an object which has belongs to a group Group which is useful for group related
  * operation such as clustering, JMX style API
@@ -27,5 +29,6 @@ public interface HasGroup {
      *
      * @return the group
      */
+    @Nullable
     String getGroup();
 }

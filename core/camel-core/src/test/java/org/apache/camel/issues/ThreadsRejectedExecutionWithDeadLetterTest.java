@@ -26,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
+
 public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSupport {
 
     @Override
@@ -62,7 +64,9 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         template.sendBody("seda:start", "Hi World"); // will be queued
         template.sendBody("seda:start", "Bye World"); // will be rejected
 
-        Thread.sleep(100);
+        // wait for the rejected message to arrive at dead letter
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> getMockEndpoint("mock:failed").getReceivedCounter() >= 1);
 
         latch.countDown();
         latch.countDown();

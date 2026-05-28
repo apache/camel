@@ -2415,6 +2415,80 @@ public interface BedrockAgentEndpointBuilderFactory {
         public String awsBedrockAgentRuntimeFlowCompletionReason() {
             return "CamelAwsBedrockAgentRuntimeFlowCompletionReason";
         }
+        /**
+         * When performing a retrieve operation, this header will contain the
+         * list of KnowledgeBaseRetrievalResult chunks returned by the knowledge
+         * base.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalResult>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeRetrievedResults}.
+         */
+        public String awsBedrockAgentRuntimeRetrievedResults() {
+            return "CamelAwsBedrockAgentRuntimeRetrievedResults";
+        }
+        /**
+         * Overrides the maximum number of results returned by the retrieve
+         * operation. Must be a positive Integer; when not set the AWS service
+         * default is used.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeNumberOfResults}.
+         */
+        public String awsBedrockAgentRuntimeNumberOfResults() {
+            return "CamelAwsBedrockAgentRuntimeNumberOfResults";
+        }
+        /**
+         * Overrides the search type used by the retrieve operation. Accepts the
+         * AWS SearchType enum (HYBRID, SEMANTIC) or its String representation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeSearchType}.
+         */
+        public String awsBedrockAgentRuntimeSearchType() {
+            return "CamelAwsBedrockAgentRuntimeSearchType";
+        }
+        /**
+         * Pagination token used by the retrieve operation. Set on the
+         * in-message to request the next page; set on the out-message when the
+         * response carries one.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeNextToken}.
+         */
+        public String awsBedrockAgentRuntimeNextToken() {
+            return "CamelAwsBedrockAgentRuntimeNextToken";
+        }
+        /**
+         * When performing a retrieve operation, this header will contain the
+         * guardrail action (if any) applied by the knowledge base.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeRetrieveGuardrailAction}.
+         */
+        public String awsBedrockAgentRuntimeRetrieveGuardrailAction() {
+            return "CamelAwsBedrockAgentRuntimeRetrieveGuardrailAction";
+        }
     }
     static BedrockAgentEndpointBuilder endpointBuilder(String componentName, String path) {
         class BedrockAgentEndpointBuilderImpl extends AbstractEndpointBuilder implements BedrockAgentEndpointBuilder, AdvancedBedrockAgentEndpointBuilder {

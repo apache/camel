@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A Strategy pattern for handling exceptions; particularly in asynchronous processes such as consumers.
@@ -39,7 +40,7 @@ public interface ExceptionHandler {
      * @param message   additional message
      * @param exception the exception
      */
-    void handleException(String message, Throwable exception);
+    void handleException(@Nullable String message, Throwable exception);
 
     /**
      * Handles the given exception
@@ -48,5 +49,5 @@ public interface ExceptionHandler {
      * @param exchange  exchange which cause the exception
      * @param exception the exception
      */
-    void handleException(String message, Exchange exchange, Throwable exception);
+    void handleException(@Nullable String message, @Nullable Exchange exchange, Throwable exception);
 }

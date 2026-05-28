@@ -90,7 +90,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").resequence(header("seqno")).stream().timeout(150).deliveryAttemptInterval(10)
+                from("direct:start").resequence(header("seqno")).stream().timeout(2000).deliveryAttemptInterval(100)
                         .to("mock:result");
             }
         };

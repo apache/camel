@@ -274,21 +274,22 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:start
-    steps:
-      - to: mock:a
-      - claimCheck:
-          operation: Push
-      - transform:
-          expression:
-            constant: Bye World
-      - to:
-          uri: mock:b
-      - claimCheck:
-          operation: Pop
-      - to:
-          uri: mock:c
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to: mock:a
+        - claimCheck:
+            operation: Push
+        - transform:
+            expression:
+              constant: Bye World
+        - to:
+            uri: mock:b
+        - claimCheck:
+            operation: Pop
+        - to:
+            uri: mock:c
 ----
 ====
 
@@ -344,33 +345,34 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:start
-    steps:
-      - to: mock:a
-      - claimCheck:
-          operation: Set
-          key: foo
-      - transform:
-          expression:
-            constant: Bye World
-      - to:
-          uri: mock:b
-      - claimCheck:
-          operation: Get
-          key: foo
-      - to:
-          uri: mock:c
-      - transform:
-          expression:
-            constant: Hi World
-      - to:
-          uri: mock:d
-      - claimCheck:
-          operation: Get
-          key: foo
-      - to:
-          uri: mock:e
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to: mock:a
+        - claimCheck:
+            operation: Set
+            key: foo
+        - transform:
+            expression:
+              constant: Bye World
+        - to:
+            uri: mock:b
+        - claimCheck:
+            operation: Get
+            key: foo
+        - to:
+            uri: mock:c
+        - transform:
+            expression:
+              constant: Hi World
+        - to:
+            uri: mock:d
+        - claimCheck:
+            operation: Get
+            key: foo
+        - to:
+            uri: mock:e
 ----
 ====
 
@@ -423,28 +425,29 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:start
-    steps:
-      - to: 
-          uri: mock:a
-      - claimCheck:
-          operation: Push
-      - transform:
-          expression:
-            constant: ByeWorld
-      - setHeader:
-          name: foo
-          expression:
-            constant: 456
-      - removeHeader:
-          name: bar
-      - to:
-          uri: mock:b
-      - claimCheck:
-          operation: Pop
-          filter: "header:(foo|bar)"
-      - to:
-          uri: mock:c
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mock:a
+        - claimCheck:
+            operation: Push
+        - transform:
+            expression:
+              constant: ByeWorld
+        - setHeader:
+            name: foo
+            expression:
+              constant: 456
+        - removeHeader:
+            name: bar
+        - to:
+            uri: mock:b
+        - claimCheck:
+            operation: Pop
+            filter: "header:(foo|bar)"
+        - to:
+            uri: mock:c
 ----
 ====

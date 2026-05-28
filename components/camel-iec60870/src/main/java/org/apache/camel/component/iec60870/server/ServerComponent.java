@@ -31,6 +31,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.eclipse.neoscada.protocol.iec60870.server.data.DataModuleOptions;
 
 @Component("iec60870-server")
+@Deprecated(since = "4.21")
 public class ServerComponent extends AbstractIecComponent<ServerConnectionMultiplexor, ServerOptions> {
 
     public ServerComponent(final CamelContext context) {

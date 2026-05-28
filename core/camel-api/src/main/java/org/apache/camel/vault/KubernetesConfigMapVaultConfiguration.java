@@ -17,16 +17,19 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to Kubernetes Confimaps
+ *
+ * @since 4.9
  */
 public class KubernetesConfigMapVaultConfiguration extends VaultConfiguration {
 
     @Metadata
     private boolean refreshEnabled;
     @Metadata
-    private String configmaps;
+    private @Nullable String configmaps;
 
     public boolean isRefreshEnabled() {
         return refreshEnabled;
@@ -39,14 +42,14 @@ public class KubernetesConfigMapVaultConfiguration extends VaultConfiguration {
         this.refreshEnabled = refreshEnabled;
     }
 
-    public String getConfigmaps() {
+    public @Nullable String getConfigmaps() {
         return configmaps;
     }
 
     /**
      * Specify the configmap names (or pattern) to check for updates. Multiple configmaps can be separated by comma.
      */
-    public void setConfigmaps(String configmaps) {
+    public void setConfigmaps(@Nullable String configmaps) {
         this.configmaps = configmaps;
     }
 }

@@ -16,26 +16,49 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
- * A runtime exception thrown if an {@link Endpoint} cannot be resolved via URI
+ * Thrown when the {@link CamelContext} fails to resolve a URI to an {@link Endpoint}, for example because the scheme is
+ * unknown, the component is not on the classpath, or the URI contains invalid parameters.
+ * <p/>
+ * The reported URI is sanitized (credentials are masked) before being included in the exception message.
+ *
+ * @see Endpoint
+ * @see NoSuchEndpointException
  */
 public class ResolveEndpointFailedException extends RuntimeCamelException {
 
     private final String uri;
 
-    public ResolveEndpointFailedException(String uri, Throwable cause) {
-        super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: " + cause.getMessage(), cause);
+    /**
+     * @param uri   the endpoint URI that could not be resolved
+     * @param cause the cause of the failure
+     */
+    public ResolveEndpointFailedException(@Nullable String uri, Throwable cause) {
+        super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: "
+              + Objects.requireNonNull(cause, "cause").getMessage(), cause);
         this.uri = sanitizeUri(uri);
     }
 
-    public ResolveEndpointFailedException(String uri, String message) {
-        super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: " + message);
+    /**
+     * @param uri     the endpoint URI that could not be resolved
+     * @param message the detail message describing why the endpoint could not be resolved
+     */
+    public ResolveEndpointFailedException(@Nullable String uri, String message) {
+        super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: "
+              + Objects.requireNonNull(message, "message"));
         this.uri = sanitizeUri(uri);
     }
 
-    public ResolveEndpointFailedException(String uri) {
+    /**
+     * @param uri the endpoint URI that could not be resolved
+     */
+    public ResolveEndpointFailedException(@Nullable String uri) {
         super("Failed to resolve endpoint: " + sanitizeUri(uri));
         this.uri = sanitizeUri(uri);
     }

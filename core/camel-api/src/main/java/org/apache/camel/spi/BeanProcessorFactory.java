@@ -21,12 +21,15 @@ import java.lang.reflect.Method;
 import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory for creating a {@link Processor} that can invoke a method on a bean and supporting using Camel bean parameter
  * bindings.
  * <p/>
  * This requires to have camel-bean on the classpath.
+ *
+ * @since 3.0
  */
 public interface BeanProcessorFactory {
 
@@ -61,8 +64,9 @@ public interface BeanProcessorFactory {
      * @throws Exception    is thrown if error creating the processor
      */
     Processor createBeanProcessor(
-            CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
-            String method, BeanScope scope)
+            CamelContext camelContext, @Nullable Object bean, @Nullable String beanType, @Nullable Class<?> beanClass,
+            @Nullable String ref,
+            @Nullable String method, BeanScope scope)
             throws Exception;
 
 }

@@ -18,8 +18,12 @@ package org.apache.camel.spi;
 
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A manager for internal plugins. This is part of the internal Camel API and not meant for public usage.
+ *
+ * @since 4.0
  */
 public interface PluginManager {
 
@@ -29,7 +33,7 @@ public interface PluginManager {
      * @param  type the type of the extension
      * @return      the extension, or <tt>null</tt> if no extension has been installed.
      */
-    <T> T getContextPlugin(Class<T> type);
+    <T> @Nullable T getContextPlugin(Class<T> type);
 
     /**
      * Whether a plugin of the given type is already in use

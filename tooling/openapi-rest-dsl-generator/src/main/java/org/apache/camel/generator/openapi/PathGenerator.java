@@ -19,7 +19,7 @@ package org.apache.camel.generator.openapi;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import com.squareup.javapoet.JavaFile;
+import com.palantir.javapoet.JavaFile;
 import io.swagger.v3.oas.models.OpenAPI;
 
 final class PathGenerator extends RestDslSourceCodeGenerator<Path> {

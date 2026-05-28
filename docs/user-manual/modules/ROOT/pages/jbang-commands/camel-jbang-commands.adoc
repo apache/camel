@@ -11,6 +11,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 [cols="2,5",options="header"]
 |===
 | Command | Description
+| xref:jbang-commands/camel-jbang-ask.adoc[camel ask] | Ask a question about a running Camel application using AI
 | xref:jbang-commands/camel-jbang-bind.adoc[camel bind] | DEPRECATED: Bind source and sink Kamelets as a new Camel integration
 | xref:jbang-commands/camel-jbang-catalog.adoc[camel catalog] | List artifacts from Camel Catalog
 | xref:jbang-commands/camel-jbang-cmd.adoc[camel cmd] | Performs commands in the running Camel integrations, such as start/stop route, or change logging levels.
@@ -20,6 +21,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-dependency.adoc[camel dependency] | Displays all Camel dependencies required to run
 | xref:jbang-commands/camel-jbang-dirty.adoc[camel dirty] | Check if there are dirty files from previous Camel runs that did not terminate gracefully
 | xref:jbang-commands/camel-jbang-doc.adoc[camel doc] | Shows documentation for kamelet, component, and other Camel resources
+| xref:jbang-commands/camel-jbang-doctor.adoc[camel doctor] | Checks the environment and reports potential issues
 | xref:jbang-commands/camel-jbang-eval.adoc[camel eval] | Evaluate Camel expressions and scripts
 | xref:jbang-commands/camel-jbang-explain.adoc[camel explain] | Explain what a Camel route does using AI/LLM
 | xref:jbang-commands/camel-jbang-export.adoc[camel export] | Export to other runtimes (Camel Main, Spring Boot, or Quarkus)

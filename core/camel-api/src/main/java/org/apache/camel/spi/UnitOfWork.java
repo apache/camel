@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An object representing the unit of work processing an {@link Exchange} which allows the use of
@@ -104,7 +105,7 @@ public interface UnitOfWork {
      * @param target the target exchange
      * @param filter optional filter to only handover if filter returns <tt>true</tt>
      */
-    void handoverSynchronization(Exchange target, Predicate<Synchronization> filter);
+    void handoverSynchronization(Exchange target, @Nullable Predicate<Synchronization> filter);
 
     /**
      * Invoked when this unit of work has been completed, whether it has failed or completed
@@ -136,8 +137,9 @@ public interface UnitOfWork {
      * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If its disabled an
      * <tt>IllegalStateException</tt> is thrown.
      *
-     * @return the original IN {@link Message}
+     * @return the original IN {@link Message}, or {@code null} if the original message is not available
      */
+    @Nullable
     Message getOriginalInMessage();
 
     /**
@@ -179,6 +181,7 @@ public interface UnitOfWork {
      *
      * @return the route, maybe be <tt>null</tt> if not routed through a route currently.
      */
+    @Nullable
     Route getRoute();
 
     /**
@@ -196,6 +199,7 @@ public interface UnitOfWork {
      *
      * @return the route or <tt>null</tt> if none existed
      */
+    @Nullable
     Route popRoute();
 
     /**

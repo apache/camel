@@ -21,6 +21,8 @@ import java.util.Set;
 
 /**
  * Source for parameters used when creating routes from route templates.
+ *
+ * @since 3.5
  */
 public interface RouteTemplateParameterSource {
 

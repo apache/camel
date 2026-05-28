@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An interface to represent an object which wishes to be injected with a {@link Route} such as {@link Consumer} which
  * is the consumer for a route.
@@ -27,13 +29,14 @@ public interface RouteAware {
      *
      * @param route the route
      */
-    void setRoute(Route route);
+    void setRoute(@Nullable Route route);
 
     /**
      * Gets the {@link Route}
      *
      * @return the route, or <tt>null</tt> if no route has been set.
      */
+    @Nullable
     Route getRoute();
 
 }

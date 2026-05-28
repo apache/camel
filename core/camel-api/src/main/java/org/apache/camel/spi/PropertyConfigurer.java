@@ -24,7 +24,8 @@ import org.apache.camel.CamelContext;
  * This is used in Camel to have fast property configuration of Camel components & endpoints, and for EIP patterns as
  * well.
  *
- * @see PropertyConfigurerGetter
+ * @see   PropertyConfigurerGetter
+ * @since 3.0
  */
 public interface PropertyConfigurer {
 

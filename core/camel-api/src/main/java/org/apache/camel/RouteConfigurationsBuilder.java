@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * A route configurations builder is capable of building route configurations using the builder and model classes.
+ *
+ * @since 3.12
  */
 public interface RouteConfigurationsBuilder {
 

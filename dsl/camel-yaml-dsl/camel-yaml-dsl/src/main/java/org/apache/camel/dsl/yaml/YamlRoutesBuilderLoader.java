@@ -176,6 +176,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
             private boolean doConfigure(Object item) throws Exception {
                 if (item instanceof OutputAwareFromDefinition) {
+                    ctx.warnCompactNotationOnce(LOG);
                     RouteDefinition route = new RouteDefinition();
                     route.setInput(((OutputAwareFromDefinition) item).getDelegate());
                     route.setOutputs(((OutputAwareFromDefinition) item).getOutputs());

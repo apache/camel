@@ -21,6 +21,8 @@ import org.apache.camel.LineNumberAware;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
 import org.apache.camel.spi.ResourceAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -29,6 +31,8 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport implements ConstructNode {
+
+    private static final Logger LOG = LoggerFactory.getLogger(YamlDeserializerBase.class);
 
     private final Class<T> type;
 
@@ -52,6 +56,10 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
         if (node.getNodeType() == NodeType.SCALAR) {
             ScalarNode mn = (ScalarNode) node;
             target = newInstance(mn.getValue());
+            YamlDeserializationContext ctx = getDeserializationContext(node);
+            if (ctx != null) {
+                ctx.warnCompactNotationOnce(LOG);
+            }
             // line number points to the scalar itself, so it should be +1
             if (line != -1) {
                 line++;

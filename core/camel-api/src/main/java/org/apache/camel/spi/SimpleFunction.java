@@ -17,11 +17,14 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A custom simple language function
  *
  * This allows to plugin custom functions to the built-in simple language.
+ *
+ * @since 4.18
  */
 public interface SimpleFunction {
 
@@ -40,7 +43,8 @@ public interface SimpleFunction {
      * @return           the response
      * @throws Exception can be thrown if there was an error
      */
-    Object apply(Exchange exchange, Object input) throws Exception;
+    @Nullable
+    Object apply(Exchange exchange, @Nullable Object input) throws Exception;
 
     /**
      * Whether this custom function allows null as input value.

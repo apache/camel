@@ -17,7 +17,15 @@
 package org.apache.camel;
 
 /**
- * Marks the {@link Endpoint} as an endpoint from an API based component.
+ * Marker interface indicating that an {@link Endpoint} belongs to an API-based component, where the endpoint URI
+ * encodes an API name and method name rather than a plain scheme and path.
+ * <p/>
+ * API-based components (for example camel-box) are typically generated from an API specification and expose many
+ * operations as distinct endpoint URIs. This interface allows tooling and the Camel catalog to identify and document
+ * them as API endpoints.
+ *
+ * @see   Endpoint
+ * @since 3.6
  */
 public interface ApiEndpoint extends Endpoint {
 

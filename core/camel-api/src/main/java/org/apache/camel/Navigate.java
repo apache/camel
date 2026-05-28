@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Implementations support navigating a graph where you can traverse forward and each next returns a {@link List} of
  * outputs of type <tt>T</tt> that can contain <tt>0..n</tt> nodes.
@@ -32,6 +34,7 @@ public interface Navigate<T> {
      *
      * @return next group or <tt>null</tt> if no more outputs
      */
+    @Nullable
     List<T> next();
 
     /**

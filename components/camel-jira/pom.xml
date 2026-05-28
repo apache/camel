@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
-            <version>5.1.4</version>
+            <version>${jira-sal-api-version}</version>
             <!-- force jar type -->
             <type>jar</type>
         </dependency>
@@ -79,10 +79,6 @@
             <artifactId>jira-rest-java-client-api</artifactId>
             <version>${jira-rest-client-api-version}</version>
             <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.sal</groupId>
-                    <artifactId>sal-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
@@ -94,10 +90,6 @@
             <artifactId>jira-rest-java-client-core</artifactId>
             <version>${jira-rest-client-api-version}</version>
             <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.sal</groupId>
-                    <artifactId>sal-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.codehaus.jettison</groupId>
                     <artifactId>jettison</artifactId>

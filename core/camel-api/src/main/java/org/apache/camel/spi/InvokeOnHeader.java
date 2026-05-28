@@ -52,7 +52,8 @@ import org.apache.camel.Message;
  * Component implementation producers should extend org.apache.camel.support.HeaderSelectorProducer. And use Camel maven
  * tooling (camel-package-maven-plugin) to generate java source code that selects and invokes the method at runtime.
  *
- * @see Message#getHeader(String)
+ * @see   Message#getHeader(String)
+ * @since 3.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

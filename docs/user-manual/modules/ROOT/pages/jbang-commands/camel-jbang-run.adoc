@@ -29,6 +29,7 @@ camel run [options]
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--empty` | Run an empty Camel without loading source files | false | boolean
+| `--example` | Run an example by name, or list available examples when no name is given. |  | String
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--gav` | The Maven group:artifact:version (used during exporting) |  | String
@@ -66,11 +67,12 @@ camel run [options]
 | `--prompt` | Allow user to type in required parameters in prompt if not present in application | false | boolean
 | `--prop,--property` | Additional properties (override existing) |  | String
 | `--properties` | comma separated list of properties file (ex. /path/to/file.properties,/path/to/other.properties |  | String
-| `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
-| `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
-| `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
+| `--quarkus-artifact-id` _(deprecated)_ | Deprecated. This value is not used anymore. It is kept only for backwards compatibility and will be removed in Camel 5.x. Camel commands may use either 'quarkus-bom' or 'quarkus-camel-bom' artifactIds depending on the context. | quarkus-bom | String
+| `--quarkus-ext-registry` | The base URI of Quarkus Extension Registry. The default is {@value RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL} unless camel.jbang.quarkus.platform.url system property is set (the /client/platforms suffix is removed if present). |  | String
+| `--quarkus-group-id` | groupId of Quarkus Platform BOM; honored only if --quarkus-version is set | io.quarkus.platform | String
+| `--quarkus-version` | version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry |  | String
 | `--reload,--dev` | Enables dev mode (live reload when source files are updated and saved) |  | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
 | `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String

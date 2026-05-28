@@ -21,6 +21,8 @@ import java.util.concurrent.ExecutorService;
 /**
  * Marker interface to signal that a {@link ExecutorService} is simple and tasks are either only submitted via
  * {@link ExecutorService#submit(Runnable)} or executed via {@link ExecutorService#execute(Runnable)} methods.
+ *
+ * @since 3.5
  */
 public interface SimpleExecutorService {
 }

@@ -22,16 +22,18 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the variable with an {@link Expression}
  */
-public class SetVariableProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetVariableProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression variableName;
     private final Expression expression;
 
@@ -91,6 +93,16 @@ public class SetVariableProcessor extends BaseProcessorSupport implements Tracea
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public String getVariableName() {

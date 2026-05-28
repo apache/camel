@@ -17,9 +17,20 @@
 package org.apache.camel;
 
 import java.io.Serial;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
- * Base class for all Camel unchecked exceptions.
+ * Base class for all unchecked exceptions thrown by Camel itself.
+ * <p/>
+ * Used by Camel when it cannot propagate a checked {@link Exception} through an API that does not declare one (for
+ * example inside a {@link Processor} chain). The static {@link #wrapRuntimeCamelException(Throwable)} and
+ * {@link #wrapRuntimeException(Throwable)} helpers preserve the original cause unchanged when it is already unchecked,
+ * so wrapping a {@link Throwable} from a unit of work is idempotent.
+ *
+ * @see CamelException
+ * @see CamelExecutionException
  */
 public class RuntimeCamelException extends RuntimeException {
     private static final @Serial long serialVersionUID = 8046489554418284257L;
@@ -27,15 +38,25 @@ public class RuntimeCamelException extends RuntimeException {
     public RuntimeCamelException() {
     }
 
-    public RuntimeCamelException(String message) {
+    /**
+     * @param message the detail message
+     */
+    public RuntimeCamelException(@Nullable String message) {
         super(message);
     }
 
-    public RuntimeCamelException(String message, Throwable cause) {
+    /**
+     * @param message the detail message
+     * @param cause   the cause of the failure
+     */
+    public RuntimeCamelException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 
-    public RuntimeCamelException(Throwable cause) {
+    /**
+     * @param cause the cause of the failure
+     */
+    public RuntimeCamelException(@Nullable Throwable cause) {
         super(cause);
     }
 
@@ -46,6 +67,7 @@ public class RuntimeCamelException extends RuntimeException {
      * @return   the wrapper exception
      */
     public static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
+        Objects.requireNonNull(e, "e");
         if (e instanceof RuntimeCamelException re) {
             // don't double wrap
             return re;
@@ -61,6 +83,7 @@ public class RuntimeCamelException extends RuntimeException {
      * @return   the wrapper exception
      */
     public static RuntimeException wrapRuntimeException(Throwable e) {
+        Objects.requireNonNull(e, "e");
         if (e instanceof RuntimeException re) {
             // don't double wrap
             return re;

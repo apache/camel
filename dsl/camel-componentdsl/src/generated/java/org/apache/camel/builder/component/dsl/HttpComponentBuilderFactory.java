@@ -318,7 +318,10 @@ public interface HttpComponentBuilderFactory {
     
         
         /**
-         * Disables automatic request recovery and re-execution.
+         * Disables automatic request recovery and re-execution. This is useful
+         * when a server responds with HTTP 429 (Too Many Requests) and includes
+         * a long Retry-After header, which would otherwise cause the client to
+         * wait (and appear to hang) before retrying.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

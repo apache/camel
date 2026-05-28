@@ -20,6 +20,7 @@ import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.Security;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +28,8 @@ public class SecureRandomParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecureRandomParameters.class);
 
-    protected String algorithm;
-    protected String provider;
+    protected @Nullable String algorithm;
+    protected @Nullable String provider;
 
     /**
      * Returns a {@code SecureRandom} instance initialized using the configured algorithm and provider, if specified.
@@ -55,7 +56,7 @@ public class SecureRandomParameters extends JsseParameters {
         return secureRandom;
     }
 
-    public String getAlgorithm() {
+    public @Nullable String getAlgorithm() {
         return algorithm;
     }
 
@@ -67,11 +68,11 @@ public class SecureRandomParameters extends JsseParameters {
      *
      * @param value the algorithm identifier
      */
-    public void setAlgorithm(String value) {
+    public void setAlgorithm(@Nullable String value) {
         this.algorithm = value;
     }
 
-    public String getProvider() {
+    public @Nullable String getProvider() {
         return provider;
     }
 
@@ -84,7 +85,7 @@ public class SecureRandomParameters extends JsseParameters {
      *
      * @see         Security#getProviders()
      */
-    public void setProvider(String value) {
+    public void setProvider(@Nullable String value) {
         this.provider = value;
     }
 

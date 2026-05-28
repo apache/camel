@@ -32,6 +32,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * Implements try/catch/finally type processing
  */
 public class TryProcessor extends BaseProcessorSupport
-        implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, InterceptableProcessor {
+        implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, StepIdAware, InterceptableProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
@@ -50,6 +51,7 @@ public class TryProcessor extends BaseProcessorSupport
     protected final ReactiveExecutor reactiveExecutor;
     protected String id;
     protected String routeId;
+    protected String stepId;
     protected final Processor tryProcessor;
     protected final List<Processor> catchClauses;
     protected final Processor finallyProcessor;
@@ -198,5 +200,15 @@ public class TryProcessor extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 }

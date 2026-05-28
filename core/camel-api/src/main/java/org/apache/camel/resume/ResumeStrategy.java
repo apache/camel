@@ -18,10 +18,13 @@
 package org.apache.camel.resume;
 
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
  * processing records.
+ *
+ * @since 3.17
  */
 public interface ResumeStrategy extends Service {
     /**
@@ -34,7 +37,7 @@ public interface ResumeStrategy extends Service {
          *
          * @param throwable an instance of a Throwable if an exception was thrown during the update process
          */
-        void onUpdate(Throwable throwable);
+        void onUpdate(@Nullable Throwable throwable);
     }
 
     String DEFAULT_NAME = "resumeStrategy";
@@ -86,7 +89,7 @@ public interface ResumeStrategy extends Service {
      * @param  updateCallBack a callback to be executed after the updated has occurred (null if not available)
      * @throws Exception      if unable to update the offset
      */
-    <T extends Resumable> void updateLastOffset(T offset, UpdateCallBack updateCallBack) throws Exception;
+    <T extends Resumable> void updateLastOffset(T offset, @Nullable UpdateCallBack updateCallBack) throws Exception;
 
     /**
      * Updates the last processed offset
@@ -105,9 +108,19 @@ public interface ResumeStrategy extends Service {
      * @param  updateCallBack a callback to be executed after the updated has occurred (null if not available)
      * @throws Exception      if unable to update the offset
      */
-    void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack) throws Exception;
+    void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, @Nullable UpdateCallBack updateCallBack) throws Exception;
 
+    /**
+     * Sets the configuration for this resume strategy.
+     *
+     * @param resumeStrategyConfiguration the resume strategy configuration
+     */
     void setResumeStrategyConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration);
 
+    /**
+     * Gets the configuration for this resume strategy.
+     *
+     * @return the resume strategy configuration
+     */
     ResumeStrategyConfiguration getResumeStrategyConfiguration();
 }

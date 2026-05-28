@@ -18,6 +18,8 @@ package org.apache.camel.health;
 
 /**
  * An interface to represent an object which wishes to be injected with the {@link HealthCheck}
+ *
+ * @since 3.13
  */
 public interface HealthCheckAware {
 

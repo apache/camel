@@ -22,15 +22,17 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which executes the script as an expression and does not change the message body.
  */
-public class ScriptProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class ScriptProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression expression;
 
     public ScriptProcessor(Expression expression) {
@@ -78,6 +80,16 @@ public class ScriptProcessor extends BaseProcessorSupport implements Traceable, 
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public Expression getExpression() {

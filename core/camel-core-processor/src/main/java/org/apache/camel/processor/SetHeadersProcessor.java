@@ -25,14 +25,16 @@ import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 
 /**
  * A processor which sets multiple headers on the IN or OUT message with an {@link org.apache.camel.Expression}
  */
-public class SetHeadersProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetHeadersProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private final List<Expression> headerNames;
     private final List<Expression> expressions;
 
@@ -106,6 +108,16 @@ public class SetHeadersProcessor extends BaseProcessorSupport implements Traceab
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public List<Expression> getHeaderNames() {

@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Producer endpoint that sets the commit status.
  *
- * The endpoint requires the "GitHubPullRequestHeadCommitSHA" header, identifying the commit SHA on which the state will
- * be recorded.
+ * The endpoint requires the "CamelGitHubPullRequestHeadCommitSha" header, identifying the commit SHA on which the state
+ * will be recorded.
  */
 public class PullRequestStateProducer extends AbstractGitHub2Producer {
 

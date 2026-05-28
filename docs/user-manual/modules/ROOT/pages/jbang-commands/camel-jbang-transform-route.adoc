@@ -19,9 +19,12 @@ camel transform route [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--format` | Output format (xml, yaml), if only yaml files are provided, the format defaults to xml and vice versa |  | String
+| `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) |  | boolean
 | `--output` | File or directory to store transformed files. If none provide then output is printed to console. Use clipboard as name to copy content into clipboard. |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--resolve-placeholders` | Whether to resolve property placeholders in the dumped output | false | boolean
 | `--uri-as-parameters` | Whether to expand URIs into separated key/value parameters (only in use for YAML format) | true | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

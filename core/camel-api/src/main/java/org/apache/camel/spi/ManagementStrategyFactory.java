@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Service Factory for ManagementStrategy
@@ -53,6 +54,6 @@ public interface ManagementStrategyFactory {
      * @param strategy     the management strategy
      * @param lifecycle    the associated lifecycle strategy (optional)
      */
-    void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle);
+    void setupManagement(CamelContext camelContext, ManagementStrategy strategy, @Nullable LifecycleStrategy lifecycle);
 
 }

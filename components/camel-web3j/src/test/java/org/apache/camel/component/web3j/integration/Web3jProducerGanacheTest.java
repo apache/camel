@@ -757,7 +757,7 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("web3j://" + getUrl() + OPERATION.toLowerCase() + "=" + TRANSACTION);
+                        .to("web3j://" + getUrl() + "operation" + "=" + TRANSACTION);
             }
         };
     }

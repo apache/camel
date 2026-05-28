@@ -21,7 +21,7 @@ import org.apache.camel.Service;
 
 /**
  * Access to a repository of Message IDs to implement the
- * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
+ * <a href="https://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  * <p/>
  * The <tt>add</tt> and <tt>contains</tt> methods is operating according to the {@link java.util.Set} contract.
  * <p/>

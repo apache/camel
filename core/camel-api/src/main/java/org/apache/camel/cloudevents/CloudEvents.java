@@ -19,6 +19,9 @@ package org.apache.camel.cloudevents;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * @since 4.7
+ */
 public enum CloudEvents implements CloudEvent {
 
     //

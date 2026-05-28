@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +33,14 @@ import org.slf4j.LoggerFactory;
  * The processor which implements the <a href="http://camel.apache.org/message-filter.html">Message Filter</a> EIP
  * pattern.
  */
-public class FilterProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class FilterProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
 
     private final CamelContext context;
     private String id;
     private String routeId;
+    private String stepId;
     private final Predicate predicate;
     private transient long filtered;
     private String statusPropertyName;
@@ -119,6 +121,16 @@ public class FilterProcessor extends BaseDelegateProcessorSupport implements Tra
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

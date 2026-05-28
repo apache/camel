@@ -29,7 +29,7 @@
 
     <artifactId>camel-paho</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Paho</name>
+    <name>Camel :: Paho (deprecated)</name>
     <description>Camel Eclipse Paho support</description>
 
     <properties>

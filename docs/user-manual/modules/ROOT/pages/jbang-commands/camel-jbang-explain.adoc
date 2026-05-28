@@ -19,8 +19,8 @@ camel explain [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
-| `--api-key` | API key for authentication. Also reads OPENAI_API_KEY or LLM_API_KEY env vars |  | String
-| `--api-type` | API type: 'ollama' or 'openai' (OpenAI-compatible) | ollama | ApiType
+| `--api-key` | API key for authentication. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, or LLM_API_KEY env vars |  | String
+| `--api-type` | API type: 'ollama', 'openai' (OpenAI-compatible), or 'anthropic' (Anthropic/Vertex AI) |  | ApiType
 | `--catalog-context` | Include Camel Catalog descriptions in the prompt |  | boolean
 | `--format` | Output format (text, markdown) | text | String
 | `--model` | Model to use | DEFAULT_MODEL | String

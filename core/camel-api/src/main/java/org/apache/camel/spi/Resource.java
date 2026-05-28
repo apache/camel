@@ -26,8 +26,12 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Describe a resource, such as a file or class path resource.
+ *
+ * @since 3.8
  */
 public interface Resource {
 
@@ -60,7 +64,7 @@ public interface Resource {
      * </p>
      * The default implementation creates a {@code URI} object from resource location.
      */
-    default URL getURL() throws MalformedURLException {
+    default @Nullable URL getURL() throws MalformedURLException {
         URI uri = getURI();
         return uri != null ? uri.toURL() : null;
     }

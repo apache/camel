@@ -19,6 +19,21 @@ camel update run [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--camelArtifact` | The Maven artifact coordinates for the Camel upgrade recipes. | camel-upgrade-recipes | String
+| `--camelSpringBootArtifact` | The Maven artifact coordinates for the Camel Spring Boot upgrade recipes. | camel-spring-boot-upgrade-recipes | String
+| `--debug` | Enables debug logging if set to true. | false | boolean
+| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--dryRun` | If set to true, performs a dry run of the update process without making any changes. | false | boolean
+| `--extraActiveRecipes` | Comma separated list of recipes to be executed after the Camel one, make sure the artifact containing the recipes is added via extraRecipeArtifactCoordinates |  | List
+| `--extraRecipeArtifactCoordinates` | Comma separated list of artifact coordinates containing extraActiveRecipes, ex.my.org:recipes:1.0.0 |  | List
+| `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
+| `--openRewriteVersion` | The version of OpenRewrite to use during the update process. | 6.0.4 | String
+| `--quarkus-ext-registry` | The base URI of Quarkus Extension Registry. The default is {@value RuntimeType#QUARKUS_EXTENSION_REGISTRY_BASE_URL} unless camel.jbang.quarkus.platform.url system property is set (the /client/platforms suffix is removed if present). |  | String
+| `--quarkusMavenPluginGroupId` | The group ID of the Quarkus Maven plugin. | io.quarkus.platform | String
+| `--quarkusMavenPluginVersion` | The version of the Quarkus Maven plugin to use; the default value is looked up in Quarkus Extension Registry |  | String
+| `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
+| `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
+| `--upgradeTimeout` | Time to wait, in seconds, before shutting down the upgrade process | 240 | int
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

@@ -19,6 +19,8 @@ package org.apache.camel;
 import java.util.Collections;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents a node in the {@link org.apache.camel.model routes} which is identified by an id.
  */
@@ -32,6 +34,7 @@ public interface NamedNode extends LineNumberAware {
     /**
      * Gets the node prefix id.
      */
+    @Nullable
     String getNodePrefixId();
 
     /**
@@ -50,11 +53,13 @@ public interface NamedNode extends LineNumberAware {
     /**
      * Returns the description text or null if there is no description text associated with this node
      */
+    @Nullable
     String getDescriptionText();
 
     /**
      * Returns the parent
      */
+    @Nullable
     NamedNode getParent();
 
     /**
@@ -81,7 +86,7 @@ public interface NamedNode extends LineNumberAware {
         return level;
     }
 
-    default String getParentId() {
+    default @Nullable String getParentId() {
         NamedNode node = this;
         if (node.getParent() != null) {
             return node.getParent().getId();
@@ -103,14 +108,14 @@ public interface NamedNode extends LineNumberAware {
     /**
      * Special methods for Choice EIP
      */
-    default NamedNode findMatchingWhen(String id) {
+    default @Nullable NamedNode findMatchingWhen(String id) {
         return null;
     }
 
     /**
      * Special methods for Choice EIP
      */
-    default NamedNode findMatchingOtherwise(String id) {
+    default @Nullable NamedNode findMatchingOtherwise(String id) {
         return null;
     }
 

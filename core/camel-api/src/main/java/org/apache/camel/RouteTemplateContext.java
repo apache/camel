@@ -22,9 +22,12 @@ import java.util.function.Supplier;
 
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.HasCamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The context used during creating a {@link Route} from a route template.
+ *
+ * @since 3.10
  */
 public interface RouteTemplateContext extends HasCamelContext {
 
@@ -106,6 +109,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      * @param  name name of property
      * @return      the property value or <tt>null</tt> if no property exists
      */
+    @Nullable
     Object getProperty(String name);
 
     /**
@@ -117,6 +121,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      * @param  name name of property
      * @return      the property value or <tt>null</tt> if no property exists
      */
+    @Nullable
     Object getEnvironmentVariable(String name);
 
     /**
@@ -127,7 +132,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      * @return                         the property value or <tt>null</tt> if no property exists
      * @throws TypeConversionException is thrown if error during type conversion
      */
-    <T> T getProperty(String name, Class<?> type);
+    <T> @Nullable T getProperty(String name, Class<?> type);
 
     /**
      * Sets a parameter
@@ -173,11 +178,12 @@ public interface RouteTemplateContext extends HasCamelContext {
      *
      * @param configurer the configurer with callback to invoke with the given route template context
      */
-    void setConfigurer(Consumer<RouteTemplateContext> configurer);
+    void setConfigurer(@Nullable Consumer<RouteTemplateContext> configurer);
 
     /**
      * Gets the custom configurer.
      */
+    @Nullable
     Consumer<RouteTemplateContext> getConfigurer();
 
 }

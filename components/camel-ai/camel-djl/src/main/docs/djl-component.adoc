@@ -396,18 +396,6 @@ Application: `nlp/sentiment_analysis`
 
 |===
 
-==== NLP - Word Embedding
-
-Application: `nlp/word_embedding`
-
-[width="100%",cols="2,5,5",options="header"]
-|===
-| Model family | Artifact ID | Options
-
-| GloVe | `ai.djl.mxnet:glove:0.0.2` | {dimensions=50}
-
-|===
-
 ==== Time Series - Forecasting
 
 Application: `timeseries/forecasting`

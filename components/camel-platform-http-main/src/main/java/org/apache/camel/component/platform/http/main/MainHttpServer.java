@@ -131,7 +131,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     @ManagedAttribute(description = "HTTP server port number")
     public int getPort() {
-        return configuration.getBindPort();
+        return server != null ? server.getPort() : configuration.getBindPort();
     }
 
     public void setPort(int port) {

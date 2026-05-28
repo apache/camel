@@ -20,6 +20,8 @@ import org.apache.camel.CamelContextAware;
 
 /**
  * SPI for loading resources.
+ *
+ * @since 3.9
  */
 public interface ResourceLoader extends CamelContextAware {
 

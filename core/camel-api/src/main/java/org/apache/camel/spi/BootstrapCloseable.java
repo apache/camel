@@ -22,6 +22,8 @@ import java.io.Closeable;
  * A marker interface for a service, or other kind of process that is only used during bootstrapping Camel. After the
  * bootstrap is complete the {@link #close()} method is invoked which allows to do some cleanup processes such as
  * clearing internal caches, maps etc to clear up memory etc.
+ *
+ * @since 3.7
  */
 public interface BootstrapCloseable extends Closeable {
 

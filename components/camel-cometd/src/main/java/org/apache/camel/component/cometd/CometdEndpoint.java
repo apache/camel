@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -77,6 +78,8 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
     private String filterPath;
     @UriParam(label = "producer")
     private boolean disconnectLocalSession;
+    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter headers.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public CometdEndpoint(CometdComponent component, String uri, String remaining) {
         super(uri, component);
@@ -288,5 +291,13 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
      */
     public void setDisconnectLocalSession(boolean disconnectLocalSession) {
         this.disconnectLocalSession = disconnectLocalSession;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 }

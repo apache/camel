@@ -26,6 +26,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory used internally by Camel to create {@link Processor} and other internal building blocks. This factory is
@@ -33,7 +34,8 @@ import org.apache.camel.Route;
  *
  * Camel end user should NOT use this, but use {@link ProcessorFactory} instead.
  *
- * @see ProcessorFactory
+ * @see   ProcessorFactory
+ * @since 3.7
  */
 public interface InternalProcessorFactory {
 
@@ -51,7 +53,8 @@ public interface InternalProcessorFactory {
     Channel createChannel(CamelContext camelContext);
 
     AsyncProducer createInterceptSendToEndpointProcessor(
-            InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip, Predicate onWhen);
+            InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip,
+            @Nullable Predicate onWhen);
 
     AsyncProcessor createWrapProcessor(Processor processor, Processor wrapped);
 

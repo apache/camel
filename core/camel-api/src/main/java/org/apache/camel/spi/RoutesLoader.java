@@ -18,14 +18,18 @@ package org.apache.camel.spi;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 
 /**
  * SPI for loading {@link RoutesBuilder} from a list of {@link Resource}.
+ *
+ * @since 3.8
  */
 public interface RoutesLoader extends CamelContextAware {
 
@@ -60,18 +64,19 @@ public interface RoutesLoader extends CamelContextAware {
      * @param resources the resources to be loaded.
      */
     default void loadRoutes(Collection<Resource> resources) throws Exception {
+        CamelContext ctx = Objects.requireNonNull(getCamelContext(), "CamelContext");
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
         // add configuration first before the routes
         for (RoutesBuilder builder : builders) {
             if (builder instanceof RouteConfigurationsBuilder rcb) {
-                getCamelContext().addRoutesConfigurations(rcb);
+                ctx.addRoutesConfigurations(rcb);
             }
         }
         for (RoutesBuilder builder : builders) {
-            getCamelContext().addRoutes(builder);
+            ctx.addRoutes(builder);
         }
         for (RoutesBuilder builder : builders) {
-            getCamelContext().addTemplatedRoutes(builder);
+            ctx.addTemplatedRoutes(builder);
         }
     }
 
@@ -82,18 +87,19 @@ public interface RoutesLoader extends CamelContextAware {
      * @param resources the resources to be loaded.
      */
     default void loadRoutes(Resource... resources) throws Exception {
+        CamelContext ctx = Objects.requireNonNull(getCamelContext(), "CamelContext");
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
         // add configuration first before the routes
         for (RoutesBuilder builder : builders) {
             if (builder instanceof RouteConfigurationsBuilder rcb) {
-                getCamelContext().addRoutesConfigurations(rcb);
+                ctx.addRoutesConfigurations(rcb);
             }
         }
         for (RoutesBuilder builder : builders) {
-            getCamelContext().addRoutes(builder);
+            ctx.addRoutes(builder);
         }
         for (RoutesBuilder builder : builders) {
-            getCamelContext().addTemplatedRoutes(builder);
+            ctx.addTemplatedRoutes(builder);
         }
     }
 

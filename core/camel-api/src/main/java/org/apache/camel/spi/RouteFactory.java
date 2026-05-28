@@ -20,9 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory to create {@link Route}
+ *
+ * @since 3.7
  */
 public interface RouteFactory {
 
@@ -40,7 +43,7 @@ public interface RouteFactory {
      */
     Route createRoute(
             CamelContext camelContext, NamedNode routeDefinition,
-            String routeId, String routeDescription, String routeNote,
-            Endpoint endpoint, Resource resource);
+            String routeId, @Nullable String routeDescription, @Nullable String routeNote,
+            Endpoint endpoint, @Nullable Resource resource);
 
 }

@@ -33,6 +33,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
@@ -50,7 +51,8 @@ import org.slf4j.LoggerFactory;
  *
  * @see SendDynamicProcessor
  */
-public class SendProcessor extends BaseProcessorSupport implements Traceable, EndpointAware, IdAware, RouteIdAware {
+public class SendProcessor extends BaseProcessorSupport
+        implements Traceable, EndpointAware, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
 
@@ -66,6 +68,7 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
     protected ExchangePattern destinationExchangePattern;
     protected String id;
     protected String routeId;
+    protected String stepId;
     protected boolean extendedStatistics;
     protected final AtomicLong counter = new AtomicLong();
 
@@ -105,6 +108,16 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override
@@ -328,6 +341,9 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
             this.producer = pf.createAsyncProducer(destination);
             if (this.producer instanceof RouteIdAware ria) {
                 ria.setRouteId(getRouteId());
+            }
+            if (this.producer instanceof StepIdAware sia) {
+                sia.setStepId(getStepId());
             }
             // ensure the producer is managed and started
             camelContext.addService(this.producer, true, true);

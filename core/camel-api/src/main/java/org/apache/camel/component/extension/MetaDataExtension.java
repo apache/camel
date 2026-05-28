@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
+import org.jspecify.annotations.Nullable;
 
 @Deprecated(since = "4.11.0")
 public interface MetaDataExtension extends ComponentExtension {
@@ -42,6 +43,7 @@ public interface MetaDataExtension extends ComponentExtension {
          * @param  name the attribute name
          * @return      the attribute
          */
+        @Nullable
         Object getAttribute(String name);
 
         /**
@@ -59,13 +61,14 @@ public interface MetaDataExtension extends ComponentExtension {
          *                                 for the given name
          * @throws TypeConversionException is thrown if error during type conversion
          */
-        <T> T getAttribute(String name, Class<T> type);
+        <T> @Nullable T getAttribute(String name, Class<T> type);
 
         /**
          * Returns the payload of the meta data as a POJO.
          *
          * @return the body, can be <tt>null</tt>
          */
+        @Nullable
         Object getPayload();
 
         /**
@@ -75,6 +78,6 @@ public interface MetaDataExtension extends ComponentExtension {
          * @return                         the payload of the meta data as the specified type.
          * @throws TypeConversionException is thrown if error during type conversion
          */
-        <T> T getPayload(Class<T> type);
+        <T> @Nullable T getPayload(Class<T> type);
     }
 }

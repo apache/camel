@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 
 /**
  * Notification on starting a {@link CamelContext}.
+ *
+ * @since 3.5
  */
 @FunctionalInterface
 public interface OnCamelContextStarting extends OnCamelContextEvent {

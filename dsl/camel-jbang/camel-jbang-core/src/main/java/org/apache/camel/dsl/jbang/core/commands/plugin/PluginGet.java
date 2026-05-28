@@ -25,15 +25,18 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
-                     description = "Display available plugins", sortOptions = false, showDefaultValues = true)
+                     description = "Get installed plugins", sortOptions = false, showDefaultValues = true)
 public class PluginGet extends PluginBaseCommand {
 
-    @CommandLine.Option(names = { "--all" }, defaultValue = "false", description = "Display all available plugins")
+    @Deprecated
+    @CommandLine.Option(names = { "--all" }, hidden = true, defaultValue = "false",
+                        description = "DEPRECATED: use 'camel plugin list' instead")
     public boolean all;
 
     @CommandLine.Option(names = { "--repos" }, defaultValue = "false", description = "Display maven repository column")
@@ -45,6 +48,12 @@ public class PluginGet extends PluginBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (all) {
+            PluginList delegate = new PluginList(getMain());
+            delegate.repos = this.repos;
+            return delegate.doCall();
+        }
+
         List<Row> rows = new ArrayList<>();
 
         JsonObject plugins = loadConfig().getMap("plugins");
@@ -59,52 +68,46 @@ public class PluginGet extends PluginBaseCommand {
                     = details.getStringOrDefault("description", "Plugin %s called with command %s".formatted(name, command));
             String repos = details.getString("repos");
 
-            rows.add(new Row(name, command, dependency, description, repos));
+            String vendor = resolveVendor(name);
+            rows.add(new Row(name, command, dependency, description, repos, vendor));
         });
 
-        printRows(rows);
-
-        if (all) {
-            rows.clear();
-            for (PluginType camelPlugin : PluginType.values()) {
-                if (plugins.get(camelPlugin.getName()) == null) {
-                    String dependency = "org.apache.camel:camel-jbang-plugin-%s".formatted(camelPlugin.getCommand());
-                    rows.add(new Row(
-                            camelPlugin.getName(), camelPlugin.getCommand(), dependency,
-                            camelPlugin.getDescription(), camelPlugin.getRepos()));
-                }
-            }
-
-            if (!rows.isEmpty()) {
-                printer().println();
-                printer().println("Supported plugins:");
-                printer().println();
-
-                printRows(rows);
-            }
+        if (!rows.isEmpty()) {
+            printer().println("Installed plugins:");
+            printer().println();
         }
+        printRows(rows);
 
         return 0;
     }
 
-    private void printRows(List<Row> rows) {
+    private String resolveVendor(String name) {
+        return PluginType.findByName(name)
+                .map(PluginType::getVendor)
+                .or(() -> PluginHelper.findKnownPlugin(name).map(kp -> kp.getStringOrDefault("vendor", "Community")))
+                .orElse("");
+    }
+
+    protected void printRows(List<Row> rows) {
         if (!rows.isEmpty()) {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("NAME").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.name),
                     new Column().header("COMMAND").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.command),
+                    new Column().header("VENDOR").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                            .with(r -> r.vendor != null ? r.vendor : ""),
                     new Column().header("DEPENDENCY").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.dependency),
                     new Column().visible(repos).header("REPOSITORY").headerAlign(HorizontalAlign.LEFT)
                             .dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.repos),
                     new Column().header("DESCRIPTION").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .maxWidth(80, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.description))));
         }
     }
 
-    private record Row(String name, String command, String dependency, String description, String repos) {
+    record Row(String name, String command, String dependency, String description, String repos, String vendor) {
     }
 }

@@ -20,6 +20,8 @@ import org.apache.camel.StaticService;
 
 /**
  * Strategy for dumping routes during startup dump all loaded routes (incl rests and route templates).
+ *
+ * @since 4.1
  */
 public interface DumpRoutesStrategy extends StaticService {
 

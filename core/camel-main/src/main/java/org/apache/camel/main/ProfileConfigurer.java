@@ -49,6 +49,11 @@ public class ProfileConfigurer {
             if (!enabled) {
                 config.tracerConfig().withStandby(true);
             }
+            if (!config.isTracing()) {
+                config.setTracingStandby(true);
+            }
+            // enable error registry to capture routing errors
+            config.errorRegistryConfig().withEnabled(true);
         }
 
         if ("dev".equals(profile)) {
@@ -96,6 +101,7 @@ public class ProfileConfigurer {
             config.setLoadStatisticsEnabled(true);
             config.setMessageHistory(true);
             config.setInflightRepositoryBrowseEnabled(true);
+            config.setMessageSizeEnabled(true);
             config.setEndpointRuntimeStatisticsEnabled(true);
             config.setJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
             config.setJmxUpdateRouteEnabled(true);

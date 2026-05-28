@@ -21,8 +21,8 @@ has the following features:
 
 * As a consumer, monitors couch changesets for inserts, updates and
 deletes and publishes these as messages into camel routes.
-* As a producer, can save, update, delete (by using `CouchDbMethod` with `DELETE` value)
-documents and get documents by id (by using `CouchDbMethod` with GET value) into CouchDB.
+* As a producer, can save, update, delete (by using `CamelCouchDbMethod` with `DELETE` value)
+documents and get documents by id (by using `CamelCouchDbMethod` with GET value) into CouchDB.
 * Can support as many endpoints as required, eg for multiple databases
 across multiple instances.
 * Ability to have events trigger for only deletes, only inserts/updates
@@ -67,7 +67,7 @@ include::partial$component-endpoint-headers.adoc[]
 Headers are set by the consumer once the message is received. The
 producer will also set the headers for downstream processors once the
 insert/update has taken place. Any headers set prior to the producer are
-ignored. That means, for example, if you set CouchDbId as a header, it
+ignored. That means, for example, if you set CamelCouchDbId as a header, it
 will not be used as the id for insertion, the id of the document will
 still be used.
 

@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 /**
  * Information about embedded HTTP server such as when using the camel-platform-http component, that integrates with the
  * Spring Boot or Quarkus HTTP server.
+ *
+ * @since 4.7
  */
 public interface EmbeddedHttpService {
 

@@ -27,7 +27,8 @@ import java.util.Map;
  * <p/>
  * This is used by API based components
  *
- * @see PropertyConfigurer
+ * @see   PropertyConfigurer
+ * @since 3.7
  */
 public interface ExtendedPropertyConfigurerGetter extends PropertyConfigurerGetter {
 

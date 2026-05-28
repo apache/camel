@@ -22,6 +22,8 @@ import org.apache.camel.StaticService;
 
 /**
  * SPI for loading {@link RoutesBuilder} from a {@link Resource}.
+ *
+ * @since 3.8
  */
 public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
 

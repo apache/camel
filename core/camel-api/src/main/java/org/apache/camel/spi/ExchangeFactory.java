@@ -20,6 +20,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory used by {@link Consumer} to create Camel {@link Exchange} holding the incoming message received by the
@@ -34,8 +35,9 @@ import org.apache.camel.NonManagedService;
  * The factory is pluggable which allows using different strategies. The default factory will create a new
  * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
  *
- * @see ProcessorExchangeFactory
- * @see org.apache.camel.PooledExchange
+ * @see   ProcessorExchangeFactory
+ * @see   org.apache.camel.PooledExchange
+ * @since 3.9
  */
 public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware {
 
@@ -47,6 +49,7 @@ public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManag
     /**
      * The consumer using this factory.
      */
+    @Nullable
     Consumer getConsumer();
 
     /**

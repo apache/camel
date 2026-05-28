@@ -68,7 +68,9 @@ class ExportMainJkubeTest {
 
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "target/test-classes/route.yaml");
+                "--runtime=%s".formatted(rt.runtime()),
+                CamelCommandBaseTestSupport.quarkusExtRegistry(),
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);

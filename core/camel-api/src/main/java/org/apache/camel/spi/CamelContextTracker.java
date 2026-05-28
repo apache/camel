@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.io.Closeable;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -56,7 +57,7 @@ public class CamelContextTracker implements Closeable {
     }
 
     public CamelContextTracker(Filter filter) {
-        this.filter = filter;
+        this.filter = Objects.requireNonNull(filter, "filter");
     }
 
     /**
@@ -70,6 +71,7 @@ public class CamelContextTracker implements Closeable {
      * Called when a context is created.
      */
     public void contextCreated(CamelContext camelContext) {
+        Objects.requireNonNull(camelContext, "camelContext");
         // do nothing
     }
 
@@ -77,6 +79,7 @@ public class CamelContextTracker implements Closeable {
      * Called when a context has been shutdown.
      */
     public void contextDestroyed(CamelContext camelContext) {
+        Objects.requireNonNull(camelContext, "camelContext");
         // do nothing
     }
 
@@ -96,6 +99,7 @@ public class CamelContextTracker implements Closeable {
     }
 
     public static void notifyContextCreated(CamelContext camelContext) {
+        Objects.requireNonNull(camelContext, "camelContext");
         LOCK.lock();
         try {
             for (CamelContextTracker tracker : TRACKERS) {
@@ -113,6 +117,7 @@ public class CamelContextTracker implements Closeable {
     }
 
     public static void notifyContextDestroyed(CamelContext camelContext) {
+        Objects.requireNonNull(camelContext, "camelContext");
         LOCK.lock();
         try {
             for (CamelContextTracker tracker : TRACKERS) {

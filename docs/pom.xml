@@ -133,48 +133,19 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>2.0.0</version>
-                        <executions>
-                            <execution>
-                                <id>install node and yarn</id>
-                                <goals>
-                                    <goal>install-node-and-yarn</goal>
-                                </goals>
-                                <configuration>
-                                    <nodeVersion>v18.20.8</nodeVersion>
-                                    <yarnVersion>v1.22.19</yarnVersion>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>yarn install</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <configuration>
-                                     <!-- need to specify the normal install as there is another goal specified too and no cache is checked in codebase -->
-                                    <arguments>install</arguments>
-                                    <skip>${skipOnUnsupported}</skip>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>yarn-gulp</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <arguments>gulp --verbose --loglevel verbose</arguments>
-                                    <skip>${skipOnUnsupported}</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.camel</groupId>
                         <artifactId>camel-package-maven-plugin</artifactId>
                         <executions>
+                            <execution>
+                                <id>prepare-doc-symlinks</id>
+                                <goals>
+                                    <goal>prepare-doc-symlinks</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <skip>${skipOnUnsupported}</skip>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>xref-check</id>
                                 <goals>

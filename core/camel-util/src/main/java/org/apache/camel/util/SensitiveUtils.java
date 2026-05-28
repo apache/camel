@@ -63,6 +63,9 @@ public final class SensitiveUtils {
                     "keypassword",
                     "keystorePassword",
                     "keystorepassword",
+                    "knownhosts",
+                    "knownhostsfile",
+                    "knownhostsuri",
                     "oauthclientid",
                     "oauthclientsecret",
                     "oauthtoken",
@@ -155,6 +158,9 @@ public final class SensitiveUtils {
                                                     + "|\\Qkeypassword\\E"
                                                     + "|\\QkeystorePassword\\E"
                                                     + "|\\Qkeystorepassword\\E"
+                                                    + "|\\Qknownhosts\\E"
+                                                    + "|\\Qknownhostsfile\\E"
+                                                    + "|\\Qknownhostsuri\\E"
                                                     + "|\\Qoauthclientid\\E"
                                                     + "|\\Qoauthclientsecret\\E"
                                                     + "|\\Qoauthtoken\\E"

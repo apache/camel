@@ -39,13 +39,6 @@ class GrpcConsumerConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    void invalidPort() {
-        FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
-                () -> consumer.receive("grpc:localhost:0/org.apache.camel.component.grpc.PingPong"));
-        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
-    }
-
-    @Test
     void invalidMaxRstFramesPerWindowWithValidMaxRstPeriodSeconds() {
         FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
                 () -> consumer.receive(

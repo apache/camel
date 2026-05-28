@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * A factory for creating {@link Predicate}
+ *
+ * @since 3.8
  */
 @FunctionalInterface
 public interface PredicateFactory {

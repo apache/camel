@@ -21,6 +21,8 @@ import org.apache.camel.Service;
 
 /**
  * A Camel MDC service is a factory for Mapped Diagnostic Context service.
+ *
+ * @since 4.15
  */
 public interface CamelMDCService extends Service, CamelContextAware {
 

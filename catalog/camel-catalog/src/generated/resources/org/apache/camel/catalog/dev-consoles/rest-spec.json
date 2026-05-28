@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "rest-spec",
+    "title": "Rest Spec",
+    "description": "OpenAPI specification content for contract-first REST services",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.RestSpecDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+

@@ -27,12 +27,8 @@ import io.grpc.stub.StreamObserver;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,21 +40,18 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerStreamingTest.class);
 
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcTestPort = AvailablePortFinder.find();
+    private Server grpcServer;
+    private PingPongImpl pingPongServer;
 
-    private static Server grpcServer;
-    private static PingPongImpl pingPongServer;
-
-    @BeforeEach
-    public void startGrpcServer() throws Exception {
+    @Override
+    protected void setupResources() throws Exception {
         pingPongServer = new PingPongImpl();
-        grpcServer = ServerBuilder.forPort(grpcTestPort.getPort()).addService(pingPongServer).build().start();
-        LOG.info("gRPC server started on port {}", grpcTestPort.getPort());
+        grpcServer = ServerBuilder.forPort(0).addService(pingPongServer).build().start();
+        LOG.info("gRPC server started on port {}", grpcServer.getPort());
     }
 
-    @AfterEach
-    public void stopGrpcServer() {
+    @Override
+    protected void cleanupResources() {
         if (grpcServer != null) {
             grpcServer.shutdown();
             LOG.info("gRPC server stopped");
@@ -124,7 +117,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:grpc-stream-async-async-route")
-                        .to("grpc://localhost:" + grpcTestPort.getPort()
+                        .to("grpc://localhost:" + grpcServer.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?producerStrategy=STREAMING&streamRepliesTo=direct:grpc-replies&method=pingAsyncAsync");
 
                 from("direct:grpc-replies")

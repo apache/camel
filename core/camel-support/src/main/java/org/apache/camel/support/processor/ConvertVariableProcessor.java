@@ -29,6 +29,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchVariableException;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
@@ -41,12 +42,13 @@ import org.apache.camel.util.StringHelper;
  * A processor which converts the variable to be of the given type
  */
 public class ConvertVariableProcessor extends ServiceSupport
-        implements AsyncProcessor, IdAware, RouteIdAware, CamelContextAware, DisabledAware {
+        implements AsyncProcessor, IdAware, RouteIdAware, StepIdAware, CamelContextAware, DisabledAware {
 
     private CamelContext camelContext;
     private VariableRepositoryFactory factory;
     private String id;
     private String routeId;
+    private String stepId;
     private boolean disabled;
     private final String name;
     private final Expression variableName;
@@ -102,6 +104,16 @@ public class ConvertVariableProcessor extends ServiceSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

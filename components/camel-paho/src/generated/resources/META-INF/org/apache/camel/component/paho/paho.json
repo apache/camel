@@ -4,7 +4,7 @@
     "name": "paho",
     "title": "Paho",
     "description": "Communicate with MQTT message brokers using Eclipse Paho MQTT Client.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.16.0",
     "label": "messaging,iot",
     "javaType": "org.apache.camel.component.paho.PahoComponent",

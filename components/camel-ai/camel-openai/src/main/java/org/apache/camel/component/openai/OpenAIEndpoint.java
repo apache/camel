@@ -138,6 +138,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             returnDirectTools.clear();
         }
         if (client != null) {
+            client.close();
             client = null;
         }
         super.doStop();

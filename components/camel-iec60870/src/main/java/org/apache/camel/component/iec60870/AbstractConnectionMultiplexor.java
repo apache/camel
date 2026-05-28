@@ -25,6 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.21")
 public abstract class AbstractConnectionMultiplexor {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractConnectionMultiplexor.class);

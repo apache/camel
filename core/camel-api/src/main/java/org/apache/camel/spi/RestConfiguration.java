@@ -17,6 +17,9 @@
 package org.apache.camel.spi;
 
 import java.util.Map;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and
@@ -49,37 +52,37 @@ public class RestConfiguration {
         none;
     }
 
-    private String component;
-    private String apiComponent;
-    private String producerComponent;
-    private String producerApiDoc;
-    private String scheme;
-    private String host;
+    private @Nullable String component;
+    private @Nullable String apiComponent;
+    private @Nullable String producerComponent;
+    private @Nullable String producerApiDoc;
+    private @Nullable String scheme;
+    private @Nullable String host;
     private boolean useXForwardHeaders;
-    private String apiHost;
+    private @Nullable String apiHost;
     private int port;
-    private String contextPath;
-    private String apiContextPath;
-    private String apiContextRouteId;
+    private @Nullable String contextPath;
+    private @Nullable String apiContextPath;
+    private @Nullable String apiContextRouteId;
     private boolean apiVendorExtension;
     private RestHostNameResolver hostNameResolver = RestHostNameResolver.allLocalIp;
     private RestBindingMode bindingMode = RestBindingMode.off;
-    private String bindingPackageScan;
+    private @Nullable String bindingPackageScan;
     private boolean skipBindingOnErrorCode = true;
     private boolean clientRequestValidation;
     private boolean clientResponseValidation;
     private boolean inlineRoutes = true;
     private boolean enableCORS;
     private boolean enableNoContentResponse;
-    private String jsonDataFormat;
-    private String xmlDataFormat;
-    private Map<String, Object> componentProperties;
-    private Map<String, Object> endpointProperties;
-    private Map<String, Object> consumerProperties;
-    private Map<String, Object> dataFormatProperties;
-    private Map<String, Object> apiProperties;
-    private Map<String, String> corsHeaders;
-    private Map<String, String> validationLevels;
+    private @Nullable String jsonDataFormat;
+    private @Nullable String xmlDataFormat;
+    private @Nullable Map<String, Object> componentProperties;
+    private @Nullable Map<String, Object> endpointProperties;
+    private @Nullable Map<String, Object> consumerProperties;
+    private @Nullable Map<String, Object> dataFormatProperties;
+    private @Nullable Map<String, Object> apiProperties;
+    private @Nullable Map<String, String> corsHeaders;
+    private @Nullable Map<String, String> validationLevels;
 
     /**
      * Gets the name of the Camel component to use as the REST consumer
@@ -87,7 +90,7 @@ public class RestConfiguration {
      * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable
      *         implementation
      */
-    public String getComponent() {
+    public @Nullable String getComponent() {
         return component;
     }
 
@@ -97,7 +100,7 @@ public class RestConfiguration {
      * @param componentName the name of the component (such as netty-http, jetty, servlet, undertow, etc.)
      */
     public void setComponent(String componentName) {
-        this.component = componentName;
+        this.component = Objects.requireNonNull(componentName, "componentName");
     }
 
     /**
@@ -105,7 +108,7 @@ public class RestConfiguration {
      *
      * @return the component name
      */
-    public String getApiComponent() {
+    public @Nullable String getApiComponent() {
         return apiComponent;
     }
 
@@ -115,7 +118,7 @@ public class RestConfiguration {
      * @param apiComponent the name of the component (such as swagger or openapi)
      */
     public void setApiComponent(String apiComponent) {
-        this.apiComponent = apiComponent;
+        this.apiComponent = Objects.requireNonNull(apiComponent, "apiComponent");
     }
 
     /**
@@ -124,7 +127,7 @@ public class RestConfiguration {
      * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable
      *         implementation
      */
-    public String getProducerComponent() {
+    public @Nullable String getProducerComponent() {
         return producerComponent;
     }
 
@@ -134,14 +137,14 @@ public class RestConfiguration {
      * @param componentName the name of the component (such as http, netty-http, undertow, etc.)
      */
     public void setProducerComponent(String componentName) {
-        this.producerComponent = componentName;
+        this.producerComponent = Objects.requireNonNull(componentName, "componentName");
     }
 
     /**
      * Gets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
      * parameters are valid accordingly to the api document.
      */
-    public String getProducerApiDoc() {
+    public @Nullable String getProducerApiDoc() {
         return producerApiDoc;
     }
 
@@ -154,7 +157,7 @@ public class RestConfiguration {
      * <tt>http:</tt> to refer to resources to load from file or http url.
      */
     public void setProducerApiDoc(String producerApiDoc) {
-        this.producerApiDoc = producerApiDoc;
+        this.producerApiDoc = Objects.requireNonNull(producerApiDoc, "producerApiDoc");
     }
 
     /**
@@ -162,7 +165,7 @@ public class RestConfiguration {
      *
      * @return the hostname, or <tt>null</tt> to use default hostname
      */
-    public String getHost() {
+    public @Nullable String getHost() {
         return host;
     }
 
@@ -172,7 +175,7 @@ public class RestConfiguration {
      * @param host the hostname
      */
     public void setHost(String host) {
-        this.host = host;
+        this.host = Objects.requireNonNull(host, "host");
     }
 
     /**
@@ -197,7 +200,12 @@ public class RestConfiguration {
         this.useXForwardHeaders = useXForwardHeaders;
     }
 
-    public String getApiHost() {
+    /**
+     * Gets the hostname to use for the API documentation (such as swagger or openapi).
+     *
+     * @return the API host, or <tt>null</tt> to use the default host
+     */
+    public @Nullable String getApiHost() {
         return apiHost;
     }
 
@@ -207,7 +215,7 @@ public class RestConfiguration {
      * This can be used to override the generated host with this configured hostname
      */
     public void setApiHost(String apiHost) {
-        this.apiHost = apiHost;
+        this.apiHost = Objects.requireNonNull(apiHost, "apiHost");
     }
 
     /**
@@ -215,7 +223,7 @@ public class RestConfiguration {
      *
      * @return the scheme, or <tt>null</tt> to use default scheme
      */
-    public String getScheme() {
+    public @Nullable String getScheme() {
         return scheme;
     }
 
@@ -225,7 +233,7 @@ public class RestConfiguration {
      * @param scheme the scheme
      */
     public void setScheme(String scheme) {
-        this.scheme = scheme;
+        this.scheme = Objects.requireNonNull(scheme, "scheme");
     }
 
     /**
@@ -251,7 +259,7 @@ public class RestConfiguration {
      *
      * @return the context path, or <tt>null</tt> if none configured.
      */
-    public String getContextPath() {
+    public @Nullable String getContextPath() {
         return contextPath;
     }
 
@@ -265,10 +273,15 @@ public class RestConfiguration {
      * @param contextPath the context path
      */
     public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
+        this.contextPath = Objects.requireNonNull(contextPath, "contextPath");
     }
 
-    public String getApiContextPath() {
+    /**
+     * Gets the leading API context-path the REST API services will be using.
+     *
+     * @return the API context path, or <tt>null</tt> if none configured.
+     */
+    public @Nullable String getApiContextPath() {
         return apiContextPath;
     }
 
@@ -281,10 +294,15 @@ public class RestConfiguration {
      * @param contextPath the API context path
      */
     public void setApiContextPath(String contextPath) {
-        this.apiContextPath = contextPath;
+        this.apiContextPath = Objects.requireNonNull(contextPath, "contextPath");
     }
 
-    public String getApiContextRouteId() {
+    /**
+     * Gets the route id used for the route that services the REST API.
+     *
+     * @return the route id, or <tt>null</tt> if using an auto-assigned id
+     */
+    public @Nullable String getApiContextRouteId() {
         return apiContextRouteId;
     }
 
@@ -296,9 +314,14 @@ public class RestConfiguration {
      * @param apiContextRouteId the route id
      */
     public void setApiContextRouteId(String apiContextRouteId) {
-        this.apiContextRouteId = apiContextRouteId;
+        this.apiContextRouteId = Objects.requireNonNull(apiContextRouteId, "apiContextRouteId");
     }
 
+    /**
+     * Whether vendor extension is enabled in the REST APIs.
+     *
+     * @return true if vendor extensions are included in the API docs
+     */
     public boolean isApiVendorExtension() {
         return apiVendorExtension;
     }
@@ -327,7 +350,7 @@ public class RestConfiguration {
      * @param hostNameResolver the resolver
      */
     public void setHostNameResolver(RestHostNameResolver hostNameResolver) {
-        this.hostNameResolver = hostNameResolver;
+        this.hostNameResolver = Objects.requireNonNull(hostNameResolver, "hostNameResolver");
     }
 
     /**
@@ -336,6 +359,7 @@ public class RestConfiguration {
      * @param hostNameResolver the resolver
      */
     public void setHostNameResolver(String hostNameResolver) {
+        Objects.requireNonNull(hostNameResolver, "hostNameResolver");
         this.hostNameResolver = RestHostNameResolver.valueOf(hostNameResolver);
     }
 
@@ -354,7 +378,7 @@ public class RestConfiguration {
      * @param bindingMode the binding mode
      */
     public void setBindingMode(RestBindingMode bindingMode) {
-        this.bindingMode = bindingMode;
+        this.bindingMode = Objects.requireNonNull(bindingMode, "bindingMode");
     }
 
     /**
@@ -363,10 +387,16 @@ public class RestConfiguration {
      * @param bindingMode the binding mode
      */
     public void setBindingMode(String bindingMode) {
+        Objects.requireNonNull(bindingMode, "bindingMode");
         this.bindingMode = RestBindingMode.valueOf(bindingMode);
     }
 
-    public String getBindingPackageScan() {
+    /**
+     * Gets the package name used as base for classpath scanning of POJO classes when binding mode is enabled.
+     *
+     * @return the package name, or <tt>null</tt> if not configured
+     */
+    public @Nullable String getBindingPackageScan() {
         return bindingPackageScan;
     }
 
@@ -375,7 +405,7 @@ public class RestConfiguration {
      * is enabled for JSon or XML. Multiple package names can be separated by comma.
      */
     public void setBindingPackageScan(String bindingPackageScan) {
-        this.bindingPackageScan = bindingPackageScan;
+        this.bindingPackageScan = Objects.requireNonNull(bindingPackageScan, "bindingPackageScan");
     }
 
     /**
@@ -400,6 +430,11 @@ public class RestConfiguration {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
+    /**
+     * Whether client request validation is enabled.
+     *
+     * @return true if client request validation is enabled
+     */
     public boolean isClientRequestValidation() {
         return clientRequestValidation;
     }
@@ -416,6 +451,11 @@ public class RestConfiguration {
         this.clientRequestValidation = clientRequestValidation;
     }
 
+    /**
+     * Whether client response validation is enabled.
+     *
+     * @return true if client response validation is enabled
+     */
     public boolean isClientResponseValidation() {
         return clientResponseValidation;
     }
@@ -455,6 +495,11 @@ public class RestConfiguration {
         this.enableCORS = enableCORS;
     }
 
+    /**
+     * Whether HTTP 204 No Content responses are enabled for empty JSON or XML responses.
+     *
+     * @return true if HTTP 204 responses are enabled
+     */
     public boolean isEnableNoContentResponse() {
         return enableNoContentResponse;
     }
@@ -470,6 +515,11 @@ public class RestConfiguration {
         this.enableNoContentResponse = enableNoContentResponse;
     }
 
+    /**
+     * Whether routes in rest-dsl linked via direct endpoints are inlined as a single route.
+     *
+     * @return true if rest-dsl routes are inlined
+     */
     public boolean isInlineRoutes() {
         return inlineRoutes;
     }
@@ -496,7 +546,7 @@ public class RestConfiguration {
      *
      * @return the name, or <tt>null</tt> to use default
      */
-    public String getJsonDataFormat() {
+    public @Nullable String getJsonDataFormat() {
         return jsonDataFormat;
     }
 
@@ -509,7 +559,7 @@ public class RestConfiguration {
      * @param name name of the data format
      */
     public void setJsonDataFormat(String name) {
-        this.jsonDataFormat = name;
+        this.jsonDataFormat = Objects.requireNonNull(name, "name");
     }
 
     /**
@@ -520,7 +570,7 @@ public class RestConfiguration {
      *
      * @return the name, or <tt>null</tt> to use default
      */
-    public String getXmlDataFormat() {
+    public @Nullable String getXmlDataFormat() {
         return xmlDataFormat;
     }
 
@@ -533,7 +583,7 @@ public class RestConfiguration {
      * @param name name of the data format
      */
     public void setXmlDataFormat(String name) {
-        this.xmlDataFormat = name;
+        this.xmlDataFormat = Objects.requireNonNull(name, "name");
     }
 
     /**
@@ -541,7 +591,7 @@ public class RestConfiguration {
      *
      * @return additional options
      */
-    public Map<String, Object> getComponentProperties() {
+    public @Nullable Map<String, Object> getComponentProperties() {
         return componentProperties;
     }
 
@@ -551,7 +601,7 @@ public class RestConfiguration {
      * @param componentProperties the options
      */
     public void setComponentProperties(Map<String, Object> componentProperties) {
-        this.componentProperties = componentProperties;
+        this.componentProperties = Objects.requireNonNull(componentProperties, "componentProperties");
     }
 
     /**
@@ -559,7 +609,7 @@ public class RestConfiguration {
      *
      * @return additional options
      */
-    public Map<String, Object> getEndpointProperties() {
+    public @Nullable Map<String, Object> getEndpointProperties() {
         return endpointProperties;
     }
 
@@ -569,7 +619,7 @@ public class RestConfiguration {
      * @param endpointProperties the options
      */
     public void setEndpointProperties(Map<String, Object> endpointProperties) {
-        this.endpointProperties = endpointProperties;
+        this.endpointProperties = Objects.requireNonNull(endpointProperties, "endpointProperties");
     }
 
     /**
@@ -577,7 +627,7 @@ public class RestConfiguration {
      *
      * @return additional options
      */
-    public Map<String, Object> getConsumerProperties() {
+    public @Nullable Map<String, Object> getConsumerProperties() {
         return consumerProperties;
     }
 
@@ -587,7 +637,7 @@ public class RestConfiguration {
      * @param consumerProperties the options
      */
     public void setConsumerProperties(Map<String, Object> consumerProperties) {
-        this.consumerProperties = consumerProperties;
+        this.consumerProperties = Objects.requireNonNull(consumerProperties, "consumerProperties");
     }
 
     /**
@@ -595,7 +645,7 @@ public class RestConfiguration {
      *
      * @return additional options
      */
-    public Map<String, Object> getDataFormatProperties() {
+    public @Nullable Map<String, Object> getDataFormatProperties() {
         return dataFormatProperties;
     }
 
@@ -605,10 +655,15 @@ public class RestConfiguration {
      * @param dataFormatProperties the options
      */
     public void setDataFormatProperties(Map<String, Object> dataFormatProperties) {
-        this.dataFormatProperties = dataFormatProperties;
+        this.dataFormatProperties = Objects.requireNonNull(dataFormatProperties, "dataFormatProperties");
     }
 
-    public Map<String, Object> getApiProperties() {
+    /**
+     * Gets additional options on API level.
+     *
+     * @return additional options
+     */
+    public @Nullable Map<String, Object> getApiProperties() {
         return apiProperties;
     }
 
@@ -618,7 +673,7 @@ public class RestConfiguration {
      * @param apiProperties the options
      */
     public void setApiProperties(Map<String, Object> apiProperties) {
-        this.apiProperties = apiProperties;
+        this.apiProperties = Objects.requireNonNull(apiProperties, "apiProperties");
     }
 
     /**
@@ -626,7 +681,7 @@ public class RestConfiguration {
      *
      * @return the CORS headers
      */
-    public Map<String, String> getCorsHeaders() {
+    public @Nullable Map<String, String> getCorsHeaders() {
         return corsHeaders;
     }
 
@@ -636,7 +691,7 @@ public class RestConfiguration {
      * @param corsHeaders the CORS headers
      */
     public void setCorsHeaders(Map<String, String> corsHeaders) {
-        this.corsHeaders = corsHeaders;
+        this.corsHeaders = Objects.requireNonNull(corsHeaders, "corsHeaders");
     }
 
     /**
@@ -644,14 +699,14 @@ public class RestConfiguration {
      *
      * @return the validation levels
      */
-    public Map<String, String> getValidationLevels() {
+    public @Nullable Map<String, String> getValidationLevels() {
         return validationLevels;
     }
 
     /**
      * Sets the client request validation levels when using camel-openapi-validator.
      */
-    public void setValidationLevels(Map<String, String> validationLevels) {
+    public void setValidationLevels(@Nullable Map<String, String> validationLevels) {
         this.validationLevels = validationLevels;
     }
 }

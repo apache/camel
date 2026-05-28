@@ -36,6 +36,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
@@ -43,6 +44,7 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.SyntheticBacklogTracer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
@@ -208,7 +210,19 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                         exchange.setRouteStop(true);
                     } else if ("mock".equalsIgnoreCase(missingOperation)) {
                         // no route then try to load mock data as the answer
-                        loadMockData(operation, verb, path, exchange);
+                        SyntheticBacklogTracer syntheticTracer
+                                = camelContext.getCamelContextExtension().getContextPlugin(SyntheticBacklogTracer.class);
+                        NamedNode mockNode = new MockOperationNode(verb, path, operation.getOperationId());
+                        if (syntheticTracer != null && (syntheticTracer.isEnabled() || syntheticTracer.isStandby())) {
+                            syntheticTracer.traceFirstNode(mockNode, exchange);
+                        }
+                        try {
+                            loadMockData(operation, verb, path, exchange);
+                        } finally {
+                            if (syntheticTracer != null && (syntheticTracer.isEnabled() || syntheticTracer.isStandby())) {
+                                syntheticTracer.traceLastNode(mockNode, exchange);
+                            }
+                        }
                     }
                     if (requestError == null) {
                         var responseError = binding.doClientResponseValidation(exchange);
@@ -441,4 +455,65 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         }
     }
 
+    /**
+     * Minimal {@link NamedNode} to represent a mocked OpenAPI operation for tracing purposes.
+     */
+    private static final class MockOperationNode implements NamedNode {
+
+        private final String id;
+        private final String label;
+
+        private MockOperationNode(String verb, String path, String operationId) {
+            this.id = operationId != null ? operationId : verb + ":" + path;
+            this.label = "mock:" + verb + ":" + path;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String getNodePrefixId() {
+            return null;
+        }
+
+        @Override
+        public String getShortName() {
+            return "mock";
+        }
+
+        @Override
+        public String getLabel() {
+            return label;
+        }
+
+        @Override
+        public String getDescriptionText() {
+            return null;
+        }
+
+        @Override
+        public NamedNode getParent() {
+            return null;
+        }
+
+        @Override
+        public int getLineNumber() {
+            return -1;
+        }
+
+        @Override
+        public void setLineNumber(int lineNumber) {
+        }
+
+        @Override
+        public String getLocation() {
+            return null;
+        }
+
+        @Override
+        public void setLocation(String location) {
+        }
+    }
 }

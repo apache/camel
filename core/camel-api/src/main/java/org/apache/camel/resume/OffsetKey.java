@@ -19,10 +19,13 @@ package org.apache.camel.resume;
 
 import java.nio.ByteBuffer;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An interface to represent offset keys (addressable for an offset)
  *
  * @param <K> the type of the offset key
+ * @since     3.18
  */
 public interface OffsetKey<K> extends Serializable {
     /**
@@ -37,10 +40,11 @@ public interface OffsetKey<K> extends Serializable {
      *
      * @return the key instance
      */
+    @Nullable
     K getValue();
 
     @Override
-    default ByteBuffer serialize() {
+    default @Nullable ByteBuffer serialize() {
         return serialize(getValue());
     }
 }

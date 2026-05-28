@@ -20,9 +20,17 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Access to a repository to store aggregated exchanges to support pluggable implementations.
+ * Repository for storing aggregated exchanges used by the Aggregator EIP.
+ * <p/>
+ * The aggregation lifecycle is: {@link #get(CamelContext, String)} to retrieve the existing aggregate, then
+ * {@link #add(CamelContext, String, Exchange)} to store the updated aggregate, and finally
+ * {@link #remove(CamelContext, String, Exchange)} when the aggregation is complete.
+ * {@link #confirm(CamelContext, String)} is called after the aggregated exchange has been processed successfully.
+ * <p/>
+ * Implementations must be thread-safe as multiple threads may aggregate concurrently for different correlation keys.
  *
  */
 public interface AggregationRepository {
@@ -40,6 +48,7 @@ public interface AggregationRepository {
      * @param  exchange     the aggregated exchange
      * @return              the old exchange if any existed
      */
+    @Nullable
     Exchange add(CamelContext camelContext, String key, Exchange exchange);
 
     /**
@@ -51,6 +60,7 @@ public interface AggregationRepository {
      * @param  key          the correlation key
      * @return              the exchange, or <tt>null</tt> if no exchange was previously added
      */
+    @Nullable
     Exchange get(CamelContext camelContext, String key);
 
     /**

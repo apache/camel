@@ -20,12 +20,17 @@ import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * Level of mbeans for registration
+ *
+ * @since 3.17
  */
 @XmlEnum
 public enum ManagementMBeansLevel {
 
+    /** Only register the CamelContext MBean. */
     ContextOnly,
+    /** Register MBeans for the CamelContext and routes. */
     RoutesOnly,
+    /** Register MBeans for the CamelContext, routes, and processors. */
     Default;
 
     public boolean isRoutes() {

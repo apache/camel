@@ -73,7 +73,7 @@ class RestRegistryStatefulTest {
         registry.addRestService(consumer, false, "http://localhost:8080/api/users",
                 "http://localhost:8080", "/api", "/users", "GET",
                 "application/json", "application/json", null, null,
-                "route1", "Get users");
+                "route1", null, null, "Get users");
 
         List<RestRegistry.RestService> services = registry.listAllRestServices();
         assertThat(services).hasSize(1);
@@ -101,7 +101,7 @@ class RestRegistryStatefulTest {
 
         registry.addRestService(consumer, false, "http://localhost:8080/api/orders",
                 "http://localhost:8080", "/api", "/orders", "POST",
-                null, null, null, null, "route2", "Create order");
+                null, null, null, null, "route2", null, null, "Create order");
 
         List<RestRegistry.RestService> services = registry.listAllRestServices();
         assertThat(services.get(0).getState()).isEqualTo("Started");
@@ -117,7 +117,7 @@ class RestRegistryStatefulTest {
 
         registry.addRestService(consumer, false, "http://localhost:8080/api/items",
                 "http://localhost:8080", "/api", "/items", "DELETE",
-                null, null, null, null, "route3", "Delete item");
+                null, null, null, null, "route3", null, null, "Delete item");
 
         List<RestRegistry.RestService> services = registry.listAllRestServices();
         assertThat(services.get(0).getState()).isEqualTo("Suspended");

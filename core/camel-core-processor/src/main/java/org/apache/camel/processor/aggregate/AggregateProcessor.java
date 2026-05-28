@@ -59,6 +59,7 @@ import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
@@ -85,7 +86,7 @@ import org.slf4j.LoggerFactory;
  * message.
  */
 public class AggregateProcessor extends BaseProcessorSupport
-        implements Navigate<Processor>, Traceable, ShutdownAware, IdAware, RouteIdAware {
+        implements Navigate<Processor>, Traceable, ShutdownAware, IdAware, RouteIdAware, StepIdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
     public static final String AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR = "AggregateOptimisticLockingExecutor";
@@ -106,6 +107,7 @@ public class AggregateProcessor extends BaseProcessorSupport
     private final AsyncProcessor processor;
     private String id;
     private String routeId;
+    private String stepId;
     private AggregationStrategy aggregationStrategy;
     private boolean preCompletion;
     private Expression correlationExpression;
@@ -312,6 +314,16 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override
@@ -1725,7 +1737,7 @@ public class AggregateProcessor extends BaseProcessorSupport
         // but only do this when forced=false, as that is when we have chance to
         // send out new messages to be routed by Camel. When forced=true, then
         // we have to shutdown in a hurry
-        if (!forced && forceCompletionOnStop) {
+        if (!forced && (forceCompletionOnStop || completeAllOnStop)) {
             doForceCompletionOnStop();
         }
     }

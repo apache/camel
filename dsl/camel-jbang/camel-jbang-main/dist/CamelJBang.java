@@ -20,6 +20,7 @@
 //JAVA 21+
 //REPOS central=https://repo1.maven.org/maven2,apache-snapshot=https://repository.apache.org/content/groups/snapshots/
 //JAVA_OPTIONS -Dcamel.jbang.quarkusVersion=3.33.1.1
+//JAVA_OPTIONS --enable-native-access=ALL-UNNAMED
 //DEPS org.apache.camel:camel-bom:${camel.jbang.version:4.18.2}@pom
 //DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:4.18.2}
 //DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:4.18.1}

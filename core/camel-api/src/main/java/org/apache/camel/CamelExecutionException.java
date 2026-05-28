@@ -16,6 +16,10 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * Exception occurred during execution/processing of an {@link Exchange}.
  * <p/>
@@ -23,12 +27,22 @@ package org.apache.camel;
  */
 public class CamelExecutionException extends RuntimeExchangeException {
 
-    public CamelExecutionException(String message, Exchange exchange) {
-        super(message, exchange);
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     */
+    public CamelExecutionException(String message, @Nullable Exchange exchange) {
+        super(Objects.requireNonNull(message, "message"), exchange);
     }
 
-    public CamelExecutionException(String message, Exchange exchange, Throwable cause) {
-        super(message, exchange, cause);
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     * @param cause    the cause of the failure
+     */
+    public CamelExecutionException(String message, @Nullable Exchange exchange, Throwable cause) {
+        super(Objects.requireNonNull(message, "message"), exchange,
+              Objects.requireNonNull(cause, "cause"));
     }
 
     /**
@@ -37,7 +51,8 @@ public class CamelExecutionException extends RuntimeExchangeException {
      * @param  e the caused exception
      * @return   the wrapper exception
      */
-    public static CamelExecutionException wrapCamelExecutionException(Exchange exchange, Throwable e) {
+    public static CamelExecutionException wrapCamelExecutionException(@Nullable Exchange exchange, Throwable e) {
+        Objects.requireNonNull(e, "e");
         if (e instanceof CamelExecutionException ce) {
             // don't double wrap
             return ce;

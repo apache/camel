@@ -25,6 +25,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Registry for type converters.
@@ -124,6 +125,7 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * @param  fromType the type to convert from
      * @return          the type converter or <tt>null</tt> if not found.
      */
+    @Nullable
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
     /**

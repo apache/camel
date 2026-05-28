@@ -25,16 +25,17 @@ import org.apache.camel.Processor;
 /**
  * Allows SPI to plugin a {@link RestOpenApiConsumerFactory} that creates the Camel {@link Consumer} responsible for
  * handling incoming HTTP requests from clients that request to access REST services which has been created using the
- * <a href="http://camel.apache.org/rest-dsl">rest-dsl</a> for an entire open-api specification.
+ * <a href="https://camel.apache.org/rest-dsl">rest-dsl</a> for an entire open-api specification.
  *
- * @see RestApiConsumerFactory
- * @see RestOpenApiConsumerFactory
- * @see RestApiProcessorFactory
+ * @see   RestApiConsumerFactory
+ * @see   RestOpenApiConsumerFactory
+ * @see   RestApiProcessorFactory
+ * @since 4.6
  */
 public interface RestOpenApiConsumerFactory {
 
     /**
-     * Creates a new REST <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>, which
+     * Creates a new REST <a href="https://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>, which
      * consumes messages from the endpoint using the given processor
      *
      * @param  camelContext  the camel context

@@ -21,6 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,8 @@ import org.slf4j.LoggerFactory;
  * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
  * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly invoke
  * the operation in a safe manner.
+ *
+ * @since 3.2
  */
 public abstract class BaseService {
 
@@ -55,6 +58,9 @@ public abstract class BaseService {
     protected final Lock lock = new ReentrantLock();
     protected volatile byte status = NEW;
 
+    /**
+     * Builds the service. This method will only be called once and transitions the service from NEW to BUILT state.
+     */
     public void build() {
         if (status == NEW) {
             lock.lock();
@@ -73,6 +79,9 @@ public abstract class BaseService {
         }
     }
 
+    /**
+     * Initializes the service. This method will only be called once before starting.
+     */
     public void init() {
         // allow to initialize again if stopped or failed
         if (status <= BUILT || status >= STOPPED) {
@@ -269,6 +278,7 @@ public abstract class BaseService {
         }
     }
 
+    /** Returns the current status of the service. */
     public ServiceStatus getStatus() {
         switch (status) {
             case INITIALIZING:
@@ -290,46 +300,57 @@ public abstract class BaseService {
         }
     }
 
+    /** Returns true if the service is in the NEW state (not yet built). */
     public boolean isNew() {
         return status == NEW;
     }
 
+    /** Returns true if the service is in the BUILT state. */
     public boolean isBuild() {
         return status == BUILT;
     }
 
+    /** Returns true if the service is in the INITIALIZED state. */
     public boolean isInit() {
         return status == INITIALIZED;
     }
 
+    /** Returns true if the service is in the STARTED state. */
     public boolean isStarted() {
         return status == STARTED;
     }
 
+    /** Returns true if the service is in the STARTING state. */
     public boolean isStarting() {
         return status == STARTING;
     }
 
+    /** Returns true if the service is in the STOPPING state. */
     public boolean isStopping() {
         return status == STOPPING;
     }
 
+    /** Returns true if the service is stopped (not yet started or already stopped). */
     public boolean isStopped() {
         return status < STARTING || status >= STOPPED;
     }
 
+    /** Returns true if the service is in the SUSPENDING state. */
     public boolean isSuspending() {
         return status == SUSPENDING;
     }
 
+    /** Returns true if the service is in the SUSPENDED state. */
     public boolean isSuspended() {
         return status == SUSPENDED;
     }
 
+    /** Returns true if the service is allowed to process exchanges (started, starting, or suspended). */
     public boolean isRunAllowed() {
         return status >= STARTING && status <= SUSPENDED;
     }
 
+    /** Returns true if the service is in the SHUTDOWN state. */
     public boolean isShutdown() {
         return status == SHUTDOWN;
     }
@@ -434,7 +455,7 @@ public abstract class BaseService {
     /**
      * Implementations may return an object that will be closed when the lifecycle action is completed.
      */
-    protected AutoCloseable doLifecycleChange() {
+    protected @Nullable AutoCloseable doLifecycleChange() {
         return null;
     }
 

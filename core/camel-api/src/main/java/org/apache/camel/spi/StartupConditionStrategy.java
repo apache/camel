@@ -24,7 +24,8 @@ import org.apache.camel.StaticService;
  * Strategy for performing checks on startup that can validate whether Camel can be started, or wait for some conditions
  * to be satisfied, before Camel can continue to startup.
  *
- * @see StartupCondition
+ * @see   StartupCondition
+ * @since 4.9
  */
 public interface StartupConditionStrategy extends StaticService {
 

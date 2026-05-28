@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +40,13 @@ import org.slf4j.LoggerFactory;
  * This kind of throttling can be useful for taking a sample from an exchange stream, rough consolidation of noisy and
  * bursty exchange traffic or where queuing of throttled exchanges is undesirable.
  */
-public class SamplingThrottler extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SamplingThrottler extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SamplingThrottler.class);
 
     private String id;
     private String routeId;
+    private String stepId;
     private long messageFrequency;
     private long currentMessageCount;
     private long samplePeriod;
@@ -97,6 +99,16 @@ public class SamplingThrottler extends BaseProcessorSupport implements Traceable
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

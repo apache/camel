@@ -21,21 +21,25 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A specialized {@link InterceptStrategy} which is used for JMX management for EIPs.
  */
 public interface ManagementInterceptStrategy {
 
+    @Nullable
     InstrumentationProcessor<?> createProcessor(NamedNode definition, Processor target);
 
+    @Nullable
     InstrumentationProcessor<?> createProcessor(String type);
 
     interface InstrumentationProcessor<T> extends AsyncProcessor, Ordered {
 
+        @Nullable
         T before(Exchange exchange);
 
-        void after(Exchange exchange, T data);
+        void after(Exchange exchange, @Nullable T data);
 
         void setProcessor(Processor processor);
 

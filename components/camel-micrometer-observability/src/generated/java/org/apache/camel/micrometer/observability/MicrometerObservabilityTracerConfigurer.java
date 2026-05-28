@@ -29,6 +29,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "disableCoreProcessors": target.setDisableCoreProcessors(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
         case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
+        case "includepatterns":
+        case "includePatterns": target.setIncludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "observationregistry":
         case "observationRegistry": target.setObservationRegistry(property(camelContext, io.micrometer.observation.ObservationRegistry.class, value)); return true;
         case "propagator": target.setPropagator(property(camelContext, io.micrometer.tracing.propagation.Propagator.class, value)); return true;
@@ -52,6 +54,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "disableCoreProcessors": return boolean.class;
         case "excludepatterns":
         case "excludePatterns": return java.lang.String.class;
+        case "includepatterns":
+        case "includePatterns": return java.lang.String.class;
         case "observationregistry":
         case "observationRegistry": return io.micrometer.observation.ObservationRegistry.class;
         case "propagator": return io.micrometer.tracing.propagation.Propagator.class;
@@ -76,6 +80,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "disableCoreProcessors": return target.isDisableCoreProcessors();
         case "excludepatterns":
         case "excludePatterns": return target.getExcludePatterns();
+        case "includepatterns":
+        case "includePatterns": return target.getIncludePatterns();
         case "observationregistry":
         case "observationRegistry": return target.getObservationRegistry();
         case "propagator": return target.getPropagator();

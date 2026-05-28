@@ -42,6 +42,7 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         map.put("Query", com.braintreegateway.TransactionSearchRequest.class);
         map.put("RefundRequest", com.braintreegateway.TransactionRefundRequest.class);
         map.put("Request", com.braintreegateway.TransactionRequest.class);
+        map.put("VoidRequest", com.braintreegateway.TransactionVoidRequest.class);
         ALL_OPTIONS = map;
     }
 
@@ -84,6 +85,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "refundrequest":
         case "refundRequest": target.setRefundRequest(property(camelContext, com.braintreegateway.TransactionRefundRequest.class, value)); return true;
         case "request": target.setRequest(property(camelContext, com.braintreegateway.TransactionRequest.class, value)); return true;
+        case "voidrequest":
+        case "voidRequest": target.setVoidRequest(property(camelContext, com.braintreegateway.TransactionVoidRequest.class, value)); return true;
         default: return false;
         }
     }
@@ -131,6 +134,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "refundrequest":
         case "refundRequest": return com.braintreegateway.TransactionRefundRequest.class;
         case "request": return com.braintreegateway.TransactionRequest.class;
+        case "voidrequest":
+        case "voidRequest": return com.braintreegateway.TransactionVoidRequest.class;
         default: return null;
         }
     }
@@ -174,6 +179,8 @@ public class TransactionGatewayEndpointConfigurationConfigurer extends org.apach
         case "refundrequest":
         case "refundRequest": return target.getRefundRequest();
         case "request": return target.getRequest();
+        case "voidrequest":
+        case "voidRequest": return target.getVoidRequest();
         default: return null;
         }
     }

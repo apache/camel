@@ -89,7 +89,7 @@ public class ExplainTools {
 
             RouteContextSummary summary = new RouteContextSummary(components.size(), eips.size());
 
-            return new RouteContextResult(resolvedFormat, route, components, eips, summary);
+            return new RouteContextResult(resolvedFormat, components, eips, summary);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -155,7 +155,7 @@ public class ExplainTools {
     // Result records
 
     public record RouteContextResult(
-            String format, String route, List<RouteComponent> components,
+            String format, List<RouteComponent> components,
             List<RouteEip> eips, RouteContextSummary summary) {
     }
 

@@ -22,11 +22,19 @@ import java.util.Map;
 
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.jspecify.annotations.Nullable;
 
-/*
- * {@link Exchange} extensions which contains the methods and APIs that are not intended for Camel end users but
- * used internally by Camel for optimization purposes, SPI, custom components, or more advanced used-cases with
- * Camel.
+/**
+ * Internal extension surface of {@link Exchange} exposing methods and APIs not intended for Camel end users, but used
+ * inside Camel for optimization, SPI integration, custom component development, and advanced use cases.
+ * <p/>
+ * An instance is obtained by calling {@link Exchange#getExchangeExtension()}.
+ * <p/>
+ * The contract of this interface may change between minor releases without the usual deprecation cycle that applies to
+ * the main {@link Exchange} API.
+ *
+ * @see   Exchange
+ * @since 4.0
  */
 public interface ExchangeExtension {
 
@@ -36,7 +44,7 @@ public interface ExchangeExtension {
      * @param  type the given type
      * @return      the message if exists with the given type, otherwise null.
      */
-    <T> T getInOrNull(Class<T> type);
+    <T> @Nullable T getInOrNull(Class<T> type);
 
     /**
      * Sets the endpoint which originated this message exchange. This method should typically only be called by
@@ -47,6 +55,7 @@ public interface ExchangeExtension {
     /**
      * Returns the endpoint which originated this message exchange. See {@link Exchange#getFromEndpoint()} for details.
      */
+    @Nullable
     Endpoint getFromEndpoint();
 
     /**
@@ -58,7 +67,7 @@ public interface ExchangeExtension {
     /**
      * Sets the unit of work that this exchange belongs to; which may map to zero, one or more physical transactions
      */
-    void setUnitOfWork(UnitOfWork unitOfWork);
+    void setUnitOfWork(@Nullable UnitOfWork unitOfWork);
 
     /**
      * Is stream caching disabled on the given exchange
@@ -94,12 +103,13 @@ public interface ExchangeExtension {
     /**
      * Whether the exchange has been handled by the error handler. This is used internally by Camel.
      */
+    @Nullable
     Boolean getErrorHandlerHandled();
 
     /**
      * Used to signal that this exchange has been handled by the error handler. This is used internally by Camel.
      */
-    void setErrorHandlerHandled(Boolean errorHandlerHandled);
+    void setErrorHandlerHandled(@Nullable Boolean errorHandlerHandled);
 
     /**
      * To control whether the exchange can accept being interrupted currently.
@@ -188,34 +198,37 @@ public interface ExchangeExtension {
     /**
      * Sets the history node id (the current processor that will process the exchange)
      */
-    void setHistoryNodeId(String historyNodeId);
+    void setHistoryNodeId(@Nullable String historyNodeId);
 
     /**
      * Gets the history node id (the current processor that will process the exchange)
      */
+    @Nullable
     String getHistoryNodeId();
 
     /**
      * Gets the history node source:line-number where the node is located in the source code (the current processor that
      * will process the exchange).
      */
+    @Nullable
     String getHistoryNodeSource();
 
     /**
      * Sets the history node source:line-number where the node is located in the source code (the current processor that
      * will process the exchange).
      */
-    void setHistoryNodeSource(String historyNodeSource);
+    void setHistoryNodeSource(@Nullable String historyNodeSource);
 
     /**
      * Gets the history node label (the current processor that will process the exchange)
      */
+    @Nullable
     String getHistoryNodeLabel();
 
     /**
      * Sets the history node label (the current processor that will process the exchange)
      */
-    void setHistoryNodeLabel(String historyNodeLabel);
+    void setHistoryNodeLabel(@Nullable String historyNodeLabel);
 
     /**
      * Whether the exchange is currently used as event notification.
@@ -274,7 +287,7 @@ public interface ExchangeExtension {
      *
      * @see SafeCopyProperty
      */
-    <T> T getSafeCopyProperty(String key, Class<T> type);
+    <T> @Nullable T getSafeCopyProperty(String key, Class<T> type);
 
     /**
      * To set a property that must be copied specially (thread safe with deep cloning).
@@ -308,6 +321,7 @@ public interface ExchangeExtension {
      * <p>
      * This is only used when pooled exchange is enabled for optimization and reducing object allocations.
      */
+    @Nullable
     AsyncCallback getDefaultConsumerCallback();
 
     /**
@@ -315,7 +329,7 @@ public interface ExchangeExtension {
      * <p>
      * This is only used when pooled exchange is enabled for optimization and reducing object allocations.
      */
-    void setDefaultConsumerCallback(AsyncCallback callback);
+    void setDefaultConsumerCallback(@Nullable AsyncCallback callback);
 
     /**
      * Returns whether the exchange has been failure handed

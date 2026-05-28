@@ -20,7 +20,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled("Test was flaky 4 years ago. It is now completely broken when launched with Maven. See CAMEL-23499")
 public class FileToFtpsImplicitSSLWithoutClientAuthAndSSLContextParametersIT
         extends FileToFtpsImplicitSSLWithoutClientAuthIT {
     @BindToRegistry("sslContextParameters")

@@ -1,0 +1,161 @@
+= Message Size
+
+Camel can track the size of message payloads (body and headers) at the endpoint level.
+This is useful for observability — understanding how large messages are, detecting payload bloat,
+and monitoring size trends over time. Sizes are tracked per endpoint for both incoming (IN)
+and outgoing (OUT) directions.
+
+Message size tracking is *disabled by default* and must be explicitly enabled.
+It also requires extended management statistics level.
+
+NOTE: Message size tracking is a *global* feature. When enabled, it applies to all endpoints
+in the CamelContext. There is no fine-grained control to enable or disable it per route or per endpoint.
+
+IMPORTANT: Streaming message bodies (such as `InputStream`) are only supported when
+xref:stream-caching.adoc[Stream Caching] is enabled. Without stream caching, the body size
+of streaming payloads cannot be determined and will be reported as -1 (unknown).
+
+== How it works
+
+When enabled, Camel computes message body and headers sizes using the `RuntimeEndpointRegistry`
+event mechanism:
+
+* *IN direction* — sizes are computed when an exchange is created by a consumer endpoint
+  (e.g., an HTTP request arrives, a file is consumed, a JMS message is received).
+  The computed sizes are also stored as exchange properties
+  (`CamelMessageBodySize` and `CamelMessageHeadersSize`) for use during routing.
+* *OUT direction* — sizes are computed when a message is sent to a producer endpoint
+  (e.g., sending to a Kafka topic, writing to a file, calling an HTTP service).
+
+Size statistics (min, max, mean) are collected per endpoint and exposed via JMX as part
+of the runtime endpoint statistics.
+
+A pluggable `MessageSizeStrategy` computes the actual sizes.
+
+== Enabling Message Size
+
+Message size tracking requires both the `messageSizeEnabled` option and `Extended` statistics level:
+
+[tabs]
+====
+
+Application Properties::
++
+[source,properties]
+----
+camel.main.messageSizeEnabled = true
+camel.main.jmxManagementStatisticsLevel = Extended
+----
+
+Java::
++
+[source,java]
+----
+CamelContext context = ...
+context.setMessageSize(true);
+context.getManagementStrategy().getManagementAgent()
+    .setStatisticsLevel(ManagementStatisticsLevel.Extended);
+----
+
+====
+
+TIP: Message size tracking is automatically enabled when running with the `dev` profile.
+
+TIP: You can run Camel JBang: `camel doc main --filter=messageSize` from CLI to see message size options.
+
+== Default size computation
+
+The default `MessageSizeStrategy` computes body size using type-specific logic.
+If the body type is not recognized, it falls back to the `Content-Length` header (useful for HTTP components
+where the body is a stream). If size cannot be determined, it returns -1 and the exchange is not included
+in the size statistics.
+
+=== Body size
+
+[width="100%",cols="1m,3",options="header"]
+|===
+| Body type | Size computation
+| null | 0
+| byte[] | Array length
+| String | UTF-8 encoded byte length
+| StreamCache | `length()` method
+| WrappedFile | `getFileLength()` method (covers file, FTP, and similar components)
+| File | `length()` method
+| Path | `Files.size()`
+| Content-Length header | Fallback: uses the `Content-Length` message header value
+| Other | -1 (unknown, not tracked)
+|===
+
+=== Headers size
+
+The total headers size is computed by iterating all message headers and summing:
+
+* Each header key's UTF-8 byte length
+* Each header value's `toString()` UTF-8 byte length
+
+Returns 0 if there are no headers.
+
+== Endpoint statistics via JMX
+
+When JMX is enabled with `Extended` statistics level, size statistics are available
+in the runtime endpoint registry MBean alongside the existing endpoint hit counts.
+
+The statistics are part of the `endpointStatistics` tabular data on the
+`RuntimeEndpointRegistry` MBean (under `org.apache.camel` domain, type `services`):
+
+[width="100%",cols="1m,3",options="header"]
+|===
+| Column | Description
+| url | Endpoint URI
+| routeId | Associated route ID
+| direction | `in` for consumer endpoints, `out` for producer endpoints
+| hits | Number of messages processed
+| minBodySize | Smallest message body size observed (bytes), -1 if not tracked
+| maxBodySize | Largest message body size observed (bytes), -1 if not tracked
+| meanBodySize | Average message body size observed (bytes), -1 if not tracked
+| minHeadersSize | Smallest total headers size observed (bytes), -1 if not tracked
+| maxHeadersSize | Largest total headers size observed (bytes), -1 if not tracked
+| meanHeadersSize | Average total headers size observed (bytes), -1 if not tracked
+|===
+
+The statistics are reset when the endpoint registry statistics are reset.
+
+== Exchange properties
+
+For the IN direction, the computed sizes are available as exchange properties during routing.
+You can use them for logging, content-based routing, or custom processing:
+
+[source,java]
+----
+from("seda:start")
+    .log("Body size: ${exchangeProperty.CamelMessageBodySize} bytes")
+    .choice()
+        .when(exchangeProperty("CamelMessageBodySize").isGreaterThan(1048576))
+            .to("direct:largeMessage")
+        .otherwise()
+            .to("direct:normalMessage");
+----
+
+[width="100%",cols="1m,3",options="header"]
+|===
+| Property | Description
+| CamelMessageBodySize | Body size in bytes, or -1 if unknown
+| CamelMessageHeadersSize | Total headers size in bytes
+|===
+
+NOTE: Exchange properties are set when the consumer endpoint creates the exchange.
+They reflect the size of the incoming message as received by the route.
+
+== Custom strategy
+
+You can provide a custom `MessageSizeStrategy` implementation for specialized sizing logic
+(for example, to handle application-specific body types):
+
+[source,java]
+----
+CamelContext context = ...
+context.setMessageSizeStrategy(new MyCustomMessageSizeStrategy());
+context.setMessageSize(true);
+----
+
+The strategy must implement `org.apache.camel.spi.MessageSizeStrategy`.

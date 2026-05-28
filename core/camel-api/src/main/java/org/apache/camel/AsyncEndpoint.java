@@ -17,7 +17,16 @@
 package org.apache.camel;
 
 /**
- * Marks the {@link Endpoint} as support asynchronous non-blocking routing in its consumer and producer.
+ * Marker interface indicating that the {@link Endpoint}'s consumer and producer support asynchronous, non-blocking
+ * routing.
+ * <p/>
+ * When an endpoint implements this interface, the Camel routing engine can pass an {@link AsyncCallback} to the
+ * producer's {@link AsyncProcessor#process(Exchange, AsyncCallback)} method instead of blocking until the exchange
+ * completes.
+ *
+ * @see Endpoint
+ * @see AsyncProcessor
+ * @see AsyncProducer
  */
 public interface AsyncEndpoint extends Endpoint {
 

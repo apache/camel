@@ -2718,6 +2718,52 @@ public interface MailEndpointBuilderFactory {
             doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
         }
+        /**
+         * Whether to allow dynamic JavaMail session properties (message headers
+         * whose key starts with mail.smtp. or mail.smtps.) to override the
+         * endpoint configuration on a per-message basis. This is disabled by
+         * default. Only enable it when these headers originate exclusively from
+         * trusted route logic, never from data crossing a trust boundary (for
+         * example HTTP query parameters, or JMS/Kafka messages from untrusted
+         * producers). When enabled, an attacker able to set these headers could
+         * weaken transport security (such as mail.smtp.ssl.trust or
+         * mail.smtp.starttls.enable) or redirect the SMTP connection.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useJavaMailSessionPropertiesFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointProducerBuilder useJavaMailSessionPropertiesFromHeaders(boolean useJavaMailSessionPropertiesFromHeaders) {
+            doSetProperty("useJavaMailSessionPropertiesFromHeaders", useJavaMailSessionPropertiesFromHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow dynamic JavaMail session properties (message headers
+         * whose key starts with mail.smtp. or mail.smtps.) to override the
+         * endpoint configuration on a per-message basis. This is disabled by
+         * default. Only enable it when these headers originate exclusively from
+         * trusted route logic, never from data crossing a trust boundary (for
+         * example HTTP query parameters, or JMS/Kafka messages from untrusted
+         * producers). When enabled, an attacker able to set these headers could
+         * weaken transport security (such as mail.smtp.ssl.trust or
+         * mail.smtp.starttls.enable) or redirect the SMTP connection.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useJavaMailSessionPropertiesFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointProducerBuilder useJavaMailSessionPropertiesFromHeaders(String useJavaMailSessionPropertiesFromHeaders) {
+            doSetProperty("useJavaMailSessionPropertiesFromHeaders", useJavaMailSessionPropertiesFromHeaders);
+            return this;
+        }
     }
 
     /**
@@ -3547,10 +3593,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code copyTo}.
+         * @return the name of the header {@code MailCopyTo}.
          */
-        public String copyTo() {
-            return "copyTo";
+        public String mailCopyTo() {
+            return "CamelMailCopyTo";
         }
         /**
          * After processing a mail message, it can be moved to a mail folder
@@ -3560,10 +3606,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code moveTo}.
+         * @return the name of the header {@code MailMoveTo}.
          */
-        public String moveTo() {
-            return "moveTo";
+        public String mailMoveTo() {
+            return "CamelMailMoveTo";
         }
         /**
          * Deletes the messages after they have been processed.
@@ -3572,10 +3618,10 @@ public interface MailEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code delete}.
+         * @return the name of the header {@code MailDelete}.
          */
-        public String delete() {
-            return "delete";
+        public String mailDelete() {
+            return "CamelMailDelete";
         }
         /**
          * The message ID.

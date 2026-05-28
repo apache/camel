@@ -20,14 +20,16 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 
 /**
  * A disabled EIP that does not do anything
  */
-public class DisabledProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware {
+public class DisabledProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware, StepIdAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private String nodeType;
 
     @Override
@@ -60,6 +62,16 @@ public class DisabledProcessor extends BaseProcessorSupport implements IdAware, 
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     /**

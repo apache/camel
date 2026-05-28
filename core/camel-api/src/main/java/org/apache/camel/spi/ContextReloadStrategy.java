@@ -24,7 +24,8 @@ import org.apache.camel.CamelContext;
  * The reloading is limited to all routes and property placeholders. General services in the {@link CamelContext} is not
  * reloaded.
  *
- * @see ResourceReloadStrategy
+ * @see   ResourceReloadStrategy
+ * @since 3.19
  */
 public interface ContextReloadStrategy extends ReloadStrategy {
 

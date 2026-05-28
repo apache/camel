@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Constants to use when working with Paho component.
  */
+@Deprecated(since = "4.21")
 public final class PahoConstants {
 
     /**

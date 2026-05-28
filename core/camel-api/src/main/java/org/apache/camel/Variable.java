@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
 /**
  * Marks a parameter as being a variable
  *
- * @see Exchange#getVariable(String)
+ * @see   Exchange#getVariable(String)
+ * @since 4.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

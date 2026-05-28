@@ -16,15 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-
 /**
  * Helper for detecting the terminal width to adapt table and command output.
  *
  * <p>
- * Uses JLine to query the actual terminal size. Falls back to a default width when the terminal size cannot be
- * determined (e.g., when output is piped or redirected).
+ * Uses the {@code COLUMNS} environment variable or {@code stty size} to detect the terminal width. Falls back to a
+ * default width when the terminal size cannot be determined (e.g., when output is piped or redirected).
+ *
+ * <p>
+ * Avoids using JLine's {@code TerminalBuilder} for width detection because it sends escape sequence queries (DA1, CPR)
+ * to the terminal that can leak into the shell output when the terminal is closed before responses arrive.
  */
 public final class TerminalWidthHelper {
 
@@ -38,20 +39,40 @@ public final class TerminalWidthHelper {
      * Returns the current terminal width in columns.
      *
      * <p>
-     * Attempts to detect the terminal width using JLine. Returns {@value #DEFAULT_WIDTH} if detection fails or if the
-     * output is not connected to a terminal.
+     * Tries {@code COLUMNS} environment variable first, then {@code stty size}. Returns {@value #DEFAULT_WIDTH} if
+     * detection fails or if the output is not connected to a terminal.
      */
     public static int getTerminalWidth() {
-        try (Terminal terminal = TerminalBuilder.builder()
-                .system(true)
-                .dumb(true)
-                .build()) {
-            int width = terminal.getWidth();
-            if (width > 0) {
-                return Math.max(width, MIN_WIDTH);
+        // Try COLUMNS env var first (set by most shells)
+        String cols = System.getenv("COLUMNS");
+        if (cols != null) {
+            try {
+                int w = Integer.parseInt(cols.trim());
+                if (w > 0) {
+                    return Math.max(w, MIN_WIDTH);
+                }
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
+        // Fall back to stty which reads the terminal size without escape sequences
+        try {
+            Process p = new ProcessBuilder("stty", "size")
+                    .redirectInput(ProcessBuilder.Redirect.INHERIT)
+                    .start();
+            String output = new String(p.getInputStream().readAllBytes()).trim();
+            p.waitFor();
+            if (!output.isEmpty()) {
+                String[] parts = output.split("\\s+");
+                if (parts.length >= 2) {
+                    int w = Integer.parseInt(parts[1]);
+                    if (w > 0) {
+                        return Math.max(w, MIN_WIDTH);
+                    }
+                }
             }
         } catch (Exception e) {
-            // ignore
+            // ignore — stty not available (e.g. Windows)
         }
         return DEFAULT_WIDTH;
     }

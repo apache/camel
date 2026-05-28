@@ -34,7 +34,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -103,7 +102,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriParam(label = "consumer", defaultValue = "10")
     private int connectionPollDelay = 10;
     @UriParam(label = "filter")
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new XmppHeaderFilterStrategy();
     @UriParam(label = "advanced")
     private ConnectionConfiguration connectionConfig;
 

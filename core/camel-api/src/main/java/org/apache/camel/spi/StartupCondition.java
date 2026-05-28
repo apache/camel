@@ -17,12 +17,15 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Pluggable condition that must be accepted before Camel can continue starting up.
  *
  * This can be used to let Camel wait for a specific file to be present, an environment-variable, or some other custom
  * conditions.
+ *
+ * @since 4.9
  */
 public interface StartupCondition {
 
@@ -36,14 +39,14 @@ public interface StartupCondition {
     /**
      * Optional logging message to log before waiting for the condition
      */
-    default String getWaitMessage() {
+    default @Nullable String getWaitMessage() {
         return null;
     }
 
     /**
      * Optional logging message to log if condition was not meet.
      */
-    default String getFailureMessage() {
+    default @Nullable String getFailureMessage() {
         return null;
     }
 

@@ -20,6 +20,8 @@ import java.util.Properties;
 
 /**
  * Listener for re-loading a {@link java.util.Properties} such as a Camel route.
+ *
+ * @since 4.0
  */
 @FunctionalInterface
 public interface PropertiesReload {

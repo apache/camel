@@ -32,6 +32,7 @@ import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * Resume EIP
  */
 public class ResumableProcessor extends BaseProcessorSupport
-        implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware {
+        implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResumableProcessor.class);
 
@@ -52,6 +53,7 @@ public class ResumableProcessor extends BaseProcessorSupport
     private final boolean intermittent;
     private String id;
     private String routeId;
+    private String stepId;
 
     public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor, LoggingLevel loggingLevel,
                               boolean intermittent) {
@@ -113,6 +115,16 @@ public class ResumableProcessor extends BaseProcessorSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     @Override

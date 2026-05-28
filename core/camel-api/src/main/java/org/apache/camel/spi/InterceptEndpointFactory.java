@@ -20,9 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory to create {@link Endpoint} which are intercepted.
+ *
+ * @since 3.7
  */
 public interface InterceptEndpointFactory {
 
@@ -39,6 +42,6 @@ public interface InterceptEndpointFactory {
      */
     InterceptSendToEndpoint createInterceptSendToEndpoint(
             CamelContext camelContext, Endpoint endpoint, boolean skip,
-            Predicate onWhen, Processor before, Processor after);
+            @Nullable Predicate onWhen, @Nullable Processor before, @Nullable Processor after);
 
 }

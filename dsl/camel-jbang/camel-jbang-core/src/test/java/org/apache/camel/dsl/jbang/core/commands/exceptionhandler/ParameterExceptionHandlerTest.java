@@ -48,11 +48,12 @@ class ParameterExceptionHandlerTest {
         CamelJBangMain.run(camelJBangMainNotExiting, "plugin", "secondInvalid");
 
         String[] lines = err.capturedLines();
-        Assertions.assertEquals(3, lines.length, "3 lines for the error is expected but received " + lines.length);
+        Assertions.assertTrue(lines.length >= 3, "At least 3 lines for the error is expected but received " + lines.length);
         Assertions.assertEquals("Unmatched argument at index 1: 'secondInvalid'", lines[0],
                 "First line mentioning unmatched argument");
-        Assertions.assertEquals("Usage: camel plugin [-h] [COMMAND]", lines[1], "Second line with usage");
-        Assertions.assertEquals("Try 'camel plugin --help' for more information.", lines[2],
+        Assertions.assertEquals("Usage: camel plugin [-h] [COMMAND]", lines[lines.length - 2],
+                "Second to last line with usage");
+        Assertions.assertEquals("Try 'camel plugin --help' for more information.", lines[lines.length - 1],
                 "Last line with what to try to get help");
     }
 

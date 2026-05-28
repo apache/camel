@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour, with the following flow: before,
@@ -34,32 +35,35 @@ public interface InterceptSendToEndpoint extends Endpoint {
     /**
      * Optional predicate that must match to trigger this interceptor.
      */
+    @Nullable
     Predicate getOnWhen();
 
     /**
      * Optional predicate that must match to trigger this interceptor.
      */
-    void setOnWhen(Predicate onWhen);
+    void setOnWhen(@Nullable Predicate onWhen);
 
     /**
      * The processor for routing in a detour before sending to the original endpoint.
      */
+    @Nullable
     Processor getBefore();
 
     /**
      * Sets the processor for routing in a detour before sending to the original endpoint.
      */
-    void setBefore(Processor before);
+    void setBefore(@Nullable Processor before);
 
     /**
      * The processor (optional) for routing after sending to the original endpoint.
      */
+    @Nullable
     Processor getAfter();
 
     /**
      * Sets the processor (optional) for routing after sending to the original endpoint.
      */
-    void setAfter(Processor after);
+    void setAfter(@Nullable Processor after);
 
     /**
      * Whether to skip sending to the original endpoint.

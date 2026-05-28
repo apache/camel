@@ -20,6 +20,8 @@ import org.apache.camel.Processor;
 
 /**
  * An interface used to represent an error handler
+ *
+ * @since 3.7
  */
 public interface ErrorHandler extends Processor {
 }

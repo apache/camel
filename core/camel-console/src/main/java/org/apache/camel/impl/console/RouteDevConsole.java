@@ -113,6 +113,8 @@ public class RouteDevConsole extends AbstractDevConsole {
                 sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
             }
             sb.append(String.format("%n    State: %s", mrb.getState()));
+            Route r = getCamelContext().getRoute(mrb.getRouteId());
+            sb.append(String.format("%n    Supports Suspension: %s", r != null && r.supportsSuspension()));
             if (mrb.getLastError() != null) {
                 String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
                 String ago = TimeUtils.printSince(mrb.getLastError().getDate().getTime());
@@ -167,6 +169,11 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
                 sb.append(String.format("%n    Since Last Completed: %s", ago));
+            }
+            last = mrb.getLastExchangeFailureHandledTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                sb.append(String.format("%n    Since Last Failure Handled: %s", ago));
             }
             last = mrb.getLastExchangeFailureTimestamp();
             if (last != null) {
@@ -243,6 +250,8 @@ public class RouteDevConsole extends AbstractDevConsole {
                 jo.put("source", mrb.getSourceLocation());
             }
             jo.put("state", mrb.getState());
+            Route r = getCamelContext().getRoute(mrb.getRouteId());
+            jo.put("supportsSuspension", r != null && r.supportsSuspension());
             jo.put("uptime", mrb.getUptime());
             if (mrb.getLastError() != null) {
                 String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
@@ -490,6 +499,10 @@ public class RouteDevConsole extends AbstractDevConsole {
         last = mrb.getLastExchangeCompletedTimestamp();
         if (last != null) {
             stats.put("lastCompletedExchangeTimestamp", last.getTime());
+        }
+        last = mrb.getLastExchangeFailureHandledTimestamp();
+        if (last != null) {
+            stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
         }
         last = mrb.getLastExchangeFailureTimestamp();
         if (last != null) {

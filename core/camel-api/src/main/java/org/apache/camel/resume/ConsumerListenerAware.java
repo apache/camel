@@ -20,6 +20,8 @@ package org.apache.camel.resume;
 /**
  * An interface to represent an object which wishes to support listening for consumer events using the
  * {@link ConsumerListener}.
+ *
+ * @since 3.17
  */
 public interface ConsumerListenerAware<T extends ConsumerListener<?, ?>> {
 

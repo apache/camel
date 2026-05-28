@@ -681,6 +681,27 @@ or directory using the `--output` option:
 camel validate normalize --output normalized/ myroute.yaml
 ----
 
+=== Compact notation warning
+
+Camel logs a WARN message when YAML routes use compact (shorthand) notation instead of
+the canonical (explicit) form. This is to encourage adopting the canonical style which is
+more friendly for tooling and AI assistants.
+
+The warning is logged once per resource file and looks like:
+
+----
+YAML DSL compact notation detected in: myroute.yaml.
+It is recommended to use canonical/normalized YAML DSL notation which is more tooling and AI friendly.
+Use Camel JBang to normalize: camel yaml normalize <file>
+----
+
+To disable this warning, set the following property in `application.properties`:
+
+[source,properties]
+----
+camel.main.yamlDslCompactNotationWarn = false
+----
+
 === Validating with the canonical schema
 
 To validate YAML routes against the canonical schema:

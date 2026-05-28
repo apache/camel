@@ -16,8 +16,12 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents an object that can have an associated content type. Such as a file or http resource.
+ *
+ * @since 3.18
  */
 public interface ContentTypeAware {
     /**
@@ -25,6 +29,7 @@ public interface ContentTypeAware {
      *
      * @return The content type string. Can be {@code null} if the content type has not been set or is not known.
      */
+    @Nullable
     String getContentType();
 
     /**
@@ -32,5 +37,5 @@ public interface ContentTypeAware {
      *
      * @param contentType The content type string
      */
-    void setContentType(String contentType);
+    void setContentType(@Nullable String contentType);
 }

@@ -23,7 +23,8 @@ import org.apache.camel.util.backoff.BackOffTimer;
 /**
  * Factory for creating {@link BackOffTimer}.
  *
- * @see org.apache.camel.util.backoff.BackOff
+ * @see   org.apache.camel.util.backoff.BackOff
+ * @since 4.13
  */
 public interface BackOffTimerFactory {
 

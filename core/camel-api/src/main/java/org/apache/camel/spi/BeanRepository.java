@@ -20,10 +20,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.NoSuchBeanTypeException;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a bean repository used to lookup components by name and type. This allows Camel to plugin to third-party
  * bean repositories such as Spring, JNDI, OSGi.
+ *
+ * @since 3.0
  */
 public interface BeanRepository {
 
@@ -38,6 +41,7 @@ public interface BeanRepository {
      * @param  name the name of the bean
      * @return      the bean from the registry or <tt>null</tt> if it could not be found
      */
+    @Nullable
     Object lookupByName(String name);
 
     /**
@@ -47,7 +51,7 @@ public interface BeanRepository {
      * @param  type the type of the required bean
      * @return      the bean from the registry or <tt>null</tt> if it could not be found
      */
-    <T> T lookupByNameAndType(String name, Class<T> type);
+    <T> @Nullable T lookupByNameAndType(String name, Class<T> type);
 
     /**
      * Finds beans in the registry by their type.
@@ -71,7 +75,7 @@ public interface BeanRepository {
      * @param  type the type of the beans
      * @return      the single bean instance, or null if none found or there are more than one bean of the given type.
      */
-    default <T> T findSingleByType(Class<T> type) {
+    default <T> @Nullable T findSingleByType(Class<T> type) {
         Set<T> set = findByType(type);
         if (set.size() == 1) {
             return set.iterator().next();

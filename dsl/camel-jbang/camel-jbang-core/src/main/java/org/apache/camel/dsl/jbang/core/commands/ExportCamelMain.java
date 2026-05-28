@@ -59,7 +59,7 @@ class ExportCamelMain extends Export {
 
         // the settings file has information what to export
         Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
-        if (fresh || !files.isEmpty() || !Files.exists(settings)) {
+        if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
             int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
@@ -278,6 +278,8 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
+        // spring-boot-starter JARs are not usable in camel-main runtime
+        answer.removeIf(s -> s.contains("spring-boot-starter"));
 
         if (profile != null && Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();

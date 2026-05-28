@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 
@@ -30,16 +29,18 @@ import org.jboss.logging.Logger;
  * Utility to detect and sanitize sensitive data in POM content before processing.
  * <p>
  * Scans for common credential patterns (passwords, tokens, API keys, secrets) in XML element values and masks them.
- * Property placeholders (e.g., {@code ${db.password}}) are preserved since they reference external values and do not
- * contain actual secrets.
+ * Also detects credentials embedded in URLs ({@code ://user:password@host}). Property placeholders (e.g.,
+ * {@code ${db.password}}, {@code {{vault:password}}}) are preserved since they reference external values and do not
+ * contain actual secrets. CDATA-wrapped values are inspected and masked when appropriate.
  * <p>
  * <b>Limitations:</b> Detection is tag-name-based using keyword matching. This means:
  * <ul>
  * <li><b>False positives</b> — non-secret values in elements whose names happen to contain a keyword (e.g.,
  * {@code <password-policy>strict</password-policy>},
  * {@code <token-refresh-interval>300</token-refresh-interval>}).</li>
- * <li><b>False negatives</b> — actual secrets in elements with non-obvious names (e.g., credentials embedded in JDBC
- * URLs, or elements named {@code <my.credential>} where the singular form is not in the keyword list).</li>
+ * <li><b>False negatives</b> — actual secrets in elements with non-obvious names (e.g., elements named
+ * {@code <my.credential>} where the singular form is not in the keyword list). URL credential detection is limited to
+ * the {@code ://user:password@host} pattern.</li>
  * </ul>
  * This heuristic is a best-effort safety net, not a guarantee. Users should still avoid passing sensitive data.
  */
@@ -49,17 +50,25 @@ final class PomSanitizer {
 
     private static final String SENSITIVE_KEYWORDS
             = "password|passwd|token|apikey|api-key|api_key|secret|secretkey|secret-key|secret_key"
-              + "|accesskey|access-key|access_key|passphrase|privatekey|private-key|private_key|credentials";
+              + "|accesskey|access-key|access_key|passphrase|privatekey|private-key|private_key|credentials"
+              + "|connection-string|connectionstring|connection_string";
 
     /**
      * Pattern matching XML elements whose tag names contain sensitive keywords. Captures: group(1) = element name,
-     * group(2) = element value.
+     * group(2) = full content between tags (including whitespace and optional CDATA wrapper).
      */
     private static final Pattern SENSITIVE_ELEMENT_PATTERN = Pattern.compile(
             "<([a-zA-Z0-9_.:-]*(?:" + SENSITIVE_KEYWORDS + ")[a-zA-Z0-9_.:-]*)>"
-                                                                             + "\\s*([^<]+?)\\s*"
+                                                                             + "(\\s*(?:<!\\[CDATA\\[.*?\\]\\]>|[^<]+?)\\s*)"
                                                                              + "</\\1>",
-            Pattern.CASE_INSENSITIVE);
+            Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+
+    /**
+     * Pattern matching URL-embedded credentials ({@code ://user:password@host}). Captures: group(1) = scheme through
+     * username ({@code ://user}), group(2) = password.
+     */
+    private static final Pattern URL_CREDENTIAL_PATTERN = Pattern.compile(
+            "(://[^/@\\s:]+):([^/@\\s]+)@");
 
     private PomSanitizer() {
     }
@@ -70,48 +79,41 @@ final class PomSanitizer {
      * @return list of element names that contain sensitive values
      */
     static List<String> detectSensitiveContent(String pomContent) {
-        Set<String> findings = new LinkedHashSet<>();
-
-        Matcher matcher = SENSITIVE_ELEMENT_PATTERN.matcher(pomContent);
-        while (matcher.find()) {
-            String value = matcher.group(2).trim();
-            // Property placeholders like ${my.password} are not actual secrets
-            if (!value.startsWith("${")) {
-                findings.add(matcher.group(1));
-            }
-        }
-
-        return new ArrayList<>(findings);
+        return sanitize(pomContent).detectedPatterns();
     }
 
     /**
-     * Sanitize POM content by masking sensitive element values.
+     * Sanitize POM content by masking sensitive element values and URL-embedded credentials.
      * <p>
-     * Property placeholders (e.g., {@code ${db.password}}) are preserved since they do not contain actual secret
-     * values.
+     * Property placeholders (e.g., {@code ${db.password}}, {@code {{vault:password}}}) are preserved since they do not
+     * contain actual secret values. CDATA-wrapped values are inspected and masked when they contain plain-text secrets.
      *
      * @return sanitization result with the processed POM content and detected patterns
      */
     static SanitizationResult sanitize(String pomContent) {
-        List<String> detected = detectSensitiveContent(pomContent);
+        Set<String> detected = new LinkedHashSet<>();
 
-        String sanitized = pomContent;
-
-        // Mask sensitive element values (preserve property placeholders)
-        sanitized = SENSITIVE_ELEMENT_PATTERN.matcher(sanitized).replaceAll(mr -> {
-            String value = mr.group(2).trim();
-            if (value.startsWith("${")) {
+        String sanitized = SENSITIVE_ELEMENT_PATTERN.matcher(pomContent).replaceAll(mr -> {
+            String elementName = mr.group(1);
+            String value = extractValue(mr.group(2));
+            if (isPlaceholder(value)) {
                 return Matcher.quoteReplacement(mr.group());
             }
+            detected.add(elementName);
             return Matcher.quoteReplacement(
-                    "<" + mr.group(1) + ">***MASKED***</" + mr.group(1) + ">");
+                    "<" + elementName + ">***MASKED***</" + elementName + ">");
+        });
+
+        sanitized = URL_CREDENTIAL_PATTERN.matcher(sanitized).replaceAll(mr -> {
+            detected.add("(URL credential)");
+            return Matcher.quoteReplacement(mr.group(1) + ":***MASKED***@");
         });
 
         if (!detected.isEmpty()) {
             LOG.warnf("Sensitive data detected in pomContent: %s. Content was sanitized before processing.", detected);
         }
 
-        return new SanitizationResult(sanitized, detected);
+        return new SanitizationResult(sanitized, new ArrayList<>(detected));
     }
 
     /**
@@ -129,9 +131,22 @@ final class PomSanitizer {
         List<String> warnings = new ArrayList<>();
         if (!sr.detectedPatterns().isEmpty()) {
             warnings.add("Sensitive data detected and masked: "
-                         + sr.detectedPatterns().stream().collect(Collectors.joining(", ")));
+                         + String.join(", ", sr.detectedPatterns()));
         }
         return new ProcessedPom(sr.pomContent(), warnings);
+    }
+
+    private static String extractValue(String content) {
+        String trimmed = content.trim();
+        if (trimmed.startsWith("<![CDATA[") && trimmed.endsWith("]]>")) {
+            return trimmed.substring(9, trimmed.length() - 3).trim();
+        }
+        return trimmed;
+    }
+
+    private static boolean isPlaceholder(String value) {
+        return value.startsWith("${")
+                || (value.startsWith("{{") && value.endsWith("}}"));
     }
 
     record SanitizationResult(

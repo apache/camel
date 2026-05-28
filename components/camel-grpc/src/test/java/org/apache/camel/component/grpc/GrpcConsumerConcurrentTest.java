@@ -29,10 +29,7 @@ import io.grpc.stub.StreamObserver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GrpcConsumerConcurrentTest extends CamelTestSupport {
+public class GrpcConsumerConcurrentTest extends GrpcTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerConcurrentTest.class);
 
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcAsyncRequestTestPort = AvailablePortFinder.find();
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcHeadersTestPort = AvailablePortFinder.find();
     private static final int CONCURRENT_THREAD_COUNT = 30;
     private static final int ROUNDS_PER_THREAD_COUNT = 10;
     private static final String GRPC_TEST_PING_VALUE = "PING";
@@ -64,13 +57,14 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
     @Test
     public void testAsyncWithConcurrentThreads() {
+        int asyncPort = getRoutePort("grpc-async");
         RunnableAssert ra = new RunnableAssert("foo") {
 
             @Override
             public void run() {
                 final CountDownLatch latch = new CountDownLatch(1);
                 ManagedChannel asyncRequestChannel
-                        = NettyChannelBuilder.forAddress("localhost", grpcAsyncRequestTestPort.getPort()).usePlaintext()
+                        = NettyChannelBuilder.forAddress("localhost", asyncPort).usePlaintext()
                                 .build();
                 PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
 
@@ -105,13 +99,14 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
     @Test
     public void testHeadersWithConcurrentThreads() {
+        int headersPort = getRoutePort("grpc-headers");
         RunnableAssert ra = new RunnableAssert("foo") {
 
             @Override
             public void run() {
                 int instanceId = createId();
                 final CountDownLatch latch = new CountDownLatch(1);
-                ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", grpcHeadersTestPort.getPort())
+                ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", headersPort)
                         .userAgent(GRPC_USER_AGENT_PREFIX + instanceId)
                         .usePlaintext().build();
                 PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
@@ -149,12 +144,12 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("grpc://localhost:" + grpcAsyncRequestTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION&hash=1")
+                        .routeId("grpc-async")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
-                from("grpc://localhost:" + grpcHeadersTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION&hash=2")
+                        .routeId("grpc-headers")
                         .process(new HeaderExchangeProcessor());
             }
         };

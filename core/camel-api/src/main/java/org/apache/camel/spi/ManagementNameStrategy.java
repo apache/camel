@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Strategy for assigning the name part of the {@link javax.management.ObjectName} for a managed
  * {@link org.apache.camel.CamelContext}.
@@ -41,6 +43,7 @@ public interface ManagementNameStrategy {
      *
      * @return the custom name pattern, or <tt>null</tt> if using the default pattern strategy.
      */
+    @Nullable
     String getNamePattern();
 
     /**

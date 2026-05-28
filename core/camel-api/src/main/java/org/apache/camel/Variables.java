@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
 /**
  * Marks a parameter as being an injection point of the variables
  *
- * @see Exchange#getVariables()
+ * @see   Exchange#getVariables()
+ * @since 4.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

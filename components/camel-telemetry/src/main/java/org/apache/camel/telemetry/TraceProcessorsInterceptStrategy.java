@@ -59,7 +59,7 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
             String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
             if ((isCoreProcessEnabled(tracer.isDisableCoreProcessors(), processorDefinition.getShortName()) ||
                     isCustomProcessEnabled(tracer.isTraceProcessors(), processorDefinition.getShortName()))
-                    && !tracer.exclude(processorName, exchange.getContext())) {
+                    && tracer.match(processorName, exchange.getContext())) {
                 tracer.beginProcessorSpan(exchange, processorName);
                 try {
                     processor.process(exchange);
@@ -78,7 +78,7 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
             boolean isTraceProcessor
                     = (isCoreProcessEnabled(tracer.isDisableCoreProcessors(), processorDefinition.getShortName()) ||
                             isCustomProcessEnabled(tracer.isTraceProcessors(), processorDefinition.getShortName()))
-                            && !tracer.exclude(processorName, exchange.getContext());
+                            && tracer.match(processorName, exchange.getContext());
             if (isTraceProcessor) {
                 try {
                     tracer.beginProcessorSpan(exchange, processorName);

@@ -62,4 +62,29 @@ public interface BedrockAgentRuntimeConstants {
     @Metadata(description = "When invoking a flow, this header will contain the reason the flow completed (set when a FlowCompletionEvent is received).",
               javaType = "String")
     String FLOW_COMPLETION_REASON = "CamelAwsBedrockAgentRuntimeFlowCompletionReason";
+
+    @Metadata(description = "When performing a retrieve operation, this header will contain the list of "
+                            + "KnowledgeBaseRetrievalResult chunks returned by the knowledge base.",
+              javaType = "java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalResult>")
+    String RETRIEVED_RESULTS = "CamelAwsBedrockAgentRuntimeRetrievedResults";
+
+    @Metadata(description = "Overrides the maximum number of results returned by the retrieve operation. "
+                            + "Must be a positive Integer; when not set the AWS service default is used.",
+              javaType = "Integer")
+    String NUMBER_OF_RESULTS = "CamelAwsBedrockAgentRuntimeNumberOfResults";
+
+    @Metadata(description = "Overrides the search type used by the retrieve operation. Accepts the AWS SearchType "
+                            + "enum (HYBRID, SEMANTIC) or its String representation.",
+              javaType = "String")
+    String OVERRIDE_SEARCH_TYPE = "CamelAwsBedrockAgentRuntimeSearchType";
+
+    @Metadata(description = "Pagination token used by the retrieve operation. Set on the in-message to request "
+                            + "the next page; set on the out-message when the response carries one.",
+              javaType = "String")
+    String NEXT_TOKEN = "CamelAwsBedrockAgentRuntimeNextToken";
+
+    @Metadata(description = "When performing a retrieve operation, this header will contain the guardrail action "
+                            + "(if any) applied by the knowledge base.",
+              javaType = "String")
+    String RETRIEVE_GUARDRAIL_ACTION = "CamelAwsBedrockAgentRuntimeRetrieveGuardrailAction";
 }

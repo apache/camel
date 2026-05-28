@@ -17,9 +17,12 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * SPI for setting up XML data format (jacksonXml) for rest-dsl.
+ *
+ * @since 4.16
  */
 public interface RestBindingJacksonXmlDataFormatFactory {
 
@@ -33,7 +36,8 @@ public interface RestBindingJacksonXmlDataFormatFactory {
      */
     void setupJacksonXml(
             CamelContext camelContext, RestConfiguration config,
-            String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
+            @Nullable String type, @Nullable Class<?> typeClass, @Nullable String outType,
+            @Nullable Class<?> outTypeClass,
             DataFormat jacksonXml, DataFormat outJacksonXml)
             throws Exception;
 

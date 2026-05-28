@@ -4,7 +4,7 @@
     "name": "iec60870-server",
     "title": "IEC 60870 Server",
     "description": "IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA implementation.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "iot",
     "javaType": "org.apache.camel.component.iec60870.server.ServerComponent",

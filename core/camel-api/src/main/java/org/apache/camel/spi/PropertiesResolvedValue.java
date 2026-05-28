@@ -16,9 +16,14 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Data about a {@link PropertiesComponent} property placeholder that has been resolved to a value by Camel.
+ *
+ * @since 4.9
  */
-public record PropertiesResolvedValue(String name, String originalValue, String value, String defaultValue, String source) {
+public record PropertiesResolvedValue(String name, String originalValue, String value, @Nullable String defaultValue,
+        @Nullable String source) {
 
 }

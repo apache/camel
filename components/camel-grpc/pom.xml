@@ -201,13 +201,13 @@
                     <sourceDirectories>
                         <sourceDirectory>${project.basedir}/src/test/proto</sourceDirectory>
                     </sourceDirectories>
-                    <binaryMavenPlugins>
-                        <binaryMavenPlugin>
+                    <plugins>
+                        <plugin kind="binary-maven">
                             <groupId>io.grpc</groupId>
                             <artifactId>protoc-gen-grpc-java</artifactId>
                             <version>${grpc-version}</version>
-                        </binaryMavenPlugin>
-                    </binaryMavenPlugins>
+                        </plugin>
+                    </plugins>
                 </configuration>
                 <executions>
                     <execution>
@@ -249,6 +249,16 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
 
             <!-- Force the version of guava to camel-package-maven-plugin to prevent build failure due to the

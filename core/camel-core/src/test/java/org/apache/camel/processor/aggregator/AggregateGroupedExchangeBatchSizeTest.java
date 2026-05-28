@@ -17,6 +17,7 @@
 package org.apache.camel.processor.aggregator;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,8 +60,10 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
         assertEquals("100", grouped.get(0).getIn().getBody(String.class));
         assertEquals("150", grouped.get(1).getIn().getBody(String.class));
 
-        // wait a bit for the remainder to come in
-        Thread.sleep(1000);
+        // wait for the remainder to come in via completion timeout
+        await().atMost(5, TimeUnit.SECONDS)
+                .pollDelay(1, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(result.getReceivedCounter() >= 1));
 
         if (result.getReceivedCounter() == 2) {
 

@@ -25,6 +25,7 @@ camel get [options]
 | xref:jbang-commands/camel-jbang-get-context.adoc[context] | Get status of Camel integrations
 | xref:jbang-commands/camel-jbang-get-count.adoc[count] | Get total and failed exchanges
 | xref:jbang-commands/camel-jbang-get-endpoint.adoc[endpoint] | Get usage of Camel endpoints
+| xref:jbang-commands/camel-jbang-get-error.adoc[error] | Get captured routing errors of Camel integrations
 | xref:jbang-commands/camel-jbang-get-event.adoc[event] | Get latest events of Camel integrations
 | xref:jbang-commands/camel-jbang-get-groovy.adoc[groovy] | Groovy Sources used of Camel integrations
 | xref:jbang-commands/camel-jbang-get-group.adoc[group] | Get status of Camel route groups

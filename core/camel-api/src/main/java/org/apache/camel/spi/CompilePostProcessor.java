@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Allows to plugin custom post-processors that are processed after the DSL has loaded the source and compiled into a
@@ -25,7 +26,8 @@ import org.apache.camel.CamelContext;
  * This is used to detect and handle {@link org.apache.camel.BindToRegistry} and {@link org.apache.camel.Converter}
  * classes.
  *
- * @see CompilePreProcessor
+ * @see   CompilePreProcessor
+ * @since 3.17
  */
 public interface CompilePostProcessor {
 
@@ -41,7 +43,7 @@ public interface CompilePostProcessor {
      */
     void postCompile(
             CamelContext camelContext, String name,
-            Class<?> clazz, byte[] byteCode, Object instance)
+            Class<?> clazz, byte @Nullable [] byteCode, @Nullable Object instance)
             throws Exception;
 
 }

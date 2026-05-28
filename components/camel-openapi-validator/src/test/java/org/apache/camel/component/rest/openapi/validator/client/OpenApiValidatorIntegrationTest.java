@@ -21,9 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
@@ -34,9 +32,6 @@ import static org.hamcrest.Matchers.containsString;
  * validator, providing full OpenAPI schema validation via the Atlassian Swagger Request Validator library.
  */
 public class OpenApiValidatorIntegrationTest {
-
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     public void testValidRequestSucceeds() throws Exception {
@@ -54,7 +49,7 @@ public class OpenApiValidatorIntegrationTest {
             });
             context.start();
 
-            given().port(port.getPort())
+            given().port(server.getPort())
                     .contentType("application/json")
                     .body("{\"name\": \"tiger\", \"photoUrls\": [\"img.jpg\"]}")
                     .when()
@@ -82,7 +77,7 @@ public class OpenApiValidatorIntegrationTest {
             });
             context.start();
 
-            given().port(port.getPort())
+            given().port(server.getPort())
                     .contentType("application/json")
                     .when()
                     .put("/api/v3/pet")
@@ -110,7 +105,7 @@ public class OpenApiValidatorIntegrationTest {
             });
             context.start();
 
-            given().port(port.getPort())
+            given().port(server.getPort())
                     .contentType("application/json")
                     .body("{\"name\": \"tiger\"}")
                     .when()
@@ -139,7 +134,7 @@ public class OpenApiValidatorIntegrationTest {
             });
             context.start();
 
-            given().port(port.getPort())
+            given().port(server.getPort())
                     .when()
                     .get("/api/v3/pet/findByStatus")
                     .then()
@@ -166,7 +161,7 @@ public class OpenApiValidatorIntegrationTest {
             });
             context.start();
 
-            given().port(port.getPort())
+            given().port(server.getPort())
                     .when()
                     .get("/api/v3/pet/findByTags")
                     .then()
@@ -198,7 +193,7 @@ public class OpenApiValidatorIntegrationTest {
 
             // Body missing required "photoUrls" field, but the validation level for
             // schema.required is downgraded to INFO, so the request passes.
-            given().port(port.getPort())
+            given().port(server.getPort())
                     .contentType("application/json")
                     .body("{\"name\": \"tiger\"}")
                     .when()
@@ -210,11 +205,14 @@ public class OpenApiValidatorIntegrationTest {
         }
     }
 
+    private VertxPlatformHttpServer server;
+
     private CamelContext createCamelContext() throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port.getPort());
+        conf.setBindPort(0);
+        server = new VertxPlatformHttpServer(conf);
         CamelContext context = new DefaultCamelContext();
-        context.addService(new VertxPlatformHttpServer(conf));
+        context.addService(server);
         return context;
     }
 }

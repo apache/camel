@@ -57,6 +57,7 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
     @Test
     public void testErrorOk() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("Kaboom");
+        getMockEndpoint("mock:error").setResultWaitTime(5000);
         getMockEndpoint("mock:start").expectedBodiesReceived("Kaboom", "World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:exception").expectedBodiesReceived("Kaboom");

@@ -116,7 +116,9 @@ public class DefaultPropertiesFunctionResolver extends ServiceSupport
     }
 
     @Override
-    protected void doInit() throws Exception {
+    protected void doBuild() throws Exception {
+        super.doBuild();
+
         // include out of the box functions
         addPropertiesFunction(new EnvPropertiesFunction());
         addPropertiesFunction(new SysPropertiesFunction());
@@ -125,6 +127,11 @@ public class DefaultPropertiesFunctionResolver extends ServiceSupport
         addPropertiesFunction(new ServicePortPropertiesFunction());
         addPropertiesFunction(new BooleanPropertiesFunction());
 
+        ServiceHelper.buildService(functions.values());
+    }
+
+    @Override
+    protected void doInit() throws Exception {
         functions.values().forEach(f -> CamelContextAware.trySetCamelContext(f, camelContext));
         ServiceHelper.initService(functions.values());
     }

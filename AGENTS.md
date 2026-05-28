@@ -73,6 +73,13 @@ When creating a PR, **always identify and request reviews** from the most releva
 
 - Every PR must include tests for new functionality or bug fixes.
 - Every PR must include documentation updates where applicable.
+  Any user-visible change must be documented in the upgrade guide
+  (`docs/user-manual/modules/ROOT/pages/camel-4x-upgrade-guide-4_XX.adoc`) and in the relevant
+  command or component documentation page. This includes: changed defaults, new auto-detection
+  behavior, removed or renamed options, changed header names or values, API/SPI signature changes,
+  removed or deprecated components, migrated libraries, and renamed documentation pages.
+  For backported changes, the upgrade guide entry must be added on the `main` branch (not on the
+  maintenance branch where the fix is backported).
 - All code must pass formatting checks (`mvn formatter:format impsort:sort`) before pushing.
 - All generated files must be regenerated and committed (CI checks for uncommitted changes).
 
@@ -114,11 +121,12 @@ jump straight to implementation after reading the issue description and the curr
    is written the way it is.
 3. **Search for related issues**: Search JIRA for related tickets (same component, similar keywords)
    to find prior discussions, rejected approaches, or intentional design decisions.
-4. **Look for design documents**: Check the `proposals/` directory for design docs (`.adoc` files)
-   that may explain architectural decisions in the affected area. Key proposals by area:
-   - **Security** (secrets, SSL/TLS, serialization, policy enforcement): [`proposals/security.adoc`](proposals/security.adoc)
-   - **Tracing / Telemetry** (OpenTelemetry, spans, context propagation): [`proposals/tracing.adoc`](proposals/tracing.adoc)
-   - **MDC / Logging** (MDC propagation, logging context): [`proposals/mdc.adoc`](proposals/mdc.adoc)
+4. **Look for design documents**: Check the `design/` directory for design docs (`.adoc` files)
+   that may explain architectural decisions in the affected area. Key documents by area:
+   - **Security** (secrets, SSL/TLS, serialization, policy enforcement): [`design/security.adoc`](design/security.adoc)
+   - **Tracing / Telemetry** (OpenTelemetry, spans, context propagation): [`design/tracing.adoc`](design/tracing.adoc)
+   - **MDC / Logging** (MDC propagation, logging context): [`design/mdc.adoc`](design/mdc.adoc)
+   - **Headers** (naming conventions, constants, upgrade policy): [`design/headers.adoc`](design/headers.adoc)
 5. **Understand the broader context**: If the issue involves a module that replaced or deprecated
    another (e.g., `camel-opentelemetry2` replacing `camel-opentelemetry`), understand *why* the
    replacement was made and what was intentionally changed vs. accidentally omitted.
@@ -150,8 +158,8 @@ When reviewing PRs, apply the same investigative rigor:
 - Check `git log` and `git blame` on modified files to see if the change conflicts with prior
   intentional decisions.
 - Verify that "fixes" don't revert deliberate behavior without justification.
-- Check for design proposals (`proposals/*.adoc`) related to the affected area
-  (see the area-to-proposal mapping in "Issue Investigation" above).
+- Check for design documents (`design/*.adoc`) related to the affected area
+  (see the area-to-document mapping in "Issue Investigation" above).
 - Search for related JIRA tickets that provide context on why the code was written that way.
 
 ### Documentation Conventions
@@ -168,6 +176,115 @@ When writing or modifying `.adoc` documentation:
   version-aware reference.
 - **When reviewing doc PRs**, check that all `xref:` links and anchors resolve correctly, especially
   cross-component references that may span versions.
+
+## Security Model
+
+Camel has a documented threat model that defines who is trusted, where the trust boundaries sit,
+what counts as a framework vulnerability, and what is operator responsibility. The canonical
+document is [`docs/user-manual/modules/ROOT/pages/security-model.adoc`](docs/user-manual/modules/ROOT/pages/security-model.adoc).
+Use it as the reference when triaging security reports, deciding whether a finding warrants a
+CVE, or reviewing a security-sensitive PR.
+
+For the vulnerability **reporting** convention, [`SECURITY.md`](SECURITY.md) at the repository
+root is the entry point GitHub and security tooling expect. It points to the threat model above
+for scope and to the ASF process for private disclosure. An agent that discovers or is handed a
+suspected vulnerability MUST NOT open a public issue, PR, or mailing-list post about it — follow
+the private process in `SECURITY.md` and stop.
+
+### Trust assumptions
+
+- **Camel committers and component authors** are trusted to ship secure defaults.
+- **Route authors** (the people writing DSL routes) are **fully trusted**. They execute arbitrary
+  Java in `.bean()` / `.process()`, evaluate arbitrary expressions in `simple` / `groovy` / `jexl`
+  / `mvel` / `xpath`, and configure every component option. Code execution by a route author is
+  by design and is **not** a vulnerability.
+- **Deployment operators** are **fully trusted**. They set configuration, secrets, network
+  exposure and the JVM. Their misconfiguration is not a framework vulnerability unless Camel's
+  default exposed it.
+- **External message senders** (HTTP clients, JMS producers, file droppers, SMTP senders, CoAP
+  peers, etc.) are **untrusted**. This is the primary attacker model.
+
+The fundamental trust boundary is between **the route plus its configuration** (trusted) and
+**the data flowing through the route** (untrusted). The framework must not turn untrusted data
+into code execution, file read, request forgery, or auth bypass on its own.
+
+### What is in scope (concise summary)
+
+Reports that demonstrate untrusted input crossing a trust boundary the framework should have
+held — in a default or reasonably-expected configuration — are in scope. Concrete classes the
+PMC has historically accepted:
+
+- **Unsafe deserialisation** of untrusted input (XStream / Hessian / Jackson polymorphic / raw
+  `ObjectInputStream` in consumers, type converters, aggregation repositories, key stores).
+- **XXE** and remote DTD/stylesheet resolution in XML/XSLT/XPath/XSD parsers.
+- **Expression or template language injection** where the framework itself passes untrusted
+  input to an evaluator (not the route author).
+- **Path traversal** in file/mail/FTP consumers and producers.
+- **SSRF triggered by parser default resolution**.
+- **Camel-header / bean-dispatch abuse** when a consumer maps untrusted input into the Exchange
+  header map without a strict, case-insensitive `HeaderFilterStrategy`.
+- **Auth/authz bypass** in components implementing AAA (Keycloak, Shiro, platform-http auth,
+  Spring Security integration).
+- **Information disclosure** of secrets or Exchange state via logs, events, world-readable files
+  or HTTP responses.
+- **Insecure defaults** — any component shipping with deserialisation, TLS-skip or admin-exposure
+  enabled out of the box.
+- **Injection into back-end queries** built by Camel itself (Cypher, XSLT extension functions,
+  etc.).
+
+### What is out of scope
+
+The following are explicitly **not** framework vulnerabilities and will be closed as such:
+
+- A **route author** executing arbitrary code through `.bean()`, `.process()`, `Runtime.exec()`,
+  or evaluating `simple` / `groovy` on untrusted input. Route code is trusted.
+- A route author building a SQL / Cypher / LDAP / HTTP URI from untrusted input without
+  parameterising. The route is at fault, not the framework.
+- Behaviour that is enabled by **explicit opt-in**: `allowJavaSerializedObject=true`,
+  `transferException=true`, `trustAllCertificates=true`, `hostnameVerificationEnabled=false`, or
+  selecting an `ObjectInputStream`-using data format.
+- **DoS / resource exhaustion** through unthrottled routes. Operators apply `throttle`,
+  `circuitBreaker`, `resilience4j`, JVM limits.
+- A deployer exposing `camel-management`, the developer console, `camel-jolokia` or JMX on a
+  public network.
+- Third-party transitive dependency CVEs that are not reachable through any Camel-exposed code
+  path.
+- Automated scanner reports without a PoC demonstrating an actual trust-boundary breach.
+
+### Operator hardening checklist
+
+When reviewing or recommending a deployment, surface the following:
+
+- Enable the security policy framework: set `camel.main.profile = prod` so the default for
+  `secret` / `insecure:ssl` / `insecure:serialization` / `insecure:dev` is `fail`
+  (see [`design/security.adoc`](design/security.adoc)).
+- Resolve secrets through one of the supported vaults rather than plain-text properties.
+- Configure TLS through `SSLContextParameters` (the JSSE Utility); never `trustAllCertificates`
+  in production.
+- Strip Camel-internal headers (`Camel*`, `org.apache.camel.*`) from messages arriving from
+  untrusted producers using `removeHeaders("Camel*")` before any dispatching processor.
+- Do not enable Java serialisation on consumers exposed to untrusted networks.
+- Keep `camel-management`, the developer console, `camel-jolokia` and JMX on a trusted network
+  only.
+
+### Committer review checklist (for security-sensitive PRs)
+
+When reviewing a PR that touches a consumer, type converter, aggregation repository, data
+format, parser, or anything that handles `@UriParam` security knobs:
+
+- Does the inbound side apply a `HeaderFilterStrategy` that blocks `Camel*` / `camel*` /
+  `org.apache.camel.*` **case-insensitively**? The header-injection family (CVE-2025-27636 and
+  five follow-ons) recurred precisely because new consumers shipped without it.
+- Does the change call `ObjectInputStream.readObject()` (directly or via Hessian/Castor/XStream)
+  without an `ObjectInputFilter`? Five sequential CVEs (CVE-2024-22369, 23114, 2026-25747, 27172,
+  40858) accepted this exact pattern in aggregation repositories.
+- Does any new `@UriParam` control a security-relevant default? If so, mark it with
+  `secret = true` for secrets or `security = "insecure:ssl"` / `"insecure:serialization"` /
+  `"insecure:dev"` for risky flags (see the `Annotations` subsection further down).
+- Does the change relax a default? New defaults err toward "denied unless opted in". A relaxed
+  default needs an upgrade-guide entry and PMC sign-off.
+- Does an authentication or authorization component enforce what its option names claim — issuer
+  validation, audience checking, signature verification, every advertised sub-path covered?
 
 ## Structure
 
@@ -249,7 +366,7 @@ Annotations:
 - Mark sensitive parameters with `secret = true` on `@UriParam` or `@Metadata` (passwords, tokens, API keys)
 - For insecure configuration flags (e.g., `trustAllCertificates`, `allowJavaSerializedObject`),
   add `security = "insecure:ssl"` / `"insecure:serialization"` / `"insecure:dev"` on `@UriParam`.
-  See [`proposals/security.adoc`](proposals/security.adoc) for categories and rationale.
+  See [`design/security.adoc`](design/security.adoc) for categories and rationale.
 
 Import Style:
 - Do NOT use fully qualified class names (FQCNs) in Java code. Always add an `import` statement
@@ -260,6 +377,14 @@ Import Style:
 - Generated code (`src/generated/`) is excluded from this rule.
 - The build automatically shortens unnecessary FQCNs via OpenRewrite (`rewrite-maven-plugin`).
   CI will fail if uncommitted FQCN changes are detected after the build.
+
+Javadoc `@since` Tags:
+- All new public classes, interfaces, enums, and annotations in `core/camel-api` MUST include
+  a `@since X.Y` Javadoc tag indicating the Camel version when they are introduced.
+- All new public methods added to existing interfaces/classes in `core/camel-api` MUST include
+  a `@since X.Y` Javadoc tag on each new method.
+- Use the upcoming minor release version (e.g., `@since 4.21` if the current SNAPSHOT is 4.21.0).
+- Place `@since` as the last Javadoc tag, after `@param`, `@return`, `@throws`, etc.
 
 ## Adding Components
 

@@ -451,11 +451,17 @@ public class RouteDiagramRenderer {
         };
     }
 
-    public List<String> printTextDiagram(List<RouteInfo> routes) {
+    /**
+     * Used for testing
+     */
+    List<String> printTextDiagram(List<RouteInfo> routes) {
         return printTextDiagram(routes, RouteDiagramLayoutEngine.NodeLabelMode.CODE);
     }
 
-    public List<String> printTextDiagram(List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode mode) {
+    /**
+     * Used for testing
+     */
+    List<String> printTextDiagram(List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode mode) {
         List<String> lines = new ArrayList<>();
         for (RouteInfo route : routes) {
             lines.add("");

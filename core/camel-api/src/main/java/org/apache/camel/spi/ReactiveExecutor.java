@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * SPI to plugin different reactive engines in the Camel routing engine.
+ *
+ * @since 3.0
  */
 public interface ReactiveExecutor {
 

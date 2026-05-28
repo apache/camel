@@ -32,6 +32,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * </ul>
  * <b>Notice:</b> Most consumers only have a single task, but {@link org.apache.camel.BatchConsumer} can have many tasks
  * and thus this option mostly applies to this kind of consumer.
+ *
+ * @see ShutdownRoute
+ * @see BatchConsumer
  */
 @XmlType
 @XmlEnum

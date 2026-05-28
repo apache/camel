@@ -24,6 +24,9 @@ import java.util.Optional;
 
 import org.apache.camel.Exchange;
 
+/**
+ * @since 4.7
+ */
 public interface CloudEvent {
 
     String CAMEL_CLOUD_EVENT_ID = "CamelCloudEventID";

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * To allow objects to be injected with an group.
  */
@@ -26,6 +28,6 @@ public interface GroupAware extends HasGroup {
      *
      * @param group the group
      */
-    void setGroup(String group);
+    void setGroup(@Nullable String group);
 
 }

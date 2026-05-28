@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -76,9 +77,8 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                         description = "Timeout in millis waiting for evaluation to be done")
     long timeout = 10000;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    String repositories;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     long pid;
 
@@ -115,7 +115,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                     printer().printErr("This requires Camel version 4.3 or newer");
                     return -1;
                 }
-                exit = run.runTransformMessage(camelVersion, repositories);
+                exit = run.runTransformMessage(camelVersion, mavenResolver);
                 this.pid = run.spawnPid;
                 if (exit == 0) {
                     exit = super.doCall();

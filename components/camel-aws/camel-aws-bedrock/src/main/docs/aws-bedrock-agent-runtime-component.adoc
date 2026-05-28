@@ -56,7 +56,34 @@ the https://aws.amazon.com/bedrock/[Amazon Bedrock] service.
 The component supports the following operations on the `operation` URI option:
 
 * `retrieveAndGenerate` — Query a Bedrock Knowledge Base and generate a grounded response from the selected model.
+* `retrieve` — Run a semantic search against a Bedrock Knowledge Base and return the matched chunks without LLM generation.
 * `invokeFlow` — Invoke a Bedrock Flow by id/alias and stream the resulting events back as Camel message headers.
+
+=== Retrieving from a Bedrock Knowledge Base
+
+The `retrieve` operation performs a semantic search against a Bedrock Knowledge Base and returns the matching chunks
+without invoking an LLM. Use this when you want to plug retrieval into your own generation step, inspect retrieval
+quality, or build pagination on top of the knowledge base.
+
+Mandatory options:
+
+* `knowledgeBaseId` — the id of the Bedrock Knowledge Base to query.
+
+The body of the in-message must be a `String` containing the search query. When `pojoRequest=true`, the body must be a
+`RetrieveRequest` (any retrieval-config knobs in that POJO are honored verbatim).
+
+The retrieval configuration can be tuned per exchange via the following headers:
+
+* `CamelAwsBedrockAgentRuntimeNumberOfResults` (Integer) — maximum number of chunks to return.
+* `CamelAwsBedrockAgentRuntimeSearchType` (String) — overrides the search type (`HYBRID` or `SEMANTIC`).
+* `CamelAwsBedrockAgentRuntimeNextToken` (String) — pagination token returned by a previous call.
+
+The producer surfaces the matched chunks as the out-message body (a `List<KnowledgeBaseRetrievalResult>`) and on the
+following headers:
+
+* `CamelAwsBedrockAgentRuntimeRetrievedResults` — the same `List<KnowledgeBaseRetrievalResult>` available on the body.
+* `CamelAwsBedrockAgentRuntimeNextToken` — present when the response carries a pagination token.
+* `CamelAwsBedrockAgentRuntimeRetrieveGuardrailAction` — present when the knowledge base applies a guardrail action.
 
 === Invoking a Bedrock Flow
 

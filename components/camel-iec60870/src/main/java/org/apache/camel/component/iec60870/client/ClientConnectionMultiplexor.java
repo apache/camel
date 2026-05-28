@@ -18,6 +18,7 @@ package org.apache.camel.component.iec60870.client;
 
 import org.apache.camel.component.iec60870.AbstractConnectionMultiplexor;
 
+@Deprecated(since = "4.21")
 public class ClientConnectionMultiplexor extends AbstractConnectionMultiplexor {
 
     private final ClientConnection connection;

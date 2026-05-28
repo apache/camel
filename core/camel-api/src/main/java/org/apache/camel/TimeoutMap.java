@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents a map of values which timeout after a period of inactivity.
  */
@@ -27,6 +29,7 @@ public interface TimeoutMap<K, V> extends Service {
      * @param  key the key of the value to search for
      * @return     the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
+    @Nullable
     V get(K key);
 
     /**
@@ -45,6 +48,7 @@ public interface TimeoutMap<K, V> extends Service {
      * @return               the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping
      *                       for <tt>key</tt>.
      */
+    @Nullable
     V put(K key, V value, long timeoutMillis);
 
     /**
@@ -57,6 +61,7 @@ public interface TimeoutMap<K, V> extends Service {
      * @return               the value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for
      *                       <tt>key</tt>.
      */
+    @Nullable
     V putIfAbsent(K key, V value, long timeoutMillis);
 
     /**
@@ -65,6 +70,7 @@ public interface TimeoutMap<K, V> extends Service {
      * @param  key key for the object to remove
      * @return     the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
+    @Nullable
     V remove(K key);
 
     /**

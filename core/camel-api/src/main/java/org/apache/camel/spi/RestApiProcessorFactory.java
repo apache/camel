@@ -31,7 +31,7 @@ import org.apache.camel.Processor;
 public interface RestApiProcessorFactory {
 
     /**
-     * Creates a new REST API <a href="http://camel.apache.org/processor.html">Processor </a>, which provides API
+     * Creates a new REST API <a href="https://camel.apache.org/processor.html">Processor </a>, which provides API
      * listing of the REST services
      *
      * @param  camelContext  the camel context

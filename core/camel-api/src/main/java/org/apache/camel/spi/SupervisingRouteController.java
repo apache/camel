@@ -21,14 +21,18 @@ import java.util.Set;
 
 import org.apache.camel.Route;
 import org.apache.camel.util.backoff.BackOffTimer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A supervising capable {@link RouteController} that delays the startup of the routes after the camel context startup
  * and takes control of starting the routes in a safe manner. This controller is able to retry starting failing routes,
  * and have various options to configure settings for backoff between restarting routes.
+ *
+ * @since 3.3
  */
 public interface SupervisingRouteController extends RouteController {
 
+    @Nullable
     String getIncludeRoutes();
 
     /**
@@ -40,8 +44,9 @@ public interface SupervisingRouteController extends RouteController {
      * ids <tt>myRoute,myOtherRoute</tt>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
-    void setIncludeRoutes(String includeRoutes);
+    void setIncludeRoutes(@Nullable String includeRoutes);
 
+    @Nullable
     String getExcludeRoutes();
 
     /**
@@ -53,7 +58,7 @@ public interface SupervisingRouteController extends RouteController {
      * <tt>mySpecialRoute,myOtherSpecialRoute</tt>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
-    void setExcludeRoutes(String excludeRoutes);
+    void setExcludeRoutes(@Nullable String excludeRoutes);
 
     int getThreadPoolSize();
 
@@ -153,7 +158,7 @@ public interface SupervisingRouteController extends RouteController {
      * @param  routeId the route id
      * @return         the state, or <tt>null</tt> if the route is not under restarting
      */
-    BackOffTimer.Task getRestartingRouteState(String routeId);
+    BackOffTimer.@Nullable Task getRestartingRouteState(String routeId);
 
     /**
      * Gets the last exception that caused the route to not startup for the given route
@@ -161,6 +166,7 @@ public interface SupervisingRouteController extends RouteController {
      * @param  routeId the route id
      * @return         the caused exception
      */
+    @Nullable
     Throwable getRestartException(String routeId);
 
     /**

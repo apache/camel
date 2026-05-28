@@ -34,8 +34,8 @@ over the MCP protocol.
 
 == Available Tools
 
-The server exposes 27 tools organized into eleven functional areas, plus 3 prompts that provide structured
-multi-step workflows.
+The server exposes 30 catalog tools organized into twelve functional areas, 21 runtime introspection tools for
+inspecting and interacting with live Camel processes, plus 3 prompts that provide structured multi-step workflows.
 
 === Catalog Exploration
 
@@ -48,8 +48,13 @@ multi-step workflows.
   runtime type (`main`, `spring-boot`, `quarkus`). Supports querying specific Camel versions.
 
 | `camel_catalog_component_doc`
-| Get detailed documentation for a specific component including all endpoint options, component-level options,
-  Maven coordinates, and URI syntax.
+| Get documentation for a specific component: URI syntax, component-level and endpoint options. Supports
+  `optionsFilter` (case-insensitive substring on option name) and `includeOptions` (`required`, `common`, or
+  `all`; default `common`, which excludes deprecated and advanced options) to control payload size.
+
+| `camel_catalog_component_maven`
+| Get the Maven coordinates (`groupId`, `artifactId`, `version`) of a specific component, for adding it as a
+  project dependency.
 
 | `camel_catalog_dataformats`
 | List available data formats (JSON, XML, CSV, Avro, Protobuf, and others).
@@ -85,6 +90,23 @@ multi-step workflows.
 | `camel_catalog_kamelet_doc`
 | Get detailed documentation for a specific Kamelet including all properties/options, their types, defaults,
   examples, and the Kamelet's Maven dependencies.
+|===
+
+=== Example Catalog
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_catalog_examples`
+| List available Camel JBang examples with filtering by name, description, or tag (case-insensitive substring match).
+  Supports filtering by difficulty level (`beginner`, `intermediate`, `advanced`) and limiting the number of results.
+  Returns name, title, description, level, tags, and file list for each example.
+
+| `camel_catalog_example_file`
+| Get the content of a specific file from a Camel JBang example. For bundled examples, returns the file content
+  directly. For non-bundled examples, returns a GitHub URL where the file can be found. Use `camel_catalog_examples`
+  first to discover example names and their files.
 |===
 
 === Route Understanding
@@ -240,6 +262,112 @@ help validate, scaffold, and provide mock guidance for that workflow.
 
 | `camel_version_list`
 | Lists available Camel versions for a given runtime, including release dates, JDK requirements, and LTS status.
+|===
+
+=== Runtime Introspection
+
+NOTE: Runtime tools require a running Camel application started via `camel run`. They communicate with the
+application through the file-based IPC protocol in `~/.camel/`. All tools accept an optional `nameOrPid`
+parameter; when omitted, the server auto-discovers the running Camel process (this works when exactly one
+process is running).
+
+==== Process Discovery
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_runtime_processes`
+| List all running Camel processes that can be inspected. Returns PID, name, and context name for each
+  discovered process.
+|===
+
+==== Context and Routes
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_runtime_context`
+| Get Camel context information: name, version, state, uptime, route count, exchange statistics.
+
+| `camel_runtime_routes`
+| List Camel routes with their state, uptime, messages processed, last error, and throughput statistics.
+
+| `camel_runtime_route_source`
+| Get the source code of routes in the running Camel application. Supports wildcard filtering.
+
+| `camel_runtime_route_dump`
+| Dump route definitions in XML or YAML format.
+
+| `camel_runtime_route_structure`
+| Show the route structure as a tree of processors.
+
+| `camel_runtime_route_control`
+| Control a route: start, stop, suspend, or resume it by route ID.
+|===
+
+==== Observability
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_runtime_health`
+| Get health check status for the Camel application.
+
+| `camel_runtime_endpoints`
+| List all endpoints registered in the Camel context with their URIs and usage statistics.
+
+| `camel_runtime_inflight`
+| Show currently in-flight exchanges (messages being processed).
+
+| `camel_runtime_blocked`
+| Show blocked exchanges that are stuck or waiting.
+
+| `camel_runtime_top`
+| Show top processor statistics: which processors are slowest and most active.
+
+| `camel_runtime_memory`
+| Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.
+|===
+
+==== Configuration and Registry
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_runtime_variables`
+| Show exchange variables in the Camel context.
+
+| `camel_runtime_consumers`
+| Show consumer statistics (polling consumers, event-driven consumers).
+
+| `camel_runtime_properties`
+| Show configuration properties of the running Camel application.
+
+| `camel_runtime_services`
+| Show services registered in the Camel service registry.
+|===
+
+==== Interaction and Debugging
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_runtime_send`
+| Send a test message to a Camel endpoint in the running application.
+
+| `camel_runtime_trace`
+| Enable, disable, or dump message tracing for the running Camel application.
+
+| `camel_runtime_eval`
+| Evaluate an expression in the given language (e.g., simple, jsonpath, xpath) against the Camel context.
+
+| `camel_runtime_browse`
+| Browse messages in a Camel endpoint (e.g., messages queued in a SEDA endpoint).
 |===
 
 == Available Prompts
@@ -423,6 +551,109 @@ Once connected, you can navigate the available MCP Tools, Resources, and Prompts
 This is useful for understanding what data the server provides and for testing tool invocations
 before integrating with an AI coding assistant.
 
+== Getting Started
+
+This walkthrough demonstrates the full AI-assisted Camel workflow: use the catalog tools to build a route,
+launch it with `camel run`, then use the runtime tools to inspect and interact with the live application.
+The same MCP server provides both catalog and runtime capabilities.
+
+=== Prerequisites
+
+* https://www.jbang.dev/[JBang] installed and on your PATH
+* manual/camel-jbang.html[Camel JBang] installed (`jbang app install camel@apache/camel`)
+* An MCP-capable AI tool (Claude Code, VS Code with Copilot, JetBrains AI, etc.) configured as shown in the <<Setup>> section above
+
+=== Step 1: Ask the AI to build a route
+
+Start by asking your AI assistant to create a Camel route. The assistant uses the catalog tools to discover
+components, look up their documentation, build the route, and validate it:
+
+----
+Build me a Camel route that generates a message every 5 seconds with a random number,
+logs it, and sends it to a SEDA queue called "numbers".
+----
+
+The assistant uses `camel_catalog_component_doc` to look up the `timer`, `log`, and `seda` component options,
+builds a YAML route, and validates it with `camel_validate_yaml_dsl`. You can also use the
+`camel_build_integration` prompt for a more structured multi-step workflow.
+
+The result is a route file, for example `random-numbers.yaml`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:generate?period=5000
+      steps:
+        - setBody:
+            simple: "${random(1000)}"
+        - log: "Generated number: ${body}"
+        - to: seda:numbers
+----
+
+=== Step 2: Launch the route
+
+In AI tools that can execute shell commands (such as Claude Code), ask the assistant to launch the route:
+
+----
+Run this route with camel run
+----
+
+The assistant runs `camel run random-numbers.yaml` in the background. Alternatively, open a separate terminal
+and run it yourself:
+
+[source,bash]
+----
+camel run random-numbers.yaml
+----
+
+=== Step 3: Inspect the running application
+
+Once the route is running, use the runtime tools to inspect it:
+
+----
+Show me the running Camel processes and their route statistics
+----
+
+The assistant calls `camel_runtime_processes` to discover the running application, then `camel_runtime_routes`
+to show route state, message counts, and throughput. You can drill deeper:
+
+----
+Are there any health issues? What do the endpoints look like?
+----
+
+The assistant calls `camel_runtime_health` and `camel_runtime_endpoints` to provide a full picture of the
+live application.
+
+=== Step 4: Interact with the running application
+
+Try sending a test message or enabling tracing:
+
+----
+Enable message tracing so I can see the exchange flow, wait a few seconds,
+then show me the traced messages.
+----
+
+The assistant calls `camel_runtime_trace` with `action=enable`, waits, then calls it again with `action=dump`
+to show the message path through the route processors.
+
+----
+Browse the messages queued in the seda:numbers endpoint
+----
+
+The assistant calls `camel_runtime_browse` with `endpoint=seda:numbers` to show pending messages.
+
+=== Step 5: Debug and iterate
+
+If something goes wrong, combine catalog and runtime tools:
+
+----
+The route is showing errors. Diagnose the issue and suggest a fix.
+----
+
+The assistant calls `camel_runtime_health` and checks error details from `camel_runtime_routes`, then uses
+`camel_error_diagnose` (a catalog tool) to analyze the error and suggest fixes — all in one conversation.
+
 == Examples
 
 === Listing Components
@@ -462,6 +693,24 @@ What options does the aws-s3-source kamelet accept?
 
 The assistant calls `camel_catalog_kamelet_doc` with `kamelet=aws-s3-source` and returns the complete property
 list including required fields, types, defaults, and Maven dependencies.
+
+=== Browsing Examples
+
+----
+Show me beginner-level Camel examples related to REST
+----
+
+The assistant calls `camel_catalog_examples` with `filter=rest` and `level=beginner` and returns matching examples
+with their name, title, description, difficulty level, tags, and file list.
+
+To read a specific file from an example:
+
+----
+Show me the route file from the rest-api example
+----
+
+The assistant calls `camel_catalog_example_file` with `example=rest-api` and `file=route.camel.yaml` and returns
+the file content directly for bundled examples, or a GitHub URL for non-bundled ones.
 
 === Validating an Endpoint URI
 
@@ -698,3 +947,60 @@ Format: yaml
 The prompt guides the assistant through a security audit: analyzing the route for vulnerabilities and
 security-sensitive components, understanding the data flow, and producing a structured audit checklist with
 critical issues, warnings, positive findings, and actionable recommendations.
+
+=== Runtime Introspection Examples
+
+The runtime tools require a Camel application to be running. Start one with `camel run`:
+
+[source,bash]
+----
+camel run my-route.yaml
+----
+
+Then, from a separate terminal (or through your AI assistant), the MCP server auto-discovers the running process.
+
+==== Listing Running Processes
+
+----
+Show me the running Camel processes
+----
+
+The assistant calls `camel_runtime_processes` and returns the PID, name, and context name for each discovered
+Camel application.
+
+==== Inspecting Context and Routes
+
+----
+Show me the Camel context info and route statistics for the running application
+----
+
+The assistant calls `camel_runtime_context` to get context metadata (version, state, uptime) and
+`camel_runtime_routes` to list routes with their state, exchange counts, and throughput.
+
+==== Debugging a Live Route
+
+----
+Enable tracing so I can see messages flowing through my routes, then show me the traced messages
+----
+
+The assistant calls `camel_runtime_trace` with `action=enable` to start tracing, waits briefly, then calls
+`camel_runtime_trace` with `action=dump` to retrieve the traced messages showing the path each exchange took
+through the route processors.
+
+==== Sending a Test Message
+
+----
+Send a test message with body "Hello" to the direct:start endpoint
+----
+
+The assistant calls `camel_runtime_send` with `endpoint=direct:start` and `body=Hello`. The tool returns the
+exchange result and any response.
+
+==== Finding Performance Bottlenecks
+
+----
+Which processors in my routes are the slowest?
+----
+
+The assistant calls `camel_runtime_top` to get processor-level statistics sorted by processing time,
+helping identify bottlenecks in the running application.

@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * An annotation used to mark classes and methods to indicate code capable of converting from a type to another type
- * which are then auto-discovered using the <a href="http://camel.apache.org/type-converter.html">Type Conversion
+ * which are then auto-discovered using the <a href="https://camel.apache.org/type-converter.html">Type Conversion
  * Support</a>
  */
 @Retention(RetentionPolicy.RUNTIME)

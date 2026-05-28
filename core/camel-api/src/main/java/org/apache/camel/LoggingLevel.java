@@ -24,11 +24,17 @@ import jakarta.xml.bind.annotation.XmlEnum;
 @XmlEnum
 public enum LoggingLevel {
 
+    /** Most detailed logging level. */
     TRACE,
+    /** Detailed information useful during development. */
     DEBUG,
+    /** Informational messages. */
     INFO,
+    /** Warning messages. */
     WARN,
+    /** Error messages. */
     ERROR,
+    /** Disables logging entirely. */
     OFF;
 
     /**

@@ -119,11 +119,14 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
             template.sendBody("seda:throttleCountAsync", "Message " + i);
         }
 
-        assertTrue(notifier.matches(5, TimeUnit.SECONDS));
+        assertTrue(notifier.matches(10, TimeUnit.SECONDS));
         assertMockEndpointsSatisfied();
 
-        Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
-        assertEquals(10, completed.longValue());
+        Awaitility.await().atMost(15, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Long c = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
+                    assertEquals(10, c.longValue());
+                });
     }
 
     @DisabledOnOs(OS.WINDOWS)

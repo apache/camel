@@ -17,11 +17,19 @@
 package org.apache.camel;
 
 /**
- * Provides a channel on which clients can create and invoke message exchanges on an {@link Endpoint}.
+ * A service that sends {@link Exchange}s to an {@link Endpoint}.
+ * <p/>
+ * A producer is created by calling {@link Endpoint#createProducer()} and participates in the Camel lifecycle as a
+ * {@link Service}. Calls to {@link #process(Exchange)} block until processing of the exchange completes; for
+ * non-blocking dispatch use {@link AsyncProducer}.
  * <p/>
  * Important: Do not do any initialization in the constructor. Instead use
  * {@link org.apache.camel.support.service.ServiceSupport#doInit()} or
  * {@link org.apache.camel.support.service.ServiceSupport#doStart()}.
+ *
+ * @see Consumer
+ * @see AsyncProducer
+ * @see Endpoint
  */
 public interface Producer extends Processor, Service, IsSingleton, EndpointAware {
 

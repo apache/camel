@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Holder object for a given value.
  */
@@ -25,7 +27,7 @@ public class ValueHolder<V> {
     private final V value;
 
     public ValueHolder(V val) {
-        value = val;
+        value = Objects.requireNonNull(val, "val");
     }
 
     public V get() {
@@ -33,7 +35,7 @@ public class ValueHolder<V> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) {
             return true;
         }

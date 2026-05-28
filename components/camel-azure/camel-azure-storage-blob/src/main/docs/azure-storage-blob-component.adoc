@@ -137,6 +137,7 @@ For these operations, `accountName` and `containerName` are *required*.
 |`createBlobContainer` | Create a new container within a storage account. If a container with the same name already exists, the producer will ignore it.
 |`deleteBlobContainer` | Delete the specified container in the storage account. If the container doesn't exist, the operation fails.
 |`listBlobs`| Returns a list of blobs in this container, with folder structures flattened.
+|`listBlobVersions`| Returns a list of blobs and their versions in this container. Each `BlobItem` in the result carries its own `versionId` and `isCurrentVersion` flag, allowing the full version history of every blob to be inspected. Requires versioning to be enabled on the storage account. Honours the same `prefix`, `regex` and `maxResultsPerPage` filters as `listBlobs`.
 |===
 
 *Operations on the blob level*
@@ -233,8 +234,10 @@ YAML::
         credentialType: SHARED_ACCOUNT_KEY
         accessKey: "RAW({{azure.accessKey}})"
       steps:
-        - log: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
-        - to: direct:processBlob
+        - log:
+            message: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
+        - to:
+            uri: direct:processBlob
 ----
 ====
 
@@ -272,8 +275,10 @@ YAML::
         credentialType: SHARED_ACCOUNT_KEY
         accessKey: "RAW({{azure.accessKey}})"
       steps:
-        - log: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
-        - to: direct:processBlob
+        - log:
+            message: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
+        - to:
+            uri: direct:processBlob
 ----
 ====
 
@@ -317,8 +322,10 @@ YAML::
         credentialType: SHARED_ACCOUNT_KEY
         accessKey: "RAW({{azure.accessKey}})"
       steps:
-        - log: "Processing: ${header.CamelAzureStorageBlobBlobName}"
-        - to: direct:processBlob
+        - log:
+            message: "Processing: ${header.CamelAzureStorageBlobBlobName}"
+        - to:
+            uri: direct:processBlob
 ----
 ====
 
@@ -398,6 +405,29 @@ from("direct:start")
     exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, "overridenName");
   })
   .to("azure-storage-blob://camelazure/container1?operation=listBlobs&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+
+- `listBlobVersions`:
+
+Returns every version of every blob in the container. Versioning must be enabled on the storage
+account. Each `BlobItem` in the result carries its own `versionId` and `isCurrentVersion` flag.
+The `prefix` and `regex` options can be used to narrow the result down to a single blob name.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(BlobConstants.PREFIX, constant("invoice.pdf"))
+  .to("azure-storage-blob://camelazure/container1?operation=listBlobVersions&serviceClient=#client")
+  .process(exchange -> {
+      @SuppressWarnings("unchecked")
+      List<BlobItem> versions = exchange.getMessage().getBody(List.class);
+      for (BlobItem v : versions) {
+          System.out.printf("%s versionId=%s isCurrent=%s%n",
+                  v.getName(), v.getVersionId(), v.isCurrentVersion());
+      }
+  })
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -530,9 +560,12 @@ YAML::
 - route:
     id: azure-blob-upload
     from:
-      uri: file://data?noop=true
+      uri: file://data
+      parameters:
+        noop: true
       steps:
-        - log: "Uploading file: ${header.CamelFileName}"
+        - log:
+            message: "Uploading file: ${header.CamelFileName}"
         - toD:
             uri: "azure-storage-blob://{{azure.account}}/{{azure.container}}"
             parameters:
@@ -542,7 +575,8 @@ YAML::
               maxConcurrency: 4          # 4 parallel uploads
               credentialType: SHARED_ACCOUNT_KEY
               accessKey: "RAW({{azure.accessKey}})"
-        - log: "Upload completed: ${header.CamelFileName}"
+        - log:
+            message: "Upload completed: ${header.CamelFileName}"
 ----
 ====
 

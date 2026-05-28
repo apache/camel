@@ -35,6 +35,7 @@ import static org.apache.camel.component.iec60870.Constants.SCHEME_SERVER;
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_SERVER, syntax = "iec60870-server:uriPath",
              title = "IEC 60870 Server", category = { Category.IOT }, headersClass = Constants.class)
+@Deprecated(since = "4.21")
 public class ServerEndpoint extends AbstractIecEndpoint<ServerConnectionMultiplexor> {
 
     /**

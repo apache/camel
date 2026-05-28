@@ -20,6 +20,7 @@ import java.io.Serial;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A specialized {@link org.apache.camel.spi.AggregationRepository} which also supports optimistic locking.
@@ -74,7 +75,8 @@ public interface OptimisticLockingAggregationRepository extends AggregationRepos
      * @throws OptimisticLockingException This should be thrown when the currently stored exchange differs from the
      *                                    supplied oldExchange.
      */
-    Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange)
+    @Nullable
+    Exchange add(CamelContext camelContext, String key, @Nullable Exchange oldExchange, Exchange newExchange)
             throws OptimisticLockingException;
 
     /**

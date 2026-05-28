@@ -453,7 +453,11 @@ public class KameletMain extends MainCommandLineSupport {
             setupExport(answer, true);
         } else {
             PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
-            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, false, transform));
+            // create resolver that can download dependencies for known functions
+            var resolver = new DependencyDownloaderPropertiesFunctionResolver(answer, false, transform);
+            resolver.setCamelContext(answer);
+            resolver.start();
+            pc.setPropertiesFunctionResolver(resolver);
         }
 
         // groovy scripts
@@ -795,8 +799,11 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.properties.ignore-missing-location", "true");
         PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
         pc.setPropertiesParser(new ExportPropertiesParser(answer));
-        pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, export, false));
-
+        // create resolver that can download dependencies for known functions
+        var resolver = new DependencyDownloaderPropertiesFunctionResolver(answer, export, false);
+        resolver.setCamelContext(answer);
+        resolver.start();
+        pc.setPropertiesFunctionResolver(resolver);
         // override default type converters with our export converter that is more flexible during exporting
         ExportTypeConverter ec = new ExportTypeConverter();
         answer.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);

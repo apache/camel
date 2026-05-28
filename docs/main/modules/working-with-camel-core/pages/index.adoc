@@ -2,7 +2,7 @@
 
 == Context
 
-The xref:manual::camelcontext.adoc[Camel Context] is the hearth of Apache Camel, which holds everything together.
+The xref:manual::camelcontext.adoc[Camel Context] is the heart of Apache Camel, which holds everything together.
 
 If you are not familiar with Apache Camel, then we recommend reading the xref:manual::camelcontext.adoc[Camel Context] first
 before coming back here.
@@ -18,7 +18,7 @@ In other words, a Camel _route_ is where the integration flow is defined. For ex
 If you have basic knowledge about _routes_, you can use the following guides to learn how to write them in different languages, handle errors, and customize them.
 
 * Content
-** xref:manual::camelcontext.adoc[Camel Context]: the hearth of Apache Camel
+** xref:manual::camelcontext.adoc[Camel Context]: the heart of Apache Camel
 
 * Routes (Basic + DSL)
 ** xref:manual::java-dsl.adoc[Java DSL]: the default language to write _routes_.
@@ -79,7 +79,6 @@ Learn about additional ways to customize your integrations. Explore alternatives
 
 
 * Context
-** xref:manual::camelcontext.adoc[Camel Context]
 ** xref:manual::camelcontext-autoconfigure.adoc[Camel Context Auto Configuration]
 ** xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced Configuration of Camel Context]
 * Running Camel Applications and Other Runtime Guides
@@ -108,9 +107,8 @@ Learn about additional ways to customize your integrations. Explore alternatives
 ** xref:manual::spring.adoc[Spring]
 ** xref:manual::spring-xml-extensions.adoc[Spring XML Extensions]
 ** xref:manual::validator.adoc[Validator]
-** xref:manual::variables.adoc[Variables]
 ** xref:manual::what-are-the-dependencies.adoc[Camel Requirements]
 ** xref:manual::testing.adoc[Testing]
 
 
-You can find additional documentation in the xref:manual::architecture.adoc[architecture documentation] in the old user manual.
+You can find additional documentation in the xref:manual::architecture.adoc[architecture documentation] in the user manual.

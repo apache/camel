@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.squareup.javapoet.TypeSpec;
+import com.palantir.javapoet.TypeSpec;
 
 public class TypeSpecHolder {
     public final TypeSpec type;

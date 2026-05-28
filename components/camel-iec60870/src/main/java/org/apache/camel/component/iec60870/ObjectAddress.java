@@ -22,6 +22,7 @@ import java.util.Objects;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.ASDUAddress;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 
+@Deprecated(since = "4.21")
 public class ObjectAddress {
     int[] address;
 

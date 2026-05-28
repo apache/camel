@@ -21,6 +21,8 @@ import org.apache.camel.StaticService;
 
 /**
  * Local {@link CliConnector} that allows Camel CLI to manage local running Camel integrations.
+ *
+ * @since 3.19
  */
 public interface CliConnector extends StaticService, NonManagedService {
 

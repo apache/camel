@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a resolver of data formats.
@@ -30,5 +31,6 @@ public interface DataFormatResolver {
      * @param  context the camel context
      * @return         the data format or <tt>null</tt> if not possible to resolve
      */
+    @Nullable
     DataFormat createDataFormat(String name, CamelContext context);
 }

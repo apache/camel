@@ -112,6 +112,11 @@ public class DoclingConfiguration implements Cloneable {
     @Metadata(description = "Maximum time to wait for async conversion completion in milliseconds", defaultValue = "300000")
     private long asyncTimeout = 300000; // 5 minutes
 
+    @UriParam(label = "advanced")
+    @Metadata(description = "Time-to-live for pending async conversion tasks in milliseconds. Tasks older than this will be evicted from memory to prevent leaks.",
+              defaultValue = "86400000")
+    private long asyncTaskTtl = 86400000; // 24 hours
+
     @UriParam(label = "batch")
     @Metadata(description = "Number of documents to submit per sub-batch. Documents are partitioned into sub-batches of this size"
                             + " and each sub-batch is processed before starting the next one. Within each sub-batch, up to"
@@ -628,6 +633,14 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setChunkingUseMarkdownTables(Boolean chunkingUseMarkdownTables) {
         this.chunkingUseMarkdownTables = chunkingUseMarkdownTables;
+    }
+
+    public long getAsyncTaskTtl() {
+        return asyncTaskTtl;
+    }
+
+    public void setAsyncTaskTtl(long asyncTaskTtl) {
+        this.asyncTaskTtl = asyncTaskTtl;
     }
 
     public DoclingConfiguration copy() {

@@ -23,9 +23,12 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.spi.SendDynamicAware;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Runtime catalog which limited API needed by components that supports {@link ComponentVerifierExtension}.
+ *
+ * @since 3.1
  */
 public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
@@ -42,6 +45,7 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
      * @param  name the component name
      * @return      component details in JSon
      */
+    @Nullable
     String componentJSonSchema(String name);
 
     /**

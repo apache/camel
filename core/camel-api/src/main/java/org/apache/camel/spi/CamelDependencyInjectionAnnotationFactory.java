@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 /**
  * A factory which performs the task from Camel dependency injection annotations on a field, property or method
  * parameter of a specified type.
+ *
+ * @since 3.16
  */
 public interface CamelDependencyInjectionAnnotationFactory {
 

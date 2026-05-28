@@ -18,8 +18,12 @@ package org.apache.camel.spi;
 
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents a {@link Language} which is a general purpose scripting languages such as groovy, joor and others.
+ *
+ * @since 3.10
  */
 @FunctionalInterface
 public interface ScriptingLanguage {
@@ -32,5 +36,5 @@ public interface ScriptingLanguage {
      * @param  resultType the expected result type
      * @return            the result of the evaluation
      */
-    <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType);
+    <T> @Nullable T evaluate(String script, @Nullable Map<String, Object> bindings, Class<T> resultType);
 }

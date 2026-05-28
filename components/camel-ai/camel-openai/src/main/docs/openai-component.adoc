@@ -123,7 +123,8 @@ YAML::
             uri: openai:chat-completion
             parameters:
               userMessage: What is Apache Camel?
-        - log: "Response: ${body}"
+        - log:
+            message: "Response: ${body}"
 ----
 ====
 
@@ -186,8 +187,9 @@ When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` 
               - log:
                   id: log-6722
                   message: ${body}
-            simple:
-              expression: ${body}
+            expression:
+              simple:
+                expression: ${body}
             streaming: true
 ----
 
@@ -594,7 +596,9 @@ Using the xref:pgvector-component.adoc[PGVector] component:
       steps:
         - setVariable:
             name: text
-            simple: "${body}"
+            expression:
+              simple:
+                expression: "${body}"
         - to:
             uri: openai:embeddings
             parameters:
@@ -604,7 +608,9 @@ Using the xref:pgvector-component.adoc[PGVector] component:
             constant: UPSERT
         - setHeader:
             name: CamelPgVectorTextContent
-            simple: "${variable.text}"
+            expression:
+              simple:
+                expression: "${variable.text}"
         - to:
             uri: pgvector:documents
 
@@ -713,7 +719,8 @@ YAML::
             uri: openai:audio-transcription
             parameters:
               audioModel: whisper-1
-        - log: "Transcription: ${body}"
+        - log:
+            message: "Transcription: ${body}"
 ----
 ====
 
@@ -857,7 +864,8 @@ YAML::
               mcpServer.fs.args: "-y,@modelcontextprotocol/server-filesystem,/tmp"
               mcpServer.weather.transportType: sse
               mcpServer.weather.url: http://localhost:8080
-        - log: "${body}"
+        - log:
+            message: "${body}"
 ----
 ====
 
@@ -936,7 +944,9 @@ YAML::
       steps:
         - setProperty:
             name: originalPrompt
-            simple: "${body}"
+            expression:
+              simple:
+                expression: "${body}"
         - to:
             uri: openai:chat-completion
             parameters:
@@ -946,7 +956,9 @@ YAML::
               mcpServer.api.transportType: streamableHttp
               mcpServer.api.url: http://localhost:9090/mcp
         - loopDoWhile:
-            simple: "${header.CamelOpenAIFinishReason} == 'tool_calls'"
+            expression:
+              simple:
+                expression: "${header.CamelOpenAIFinishReason} == 'tool_calls'"
             steps:
               - to:
                   uri: openai:tool-execution
@@ -961,7 +973,8 @@ YAML::
                     storeFullResponse: true
                     mcpServer.api.transportType: streamableHttp
                     mcpServer.api.url: http://localhost:9090/mcp
-        - log: "Final answer: ${body}"
+        - log:
+            message: "Final answer: ${body}"
 ----
 ====
 
@@ -1029,7 +1042,8 @@ YAML::
               conversationMemory: true
               mcpServer.api.transportType: streamableHttp
               mcpServer.api.url: http://localhost:9090/mcp
-        - log: "${body}"
+        - log:
+            message: "${body}"
 ----
 ====
 

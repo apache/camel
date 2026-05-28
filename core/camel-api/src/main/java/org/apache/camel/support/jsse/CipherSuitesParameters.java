@@ -18,12 +18,15 @@ package org.apache.camel.support.jsse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a list of TLS/SSL cipher suite names.
  */
 public class CipherSuitesParameters {
-    private List<String> cipherSuite;
+    private @Nullable List<String> cipherSuite;
 
     /**
      * Returns a live reference to the list of cipher suite names.
@@ -38,6 +41,7 @@ public class CipherSuitesParameters {
     }
 
     public void addCipherSuite(String cipher) {
+        Objects.requireNonNull(cipher, "cipher");
         if (this.cipherSuite == null) {
             this.cipherSuite = new ArrayList<>();
         }
@@ -49,7 +53,7 @@ public class CipherSuitesParameters {
      *
      * @param cipherSuite cipher suite
      */
-    public void setCipherSuite(List<String> cipherSuite) {
+    public void setCipherSuite(@Nullable List<String> cipherSuite) {
         this.cipherSuite = cipherSuite == null ? null : new ArrayList<>(cipherSuite);
     }
 

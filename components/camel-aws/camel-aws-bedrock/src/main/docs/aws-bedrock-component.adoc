@@ -803,6 +803,7 @@ The Camel AWS Bedrock component provides comprehensive support for guardrails th
 *Message-level Configuration* (per-message override via headers):
 
 - `CamelAwsBedrockGuardrailConfig`: GuardrailConfiguration object for converse operations
+- `CamelAwsBedrockGuardrailIdentifier`: Guardrail identifier String for the applyGuardrail operation (overrides the endpoint `guardrailIdentifier`)
 - `CamelAwsBedrockGuardrailContent`: Content blocks for applyGuardrail operation
 - `CamelAwsBedrockGuardrailSource`: Source type - "INPUT" or "OUTPUT" for applyGuardrail
 

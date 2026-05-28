@@ -35,7 +35,7 @@ public class Dhis2ResourceTables {
         if (skipEvents != null) {
             postOperation.withParameter("skipEvents", String.valueOf(skipEvents));
         }
-        if (skipEvents != null) {
+        if (skipAggregate != null) {
             postOperation.withParameter("skipAggregate", String.valueOf(skipAggregate));
         }
         if (lastYears != null) {

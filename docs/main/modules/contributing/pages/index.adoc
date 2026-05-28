@@ -79,7 +79,7 @@ Make sure to replace the camel version in `-DarchetypeVersion=4.0.0` with the ve
 
 [NOTE]
 ====
-You will need to register to create or comment on JIRA issues. The “Log In” link in the upper right will allow you to log in with an existing account or sign up for an account.
+You will need an account to create or comment on JIRA issues. ASF JIRA does not allow self-registration. You can request an account at https://selfserve.apache.org/jira-account.html[ASF's self-serve portal].
 ====
 
 == Working on the documentation

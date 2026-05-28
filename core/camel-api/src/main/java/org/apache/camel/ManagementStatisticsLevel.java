@@ -24,9 +24,13 @@ import jakarta.xml.bind.annotation.XmlEnum;
 @XmlEnum
 public enum ManagementStatisticsLevel {
 
+    /** Extended statistics including additional performance metrics. */
     Extended,
+    /** Default statistics for context, routes, and processors. */
     Default,
+    /** Statistics for the context and routes only (no processors). */
     RoutesOnly,
+    /** No statistics collected. */
     Off;
 
     public boolean isDefaultOrExtended() {

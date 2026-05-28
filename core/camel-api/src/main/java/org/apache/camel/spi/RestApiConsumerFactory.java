@@ -32,7 +32,7 @@ import org.apache.camel.Processor;
 public interface RestApiConsumerFactory {
 
     /**
-     * Creates a new REST API <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>,
+     * Creates a new REST API <a href="https://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>,
      * which provides API listing of the REST services
      *
      * @param  camelContext  the camel context

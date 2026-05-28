@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -131,6 +132,9 @@ public class CamelSendAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--infra" },
                         description = "Send to infrastructure service (e.g., nats, kafka)")
     String infra;
+
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     private volatile long pid;
 
@@ -295,6 +299,7 @@ public class CamelSendAction extends ActionBaseCommand {
         run.empty = true;
         run.propertiesFiles = propertiesFiles;
         run.property = property;
+        run.mavenResolver = mavenResolver;
 
         // spawn thread that waits for response file
         final CountDownLatch latch = new CountDownLatch(1);
@@ -329,7 +334,7 @@ public class CamelSendAction extends ActionBaseCommand {
     private void printStatusLine(JsonObject jo) {
         // timestamp
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String ts = sdf.format(new Date(jo.getLong("timestamp")));
+        String ts = sdf.format(new Date(jo.getLongOrDefault("timestamp", System.currentTimeMillis())));
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
         } else {

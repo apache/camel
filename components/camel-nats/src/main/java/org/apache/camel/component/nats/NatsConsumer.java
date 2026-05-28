@@ -78,7 +78,15 @@ public class NatsConsumer extends DefaultConsumer {
                 ? this.getEndpoint().getConfiguration().getConnection()
                 : this.getEndpoint().getConnection();
 
-        this.executor.submit(new NatsConsumingTask(this.connection, this.getEndpoint().getConfiguration()));
+        NatsConfiguration config = this.getEndpoint().getConfiguration();
+        if (config.isManualAck() && !config.isJetstreamEnabled()) {
+            LOG.warn("manualAck=true has no effect without jetstreamEnabled=true; standard NATS has no acknowledgment");
+        }
+        if (config.isManualAck() && config.getAckPolicy() == AckPolicy.None) {
+            LOG.warn(
+                    "manualAck=true with ackPolicy=None: the server acknowledges automatically on delivery, manual ack/nak calls will have no effect");
+        }
+        this.executor.submit(new NatsConsumingTask(this.connection, config));
     }
 
     @Override
@@ -304,35 +312,38 @@ public class NatsConsumer extends DefaultConsumer {
         class CamelNatsMessageHandler implements MessageHandler {
 
             final boolean ackPolicyNone = configuration.getAckPolicy() == AckPolicy.None;
+            final boolean manualAckEnabled = configuration.isManualAck() && configuration.isJetstreamEnabled();
 
             @Override
             public void onMessage(Message msg) throws InterruptedException {
                 LOG.debug("Received Message: {}", msg);
                 final Exchange exchange = NatsConsumer.this.createExchange(false);
 
-                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                    @Override
-                    public void onComplete(Exchange exchange) {
-                        LOG.debug("ACK");
-                        msg.ack();
-                    }
-
-                    @Override
-                    public void onFailure(Exchange exchange) {
-                        if (ackPolicyNone) {
-                            // ACK policy is none which means that we should auto ACK even if the message processed failed in Camel
+                if (!manualAckEnabled) {
+                    exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                        @Override
+                        public void onComplete(Exchange exchange) {
                             LOG.debug("ACK");
                             msg.ack();
-                        } else {
-                            LOG.debug("NACK (delay:{})", configuration.getNackWait());
-                            if (configuration.getNackWait() <= 0) {
-                                msg.nak();
+                        }
+
+                        @Override
+                        public void onFailure(Exchange exchange) {
+                            if (ackPolicyNone) {
+                                // ACK policy is none which means that we should auto ACK even if the message processed failed in Camel
+                                LOG.debug("ACK");
+                                msg.ack();
                             } else {
-                                msg.nakWithDelay(configuration.getNackWait());
+                                LOG.debug("NACK (delay:{})", configuration.getNackWait());
+                                if (configuration.getNackWait() <= 0) {
+                                    msg.nak();
+                                } else {
+                                    msg.nakWithDelay(configuration.getNackWait());
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
                 try {
                     exchange.getIn().setBody(msg.getData());
                     exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
@@ -366,6 +377,10 @@ public class NatsConsumer extends DefaultConsumer {
                     // redelivery information
                     exchange.getMessage().setPayloadForTrait(MessageTrait.REDELIVERY,
                             evalRedeliveryMessageTrait(msg, exchange));
+
+                    if (manualAckEnabled) {
+                        exchange.getIn().setHeader(NatsConstants.NATS_MANUAL_ACK, new DefaultNatsManualAck(msg));
+                    }
 
                     NatsConsumer.this.processor.process(exchange);
 

@@ -30,6 +30,7 @@ import org.eclipse.neoscada.protocol.iec60870.asdu.types.CauseOfTransmission;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.QualifierOfInterrogation;
 
+@Deprecated(since = "4.21")
 public class ClientProducer extends DefaultProducer {
 
     private final ClientConnection connection;

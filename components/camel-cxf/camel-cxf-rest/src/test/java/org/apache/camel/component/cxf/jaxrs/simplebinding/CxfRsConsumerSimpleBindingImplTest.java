@@ -70,7 +70,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI)
-                        .recipientList(simple("direct:${header.operationName}"));
+                        .recipientList(simple("direct:${header.CamelCxfOperationName}"));
 
                 from("direct:getCustomer").process(new Processor() {
                     @Override

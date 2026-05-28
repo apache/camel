@@ -24,6 +24,8 @@ package org.apache.camel.resume;
  * resume operations cannot know in advance what is the SQL to be executed).
  *
  * This provides a way for integrations to inject that part of the logic into the resume API.
+ *
+ * @since 3.18
  */
 public interface ResumeActionAware extends ResumeAdapter {
 

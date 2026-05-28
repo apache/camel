@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.jspecify.annotations.Nullable;
 
 /**
  * {@link org.apache.camel.spi.Breakpoint} are used by the {@link org.apache.camel.spi.Debugger} API.
@@ -92,6 +93,6 @@ public interface Breakpoint {
      *                   possible to resolve from tracing
      * @see              ExchangeEvent
      */
-    void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition);
+    void onEvent(Exchange exchange, ExchangeEvent event, @Nullable NamedNode definition);
 
 }

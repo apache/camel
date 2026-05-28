@@ -25,6 +25,8 @@ import java.lang.annotation.Target;
 /**
  * An annotation used to mark classes to indicate code capable of configuring its options via a getter/setters that can
  * be called via Camels {@link org.apache.camel.spi.PropertyConfigurer}.
+ *
+ * @since 3.3
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

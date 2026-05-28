@@ -137,6 +137,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
@@ -278,6 +279,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.TRUE;
+    private Boolean messageSize = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.FALSE;
     private Boolean loadHealthChecks = Boolean.FALSE;
@@ -2010,6 +2012,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void setMessageSize(Boolean messageSize) {
+        this.messageSize = messageSize;
+    }
+
+    @Override
+    public Boolean isMessageSize() {
+        return messageSize;
+    }
+
+    @Override
     public void setTracing(Boolean tracing) {
         this.trace = tracing;
     }
@@ -3136,6 +3148,10 @@ public abstract class AbstractCamelContext extends BaseService
                       + " See more details at https://camel.apache.org/stream-caching.html");
         }
 
+        if (isMessageSizeInUse()) {
+            getMessageSizeStrategy().setEnabled(true);
+        }
+
         if (isAllowUseOriginalMessage()) {
             LOG.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
@@ -3560,6 +3576,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected boolean isStreamCachingInUse() throws Exception {
         return isStreamCaching();
+    }
+
+    protected boolean isMessageSizeInUse() throws Exception {
+        return isMessageSize();
     }
 
     protected void bindDataFormats() throws Exception {
@@ -4337,6 +4357,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public MessageSizeStrategy getMessageSizeStrategy() {
+        return camelContextExtension.getMessageSizeStrategy();
+    }
+
+    @Override
+    public void setMessageSizeStrategy(MessageSizeStrategy messageSizeStrategy) {
+        camelContextExtension.setMessageSizeStrategy(messageSizeStrategy);
+    }
+
+    @Override
     public RestRegistry getRestRegistry() {
         return PluginHelper.getRestRegistry(this);
     }
@@ -4348,6 +4378,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected RestRegistry createRestRegistry() {
         RestRegistryFactory factory = camelContextExtension.getRestRegistryFactory();
+        if (factory == null) {
+            return null;
+        }
         return factory.createRegistry();
     }
 
@@ -4451,6 +4484,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ReactiveExecutor createReactiveExecutor();
 
     protected abstract StreamCachingStrategy createStreamCachingStrategy();
+
+    protected abstract MessageSizeStrategy createMessageSizeStrategy();
 
     protected abstract TypeConverter createTypeConverter();
 

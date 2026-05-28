@@ -362,13 +362,13 @@ The condition functions is small functions that mostly evaluates to a `boolean` 
 |====
 |Function |Response Type |Description
 |`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false. This function is not supported when using csimple.
-|`contains(text`) | `boolean` | Returns true if the message body contains part of the text (ignore case)
-|`contains(exp,text`) | `boolean` | Returns true if the expression contains part of the text (ignore case)
-|`iif(predicate,trueExp,falseExp`) | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
+|`contains(text)` | `boolean` | Returns true if the message body contains part of the text (ignore case)
+|`contains(exp,text)` | `boolean` | Returns true if the expression contains part of the text (ignore case)
+|`iif(predicate,trueExp,falseExp)` | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
 |`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
 |`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
-|`isAlpha()` | `boolean` | Whether the message body is numeric value (A..Z). For more advanced checks use the `regex` operator.
-|`isAlpha(exp)` | `boolean` | Whether the expression is numeric value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlpha()` | `boolean` | Whether the message body is alphabetic value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlpha(exp)` | `boolean` | Whether the expression is alphabetic value (A..Z). For more advanced checks use the `regex` operator.
 |`isAlphaNumeric()` | `boolean` | Whether the message body is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
 |`isAlphaNumeric(exp)` | `boolean` | Whether the expression is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
 |`isNumeric()` | `boolean` | Whether the message body is numeric value (0..9). For more advanced checks use the `regex` operator.
@@ -392,7 +392,7 @@ The `isEmpty` is primary for checking if a value is either `null` or empty strin
 The `isAlpha` / `isAlphaNumeric` and `isNumeric` is for checking if a value only contains `A..Z` or `A.Z0..9`, or `0..9` characters.
 Camel will use from the JDK `Character.isLetter` / `Character.isLetterOrDigit`, or `Character.isDigit` methods internally.
 
-So `${isAlpha('Hello World'}` will actually return `false` because there is a whitespace. However `${isAlpha('HelloWorld'}` returns `true`.
+So `${isAlpha('Hello World')}` will actually return `false` because there is a whitespace. However `${isAlpha('HelloWorld')}` returns `true`.
 
 TIP: You can use the `regex` operator to use regular expressions for more advanced tests.
 
@@ -408,8 +408,8 @@ The date functions is used for parsing and formatting with date and times.
 |Function |Response Type |Description
 |`date:millis` | `long` | Returns the current timestamp as millis in unix epoch.
 |`date:command` | `Date` | Evaluates to a `java.util.Date` object. Supported commands are: `now` for current timestamp, `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the `Long/Date` object in the header with the key xxx. `variable.xxx` to use the `Long/Date` in the variable with the key xxx. `exchangeProperty.xxx` to use the `Long/Date` object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (only available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or `now+1h30m-100`.
-|`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `data:command` function for additional documentation on the commands.
-|`date-with-timezone:command:timezone:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` timezones and patterns. See `data:command` function for additional documentation on the commands.
+|`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `date:command` function for additional documentation on the commands.
+|`date-with-timezone:command:timezone:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` timezones and patterns. See `date:command` function for additional documentation on the commands.
 |====
 
 For example to get the current time use `${date:now}` which is returned as a `java.util.Date` object.
@@ -449,13 +449,13 @@ The `abs` function returns the absolute value of a numeric value. It converts th
 A few examples `${abs(-5)}` returns `5`, and `${abs(5)}` also returns `5`.
 
 The `average` function calculates the average (mean) of integral numbers (not floating point).
-Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${avg()}` results in `20`
+Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${average()}` results in `20`
 
 The `ceil` functions returns the value of number rounded up to the nearest integer that is greater than or equal to number.
 For example `${ceil(5.7)}` returns `6`, and `${ceil(5.1)}` also returns `6`.
 
 The `floor` functions returns the value of number rounded down to the nearest integer that is smaller or equal to number.
-For example `${ceil(5.7)}` returns `5`, and `${ceil(5.1)}` also returns `5`.
+For example `${floor(5.7)}` returns `5`, and `${floor(5.1)}` also returns `5`.
 
 The `max` and `min` functions in are used to find the maximum or minimum value among a set of numeric integral values.
 For example message body contains a list `[10, 5, 30, 15]` then `${max()}` returns `30` and `${min()}` returns `5`.
@@ -469,7 +469,7 @@ For example `${range(10)}` returns the numbers `0..9`. And `${range(1,10)}` retu
 The `sum` function adds up numeric values (not floating point) and returns the result as a long.
 Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${sum()}` results in `60`
 You can also use the `sum` function to add or subtract numbers. For example if you want to add 2 to a number, you can do
-`$sum($\{body},2)}`, and likewise to subtract you use negative number, such as `$sum($\{body},-2)}`.
+`${sum($\{body},2)}`, and likewise to subtract you use negative number, such as `${sum($\{body},-2)}`.
 
 === Other Functions
 
@@ -484,7 +484,7 @@ Other kind of functions.
 |`load(file)` | `String` | Loads the content of the resource from classpath (cannot load from file-system to avoid dangerous situations).
 |`null` | `null` | Returns a `null` value.
 |`sys.key` | `String` | *Deprecated* To lookup the JVM system property with the given key.
-|`sysenv.key` | `String` | To lookup the JVM system property with the given key.
+|`sysenv.key` | `String` | To lookup the OS environment variable with the given key.
 |`threadId` | `String` | Returns the id of the current thread.
 |`threadName` | `String` | Returns the name of the current thread.
 |`uuid(kind)` | `String` | Returns a UUID using the Camel `UuidGenerator`. You can choose kind between `default`, `classic`, `short`, `simple` and `random` as the kind. If no kind is given, then `default` is used. It is also possible to use a custom `UuidGenerator` and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}` where the id is `myGenerator`.
@@ -500,7 +500,7 @@ The `hostname` function returns the OS hostname and does not require using paren
 
 The `null` function returns a `null` value such as `$\{null}`.
 
-To use JVM system properties you use the `${sysenv.key}` function, such as `${sysenv.java.version}` or `${sysenv.java.io.tmpdir}`.
+To use OS environment variables you can also use the `${sysenv.key}` function (an alias for `${env.key}`), such as `${sysenv.PATH}` or `${sysenv.HOME}`.
 
 You can get the current thread id by the `$\{threadId}` function, and the name via `$\{threadName}`.
 
@@ -537,14 +537,14 @@ The string functions is various functions to work with values that are String an
 |`safeQuote()` | `String` | Returns the message body safely quoted if needed
 |`safeQuote(exp)` | `String` | Returns the expression safely quoted if needed
 |`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
-|`substring(num1,num2)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
-|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
+|`substring(num1,num2)` | `String` | Returns a substring of the message body. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
+|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
 |`substringAfter(after)` | `String` | Returns a substring of the message body that comes after. Returns `null` if nothing comes after.
 |`substringAfter(exp,after)` | `String` | Returns a substring of the expression that comes after. Returns `null` if nothing comes after.
 |`substringBefore(before)` | `String` | Returns a substring of the message body that comes before. Returns `null` if nothing comes before.
 |`substringBefore(exp,before)` | `String` | Returns a substring of the expression that comes before. Returns `null` if nothing comes before.
-|`substringBetween(after,before` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
-|`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(after,before)` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(exp,after,before)` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
 |`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
 |`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
 |`unquote()` | `String` | Returns the message body with any leading/ending quotes removed
@@ -570,7 +570,7 @@ To use semicolon as separator you would use `${join(;)}`. The `prefix` argument 
 `${join(&,id=)}` would return `id=A&id=B&id=C`.
 
 The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
-So `${lowercase('Hello World`)}` returns `hello world` and `${uppercase('Hello World`)}` returns `HELLO WORLD`.
+So `${lowercase('Hello World')}` returns `hello world` and `${uppercase('Hello World')}` returns `HELLO WORLD`.
 
 You can use the `normalizeWhitespace` function to _clean up_ a value by removing extra whitespaces. This is done by ensuring that
 there are exactly only 1 whitespace between words. And as well trimming the value for empty whitespace
@@ -579,7 +579,7 @@ in the beginning and end. Suppose the message body is a String value with `"   H
 The `pad` function returns a copy of the string with extra padding, if necessary, so that its total number of characters is at least the absolute value of the width parameter.
 If width is a positive number, then the string is padded to the right; if negative, it is padded to the left.
 The optional separator specifies the padding character(s) to use. If not specified, it defaults to the space character.
-If the message body contains `foo` then `${pad(5)}` return `"foo  "` and `${pad(-5)}` returns `"  foo"`, and `${pad(-5,'@')}` returns `@@foo`.
+If the message body contains `foo` then `${pad($\{body},5)}` returns `"foo  "` and `${pad($\{body},-5)}` returns `"  foo"`, and `${pad($\{body},-5,'@')}` returns `@@foo`.
 
 The `replace` function is used for finding a given text in a string and replacing it with another.
 For example the message body contains `Hello a how are you`, then `${replace(a,b)}` returns `Hello b how bre you`.
@@ -610,9 +610,9 @@ And using `${quote('Hi from me')}` then `"Hi from me"` is returned.
 
 The `safeQuote` function is quoting the value depending on the value type
 (uses the same logic as `kindOfType` function). In essence values that are null, boolean or numbers are not quoted,
-while everything else is. The `safeQuote` function is useful when working with JSon data.
+while everything else is. The `safeQuote` function is useful when working with JSON data.
 
-For example when doing JSon to JSon mapping you can extract values form the source document,
+For example when doing JSON to JSON mapping you can extract values form the source document,
 to be included in the output, but the values may or may not need to be quoted. Then you can use the `~>` chain operator
 to call the `safeQuote` function as shown below:
 
@@ -625,34 +625,34 @@ to call the `safeQuote` function as shown below:
 ----
 
 
-=== XML & JSon Functions
+=== XML & JSON Functions
 
-Functions to work with XML and JSon payloads.
+Functions to work with XML and JSON payloads.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
-|`jq(exp)` | `Object` | When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
-|`jq(input,exp)` | `Object` | Same as `jq(exp)` but to use the _input_ expression as the source of the JSon document.
-|`jsonpath(exp)` | `Object` | When working with JSon data, then this allows using the JsonPath language, for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
-|`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSon document.
-|`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
-|`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
-|`simpleJsonpath(exp)` | `Object` | When working with JSon data, then this allows using built-in Simple JsonPath, for example, to extract data from the message body (in JSon format).
-|`simpleJsonpath(input,exp)` | `Object` | Same as `simpleJsonpath(exp)` but to use the _input_ expression as the source of the JSon document.
-|`toJson(exp)` | `String` | Converts the expression to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon.
-|`toJsonBody` | `String` | Converts the message body to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon.
-|`toPrettyJson(exp)` | `String` | Converts the expression to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon in pretty mode.
-|`toPrettyJsonBody` | `String` | Converts the message body to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon in pretty mode.
+|`jq(exp)` | `Object` | When working with JSON data, then this allows using the JQ language, for example, to extract data from the message body (in JSON format). This requires having camel-jq JAR on the classpath.
+|`jq(input,exp)` | `Object` | Same as `jq(exp)` but to use the _input_ expression as the source of the JSON document.
+|`jsonpath(exp)` | `Object` | When working with JSON data, then this allows using the JsonPath language, for example, to extract data from the message body (in JSON format). This requires having camel-jsonpath JAR on the classpath.
+|`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSON document.
+|`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSON or XML) otherwise return the value as-is.
+|`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSON or XML) otherwise return the value as-is.
+|`simpleJsonpath(exp)` | `Object` | When working with JSON data, then this allows using built-in Simple JsonPath, for example, to extract data from the message body (in JSON format).
+|`simpleJsonpath(input,exp)` | `Object` | Same as `simpleJsonpath(exp)` but to use the _input_ expression as the source of the JSON document.
+|`toJson(exp)` | `String` | Converts the expression to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON.
+|`toJsonBody` | `String` | Converts the message body to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON.
+|`toPrettyJson(exp)` | `String` | Converts the expression to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON in pretty mode.
+|`toPrettyJsonBody` | `String` | Converts the message body to a JSON `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSON in pretty mode.
 |`xpath(exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
-|`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
+|`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSON payload instead of the message body.
 |====
 
-The simple language has support for working with XML and JSon data by offering functions that leverage the
-xref:languages:jsonpath-language.adoc[JSonPath], xref:languages:jq-language.adoc[JQ], xref:languages:xpath-language.adoc[XPath] languages.
+The simple language has support for working with XML and JSON data by offering functions that leverage the
+xref:languages:jsonpath-language.adoc[JSONPath], xref:languages:jq-language.adoc[JQ], xref:languages:xpath-language.adoc[XPath] languages.
 This also mean that you must include the required JARs on the classpath.
 
-The `jq` function (JSon Query) is used for using the JQ language to obtain data from an existing JSon payload.
+The `jq` function (JSON Query) is used for using the JQ language to obtain data from an existing JSON payload.
 For example given this payload:
 
 [source,json]
@@ -676,7 +676,7 @@ from("direct:map")
         .to("log:data");
 ----
 
-The `jsonpath` function works similar to `jq` but uses JSonPath.
+The `jsonpath` function works similar to `jq` but uses JSONPath.
 When using `${jsonpath($.id)}` will also return `123`.
 
 And the data mapping can be done as follows with JSonPath instead of JQ:
@@ -693,10 +693,10 @@ from("direct:map")
         .to("log:data");
 ----
 
-The `simpleJsonpath` function is using Camel's built in JSon library from `camel-util-json` that is a basic JSon parser.
+The `simpleJsonpath` function is using Camel's built in JSON library from `camel-util-json` that is a basic JSON parser.
 The syntax for the path is similar to Camel's bean OGNL syntax to use a dot notation to walk down a nested structure.
 
-Because the input JSon is not nested then the mapping example is just:
+Because the input JSON is not nested then the mapping example is just:
 
 [source,java]
 ----
@@ -710,7 +710,7 @@ from("direct:map")
         .to("log:data");
 ----
 
-However, if there are nested JSon such as:
+However, if there are nested JSON such as:
 
 [source,json]
 ----
@@ -738,7 +738,7 @@ However, if there are nested JSon such as:
 }
 ----
 
-Then you can retrieve data from the JSon payload as follows:
+Then you can retrieve data from the JSON payload as follows:
 
 [source,text]
 ----
@@ -763,9 +763,9 @@ For example, we attempt to refer to a non-existing attribute
 library.book[0]?.cheese
 ----
 
-The optional marker can also be used sooner in the path, such as `foo?.bar.age` which will not fail if there are no nested _bar_ node in the JSon payload.
+The optional marker can also be used sooner in the path, such as `foo?.bar.age` which will not fail if there are no nested _bar_ node in the JSON payload.
 
-The `toJson` function is to convert the payload to JSon as a `String` value. However, if the payload is already a `String` then no conversion happens.
+The `toJson` function is to convert the payload to JSON as a `String` value. However, if the payload is already a `String` then no conversion happens.
 So suppose the payload is a `Map` object as follows:
 
 [source,java]
@@ -775,9 +775,23 @@ map.put("name", "Jack");
 map.put("id", 123);
 ----
 
-Then `toJson` will output: `{"name":"Jack","id":123}`.
+Then `toJson` will output:
 
-There are also _pretty_ alternatives so when calling `toPrettyJson` will output: TODO:
+[source,json]
+----
+{"name":"Jack","id":123}
+----
+
+
+There are also _pretty_ alternatives so when calling `toPrettyJson` will output:
+
+[source,json]
+----
+{
+  "name": "Jack",
+  "id": 123
+}
+----
 
 The `xpath` function is for working with XML and using XPath expressions to extract data from XML payloads.
 
@@ -805,15 +819,15 @@ And the data mapping can be done with XPath as follows:
 from("direct:map")
     .transform().simple("""
         {
-          "roll": ${jsonpath($.id)},
-          "years": ${jsonpath($.age)},
-          "fullname": "${jsonpath($.name)}"
+          "id": ${xpath(/order/@id)},
+          "item": "${xpath(/order/item)}",
+          "fullname": "${xpath(/order/first)} ${xpath(/order/last)}"
         }""")
     .to("log:data");
 ----
 
-The `pretty` function is used for pretty printing JSon or XML data as a String value.
-For example given the following JSon payload (in a single line): `{"id": 123, "age": 42, "name": "scott"}`
+The `pretty` function is used for pretty printing JSON or XML data as a String value.
+For example given the following JSON payload (in a single line): `{"id": 123, "age": 42, "name": "scott"}`
 then `$\{pretty}` will output this nicely formatted:
 
 [source,json]
@@ -948,7 +962,7 @@ The following special symbols can be used when escaped with `\` as below:
 |`\\n` | To use newline character.
 |`\\t` | To use tab character.
 |`\\r` | To use carriage return character.
-|`\\}` | To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
+|`\\}` | To use the `}` character as text. This may be needed when building a JSON structure with the simple language.
 |====
 
 For example to use a new-line character in the split function `${split(\\n)}`.
@@ -1100,7 +1114,7 @@ And there can be as many chains:
 
 [source,text]
 ----
-${leftValue} ~> ${midValue} ~> ${midValue} -> ${rightValue}
+${leftValue} ~> ${midValue} ~> ${midValue} ~> ${rightValue}
 ----
 
 For example if the message body contains `Hello World` then the follow would return `WORLD`:
@@ -1309,14 +1323,14 @@ For instance:
 
 [source,java]
 -----
-simple("${header.title} contains 'Camel' && ${header.type'} == 'gold'")
+simple("${header.title} contains 'Camel' && ${header.type} == 'gold'")
 -----
 
 And of course the `||` is also supported. The sample would be:
 
 [source,java]
 -----
-simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
+simple("${header.title} contains 'Camel' || ${header.type} == 'gold'")
 -----
 
 == Init Blocks
@@ -1358,7 +1372,7 @@ Here are a couple of examples:
 $init{
   $cheese := 'Hello ${body}';
   $minAge := 18;
-  $foo := ${uppercase('Hello ${body}'};
+  $foo := ${uppercase('Hello ${body}')};
   $bar := ${header.code > 999 ? 'Gold' : 'Silver'};
 }init$
 ----
@@ -1382,7 +1396,7 @@ $init{
 The local variables can then easily be used in the Simple language either using the `${variable.foo}` syntax
 or the shorthand syntax `$foo`.
 
-For example as below where we do a basic JSon mapping:
+For example as below where we do a basic JSON mapping:
 
 [source,text]
 ----
@@ -1868,6 +1882,7 @@ Instead of the message body then a simple expression can be nested as input, for
 </setBody>
 ----
 
+[#_replacing_double_and_single_quotes]
 == Replacing double and single quotes
 
 You can use the `replace` function to more easily replace all single or double quotes in the message body,
@@ -1964,7 +1979,7 @@ e.g., to refer to a file on the classpath you can do:
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
 ----
 
-== Pretty XML or JSon
+== Pretty XML or JSON
 
 From *Camel 4.18* onwards then the Simple language can _pretty format_ the output.
 
@@ -2113,7 +2128,7 @@ reg.addFunction(new FooSimpleFunction());
 ----
 
 TIP: The custom function can then be made discoverable by Camel by dependency injection.
-If you use standalone Camel you can add `@BindToRegistry("foo-function)` to the class.
+If you use standalone Camel you can add `@BindToRegistry("foo-function")` to the class.
 For Spring Boot use `@Component` or `@Service` and Quarkus you can for example use `@ApplicationScoped`.
 
 

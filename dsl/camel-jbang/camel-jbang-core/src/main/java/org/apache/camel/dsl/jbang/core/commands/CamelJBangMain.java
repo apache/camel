@@ -48,6 +48,7 @@ import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginGet;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginList;
 import org.apache.camel.dsl.jbang.core.commands.process.*;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateCommand;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateList;
@@ -132,10 +133,12 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("runtime", new CommandLine(new DependencyRuntime(this)))
                         .addSubcommand("update", new CommandLine(new DependencyUpdate(this))))
                 .addSubcommand("dirty", new CommandLine(new Dirty(this)))
+                .addSubcommand("doctor", new CommandLine(new Doctor(this)))
                 .addSubcommand("eval", new CommandLine(new EvalCommand(this))
                         .addSubcommand("expression", new CommandLine(new EvalExpressionCommand(this))))
                 .addSubcommand("export", new CommandLine(new Export(this)))
                 .addSubcommand("explain", new CommandLine(new Explain(this)))
+                .addSubcommand("ask", new CommandLine(new Ask(this)))
                 .addSubcommand("harden", new CommandLine(new Harden(this)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(this))
                         .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
@@ -145,6 +148,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(this)))
                         .addSubcommand("count", new CommandLine(new CamelCount(this)))
                         .addSubcommand("endpoint", new CommandLine(new ListEndpoint(this)))
+                        .addSubcommand("error", new CommandLine(new ListError(this)))
                         .addSubcommand("event", new CommandLine(new ListEvent(this)))
                         .addSubcommand("groovy", new CommandLine(new ListGroovy(this)))
                         .addSubcommand("group", new CommandLine(new CamelRouteGroupStatus(this)))
@@ -183,7 +187,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("plugin", new CommandLine(new PluginCommand(this))
                         .addSubcommand("add", new CommandLine(new PluginAdd(this)))
                         .addSubcommand("delete", new CommandLine(new PluginDelete(this)))
-                        .addSubcommand("get", new CommandLine(new PluginGet(this))))
+                        .addSubcommand("get", new CommandLine(new PluginGet(this)))
+                        .addSubcommand("list", new CommandLine(new PluginList(this))))
                 .addSubcommand("ps", new CommandLine(new ListProcess(this)))
                 .addSubcommand("run", new CommandLine(new Run(this)))
                 .addSubcommand("sbom", new CommandLine(new SBOMGenerator(this)))
@@ -213,7 +218,7 @@ public class CamelJBangMain implements Callable<Integer> {
 
         postAddCommands(commandLine, args);
 
-        if (discoverPlugins) {
+        if (discoverPlugins && PluginHelper.shouldDiscoverPlugins(commandLine, args)) {
             PluginHelper.addPlugins(commandLine, this, args);
         }
 

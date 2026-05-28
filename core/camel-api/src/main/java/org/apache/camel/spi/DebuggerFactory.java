@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 
 /**
  * Factory for creating {@link Debugger}.
+ *
+ * @since 3.15
  */
 public interface DebuggerFactory {
 

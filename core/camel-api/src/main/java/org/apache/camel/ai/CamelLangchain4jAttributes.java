@@ -18,6 +18,8 @@ package org.apache.camel.ai;
 
 /**
  * Common Langchain4j Attributes shared by multiple components
+ *
+ * @since 4.7
  */
 public interface CamelLangchain4jAttributes {
     String CAMEL_LANGCHAIN4J_EMBEDDING = "CamelLangChain4jEmbeddingsEmbedding";

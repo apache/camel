@@ -25,6 +25,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.QualityInformation;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
 
+@Deprecated(since = "4.21")
 public class ClientConsumer extends DefaultConsumer {
 
     private final ClientConnection connection;

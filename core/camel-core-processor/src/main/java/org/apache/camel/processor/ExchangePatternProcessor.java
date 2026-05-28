@@ -21,14 +21,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 
 /**
  * Processor to set {@link org.apache.camel.ExchangePattern} on the {@link org.apache.camel.Exchange}.
  */
-public class ExchangePatternProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware {
+public class ExchangePatternProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware, StepIdAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
 
     public ExchangePatternProcessor() {
@@ -60,6 +62,16 @@ public class ExchangePatternProcessor extends BaseProcessorSupport implements Id
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public ExchangePattern getExchangePattern() {

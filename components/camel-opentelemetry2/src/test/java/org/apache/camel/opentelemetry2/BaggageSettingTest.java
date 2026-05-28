@@ -87,14 +87,12 @@ public class BaggageSettingTest extends OpenTelemetryTracerTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("OTEL_BAGGAGE_tenant.id", constant("1234"))
+                        .setProperty("CamelBaggage_tenant.id", constant("1234"))
                         .routeId("start")
                         .log("A message")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getIn().setHeader("operation", "fake");
-
                                 assertEquals("1234", Baggage.current().getEntryValue("tenant.id"));
                             }
                         })

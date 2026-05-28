@@ -24,6 +24,8 @@ import org.apache.camel.NamedNode;
 
 /**
  * SPI for dumping model definitions into XML representation.
+ *
+ * @since 3.1
  */
 public interface ModelToXMLDumper {
 

@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,7 @@ class DependencyRuntimeTest extends CamelCommandBaseTestSupport {
 
         pomFilePath = tempDir.toPath().resolve("pom.xml");
         command.pomXml = pomFilePath;
+        command.mavenResolver = new MavenResolverMixin();
     }
 
     @AfterEach
@@ -103,17 +105,16 @@ class DependencyRuntimeTest extends CamelCommandBaseTestSupport {
         int exit = command.doCall();
 
         assertEquals(0, exit);
-        assertEquals(jsonOutput, printer.getOutput());
+        Assertions.assertThat(printer.getOutput()).isEqualTo(jsonOutput);
     }
 
     private static class TestArguments {
         static final String QUARKUS_POM = "pom-xml-files/quarkus-pom.xml";
         static final String QUARKUS_POM_OUTPUT = "Runtime: quarkus" + System.lineSeparator() +
                                                  "Camel Version: 4.11.0" + System.lineSeparator() +
-                                                 "Camel Quarkus Version: 3.23.0" + System.lineSeparator() +
                                                  "Quarkus Version: 3.23.0";
         static final String QUARKUS_POM_JSON_OUTPUT
-                = "{\"runtime\":\"quarkus\",\"camelVersion\":\"4.11.0\",\"camelQuarkusVersion\":\"3.23.0\",\"quarkusVersion\":\"3.23.0\",\"quarkusBomGroupId\":\"io.quarkus.platform\",\"quarkusBomArtifactId\":\"quarkus-bom\",\"camelQuarkusBomGroupId\":\"io.quarkus.platform\",\"camelQuarkusBomArtifactId\":\"quarkus-camel-bom\"}";
+                = "{\"runtime\":\"quarkus\",\"camelVersion\":\"4.11.0\",\"quarkusVersion\":\"3.23.0\",\"quarkusBomGroupId\":\"io.quarkus.platform\"}";
 
         static final String SPRING_BOOT_POM = "pom-xml-files/springboot-pom.xml";
         static final String SPRING_BOOT_POM_OUTPUT = "Runtime: spring-boot" + System.lineSeparator() +

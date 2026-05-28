@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * Factory for parsing modeline when running Camel JBang standalone with DSLs.
+ *
+ * @since 3.16
  */
 public interface ModelineFactory {
 

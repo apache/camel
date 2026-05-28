@@ -16,8 +16,12 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Listener to trigger when the properties component is looking up and found a property.
+ *
+ * @since 3.17
  */
 @FunctionalInterface
 public interface PropertiesLookupListener {
@@ -30,6 +34,6 @@ public interface PropertiesLookupListener {
      * @param defaultValue optional default value
      * @param source       optional source containing the properties
      */
-    void onLookup(String name, String value, String defaultValue, String source);
+    void onLookup(String name, @Nullable String value, @Nullable String defaultValue, @Nullable String source);
 
 }

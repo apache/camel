@@ -19,8 +19,14 @@ package org.apache.camel.spi;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
+import org.jspecify.annotations.Nullable;
+
 /**
  * Backlog tracer that captures the last N messages during routing in a backlog.
+ *
+ * @since 4.0
  */
 public interface BacklogTracer {
 
@@ -153,27 +159,36 @@ public interface BacklogTracer {
     /**
      * Filter for tracing by route or node id
      */
+    @Nullable
     String getTracePattern();
 
     /**
      * Filter for tracing by route or node id
      */
-    void setTracePattern(String tracePattern);
+    void setTracePattern(@Nullable String tracePattern);
 
     /**
      * Filter for tracing messages
      */
+    @Nullable
     String getTraceFilter();
 
     /**
      * Filter for tracing messages
      */
-    void setTraceFilter(String filter);
+    void setTraceFilter(@Nullable String filter);
 
     /**
      * Gets the trace counter (total number of traced messages)
      */
     long getTraceCounter();
+
+    /**
+     * Increments and returns the trace counter.
+     *
+     * @since 4.21
+     */
+    long incrementTraceCounter();
 
     /**
      * Number of traced messages in the backlog
@@ -184,6 +199,20 @@ public interface BacklogTracer {
      * Reset the tracing counter
      */
     void resetTraceCounter();
+
+    /**
+     * Whether the tracer should trace the given node and exchange (taking into account patterns and filters).
+     *
+     * @since 4.21
+     */
+    boolean shouldTrace(NamedNode node, Exchange exchange);
+
+    /**
+     * Records a trace event. Used internally by the route pipeline advices to submit pre-built trace events.
+     *
+     * @since 4.21
+     */
+    void traceEvent(BacklogTracerEventMessage event);
 
     /**
      * Get all tracing data (without removing)

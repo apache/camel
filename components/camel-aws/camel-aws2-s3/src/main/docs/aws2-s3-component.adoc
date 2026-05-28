@@ -1128,19 +1128,35 @@ This will require specifying the destinationBucket option. As example:
 
 In this case, the objects consumed will be moved to _myothercamelbucket_ bucket and deleted from the original one (because of deleteAfterRead set to true as default).
 
-You have also the possibility of using a key prefix/suffix while moving the file to a different bucket. The options are destinationBucketPrefix and destinationBucketSuffix.
+You have also the possibility of using a key prefix/suffix while moving the file to a different bucket.
+The options are `destinationBucketPrefix` and `destinationBucketSuffix`.
 
-Taking the above example, you could do something like:
+Both options support the xref:languages:simple-language.adoc[Simple] expression language.
+Wrap an expression in `RAW()` to prevent the Camel URI parser from interpreting special characters:
 
 [source,java]
 --------------------------------------------------------------------------------
-  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&moveAfterRead=true&destinationBucket=myothercamelbucket&destinationBucketPrefix=RAW(pre-)&destinationBucketSuffix=RAW(-suff)")
+  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&moveAfterRead=true"
+     + "&destinationBucket=myothercamelbucket"
+     + "&destinationBucketPrefix=RAW(pre-)&destinationBucketSuffix=RAW(-suff)")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-In this case, the objects consumed will be moved to _myothercamelbucket_ bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+In this case, an object named `test` is moved to `myothercamelbucket` with the key `pre-test-suff`.
 
-So if the file name is test, in the _myothercamelbucket_ you should see a file called pre-test-suff.
+Using a Simple expression, you can build dynamic paths at runtime.
+The following example organises moved objects by date:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&moveAfterRead=true"
+     + "&destinationBucket=myothercamelbucket"
+     + "&destinationBucketPrefix=RAW(${date:now:yyyy/MM/dd}/)")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+An object named `report.csv` consumed on 2026-05-19 is moved with the key `2026/05/19/report.csv`.
+Expressions are evaluated once per exchange, so each message can produce a different destination key.
 
 === Additional Consumer Examples
 

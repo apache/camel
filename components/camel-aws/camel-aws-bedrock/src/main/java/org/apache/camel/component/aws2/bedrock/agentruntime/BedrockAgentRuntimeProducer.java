@@ -40,7 +40,9 @@ import software.amazon.awssdk.services.bedrockagentruntime.model.FlowOutputEvent
 import software.amazon.awssdk.services.bedrockagentruntime.model.FlowTraceEvent;
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeFlowRequest;
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeFlowResponseHandler;
+import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseQuery;
 import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalConfiguration;
+import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalResult;
 import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrieveAndGenerateConfiguration;
 import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseVectorSearchConfiguration;
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateConfiguration;
@@ -48,6 +50,8 @@ import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGene
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateRequest;
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateResponse;
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateType;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveRequest;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveResponse;
 
 /**
  * A Producer which sends messages to the Amazon Bedrock Agent Runtime Service
@@ -70,6 +74,9 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
                 break;
             case invokeFlow:
                 invokeFlow(exchange);
+                break;
+            case retrieve:
+                retrieve(getEndpoint().getBedrockAgentRuntimeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -164,6 +171,83 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
             message.setHeader(BedrockAgentRuntimeConstants.SESSION_ID, result.sessionId());
         }
         message.setBody(result.output().text());
+    }
+
+    private void retrieve(BedrockAgentRuntimeClient bedrockAgentRuntimeClient, Exchange exchange)
+            throws InvalidPayloadException {
+        RetrieveRequest request;
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof RetrieveRequest retrieveRequest) {
+                request = retrieveRequest;
+            } else {
+                throw new IllegalArgumentException(
+                        "retrieve operation requires a RetrieveRequest body when pojoRequest=true");
+            }
+        } else {
+            request = buildRetrieveRequest(exchange);
+        }
+
+        RetrieveResponse response;
+        try {
+            response = bedrockAgentRuntimeClient.retrieve(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("Retrieve command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+
+        Message message = getMessageForResponse(exchange);
+        prepareRetrieveResponse(response, message);
+    }
+
+    private RetrieveRequest buildRetrieveRequest(Exchange exchange) throws InvalidPayloadException {
+        String knowledgeBaseId = getConfiguration().getKnowledgeBaseId();
+        if (ObjectHelper.isEmpty(knowledgeBaseId)) {
+            throw new IllegalArgumentException("retrieve operation requires knowledgeBaseId in the endpoint configuration");
+        }
+
+        String queryText = exchange.getMessage().getMandatoryBody(String.class);
+
+        KnowledgeBaseVectorSearchConfiguration.Builder vectorSearchBuilder = KnowledgeBaseVectorSearchConfiguration.builder();
+        Integer numberOfResults
+                = exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.NUMBER_OF_RESULTS, Integer.class);
+        if (numberOfResults != null) {
+            vectorSearchBuilder.numberOfResults(numberOfResults);
+        }
+        String overrideSearchType
+                = exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.OVERRIDE_SEARCH_TYPE, String.class);
+        if (ObjectHelper.isNotEmpty(overrideSearchType)) {
+            vectorSearchBuilder.overrideSearchType(overrideSearchType);
+        }
+
+        KnowledgeBaseRetrievalConfiguration retrievalConfiguration = KnowledgeBaseRetrievalConfiguration.builder()
+                .vectorSearchConfiguration(vectorSearchBuilder.build())
+                .build();
+
+        RetrieveRequest.Builder builder = RetrieveRequest.builder()
+                .knowledgeBaseId(knowledgeBaseId)
+                .retrievalQuery(KnowledgeBaseQuery.builder().text(queryText).build())
+                .retrievalConfiguration(retrievalConfiguration);
+
+        String nextToken = exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN, String.class);
+        if (ObjectHelper.isNotEmpty(nextToken)) {
+            builder.nextToken(nextToken);
+        }
+
+        return builder.build();
+    }
+
+    private void prepareRetrieveResponse(RetrieveResponse response, Message message) {
+        List<KnowledgeBaseRetrievalResult> results
+                = response.hasRetrievalResults() ? response.retrievalResults() : Collections.emptyList();
+        message.setHeader(BedrockAgentRuntimeConstants.RETRIEVED_RESULTS, results);
+        if (ObjectHelper.isNotEmpty(response.nextToken())) {
+            message.setHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN, response.nextToken());
+        }
+        if (ObjectHelper.isNotEmpty(response.guardrailActionAsString())) {
+            message.setHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION, response.guardrailActionAsString());
+        }
+        message.setBody(results);
     }
 
     private void invokeFlow(Exchange exchange) throws InvalidPayloadException {

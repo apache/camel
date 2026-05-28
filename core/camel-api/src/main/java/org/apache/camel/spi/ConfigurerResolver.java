@@ -17,9 +17,12 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A pluggable strategy for resolving different configurers in a loosely coupled manner
+ *
+ * @since 3.1
  */
 public interface ConfigurerResolver {
 
@@ -32,5 +35,6 @@ public interface ConfigurerResolver {
      * @param  context the camel context
      * @return         the resolved configurer, or <tt>null</tt> if no configurer could be found
      */
+    @Nullable
     PropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context);
 }

@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The purpose of this interface is to allow an implementation to wrap processors in a route with interceptors. For
@@ -48,6 +49,6 @@ public interface InterceptStrategy {
      */
     Processor wrapProcessorInInterceptors(
             CamelContext context, NamedNode definition,
-            Processor target, Processor nextTarget)
+            Processor target, @Nullable Processor nextTarget)
             throws Exception;
 }

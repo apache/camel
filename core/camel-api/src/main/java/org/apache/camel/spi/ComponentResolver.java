@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a resolver of components from a URI to be able to autoload them using some discovery mechanism.
@@ -32,5 +33,6 @@ public interface ComponentResolver {
      * @return           the component which is added to the context or null if it cannot be resolved
      * @throws Exception is thrown if the component could not be loaded
      */
+    @Nullable
     Component resolveComponent(String name, CamelContext context) throws Exception;
 }

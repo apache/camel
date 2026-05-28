@@ -16,18 +16,31 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
- * The base class for any validation exception, such as
- * {@link org.apache.camel.support.processor.validation.SchemaValidationException} so that it is easy to treat all
- * validation errors in a similar way irrespective of the particular validation technology used.
+ * Base class for all validation exceptions, such as
+ * {@link org.apache.camel.support.processor.validation.SchemaValidationException}, so that callers can catch all
+ * validation failures in a single handler irrespective of the particular validation technology used.
+ *
+ * @see Exchange
  */
 public class ValidationException extends CamelExchangeException {
 
-    public ValidationException(Exchange exchange, String message) {
+    /**
+     * @param exchange the exchange that failed validation
+     * @param message  the detail message
+     */
+    public ValidationException(@Nullable Exchange exchange, @Nullable String message) {
         super(message, exchange);
     }
 
-    public ValidationException(String message, Exchange exchange, Throwable cause) {
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that failed validation
+     * @param cause    the cause of the failure
+     */
+    public ValidationException(@Nullable String message, @Nullable Exchange exchange, @Nullable Throwable cause) {
         super(message, exchange, cause);
     }
 }

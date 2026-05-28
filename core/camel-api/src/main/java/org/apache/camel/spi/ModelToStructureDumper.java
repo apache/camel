@@ -22,6 +22,8 @@ import org.apache.camel.CamelContext;
 
 /**
  * SPI for dumping model definitions into textual structure
+ *
+ * @since 4.16
  */
 public interface ModelToStructureDumper {
 

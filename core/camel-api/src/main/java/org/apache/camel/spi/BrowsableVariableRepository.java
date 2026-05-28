@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 
 /**
  * A {@link VariableRepository} that can browse the variables.
+ *
+ * @since 4.4
  */
 public interface BrowsableVariableRepository extends VariableRepository {
 

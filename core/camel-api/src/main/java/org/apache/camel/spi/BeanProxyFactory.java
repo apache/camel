@@ -22,6 +22,8 @@ import org.apache.camel.Endpoint;
  * A factory for creating a {@link java.lang.reflect.Proxy} for a bean.
  * <p/>
  * This requires to have camel-bean on the classpath.
+ *
+ * @since 3.0
  */
 public interface BeanProxyFactory {
 

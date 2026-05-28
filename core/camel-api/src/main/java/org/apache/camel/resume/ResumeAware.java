@@ -19,6 +19,8 @@ package org.apache.camel.resume;
 
 /**
  * An interface to represent an object which wishes to support resume operations using a {@link ResumeStrategy}.
+ *
+ * @since 3.17
  */
 public interface ResumeAware<T extends ResumeStrategy> {
 

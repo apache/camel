@@ -137,7 +137,7 @@
         <maven-assembly-plugin-version>3.8.0</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.15.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.10.0</maven-dependency-plugin-version>
-        <maven-enforcer-plugin-version>3.6.2</maven-enforcer-plugin-version>
+        <maven-enforcer-plugin-version>3.6.3</maven-enforcer-plugin-version>
         <maven-invoker-plugin-version>3.10.1</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.3.1</maven-release-plugin-version>
@@ -316,8 +316,6 @@
                                     <exclude>**/.eslint*</exclude>
                                     <exclude>**/.pnp*</exclude>
                                     <exclude>**/*.jte</exclude>
-                                    <exclude>**/.yarn/**</exclude>
-                                    <exclude>**/.yarnrc.yml</exclude>
                                     <exclude>**/CamelJBang.java</exclude>
                                     <exclude>**/LICENSE.txt</exclude>
                                     <exclude>**/LICENSE</exclude>
@@ -374,7 +372,6 @@
                                     <exclude>**/test-kerb5.conf</exclude>
                                     <exclude>**/variables/variables.data-*-of-*</exclude>
                                     <exclude>**/variables/variables.index</exclude>
-                                    <exclude>**/yarn.lock</exclude>
                                     <exclude>**/zkserver*.conf</exclude>
                                     <exclude>**/*.wasm</exclude>
                                     <exclude>**/*.lock</exclude>
@@ -394,6 +391,7 @@
                                     <exclude>**/helm/etc/**</exclude>
                                     <exclude>**/examples/*</exclude>
                                     <exclude>**/*.wav</exclude>
+                                    <exclude>**/*.cast</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
@@ -439,6 +437,7 @@
                             <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
                             <spring.schemas>CAMEL_PROPERTIES_STYLE</spring.schemas>
                             <sql>DOUBLEDASHES_STYLE</sql>
+                            <tape>SCRIPT_STYLE</tape>
                             <thrift>JAVADOC_STYLE</thrift>
                             <toml>SCRIPT_STYLE</toml>
                             <unrealircd.conf>SLASHSTAR_STYLE</unrealircd.conf>
@@ -550,9 +549,7 @@
                             <exclude>**/node/**</exclude>
                             <exclude>**/node_modules/**</exclude>
                             <exclude>**/user-manual/**</exclude>
-                            <exclude>**/yarn.lock</exclude>
                             <exclude>**/docs/**/*</exclude>
-                            <exclude>**/yarn*.cjs</exclude>
                             <exclude>**/build-state.yml</exclude>
                             <!-- generated files -->
                             <exclude>**/target/**/*</exclude>

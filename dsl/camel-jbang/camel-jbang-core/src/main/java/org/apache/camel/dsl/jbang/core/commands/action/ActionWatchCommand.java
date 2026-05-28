@@ -31,7 +31,8 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
                         description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
-    private CommandHelper.ReadConsoleTask waitUserTask;
+    private Runnable waitUserTask;
+    final AtomicBoolean running = new AtomicBoolean(true);
 
     protected ActionWatchCommand(CamelJBangMain main) {
         super(main);
@@ -40,10 +41,9 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     @Override
     public Integer doCall() throws Exception {
         int exit;
-        final AtomicBoolean running = new AtomicBoolean(true);
         if (watch) {
             Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
+                waitUserTask = waitForUserEnter();
                 waitUserTask.run();
             }, "WaitForUser");
             t.start();
@@ -53,7 +53,7 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
                     // use 2-sec delay in watch mode
                     try {
                         StopWatch watch = new StopWatch();
-                        while (running.get() && watch.taken() < 2000) {
+                        while (running.get() && watchWait(watch)) {
                             Thread.sleep(100);
                         }
                     } catch (Exception e) {
@@ -67,8 +67,16 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
         return exit;
     }
 
+    protected Runnable waitForUserEnter() {
+        return new CommandHelper.ReadConsoleTask(() -> running.set(false));
+    }
+
     protected void clearScreen() {
         AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
+    }
+
+    protected boolean watchWait(StopWatch watch) {
+        return watch.taken() < 2000;
     }
 
     protected abstract Integer doWatchCall() throws Exception;

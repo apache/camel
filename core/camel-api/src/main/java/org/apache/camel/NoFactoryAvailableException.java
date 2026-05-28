@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Thrown if no factory resource is available for the given URI
@@ -25,14 +26,21 @@ public class NoFactoryAvailableException extends IOException {
 
     private final String uri;
 
+    /**
+     * @param uri the URI for which no factory class could be found
+     */
     public NoFactoryAvailableException(String uri) {
-        super("Cannot find factory class for resource: " + uri);
+        super("Cannot find factory class for resource: " + Objects.requireNonNull(uri, "uri"));
         this.uri = uri;
     }
 
+    /**
+     * @param uri   the URI for which no factory class could be found
+     * @param cause the cause of the failure
+     */
     public NoFactoryAvailableException(String uri, Throwable cause) {
         this(uri);
-        initCause(cause);
+        initCause(Objects.requireNonNull(cause, "cause"));
     }
 
     public String getUri() {

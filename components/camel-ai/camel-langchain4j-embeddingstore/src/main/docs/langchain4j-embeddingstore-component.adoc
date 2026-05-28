@@ -94,10 +94,14 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:store"
+      uri: direct:store
     steps:
-      - to: "langchain4j-embeddings:embed"
-      - to: "langchain4j-embeddingstore:myStore?action=ADD"
+      - to:
+          uri: langchain4j-embeddings:embed
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: ADD
 ----
 ====
 
@@ -124,10 +128,16 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:search"
+      uri: direct:search
     steps:
-      - to: "langchain4j-embeddings:embed"
-      - to: "langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&minScore=0.7"
+      - to:
+          uri: langchain4j-embeddings:embed
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: SEARCH
+            maxResults: 5
+            minScore: 0.7
 ----
 ====
 
@@ -155,11 +165,18 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:search"
+      uri: direct:search
     steps:
-      - to: "langchain4j-embeddings:embed"
-      - to: "langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&returnTextContent=true"
-      - log: "Found texts: ${body}"
+      - to:
+          uri: langchain4j-embeddings:embed
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: SEARCH
+            maxResults: 5
+            returnTextContent: true
+      - log:
+          message: "Found texts: ${body}"
 ----
 ====
 
@@ -184,11 +201,16 @@ YAML::
 ----
 - route:
     from:
-      uri: "direct:remove"
+      uri: direct:remove
     steps:
       - setBody:
-          simple: "${header.embeddingId}"
-      - to: "langchain4j-embeddingstore:myStore?action=REMOVE"
+          expression:
+            simple:
+              expression: "${header.embeddingId}"
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: REMOVE
 ----
 ====
 

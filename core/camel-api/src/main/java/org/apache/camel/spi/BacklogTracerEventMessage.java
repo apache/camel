@@ -19,11 +19,14 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a traced message by the BacklogTracer.
+ *
+ * @since 4.0
  */
-public interface BacklogTracerEventMessage {
+public interface BacklogTracerEventMessage extends BacklogEventMessage {
 
     String ROOT_TAG = "backlogTracerEventMessage";
     String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -53,6 +56,7 @@ public interface BacklogTracerEventMessage {
     /**
      * The location of the trace (source code name:line) if possible.
      */
+    @Nullable
     String getLocation();
 
     /**
@@ -78,21 +82,25 @@ public interface BacklogTracerEventMessage {
     /**
      * Node id where the message is being routed to
      */
+    @Nullable
     String getToNode();
 
     /**
      * Parent node id for this node
      */
+    @Nullable
     String getToNodeParentId();
 
     /**
      * Special for choice where we want to know which when predicate was triggered
      */
+    @Nullable
     String getToNodeParentWhenId();
 
     /**
      * Special for choice where we want to know which when predicate was triggered
      */
+    @Nullable
     String getToNodeParentWhenLabel();
 
     /**
@@ -118,6 +126,7 @@ public interface BacklogTracerEventMessage {
     /**
      * The correlation id to a parent exchange (if any)
      */
+    @Nullable
     String getCorrelationExchangeId();
 
     /**
@@ -163,17 +172,20 @@ public interface BacklogTracerEventMessage {
     /**
      * The exception as XML (exception type, message and stacktrace)
      */
+    @Nullable
     String getExceptionAsXml();
 
     /**
      * The exception as JSon (exception type, message and stacktrace)
      */
+    @Nullable
     String getExceptionAsJSon();
 
     /**
      * The endpoint uri if this trace is either from a route input (from), or the exchange was sent to an endpoint such
      * as (to, toD, wireTap) etc.
      */
+    @Nullable
     String getEndpointUri();
 
     /**
@@ -190,6 +202,7 @@ public interface BacklogTracerEventMessage {
      * @return the address or null if no address can be determined.
      * @see    EndpointServiceLocation
      */
+    @Nullable
     String getEndpointServiceUrl();
 
     /**
@@ -197,6 +210,7 @@ public interface BacklogTracerEventMessage {
      *
      * @see EndpointServiceLocation
      */
+    @Nullable
     String getEndpointServiceProtocol();
 
     /**
@@ -207,6 +221,7 @@ public interface BacklogTracerEventMessage {
      * @return optional metadata or null if no data
      * @see    EndpointServiceLocation
      */
+    @Nullable
     Map<String, String> getEndpointServiceMetadata();
 
     /**

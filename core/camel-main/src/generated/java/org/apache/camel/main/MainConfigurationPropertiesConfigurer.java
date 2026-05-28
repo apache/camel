@@ -62,10 +62,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("EndpointBridgeErrorHandler", boolean.class);
         map.put("EndpointLazyStartProducer", boolean.class);
         map.put("EndpointRuntimeStatisticsEnabled", boolean.class);
-        map.put("ErrorRegistryEnabled", boolean.class);
-        map.put("ErrorRegistryMaximumEntries", int.class);
-        map.put("ErrorRegistryStackTraceEnabled", boolean.class);
-        map.put("ErrorRegistryTimeToLiveSeconds", int.class);
         map.put("ExchangeFactory", java.lang.String.class);
         map.put("ExchangeFactoryCapacity", int.class);
         map.put("ExchangeFactoryStatisticsEnabled", boolean.class);
@@ -96,6 +92,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("MainListeners", java.util.List.class);
         map.put("MdcLoggingKeysPattern", java.lang.String.class);
         map.put("MessageHistory", boolean.class);
+        map.put("MessageSizeEnabled", boolean.class);
         map.put("Modeline", boolean.class);
         map.put("Name", java.lang.String.class);
         map.put("ProducerTemplateCacheSize", int.class);
@@ -153,6 +150,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("UseMdcLogging", boolean.class);
         map.put("UuidGenerator", java.lang.String.class);
         map.put("VirtualThreadsEnabled", boolean.class);
+        map.put("YamlDslCompactNotationWarn", boolean.class);
         ALL_OPTIONS = map;
     }
 
@@ -238,14 +236,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "endpointLazyStartProducer": target.setEndpointLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "endpointruntimestatisticsenabled":
         case "endpointRuntimeStatisticsEnabled": target.setEndpointRuntimeStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "errorregistryenabled":
-        case "errorRegistryEnabled": target.setErrorRegistryEnabled(property(camelContext, boolean.class, value)); return true;
-        case "errorregistrymaximumentries":
-        case "errorRegistryMaximumEntries": target.setErrorRegistryMaximumEntries(property(camelContext, int.class, value)); return true;
-        case "errorregistrystacktraceenabled":
-        case "errorRegistryStackTraceEnabled": target.setErrorRegistryStackTraceEnabled(property(camelContext, boolean.class, value)); return true;
-        case "errorregistrytimetoliveseconds":
-        case "errorRegistryTimeToLiveSeconds": target.setErrorRegistryTimeToLiveSeconds(property(camelContext, int.class, value)); return true;
         case "exchangefactory":
         case "exchangeFactory": target.setExchangeFactory(property(camelContext, java.lang.String.class, value)); return true;
         case "exchangefactorycapacity":
@@ -306,6 +296,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "mdcLoggingKeysPattern": target.setMdcLoggingKeysPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "messagehistory":
         case "messageHistory": target.setMessageHistory(property(camelContext, boolean.class, value)); return true;
+        case "messagesizeenabled":
+        case "messageSizeEnabled": target.setMessageSizeEnabled(property(camelContext, boolean.class, value)); return true;
         case "modeline": target.setModeline(property(camelContext, boolean.class, value)); return true;
         case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "producertemplatecachesize":
@@ -416,6 +408,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "uuidGenerator": target.setUuidGenerator(property(camelContext, java.lang.String.class, value)); return true;
         case "virtualthreadsenabled":
         case "virtualThreadsEnabled": target.setVirtualThreadsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "yamldslcompactnotationwarn":
+        case "yamlDslCompactNotationWarn": target.setYamlDslCompactNotationWarn(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -506,14 +500,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "endpointLazyStartProducer": return boolean.class;
         case "endpointruntimestatisticsenabled":
         case "endpointRuntimeStatisticsEnabled": return boolean.class;
-        case "errorregistryenabled":
-        case "errorRegistryEnabled": return boolean.class;
-        case "errorregistrymaximumentries":
-        case "errorRegistryMaximumEntries": return int.class;
-        case "errorregistrystacktraceenabled":
-        case "errorRegistryStackTraceEnabled": return boolean.class;
-        case "errorregistrytimetoliveseconds":
-        case "errorRegistryTimeToLiveSeconds": return int.class;
         case "exchangefactory":
         case "exchangeFactory": return java.lang.String.class;
         case "exchangefactorycapacity":
@@ -574,6 +560,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "mdcLoggingKeysPattern": return java.lang.String.class;
         case "messagehistory":
         case "messageHistory": return boolean.class;
+        case "messagesizeenabled":
+        case "messageSizeEnabled": return boolean.class;
         case "modeline": return boolean.class;
         case "name": return java.lang.String.class;
         case "producertemplatecachesize":
@@ -684,6 +672,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "uuidGenerator": return java.lang.String.class;
         case "virtualthreadsenabled":
         case "virtualThreadsEnabled": return boolean.class;
+        case "yamldslcompactnotationwarn":
+        case "yamlDslCompactNotationWarn": return boolean.class;
         default: return null;
         }
     }
@@ -770,14 +760,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "endpointLazyStartProducer": return target.isEndpointLazyStartProducer();
         case "endpointruntimestatisticsenabled":
         case "endpointRuntimeStatisticsEnabled": return target.isEndpointRuntimeStatisticsEnabled();
-        case "errorregistryenabled":
-        case "errorRegistryEnabled": return target.isErrorRegistryEnabled();
-        case "errorregistrymaximumentries":
-        case "errorRegistryMaximumEntries": return target.getErrorRegistryMaximumEntries();
-        case "errorregistrystacktraceenabled":
-        case "errorRegistryStackTraceEnabled": return target.isErrorRegistryStackTraceEnabled();
-        case "errorregistrytimetoliveseconds":
-        case "errorRegistryTimeToLiveSeconds": return target.getErrorRegistryTimeToLiveSeconds();
         case "exchangefactory":
         case "exchangeFactory": return target.getExchangeFactory();
         case "exchangefactorycapacity":
@@ -838,6 +820,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "mdcLoggingKeysPattern": return target.getMdcLoggingKeysPattern();
         case "messagehistory":
         case "messageHistory": return target.isMessageHistory();
+        case "messagesizeenabled":
+        case "messageSizeEnabled": return target.isMessageSizeEnabled();
         case "modeline": return target.isModeline();
         case "name": return target.getName();
         case "producertemplatecachesize":
@@ -948,6 +932,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "uuidGenerator": return target.getUuidGenerator();
         case "virtualthreadsenabled":
         case "virtualThreadsEnabled": return target.isVirtualThreadsEnabled();
+        case "yamldslcompactnotationwarn":
+        case "yamlDslCompactNotationWarn": return target.isYamlDslCompactNotationWarn();
         default: return null;
         }
     }

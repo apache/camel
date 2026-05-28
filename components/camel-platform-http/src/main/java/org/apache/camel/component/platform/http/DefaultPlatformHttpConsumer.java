@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -66,6 +67,14 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     @Override
     public void registerAfterConfigured(AfterPropertiesConfigured listener) {
         this.afterConfiguredListener = listener;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        super.setRouteId(routeId);
+        if (platformHttpConsumer instanceof RouteIdAware ria) {
+            ria.setRouteId(routeId);
+        }
     }
 
     @Override

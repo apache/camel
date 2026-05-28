@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * Special accessor for a DataFormat
+ *
+ * @since 3.1
  */
 public interface DataFormatContentTypeHeader {
 

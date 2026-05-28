@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * Evaluates a binary <a href="http://camel.apache.org/predicate.html">predicate</a> on the message exchange.
+ * Evaluates a binary <a href="https://camel.apache.org/predicate.html">predicate</a> on the message exchange.
  *
  * A predicate should be thread-safe and be able to evaluate concurrently by different threads with different exchanges.
  *

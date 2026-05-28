@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.kamelet.utils.format;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public enum MimeType {
@@ -44,8 +46,11 @@ public enum MimeType {
     }
 
     public static MimeType of(String type) {
+        // URL-decode the type in case it was encoded
+        String decodedType = URLDecoder.decode(type, StandardCharsets.UTF_8);
+
         for (MimeType mt : VALUES) {
-            if (Objects.equals(type, mt.type)) {
+            if (Objects.equals(decodedType, mt.type)) {
                 return mt;
             }
         }

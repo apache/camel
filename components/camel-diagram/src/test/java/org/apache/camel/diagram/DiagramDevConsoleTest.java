@@ -17,7 +17,6 @@
 package org.apache.camel.diagram;
 
 import java.util.Base64;
-import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsole;
@@ -72,16 +71,6 @@ class DiagramDevConsoleTest extends CamelTestSupport {
         // default theme renders HTML with inline image
         assertThat(text).contains("<html>");
         assertThat(text).contains("data:image/png;base64,");
-    }
-
-    @Test
-    void testTextOutputTextTheme() {
-        DevConsole console = resolveConsole();
-        String text = (String) console.call(DevConsole.MediaType.TEXT, Map.of(DiagramDevConsole.THEME, "text"));
-        assertThat(text).contains("Route: myRoute");
-        assertThat(text).contains("Route: otherRoute");
-        assertThat(text).contains("[from]");
-        assertThat(text).contains("[choice]");
     }
 
     @Test

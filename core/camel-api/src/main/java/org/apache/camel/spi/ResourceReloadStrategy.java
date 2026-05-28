@@ -19,9 +19,10 @@ package org.apache.camel.spi;
 /**
  * SPI strategy for reloading {@link Resource} in an existing running {@link org.apache.camel.CamelContext}
  *
- * @see ContextReloadStrategy
- * @see ResourceReload
- * @see Resource
+ * @see   ContextReloadStrategy
+ * @see   ResourceReload
+ * @see   Resource
+ * @since 3.14
  */
 public interface ResourceReloadStrategy extends ReloadStrategy {
 

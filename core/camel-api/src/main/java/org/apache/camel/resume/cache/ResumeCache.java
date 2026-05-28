@@ -21,11 +21,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.camel.resume.ResumeStrategy;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This cache stored the resumed data from a {@link ResumeStrategy}.
  *
  * @param <K> the type of the key
+ * @since     3.17
  */
 public interface ResumeCache<K> {
     /**
@@ -84,7 +86,7 @@ public interface ResumeCache<K> {
      * @param  clazz the class object representing the value to be obtained
      * @return       the offset value wrapped in an optional
      */
-    <T> T get(K key, Class<T> clazz);
+    <T> @Nullable T get(K key, Class<T> clazz);
 
     /**
      * Gets the offset entry for the key
@@ -92,6 +94,7 @@ public interface ResumeCache<K> {
      * @param  key the key
      * @return     the offset value
      */
+    @Nullable
     Object get(K key);
 
     /**

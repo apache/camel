@@ -33,6 +33,7 @@ public class Otel2ConfigurationProperties implements BootstrapCloseable {
     private String instrumentationName = "camel";
     private boolean encoding;
     private String excludePatterns;
+    private String includePatterns;
     private boolean traceProcessors;
     private boolean disableCoreProcessors;
 
@@ -94,6 +95,18 @@ public class Otel2ConfigurationProperties implements BootstrapCloseable {
      */
     public void setExcludePatterns(String excludePatterns) {
         this.excludePatterns = excludePatterns;
+    }
+
+    public String getIncludePatterns() {
+        return includePatterns;
+    }
+
+    /**
+     * Sets include pattern(s) that will explicitly enable tracing for Camel processors that matches the pattern.
+     * Multiple patterns can be separated by comma. All processors included by default if nothing is specified.
+     */
+    public void setIncludePatterns(String includePatterns) {
+        this.includePatterns = includePatterns;
     }
 
     public boolean isTraceProcessors() {

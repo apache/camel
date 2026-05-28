@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -540,12 +541,14 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     @Test
     public void testLongShutdownOfThreadPool() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch started = new CountDownLatch(1);
         ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");
 
         pool.execute(new Runnable() {
             @Override
             public void run() {
                 log.info("Starting thread");
+                started.countDown();
 
                 // this should take a long time to shutdown
                 try {
@@ -558,8 +561,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
             }
         });
 
-        // sleep a bit before shutting down
-        Thread.sleep(3000);
+        // wait for the task to start before shutting down
+        await().atMost(5, TimeUnit.SECONDS).until(() -> started.getCount() == 0);
 
         context.getExecutorServiceManager().shutdown(pool);
 

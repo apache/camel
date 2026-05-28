@@ -23,6 +23,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.ThrowingBiConsumer;
 import org.apache.camel.util.function.ThrowingConsumer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * To apply custom configurations to {@link Component} instances.
@@ -139,7 +140,7 @@ public interface ComponentCustomizer extends Ordered {
      */
     class Builder<T extends Component> {
         private final Class<T> type;
-        private BiPredicate<String, Component> condition;
+        private @Nullable BiPredicate<String, Component> condition;
         private int order;
 
         public Builder(Class<T> type) {
@@ -221,10 +222,11 @@ public interface ComponentCustomizer extends Ordered {
                 };
             }
 
+            final BiPredicate<String, Component> cond = condition;
             return new BiPredicate<>() {
                 @Override
                 public boolean test(String name, Component target) {
-                    return type.isAssignableFrom(target.getClass()) && condition.test(name, target);
+                    return type.isAssignableFrom(target.getClass()) && cond != null && cond.test(name, target);
                 }
             };
         }

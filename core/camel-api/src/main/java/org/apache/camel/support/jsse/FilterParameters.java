@@ -20,16 +20,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a set of regular expression based filter patterns for including and excluding content of some type.
  */
 public class FilterParameters extends JsseParameters {
 
-    protected List<String> include;
-    protected List<String> exclude;
+    protected @Nullable List<String> include;
+    protected @Nullable List<String> exclude;
 
     /**
      * Returns a live copy of the list of patterns to include. The list of excludes takes precedence over the include
@@ -57,6 +60,7 @@ public class FilterParameters extends JsseParameters {
     }
 
     public void addInclude(String pattern) {
+        Objects.requireNonNull(pattern, "pattern");
         if (this.include == null) {
             this.include = new ArrayList<>();
         }
@@ -64,6 +68,7 @@ public class FilterParameters extends JsseParameters {
     }
 
     public void addExclude(String pattern) {
+        Objects.requireNonNull(pattern, "pattern");
         if (this.exclude == null) {
             this.exclude = new ArrayList<>();
         }
@@ -126,6 +131,8 @@ public class FilterParameters extends JsseParameters {
         private final List<Pattern> excludes;
 
         public Patterns(List<Pattern> includes, List<Pattern> excludes) {
+            Objects.requireNonNull(includes, "includes");
+            Objects.requireNonNull(excludes, "excludes");
             this.includes = Collections.unmodifiableList(new ArrayList<>(includes));
             this.excludes = Collections.unmodifiableList(new ArrayList<>(excludes));
         }

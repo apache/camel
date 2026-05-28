@@ -17,12 +17,15 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Ordered;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A source for properties.
  * <p/>
  * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel properties
  * component. The source with the highest precedence (the lowest number) will be used first.
+ *
+ * @since 3.0
  */
 public interface PropertiesSource {
 
@@ -37,6 +40,7 @@ public interface PropertiesSource {
      * @param  name name of property
      * @return      the property value, or <tt>null</tt> if no property exists
      */
+    @Nullable
     String getProperty(String name);
 
     /**
@@ -46,7 +50,7 @@ public interface PropertiesSource {
      * @param  defaultValue default value to use as fallback
      * @return              the property value, or <tt>null</tt> if no property exists
      */
-    default String getProperty(String name, String defaultValue) {
+    default @Nullable String getProperty(String name, @Nullable String defaultValue) {
         return getProperty(name);
     }
 

@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * A function that is applied instead of looking up a property placeholder.
+ *
+ * @since 3.3
  */
 public interface PropertiesFunction {
 

@@ -17,6 +17,8 @@
 package org.apache.camel.component.jackson3.avro.transform;
 
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -65,7 +67,9 @@ public class AvroSchemaResolver implements SchemaResolver, Processor {
 
     public void setSchema(String schema) {
         if (ObjectHelper.isNotEmpty(schema)) {
-            this.schema = new AvroSchema(new Schema.Parser(NameValidator.UTF_VALIDATOR).parse(schema));
+            // URL-decode the schema in case it was encoded
+            String decodedSchema = URLDecoder.decode(schema, StandardCharsets.UTF_8);
+            this.schema = new AvroSchema(new Schema.Parser(NameValidator.UTF_VALIDATOR).parse(decodedSchema));
         } else {
             this.schema = null;
         }

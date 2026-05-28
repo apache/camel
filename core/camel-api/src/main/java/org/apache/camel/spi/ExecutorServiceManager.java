@@ -23,6 +23,7 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy to create thread pools.
@@ -110,6 +111,7 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
      * @param  id id of the thread pool profile to get
      * @return    the found profile, or <tt>null</tt> if not found
      */
+    @Nullable
     ThreadPoolProfile getThreadPoolProfile(String id);
 
     /**
@@ -218,6 +220,7 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
      * @param  profileId the id of the profile with the thread pool settings to use
      * @return           the created thread pool, or <tt>null</tt> if the thread pool profile could not be found
      */
+    @Nullable
     ExecutorService newThreadPool(Object source, String name, String profileId);
 
     /**

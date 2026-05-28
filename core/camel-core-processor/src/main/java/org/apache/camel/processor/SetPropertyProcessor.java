@@ -22,15 +22,17 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the property on the exchange with an {@link org.apache.camel.Expression}
  */
-public class SetPropertyProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetPropertyProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
 
     private String id;
     private String routeId;
+    private String stepId;
     private final Expression propertyName;
     private final Expression expression;
 
@@ -90,6 +92,16 @@ public class SetPropertyProcessor extends BaseProcessorSupport implements Tracea
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public String getStepId() {
+        return stepId;
+    }
+
+    @Override
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public String getPropertyName() {

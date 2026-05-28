@@ -20,6 +20,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.net.ssl.SNIHostName;
 import javax.net.ssl.SNIServerName;
@@ -43,12 +44,14 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     private final List<SNIServerName> sniHostNames = new ArrayList<>();
 
     public void addAllSniHostNames(List<String> sniHostNames) {
+        Objects.requireNonNull(sniHostNames, "sniHostNames");
         for (String sniHostName : sniHostNames) {
             this.sniHostNames.add(new SNIHostName(sniHostName));
         }
     }
 
     public void setSniHostName(String sniHostName) {
+        Objects.requireNonNull(sniHostName, "sniHostName");
         this.sniHostNames.add(new SNIHostName(sniHostName));
     }
 

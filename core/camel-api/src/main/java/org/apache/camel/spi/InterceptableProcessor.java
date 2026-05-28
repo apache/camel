@@ -22,6 +22,8 @@ import org.apache.camel.Processor;
  * To control whether a {@link Processor} can be intercepted via {@link InterceptStrategy}.
  *
  * Some EIPs such as try/catch/finally cannot be intercepted.
+ *
+ * @since 4.7
  */
 public interface InterceptableProcessor {
 
