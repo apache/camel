@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.web3j.protocol.core.methods.response.EthBlock;
 
-import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
 
 @Disabled("Requires a local node or registration at Infura")
@@ -51,7 +50,7 @@ public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                     + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
+                     + "operation" + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
                      + "fromBlock=5713030&"
                      + "toBlock=5713031&"
                      + "fullTransactionObjects=false")

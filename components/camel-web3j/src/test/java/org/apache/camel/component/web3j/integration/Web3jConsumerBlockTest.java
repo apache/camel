@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.web3j.Web3jConstants.BLOCK_OBSERVABLE;
-import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 
 @Disabled("Requires Ganache instance with few transactions")
 public class Web3jConsumerBlockTest extends Web3jIntegrationTestSupport {
@@ -41,7 +40,7 @@ public class Web3jConsumerBlockTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                     + OPERATION.toLowerCase() + "=" + BLOCK_OBSERVABLE)
+                     + "operation" + "=" + BLOCK_OBSERVABLE)
                         .to("mock:result");
             }
         };
