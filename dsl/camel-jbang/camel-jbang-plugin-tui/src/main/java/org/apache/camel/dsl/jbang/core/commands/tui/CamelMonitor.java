@@ -1253,19 +1253,6 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 Style statusStyle = info.alive ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
                 String statusText = info.alive ? "Running" : "Stopped";
-                String port = objToString(info.properties.get("getPort"));
-                String host = objToString(info.properties.get("getHost"));
-                if (host.isEmpty()) {
-                    host = objToString(info.properties.get("getHostname"));
-                }
-                String portHost = "";
-                if (!port.isEmpty() && !host.isEmpty()) {
-                    portHost = host + ":" + port;
-                } else if (!port.isEmpty()) {
-                    portHost = ":" + port;
-                } else if (!host.isEmpty()) {
-                    portHost = host;
-                }
                 String infraAlias = "🔧  " + info.alias;
                 String version = info.serviceVersion != null ? info.serviceVersion : "";
                 rows.add(Row.from(
@@ -1280,7 +1267,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(""),
                         Cell.from(""),
                         Cell.from(""),
-                        Cell.from(portHost)));
+                        Cell.from("")));
             }
         }
 
