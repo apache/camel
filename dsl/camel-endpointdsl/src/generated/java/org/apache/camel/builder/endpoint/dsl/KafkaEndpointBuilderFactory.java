@@ -5316,10 +5316,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code kafka.PARTITION_KEY}.
+         * @return the name of the header {@code KafkaPartitionKey}.
          */
         public String kafkaPartitionKey() {
-            return "kafka.PARTITION_KEY";
+            return "CamelKafkaPartitionKey";
         }
         /**
          * The partition where the message was stored.
@@ -5328,10 +5328,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code kafka.PARTITION}.
+         * @return the name of the header {@code KafkaPartition}.
          */
         public String kafkaPartition() {
-            return "kafka.PARTITION";
+            return "CamelKafkaPartition";
         }
         /**
          * Producer: The key of the message in order to ensure that all related
@@ -5343,10 +5343,10 @@ public interface KafkaEndpointBuilderFactory {
          * Required: true
          * Group: common
          * 
-         * @return the name of the header {@code kafka.KEY}.
+         * @return the name of the header {@code KafkaKey}.
          */
         public String kafkaKey() {
-            return "kafka.KEY";
+            return "CamelKafkaKey";
         }
         /**
          * The topic from where the message originated.
@@ -5355,10 +5355,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code kafka.TOPIC}.
+         * @return the name of the header {@code KafkaTopic}.
          */
         public String kafkaTopic() {
-            return "kafka.TOPIC";
+            return "CamelKafkaTopic";
         }
         /**
          * The topic to which send the message (override and takes precedence),
@@ -5368,10 +5368,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code kafka.OVERRIDE_TOPIC}.
+         * @return the name of the header {@code KafkaOverrideTopic}.
          */
         public String kafkaOverrideTopic() {
-            return "kafka.OVERRIDE_TOPIC";
+            return "CamelKafkaOverrideTopic";
         }
         /**
          * The offset of the message.
@@ -5380,10 +5380,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code kafka.OFFSET}.
+         * @return the name of the header {@code KafkaOffset}.
          */
         public String kafkaOffset() {
-            return "kafka.OFFSET";
+            return "CamelKafkaOffset";
         }
         /**
          * The record headers.
@@ -5392,10 +5392,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code kafka.HEADERS}.
+         * @return the name of the header {@code KafkaHeaders}.
          */
         public String kafkaHeaders() {
-            return "kafka.HEADERS";
+            return "CamelKafkaHeaders";
         }
         /**
          * Whether or not it's the last record before commit (only available if
@@ -5405,11 +5405,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code
-         * kafka.LAST_RECORD_BEFORE_COMMIT}.
+         * @return the name of the header {@code KafkaLastRecordBeforeCommit}.
          */
         public String kafkaLastRecordBeforeCommit() {
-            return "kafka.LAST_RECORD_BEFORE_COMMIT";
+            return "CamelKafkaLastRecordBeforeCommit";
         }
         /**
          * Indicates the last record within the current poll request (only
@@ -5420,10 +5419,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code kafka.LAST_POLL_RECORD}.
+         * @return the name of the header {@code KafkaLastPollRecord}.
          */
         public String kafkaLastPollRecord() {
-            return "kafka.LAST_POLL_RECORD";
+            return "CamelKafkaLastPollRecord";
         }
         /**
          * The timestamp of the message.
@@ -5432,10 +5431,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code kafka.TIMESTAMP}.
+         * @return the name of the header {@code KafkaTimestamp}.
          */
         public String kafkaTimestamp() {
-            return "kafka.TIMESTAMP";
+            return "CamelKafkaTimestamp";
         }
         /**
          * The ProducerRecord also has an associated timestamp. If the user did
@@ -5446,10 +5445,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code kafka.OVERRIDE_TIMESTAMP}.
+         * @return the name of the header {@code KafkaOverrideTimestamp}.
          */
         public String kafkaOverrideTimestamp() {
-            return "kafka.OVERRIDE_TIMESTAMP";
+            return "CamelKafkaOverrideTimestamp";
         }
         /**
          * The metadata (only configured if recordMetadata endpoint parameter is
@@ -5459,10 +5458,10 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code kafka.RECORD_META}.
+         * @return the name of the header {@code KafkaRecordMeta}.
          */
         public String kafkaRecordMeta() {
-            return "kafka.RECORD_META";
+            return "CamelKafkaRecordMeta";
         }
         /**
          * Can be used for forcing manual offset commit when using Kafka
