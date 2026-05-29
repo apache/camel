@@ -53,9 +53,9 @@ class QueueServiceOperationsIT {
     public void setup() throws Exception {
         final Properties properties = QueueTestUtils.loadAzureAccessFromJvmEnv();
 
-        queueName1 = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-        queueName2 = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-        queueName3 = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        queueName1 = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+        queueName2 = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+        queueName3 = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
         configuration = new QueueConfiguration();
         configuration.setAccountName(properties.getProperty("account_name"));

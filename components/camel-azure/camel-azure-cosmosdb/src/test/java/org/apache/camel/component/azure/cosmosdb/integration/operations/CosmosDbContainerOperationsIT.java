@@ -58,8 +58,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbContainerOperationsIT {
-    private static final String DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-    private static final String LEASE_DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String DATABASE_NAME = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+    private static final String LEASE_DATABASE_NAME = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbContainerOperations containerOperations;
@@ -86,7 +86,7 @@ class CosmosDbContainerOperationsIT {
 
     @BeforeEach
     void prepareFreshContainer() {
-        containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        containerId = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         containerOperations = CosmosDbClientOperations.withClient(clientWrapper)
                 .createDatabaseIfNotExistAndGetDatabaseOperations(DATABASE_NAME, null)

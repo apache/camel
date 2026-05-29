@@ -57,12 +57,12 @@ class BlobConsumerDeleteMoveIT extends Base {
 
     @BeforeAll
     public void setup() {
-        deleteContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        moveSourceContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        moveDestContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        noDeleteContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        prefixMoveSourceContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        prefixMoveDestContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        deleteContainerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        moveSourceContainerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        moveDestContainerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        noDeleteContainerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        prefixMoveSourceContainerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        prefixMoveDestContainerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         deleteContainerClient = serviceClient.getBlobContainerClient(deleteContainerName);
         moveSourceContainerClient = serviceClient.getBlobContainerClient(moveSourceContainerName);

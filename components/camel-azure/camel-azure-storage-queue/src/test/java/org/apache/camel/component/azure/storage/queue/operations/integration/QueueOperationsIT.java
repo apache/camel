@@ -72,7 +72,7 @@ class QueueOperationsIT extends CamelTestSupport {
 
     @Test
     public void testCreateDeleteQueue() {
-        final String queueName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String queueName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final QueueClientWrapper clientWrapper = serviceClientWrapper.getQueueClientWrapper(queueName);
         final QueueOperations operations = new QueueOperations(configuration, clientWrapper);
 
@@ -102,7 +102,7 @@ class QueueOperationsIT extends CamelTestSupport {
 
     @Test
     public void testSendMessageAndClearQueue() {
-        final String queueName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String queueName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final QueueClientWrapper clientWrapper = serviceClientWrapper.getQueueClientWrapper(queueName);
         final QueueOperations operations = new QueueOperations(configuration, clientWrapper);
 
@@ -248,7 +248,7 @@ class QueueOperationsIT extends CamelTestSupport {
     }
 
     private QueueOperations getQueueOperations() {
-        final String queueName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String queueName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final QueueClientWrapper clientWrapper = serviceClientWrapper.getQueueClientWrapper(queueName);
         return new QueueOperations(configuration, clientWrapper);
     }
