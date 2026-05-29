@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.math.BigInteger;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -206,10 +207,10 @@ public final class QuarkusHelper {
                 }
             }
 
-            HttpClient hc = HttpClient.newHttpClient();
+            HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
             HttpResponse<String> res = hc.send(
                     HttpRequest.newBuilder(uri)
-                            .timeout(Duration.ofSeconds(2))
+                            .timeout(Duration.ofSeconds(20))
                             .build(),
                     HttpResponse.BodyHandlers.ofString());
 
