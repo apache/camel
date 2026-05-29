@@ -29,9 +29,9 @@ class MockKafkaProducer extends org.apache.camel.support.DefaultProducer {
     public void process(org.apache.camel.Exchange exchange) throws Exception {
         // Simulate Kafka response with partition, offset, and key
         // These headers would normally be set by the real Kafka producer
-        exchange.getMessage().setHeader("kafka.PARTITION", 0);
-        exchange.getMessage().setHeader("kafka.OFFSET", "12345");
-        exchange.getMessage().setHeader("kafka.KEY", "test-key");
+        exchange.getMessage().setHeader("CamelKafkaPartition", 0);
+        exchange.getMessage().setHeader("CamelKafkaOffset", "12345");
+        exchange.getMessage().setHeader("CamelKafkaKey", "test-key");
         exchange.getMessage().setBody("Kafka Response: " + exchange.getIn().getBody());
     }
 }
