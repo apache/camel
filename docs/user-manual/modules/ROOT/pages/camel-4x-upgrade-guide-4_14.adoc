@@ -633,3 +633,72 @@ between the transport `from` and the `dns:` `to`. Allowing untrusted senders
 to drive `DnsConstants.DNS_SERVER` (the recursive resolver target in
 `dns:dig`) without such a mapping step is not the intended use of the
 component.
+
+=== camel-kafka - potential breaking change
+
+The Exchange header constants in `KafkaConstants` used header values in the
+lowercase / dotted `kafka.*` namespace, outside the `Camel` namespace, and were
+therefore not filtered by the default `HeaderFilterStrategy` on upstream HTTP /
+REST consumers. They have been renamed to follow the Camel naming convention
+used across the rest of the component catalog. The Java field names are
+unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `KafkaConstants.PARTITION_KEY` | `kafka.PARTITION_KEY` | `CamelKafkaPartitionKey`
+| `KafkaConstants.PARTITION` | `kafka.PARTITION` | `CamelKafkaPartition`
+| `KafkaConstants.KEY` | `kafka.KEY` | `CamelKafkaKey`
+| `KafkaConstants.TOPIC` | `kafka.TOPIC` | `CamelKafkaTopic`
+| `KafkaConstants.OVERRIDE_TOPIC` | `kafka.OVERRIDE_TOPIC` | `CamelKafkaOverrideTopic`
+| `KafkaConstants.OFFSET` | `kafka.OFFSET` | `CamelKafkaOffset`
+| `KafkaConstants.HEADERS` | `kafka.HEADERS` | `CamelKafkaHeaders`
+| `KafkaConstants.LAST_RECORD_BEFORE_COMMIT` | `kafka.LAST_RECORD_BEFORE_COMMIT` | `CamelKafkaLastRecordBeforeCommit`
+| `KafkaConstants.LAST_POLL_RECORD` | `kafka.LAST_POLL_RECORD` | `CamelKafkaLastPollRecord`
+| `KafkaConstants.TIMESTAMP` | `kafka.TIMESTAMP` | `CamelKafkaTimestamp`
+| `KafkaConstants.OVERRIDE_TIMESTAMP` | `kafka.OVERRIDE_TIMESTAMP` | `CamelKafkaOverrideTimestamp`
+| `KafkaConstants.KAFKA_RECORD_META` | `kafka.RECORD_META` | `CamelKafkaRecordMeta`
+|===
+
+`KafkaConstants.MANUAL_COMMIT` was already `Camel`-prefixed
+(`CamelKafkaManualCommit`) and is unchanged.
+
+Routes that reference the constants symbolically (for example
+`setHeader(KafkaConstants.OVERRIDE_TOPIC, ...)`) continue to work without
+changes. Routes that set or read the headers by their literal string values
+(for example `setHeader("kafka.OVERRIDE_TOPIC", ...)` or Simple expressions such
+as `${headers[kafka.TOPIC]}`) must be updated to use the new values:
+
+[source,java]
+----
+// before
+from("platform-http:/api/events")
+    .setHeader("kafka.OVERRIDE_TOPIC", constant("events.topic"))
+    .to("kafka:default?brokers=localhost:9092");
+
+// after
+from("platform-http:/api/events")
+    .setHeader(KafkaConstants.OVERRIDE_TOPIC, constant("events.topic"))
+    .to("kafka:default?brokers=localhost:9092");
+----
+
+The generated Endpoint DSL header accessors on `KafkaEndpointBuilderFactory`
+keep their method names (`kafkaOverrideTopic()`, `kafkaTopic()`,
+`kafkaPartitionKey()`, ...); only the returned string value reflects the new
+`CamelKafka*` convention.
+
+==== Behaviour change: cross-transport propagation of kafka.* headers
+
+Because the renamed header values now begin with `Camel`, they are filtered by
+the standard transport `HeaderFilterStrategy` (`HttpHeaderFilterStrategy`,
+`JmsHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design
+— `Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (HTTP, JMS, ...) into a `kafka:`
+producer and let the sender choose the destination topic via the
+`kafka.OVERRIDE_TOPIC` header must therefore carry that value in a
+non-`Camel`-prefixed application header and map it to
+`KafkaConstants.OVERRIDE_TOPIC` in the route between the transport `from` and
+the `kafka:` `to`. Allowing untrusted senders to drive
+`KafkaConstants.OVERRIDE_TOPIC` (which redirects the producer's target topic)
+without such a mapping step is not the intended use of the component.
