@@ -136,7 +136,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
-         * irc.num = '353'.
+         * CamelIrcNum = '353'.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -153,7 +153,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
-         * irc.num = '353'.
+         * CamelIrcNum = '353'.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -872,7 +872,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
-         * irc.num = '353'.
+         * CamelIrcNum = '353'.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -889,7 +889,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
-         * irc.num = '353'.
+         * CamelIrcNum = '353'.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1537,7 +1537,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
-         * irc.num = '353'.
+         * CamelIrcNum = '353'.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1554,7 +1554,7 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
-         * irc.num = '353'.
+         * CamelIrcNum = '353'.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2136,10 +2136,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.messageType}.
+         * @return the name of the header {@code IrcMessageType}.
          */
-        public String ircMessagetype() {
-            return "irc.messageType";
+        public String ircMessageType() {
+            return "CamelIrcMessageType";
         }
         /**
          * The target.
@@ -2148,10 +2148,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.target}.
+         * @return the name of the header {@code IrcTarget}.
          */
         public String ircTarget() {
-            return "irc.target";
+            return "CamelIrcTarget";
         }
         /**
          * The nickname or channel the message should be sent to.
@@ -2160,10 +2160,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.sendTo}.
+         * @return the name of the header {@code IrcSendTo}.
          */
-        public String ircSendto() {
-            return "irc.sendTo";
+        public String ircSendTo() {
+            return "CamelIrcSendTo";
         }
         /**
          * The nickname of the user who is kicked from a channel (passive).
@@ -2172,10 +2172,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.user.kicked}.
+         * @return the name of the header {@code IrcUserKicked}.
          */
         public String ircUserKicked() {
-            return "irc.user.kicked";
+            return "CamelIrcUserKicked";
         }
         /**
          * The host of the person who sent the line.
@@ -2184,10 +2184,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.user.host}.
+         * @return the name of the header {@code IrcUserHost}.
          */
         public String ircUserHost() {
-            return "irc.user.host";
+            return "CamelIrcUserHost";
         }
         /**
          * The nickname of the person who sent the line or the server name of
@@ -2197,10 +2197,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.user.nick}.
+         * @return the name of the header {@code IrcUserNick}.
          */
         public String ircUserNick() {
-            return "irc.user.nick";
+            return "CamelIrcUserNick";
         }
         /**
          * The server name of the server which sent the line or the nickname of
@@ -2210,10 +2210,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.user.servername}.
+         * @return the name of the header {@code IrcUserServername}.
          */
         public String ircUserServername() {
-            return "irc.user.servername";
+            return "CamelIrcUserServername";
         }
         /**
          * The username of the person who sent the line.
@@ -2222,10 +2222,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.user.username}.
+         * @return the name of the header {@code IrcUserUsername}.
          */
         public String ircUserUsername() {
-            return "irc.user.username";
+            return "CamelIrcUserUsername";
         }
         /**
          * The numeric reply.
@@ -2234,10 +2234,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.num}.
+         * @return the name of the header {@code IrcNum}.
          */
         public String ircNum() {
-            return "irc.num";
+            return "CamelIrcNum";
         }
         /**
          * The first part of the message.
@@ -2246,10 +2246,10 @@ public interface IrcEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code irc.value}.
+         * @return the name of the header {@code IrcValue}.
          */
         public String ircValue() {
-            return "irc.value";
+            return "CamelIrcValue";
         }
     }
     static IrcEndpointBuilder endpointBuilder(String componentName, String path) {

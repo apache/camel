@@ -19,6 +19,7 @@ package org.apache.camel.component.irc.it;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConfiguration;
+import org.apache.camel.component.irc.IrcConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
@@ -53,8 +54,8 @@ public class IrcsListUsersIT extends IrcIntegrationITSupport {
 
                 from(PRODUCER_URI + "?namesOnJoin=true&onReply=true")
                         .choice()
-                        .when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
-                        .filter(header("irc.num").isEqualTo(IRC_RPL_NAMREPLY))
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualToIgnoreCase("REPLY"))
+                        .filter(header(IrcConstants.IRC_NUM).isEqualTo(IRC_RPL_NAMREPLY))
                         .to("mock:result").stop();
             }
         };
