@@ -42,7 +42,11 @@ import picocli.CommandLine.Command;
 import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
 @Command(name = "route-structure", description = "Dump Camel route structure", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel cmd route-structure",
+                 "  camel cmd route-structure --filter=myRoute" })
 public class CamelRouteStructureAction extends ActionBaseCommand {
 
     public static class NameIdCompletionCandidates implements Iterable<String> {

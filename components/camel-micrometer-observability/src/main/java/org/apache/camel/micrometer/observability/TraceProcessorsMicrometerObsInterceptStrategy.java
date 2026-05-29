@@ -16,8 +16,11 @@
  */
 package org.apache.camel.micrometer.observability;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import io.micrometer.tracing.BaggageInScope;
 import io.micrometer.tracing.Tracer;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -67,8 +70,9 @@ public class TraceProcessorsMicrometerObsInterceptStrategy implements InterceptS
         public void process(Exchange exchange) throws Exception {
             Span activeSpan = spanStorage.peek(exchange);
             if (activeSpan != null) {
-                MicrometerObservabilitySpanAdapter otelSpan = (MicrometerObservabilitySpanAdapter) activeSpan;
-                try (Tracer.SpanInScope scope = tracer.withSpan(otelSpan.getSpan())) {
+                MicrometerObservabilitySpanAdapter microObsSpan = (MicrometerObservabilitySpanAdapter) activeSpan;
+                try (Tracer.SpanInScope scope = tracer.withSpan(microObsSpan.getSpan());
+                     ScopedBaggages scopedBaggages = new ScopedBaggages(getBaggageFromProperties(exchange))) {
                     processor.process(exchange);
                 }
             } else {
@@ -80,8 +84,9 @@ public class TraceProcessorsMicrometerObsInterceptStrategy implements InterceptS
         public boolean process(Exchange exchange, AsyncCallback callback) {
             Span activeSpan = spanStorage.peek(exchange);
             if (activeSpan != null) {
-                MicrometerObservabilitySpanAdapter otelSpan = (MicrometerObservabilitySpanAdapter) activeSpan;
-                try (Tracer.SpanInScope scope = tracer.withSpan(otelSpan.getSpan())) {
+                MicrometerObservabilitySpanAdapter microObsSpan = (MicrometerObservabilitySpanAdapter) activeSpan;
+                try (Tracer.SpanInScope scope = tracer.withSpan(microObsSpan.getSpan());
+                     ScopedBaggages scopedBaggages = new ScopedBaggages(getBaggageFromProperties(exchange))) {
                     return processor.process(exchange, doneSync -> {
                         callback.done(doneSync);
                     });
@@ -100,6 +105,59 @@ public class TraceProcessorsMicrometerObsInterceptStrategy implements InterceptS
             process(exchange, callback);
             return callback.getFuture();
         }
+
+        // We inspect the exchange in order to find any baggage variable
+        private List<BaggageInScope> getBaggageFromProperties(Exchange exchange) {
+            List<BaggageInScope> baggages = new ArrayList<>();
+
+            for (String propertyKey : exchange.getProperties().keySet()) {
+                String key = getBaggageVar(propertyKey);
+                if (key != null) {
+                    String value = exchange.getProperty(propertyKey) == null
+                            ? null : exchange.getProperty(propertyKey).toString();
+                    baggages.add(tracer.createBaggageInScope(key, value));
+                }
+            }
+
+            return baggages;
+        }
+
+        private String getBaggageVar(String key) {
+            if (key == null || !key.startsWith(org.apache.camel.telemetry.Tracer.BAGGAGE_PROPERTY)) {
+                return null;
+            }
+
+            return key.substring(org.apache.camel.telemetry.Tracer.BAGGAGE_PROPERTY.length());
+        }
+    }
+}
+
+class ScopedBaggages implements AutoCloseable {
+
+    private final List<BaggageInScope> baggages;
+
+    public ScopedBaggages(List<BaggageInScope> baggages) {
+        this.baggages = new ArrayList<>(baggages);
     }
 
+    @Override
+    public void close() {
+        RuntimeException failure = null;
+        for (int i = baggages.size() - 1; i >= 0; i--) {
+            try {
+                baggages.get(i).close();
+            } catch (Exception e) {
+                if (failure == null) {
+                    failure = new RuntimeException(
+                            "Failed to close baggage scopes", e);
+                } else {
+                    failure.addSuppressed(e);
+                }
+            }
+        }
+
+        if (failure != null) {
+            throw failure;
+        }
+    }
 }

@@ -21,10 +21,13 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.functions.BeanFunctionFactory;
 import org.apache.camel.language.simple.functions.BodyFunctionFactory;
 import org.apache.camel.language.simple.functions.CollateFunctionFactory;
 import org.apache.camel.language.simple.functions.CollectionFunctionFactory;
+import org.apache.camel.language.simple.functions.CustomFunctionFactory;
 import org.apache.camel.language.simple.functions.DateFunctionFactory;
+import org.apache.camel.language.simple.functions.ExchangeFunctionFactory;
 import org.apache.camel.language.simple.functions.HeaderFunctionFactory;
 import org.apache.camel.language.simple.functions.JoinFunctionFactory;
 import org.apache.camel.language.simple.functions.MathFunctionFactory;
@@ -32,6 +35,7 @@ import org.apache.camel.language.simple.functions.MessageFunctionFactory;
 import org.apache.camel.language.simple.functions.MiscFunctionFactory;
 import org.apache.camel.language.simple.functions.OutputFunctionFactory;
 import org.apache.camel.language.simple.functions.PropertiesFunctionFactory;
+import org.apache.camel.language.simple.functions.QueryLanguageFunctionFactory;
 import org.apache.camel.language.simple.functions.RandomFunctionFactory;
 import org.apache.camel.language.simple.functions.SkipFunctionFactory;
 import org.apache.camel.language.simple.functions.StringFunctionFactory;
@@ -64,6 +68,8 @@ public final class SimpleFunctionDispatcher {
             new BodyFunctionFactory(),
             new HeaderFunctionFactory(),
             new VariableFunctionFactory(),
+            new ExchangeFunctionFactory(),
+            new CustomFunctionFactory(),
             new RandomFunctionFactory(),
             new SkipFunctionFactory(),
             new CollateFunctionFactory(),
@@ -71,13 +77,15 @@ public final class SimpleFunctionDispatcher {
             new MathFunctionFactory(),
             new StringFunctionFactory(),
             new CollectionFunctionFactory(),
+            new QueryLanguageFunctionFactory(),
             new MiscFunctionFactory(),
             new SystemFunctionFactory(),
             new PropertiesFunctionFactory(),
             new TypeFunctionFactory(),
             new DateFunctionFactory(),
             new MessageFunctionFactory(),
-            new OutputFunctionFactory());
+            new OutputFunctionFactory(),
+            new BeanFunctionFactory());
 
     private static final List<Entry> EXPRESSION_ENTRIES = List.of(
             new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),

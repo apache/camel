@@ -36,7 +36,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "transformer", description = "Get list of data type transformers", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get transformer",
+                 "  camel get transformer --watch" })
 public class ListTransformer extends ProcessBaseCommand {
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {

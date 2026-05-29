@@ -66,7 +66,11 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.valueAsS
 
 @CommandLine.Command(name = "receive",
                      description = "Receive and dump messages from remote endpoints", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd receive --endpoint=seda:foo",
+                             "  camel cmd receive --endpoint=seda:foo --timeout=30000" })
 public class CamelReceiveAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;

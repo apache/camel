@@ -25,7 +25,10 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "reload",
-                     description = "Trigger reloading Camel", sortOptions = false, showDefaultValues = true)
+                     description = "Trigger reloading Camel", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd reload" })
 public class CamelReloadAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")

@@ -47,6 +47,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.Jsoner;
 
@@ -79,6 +80,8 @@ class HistoryTab implements MonitorTab {
     private int traceDetailScroll;
     private int traceDetailHScroll;
 
+    private final DiagramSupport diagram = new DiagramSupport();
+
     volatile List<HistoryEntry> historyEntries = Collections.emptyList();
     private final TableState historyTableState = new TableState();
     private boolean showHistoryProperties;
@@ -88,6 +91,7 @@ class HistoryTab implements MonitorTab {
     private boolean historyWordWrap = true;
     private int historyDetailScroll;
     private int historyDetailHScroll;
+    volatile boolean historyRefreshRequested;
 
     HistoryTab(MonitorContext ctx,
                AtomicReference<List<TraceEntry>> traces,
@@ -99,6 +103,18 @@ class HistoryTab implements MonitorTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (diagram.handleScrollKeys(ke)) {
+            return true;
+        }
+        if (ke.isChar('d')) {
+            diagram.toggleImageDiagram(this::loadDiagramForCurrentView);
+            return true;
+        }
+        if (ke.isChar('D')) {
+            diagram.toggleTextDiagram(this::loadDiagramForCurrentView);
+            return true;
+        }
+
         boolean tracerActive = !traces.get().isEmpty();
 
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
@@ -211,6 +227,10 @@ class HistoryTab implements MonitorTab {
                 return true;
             }
             if (ke.isKey(KeyCode.F5)) {
+                historyEntries = Collections.emptyList();
+                historyDetailScroll = 0;
+                historyDetailHScroll = 0;
+                historyRefreshRequested = true;
                 return true;
             }
         }
@@ -219,6 +239,9 @@ class HistoryTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
+        if (diagram.handleEscape()) {
+            return true;
+        }
         if (traceDetailView) {
             traceDetailView = false;
             traceSelectedExchangeId = null;
@@ -292,6 +315,11 @@ class HistoryTab implements MonitorTab {
             return;
         }
 
+        if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
+            diagram.renderDiagram(frame, area, " History Diagram ");
+            return;
+        }
+
         boolean tracerActive = !traces.get().isEmpty();
         if (!tracerActive) {
             renderHistory(frame, area);
@@ -313,6 +341,10 @@ class HistoryTab implements MonitorTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (diagram.isShowDiagram()) {
+            diagram.renderFooterHints(spans);
+            return;
+        }
         boolean tracerActive = !traces.get().isEmpty();
         if (tracerActive && traceDetailView) {
             hint(spans, "Esc", "back");
@@ -321,6 +353,8 @@ class HistoryTab implements MonitorTab {
             if (!traceWordWrap) {
                 hint(spans, "←→", "h-scroll");
             }
+            hint(spans, "d", "diagram");
+            hint(spans, "D", "text diagram");
             hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
             hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
             hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
@@ -330,6 +364,8 @@ class HistoryTab implements MonitorTab {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
             hint(spans, "s", "sort");
+            hint(spans, "d", "diagram");
+            hint(spans, "D", "text diagram");
             hint(spans, "Enter", "details");
             hintLast(spans, "F5", "refresh");
         } else {
@@ -339,6 +375,8 @@ class HistoryTab implements MonitorTab {
             if (!historyWordWrap) {
                 hint(spans, "←→", "h-scroll");
             }
+            hint(spans, "d", "diagram");
+            hint(spans, "D", "text diagram");
             hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
             hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
             hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
@@ -346,6 +384,83 @@ class HistoryTab implements MonitorTab {
             hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
             hintLast(spans, "F5", "refresh");
         }
+    }
+
+    // ---- Diagram loading ----
+
+    private void loadDiagramForCurrentView() {
+        if (ctx.selectedPid == null || ctx.runner == null) {
+            return;
+        }
+        if (!diagram.beginLoad()) {
+            return;
+        }
+
+        String[] messageHistory;
+        boolean failed;
+
+        boolean tracerActive = !traces.get().isEmpty();
+        if (tracerActive) {
+            String exchangeId;
+            if (traceDetailView && traceSelectedExchangeId != null) {
+                exchangeId = traceSelectedExchangeId;
+            } else {
+                Integer sel = traceTableState.selected();
+                if (sel != null && sel >= 0 && sel < traceSortedExchangeIds.size()) {
+                    exchangeId = traceSortedExchangeIds.get(sel);
+                } else {
+                    diagram.endLoad();
+                    return;
+                }
+            }
+            List<TraceEntry> steps = getTraceSteps(exchangeId);
+            if (steps.isEmpty()) {
+                diagram.endLoad();
+                return;
+            }
+            messageHistory = new String[steps.size()];
+            for (int i = 0; i < steps.size(); i++) {
+                TraceEntry e = steps.get(i);
+                messageHistory[i] = (e.routeId != null ? e.routeId : "") + "[" + (e.nodeId != null ? e.nodeId : "") + "]";
+            }
+            TraceEntry lastStep = steps.get(steps.size() - 1);
+            failed = lastStep.failed;
+        } else {
+            List<HistoryEntry> entries = historyEntries;
+            if (entries.isEmpty()) {
+                diagram.endLoad();
+                return;
+            }
+            messageHistory = new String[entries.size()];
+            for (int i = 0; i < entries.size(); i++) {
+                HistoryEntry e = entries.get(i);
+                messageHistory[i] = (e.routeId != null ? e.routeId : "") + "[" + (e.nodeId != null ? e.nodeId : "") + "]";
+            }
+            HistoryEntry lastEntry = entries.get(entries.size() - 1);
+            for (HistoryEntry e : entries) {
+                if (e.last) {
+                    lastEntry = e;
+                    break;
+                }
+            }
+            failed = lastEntry.failed;
+        }
+
+        String pid = ctx.selectedPid;
+        boolean textMode = diagram.isDiagramTextMode();
+        RouteDiagramHelper.HighlightStyle style = failed
+                ? RouteDiagramHelper.HighlightStyle.FAIL
+                : RouteDiagramHelper.HighlightStyle.SUCCESS;
+
+        diagram.setLoadingPlaceholder();
+
+        ctx.runner.scheduler().execute(() -> {
+            try {
+                diagram.loadHighlightedDiagramInBackground(ctx, pid, textMode, messageHistory, style);
+            } finally {
+                diagram.endLoad();
+            }
+        });
     }
 
     // ---- Trace rendering ----
@@ -844,6 +959,9 @@ class HistoryTab implements MonitorTab {
                 int w = l.width();
                 contentHeight += Math.max(1, (w + visibleWidth - 1) / visibleWidth);
             }
+            // word-wrap breaks at word boundaries which can produce more lines
+            // than char-based math; add padding so last section is always reachable
+            contentHeight += visibleHeight;
         } else {
             contentHeight = lines.size();
         }

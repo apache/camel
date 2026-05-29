@@ -457,6 +457,25 @@
         ]
     },
     {
+        "name": "tui-hello-world",
+        "title": "TUI Hello World",
+        "description": "Say hello via TUI Send Message (F2) or CLI",
+        "level": "beginner",
+        "tags": [
+            "beginner",
+            "direct",
+            "send",
+            "tui"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "tui-hello-world.yaml"
+        ]
+    },
+    {
         "name": "xslt",
         "title": "XSLT Transformation",
         "description": "Basic XML transformation using XSLT style sheets",

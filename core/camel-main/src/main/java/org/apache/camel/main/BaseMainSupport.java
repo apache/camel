@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.KeyStore;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -74,6 +75,7 @@ import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
+import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -146,6 +148,7 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String PREFIX_DEBUG = "camel.debug.";
     private static final String PREFIX_TRACE = "camel.trace.";
     private static final String PREFIX_ROUTE_CONTROLLER = "camel.routeController.";
+    private static final String PREFIX_ERROR_REGISTRY = "camel.errorRegistry.";
 
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
@@ -154,7 +157,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.telemetryDev.", "camel.management.", "camel.mdc.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             PREFIX_SERVER, PREFIX_SSL, PREFIX_SECURITY, PREFIX_DEBUG, PREFIX_TRACE,
-            PREFIX_ROUTE_CONTROLLER };
+            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY };
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
@@ -1409,6 +1412,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties debuggerProperties = new OrderedLocationProperties();
         OrderedLocationProperties tracerProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeControllerProperties = new OrderedLocationProperties();
+        OrderedLocationProperties errorRegistryProperties = new OrderedLocationProperties();
 
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
@@ -1556,6 +1560,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(22);
                 validateOptionAndValue(key, option, value);
                 routeControllerProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, PREFIX_ERROR_REGISTRY)) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(20);
+                validateOptionAndValue(key, option, value);
+                errorRegistryProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1698,6 +1708,12 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        if (!errorRegistryProperties.isEmpty() || mainConfigurationProperties.hasErrorRegistryConfiguration()) {
+            LOG.debug("Auto-configuring Error Registry from loaded properties: {}", errorRegistryProperties.size());
+            setErrorRegistryProperties(camelContext, errorRegistryProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
 
         // configure which requires access to the model
         MainSupportModelConfigurer.configureModelCamelContext(camelContext, mainConfigurationProperties,
@@ -1760,6 +1776,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!routeControllerProperties.isEmpty()) {
             routeControllerProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.routeController.{}={}", k, v);
+            });
+        }
+        if (!errorRegistryProperties.isEmpty()) {
+            errorRegistryProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.errorRegistry.{}={}", k, v);
             });
         }
         if (!devConsoleProperties.isEmpty()) {
@@ -2482,6 +2503,26 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    private void setErrorRegistryProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        ErrorRegistryConfigurationProperties config = mainConfigurationProperties.errorRegistryConfig();
+        setPropertiesOnTarget(camelContext, config, properties, PREFIX_ERROR_REGISTRY,
+                failIfNotSet, true, autoConfiguredProperties);
+
+        ErrorRegistry registry = camelContext.getErrorRegistry();
+        registry.setEnabled(config.isEnabled());
+        registry.setMaximumEntries(config.getMaximumEntries());
+        registry.setTimeToLive(Duration.ofSeconds(config.getTimeToLiveSeconds()));
+        registry.setBodyMaxChars(config.getBodyMaxChars());
+        registry.setBodyIncludeStreams(config.isBodyIncludeStreams());
+        registry.setBodyIncludeFiles(config.isBodyIncludeFiles());
+        registry.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
+        registry.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
+    }
+
     private void bindBeansToRegistry(
             CamelContext camelContext, OrderedLocationProperties properties,
             String optionPrefix, boolean failIfNotSet, boolean logSummary, boolean ignoreCase,
@@ -3105,10 +3146,11 @@ public abstract class BaseMainSupport extends BaseService {
                     String k = entry.getKey().toString();
                     Object v = entry.getValue();
                     Object dv = propertyPlaceholders.getDefaultValue(k);
-                    // skip logging configurations that are using default-value
-                    // or a kamelet that uses templateId as a parameter
+                    // skip logging configurations that are using default-value,
+                    // a kamelet that uses templateId as a parameter,
+                    // or internal camel-jbang properties
                     boolean same = ObjectHelper.equal(v, dv);
-                    boolean skip = "templateId".equals(k);
+                    boolean skip = "templateId".equals(k) || k.startsWith("camel.jbang.");
                     if (!same && !skip) {
                         if (header) {
                             LOG.info("Property-placeholders summary");

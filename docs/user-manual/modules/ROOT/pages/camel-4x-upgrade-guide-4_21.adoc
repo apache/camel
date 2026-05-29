@@ -28,6 +28,35 @@ your own code or tooling, add `org.jspecify:jspecify` explicitly to your project
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
+==== Error Registry SPI changes
+
+The `ErrorRegistry` SPI has been enhanced to capture rich exchange data snapshots at error time,
+following the same pattern as BacklogTracer. The following breaking changes apply:
+
+- The `org.apache.camel.spi.ErrorRegistryEntry` interface has been removed and replaced by `BacklogErrorEventMessage`,
+  which extends a new `BacklogEventMessage` base interface shared with `BacklogTracerEventMessage`.
+- The `ErrorRegistryView.browse()` methods now return `Collection<BacklogErrorEventMessage>` instead of
+  `Collection<ErrorRegistryEntry>`.
+- The `stackTraceEnabled` option on `ErrorRegistry` has been removed. The full `Throwable` is now always captured.
+- Error registry configuration properties have moved from `camel.main.errorRegistryXxx` to the grouped
+  `camel.errorRegistry.*` prefix. The old flat properties (`camel.main.errorRegistryEnabled`,
+  `camel.main.errorRegistryMaximumEntries`, `camel.main.errorRegistryTimeToLiveSeconds`,
+  `camel.main.errorRegistryStackTraceEnabled`) are removed.
+
+New configuration properties under `camel.errorRegistry.*`:
+
+[options="header"]
+|===
+| Old property | New property
+| `camel.main.errorRegistryEnabled` | `camel.errorRegistry.enabled`
+| `camel.main.errorRegistryMaximumEntries` | `camel.errorRegistry.maximumEntries`
+| `camel.main.errorRegistryTimeToLiveSeconds` | `camel.errorRegistry.timeToLiveSeconds`
+| `camel.main.errorRegistryStackTraceEnabled` | _(removed, always captures full exception)_
+|===
+
+New capture options: `bodyMaxChars`, `bodyIncludeStreams`, `bodyIncludeFiles`,
+`includeExchangeProperties`, `includeExchangeVariables` — matching the BacklogTracer configuration.
+
 ==== Virtual threads: `maxQueueSize` now honored in `threads()` EIP
 
 When virtual threads are enabled (`camel.threads.virtual.enabled=true`), the `threads()` EIP now honors `maxQueueSize`
@@ -82,25 +111,25 @@ auto-disables `contentCache` on resource-based components (such as `xslt`) whose
 the route. Set `camel.component.<name>.contentCache=true` (or pass `?contentCache=true` on the
 URI) to opt back in to caching during dev mode.
 
-==== Unified `--packaging` option for `camel export`
+==== Container-optimized layered Docker packaging for `camel export`
 
-A new `--packaging` option has been added to `camel export` that works across all three runtimes
-(Camel Main, Spring Boot, and Quarkus). It replaces the Quarkus-specific `--quarkus-package-type`
-option, which is now deprecated.
+The `camel export` command now generates Dockerfiles optimized for container image layer caching
+across all three runtimes. Previously, Camel Main and Spring Boot exports produced a single-layer
+fat JAR Dockerfile; now each runtime uses a layered approach where dependencies (stable) and
+application code (volatile) are in separate Docker layers.
 
-Accepted values:
-
-- `layered` or `fast-jar` — container-optimized packaging with separate dependency layers (default)
-- `fat-jar` or `uber-jar` — single executable JAR
-
-The default is `layered`, which produces Dockerfiles optimized for container image layer caching.
 Each runtime implements layered packaging using its native mechanism:
 
-- **Camel Main**: thin JAR with dependencies in a `lib/` folder
-- **Spring Boot**: multi-stage Dockerfile using Spring Boot's built-in layer extraction
-- **Quarkus**: fast-jar packaging (unchanged from the previous `--quarkus-package-type=fast-jar` default)
+- **Camel Main**: the generated POM now includes `maven-jar-plugin` (with classpath manifest) and
+  `maven-dependency-plugin:copy-dependencies`. The Dockerfile copies `target/lib/` first (cached
+  dependency layer), then the thin `.original` JAR (small application layer).
+- **Spring Boot**: a multi-stage Dockerfile using Spring Boot's `jarmode=tools extract --layers`
+  to split the fat JAR into 4 Docker layers (dependencies, spring-boot-loader,
+  snapshot-dependencies, application).
+- **Quarkus**: unchanged — already uses fast-jar packaging with a 4-layer Dockerfile.
 
-The deprecated `--quarkus-package-type` option continues to work for backward compatibility.
+The Quarkus-specific `--quarkus-package-type` option is now deprecated and hidden from help output.
+Quarkus exports always use fast-jar (layered) packaging.
 
 ==== Improved default `--quarkus-version`
 
@@ -156,6 +185,12 @@ The list-style catalog tools — `camel_catalog_components`, `camel_catalog_data
 the matching `*_doc` tool. The default `limit` for `camel_catalog_components` and
 `camel_catalog_dataformats` is also lowered from 50 to 20; pass an explicit `limit` to restore the
 previous behaviour.
+
+==== camel-jbang plugin commands
+
+The `camel plugin get --all` option is deprecated. Use the new `camel plugin list` command instead,
+which lists all available plugins (installed, bundled, and known 3rd party).
+The `camel plugin get` command now only shows installed plugins.
 
 ==== camel-jbang plugins
 
@@ -849,6 +884,72 @@ directions, aligning the component with the rest of the Camel component catalog.
 `Camel`-prefixed user-header names from Iggy messages can supply a custom `headerFilterStrategy`
 to restore the previous behaviour.
 
+=== camel-shiro - potential breaking change
+
+The three Exchange header constants in `ShiroSecurityConstants` that drive
+Shiro authentication used header values outside the `Camel` namespace
+(`SHIRO_SECURITY_TOKEN`, `SHIRO_SECURITY_USERNAME`, `SHIRO_SECURITY_PASSWORD`)
+and were therefore not filtered by the default `HeaderFilterStrategy`. They
+have been renamed to follow the Camel naming convention. The Java field names
+are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ShiroSecurityConstants.SHIRO_SECURITY_TOKEN` | `SHIRO_SECURITY_TOKEN` | `CamelShiroSecurityToken`
+| `ShiroSecurityConstants.SHIRO_SECURITY_USERNAME` | `SHIRO_SECURITY_USERNAME` | `CamelShiroSecurityUsername`
+| `ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD` | `SHIRO_SECURITY_PASSWORD` | `CamelShiroSecurityPassword`
+|===
+
+These headers carry credentials and a serialized authentication token, so
+filtering them at transport boundaries by default is particularly important.
+
+Routes that reference the constants symbolically (for example
+`setHeader(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, ...)`) continue to
+work without changes. Routes that set the header by its literal string value
+(for example `setHeader("SHIRO_SECURITY_USERNAME", ...)`) must be updated to
+use the new value (`setHeader("CamelShiroSecurityUsername", ...)`).
+
+Because the three header values are now in the `Camel*` namespace, transports
+that filter Camel-internal headers by default (JMS, CXF, HTTP, etc.) will
+strip the serialized Shiro authentication token before publishing. This is
+the intended behavior for untrusted producers. Trusted Shiro-over-transport
+routes that previously relied on the token surviving the boundary must opt
+those three headers back in via a custom `HeaderFilterStrategy`, for example:
+
+[source,java]
+----
+public class ShiroFriendlyJmsHeaderFilterStrategy extends JmsHeaderFilterStrategy {
+    @Override
+    public boolean applyFilterToCamelHeaders(String name, Object value, Exchange ex) {
+        if (isShiroSecurityHeader(name)) {
+            return false;
+        }
+        return super.applyFilterToCamelHeaders(name, value, ex);
+    }
+
+    @Override
+    public boolean applyFilterToExternalHeaders(String name, Object value, Exchange ex) {
+        if (isShiroSecurityHeader(name)) {
+            return false;
+        }
+        return super.applyFilterToExternalHeaders(name, value, ex);
+    }
+
+    private static boolean isShiroSecurityHeader(String name) {
+        return ShiroSecurityConstants.SHIRO_SECURITY_TOKEN.equalsIgnoreCase(name)
+                || ShiroSecurityConstants.SHIRO_SECURITY_USERNAME.equalsIgnoreCase(name)
+                || ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD.equalsIgnoreCase(name);
+    }
+}
+
+jmsComponent.setHeaderFilterStrategy(new ShiroFriendlyJmsHeaderFilterStrategy());
+----
+
+A worked example is in `ShiroOverJmsTest` in the `camel-itest` module.
+
+
+
 === camel-undertow - potential breaking change
 
 `UndertowHeaderFilterStrategy` now also filters the legacy `websocket.*`
@@ -1503,6 +1604,10 @@ have been renamed accordingly:
 * `gridfsObjectid()` -> `gridFsObjectId()`
 * `gridfsFileid()` -> `gridFsFileId()`
 
+=== camel-jooq - dbcp
+
+The `commons-dbcp` dependency has been removed. Even if is a very common usage with it, this is only a test dependency. In case, you are relying on it, you will need to add it to you project dependency. Note that, for our tests and examples, we migrated to use `commons-dbcp2`.
+
 === Deprecation of camel-ironmq
 
 The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017
@@ -1531,6 +1636,34 @@ Use the standalone CLI scripts (`encrypt.sh` / `decrypt.sh` / `digest.sh`) shipp
 link:https://github.com/jasypt/jasypt/releases/tag/jasypt-1.9.3[jasypt-1.9.3 distribution] instead. They cover
 the same workflow and let us drop the duplicate implementation maintained inside `camel-jasypt`. The component
 itself (property-source decryption at runtime) is unaffected.
+
+=== camel-langchain4j-tools / camel-langchain4j-agent / camel-spring-ai-tools
+
+Tool argument headers are now filtered against the tool's declared parameter schema. When the LLM returns
+a tool call, only JSON field names that match a declared `parameter.<name>` are set as Exchange headers.
+Undeclared field names are logged at WARN level and skipped.
+
+This is a breaking change for tools defined without explicit `parameter.*` declarations. Previously, all
+LLM-provided argument field names were set as Exchange headers without filtering. Now, tools with no
+declared parameters will have zero argument headers set from the LLM tool call.
+
+For example, a tool defined as:
+
+[source,java]
+----
+from("langchain4j-tools:test1?tags=user&description=Does not really do anything")
+----
+
+will no longer receive any LLM-provided arguments as headers. To restore argument flow, declare the
+expected parameters explicitly:
+
+[source,java]
+----
+from("langchain4j-tools:test1?tags=user&description=Query user by number&parameter.number=integer")
+----
+
+Additionally, `camel-langchain4j-agent` now extracts primitive values (`int`, `long`, `double`, `boolean`,
+`String`) from tool arguments instead of setting raw `JsonNode` objects as headers.
 
 === Deprecation of camel-paho
 
@@ -1580,4 +1713,12 @@ the JMS provider has already decoded the payload). Graph-shape limits are theref
 those sites and have not been added; DoS hardening on the JMS path must be configured at the JMS provider
 level (for example Artemis `deserializationAllowList`, ActiveMQ Classic `SERIALIZABLE_PACKAGES`) or via
 `-Djdk.serialFilter`.
+
+=== camel-azure-storage-blob
+
+A new container-level operation `listBlobVersions` has been added. It returns one `BlobItem`
+per version of every blob in the container, each carrying its own `versionId` and
+`isCurrentVersion` flag, so the full version history can be inspected. Requires versioning to be
+enabled on the storage account. The same `prefix`, `regex` and `maxResultsPerPage` filters as
+`listBlobs` are honoured.
 

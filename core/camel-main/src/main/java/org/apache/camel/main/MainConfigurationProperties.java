@@ -77,6 +77,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private DebuggerConfigurationProperties debuggerConfigurationProperties;
     private TracerConfigurationProperties tracerConfigurationProperties;
     private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
+    private ErrorRegistryConfigurationProperties errorRegistryConfigurationProperties;
 
     @Override
     public void close() {
@@ -155,6 +156,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (routeControllerConfigurationProperties != null) {
             routeControllerConfigurationProperties.close();
             routeControllerConfigurationProperties = null;
+        }
+        if (errorRegistryConfigurationProperties != null) {
+            errorRegistryConfigurationProperties.close();
+            errorRegistryConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -375,6 +380,24 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasTracerConfiguration() {
         return tracerConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Error Registry.
+     */
+    public ErrorRegistryConfigurationProperties errorRegistryConfig() {
+        if (errorRegistryConfigurationProperties == null) {
+            errorRegistryConfigurationProperties = new ErrorRegistryConfigurationProperties(this);
+        }
+
+        return errorRegistryConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Error Registry configuration specified.
+     */
+    public boolean hasErrorRegistryConfiguration() {
+        return errorRegistryConfigurationProperties != null;
     }
 
     /**

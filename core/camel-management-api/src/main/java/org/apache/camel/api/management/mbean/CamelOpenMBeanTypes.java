@@ -386,13 +386,19 @@ public final class CamelOpenMBeanTypes {
         return new CompositeType(
                 "errors", "Errors",
                 new String[] {
-                        "exchangeId", "routeId", "endpointUri", "timestamp",
+                        "exchangeId", "routeId", "routeGroup", "nodeId", "stepId",
+                        "endpointUri", "fromEndpointUri", "timestamp",
+                        "routeUptime", "elapsed",
                         "handled", "exceptionType", "exceptionMessage" },
                 new String[] {
-                        "Exchange Id", "Route Id", "Endpoint Uri", "Timestamp",
+                        "Exchange Id", "Route Id", "Route Group", "Node Id", "Step Id",
+                        "Endpoint Uri", "From Endpoint Uri", "Timestamp",
+                        "Route Uptime", "Elapsed",
                         "Handled", "Exception Type", "Exception Message" },
                 new OpenType[] {
-                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                        SimpleType.LONG, SimpleType.LONG,
                         SimpleType.BOOLEAN, SimpleType.STRING, SimpleType.STRING });
     }
 

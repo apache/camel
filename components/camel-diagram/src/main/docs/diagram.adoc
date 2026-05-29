@@ -19,6 +19,7 @@ It can generate visual route diagrams as PNG images or plain ASCII art text repr
 * Support for all Camel EIPs: choice, doTry/doCatch, filter, split, loop, multicast, and more
 * Scope boxes visually group branching and scoping EIPs
 * Multiple color themes: dark, light, transparent, or custom (PNG only)
+* Highlight specific paths through routes (e.g., error paths or message traces) with colored arrows
 
 == Usage
 
@@ -216,4 +217,57 @@ route1
 ┌──────────────────────┐
 │        log:a         │
 └──────────────────────┘
+----
+
+== Path Highlighting
+
+You can highlight specific paths through routes by specifying node IDs.
+The arrows and lines between consecutive highlighted nodes are rendered in color,
+making it easy to visualize message flow, error paths, or trace results.
+
+Two highlight styles are available:
+
+* `success` - Green arrows (default). Useful for visualizing successful message paths or trace results.
+* `fail` - Red arrows. Useful for visualizing error paths or failure routes.
+
+Only the arrows between highlighted nodes are colored — the node boxes remain unchanged.
+When highlighting is active, only routes that contain highlighted nodes are rendered.
+
+=== With Camel JBang
+
+Use the `--highlight` and `--highlight-style` options:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.yaml --theme=unicode --highlight "from1,setBody1,log1" --highlight-style success
+----
+
+To highlight an error path in red:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.yaml --theme=unicode --highlight "from1,filter1,throwException1" --highlight-style fail
+----
+
+The node IDs (e.g., `from1`, `setBody1`, `log1`) correspond to the IDs assigned in the route structure.
+You can discover them by inspecting the route structure JSON from a running Camel application,
+or they typically follow the pattern `<eipName><index>`.
+
+=== With Java API
+
+[source,java]
+----
+import org.apache.camel.diagram.*;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.*;
+
+Set<String> highlightedNodes = Set.of("from1", "setBody1", "log1");
+RouteDiagramHelper.HighlightStyle style = RouteDiagramHelper.HighlightStyle.SUCCESS;
+
+// For ASCII/Unicode rendering
+RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), true);
+String diagram = renderer.renderDiagramAnsi(layoutRoutes, totalHeight, highlightedNodes, style);
+
+// For PNG rendering
+RouteDiagramRenderer pngRenderer = new RouteDiagramRenderer(nodeWidth, fontSize);
+BufferedImage image = pngRenderer.renderDiagram(layoutRoutes, totalHeight, colors, highlightedNodes, style);
 ----

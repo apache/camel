@@ -47,6 +47,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
 
     public static final String TRACE_HEADER = "CAMEL_TRACE_ID";
     public static final String SPAN_HEADER = "CAMEL_SPAN_ID";
+    public static final String BAGGAGE_PROPERTY = "CamelBaggage_";
 
     private static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
 

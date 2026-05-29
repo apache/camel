@@ -152,6 +152,7 @@ public class RouteDiagramLayoutEngine {
 
     public static class NodeInfo {
         public String type;
+        public String id;
         public String code;
         public String description;
         public int level;
@@ -179,6 +180,7 @@ public class RouteDiagramLayoutEngine {
 
     public static class LayoutNode {
         public String type;
+        public String id;
         public int x;
         public int y;
         public int height;
@@ -405,6 +407,7 @@ public class RouteDiagramLayoutEngine {
 
         LayoutNode ln = new LayoutNode();
         ln.type = node.info.type;
+        ln.id = node.info.id;
         ln.x = nodeX;
         ln.y = y;
         ln.wrappedLines = resolveLabel(node.info, nodeLabelMode).stream()

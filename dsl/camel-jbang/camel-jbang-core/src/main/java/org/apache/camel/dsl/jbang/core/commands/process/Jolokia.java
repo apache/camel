@@ -35,7 +35,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "jolokia", description = "Attach Jolokia JVM Agent to a running Camel integration", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel jolokia myApp",
+                 "  camel jolokia myApp --stop" })
 public class Jolokia extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")

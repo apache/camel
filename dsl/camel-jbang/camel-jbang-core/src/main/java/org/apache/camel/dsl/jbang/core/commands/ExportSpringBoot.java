@@ -386,6 +386,11 @@ class ExportSpringBoot extends Export {
     }
 
     @Override
+    protected String getDockerfileTemplateName() {
+        return "Dockerfile-spring-boot";
+    }
+
+    @Override
     protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 

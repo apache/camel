@@ -52,6 +52,8 @@ public class ProfileConfigurer {
             if (!config.isTracing()) {
                 config.setTracingStandby(true);
             }
+            // enable error registry to capture routing errors
+            config.errorRegistryConfig().withEnabled(true);
         }
 
         if ("dev".equals(profile)) {

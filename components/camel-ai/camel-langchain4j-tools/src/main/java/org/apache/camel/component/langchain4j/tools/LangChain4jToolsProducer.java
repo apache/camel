@@ -173,10 +173,23 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             try {
                 TypeConverter typeConverter = endpoint.getCamelContext().getTypeConverter();
 
+                // Get declared parameters from tool specification to filter incoming fields
+                Set<String> declaredParams = Set.of();
+                JsonObjectSchema paramSchema = camelToolSpecification.getToolSpecification().parameters();
+                if (paramSchema != null && paramSchema.properties() != null) {
+                    declaredParams = paramSchema.properties().keySet();
+                }
+                final Set<String> allowedParams = declaredParams;
+
                 // Map Json to Header
                 JsonNode jsonNode = objectMapper.readValue(toolExecutionRequest.arguments(), JsonNode.class);
                 jsonNode.fieldNames()
                         .forEachRemaining(name -> {
+                            if (!allowedParams.contains(name)) {
+                                LOG.warn("Skipping undeclared tool argument '{}' for tool '{}'",
+                                        name, toolName);
+                                return;
+                            }
                             final JsonNode value = jsonNode.get(name);
                             Object headerValue;
 

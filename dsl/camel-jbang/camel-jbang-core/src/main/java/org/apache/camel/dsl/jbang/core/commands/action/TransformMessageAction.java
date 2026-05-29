@@ -40,7 +40,10 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "message",
                      description = "Transform message from one format to another via an existing running Camel integration",
-                     sortOptions = false, showDefaultValues = true)
+                     sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd message --body='Hello World'" })
 public class TransformMessageAction extends ActionWatchCommand {
 
     @CommandLine.Option(names = { "--camel-version" },

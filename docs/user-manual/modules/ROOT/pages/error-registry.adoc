@@ -1,11 +1,11 @@
 = Error Registry
 
 The `ErrorRegistry` SPI captures snapshots of exceptions that occur during message routing,
-without retaining references to the original exchange or exception objects.
+including the exception, exchange data (headers, body, properties, variables), and message history.
 
-When enabled, the registry stores error snapshots including the exception type, message,
-stack trace, and message history (the trace of every node the message was routed through).
-Error entries can be browsed globally or scoped to a specific route.
+When enabled, the registry stores rich error snapshots that can be browsed globally or scoped to a specific route.
+The exchange data is captured as a detached snapshot at the time of the error, so the original exchange
+can be safely garbage collected after routing completes.
 
 == Enabling
 
@@ -20,7 +20,7 @@ Or via configuration properties:
 
 [source,properties]
 ----
-camel.main.errorRegistryEnabled = true
+camel.errorRegistry.enabled = true
 ----
 
 == Configuration
@@ -28,11 +28,33 @@ camel.main.errorRegistryEnabled = true
 [width="100%",cols="3,1,1,5",options="header"]
 |===
 | Option | Default | Type | Description
-| `camel.main.errorRegistryEnabled` | `false` | boolean | Whether the error registry is enabled.
-| `camel.main.errorRegistryMaximumEntries` | `100` | int | Maximum number of error entries to keep. When exceeded, the oldest entries are evicted.
-| `camel.main.errorRegistryTimeToLiveSeconds` | `3600` | int | Time-to-live for error entries in seconds. Entries older than this are evicted.
-| `camel.main.errorRegistryStackTraceEnabled` | `true` | boolean | Whether to capture stack traces.
+| `camel.errorRegistry.enabled` | `false` | boolean | Whether the error registry is enabled.
+| `camel.errorRegistry.maximumEntries` | `100` | int | Maximum number of error entries to keep. When exceeded, the oldest entries are evicted.
+| `camel.errorRegistry.timeToLiveSeconds` | `0` | int | Time-to-live for error entries in seconds. Entries older than this are evicted. The default value is 0 (disabled).
+| `camel.errorRegistry.bodyMaxChars` | `32768` | int | Maximum number of characters for the message body in the snapshot.
+| `camel.errorRegistry.bodyIncludeStreams` | `false` | boolean | Whether to include stream-based message bodies.
+| `camel.errorRegistry.bodyIncludeFiles` | `true` | boolean | Whether to include file-based message bodies.
+| `camel.errorRegistry.includeExchangeProperties` | `true` | boolean | Whether to include exchange properties in the snapshot.
+| `camel.errorRegistry.includeExchangeVariables` | `true` | boolean | Whether to include exchange variables in the snapshot.
 |===
+
+== Captured Data
+
+Each error entry captures:
+
+- *Exchange ID* — the unique exchange identifier
+- *Route ID* — the route where the error occurred (which may differ from the from-route if the exchange was routed across multiple routes)
+- *From Route ID* — the originating route where the exchange was created (the consumer route)
+- *Route Group* — the group of the route where the error occurred (if set)
+- *Node ID* — the EIP processor node where processing failed
+- *Location* — the source file location of the failing node (e.g. "MyRoute.java:42"), requires source location to be enabled
+- *Endpoint URI* — the producer endpoint the exchange was being sent to when the failure occurred. This can be null when the error occurs before any send attempt (e.g. a direct `throwException` in the route). This does _not_ refer to the route's consumer (from) endpoint.
+- *Timestamp* — when the error occurred (milliseconds since epoch)
+- *Exception* — the full exception instance including type, message, and stack trace
+- *Handled* — whether the error was handled by an error handler (e.g. dead letter channel, onException) or is unhandled
+- *Message data* — a detached JSON snapshot of the exchange message (body, headers, and optionally properties and variables)
+- *Message history* — the trace of every node the message was routed through up until the failure point (requires message history to be enabled)
+- *Processing thread* — the name of the thread that was processing the exchange at the time of the error
 
 == Message History
 
@@ -56,5 +78,5 @@ A JMX MBean (`ManagedErrorRegistry`) is registered when JMX is enabled, providin
 
 * Enable/disable the error registry
 * Browse error entries (globally or by route)
-* Configure maximum entries and time-to-live
+* Configure maximum entries, time-to-live, and capture options
 * Clear all entries

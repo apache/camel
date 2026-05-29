@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 133 options, which are listed below.
+The camel.main supports 129 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -64,10 +64,6 @@ The camel.main supports 133 options, which are listed below.
 | *camel.main.endpointBridgeErrorHandler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. The default value is false. | false | boolean
 | *camel.main.endpointLazyStartProducer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. The default value is false. | false | boolean
 | *camel.main.endpointRuntimeStatisticsEnabled* | Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false. | false | boolean
-| *camel.main.errorRegistryEnabled* | Sets whether the error registry is enabled to capture errors during message routing. This is by default disabled. | false | boolean
-| *camel.main.errorRegistryMaximumEntries* | Sets the maximum number of error entries to keep in the error registry. When the limit is exceeded, the oldest entries are evicted. The default value is 100. | 100 | int
-| *camel.main.errorRegistryStackTraceEnabled* | Sets whether to capture stack traces in the error registry. This is enabled by default. | true | boolean
-| *camel.main.errorRegistryTimeToLiveSeconds* | Sets the time-to-live in seconds for error entries in the error registry. Entries older than this are evicted. The default value is 3600 (1 hour). | 3600 | int
 | *camel.main.exchangeFactory* | Controls whether to pool (reuse) exchanges or create new exchanges (prototype). Using pooled will reduce JVM garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives. The default is prototype mode. | default | String
 | *camel.main.exchangeFactoryCapacity* | The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100. | 100 | int
 | *camel.main.exchangeFactoryStatisticsEnabled* | Configures whether statistics is enabled on exchange factory. | false | boolean
@@ -719,6 +715,23 @@ The camel.lra supports 5 options, which are listed below.
 | *camel.lra.enabled* | To enable Saga LRA | false | boolean
 | *camel.lra.localParticipantContextPath* | The context-path for the local participant. Is default /lra-participant | /lra-participant | String
 | *camel.lra.localParticipantUrl* | The URL for the local participant |  | String
+|===
+
+
+=== Camel Error Registry configurations
+The camel.errorRegistry supports 8 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.errorRegistry.bodyIncludeFiles* | Whether to include the message body of file based messages. The overhead is that the file content has to be read from the file. | true | boolean
+| *camel.errorRegistry.bodyIncludeStreams* | Whether to include the message body of stream based messages. If enabled then beware the stream may not be re-readable later. See more about Stream Caching. | false | boolean
+| *camel.errorRegistry.bodyMaxChars* | To limit the message body to a maximum size in the captured error data. Use 0 or negative value to use unlimited size. | 32768 | int
+| *camel.errorRegistry.enabled* | Whether the error registry is enabled to capture errors during message routing. | false | boolean
+| *camel.errorRegistry.includeExchangeProperties* | Whether to include the exchange properties in the captured error data. | true | boolean
+| *camel.errorRegistry.includeExchangeVariables* | Whether to include the exchange variables in the captured error data. | true | boolean
+| *camel.errorRegistry.maximumEntries* | The maximum number of error entries to keep in the registry. When the limit is exceeded, the oldest entries are evicted. | 100 | int
+| *camel.errorRegistry.timeToLiveSeconds* | The time-to-live in seconds for error entries. Entries older than this are evicted. The default value is 0 (disabled). | 0 | int
 |===
 // main options: END
 

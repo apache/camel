@@ -26,14 +26,24 @@ import io.grpc.ServerInterceptor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("grpc")
 public class GrpcComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GrpcComponent.class);
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         GrpcConfiguration config = new GrpcConfiguration();
         config = parseConfiguration(config, uri);
+
+        if (config.getPort() == 0 && !uri.contains("hash=")) {
+            LOG.warn("gRPC endpoint configured with port=0 (dynamic port). "
+                     + "If multiple routes use the same URI, add a unique 'hash' query parameter "
+                     + "to each route to avoid endpoint collisions, e.g. grpc://localhost:0/service?hash=1");
+        }
 
         Endpoint endpoint = new GrpcEndpoint(uri, this, config);
         setProperties(endpoint, parameters);

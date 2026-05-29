@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.44.12</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.44.14</aws-java-sdk2-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.37</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -176,10 +176,10 @@
         <jakarta-transaction-api-version>2.0.1</jakarta-transaction-api-version>
         <jakarta-jws-api-version>3.0.0</jakarta-jws-api-version>
         <jaxb-core-version>4.0.5</jaxb-core-version>
-        <jaxb-impl-version>4.0.8</jaxb-impl-version>
+        <jaxb-impl-version>4.0.9</jaxb-impl-version>
         <jaxb-osgi-version>4.0.5</jaxb-osgi-version>
-        <jaxb-xjc-version>4.0.8</jaxb-xjc-version>
-        <jaxb-jxc-version>4.0.8</jaxb-jxc-version>
+        <jaxb-xjc-version>4.0.9</jaxb-xjc-version>
+        <jaxb-jxc-version>4.0.9</jaxb-jxc-version>
         <gmavenplus-plugin-version>4.3.1</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.47.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.9.0</google-api-client-version>
@@ -232,7 +232,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.25.10</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.197</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.198</huaweicloud-sdk-version>
         <ibm-cos-sdk-version>2.15.1</ibm-cos-sdk-version>
         <ibm-secrets-manager-version>2.0.28</ibm-secrets-manager-version>
         <ibm-watson-sdk-version>16.2.0</ibm-watson-sdk-version>
@@ -277,7 +277,7 @@
         <jakarta-xml-soap-api-version>3.0.2</jakarta-xml-soap-api-version>
         <jakarta-xml-ws-api-version>4.0.3</jakarta-xml-ws-api-version>
         <glassfish-javax-json>1.1.4</glassfish-javax-json>
-        <glassfish-jaxb-runtime-version>4.0.8</glassfish-jaxb-runtime-version>
+        <glassfish-jaxb-runtime-version>4.0.9</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>4.1.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
         <jboss-logging-version>3.6.3.Final</jboss-logging-version>
@@ -296,7 +296,7 @@
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
         <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
         <jira-sal-api-version>7.2.1</jira-sal-api-version>
-        <jline-version>4.1.2</jline-version>
+        <jline-version>4.1.3</jline-version>
         <libthrift-version>0.23.0</libthrift-version>
         <jodatime2-version>2.14.2</jodatime2-version>
         <jolokia-version>2.6.0</jolokia-version>
@@ -336,9 +336,9 @@
         <keycloak-client-version>26.0.8</keycloak-client-version>
         <kubernetes-client-version>7.7.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
-        <langchain4j-version>1.15.0</langchain4j-version>
+        <langchain4j-version>1.15.1</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
-        <langchain4j-beta-version>1.15.0-beta25</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
+        <langchain4j-beta-version>1.15.1-beta25</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
         <langchain4j-community-version>1.15.0-beta25</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
@@ -347,14 +347,14 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.4</log4j2-version>
-        <logback-version>1.5.32</logback-version>
+        <logback-version>1.5.33</logback-version>
         <lucene-version>9.12.3</lucene-version>
         <littleproxy-version>2.7.0</littleproxy-version>
         <lz4-java-version>1.11.0</lz4-java-version>
         <mapstruct-version>1.6.3</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.9.16</maven-version>
-        <mima-version>2.4.44</mima-version>
+        <mima-version>2.4.45</mima-version>
         <maven-antrun-plugin-version>3.2.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.4.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.4.1</maven-archetype-packaging-version>
@@ -375,7 +375,7 @@
         <maven-resolver-version>1.9.27</maven-resolver-version>
         <maven-shade-plugin-version>3.6.2</maven-shade-plugin-version>
         <maven-shared-utils-plugin-version>3.4.2</maven-shared-utils-plugin-version>
-        <maven-surefire-report-plugin-version>3.5.5</maven-surefire-report-plugin-version>
+        <maven-surefire-report-plugin-version>3.5.6</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.5.1</maven-war-plugin-version>
         <metrics-version>4.2.39</metrics-version>
@@ -388,8 +388,8 @@
         <minio-version>8.6.0</minio-version>
         <mockito-version>5.23.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
-        <mongo-java-driver-version>5.7.0</mongo-java-driver-version>
-        <msal4j-version>1.24.1</msal4j-version>
+        <mongo-java-driver-version>5.7.1</mongo-java-driver-version>
+        <msal4j-version>1.25.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
@@ -437,7 +437,7 @@
         <protobuf-version>4.35.0</protobuf-version>
         <protobuf-maven-plugin-version>4.1.3</protobuf-maven-plugin-version>
         <prowide-version>SRU2025-10.3.8</prowide-version>
-        <pubnub-version>13.3.0</pubnub-version>
+        <pubnub-version>13.4.0</pubnub-version>
         <pulsar-version>4.2.1</pulsar-version>
         <qdrant-client-version>1.18.1</qdrant-client-version>
         <qpid-broker-version>10.0.1</qpid-broker-version>
@@ -445,7 +445,7 @@
         <qpid-jms-client-version>2.10.0</qpid-jms-client-version>
         <quarkus-extension-registry-base-url>https://registry.quarkus.io</quarkus-extension-registry-base-url>
         <quarkus-mcp-server-version>1.12.1</quarkus-mcp-server-version>
-        <quarkus-version>3.35.4</quarkus-version>
+        <quarkus-version>3.36.0</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>3.0.1</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
@@ -494,7 +494,7 @@
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp5-version>5.3.2</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
-        <sshd-version>2.17.1</sshd-version>
+        <sshd-version>2.18.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
         <stripe-java-version>32.1.0</stripe-java-version>
         <swagger-java-version>1.6.10</swagger-java-version>

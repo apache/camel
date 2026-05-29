@@ -17,7 +17,9 @@
 package org.apache.camel.diagram;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
@@ -66,6 +68,7 @@ public final class RouteDiagramHelper {
                 for (JsonObject line : lines) {
                     NodeInfo node = new NodeInfo();
                     node.type = line.getString("type");
+                    node.id = line.getString("id");
                     node.code = Jsoner.unescape(line.getString("code"));
                     node.description = line.getString("description");
                     Integer level = line.getInteger("level");
@@ -107,6 +110,96 @@ public final class RouteDiagramHelper {
             routes.add(route);
         }
         return routes;
+    }
+
+    public enum HighlightStyle {
+        SUCCESS,
+        FAIL
+    }
+
+    public static class HighlightInfo {
+        private final Set<String> nodeIds;
+        private final List<String> routeOrder;
+        private final HighlightStyle style;
+
+        public HighlightInfo(Set<String> nodeIds, List<String> routeOrder, HighlightStyle style) {
+            this.nodeIds = nodeIds;
+            this.routeOrder = routeOrder;
+            this.style = style;
+        }
+
+        public Set<String> getNodeIds() {
+            return nodeIds;
+        }
+
+        public List<String> getRouteOrder() {
+            return routeOrder;
+        }
+
+        public HighlightStyle getStyle() {
+            return style;
+        }
+    }
+
+    /**
+     * Parses message history entries into a {@link HighlightInfo} containing the node IDs to highlight and the route
+     * ordering (by first visit).
+     *
+     * @param  messageHistory array of history entries in the format {@code "routeId[nodeId] (elapsed ms)"}
+     * @param  style          the highlight style to use
+     * @return                highlight info with node IDs and route ordering
+     */
+    public static HighlightInfo parseMessageHistory(String[] messageHistory, HighlightStyle style) {
+        Set<String> nodeIds = new LinkedHashSet<>();
+        Set<String> routeOrderSet = new LinkedHashSet<>();
+        if (messageHistory != null) {
+            for (String h : messageHistory) {
+                int bracket = h.indexOf('[');
+                int end = h.indexOf(']');
+                if (bracket >= 0 && end > bracket) {
+                    routeOrderSet.add(h.substring(0, bracket));
+                    nodeIds.add(h.substring(bracket + 1, end));
+                }
+            }
+        }
+        return new HighlightInfo(nodeIds, new ArrayList<>(routeOrderSet), style);
+    }
+
+    /**
+     * Filters and orders routes based on the highlight info. Only routes that contain at least one highlighted node are
+     * included, and they are ordered by the sequence in which the message first visited each route.
+     *
+     * @param  routes    the full list of parsed routes
+     * @param  highlight the highlight info containing route ordering
+     * @return           filtered and ordered list of routes
+     */
+    public static List<RouteInfo> filterAndOrderRoutes(List<RouteInfo> routes, HighlightInfo highlight) {
+        if (highlight == null || highlight.routeOrder.isEmpty()) {
+            return routes;
+        }
+        Set<String> nodeIds = highlight.nodeIds;
+        List<String> order = highlight.routeOrder;
+
+        List<RouteInfo> result = new ArrayList<>();
+        for (RouteInfo route : routes) {
+            boolean hasHighlightedNode = route.nodes.stream()
+                    .anyMatch(n -> n.id != null && nodeIds.contains(n.id));
+            if (hasHighlightedNode) {
+                result.add(route);
+            }
+        }
+        result.sort((a, b) -> {
+            int ia = order.indexOf(a.routeId);
+            int ib = order.indexOf(b.routeId);
+            if (ia < 0) {
+                ia = Integer.MAX_VALUE;
+            }
+            if (ib < 0) {
+                ib = Integer.MAX_VALUE;
+            }
+            return Integer.compare(ia, ib);
+        });
+        return result;
     }
 
     /**

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
@@ -37,8 +38,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -61,6 +64,7 @@ import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.barchart.Bar;
@@ -104,18 +108,19 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_ENDPOINT_CHART_POINTS = 60;
     private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 9;
+    private static final int NUM_TABS = 10;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
     private static final int TAB_LOG = 1;
     private static final int TAB_ROUTES = 2;
-    private static final int TAB_CONSUMERS = 3;
-    private static final int TAB_ENDPOINTS = 4;
-    private static final int TAB_HTTP = 5;
-    private static final int TAB_HEALTH = 6;
-    private static final int TAB_HISTORY = 7;
+    private static final int TAB_ENDPOINTS = 3;
+    private static final int TAB_HTTP = 4;
+    private static final int TAB_HEALTH = 5;
+    private static final int TAB_HISTORY = 6;
+    private static final int TAB_ERRORS = 7;
     private static final int TAB_CIRCUIT_BREAKER = 8;
+    private static final int TAB_CONSUMERS = 9;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -219,6 +224,9 @@ public class CamelMonitor extends CamelCommand {
 
     private volatile long lastRefresh;
     private boolean showKillConfirm;
+    private String monitorNotification;
+    private boolean monitorNotificationError;
+    private long monitorNotificationExpiry;
     private volatile Buffer lastBuffer;
     private volatile long renderGeneration;
     private volatile String screenshotMessage;
@@ -263,6 +271,7 @@ public class CamelMonitor extends CamelCommand {
     private HealthTab healthTab;
     private HistoryTab historyTab;
     private CircuitBreakerTab circuitBreakerTab;
+    private ErrorsTab errorsTab;
 
     private ClassLoader classLoader;
 
@@ -311,6 +320,7 @@ public class CamelMonitor extends CamelCommand {
         healthTab = new HealthTab(ctx);
         historyTab = new HistoryTab(ctx, traces, traceFilePositions);
         circuitBreakerTab = new CircuitBreakerTab(ctx, cbSuccessHistory, cbFailHistory);
+        errorsTab = new ErrorsTab(ctx);
 
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
@@ -334,6 +344,7 @@ public class CamelMonitor extends CamelCommand {
         try (var tui = TuiBackendHelper.createTuiRunner()) {
             this.runner = tui;
             ctx.runner = tui;
+            actionsPopup.setScheduler(tui.scheduler());
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -420,6 +431,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (ctx.selectedPid != null) {
                     ctx.selectedPid = null;
+                    ctx.lastSelectedName = null;
                     return true;
                 }
                 return true;
@@ -442,22 +454,25 @@ public class CamelMonitor extends CamelCommand {
                     return handleTabKey(TAB_ROUTES);
                 }
                 if (ke.isChar('4')) {
-                    return handleTabKey(TAB_CONSUMERS);
-                }
-                if (ke.isChar('5')) {
                     return handleTabKey(TAB_ENDPOINTS);
                 }
-                if (ke.isChar('6')) {
+                if (ke.isChar('5')) {
                     return handleTabKey(TAB_HTTP);
                 }
-                if (ke.isChar('7')) {
+                if (ke.isChar('6')) {
                     return handleTabKey(TAB_HEALTH);
                 }
-                if (ke.isChar('8')) {
+                if (ke.isChar('7')) {
                     return handleTabKey(TAB_HISTORY);
+                }
+                if (ke.isChar('8')) {
+                    return handleTabKey(TAB_ERRORS);
                 }
                 if (ke.isChar('9')) {
                     return handleTabKey(TAB_CIRCUIT_BREAKER);
+                }
+                if (ke.isChar('0')) {
+                    return handleTabKey(TAB_CONSUMERS);
                 }
             }
 
@@ -498,6 +513,9 @@ public class CamelMonitor extends CamelCommand {
 
             // F2 opens actions menu (global)
             if (ke.isKey(KeyCode.F2)) {
+                if (tabsState.selected() == TAB_ROUTES && routesTab != null) {
+                    actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
+                }
                 actionsPopup.open();
                 return true;
             }
@@ -615,8 +633,19 @@ public class CamelMonitor extends CamelCommand {
                 showKillConfirm = true;
                 return true;
             }
+            // Overview tab: cold restart (stop + re-launch) for selected integration
+            if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !ctx.infraTableFocused) {
+                restartSelectedProcess();
+                return true;
+            }
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (event instanceof PasteEvent pe) {
+            if (actionsPopup.isVisible()) {
+                actionsPopup.handlePaste(pe.text());
                 return true;
             }
         }
@@ -718,12 +747,26 @@ public class CamelMonitor extends CamelCommand {
             logTab.onTabSelected();
         }
         if (tab == TAB_HISTORY && ctx.selectedPid != null) {
-            refreshHistoryData(List.of(Long.parseLong(ctx.selectedPid)));
-            refreshTraceData(List.of(Long.parseLong(ctx.selectedPid)));
+            try {
+                long pid = Long.parseLong(ctx.selectedPid);
+                refreshHistoryData(List.of(pid));
+                refreshTraceData(List.of(pid));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
             historyTab.onTabSelected();
         }
         if (tab == TAB_CIRCUIT_BREAKER) {
             circuitBreakerTab.onTabSelected();
+        }
+        if (tab == TAB_ERRORS && ctx.selectedPid != null) {
+            try {
+                long pid = Long.parseLong(ctx.selectedPid);
+                refreshErrorData(List.of(pid));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+            errorsTab.onTabSelected();
         }
         tabsState.select(tab);
         return true;
@@ -772,6 +815,7 @@ public class CamelMonitor extends CamelCommand {
         }
         if (newPid != null && !newPid.equals(ctx.selectedPid)) {
             ctx.selectedPid = newPid;
+            ctx.lastSelectedName = null;
             resetIntegrationTabState();
         }
     }
@@ -785,6 +829,7 @@ public class CamelMonitor extends CamelCommand {
         }
         if (newPid != null && !newPid.equals(ctx.selectedPid)) {
             ctx.selectedPid = newPid;
+            ctx.lastSelectedName = null;
             resetIntegrationTabState();
         }
     }
@@ -895,6 +940,15 @@ public class CamelMonitor extends CamelCommand {
             Style style = actionsPopup.notificationError() ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
             titleSpans.add(Span.styled(actionsPopup.notification(), style));
         }
+        if (monitorNotification != null) {
+            if (System.currentTimeMillis() > monitorNotificationExpiry) {
+                monitorNotification = null;
+            } else {
+                titleSpans.add(Span.raw("  "));
+                Style style = monitorNotificationError ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+                titleSpans.add(Span.styled(monitorNotification, style));
+            }
+        }
         Line titleLine = Line.from(titleSpans);
 
         frame.renderWidget(
@@ -956,12 +1010,13 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(" 1 Overview "),
                 Line.from(" 2 Log "),
                 Line.from(routesTab.isTopMode() ? " 3  Top  " : " 3 Route "),
-                Line.from(" 4 Consumer "),
-                Line.from(" 5 Endpoint "),
-                Line.from(" 6 HTTP "),
-                Line.from(" 7 Health "),
-                Line.from(" 8 Inspect "),
+                Line.from(" 4 Endpoint "),
+                Line.from(" 5 HTTP "),
+                Line.from(" 6 Health "),
+                Line.from(" 7 Inspect "),
+                Line.from(" 8 Errors "),
                 Line.from(" 9 Circuit Breaker "),
+                Line.from(" 0 Consumer "),
         };
 
         Tabs tabs = Tabs.builder()
@@ -981,7 +1036,7 @@ public class CamelMonitor extends CamelCommand {
             int badgeY = area.y();
             int dividerW = CharWidth.of(" | ");
 
-            String[] badgeTexts = { "", "", "", "", "", "", "", "", "" };
+            String[] badgeTexts = { "", "", "", "", "", "", "", "", "", "" };
             Style[] badgeStyles = new Style[labels.length];
             Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
             Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
@@ -1023,6 +1078,11 @@ public class CamelMonitor extends CamelCommand {
             } else if (cbCount > 0) {
                 badgeTexts[TAB_CIRCUIT_BREAKER] = "(" + cbCount + ")";
             }
+            int errorCount = hasSelection ? sel.errorCount : 0;
+            if (errorCount > 0) {
+                badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
+                badgeStyles[TAB_ERRORS] = red;
+            }
 
             int tabX = 0;
             for (int i = 0; i < labels.length; i++) {
@@ -1063,6 +1123,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_HEALTH -> healthTab;
             case TAB_HISTORY -> historyTab;
             case TAB_HTTP -> httpTab;
+            case TAB_ERRORS -> errorsTab;
             default -> null;
         };
     }
@@ -1624,6 +1685,123 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    private void restartSelectedProcess() {
+        if (ctx.selectedPid == null || ctx.infraTableFocused) {
+            return;
+        }
+        long pid;
+        try {
+            pid = Long.parseLong(ctx.selectedPid);
+        } catch (NumberFormatException e) {
+            return;
+        }
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+        if (ph == null) {
+            return;
+        }
+
+        // capture command line before stopping
+        Optional<String> cmdOpt = ph.info().command();
+        Optional<String[]> argsOpt = ph.info().arguments();
+        Optional<String> cmdLineOpt = ph.info().commandLine();
+
+        String name = info.name;
+        String directory = info.directory;
+
+        // remember name so the restarted process gets auto-selected
+        ctx.lastSelectedName = name;
+
+        // stop gracefully
+        ph.destroy();
+        setNotification("Restarting: " + name, false);
+
+        // re-launch in background after process terminates
+        if (runner != null) {
+            runner.scheduler().execute(() -> {
+                try {
+                    // wait for termination (max 10 seconds, then force kill)
+                    CompletableFuture<ProcessHandle> exitFuture = ph.onExit().toCompletableFuture();
+                    try {
+                        exitFuture.get(10, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        ph.destroyForcibly();
+                        Thread.sleep(500);
+                    }
+
+                    // build command
+                    List<String> cmd = new ArrayList<>();
+                    if (cmdOpt.isPresent() && argsOpt.isPresent() && argsOpt.get().length > 0) {
+                        cmd.add(cmdOpt.get());
+                        Collections.addAll(cmd, argsOpt.get());
+                    } else if (cmdLineOpt.isPresent()) {
+                        cmd.addAll(parseCommandLine(cmdLineOpt.get()));
+                    }
+
+                    if (cmd.isEmpty()) {
+                        runner.runOnRenderThread(
+                                () -> setNotification("Cannot restart: command line not available", true));
+                        return;
+                    }
+
+                    ProcessBuilder pb = new ProcessBuilder(cmd);
+                    if (directory != null) {
+                        pb.directory(new File(directory));
+                    }
+                    pb.redirectErrorStream(true);
+                    Path outputFile = Files.createTempFile("camel-restart-", ".log");
+                    outputFile.toFile().deleteOnExit();
+                    pb.redirectOutput(outputFile.toFile());
+                    pb.start();
+
+                    runner.runOnRenderThread(() -> setNotification("Restarted: " + name, false));
+                } catch (Exception e) {
+                    runner.runOnRenderThread(
+                            () -> setNotification("Restart failed: " + e.getMessage(), true));
+                }
+            });
+        }
+    }
+
+    private void setNotification(String message, boolean error) {
+        monitorNotification = message;
+        monitorNotificationError = error;
+        monitorNotificationExpiry = System.currentTimeMillis() + 5000;
+    }
+
+    static List<String> parseCommandLine(String commandLine) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+        boolean escaped = false;
+
+        for (int i = 0; i < commandLine.length(); i++) {
+            char c = commandLine.charAt(i);
+            if (escaped) {
+                current.append(c);
+                escaped = false;
+            } else if (c == '\\') {
+                escaped = true;
+            } else if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ' ' && !inQuotes) {
+                if (!current.isEmpty()) {
+                    tokens.add(current.toString());
+                    current.setLength(0);
+                }
+            } else {
+                current.append(c);
+            }
+        }
+        if (!current.isEmpty()) {
+            tokens.add(current.toString());
+        }
+        return tokens;
+    }
+
     private void resetStats() {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
@@ -1815,6 +1993,9 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         if (ctx.selectedPid != null) {
+            if (!ctx.infraTableFocused) {
+                hint(spans, "r", "restart");
+            }
             hint(spans, "x", "stop");
             hint(spans, "X", "kill");
         }
@@ -1926,6 +2107,13 @@ public class CamelMonitor extends CamelCommand {
                 boolean stillAlive = infos.stream()
                         .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
                 if (!stillAlive) {
+                    // Remember the name for auto-reselect when the integration restarts
+                    IntegrationInfo gone = infos.stream()
+                            .filter(i -> ctx.selectedPid.equals(i.pid))
+                            .findFirst().orElse(null);
+                    if (gone != null) {
+                        ctx.lastSelectedName = gone.name;
+                    }
                     ctx.selectedPid = null;
                 }
             }
@@ -1937,7 +2125,19 @@ public class CamelMonitor extends CamelCommand {
                     if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
                         ctx.selectedPid = info.pid;
                         ctx.infraTableFocused = false;
+                        ctx.lastSelectedName = null;
                         actionsPopup.clearPendingAutoSelect();
+                        break;
+                    }
+                }
+            }
+
+            // Auto-reselect by remembered name when the integration restarts
+            if (ctx.selectedPid == null && ctx.lastSelectedName != null && !ctx.infraTableFocused) {
+                for (IntegrationInfo info : infos) {
+                    if (!info.vanishing && ctx.lastSelectedName.equalsIgnoreCase(info.name)) {
+                        ctx.selectedPid = info.pid;
+                        ctx.lastSelectedName = null;
                         break;
                     }
                 }
@@ -1994,8 +2194,17 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
 
-            // Refresh trace data only when the Inspect tab is visible
+            // Refresh error data only when the Errors tab is visible
+            if (tabsState.selected() == TAB_ERRORS) {
+                refreshErrorData(pids);
+            }
+
+            // Refresh trace data only when the History tab is visible
             if (tabsState.selected() == TAB_HISTORY) {
+                if (historyTab.historyRefreshRequested) {
+                    historyTab.historyRefreshRequested = false;
+                    refreshHistoryData(pids);
+                }
                 refreshTraceData(pids);
             }
         } catch (Exception e) {
@@ -2397,12 +2606,12 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Derive status from done/failed booleans
-        Boolean done = (Boolean) json.get("done");
-        Boolean failed = (Boolean) json.get("failed");
-        entry.failed = Boolean.TRUE.equals(failed);
+        boolean done = Boolean.TRUE.equals(json.get("done"));
+        boolean failed = Boolean.TRUE.equals(json.get("failed"));
+        entry.failed = failed;
         if (entry.failed) {
             entry.status = "Failed";
-        } else if (Boolean.TRUE.equals(done)) {
+        } else if (done) {
             entry.status = "Done";
         } else {
             entry.status = "Processing";
@@ -2725,6 +2934,7 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
         }
+        info.directory = runtime != null ? runtime.getString("directory") : null;
         info.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
         info.javaVendor = runtime != null ? runtime.getString("javaVendor") : null;
         info.javaVmName = runtime != null ? runtime.getString("javaVmName") : null;
@@ -2910,7 +3120,7 @@ public class CamelMonitor extends CamelCommand {
                     ci.className = cj.getString("class");
                     ci.scheduled = Boolean.TRUE.equals(cj.get("scheduled"));
                     ci.inflight = cj.getIntegerOrDefault("inflight", 0);
-                    ci.polling = (Boolean) cj.get("polling");
+                    ci.polling = Boolean.TRUE.equals(cj.get("polling"));
                     ci.totalCounter = cj.getLong("totalCounter");
                     ci.delay = cj.getLong("delay");
                     ci.period = cj.getLong("period");
@@ -2989,6 +3199,12 @@ public class CamelMonitor extends CamelCommand {
                     }
                 }
             }
+        }
+
+        // Parse error count from error registry (full error data is loaded on demand by ErrorsTab)
+        JsonObject errorsObj = (JsonObject) root.get("errors");
+        if (errorsObj != null) {
+            info.errorCount = errorsObj.getIntegerOrDefault("size", 0);
         }
 
         // Parse REST DSL services
@@ -3102,6 +3318,111 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static void parseKvArray(JsonArray arr, Map<String, Object> values, Map<String, String> types) {
+        if (arr == null) {
+            return;
+        }
+        for (Object o : arr) {
+            JsonObject jo = (JsonObject) o;
+            String key = jo.getString("key");
+            if (key != null) {
+                values.put(key, jo.get("value"));
+                String type = jo.getString("type");
+                if (type != null) {
+                    types.put(key, type);
+                }
+            }
+        }
+    }
+
+    private JsonObject loadErrorFile(long pid) {
+        return TuiHelper.loadStatus(pid, this::getErrorFile);
+    }
+
+    private void refreshErrorData(List<Long> pids) {
+        IntegrationInfo sel = findSelectedIntegration();
+        if (sel == null) {
+            return;
+        }
+        try {
+            long pid = Long.parseLong(sel.pid);
+            JsonObject root = loadErrorFile(pid);
+            if (root == null) {
+                return;
+            }
+            JsonArray errorList = (JsonArray) root.get("errors");
+            if (errorList == null) {
+                return;
+            }
+            List<ErrorInfo> parsed = new ArrayList<>();
+            for (Object e : errorList) {
+                JsonObject ej = (JsonObject) e;
+                ErrorInfo ei = new ErrorInfo();
+                ei.routeId = ej.getString("routeId");
+                ei.nodeId = ej.getString("nodeId");
+                ei.exchangeId = ej.getString("exchangeId");
+                ei.handled = Boolean.TRUE.equals(ej.get("handled"));
+                Long ts = ej.getLong("timestamp");
+                if (ts != null) {
+                    ei.timestamp = ts;
+                }
+                ei.location = ej.getString("location");
+                ei.threadName = ej.getString("threadName");
+                Long elapsed = ej.getLong("elapsed");
+                if (elapsed != null) {
+                    ei.elapsed = elapsed;
+                }
+                ei.endpointUri = ej.getString("endpointUri");
+                ei.fromEndpointUri = ej.getString("fromEndpointUri");
+                // exception
+                JsonObject ex = (JsonObject) ej.get("exception");
+                if (ex != null) {
+                    ei.exceptionType = ex.getString("type");
+                    ei.exceptionMessage = ex.getString("message");
+                    ei.stackTrace = ex.getString("stackTrace");
+                }
+                // message history
+                Object mhObj = ej.get("messageHistory");
+                if (mhObj instanceof JsonArray mhArr) {
+                    ei.messageHistory = new String[mhArr.size()];
+                    for (int i = 0; i < mhArr.size(); i++) {
+                        ei.messageHistory[i] = mhArr.get(i).toString();
+                    }
+                }
+                // message (body, headers)
+                JsonObject msg = (JsonObject) ej.get("message");
+                if (msg != null) {
+                    Object bodyObj = msg.get("body");
+                    if (bodyObj instanceof JsonObject bodyJson) {
+                        ei.body = bodyJson.getString("value");
+                        ei.bodyType = bodyJson.getString("type");
+                    } else if (bodyObj != null) {
+                        ei.body = bodyObj.toString();
+                    }
+                    JsonArray hdrs = msg.getCollection("headers");
+                    if (hdrs != null) {
+                        parseKvArray(hdrs, ei.headers, ei.headerTypes);
+                    }
+                }
+                // exchange properties and variables
+                JsonArray props = ej.getCollection("exchangeProperties");
+                if (props != null) {
+                    parseKvArray(props, ei.properties, ei.propertyTypes);
+                }
+                JsonArray vars = ej.getCollection("exchangeVariables");
+                if (vars != null) {
+                    parseKvArray(vars, ei.variables, ei.variableTypes);
+                }
+                parsed.add(ei);
+            }
+            sel.errors.clear();
+            sel.errors.addAll(parsed);
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
     // ---- Helpers ----
 
     private IntegrationInfo findSelectedIntegration() {
@@ -3202,8 +3523,8 @@ public class CamelMonitor extends CamelCommand {
     // ---- MCP accessor methods ----
 
     private static final String[] TAB_NAMES = {
-            "Overview", "Log", "Routes", "Consumers", "Endpoints",
-            "HTTP", "Health", "Inspect", "Circuit Breaker"
+            "Overview", "Log", "Routes", "Endpoints",
+            "HTTP", "Health", "Inspect", "Errors", "Circuit Breaker", "Consumers"
     };
 
     Buffer getLastBuffer() {

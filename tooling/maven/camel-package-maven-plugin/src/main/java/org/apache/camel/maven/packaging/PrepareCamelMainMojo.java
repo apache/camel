@@ -240,6 +240,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.security.";
                 } else if (file.getName().contains("SSLConfigurationProperties")) {
                     prefix = "camel.ssl.";
+                } else if (file.getName().contains("ErrorRegistryConfigurationProperties")) {
+                    prefix = "camel.errorRegistry.";
                 } else if (file.getName().contains("DebuggerConfigurationProperties")) {
                     prefix = "camel.debug.";
                 } else if (file.getName().contains("TracerConfigurationProperties")) {
@@ -472,6 +474,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getGroups().add(new MainGroupModel(
                     "camel.lra", "Camel Saga EIP (Long Running Actions) configurations",
                     "org.apache.camel.main.LraConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.errorRegistry", "Camel Error Registry configurations",
+                    "org.apache.camel.main.ErrorRegistryConfigurationProperties"));
 
             String json = JsonMapper.createJsonSchema(model);
 

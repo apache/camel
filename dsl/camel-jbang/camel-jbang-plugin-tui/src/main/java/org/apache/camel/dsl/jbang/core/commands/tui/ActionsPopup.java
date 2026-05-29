@@ -17,12 +17,17 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -40,37 +45,53 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.input.TextInput;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLast;
 
 class ActionsPopup {
 
-    private static final int ACTION_RUN_EXAMPLE = 0;
-    private static final int ACTION_SHOW_DOCS = 1;
-    private static final int ACTION_CAPTION = 2;
-    private static final int ACTION_SCREENSHOT = 3;
-    private static final int ACTION_SHOW_KEYSTROKES = 4;
-    private static final int ACTION_TAPE_RECORDING = 5;
-    private static final int ACTION_TAPE_INSTRUCTIONS = 6;
-    private static final int ACTION_DOCTOR = 7;
-    private static final int ACTION_CLASSPATH = 8;
-    private static final int ACTION_MCP_INFO = 9;
-    private static final int ACTION_MCP_LOG = 10;
-    private static final int ACTION_RESET_STATS = 11;
-    private static final int ACTION_STOP_ALL = 12;
+    // Group 1: User Actions
+    private static final int ACTION_SEND_MESSAGE = 0;
+    private static final int ACTION_RUN_EXAMPLE = 1;
+    private static final int ACTION_RUN_INFRA = 2;
+    private static final int ACTION_SHOW_DOCS = 3;
+    // Group 2: Diagnostics
+    private static final int ACTION_DOCTOR = 4;
+    private static final int ACTION_CLASSPATH = 5;
+    private static final int ACTION_RESET_STATS = 6;
+    private static final int ACTION_STOP_ALL = 7;
+    // Group 3: Recording & Presentation
+    private static final int ACTION_SCREENSHOT = 8;
+    private static final int ACTION_TAPE_RECORDING = 9;
+    private static final int ACTION_TAPE_INSTRUCTIONS = 10;
+    private static final int ACTION_CAPTION = 11;
+    private static final int ACTION_SHOW_KEYSTROKES = 12;
+    // Group 4: MCP
+    private static final int ACTION_MCP_INFO = 13;
+    private static final int ACTION_MCP_LOG = 14;
+
+    private static final int[] GROUP_SIZES = { 4, 4, 5 };
+    private static final int MCP_GROUP_SIZE = 2;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
+    private final Supplier<List<InfraInfo>> infraServices;
     private final Runnable screenshotAction;
     private final Runnable toggleKeystrokes;
     private final Supplier<Boolean> keystrokesEnabled;
@@ -103,18 +124,29 @@ class ActionsPopup {
     private String docTitle;
     private int docScroll;
 
+    private boolean showInfraBrowser;
+    private final ListState infraBrowserState = new ListState();
+    private List<InfraServiceEntry> infraCatalog;
+    private boolean showInfraPortDialog;
+    private InfraServiceEntry selectedInfraService;
+    private int infraImplIndex;
+    private TextInputState infraPortState;
+
     private final McpLogPopup mcpLogPopup = new McpLogPopup();
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
     private final ClasspathPopup classpathPopup = new ClasspathPopup();
+    private final SendMessagePopup sendMessagePopup = new SendMessagePopup();
     private final StopAllPopup stopAllPopup;
     private final CaptionOverlay captionOverlay;
+    private ScheduledExecutorService scheduler;
 
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private String launchNotification;
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
     private volatile String pendingAutoSelect;
+    private String preSelectedRouteId;
 
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
                  Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
@@ -122,6 +154,7 @@ class ActionsPopup {
                  Runnable toggleTapeRecording, Supplier<Boolean> tapeRecordingActive) {
         this.runningNames = runningNames;
         this.integrations = integrations;
+        this.infraServices = infraServices;
         this.captionOverlay = captionOverlay;
         this.screenshotAction = screenshotAction;
         this.toggleKeystrokes = toggleKeystrokes;
@@ -133,6 +166,14 @@ class ActionsPopup {
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    void setScheduler(ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    void setPreSelectedRouteId(String routeId) {
+        this.preSelectedRouteId = routeId;
     }
 
     void setResetStatsAction(Runnable resetStatsAction) {
@@ -148,17 +189,76 @@ class ActionsPopup {
         mcpLogPopup.setActivityLog(activityLog);
     }
 
-    private int actionCount() {
-        return mcpEnabled ? 13 : 11;
+    private int visualActionCount() {
+        if (mcpEnabled) {
+            // 4 + 4 + 5 + 2 actions = 15, plus 3 dividers = 18
+            return 15 + 3;
+        } else {
+            // 4 + 4 + 5 actions = 13, plus 2 dividers = 15
+            return 13 + 2;
+        }
+    }
+
+    private boolean isDividerIndex(int visualIndex) {
+        int pos = 0;
+        for (int i = 0; i < GROUP_SIZES.length; i++) {
+            pos += GROUP_SIZES[i];
+            if (visualIndex == pos) {
+                return true;
+            }
+            pos++;
+        }
+        if (mcpEnabled) {
+            pos += MCP_GROUP_SIZE;
+        }
+        return false;
+    }
+
+    private int resolveAction(int visualIndex) {
+        int dividers = 0;
+        int pos = 0;
+        int groupCount = mcpEnabled ? GROUP_SIZES.length + 1 : GROUP_SIZES.length;
+        for (int i = 0; i < groupCount; i++) {
+            int gs = i < GROUP_SIZES.length ? GROUP_SIZES[i] : MCP_GROUP_SIZE;
+            pos += gs;
+            if (visualIndex < pos + dividers) {
+                break;
+            }
+            if (i < groupCount - 1) {
+                dividers++;
+                pos++;
+            }
+        }
+        return visualIndex - dividers;
+    }
+
+    private void navigateActionsMenu(int direction) {
+        int total = visualActionCount();
+        Integer current = actionsMenuState.selected();
+        int next = (current != null ? current : 0) + direction;
+        next = Math.max(0, Math.min(next, total - 1));
+        while (isDividerIndex(next) && next > 0 && next < total - 1) {
+            next += direction;
+        }
+        next = Math.max(0, Math.min(next, total - 1));
+        if (!isDividerIndex(next)) {
+            actionsMenuState.select(next);
+        }
     }
 
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
+                || showInfraBrowser || showInfraPortDialog
                 || mcpLogPopup.isVisible() || doctorPopup.isVisible() || classpathPopup.isVisible()
-                || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
+                || sendMessagePopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
     }
 
     SelectionContext getSelectionContext() {
+        if (showInfraBrowser && infraCatalog != null) {
+            List<String> items = infraCatalog.stream().map(e -> e.alias).collect(Collectors.toList());
+            Integer sel = infraBrowserState.selected();
+            return new SelectionContext("list", items, sel != null ? sel : -1, infraCatalog.size(), "Infra Services");
+        }
         if (showExampleBrowser && exampleCatalog != null) {
             List<String> items = new ArrayList<>();
             String currentLevel = null;
@@ -177,7 +277,7 @@ class ActionsPopup {
         if (showActionsMenu) {
             List<String> items = getActionLabels();
             Integer sel = actionsMenuState.selected();
-            return new SelectionContext("popup", items, sel != null ? sel : -1, items.size(), "Actions");
+            return new SelectionContext("popup", items, sel != null ? sel : -1, visualActionCount(), "Actions");
         }
         return null;
     }
@@ -192,21 +292,30 @@ class ActionsPopup {
 
     List<String> getActionLabels() {
         List<String> labels = new ArrayList<>();
+        // Group 1: User Actions
+        labels.add("Send Message");
         labels.add("Run an example...");
+        labels.add("Run Infra Service...");
         labels.add("Show Documentation");
-        labels.add("Caption...");
-        labels.add("Take Screenshot");
-        labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
-        labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
-        labels.add("Tape Recording Guide");
+        labels.add("───");
+        // Group 2: Diagnostics
         labels.add("Run Doctor");
         labels.add("Show Classpath");
         labels.add("Reset Stats");
+        labels.add("Stop All");
+        labels.add("───");
+        // Group 3: Recording & Presentation
+        labels.add("Take Screenshot");
+        labels.add(tapeRecordingActive.get() ? "Stop Tape Recording" : "Start Tape Recording");
+        labels.add("Tape Recording Guide");
+        labels.add("Caption...");
+        labels.add(keystrokesEnabled.get() ? "Hide Keystrokes" : "Show Keystrokes");
+        // Group 4: MCP
         if (mcpEnabled) {
+            labels.add("───");
             labels.add("MCP Info");
             labels.add("MCP Log");
         }
-        labels.add("Stop All");
         return labels;
     }
 
@@ -221,9 +330,12 @@ class ActionsPopup {
         runOptionsForm.close();
         showDocPicker = false;
         showDocViewer = false;
+        showInfraBrowser = false;
+        showInfraPortDialog = false;
         mcpLogPopup.close();
         doctorPopup.close();
         classpathPopup.close();
+        sendMessagePopup.close();
         stopAllPopup.close();
         captionOverlay.close();
     }
@@ -236,7 +348,21 @@ class ActionsPopup {
         return launchNotificationError;
     }
 
+    void handlePaste(String text) {
+        if (sendMessagePopup.isVisible()) {
+            sendMessagePopup.handlePaste(text);
+        }
+    }
+
     boolean handleKeyEvent(KeyEvent ke) {
+        if (sendMessagePopup.isVisible()) {
+            if (ke.isConfirm()) {
+                sendMessagePopup.doSend(ctx, scheduler);
+            } else {
+                sendMessagePopup.handleKeyEvent(ke);
+            }
+            return true;
+        }
         if (mcpLogPopup.handleKeyEvent(ke)) {
             return true;
         }
@@ -268,6 +394,44 @@ class ActionsPopup {
                 docPickerState.selectNext(docPickerIntegrations != null ? docPickerIntegrations.size() : 0);
             } else if (ke.isConfirm()) {
                 loadDocFromSelectedIntegration();
+            }
+            return true;
+        }
+        if (showInfraPortDialog) {
+            if (ke.isCancel()) {
+                showInfraPortDialog = false;
+                showInfraBrowser = true;
+            } else if (ke.isConfirm()) {
+                launchInfraService();
+            } else if (selectedInfraService != null && selectedInfraService.implementations.size() > 1) {
+                if (ke.isLeft()) {
+                    infraImplIndex = (infraImplIndex - 1 + selectedInfraService.implementations.size())
+                                     % selectedInfraService.implementations.size();
+                    return true;
+                } else if (ke.isRight()) {
+                    infraImplIndex = (infraImplIndex + 1) % selectedInfraService.implementations.size();
+                    return true;
+                }
+            }
+            handlePortInput(ke);
+            return true;
+        }
+        if (showInfraBrowser) {
+            if (ke.isCancel()) {
+                showInfraBrowser = false;
+                showActionsMenu = true;
+            } else if (ke.isUp()) {
+                navigateInfraBrowser(-1);
+            } else if (ke.isDown()) {
+                navigateInfraBrowser(1);
+            } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                navigateInfraBrowser(-10);
+            } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                navigateInfraBrowser(10);
+            } else if (ke.isConfirm()) {
+                selectInfraService();
+            } else if (ke.code() == KeyCode.CHAR) {
+                jumpToInfraService(ke.character());
             }
             return true;
         }
@@ -320,9 +484,9 @@ class ActionsPopup {
             if (ke.isCancel()) {
                 showActionsMenu = false;
             } else if (ke.isUp()) {
-                actionsMenuState.selectPrevious();
+                navigateActionsMenu(-1);
             } else if (ke.isDown()) {
-                actionsMenuState.selectNext(actionCount());
+                navigateActionsMenu(1);
             } else if (ke.isConfirm()) {
                 Integer sel = actionsMenuState.selected();
                 if (sel != null) {
@@ -349,12 +513,17 @@ class ActionsPopup {
                     } else if (action == ACTION_CLASSPATH) {
                         showActionsMenu = false;
                         openClasspath();
+                    } else if (action == ACTION_RUN_INFRA) {
+                        openInfraBrowser();
                     } else if (action == ACTION_MCP_INFO) {
                         showActionsMenu = false;
                         openMcpInfo();
                     } else if (action == ACTION_MCP_LOG) {
                         showActionsMenu = false;
                         openMcpLog();
+                    } else if (action == ACTION_SEND_MESSAGE) {
+                        showActionsMenu = false;
+                        openSendMessage();
                     } else if (action == ACTION_RESET_STATS) {
                         showActionsMenu = false;
                         if (resetStatsAction != null) {
@@ -379,6 +548,12 @@ class ActionsPopup {
         if (showActionsMenu) {
             renderActionsMenu(frame, area);
         }
+        if (showInfraBrowser) {
+            renderInfraBrowser(frame, area);
+        }
+        if (showInfraPortDialog) {
+            renderInfraPortDialog(frame, area);
+        }
         if (showExampleBrowser) {
             renderExampleBrowser(frame, area);
         }
@@ -402,6 +577,9 @@ class ActionsPopup {
         }
         if (classpathPopup.isVisible()) {
             classpathPopup.render(frame, area);
+        }
+        if (sendMessagePopup.isVisible()) {
+            sendMessagePopup.render(frame, area);
         }
         if (captionOverlay.isInlineMode()) {
             captionOverlay.render(frame, area);
@@ -444,6 +622,17 @@ class ActionsPopup {
             runOptionsForm.renderFooter(spans);
             return;
         }
+        if (showInfraPortDialog) {
+            hint(spans, "Enter", "run");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
+        if (showInfraBrowser) {
+            hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "select");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
         if (showExampleBrowser) {
             hint(spans, "↑↓", "navigate");
             hint(spans, "Enter", "run");
@@ -469,7 +658,7 @@ class ActionsPopup {
     // ---- Rendering ----
 
     private void renderActionsMenu(Frame frame, Rect area) {
-        int count = actionCount();
+        int count = visualActionCount();
         int popupW = 40;
         int popupH = 2 + count;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
@@ -477,6 +666,7 @@ class ActionsPopup {
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
+        String divider = "  ─────────────────────────────────";
         // extra space after ⌨️ because it renders narrower than other emoji
         String keystrokeLabel = keystrokesEnabled.get()
                 ? "  ⌨️  Hide Keystrokes"
@@ -484,25 +674,35 @@ class ActionsPopup {
         String stopLabel = stopAllPopup.hasBothGroups()
                 ? "  🛑 Stop All..."
                 : "  🛑 Stop All";
-        List<ListItem> items = new ArrayList<>();
-        items.add(ListItem.from("  🐪 Run an example..."));
-        items.add(ListItem.from("  📖 Show Documentation"));
-        items.add(ListItem.from("  💬 Caption..."));
-        items.add(ListItem.from("  📸 Take Screenshot"));
-        items.add(ListItem.from(keystrokeLabel));
         String tapeLabel = tapeRecordingActive.get()
                 ? "  ⏹️  Stop Tape Recording (Ctrl+R)"
                 : "  ⏺️  Start Tape Recording (Ctrl+R)";
-        items.add(ListItem.from(tapeLabel));
-        items.add(ListItem.from("  📄 Tape Recording Guide"));
+
+        List<ListItem> items = new ArrayList<>();
+        // Group 1: User Actions
+        items.add(ListItem.from("  📩 Send Message"));
+        items.add(ListItem.from("  🐪 Run an example..."));
+        items.add(ListItem.from("  🔧 Run Infra Service..."));
+        items.add(ListItem.from("  📖 Show Documentation"));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        // Group 2: Diagnostics
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  📦 Show Classpath"));
         items.add(ListItem.from("  🔄 Reset Stats"));
+        items.add(ListItem.from(stopLabel));
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        // Group 3: Recording & Presentation
+        items.add(ListItem.from("  📸 Take Screenshot"));
+        items.add(ListItem.from(tapeLabel));
+        items.add(ListItem.from("  📄 Tape Recording Guide"));
+        items.add(ListItem.from("  💬 Caption..."));
+        items.add(ListItem.from(keystrokeLabel));
+        // Group 4: MCP
         if (mcpEnabled) {
+            items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));
         }
-        items.add(ListItem.from(stopLabel));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
@@ -770,11 +970,38 @@ class ActionsPopup {
         }
     }
 
-    private int resolveAction(int index) {
-        if (!mcpEnabled && index >= ACTION_MCP_INFO) {
-            return index + 2;
+    private void openSendMessage() {
+        if (ctx == null) {
+            return;
         }
-        return index;
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            List<IntegrationInfo> ints = integrations.get();
+            List<IntegrationInfo> alive = ints.stream().filter(i -> !i.vanishing && i.pid != null).toList();
+            if (alive.size() == 1) {
+                pid = alive.get(0).pid;
+            }
+        }
+        if (pid == null) {
+            setNotification("Select an integration first", true);
+            return;
+        }
+        IntegrationInfo info = findIntegration(pid);
+        if (info == null || info.routes.isEmpty()) {
+            setNotification("No routes available", true);
+            return;
+        }
+        sendMessagePopup.open(ctx, pid, info.name, info.routes, preSelectedRouteId);
+        preSelectedRouteId = null;
+    }
+
+    private IntegrationInfo findIntegration(String pid) {
+        for (IntegrationInfo i : integrations.get()) {
+            if (pid.equals(i.pid)) {
+                return i;
+            }
+        }
+        return null;
     }
 
     private void openTapeInstructions() {
@@ -1086,6 +1313,316 @@ class ActionsPopup {
         return null;
     }
 
+    // ---- Infra Browser ----
+
+    private void openInfraBrowser() {
+        showActionsMenu = false;
+        if (infraCatalog == null) {
+            infraCatalog = loadInfraCatalog();
+        }
+        if (infraCatalog.isEmpty()) {
+            setNotification("No infra services found", true);
+            return;
+        }
+        showInfraBrowser = true;
+        infraBrowserState.select(0);
+        // skip to first non-running service
+        if (!infraCatalog.isEmpty() && infraCatalog.get(0).running) {
+            navigateInfraBrowser(1);
+        }
+    }
+
+    private List<InfraServiceEntry> loadInfraCatalog() {
+        try {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            try (InputStream is = catalog.loadResource("test-infra", "metadata.json")) {
+                if (is == null) {
+                    return List.of();
+                }
+                String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                JsonArray arr = (JsonArray) Jsoner.deserialize(json);
+                Map<String, InfraServiceEntry> byAlias = new LinkedHashMap<>();
+                for (Object obj : arr) {
+                    JsonObject svc = (JsonObject) obj;
+                    String desc = (String) svc.getOrDefault("description", "");
+                    JsonArray aliases = (JsonArray) svc.get("alias");
+                    JsonArray impls = (JsonArray) svc.get("aliasImplementation");
+                    if (aliases != null) {
+                        for (Object a : aliases) {
+                            String alias = a.toString();
+                            InfraServiceEntry entry = byAlias.get(alias);
+                            if (entry == null) {
+                                entry = new InfraServiceEntry(alias, desc, new ArrayList<>(), false);
+                                byAlias.put(alias, entry);
+                            }
+                            if (impls != null) {
+                                for (Object impl : impls) {
+                                    String implStr = impl.toString();
+                                    if (!entry.implementations.contains(implStr)) {
+                                        entry.implementations.add(implStr);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // Mark running services
+                Set<String> runningAliases = infraServices.get().stream()
+                        .filter(i -> i.alive)
+                        .map(i -> i.alias)
+                        .collect(Collectors.toSet());
+                List<InfraServiceEntry> result = new ArrayList<>();
+                for (InfraServiceEntry entry : byAlias.values()) {
+                    boolean running = runningAliases.contains(entry.alias);
+                    result.add(new InfraServiceEntry(entry.alias, entry.description, entry.implementations, running));
+                }
+                result.sort((a, b) -> a.alias.compareToIgnoreCase(b.alias));
+                return result;
+            }
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    private void refreshInfraRunningState() {
+        if (infraCatalog == null) {
+            return;
+        }
+        Set<String> runningAliases = infraServices.get().stream()
+                .filter(i -> i.alive)
+                .map(i -> i.alias)
+                .collect(Collectors.toSet());
+        List<InfraServiceEntry> refreshed = new ArrayList<>();
+        for (InfraServiceEntry entry : infraCatalog) {
+            boolean running = runningAliases.contains(entry.alias);
+            refreshed.add(new InfraServiceEntry(entry.alias, entry.description, entry.implementations, running));
+        }
+        infraCatalog = refreshed;
+    }
+
+    private void navigateInfraBrowser(int direction) {
+        if (infraCatalog == null || infraCatalog.isEmpty()) {
+            return;
+        }
+        int total = infraCatalog.size();
+        Integer current = infraBrowserState.selected();
+        int next = (current != null ? current : 0) + direction;
+        next = Math.max(0, Math.min(next, total - 1));
+        // skip running services
+        while (next >= 0 && next < total && infraCatalog.get(next).running) {
+            next += direction;
+        }
+        next = Math.max(0, Math.min(next, total - 1));
+        if (!infraCatalog.get(next).running) {
+            infraBrowserState.select(next);
+        }
+    }
+
+    private void selectInfraService() {
+        Integer sel = infraBrowserState.selected();
+        if (sel == null || sel >= infraCatalog.size()) {
+            return;
+        }
+        InfraServiceEntry entry = infraCatalog.get(sel);
+        if (entry.running) {
+            return;
+        }
+        selectedInfraService = entry;
+        infraImplIndex = 0;
+        infraPortState = new TextInputState("");
+        showInfraBrowser = false;
+        showInfraPortDialog = true;
+    }
+
+    private void jumpToInfraService(char ch) {
+        if (infraCatalog == null) {
+            return;
+        }
+        char lower = Character.toLowerCase(ch);
+        for (int i = 0; i < infraCatalog.size(); i++) {
+            if (infraCatalog.get(i).alias.toLowerCase().startsWith(String.valueOf(lower))) {
+                infraBrowserState.select(i);
+                infraBrowserState.setOffset(Math.max(0, i - 2));
+                return;
+            }
+        }
+    }
+
+    private void renderInfraBrowser(Frame frame, Rect area) {
+        if (infraCatalog == null || infraCatalog.isEmpty()) {
+            return;
+        }
+        refreshInfraRunningState();
+        int popupW = Math.min(100, area.width() - 4);
+        int popupH = Math.min(infraCatalog.size() + 2, Math.min(22, area.height() - 6));
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        int nameCol = 22;
+        List<ListItem> items = new ArrayList<>();
+        for (InfraServiceEntry entry : infraCatalog) {
+            String padded = String.format("%-" + nameCol + "s", TuiHelper.truncate(entry.alias, nameCol));
+            String prefix = "  🔧 " + padded + " ";
+            if (entry.running) {
+                items.add(ListItem.from(prefix + "(running)").style(Style.EMPTY.dim()));
+            } else {
+                String implStr = entry.implementations.isEmpty() ? "" : String.join(", ", entry.implementations);
+                String desc = entry.description;
+                if (!implStr.isEmpty()) {
+                    desc = desc + " [" + implStr + "]";
+                }
+                int descW = Math.max(10, popupW - prefix.length() - 2);
+                if (desc.length() <= descW) {
+                    items.add(ListItem.from(prefix + desc));
+                } else {
+                    String indent = " ".repeat(prefix.length());
+                    List<Line> lines = new ArrayList<>();
+                    List<String> wrapped = wrapWords(desc, descW);
+                    lines.add(Line.from(prefix + wrapped.get(0)));
+                    for (int w = 1; w < wrapped.size(); w++) {
+                        lines.add(Line.from(indent + wrapped.get(w)));
+                    }
+                    items.add(ListItem.from(Text.from(lines.toArray(Line[]::new))));
+                }
+            }
+        }
+
+        long available = infraCatalog.stream().filter(e -> !e.running).count();
+        ListWidget list = ListWidget.builder()
+                .items(items.toArray(ListItem[]::new))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.AUTO_SCROLL)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(" Run Infra Service (" + available + "/" + infraCatalog.size() + ") ")
+                        .titleBottom(Title.from(Line.from(
+                                Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" select │"),
+                                Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
+                                Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, infraBrowserState);
+    }
+
+    // ---- Infra Port Dialog ----
+
+    private void renderInfraPortDialog(Frame frame, Rect area) {
+        if (selectedInfraService == null) {
+            return;
+        }
+        boolean hasMultiImpl = selectedInfraService.implementations.size() > 1;
+        int popupW = 42;
+        int popupH = hasMultiImpl ? 8 : 6;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Run " + selectedInfraService.alias + " ")
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" run │"),
+                        Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
+                .build();
+        frame.renderWidget(block, popup);
+        Rect inner = block.inner(popup);
+
+        int labelW = 8;
+        int fieldW = inner.width() - labelW;
+        int row = inner.top();
+        int ix = inner.left();
+
+        // Implementation selector (if multiple)
+        if (hasMultiImpl) {
+            row++;
+            Rect labelArea = new Rect(ix, row, labelW, 1);
+            frame.renderWidget(Paragraph.from(Line.from(Span.styled("Impl:", Style.EMPTY.bold()))), labelArea);
+            String impl = selectedInfraService.implementations.get(infraImplIndex);
+            Rect implArea = new Rect(ix + labelW, row, fieldW, 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled("◀ ", MonitorContext.HINT_KEY_STYLE),
+                    Span.raw(impl),
+                    Span.styled(" ▶", MonitorContext.HINT_KEY_STYLE))), implArea);
+            row++;
+        }
+
+        // Port input
+        row++;
+        Rect labelArea = new Rect(ix, row, labelW, 1);
+        frame.renderWidget(Paragraph.from(Line.from(Span.styled("Port:", Style.EMPTY.bold()))), labelArea);
+        Rect portArea = new Rect(ix + labelW, row, fieldW, 1);
+        TextInput textInput = TextInput.builder()
+                .cursorStyle(Style.EMPTY.reversed())
+                .placeholder("default")
+                .build();
+        frame.renderStatefulWidget(textInput, portArea, infraPortState);
+    }
+
+    private void handlePortInput(KeyEvent ke) {
+        if (infraPortState == null) {
+            return;
+        }
+        if (ke.isDeleteBackward()) {
+            infraPortState.deleteBackward();
+        } else if (ke.isDeleteForward()) {
+            infraPortState.deleteForward();
+        } else if (ke.isLeft()) {
+            infraPortState.moveCursorLeft();
+        } else if (ke.isRight()) {
+            infraPortState.moveCursorRight();
+        } else if (ke.isHome()) {
+            infraPortState.moveCursorToStart();
+        } else if (ke.isEnd()) {
+            infraPortState.moveCursorToEnd();
+        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.character())) {
+            infraPortState.insert(ke.character());
+        }
+    }
+
+    private void launchInfraService() {
+        if (selectedInfraService == null) {
+            return;
+        }
+        String alias = selectedInfraService.alias;
+        String impl = null;
+        if (!selectedInfraService.implementations.isEmpty()) {
+            impl = selectedInfraService.implementations.get(infraImplIndex);
+        }
+        String portStr = infraPortState != null ? infraPortState.text().trim() : "";
+        showInfraPortDialog = false;
+        try {
+            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+            cmd.add("infra");
+            cmd.add("run");
+            cmd.add(alias);
+            if (impl != null) {
+                cmd.add(impl);
+            }
+            cmd.add("--background");
+            if (!portStr.isEmpty()) {
+                cmd.add("--port=" + portStr);
+            }
+            Path outputFile = Files.createTempFile("camel-infra-", ".log");
+            outputFile.toFile().deleteOnExit();
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(outputFile.toFile());
+            Process process = pb.start();
+            pendingLaunches.add(new PendingLaunch(alias, process, outputFile, System.currentTimeMillis()));
+            setNotification("Starting infra: " + alias, false);
+            // force reload next time browser opens
+            infraCatalog = null;
+        } catch (Exception e) {
+            setNotification("Failed to start infra: " + alias + " - " + e.getMessage(), true);
+        }
+    }
+
     // ---- Process Launch & Monitoring ----
 
     private void launchSelectedExample() {
@@ -1191,6 +1728,9 @@ class ActionsPopup {
             lines.add(line.toString());
         }
         return lines;
+    }
+
+    record InfraServiceEntry(String alias, String description, List<String> implementations, boolean running) {
     }
 
     private record PendingLaunch(String name, Process process, Path outputFile, long startTime) {

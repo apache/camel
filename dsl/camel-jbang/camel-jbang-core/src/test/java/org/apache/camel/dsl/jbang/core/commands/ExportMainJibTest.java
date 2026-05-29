@@ -84,8 +84,8 @@ class ExportMainJibTest {
                 model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib plugin
-        Assertions.assertEquals(4, model.getBuild().getPlugins().size());
-        Plugin p = model.getBuild().getPlugins().get(3);
+        Assertions.assertEquals(6, model.getBuild().getPlugins().size());
+        Plugin p = model.getBuild().getPlugins().get(5);
         Assertions.assertEquals("com.google.cloud.tools", p.getGroupId());
         Assertions.assertEquals("jib-maven-plugin", p.getArtifactId());
 
@@ -117,8 +117,8 @@ class ExportMainJibTest {
                 model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib plugin
-        Assertions.assertEquals(4, model.getBuild().getPlugins().size());
-        Plugin p = model.getBuild().getPlugins().get(3);
+        Assertions.assertEquals(6, model.getBuild().getPlugins().size());
+        Plugin p = model.getBuild().getPlugins().get(5);
         Assertions.assertEquals("com.google.cloud.tools", p.getGroupId());
         Assertions.assertEquals("jib-maven-plugin", p.getArtifactId());
 

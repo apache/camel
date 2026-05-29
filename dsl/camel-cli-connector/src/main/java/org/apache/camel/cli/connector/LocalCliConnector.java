@@ -125,6 +125,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private long traceFilePos;   // keep track of trace offset
     private File messageHistoryFile;
     private File debugFile;
+    private File errorFile;
     private File receiveFile;
     private long receiveFilePos; // keep track of receive offset
     private byte[] lastSource;
@@ -196,6 +197,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             outputFile = createLockFile(lockFile.getName() + "-output.json");
             traceFile = createLockFile(lockFile.getName() + "-trace.json");
             messageHistoryFile = createLockFile(lockFile.getName() + "-history.json");
+            errorFile = createLockFile(lockFile.getName() + "-error.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
             scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
@@ -1384,6 +1386,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("groovy", json);
                     }
                 }
+                DevConsole dc26 = dcr.resolveById("errors");
+                if (dc26 != null) {
+                    JsonObject json = (JsonObject) dc26.call(DevConsole.MediaType.JSON,
+                            Map.of("stackTrace", "true"));
+                    if (json != null && !json.isEmpty()) {
+                        // only include metadata in status file (full error data is in the error file)
+                        JsonObject summary = new JsonObject();
+                        summary.put("enabled", json.get("enabled"));
+                        summary.put("size", json.get("size"));
+                        summary.put("maximumEntries", json.get("maximumEntries"));
+                        summary.put("timeToLive", json.get("timeToLive"));
+                        root.put("errors", summary);
+                    }
+                }
             }
             // various details
             JsonObject mem = collectMemory();
@@ -1472,6 +1488,23 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             // ignore
             LOG.trace("Error updating message-history file: {} due to: {}. This exception is ignored.",
                     messageHistoryFile, e.getMessage(), e);
+        }
+        try {
+            DevConsole dc13c = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                    .resolveById("errors");
+            if (dc13c != null) {
+                JsonObject json = (JsonObject) dc13c.call(DevConsole.MediaType.JSON,
+                        Map.of("stackTrace", "true"));
+                if (json != null && !json.isEmpty()) {
+                    LOG.trace("Updating error file: {}", errorFile);
+                    String data = json.toJson() + System.lineSeparator();
+                    IOHelper.writeText(data, errorFile);
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.trace("Error updating error file: {} due to: {}. This exception is ignored.",
+                    errorFile, e.getMessage(), e);
         }
         try {
             DevConsole dc14 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
@@ -1634,6 +1667,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (messageHistoryFile != null) {
             FileUtil.deleteFile(messageHistoryFile);
+        }
+        if (errorFile != null) {
+            FileUtil.deleteFile(errorFile);
         }
         if (debugFile != null) {
             FileUtil.deleteFile(debugFile);

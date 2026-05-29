@@ -47,6 +47,13 @@ public enum BlobOperationsDefinition {
      * Returns a list of blobs in this container, with folder structures flattened.
      */
     listBlobs,
+    /**
+     * Returns the list of blobs and their versions in this container. Each {@code BlobItem} in the result carries its
+     * own {@code versionId} and {@code isCurrentVersion} flag, allowing the full version history of every blob to be
+     * inspected. Requires versioning to be enabled on the storage account. Honours the same {@code prefix},
+     * {@code regex} and {@code maxResultsPerPage} filters as {@link #listBlobs}.
+     */
+    listBlobVersions,
 
     // Operations on the blob level
     //

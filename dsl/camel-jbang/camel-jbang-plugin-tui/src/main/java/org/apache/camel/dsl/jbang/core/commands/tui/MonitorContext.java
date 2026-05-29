@@ -49,6 +49,7 @@ class MonitorContext {
     TuiRunner runner;
 
     String selectedPid;
+    String lastSelectedName;
     boolean infraTableFocused;
 
     MonitorContext(

@@ -22,7 +22,10 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "unset",
-                     description = "Remove user configuration value", sortOptions = false, showDefaultValues = true)
+                     description = "Remove user configuration value", sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel config unset myKey" })
 public class ConfigUnset extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
