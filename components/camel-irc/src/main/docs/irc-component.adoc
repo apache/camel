@@ -130,7 +130,7 @@ irc:nick@irc.server.org?channels=#chan1,#chan2,#chan3&keys=chan1Key,,chan3key
 === Getting a list of channel users
 
 Using the `namesOnJoin` option one can invoke the IRC-`NAMES` command after the component has joined a channel. 
-The server will reply with `irc.num = 353`. So to process the result the property `onReply` has to be `true`.
+The server will reply with `CamelIrcNum = 353`. So to process the result the property `onReply` has to be `true`.
 Furthermore, one has to filter the `onReply` exchanges to get the names.
 
 For example, we want to get all exchanges that contain the usernames of the channel:
@@ -139,8 +139,8 @@ For example, we want to get all exchanges that contain the usernames of the chan
 -----------------------------------------------------------------------------
 from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
 	.choice()
-		.when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
-			.filter(header("irc.num").isEqualTo("353"))
+		.when(header("CamelIrcMessageType").isEqualToIgnoreCase("REPLY"))
+			.filter(header("CamelIrcNum").isEqualTo("353"))
 			.to("mock:result").stop();
 -----------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ You can specify the destination in the following header:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=====================================================================
 |Header |Type |Description
-|`irc.sendTo` |`String` |The channel (or the person) name.
+|`CamelIrcSendTo` |`String` |The channel (or the person) name.
 |=====================================================================
 
 
