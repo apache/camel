@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1317,6 +1318,10 @@ class ActionsPopup {
 
     private void openInfraBrowser() {
         showActionsMenu = false;
+        if (!isContainerRuntimeAvailable()) {
+            setNotification("Docker or Podman is not running (use F2 → Run Doctor to check)", true);
+            return;
+        }
         if (infraCatalog == null) {
             infraCatalog = loadInfraCatalog();
         }
@@ -1728,6 +1733,24 @@ class ActionsPopup {
             lines.add(line.toString());
         }
         return lines;
+    }
+
+    private static boolean isContainerRuntimeAvailable() {
+        for (String cmd : new String[] { "docker", "podman" }) {
+            try {
+                Process p = new ProcessBuilder(cmd, "info")
+                        .redirectErrorStream(true)
+                        .start();
+                p.getInputStream().transferTo(OutputStream.nullOutputStream());
+                int exit = p.waitFor();
+                if (exit == 0) {
+                    return true;
+                }
+            } catch (Exception e) {
+                // not found, try next
+            }
+        }
+        return false;
     }
 
     record InfraServiceEntry(String alias, String description, List<String> implementations, boolean running) {
