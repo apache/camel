@@ -31,6 +31,9 @@ import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +46,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * This test evaluates SQL stored function call with sql-stored component against a MariaDB database because HSQLDB
  * doesn't support SQL stored functions.
  */
+@EnabledOnOs(value = { OS.LINUX, OS.WINDOWS, OS.MAC },
+             architectures = { "amd64", "x86_64", "aarch64", "aarch_64" })
+@DisabledOnOs(value = OS.LINUX, architectures = { "aarch64", "aarch_64" },
+              disabledReason = "MariaDB4j has no Linux ARM64 native binary (mariadb4j-db-linux64 is x86_64 only)")
 public class SqlFunctionDataSourceTest extends CamelTestSupport {
 
     private static final String DB_NAME = "test";

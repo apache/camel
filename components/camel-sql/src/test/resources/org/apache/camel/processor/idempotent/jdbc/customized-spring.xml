@@ -27,30 +27,30 @@
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <jdbc:embedded-database id="dataSource" type="H2" />
-    
+
     <!-- START SNIPPET: e1 -->
     <bean id="messageIdRepository" class="org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository">
-    	<constructor-arg ref="dataSource" />
-    	<constructor-arg value="myProcessorName" />
-    	<property name="tableExistsString" value="SELECT 1 FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE 1 = 0" />
-    	<property name="createString" value="CREATE TABLE CUSTOMIZED_MESSAGE_REPOSITORY (processorName VARCHAR(255), messageId VARCHAR(100), createdAt TIMESTAMP)" />
-    	<property name="queryString" value="SELECT COUNT(*) FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ? AND messageId = ?" />
-    	<property name="insertString" value="INSERT INTO CUSTOMIZED_MESSAGE_REPOSITORY (processorName, messageId, createdAt) VALUES (?, ?, ?)" />
-    	<property name="deleteString" value="DELETE FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ? AND messageId = ?" />
+        <constructor-arg ref="dataSource" />
+        <constructor-arg value="myProcessorName" />
+        <property name="tableExistsString" value="SELECT 1 FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE 1 = 0" />
+        <property name="createString" value="CREATE TABLE CUSTOMIZED_MESSAGE_REPOSITORY (processorName VARCHAR(255), messageId VARCHAR(100), createdAt TIMESTAMP)" />
+        <property name="queryString" value="SELECT COUNT(*) FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ? AND messageId = ?" />
+        <property name="insertString" value="INSERT INTO CUSTOMIZED_MESSAGE_REPOSITORY (processorName, messageId, createdAt) VALUES (?, ?, ?)" />
+        <property name="deleteString" value="DELETE FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ? AND messageId = ?" />
     </bean>
     <!-- END SNIPPET: e1 -->
-    
+
     <camel:camelContext>
-    	<camel:errorHandler id="deadLetterChannel" type="DeadLetterChannel" deadLetterUri="mock:error">
-    		<camel:redeliveryPolicy maximumRedeliveries="0" maximumRedeliveryDelay="0" logStackTrace="false" />
-    	</camel:errorHandler>
-    	
-    	<camel:route id="JdbcMessageIdRepositoryTest" errorHandlerRef="deadLetterChannel">
-    		<camel:from uri="direct:start" />
-    		<camel:idempotentConsumer idempotentRepository="messageIdRepository">
-    			<camel:header>messageId</camel:header>
-    			<camel:to uri="mock:result" />
-    		</camel:idempotentConsumer>
-    	</camel:route>
+        <camel:errorHandler id="deadLetterChannel" type="DeadLetterChannel" deadLetterUri="mock:error">
+            <camel:redeliveryPolicy maximumRedeliveries="0" maximumRedeliveryDelay="0" logStackTrace="false" />
+        </camel:errorHandler>
+
+        <camel:route id="JdbcMessageIdRepositoryTest" errorHandlerRef="deadLetterChannel">
+            <camel:from uri="direct:start" />
+            <camel:idempotentConsumer idempotentRepository="messageIdRepository">
+                <camel:header>messageId</camel:header>
+                <camel:to uri="mock:result" />
+            </camel:idempotentConsumer>
+        </camel:route>
     </camel:camelContext>
 </beans>

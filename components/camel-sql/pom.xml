@@ -47,7 +47,7 @@
         </dependency>
 
         <!-- test dependencies -->
-	    <dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit6</artifactId>
             <scope>test</scope>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-	    <version>${h2-version}</version>
+            <version>${h2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -97,6 +97,8 @@
     </dependencies>
 
     <build>
+        <!-- This is necessary when debugging tests to enable HSQLDB to find
+             the classes in the classpath. -->
         <plugins>
             <!-- generate source code from grammar for the stored procedure component -->
             <plugin>
