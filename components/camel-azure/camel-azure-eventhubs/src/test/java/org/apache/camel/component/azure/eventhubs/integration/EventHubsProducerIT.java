@@ -71,7 +71,7 @@ class EventHubsProducerIT extends CamelTestSupport {
     @Test
     public void testSendEventWithSpecificPartition() throws InterruptedException {
 
-        final String messageBody = RandomStringUtils.randomAlphabetic(30);
+        final String messageBody = RandomStringUtils.secure().nextAlphabetic(30);
         final String firstPartition = "0";
 
         final AtomicBoolean eventExists = new AtomicBoolean();
@@ -106,7 +106,7 @@ class EventHubsProducerIT extends CamelTestSupport {
     @Test
     public void testSendingNonValidData() throws InterruptedException {
 
-        final String messageBody = RandomStringUtils.randomAlphabetic(30);
+        final String messageBody = RandomStringUtils.secure().nextAlphabetic(30);
         final String firstPartition = "0";
 
         final AtomicReference<Exchange> resultExchange = new AtomicReference<>();

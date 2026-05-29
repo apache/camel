@@ -67,7 +67,7 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     void testListDatabases() throws InterruptedException {
 
         // create bunch of databases
-        final String prefixDatabaseNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String prefixDatabaseNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final int expectedSize = 5;
 
         for (int i = 0; i < expectedSize; i++) {
@@ -97,7 +97,7 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
     @Test
     void testCreateAndDeleteDatabase() throws InterruptedException {
-        final String databaseNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String databaseNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
         // test create database
         result.expectedMessageCount(1);
@@ -133,8 +133,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
     @Test
     void testCreateAndDeleteContainer() throws InterruptedException {
-        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-        final String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+        final String containerName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
         // test if we disable flag create database if not existing, we should get exchange exception
         result.expectedMessageCount(1);
@@ -192,7 +192,7 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
     @Test
     void testReplaceDatabaseThroughput() throws InterruptedException {
-        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
         client.createDatabaseIfNotExists(databaseName, ThroughputProperties.createManualThroughput(500)).block();
 
@@ -216,8 +216,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     @Test
     void testQueryContainers() throws InterruptedException {
         // create bunch of containers to test
-        final String prefixContainerNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String prefixContainerNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final int expectedSize = 5;
 
         client.createDatabaseIfNotExists(databaseName).block();
@@ -248,8 +248,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
     @Test
     void testCreateUpsertReplaceAndDeleteItem() throws InterruptedException {
-        final String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String containerName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
         final Map<String, Object> item1 = new HashMap<>();
         item1.put("id", "test-id-1");
@@ -371,8 +371,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
 
     @Test
     void testQueryItems() {
-        final String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-        final String databaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String containerName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+        final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
         // create testing items
         final Map<String, Object> item1 = new HashMap<>();

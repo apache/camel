@@ -61,7 +61,7 @@ public class Dhis2PutIT extends AbstractDhis2TestSupport {
         // parameter type is java.util.Map
         headers.put("CamelDhis2.queryParams", new HashMap<>());
 
-        String name = RandomStringUtils.randomAlphabetic(8);
+        String name = RandomStringUtils.secure().nextAlphabetic(8);
         final InputStream result = requestBodyAndHeaders(endpointUri,
                 new OrganisationUnit().withName(name).withShortName(name).withOpeningDate(new Date()), headers);
         OrganisationUnit organisationUnit

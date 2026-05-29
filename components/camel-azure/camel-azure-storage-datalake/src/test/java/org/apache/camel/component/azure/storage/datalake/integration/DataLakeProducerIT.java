@@ -40,7 +40,7 @@ public class DataLakeProducerIT extends Base {
 
     @BeforeAll
     public void setup() {
-        final String randomSuffix = RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT);
+        final String randomSuffix = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(Locale.ROOT);
         fileName = "file" + randomSuffix + ".txt";
         fileContent = ("Hello " + randomSuffix).getBytes(StandardCharsets.UTF_8);
     }

@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbDatabaseOperationsIT {
-    private static final String DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String DATABASE_NAME = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbDatabaseOperations operations;
@@ -78,7 +78,7 @@ class CosmosDbDatabaseOperationsIT {
 
     @Test
     void testCreateDeleteContainer() {
-        final String containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String containerId = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         // test create container
         final CosmosContainerResponse createdContainer = operations
@@ -105,7 +105,7 @@ class CosmosDbDatabaseOperationsIT {
 
     @Test
     void testGetContainerOperations() {
-        final String containerId = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String containerId = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         // first try to get operations without creating the container
         operations
@@ -129,7 +129,7 @@ class CosmosDbDatabaseOperationsIT {
     @Test
     void testQueryAndReadAllContainers() {
         // create bunch of containers
-        final String prefixContainerNames = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final String prefixContainerNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
         final int expectedSize = 5;
 
         for (int i = 0; i < expectedSize; i++) {
