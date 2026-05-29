@@ -45,6 +45,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.hierynomus</groupId>
+            <artifactId>smbj</artifactId>
+            <version>${smbj-version}</version>
+        </dependency>
     </dependencies>
 
 </project>

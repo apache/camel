@@ -23,6 +23,7 @@ class InfraInfo {
     String pid;
     String alias;
     String description;
+    String serviceVersion;
     Map<String, Object> properties = new TreeMap<>();
     boolean alive;
     boolean vanishing;

@@ -69,4 +69,16 @@ public @interface InfraService {
      * @return
      */
     String[] serviceImplementationAlias() default {};
+
+    /**
+     * The version of the infrastructure service (e.g., "7.4.9" for Redis, "2.54.0" for Artemis).
+     *
+     * For container-based services, the version is auto-detected from the container image tag in container.properties
+     * at build time and does not need to be set here.
+     *
+     * For embedded services (no container), set this to the library version manually.
+     *
+     * @return
+     */
+    String serviceVersion() default "";
 }
