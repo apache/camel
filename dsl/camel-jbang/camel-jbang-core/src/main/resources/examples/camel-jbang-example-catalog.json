@@ -17,6 +17,9 @@
             "application.properties",
             "consumer.camel.yaml",
             "producer.camel.yaml"
+        ],
+        "infraServices": [
+            "artemis"
         ]
     },
     {
@@ -120,6 +123,10 @@
             "compose.yaml",
             "docling-langchain4j-rag.yaml",
             "sample.md"
+        ],
+        "infraServices": [
+            "docling",
+            "ollama"
         ]
     },
     {
@@ -144,6 +151,10 @@
             "examples/semiconductor-sector-analysis.pdf",
             "examples/tesla-q3-2024.pdf",
             "financial-doc-analyzer.yaml"
+        ],
+        "infraServices": [
+            "docling",
+            "ollama"
         ]
     },
     {
@@ -165,6 +176,10 @@
             "compose.yaml",
             "ftp.camel.yaml",
             "jbang.properties"
+        ],
+        "infraServices": [
+            "artemis",
+            "ftp"
         ]
     },
     {
@@ -204,6 +219,9 @@
             "README.md",
             "application.properties",
             "rest-api.camel.yaml"
+        ],
+        "infraServices": [
+            "keycloak"
         ]
     },
     {
@@ -224,6 +242,9 @@
             "README.md",
             "application.properties",
             "rest-api.camel.yaml"
+        ],
+        "infraServices": [
+            "keycloak"
         ]
     },
     {
@@ -241,7 +262,7 @@
         "hasCitrusTests": false,
         "files": [
             "README.md",
-            "message-size.camel.yaml"
+            "orders.camel.yaml"
         ]
     },
     {
@@ -264,6 +285,9 @@
             "infra/mosquitto.conf",
             "mqtt.camel.yaml",
             "start.sh"
+        ],
+        "infraServices": [
+            "mosquitto"
         ]
     },
     {
@@ -435,6 +459,9 @@
             "application.properties",
             "compose.yaml",
             "sql.camel.yaml"
+        ],
+        "infraServices": [
+            "postgres"
         ]
     },
     {

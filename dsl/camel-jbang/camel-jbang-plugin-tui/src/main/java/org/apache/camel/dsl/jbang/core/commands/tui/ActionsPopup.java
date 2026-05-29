@@ -143,6 +143,7 @@ class ActionsPopup {
     private ScheduledExecutorService scheduler;
 
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
+    private DeferredExampleLaunch deferredLaunch;
     private String launchNotification;
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
@@ -651,6 +652,7 @@ class ActionsPopup {
 
     void tick(long now) {
         monitorPendingLaunches(now);
+        checkDeferredLaunch(now);
         if (launchNotification != null && now > launchNotificationExpiry) {
             launchNotification = null;
         }
@@ -764,8 +766,10 @@ class ActionsPopup {
             boolean docker = ExampleHelper.requiresDocker(ex);
             boolean bundled = ExampleHelper.isBundled(ex);
             boolean citrus = ExampleHelper.hasCitrusTests(ex);
+            boolean infra = !ExampleHelper.getInfraServices(ex).isEmpty();
 
-            String icons = (bundled ? "📦" : "🌐") + (docker ? "🐳" : "  ") + (citrus ? "🍋" : "  ");
+            String icons = (bundled ? "📦" : "🌐") + (docker ? "🐳" : "  ")
+                           + (infra ? "🔧" : "  ") + (citrus ? "🍋" : "  ");
             int nameCol = Math.min(30, width / 3);
             String padded = String.format("%-" + nameCol + "s", TuiHelper.truncate(name, nameCol));
             String prefix = " " + icons + " " + padded + " ";
@@ -786,7 +790,7 @@ class ActionsPopup {
             }
         }
         items.add(ListItem.from(""));
-        items.add(ListItem.from(" 📦 = bundled (offline)  🌐 = online (GitHub)  🐳 = Docker  🍋 = Citrus tests")
+        items.add(ListItem.from(" 📦 = bundled  🌐 = online  🐳 = Docker  🔧 = infra services  🍋 = Citrus tests")
                 .style(Style.EMPTY.dim()));
         return items;
     }
@@ -1160,28 +1164,18 @@ class ActionsPopup {
         }
         List<String> extraArgs = runOptionsForm.buildArgs();
         runOptionsForm.close();
-        try {
-            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
-            cmd.add("run");
-            cmd.add("--example=" + exampleName);
-            cmd.add("--logging-color=true");
-            cmd.addAll(extraArgs);
-            Path outputFile = Files.createTempFile("camel-example-", ".log");
-            outputFile.toFile().deleteOnExit();
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(outputFile.toFile());
-            Process process = pb.start();
-            pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
-            pendingAutoSelect = displayName;
-            launchNotification = "Starting: " + displayName;
-            launchNotificationError = false;
-            launchNotificationExpiry = System.currentTimeMillis() + 5000;
-        } catch (Exception e) {
-            launchNotification = "Failed to start: " + exampleName + " - " + e.getMessage();
-            launchNotificationError = true;
-            launchNotificationExpiry = System.currentTimeMillis() + 10000;
+
+        List<String> missing = findMissingInfraServices(selectedExample);
+        if (!missing.isEmpty()) {
+            if (!isContainerRuntimeAvailable()) {
+                setNotification("Docker/Podman required for infra services. Run Doctor for details", true);
+                return;
+            }
+            startMissingInfraAndDeferExample(missing, exampleName, displayName, extraArgs);
+            return;
         }
+
+        doLaunchExample(exampleName, displayName, extraArgs);
     }
 
     // ---- Example Browser Navigation ----
@@ -1641,26 +1635,103 @@ class ActionsPopup {
         }
         String exampleName = example.getStringOrDefault("name", "");
         showExampleBrowser = false;
+
+        List<String> missing = findMissingInfraServices(example);
+        if (!missing.isEmpty()) {
+            if (!isContainerRuntimeAvailable()) {
+                setNotification("Docker/Podman required for infra services. Run Doctor for details", true);
+                return;
+            }
+            startMissingInfraAndDeferExample(missing, exampleName, exampleName, List.of());
+            return;
+        }
+
+        doLaunchExample(exampleName, exampleName, List.of());
+    }
+
+    private void doLaunchExample(String exampleName, String displayName, List<String> extraArgs) {
         try {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
             cmd.add("--example=" + exampleName);
             cmd.add("--logging-color=true");
+            cmd.addAll(extraArgs);
             Path outputFile = Files.createTempFile("camel-example-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.redirectErrorStream(true);
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
-            pendingLaunches.add(new PendingLaunch(exampleName, process, outputFile, System.currentTimeMillis()));
-            pendingAutoSelect = exampleName;
-            launchNotification = "Starting: " + exampleName;
-            launchNotificationError = false;
-            launchNotificationExpiry = System.currentTimeMillis() + 5000;
+            pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
+            pendingAutoSelect = displayName;
+            setNotification("Starting: " + displayName, false);
         } catch (Exception e) {
-            launchNotification = "Failed to start: " + exampleName + " - " + e.getMessage();
-            launchNotificationError = true;
-            launchNotificationExpiry = System.currentTimeMillis() + 10000;
+            setNotification("Failed to start: " + exampleName + " - " + e.getMessage(), true);
+        }
+    }
+
+    private List<String> findMissingInfraServices(JsonObject example) {
+        List<String> required = ExampleHelper.getInfraServices(example);
+        if (required.isEmpty()) {
+            return List.of();
+        }
+        Set<String> runningAliases = infraServices.get().stream()
+                .filter(i -> i.alive)
+                .map(i -> i.alias)
+                .collect(Collectors.toSet());
+        List<String> missing = new ArrayList<>();
+        for (String alias : required) {
+            if (!runningAliases.contains(alias)) {
+                missing.add(alias);
+            }
+        }
+        return missing;
+    }
+
+    private void startMissingInfraAndDeferExample(
+            List<String> missingInfra, String exampleName, String displayName, List<String> extraArgs) {
+        for (String alias : missingInfra) {
+            try {
+                List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+                cmd.add("infra");
+                cmd.add("run");
+                cmd.add(alias);
+                cmd.add("--background");
+                Path outputFile = Files.createTempFile("camel-infra-", ".log");
+                outputFile.toFile().deleteOnExit();
+                ProcessBuilder pb = new ProcessBuilder(cmd);
+                pb.redirectErrorStream(true);
+                pb.redirectOutput(outputFile.toFile());
+                Process process = pb.start();
+                pendingLaunches.add(new PendingLaunch(alias, process, outputFile, System.currentTimeMillis()));
+            } catch (Exception e) {
+                setNotification("Failed to start infra: " + alias + " - " + e.getMessage(), true);
+                return;
+            }
+        }
+        deferredLaunch = new DeferredExampleLaunch(
+                exampleName, displayName, extraArgs, missingInfra, System.currentTimeMillis());
+        infraCatalog = null;
+        String infraList = String.join(", ", missingInfra);
+        setNotification("Starting infra: " + infraList + " → then: " + displayName, false);
+    }
+
+    private void checkDeferredLaunch(long now) {
+        if (deferredLaunch == null) {
+            return;
+        }
+        Set<String> runningAliases = infraServices.get().stream()
+                .filter(i -> i.alive)
+                .map(i -> i.alias)
+                .collect(Collectors.toSet());
+        boolean allReady = runningAliases.containsAll(deferredLaunch.requiredInfra);
+        if (allReady) {
+            DeferredExampleLaunch dl = deferredLaunch;
+            deferredLaunch = null;
+            doLaunchExample(dl.exampleName, dl.displayName, dl.extraArgs);
+        } else if (now - deferredLaunch.startTime > 120_000) {
+            deferredLaunch = null;
+            setNotification("Timeout waiting for infra services to start", true);
         }
     }
 
@@ -1757,5 +1828,10 @@ class ActionsPopup {
     }
 
     private record PendingLaunch(String name, Process process, Path outputFile, long startTime) {
+    }
+
+    private record DeferredExampleLaunch(
+            String exampleName, String displayName, List<String> extraArgs,
+            List<String> requiredInfra, long startTime) {
     }
 }
