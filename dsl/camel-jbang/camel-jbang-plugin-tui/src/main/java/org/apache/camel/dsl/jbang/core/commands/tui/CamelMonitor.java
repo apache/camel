@@ -276,6 +276,7 @@ public class CamelMonitor extends CamelCommand {
     private CircuitBreakerTab circuitBreakerTab;
     private ErrorsTab errorsTab;
     private MetricsTab metricsTab;
+    private StartupTab startupTab;
 
     // "More" dropdown state
     private boolean showMorePopup;
@@ -332,6 +333,7 @@ public class CamelMonitor extends CamelCommand {
         circuitBreakerTab = new CircuitBreakerTab(ctx, cbSuccessHistory, cbFailHistory);
         errorsTab = new ErrorsTab(ctx);
         metricsTab = new MetricsTab(ctx);
+        startupTab = new StartupTab(ctx);
 
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
@@ -425,7 +427,7 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (ke.isDown()) {
-                    morePopupState.selectNext(2);
+                    morePopupState.selectNext(3);
                     return true;
                 }
                 if (ke.isConfirm()) {
@@ -435,6 +437,7 @@ public class CamelMonitor extends CamelCommand {
                         activeMoreTab = switch (sel) {
                             case 0 -> circuitBreakerTab;
                             case 1 -> consumersTab;
+                            case 2 -> startupTab;
                             default -> null;
                         };
                         if (activeMoreTab != null) {
@@ -1144,7 +1147,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 4;
+        int popupH = 5;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -1167,6 +1170,7 @@ public class CamelMonitor extends CamelCommand {
         ListItem[] items = {
                 ListItem.from("  Circuit Breaker"),
                 ListItem.from("  Consumers"),
+                ListItem.from("  Startup"),
         };
         ListWidget list = ListWidget.builder()
                 .items(items)
