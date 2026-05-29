@@ -50,7 +50,6 @@ class MonitorContext {
 
     String selectedPid;
     String lastSelectedName;
-    boolean infraTableFocused;
 
     MonitorContext(
                    AtomicReference<List<IntegrationInfo>> data,
@@ -78,7 +77,7 @@ class MonitorContext {
     }
 
     boolean isInfraSelected() {
-        return infraTableFocused && findSelectedInfra() != null;
+        return findSelectedInfra() != null;
     }
 
     String selectedName() {

@@ -130,6 +130,15 @@ public final class ExampleHelper {
     }
 
     @SuppressWarnings("unchecked")
+    public static List<String> getInfraServices(JsonObject entry) {
+        Collection<String> services = (Collection<String>) entry.get("infraServices");
+        if (services == null) {
+            return List.of();
+        }
+        return new ArrayList<>(services);
+    }
+
+    @SuppressWarnings("unchecked")
     public static List<String> getFiles(JsonObject entry) {
         Collection<String> files = (Collection<String>) entry.get("files");
         if (files == null) {
