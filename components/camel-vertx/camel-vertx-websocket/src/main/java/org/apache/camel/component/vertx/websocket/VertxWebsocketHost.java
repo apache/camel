@@ -80,7 +80,7 @@ public class VertxWebsocketHost {
         LOG.info("Connected consumer for path {}", path);
 
         if (!ObjectHelper.isEmpty(configuration.getAllowedOriginPattern())) {
-            CorsHandler corsHandler = CorsHandler.create().addRelativeOrigin(configuration.getAllowedOriginPattern());
+            CorsHandler corsHandler = CorsHandler.create().addOriginWithRegex(configuration.getAllowedOriginPattern());
             route.handler(corsHandler);
         }
 
