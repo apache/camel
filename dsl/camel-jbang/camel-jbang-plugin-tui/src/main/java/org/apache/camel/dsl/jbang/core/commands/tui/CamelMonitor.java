@@ -277,6 +277,7 @@ public class CamelMonitor extends CamelCommand {
     private ErrorsTab errorsTab;
     private MetricsTab metricsTab;
     private StartupTab startupTab;
+    private ConfigurationTab configurationTab;
 
     // "More" dropdown state
     private boolean showMorePopup;
@@ -334,6 +335,7 @@ public class CamelMonitor extends CamelCommand {
         errorsTab = new ErrorsTab(ctx);
         metricsTab = new MetricsTab(ctx);
         startupTab = new StartupTab(ctx);
+        configurationTab = new ConfigurationTab(ctx);
 
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
@@ -427,7 +429,7 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (ke.isDown()) {
-                    morePopupState.selectNext(3);
+                    morePopupState.selectNext(4);
                     return true;
                 }
                 if (ke.isConfirm()) {
@@ -436,8 +438,9 @@ public class CamelMonitor extends CamelCommand {
                     if (sel != null) {
                         activeMoreTab = switch (sel) {
                             case 0 -> circuitBreakerTab;
-                            case 1 -> consumersTab;
-                            case 2 -> startupTab;
+                            case 1 -> configurationTab;
+                            case 2 -> consumersTab;
+                            case 3 -> startupTab;
                             default -> null;
                         };
                         if (activeMoreTab != null) {
@@ -1147,7 +1150,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 5;
+        int popupH = 6;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -1169,6 +1172,7 @@ public class CamelMonitor extends CamelCommand {
 
         ListItem[] items = {
                 ListItem.from("  Circuit Breaker"),
+                ListItem.from("  Configuration"),
                 ListItem.from("  Consumers"),
                 ListItem.from("  Startup"),
         };
@@ -3329,6 +3333,28 @@ public class CamelMonitor extends CamelCommand {
             info.httpServer = phpObj.getString("server");
             parseHttpEndpoints(phpObj, "endpoints", false, info);
             parseHttpEndpoints(phpObj, "managementEndpoints", true, info);
+        }
+
+        // Parse configuration properties (from PropertiesDevConsole)
+        JsonObject propsObj = (JsonObject) root.get("properties");
+        if (propsObj != null) {
+            JsonArray propArr = (JsonArray) propsObj.get("properties");
+            if (propArr != null) {
+                for (Object p : propArr) {
+                    JsonObject pj = (JsonObject) p;
+                    String key = pj.getString("key");
+                    if (key != null && !key.startsWith("camel.jbang.")) {
+                        ConfigurationTab.ConfigProperty cp = new ConfigurationTab.ConfigProperty();
+                        cp.key = key;
+                        cp.value = objToString(pj.get("value"));
+                        cp.defaultValue = pj.getString("defaultValue");
+                        cp.source = pj.getString("source");
+                        cp.location = pj.getString("location");
+                        info.configProperties.add(cp);
+                    }
+                }
+                info.configProperties.sort(ConfigurationTab::compareCamelFirst);
+            }
         }
 
         return info;
