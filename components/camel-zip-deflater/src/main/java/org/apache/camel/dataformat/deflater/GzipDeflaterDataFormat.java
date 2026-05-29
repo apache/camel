@@ -59,7 +59,10 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
 
         OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
         try {
-            unzipInput = new GzipCompressorInputStream(inputStream, true);
+            unzipInput = GzipCompressorInputStream.builder()
+                    .setInputStream(inputStream)
+                    .setDecompressConcatenated(true)
+                    .get();
             IOHelper.copy(unzipInput, osb);
             return osb.build();
         } finally {

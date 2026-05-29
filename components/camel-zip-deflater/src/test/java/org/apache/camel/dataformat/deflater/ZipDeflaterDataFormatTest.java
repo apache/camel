@@ -139,7 +139,7 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .streamCaching()
+                        .streamCache(true)
                         .marshal().zipDeflater()
                         .unmarshal().zipDeflater()
                         .to("mock:result");
