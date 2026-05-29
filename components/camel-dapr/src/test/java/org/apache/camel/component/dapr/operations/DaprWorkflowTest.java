@@ -25,7 +25,7 @@ import io.dapr.workflows.WorkflowStub;
 import io.dapr.workflows.client.DaprWorkflowClient;
 import io.dapr.workflows.client.NewWorkflowOptions;
 import io.dapr.workflows.client.WorkflowFailureDetails;
-import io.dapr.workflows.client.WorkflowInstanceStatus;
+import io.dapr.workflows.client.WorkflowState;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.dapr.DaprConfiguration;
@@ -173,7 +173,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         final DaprOperationResponse response = operation.handle(exchange);
 
         assertNotNull(response);
-        verify(client).purgeInstance(instanceId);
+        verify(client).purgeWorkflow(instanceId);
         assertEquals(instanceId, response.getHeaders().get(DaprConstants.WORKFLOW_INSTANCE_ID));
     }
 
@@ -300,7 +300,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         final boolean isCompleted = false;
         WorkflowFailureDetails failureDetails = mock(WorkflowFailureDetails.class);
 
-        WorkflowInstanceStatus workflowStatus = mock(WorkflowInstanceStatus.class);
+        WorkflowState workflowStatus = mock(WorkflowState.class);
         when(workflowStatus.getName()).thenReturn(name);
         when(workflowStatus.getCreatedAt()).thenReturn(createdAt);
         when(workflowStatus.getLastUpdatedAt()).thenReturn(updatedAt);
@@ -311,7 +311,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         when(workflowStatus.isCompleted()).thenReturn(isCompleted);
 
         when(endpoint.getWorkflowClient()).thenReturn(client);
-        when(client.getInstanceState(anyString(), any(Boolean.class))).thenReturn(workflowStatus);
+        when(client.getWorkflowState(anyString(), any(Boolean.class))).thenReturn(workflowStatus);
 
         DaprConfiguration configuration = new DaprConfiguration();
         configuration.setOperation(DaprOperation.workflow);
@@ -365,7 +365,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         final boolean isCompleted = false;
         WorkflowFailureDetails failureDetails = mock(WorkflowFailureDetails.class);
 
-        WorkflowInstanceStatus workflowStatus = mock(WorkflowInstanceStatus.class);
+        WorkflowState workflowStatus = mock(WorkflowState.class);
         when(workflowStatus.getName()).thenReturn(name);
         when(workflowStatus.getCreatedAt()).thenReturn(createdAt);
         when(workflowStatus.getLastUpdatedAt()).thenReturn(updatedAt);
@@ -376,7 +376,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         when(workflowStatus.isCompleted()).thenReturn(isCompleted);
 
         when(endpoint.getWorkflowClient()).thenReturn(client);
-        when(client.waitForInstanceStart(anyString(), any(Duration.class), any(Boolean.class)))
+        when(client.waitForWorkflowStart(anyString(), any(Duration.class), any(Boolean.class)))
                 .thenReturn(workflowStatus);
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -409,7 +409,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         Duration timeout = Duration.ofSeconds(10);
 
         when(endpoint.getWorkflowClient()).thenReturn(client);
-        when(client.waitForInstanceStart(anyString(), any(Duration.class), any(Boolean.class)))
+        when(client.waitForWorkflowStart(anyString(), any(Duration.class), any(Boolean.class)))
                 .thenThrow(TimeoutException.class);
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -462,7 +462,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         final boolean isCompleted = false;
         WorkflowFailureDetails failureDetails = mock(WorkflowFailureDetails.class);
 
-        WorkflowInstanceStatus workflowStatus = mock(WorkflowInstanceStatus.class);
+        WorkflowState workflowStatus = mock(WorkflowState.class);
         when(workflowStatus.getName()).thenReturn(name);
         when(workflowStatus.getCreatedAt()).thenReturn(createdAt);
         when(workflowStatus.getLastUpdatedAt()).thenReturn(updatedAt);
@@ -473,7 +473,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         when(workflowStatus.isCompleted()).thenReturn(isCompleted);
 
         when(endpoint.getWorkflowClient()).thenReturn(client);
-        when(client.waitForInstanceCompletion(anyString(), any(Duration.class), any(Boolean.class)))
+        when(client.waitForWorkflowCompletion(anyString(), any(Duration.class), any(Boolean.class)))
                 .thenReturn(workflowStatus);
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -506,7 +506,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         Duration timeout = Duration.ofSeconds(10);
 
         when(endpoint.getWorkflowClient()).thenReturn(client);
-        when(client.waitForInstanceCompletion(anyString(), any(Duration.class), any(Boolean.class)))
+        when(client.waitForWorkflowCompletion(anyString(), any(Duration.class), any(Boolean.class)))
                 .thenThrow(TimeoutException.class);
 
         DaprConfiguration configuration = new DaprConfiguration();
