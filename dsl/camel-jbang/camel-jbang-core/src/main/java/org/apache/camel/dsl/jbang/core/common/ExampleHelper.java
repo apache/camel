@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.InputStream;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -174,7 +175,7 @@ public final class ExampleHelper {
         List<String> fileNames = getFiles(entry);
         Path tempDir = Files.createTempDirectory("camel-example-");
 
-        HttpClient hc = HttpClient.newHttpClient();
+        HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
         for (String fileName : fileNames) {
             String rawUrl = String.format(GITHUB_RAW_URL, name, fileName);
             HttpResponse<String> res = hc.send(
