@@ -26,8 +26,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxException;
 import io.vertx.core.VertxOptions;
-import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.WebSocket;
+import io.vertx.core.http.WebSocketClient;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.impl.btc.BlockedThreadEvent;
 import io.vertx.ext.web.Route;
@@ -60,8 +60,8 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
     }
 
     public WebSocket openWebSocketConnection(String host, int port, String path, Consumer<String> handler) throws Exception {
-        HttpClient client = Vertx.vertx().createHttpClient();
-        CompletableFuture<WebSocket> future = client.webSocket(port, host, path)
+        WebSocketClient client = Vertx.vertx().createWebSocketClient();
+        CompletableFuture<WebSocket> future = client.connect(port, host, path)
                 .toCompletionStage()
                 .toCompletableFuture();
         WebSocket webSocket = future.get(5, TimeUnit.SECONDS);
