@@ -160,7 +160,7 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
         to.assertIsSatisfied(3000);
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
-        assertTrue(headers.containsKey(KafkaConstants.TOPIC), "Should receive KafkaEndpoint populated kafka.TOPIC header");
+        assertTrue(headers.containsKey(KafkaConstants.TOPIC), "Should receive KafkaEndpoint populated CamelKafkaTopic header");
         assertEquals(TOPIC, headers.get(KafkaConstants.TOPIC), "Topic name received");
     }
 

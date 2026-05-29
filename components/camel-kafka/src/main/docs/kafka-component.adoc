@@ -940,10 +940,10 @@ Here is the minimal route you need to read messages from Kafka.
 ----
 from("kafka:test?brokers=localhost:9092")
     .log("Message received from Kafka : ${body}")
-    .log("    on the topic ${headers[kafka.TOPIC]}")
-    .log("    on the partition ${headers[kafka.PARTITION]}")
-    .log("    with the offset ${headers[kafka.OFFSET]}")
-    .log("    with the key ${headers[kafka.KEY]}")
+    .log("    on the topic ${headers[CamelKafkaTopic]}")
+    .log("    on the partition ${headers[CamelKafkaPartition]}")
+    .log("    with the offset ${headers[CamelKafkaOffset]}")
+    .log("    with the key ${headers[CamelKafkaKey]}")
 ----
 
 If you need to consume messages from multiple topics, you can use a comma separated list of topic names.
@@ -952,10 +952,10 @@ If you need to consume messages from multiple topics, you can use a comma separa
 ----
 from("kafka:test,test1,test2?brokers=localhost:9092")
     .log("Message received from Kafka : ${body}")
-    .log("    on the topic ${headers[kafka.TOPIC]}")
-    .log("    on the partition ${headers[kafka.PARTITION]}")
-    .log("    with the offset ${headers[kafka.OFFSET]}")
-    .log("    with the key ${headers[kafka.KEY]}")
+    .log("    on the topic ${headers[CamelKafkaTopic]}")
+    .log("    on the partition ${headers[CamelKafkaPartition]}")
+    .log("    with the offset ${headers[CamelKafkaOffset]}")
+    .log("    with the key ${headers[CamelKafkaKey]}")
 ----
 
 It's also possible to subscribe to multiple topics giving a pattern as the topic name and using the `topicIsPattern` option.
@@ -964,10 +964,10 @@ It's also possible to subscribe to multiple topics giving a pattern as the topic
 ----
 from("kafka:test.*?brokers=localhost:9092&topicIsPattern=true")
     .log("Message received from Kafka : ${body}")
-    .log("    on the topic ${headers[kafka.TOPIC]}")
-    .log("    on the partition ${headers[kafka.PARTITION]}")
-    .log("    with the offset ${headers[kafka.OFFSET]}")
-    .log("    with the key ${headers[kafka.KEY]}")
+    .log("    on the topic ${headers[CamelKafkaTopic]}")
+    .log("    on the partition ${headers[CamelKafkaPartition]}")
+    .log("    with the offset ${headers[CamelKafkaOffset]}")
+    .log("    with the key ${headers[CamelKafkaKey]}")
 ----
 
 When consuming messages from Kafka, you can use your own offset management and not delegate this management to Kafka.

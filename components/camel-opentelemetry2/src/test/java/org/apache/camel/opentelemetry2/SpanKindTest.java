@@ -104,9 +104,9 @@ public class SpanKindTest extends OpenTelemetryTracerTestSupport {
 
         // Send with Kafka headers that would normally be set before/during sending
         template.sendBodyAndHeaders("direct:kafkaProducer", "test message",
-                Map.of("kafka.KEY", "test-key",
-                        "kafka.PARTITION", 0,
-                        "kafka.OFFSET", "12345"));
+                Map.of("CamelKafkaKey", "test-key",
+                        "CamelKafkaPartition", 0,
+                        "CamelKafkaOffset", "12345"));
 
         mockEndpoint.assertIsSatisfied();
 

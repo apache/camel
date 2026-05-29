@@ -9,6 +9,10 @@
   "CamelFtpReplyString",
   "CamelHttpResponseCode",
   "CamelHttpResponseText",
+  "CamelKafkaKey",
+  "CamelKafkaOffset",
+  "CamelKafkaPartition",
+  "CamelKafkaTopic",
   "CamelMqttTopic",
   "CamelNatsDeliveryCounter",
   "CamelNatsSID",
@@ -23,9 +27,5 @@
   "CamelSqlUpdateCount",
   "CamelSshExitValue",
   "Content-Type",
-  "kafka.KEY",
-  "kafka.OFFSET",
-  "kafka.PARTITION",
-  "kafka.TOPIC",
   "websocket.eventType"
 ]
