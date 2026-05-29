@@ -132,13 +132,13 @@ public class JsonXmlStreamReader implements XMLStreamReader {
                 throw new IllegalStateException("End of document");
             }
 
-            StackElement stackElement = new StackElement(currentToken, toXmlString(jsonParser.getCurrentName()));
+            StackElement stackElement = new StackElement(currentToken, toXmlString(jsonParser.currentName()));
             tokenStack.push(stackElement);
 
             if (currentToken == JsonToken.FIELD_NAME) {
                 currentToken = jsonParser.nextToken();
 
-                stackElement = new StackElement(currentToken, toXmlString(jsonParser.getCurrentName()));
+                stackElement = new StackElement(currentToken, toXmlString(jsonParser.currentName()));
                 tokenStack.push(stackElement);
             }
 
