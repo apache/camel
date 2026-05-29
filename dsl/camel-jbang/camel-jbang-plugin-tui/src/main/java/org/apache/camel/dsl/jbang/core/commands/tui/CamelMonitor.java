@@ -283,6 +283,7 @@ public class CamelMonitor extends CamelCommand {
     private boolean showMorePopup;
     private final ListState morePopupState = new ListState();
     private MonitorTab activeMoreTab;
+    private int lastMoreSelection;
     private Line[] currentTabLabels;
 
     private ClassLoader classLoader;
@@ -436,6 +437,7 @@ public class CamelMonitor extends CamelCommand {
                     showMorePopup = false;
                     Integer sel = morePopupState.selected();
                     if (sel != null) {
+                        lastMoreSelection = sel;
                         activeMoreTab = switch (sel) {
                             case 0 -> circuitBreakerTab;
                             case 1 -> configurationTab;
@@ -444,6 +446,8 @@ public class CamelMonitor extends CamelCommand {
                             default -> null;
                         };
                         if (activeMoreTab != null) {
+                            selectCurrentIntegration();
+                            tabsState.select(TAB_MORE);
                             activeMoreTab.onTabSelected();
                         }
                     }
@@ -792,8 +796,10 @@ public class CamelMonitor extends CamelCommand {
             errorsTab.onTabSelected();
         }
         if (tab == TAB_MORE) {
-            showMorePopup = true;
-            tabsState.select(tab);
+            showMorePopup = !showMorePopup;
+            if (showMorePopup) {
+                morePopupState.select(lastMoreSelection);
+            }
             return true;
         }
         showMorePopup = false;
