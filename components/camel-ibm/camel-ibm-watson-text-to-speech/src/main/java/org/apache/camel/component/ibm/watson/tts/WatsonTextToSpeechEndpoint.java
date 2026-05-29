@@ -107,7 +107,7 @@ public class WatsonTextToSpeechEndpoint extends DefaultEndpoint implements Endpo
     }
 
     private TextToSpeech createTtsClient() {
-        IamAuthenticator authenticator = new IamAuthenticator(configuration.getApiKey());
+        IamAuthenticator authenticator = (new IamAuthenticator.Builder()).apikey(configuration.getApiKey()).build();
         TextToSpeech service = new TextToSpeech(authenticator);
 
         if (configuration.getServiceUrl() != null) {
