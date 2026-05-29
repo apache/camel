@@ -12,10 +12,13 @@
   "license": "Apache-2.0",
   "keywords": [
     "camel",
+    "java",
+    "integration",
     "mcp",
     "model-context-protocol",
-    "integration",
     "jbang",
+    "spring-boot",
+    "quarkus",
     "catalog"
   ]
 }
