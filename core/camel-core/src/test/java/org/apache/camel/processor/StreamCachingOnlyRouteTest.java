@@ -46,7 +46,7 @@ public class StreamCachingOnlyRouteTest extends ContextTestSupport {
             public void configure() {
                 getContext().getGlobalOptions().put("CamelCachedOutputStreamThreshold", "4096");
 
-                from("direct:c").streamCaching().to("mock:c");
+                from("direct:c").streamCache(true).to("mock:c");
             }
         };
     }

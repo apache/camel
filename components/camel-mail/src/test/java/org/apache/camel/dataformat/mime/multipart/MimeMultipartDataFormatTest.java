@@ -551,7 +551,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
                 from("direct:marshalonlymixed").marshal().mimeMultipart();
                 from("direct:marshalonlyinlineheaders").marshal().mimeMultipart("mixed", false, true, "(included|x-.*)", false);
                 from("direct:unmarshalonly").unmarshal().mimeMultipart(false, false, false);
-                from("direct:unmarshalonlyinlineheaders").streamCaching().unmarshal().mimeMultipart(false, true, false);
+                from("direct:unmarshalonlyinlineheaders").streamCache(true).unmarshal().mimeMultipart(false, true, false);
             }
         };
     }

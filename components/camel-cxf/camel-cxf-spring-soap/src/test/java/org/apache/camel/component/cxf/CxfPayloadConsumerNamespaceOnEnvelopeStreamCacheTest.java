@@ -33,7 +33,7 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeStreamCacheTest extends CxfPay
                 // The consumer is running in payload mode
                 from("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD")
                         // Use stream caching to trigger the issue
-                        .streamCaching()
+                        .streamCache(true)
                         // Parse to DOM to make sure it's still valid XML
                         .convertBodyTo(Document.class).setBody().constant(RESPONSE_PAYLOAD);
             }

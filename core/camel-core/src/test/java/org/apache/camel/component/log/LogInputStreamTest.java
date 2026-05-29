@@ -102,17 +102,17 @@ public class LogInputStreamTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").noStreamCaching().to("log:a").to("mock:a");
+                from("direct:a").streamCache(false).to("log:a").to("mock:a");
 
-                from("direct:b").noStreamCaching().to("log:b?showStreams=true").to("mock:b");
+                from("direct:b").streamCache(false).to("log:b?showStreams=true").to("mock:b");
 
-                from("direct:c").streamCaching().to("log:c").to("mock:c");
+                from("direct:c").streamCache(true).to("log:c").to("mock:c");
 
-                from("direct:d").streamCaching().to("log:d?showStreams=true").to("mock:d");
+                from("direct:d").streamCache(true).to("log:d?showStreams=true").to("mock:d");
 
-                from("direct:e").streamCaching().to("log:e?showCachedStreams=true").to("mock:e");
+                from("direct:e").streamCache(true).to("log:e?showCachedStreams=true").to("mock:e");
 
-                from("direct:f").streamCaching().to("log:f?showCachedStreams=false").to("mock:f");
+                from("direct:f").streamCache(true).to("log:f?showCachedStreams=false").to("mock:f");
             }
         };
     }

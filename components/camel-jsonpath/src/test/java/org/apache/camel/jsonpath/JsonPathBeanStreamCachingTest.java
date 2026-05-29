@@ -41,7 +41,7 @@ public class JsonPathBeanStreamCachingTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").streamCaching()
+                from("direct:start").streamCache(true)
                         .bean(FullNameBean.class).to("mock:result");
             }
         };

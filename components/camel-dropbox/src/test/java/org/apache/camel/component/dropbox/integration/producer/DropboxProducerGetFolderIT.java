@@ -79,7 +79,7 @@ class DropboxProducerGetFolderIT extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .noStreamCaching()
+                        .streamCache(false)
                         .to("dropbox://get?accessToken={{accessToken}}" +
                             "&expireIn={{expireIn}}" +
                             "&refreshToken={{refreshToken}}" +
@@ -88,7 +88,7 @@ class DropboxProducerGetFolderIT extends DropboxTestSupport {
                         .to("mock:result");
 
                 from("direct:start2")
-                        .noStreamCaching()
+                        .streamCache(false)
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
                         .to("dropbox://get?accessToken={{accessToken}}" +
                             "&expireIn={{expireIn}}" +
@@ -97,7 +97,7 @@ class DropboxProducerGetFolderIT extends DropboxTestSupport {
                         .to("mock:result");
 
                 from("direct:start3")
-                        .noStreamCaching()
+                        .streamCache(false)
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
                         .to("dropbox://get?accessToken={{accessToken}}" +
                             "&expireIn={{expireIn}}" +

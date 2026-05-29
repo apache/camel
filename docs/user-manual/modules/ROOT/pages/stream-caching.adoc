@@ -126,7 +126,7 @@ Java::
 [source,java]
 ----
 from("file:inbox")
-  .streamCaching()
+  .streamCache(true)
   .to("bean:foo");
 ----
 
