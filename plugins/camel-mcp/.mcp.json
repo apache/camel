@@ -4,7 +4,7 @@
       "command": "jbang",
       "args": [
         "-Dquarkus.log.level=WARN",
-        "org.apache.camel:camel-jbang-mcp:4.20.0:runner"
+        "org.apache.camel:camel-jbang-mcp:LATEST:runner"
       ]
     }
   }

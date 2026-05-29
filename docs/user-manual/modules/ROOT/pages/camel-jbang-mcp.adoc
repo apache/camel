@@ -438,7 +438,7 @@ configuration):
       "command": "jbang",
       "args": [
         "-Dquarkus.log.level=WARN",
-        "org.apache.camel:camel-jbang-mcp:4.18.0:runner"
+        "org.apache.camel:camel-jbang-mcp:LATEST:runner"
       ]
     }
   }
@@ -457,7 +457,7 @@ Add the server to your MCP configuration:
       "command": "jbang",
       "args": [
         "-Dquarkus.log.level=WARN",
-        "org.apache.camel:camel-jbang-mcp:4.18.0:runner"
+        "org.apache.camel:camel-jbang-mcp:LATEST:runner"
       ]
     }
   }
@@ -476,7 +476,7 @@ Configure MCP servers in your `.vscode/mcp.json` or in the user settings:
       "command": "jbang",
       "args": [
         "-Dquarkus.log.level=WARN",
-        "org.apache.camel:camel-jbang-mcp:4.18.0:runner"
+        "org.apache.camel:camel-jbang-mcp:LATEST:runner"
       ]
     }
   }
@@ -496,7 +496,7 @@ Settings > Tools > AI Assistant > MCP Servers, or create an `.junie/mcp.json` fi
       "command": "jbang",
       "args": [
         "-Dquarkus.log.level=WARN",
-        "org.apache.camel:camel-jbang-mcp:4.18.0:runner"
+        "org.apache.camel:camel-jbang-mcp:LATEST:runner"
       ]
     }
   }
@@ -509,7 +509,7 @@ Any MCP client that supports the STDIO transport can launch the server directly:
 
 [source,bash]
 ----
-jbang org.apache.camel:camel-jbang-mcp:4.18.0:runner
+jbang org.apache.camel:camel-jbang-mcp:LATEST:runner
 ----
 
 === HTTP/SSE Transport
@@ -518,7 +518,7 @@ To start the server with the HTTP/SSE transport enabled:
 
 [source,bash]
 ----
-jbang -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 org.apache.camel:camel-jbang-mcp:4.18.0:runner
+jbang -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 org.apache.camel:camel-jbang-mcp:LATEST:runner
 ----
 
 If you have built Camel locally, you can also run the uber-JAR directly:
