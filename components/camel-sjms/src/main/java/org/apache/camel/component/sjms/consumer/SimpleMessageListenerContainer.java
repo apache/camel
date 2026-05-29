@@ -205,7 +205,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             initConsumers();
             LOG.debug("Successfully recovered JMS Connection (attempt: {})", task.iteration());
             // success so do not try again
-            return false;
+            return true;
         } catch (Exception e) {
             String message = "Failed to recover JMS Connection (attempt: " + task.iteration() + "). Will try again in "
                              + endpoint.getRecoveryInterval() + " millis";
@@ -222,7 +222,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                 recoverPool = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                         "SjmsConnectionRecovery");
             }
-            if (recoverTask == null) {
+            if (recoverTask == null || !recoverTask.isRunning()) {
                 recoverTask = createTask();
                 recoverFuture = recoverTask.schedule(endpoint.getCamelContext(), () -> recoverConnection(recoverTask));
             }
