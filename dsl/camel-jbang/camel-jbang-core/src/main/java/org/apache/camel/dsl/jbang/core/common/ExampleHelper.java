@@ -17,8 +17,14 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.InputStream;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +39,8 @@ public final class ExampleHelper {
     private static final String CATALOG_RESOURCE = "examples/camel-jbang-example-catalog.json";
     private static final String GITHUB_EXAMPLES_URL
             = "https://github.com/apache/camel-jbang-examples/tree/main/";
+    private static final String GITHUB_RAW_URL
+            = "https://raw.githubusercontent.com/apache/camel-jbang-examples/main/%s/%s";
 
     private ExampleHelper() {
     }
@@ -164,6 +172,30 @@ public final class ExampleHelper {
                     targetFile.toFile().deleteOnExit();
                     targetFile.getParent().toFile().deleteOnExit();
                 }
+            }
+        }
+
+        tempDir.toFile().deleteOnExit();
+        return tempDir;
+    }
+
+    public static Path downloadGithubExample(JsonObject entry) throws Exception {
+        String name = entry.getString("name");
+        List<String> fileNames = getFiles(entry);
+        Path tempDir = Files.createTempDirectory("camel-example-");
+
+        HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
+        for (String fileName : fileNames) {
+            String rawUrl = String.format(GITHUB_RAW_URL, name, fileName);
+            HttpResponse<String> res = hc.send(
+                    HttpRequest.newBuilder(new URI(rawUrl)).timeout(Duration.ofSeconds(20)).build(),
+                    HttpResponse.BodyHandlers.ofString());
+            if (res.statusCode() == 200) {
+                Path targetFile = tempDir.resolve(fileName);
+                Files.createDirectories(targetFile.getParent());
+                Files.writeString(targetFile, res.body());
+                targetFile.toFile().deleteOnExit();
+                targetFile.getParent().toFile().deleteOnExit();
             }
         }
 

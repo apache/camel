@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -567,7 +568,7 @@ public class VersionList extends CamelCommand {
         String gitUrl = String.format(RuntimeType.quarkus == runtime ? GIT_CAMEL_QUARKUS_URL : GIT_CAMEL_URL, coreVersion);
 
         try {
-            HttpClient hc = HttpClient.newHttpClient();
+            HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
             HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(gitUrl)).timeout(Duration.ofSeconds(20)).build(),
                     HttpResponse.BodyHandlers.ofString());
 
