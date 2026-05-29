@@ -18,11 +18,15 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.inject.Inject;
@@ -71,6 +75,9 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<InfrastructureServiceModel> models = new LinkedHashSet<>();
 
+        // Collect infra-service.properties from all dependency JARs once (for embedded service GA hints)
+        Properties infraServiceProps = collectInfraServiceProperties();
+
         for (AnnotationInstance ai : PackagePluginUtils.readJandexIndexQuietly(project).getAnnotations(INFRA_SERVICE)) {
 
             InfrastructureServiceModel infrastructureServiceModel = new InfrastructureServiceModel();
@@ -93,15 +100,41 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
                 throw new RuntimeException("Error reading jar file", e);
             }
 
+            String annotationServiceVersion = null;
+            List<String> serviceAliases = new ArrayList<>();
+            List<String> implAliases = new ArrayList<>();
+
             for (AnnotationValue av : ai.values()) {
                 if (av.name().equals("service")) {
                     infrastructureServiceModel.setService(av.asString());
                 } else if (av.name().equals("serviceAlias")) {
-                    infrastructureServiceModel.setAlias(Arrays.asList(av.asStringArray()));
+                    List<String> aliases = Arrays.asList(av.asStringArray());
+                    infrastructureServiceModel.setAlias(aliases);
+                    serviceAliases.addAll(aliases);
                 } else if (av.name().equals("serviceImplementationAlias")) {
-                    infrastructureServiceModel.getAliasImplementation().addAll(Arrays.asList(av.asStringArray()));
+                    List<String> aliases = Arrays.asList(av.asStringArray());
+                    infrastructureServiceModel.getAliasImplementation().addAll(aliases);
+                    implAliases.addAll(aliases);
                 } else if (av.name().equals("description")) {
                     infrastructureServiceModel.setDescription(av.asString());
+                } else if (av.name().equals("serviceVersion")) {
+                    annotationServiceVersion = av.asString();
+                }
+            }
+
+            // Resolve service version: annotation > container.properties > infra-service.properties GA hint
+            if (annotationServiceVersion != null && !annotationServiceVersion.isEmpty()) {
+                infrastructureServiceModel.setServiceVersion(annotationServiceVersion);
+            } else {
+                String detectedVersion = detectServiceVersionFromContainer(
+                        targetClass, infrastructureServiceModel, implAliases, serviceAliases);
+                if (detectedVersion != null) {
+                    infrastructureServiceModel.setServiceVersion(detectedVersion);
+                } else {
+                    String infraVersion = resolveVersionFromGAHint(infraServiceProps, implAliases, serviceAliases);
+                    if (infraVersion != null) {
+                        infrastructureServiceModel.setServiceVersion(infraVersion);
+                    }
                 }
             }
 
@@ -125,6 +158,207 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         }
     }
 
+    private String detectServiceVersionFromContainer(
+            String targetClass, InfrastructureServiceModel model,
+            List<String> implAliases, List<String> serviceAliases) {
+
+        // Collect container.properties from all dependency JARs to handle
+        // cross-module cases (e.g., Azure storage-queue using azure-common's properties)
+        Properties allProps = new Properties();
+
+        for (Artifact artifact : project.getArtifacts()) {
+            File file = artifact.getFile();
+            if (file == null || !file.exists()) {
+                continue;
+            }
+
+            if (file.isDirectory()) {
+                collectContainerPropertiesFromDirectory(file, file, allProps);
+            } else {
+                collectContainerPropertiesFromJar(file, allProps);
+            }
+        }
+
+        if (allProps.isEmpty()) {
+            return null;
+        }
+
+        return extractVersionFromProperties(allProps, implAliases, serviceAliases);
+    }
+
+    private void collectContainerPropertiesFromDirectory(File root, File dir, Properties target) {
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File f : files) {
+            if (f.isDirectory()) {
+                collectContainerPropertiesFromDirectory(root, f, target);
+            } else if (f.getName().equals("container.properties")) {
+                try (InputStream is = java.nio.file.Files.newInputStream(f.toPath())) {
+                    target.load(is);
+                } catch (IOException e) {
+                    // skip
+                }
+            }
+        }
+    }
+
+    private void collectContainerPropertiesFromJar(File jarPath, Properties target) {
+        try (JarFile jarFile = new JarFile(jarPath)) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (entry.getName().endsWith("/container.properties")) {
+                    try (InputStream is = jarFile.getInputStream(entry)) {
+                        target.load(is);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // skip
+        }
+    }
+
+    private String extractVersionFromProperties(
+            Properties props, List<String> implAliases, List<String> serviceAliases) {
+
+        // Determine which alias to match against property keys
+        // Prefer implementation alias (e.g., "redpanda" for Kafka Redpanda)
+        List<String> aliasesToMatch = new ArrayList<>();
+        if (!implAliases.isEmpty()) {
+            aliasesToMatch.addAll(implAliases);
+        }
+        aliasesToMatch.addAll(serviceAliases);
+
+        for (String alias : aliasesToMatch) {
+            String normalizedAlias = normalizeForMatching(alias);
+
+            for (String key : props.stringPropertyNames()) {
+                String lowerKey = key.toLowerCase();
+
+                // Skip platform-specific keys
+                if (lowerKey.endsWith(".ppc64le") || lowerKey.endsWith(".s390x")
+                        || lowerKey.endsWith(".aarch64") || lowerKey.endsWith(".amd64")) {
+                    continue;
+                }
+                // Skip version metadata keys
+                if (lowerKey.contains(".version.exclude") || lowerKey.contains(".version.include")
+                        || lowerKey.contains(".version.freeze")) {
+                    continue;
+                }
+                // Must reference a container
+                if (!lowerKey.contains("container")) {
+                    continue;
+                }
+                // Skip keys ending with .version (handled separately for RocketMQ pattern)
+                if (lowerKey.endsWith(".version")) {
+                    continue;
+                }
+
+                // Extract prefix before first ".container" occurrence
+                int containerIdx = lowerKey.indexOf(".container");
+                if (containerIdx <= 0) {
+                    continue;
+                }
+                String prefix = lowerKey.substring(0, containerIdx);
+                String normalizedPrefix = normalizeForMatching(prefix);
+
+                // Match: normalized prefix must equal the normalized alias,
+                // or end with the normalized alias (for compound names like hivemq.sparkplug)
+                if (!normalizedPrefix.equals(normalizedAlias)
+                        && !normalizedPrefix.endsWith(normalizedAlias)) {
+                    continue;
+                }
+
+                String imageRef = props.getProperty(key);
+                if (imageRef == null || imageRef.isEmpty()) {
+                    continue;
+                }
+
+                // Value must look like a container image reference (contains '/')
+                if (!imageRef.contains("/")) {
+                    continue;
+                }
+
+                // Extract version from image tag (after last ':')
+                int colonIdx = imageRef.lastIndexOf(':');
+                if (colonIdx > 0 && colonIdx < imageRef.length() - 1) {
+                    return imageRef.substring(colonIdx + 1);
+                }
+
+                // No tag in image reference — check for a separate .version property (RocketMQ pattern)
+                String versionKey = key + ".version";
+                String separateVersion = props.getProperty(versionKey);
+                if (separateVersion != null && !separateVersion.isEmpty()) {
+                    return separateVersion;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Properties collectInfraServiceProperties() {
+        Properties allProps = new Properties();
+        for (Artifact artifact : project.getArtifacts()) {
+            File file = artifact.getFile();
+            if (file == null || !file.exists()) {
+                continue;
+            }
+            if (file.isDirectory()) {
+                File propsFile = new File(file, "META-INF/infra-service.properties");
+                if (propsFile.exists()) {
+                    try (InputStream is = java.nio.file.Files.newInputStream(propsFile.toPath())) {
+                        allProps.load(is);
+                    } catch (IOException e) {
+                        // skip
+                    }
+                }
+            } else {
+                try (JarFile jarFile = new JarFile(file)) {
+                    JarEntry entry = jarFile.getJarEntry("META-INF/infra-service.properties");
+                    if (entry != null) {
+                        try (InputStream is = jarFile.getInputStream(entry)) {
+                            allProps.load(is);
+                        }
+                    }
+                } catch (IOException e) {
+                    // skip
+                }
+            }
+        }
+        return allProps;
+    }
+
+    private String resolveVersionFromGAHint(
+            Properties infraProps, List<String> implAliases, List<String> serviceAliases) {
+
+        List<String> aliasesToTry = new ArrayList<>();
+        aliasesToTry.addAll(implAliases);
+        aliasesToTry.addAll(serviceAliases);
+
+        for (String alias : aliasesToTry) {
+            String ga = infraProps.getProperty(alias);
+            if (ga == null || ga.isEmpty()) {
+                continue;
+            }
+            String[] parts = ga.split(":");
+            if (parts.length != 2) {
+                continue;
+            }
+            for (Artifact artifact : project.getArtifacts()) {
+                if (parts[0].equals(artifact.getGroupId()) && parts[1].equals(artifact.getArtifactId())) {
+                    return artifact.getVersion();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String normalizeForMatching(String s) {
+        return s.replace("-", "").replace(".", "").toLowerCase();
+    }
+
     private boolean classExistsInDependency(String classPath, File dependency) throws IOException {
         if (dependency.isDirectory()) {
             return new File(dependency, classPath).exists();
@@ -143,6 +377,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         private String groupId;
         private String artifactId;
         private String version;
+        private String serviceVersion;
 
         public String getService() {
             return service;
@@ -206,6 +441,14 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
 
         public void setVersion(String version) {
             this.version = version;
+        }
+
+        public String getServiceVersion() {
+            return serviceVersion;
+        }
+
+        public void setServiceVersion(String serviceVersion) {
+            this.serviceVersion = serviceVersion;
         }
     }
 }
