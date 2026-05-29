@@ -1267,10 +1267,11 @@ public class CamelMonitor extends CamelCommand {
                     portHost = host;
                 }
                 String infraAlias = "🔧  " + info.alias;
+                String version = info.serviceVersion != null ? info.serviceVersion : "";
                 rows.add(Row.from(
                         Cell.from(info.pid),
                         Cell.from(Span.styled(infraAlias, Style.EMPTY.fg(Color.MAGENTA))),
-                        Cell.from(""),
+                        Cell.from(version),
                         Cell.from(""),
                         Cell.from(Span.styled(statusText, statusStyle)),
                         Cell.from(""),
@@ -2240,6 +2241,7 @@ public class CamelMonitor extends CamelCommand {
                         } catch (Exception e) {
                             // ignore parse errors
                         }
+                        info.serviceVersion = objToString(info.properties.get("serviceVersion"));
                         infraInfos.add(info);
                     }
                 }

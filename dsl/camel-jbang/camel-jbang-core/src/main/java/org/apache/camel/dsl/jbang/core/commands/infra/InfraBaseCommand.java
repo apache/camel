@@ -245,7 +245,8 @@ public abstract class InfraBaseCommand extends CamelCommand {
             List<String> aliasImplementation,
             String groupId,
             String artifactId,
-            String version) {
+            String version,
+            String serviceVersion) {
     }
 
     record Row(String pid, String alias, String aliasImplementation, String description, String serviceData) {
