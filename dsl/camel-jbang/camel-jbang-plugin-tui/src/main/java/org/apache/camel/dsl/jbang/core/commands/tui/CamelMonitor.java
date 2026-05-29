@@ -73,6 +73,10 @@ import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
+import dev.tamboui.widgets.list.ListItem;
+import dev.tamboui.widgets.list.ListState;
+import dev.tamboui.widgets.list.ListWidget;
+import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -119,8 +123,8 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_HEALTH = 5;
     private static final int TAB_HISTORY = 6;
     private static final int TAB_ERRORS = 7;
-    private static final int TAB_CIRCUIT_BREAKER = 8;
-    private static final int TAB_CONSUMERS = 9;
+    private static final int TAB_METRICS = 8;
+    private static final int TAB_MORE = 9;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "version", "status", "total", "fail" };
@@ -271,6 +275,16 @@ public class CamelMonitor extends CamelCommand {
     private HistoryTab historyTab;
     private CircuitBreakerTab circuitBreakerTab;
     private ErrorsTab errorsTab;
+    private MetricsTab metricsTab;
+    private StartupTab startupTab;
+    private ConfigurationTab configurationTab;
+
+    // "More" dropdown state
+    private boolean showMorePopup;
+    private final ListState morePopupState = new ListState();
+    private MonitorTab activeMoreTab;
+    private int lastMoreSelection;
+    private Line[] currentTabLabels;
 
     private ClassLoader classLoader;
 
@@ -320,6 +334,9 @@ public class CamelMonitor extends CamelCommand {
         historyTab = new HistoryTab(ctx, traces, traceFilePositions);
         circuitBreakerTab = new CircuitBreakerTab(ctx, cbSuccessHistory, cbFailHistory);
         errorsTab = new ErrorsTab(ctx);
+        metricsTab = new MetricsTab(ctx);
+        startupTab = new StartupTab(ctx);
+        configurationTab = new ConfigurationTab(ctx);
 
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
@@ -402,6 +419,42 @@ public class CamelMonitor extends CamelCommand {
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
             }
+            // "More" tab popup
+            if (showMorePopup) {
+                if (ke.isCancel()) {
+                    showMorePopup = false;
+                    return true;
+                }
+                if (ke.isUp()) {
+                    morePopupState.selectPrevious();
+                    return true;
+                }
+                if (ke.isDown()) {
+                    morePopupState.selectNext(4);
+                    return true;
+                }
+                if (ke.isConfirm()) {
+                    showMorePopup = false;
+                    Integer sel = morePopupState.selected();
+                    if (sel != null) {
+                        lastMoreSelection = sel;
+                        activeMoreTab = switch (sel) {
+                            case 0 -> circuitBreakerTab;
+                            case 1 -> configurationTab;
+                            case 2 -> consumersTab;
+                            case 3 -> startupTab;
+                            default -> null;
+                        };
+                        if (activeMoreTab != null) {
+                            selectCurrentIntegration();
+                            tabsState.select(TAB_MORE);
+                            activeMoreTab.onTabSelected();
+                        }
+                    }
+                    return true;
+                }
+                return true;
+            }
             // Kill confirm dialog: Enter to confirm, Esc/any other key to cancel
             if (showKillConfirm) {
                 if (ke.isConfirm()) {
@@ -463,10 +516,10 @@ public class CamelMonitor extends CamelCommand {
                     return handleTabKey(TAB_ERRORS);
                 }
                 if (ke.isChar('9')) {
-                    return handleTabKey(TAB_CIRCUIT_BREAKER);
+                    return handleTabKey(TAB_METRICS);
                 }
                 if (ke.isChar('0')) {
-                    return handleTabKey(TAB_CONSUMERS);
+                    return handleTabKey(TAB_MORE);
                 }
             }
 
@@ -733,9 +786,6 @@ public class CamelMonitor extends CamelCommand {
             }
             historyTab.onTabSelected();
         }
-        if (tab == TAB_CIRCUIT_BREAKER) {
-            circuitBreakerTab.onTabSelected();
-        }
         if (tab == TAB_ERRORS && ctx.selectedPid != null) {
             try {
                 long pid = Long.parseLong(ctx.selectedPid);
@@ -745,6 +795,14 @@ public class CamelMonitor extends CamelCommand {
             }
             errorsTab.onTabSelected();
         }
+        if (tab == TAB_MORE) {
+            showMorePopup = !showMorePopup;
+            if (showMorePopup) {
+                morePopupState.select(lastMoreSelection);
+            }
+            return true;
+        }
+        showMorePopup = false;
         tabsState.select(tab);
         return true;
     }
@@ -968,7 +1026,6 @@ public class CamelMonitor extends CamelCommand {
         IntegrationInfo sel = findSelectedIntegration();
         boolean hasSelection = ctx.selectedPid != null && sel != null;
         int routeCount = hasSelection ? sel.routes.size() : 0;
-        int consumerCount = hasSelection ? sel.consumers.size() : 0;
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
         int cbCount = hasSelection ? sel.circuitBreakers.size() : 0;
         long cbOpenCount = hasSelection
@@ -984,6 +1041,8 @@ public class CamelMonitor extends CamelCommand {
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
         int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
 
+        int metricsCount = hasSelection ? sel.meters.size() : 0;
+
         // Row 0: label-only titles — fixed width so the tab bar never shifts when badges appear
         Line[] labels = {
                 Line.from(" 1 Overview "),
@@ -994,9 +1053,10 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(" 6 Health "),
                 Line.from(" 7 Inspect "),
                 Line.from(" 8 Errors "),
-                Line.from(" 9 Circuit Breaker "),
-                Line.from(" 0 Consumer "),
+                Line.from(" 9 Metrics "),
+                Line.from(" 0 More▾ "),
         };
+        currentTabLabels = labels;
 
         Tabs tabs = Tabs.builder()
                 .titles(labels)
@@ -1030,9 +1090,6 @@ public class CamelMonitor extends CamelCommand {
             if (routeCount > 0) {
                 badgeTexts[TAB_ROUTES] = "(" + routeCount + ")";
             }
-            if (consumerCount > 0) {
-                badgeTexts[TAB_CONSUMERS] = "(" + consumerCount + ")";
-            }
             if (endpointCount > 0) {
                 badgeTexts[TAB_ENDPOINTS] = "(" + endpointCount + ")";
             }
@@ -1051,11 +1108,12 @@ public class CamelMonitor extends CamelCommand {
             } else if (historyCount > 0) {
                 badgeTexts[TAB_HISTORY] = "(" + historyCount + ")";
             }
+            if (metricsCount > 0) {
+                badgeTexts[TAB_METRICS] = "(" + metricsCount + ")";
+            }
             if (cbOpenCount > 0) {
-                badgeTexts[TAB_CIRCUIT_BREAKER] = "(" + cbOpenCount + " OPEN)";
-                badgeStyles[TAB_CIRCUIT_BREAKER] = red;
-            } else if (cbCount > 0) {
-                badgeTexts[TAB_CIRCUIT_BREAKER] = "(" + cbCount + ")";
+                badgeTexts[TAB_MORE] = "(" + cbOpenCount + " OPEN)";
+                badgeStyles[TAB_MORE] = red;
             }
             int errorCount = hasSelection ? sel.errorCount : 0;
             if (errorCount > 0) {
@@ -1090,19 +1148,64 @@ public class CamelMonitor extends CamelCommand {
         } else {
             renderOverview(frame, area);
         }
+        // Render "More" popup overlay when visible
+        if (showMorePopup) {
+            renderMorePopup(frame, area);
+        }
+    }
+
+    private void renderMorePopup(Frame frame, Rect area) {
+        int popupW = 22;
+        int popupH = 6;
+        // Position just below the "0 More▾" tab label
+        int dividerW = CharWidth.of(" | ");
+        int tabBarX = 0;
+        Line[] tabLabels = currentTabLabels;
+        if (tabLabels != null) {
+            for (int i = 0; i < tabLabels.length - 1; i++) {
+                tabBarX += tabLabels[i].width();
+                tabBarX += dividerW;
+            }
+        }
+        int x = area.left() + tabBarX;
+        int y = area.top();
+        if (x + popupW > area.right()) {
+            x = Math.max(area.left(), area.right() - popupW);
+        }
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width() - (x - area.left())), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        ListItem[] items = {
+                ListItem.from("  Circuit Breaker"),
+                ListItem.from("  Configuration"),
+                ListItem.from("  Consumers"),
+                ListItem.from("  Startup"),
+        };
+        ListWidget list = ListWidget.builder()
+                .items(items)
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(" More Tabs ")
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, morePopupState);
     }
 
     private MonitorTab activeTab() {
         return switch (tabsState.selected()) {
             case TAB_LOG -> logTab;
             case TAB_ROUTES -> routesTab;
-            case TAB_CONSUMERS -> consumersTab;
             case TAB_ENDPOINTS -> endpointsTab;
-            case TAB_CIRCUIT_BREAKER -> circuitBreakerTab;
             case TAB_HEALTH -> healthTab;
             case TAB_HISTORY -> historyTab;
             case TAB_HTTP -> httpTab;
             case TAB_ERRORS -> errorsTab;
+            case TAB_METRICS -> metricsTab;
+            case TAB_MORE -> activeMoreTab;
             default -> null;
         };
     }
@@ -1874,17 +1977,23 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        MonitorTab tab = activeTab();
-
-        if (tab != null) {
-            tab.renderFooter(spans);
-            // Insert F2 after the first hint (Esc) — each hint is 2 spans (key + label)
-            int insertPos = Math.min(2, spans.size());
-            List<Span> f2Spans = new ArrayList<>();
-            hint(f2Spans, "F2", "actions");
-            spans.addAll(insertPos, f2Spans);
+        if (showMorePopup) {
+            hint(spans, "Up/Down", "select");
+            hint(spans, "Enter", "open");
+            hint(spans, "Esc", "close");
         } else {
-            renderOverviewFooter(spans);
+            MonitorTab tab = activeTab();
+
+            if (tab != null) {
+                tab.renderFooter(spans);
+                // Insert F2 after the first hint (Esc) — each hint is 2 spans (key + label)
+                int insertPos = Math.min(2, spans.size());
+                List<Span> f2Spans = new ArrayList<>();
+                hint(f2Spans, "F2", "actions");
+                spans.addAll(insertPos, f2Spans);
+            } else {
+                renderOverviewFooter(spans);
+            }
         }
 
         List<Span> rightSpans = new ArrayList<>();
@@ -3178,6 +3287,16 @@ public class CamelMonitor extends CamelCommand {
             info.errorCount = errorsObj.getIntegerOrDefault("size", 0);
         }
 
+        // Parse micrometer metrics (optional, only present when --observe is used)
+        JsonObject micrometerObj = (JsonObject) root.get("micrometer");
+        if (micrometerObj != null) {
+            parseMicrometerMeters(micrometerObj, "counters", "counter", info);
+            parseMicrometerMeters(micrometerObj, "gauges", "gauge", info);
+            parseMicrometerMeters(micrometerObj, "timers", "timer", info);
+            parseMicrometerMeters(micrometerObj, "longTaskTimers", "longTaskTimer", info);
+            parseMicrometerMeters(micrometerObj, "distribution", "distribution", info);
+        }
+
         // Parse REST DSL services
         JsonObject restsObj = (JsonObject) root.get("rests");
         if (restsObj != null) {
@@ -3220,6 +3339,28 @@ public class CamelMonitor extends CamelCommand {
             info.httpServer = phpObj.getString("server");
             parseHttpEndpoints(phpObj, "endpoints", false, info);
             parseHttpEndpoints(phpObj, "managementEndpoints", true, info);
+        }
+
+        // Parse configuration properties (from PropertiesDevConsole)
+        JsonObject propsObj = (JsonObject) root.get("properties");
+        if (propsObj != null) {
+            JsonArray propArr = (JsonArray) propsObj.get("properties");
+            if (propArr != null) {
+                for (Object p : propArr) {
+                    JsonObject pj = (JsonObject) p;
+                    String key = pj.getString("key");
+                    if (key != null && !key.startsWith("camel.jbang.")) {
+                        ConfigurationTab.ConfigProperty cp = new ConfigurationTab.ConfigProperty();
+                        cp.key = key;
+                        cp.value = objToString(pj.get("value"));
+                        cp.defaultValue = pj.getString("defaultValue");
+                        cp.source = pj.getString("source");
+                        cp.location = pj.getString("location");
+                        info.configProperties.add(cp);
+                    }
+                }
+                info.configProperties.sort(ConfigurationTab::compareCamelFirst);
+            }
         }
 
         return info;
@@ -3286,6 +3427,65 @@ public class CamelMonitor extends CamelCommand {
             Object fr = bj.get("failureRate");
             cb.failureRate = fr instanceof Number n ? n.doubleValue() : -1;
             info.circuitBreakers.add(cb);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void parseMicrometerMeters(
+            JsonObject micrometerObj, String section, String type, IntegrationInfo info) {
+        JsonArray arr = (JsonArray) micrometerObj.get(section);
+        if (arr == null) {
+            return;
+        }
+        for (Object o : arr) {
+            JsonObject jo = (JsonObject) o;
+            MicrometerMeterInfo m = new MicrometerMeterInfo();
+            m.type = type;
+            m.name = jo.getString("name");
+            m.description = jo.getString("description");
+            // parse tags
+            JsonArray tagsArr = (JsonArray) jo.get("tags");
+            if (tagsArr != null) {
+                for (Object t : tagsArr) {
+                    JsonObject tj = (JsonObject) t;
+                    m.tags.add(new String[] { tj.getString("key"), tj.getString("value") });
+                }
+            }
+            // parse type-specific values
+            switch (type) {
+                case "counter":
+                    m.count = TuiHelper.objToLong(jo.get("count"));
+                    break;
+                case "gauge":
+                    Object v = jo.get("value");
+                    m.value = v instanceof Number n ? n.doubleValue() : null;
+                    break;
+                case "timer":
+                    m.count = TuiHelper.objToLong(jo.get("count"));
+                    m.mean = TuiHelper.objToLong(jo.get("mean"));
+                    m.max = TuiHelper.objToLong(jo.get("max"));
+                    m.total = TuiHelper.objToLong(jo.get("total"));
+                    break;
+                case "longTaskTimer":
+                    Object at = jo.get("activeTasks");
+                    m.activeTasks = at instanceof Number n ? n.intValue() : null;
+                    m.mean = TuiHelper.objToLong(jo.get("mean"));
+                    m.max = TuiHelper.objToLong(jo.get("max"));
+                    m.total = TuiHelper.objToLong(jo.get("duration"));
+                    break;
+                case "distribution":
+                    m.count = TuiHelper.objToLong(jo.get("count"));
+                    Object dm = jo.get("mean");
+                    m.meanDouble = dm instanceof Number n ? n.doubleValue() : null;
+                    Object dx = jo.get("max");
+                    m.maxDouble = dx instanceof Number n ? n.doubleValue() : null;
+                    Object dt = jo.get("totalAmount");
+                    m.totalDouble = dt instanceof Number n ? n.doubleValue() : null;
+                    break;
+                default:
+                    break;
+            }
+            info.meters.add(m);
         }
     }
 
