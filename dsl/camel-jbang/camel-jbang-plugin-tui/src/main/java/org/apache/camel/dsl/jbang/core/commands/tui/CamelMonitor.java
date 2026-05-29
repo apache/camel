@@ -153,8 +153,7 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, VanishingInfo> vanishing = new ConcurrentHashMap<>();
     private final Map<String, VanishingInfraInfo> vanishingInfra = new ConcurrentHashMap<>();
     private final TableState overviewTableState = new TableState();
-    private final TableState infraTableState = new TableState();
-    // infraTableFocused is stored on ctx (MonitorContext) so tabs can access it
+    private int overviewDividerIndex = -1;
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
 
     // Sparkline: throughput history per PID (one point per second)
@@ -424,11 +423,6 @@ public class CamelMonitor extends CamelCommand {
                     tabsState.select(TAB_OVERVIEW);
                     return true;
                 }
-                if (ctx.infraTableFocused) {
-                    ctx.infraTableFocused = false;
-                    syncSelectedPidFromOverview();
-                    return true;
-                }
                 if (ctx.selectedPid != null) {
                     ctx.selectedPid = null;
                     ctx.lastSelectedName = null;
@@ -597,25 +591,8 @@ public class CamelMonitor extends CamelCommand {
                 chartMode = (chartMode + 1) % 3;
                 return true;
             }
-            // Overview tab: toggle focus between integrations and infra tables
-            if (tab == TAB_OVERVIEW && ke.isChar('i') && !infraData.get().isEmpty()) {
-                ctx.infraTableFocused = !ctx.infraTableFocused;
-                if (ctx.infraTableFocused) {
-                    if (infraTableState.selected() == null) {
-                        infraTableState.select(0);
-                    }
-                    syncSelectedPidFromInfra();
-                } else {
-                    List<IntegrationInfo> intInfos = sortedOverviewInfos();
-                    if (!intInfos.isEmpty() && overviewTableState.selected() == null) {
-                        overviewTableState.select(0);
-                    }
-                    syncSelectedPidFromOverview();
-                }
-                return true;
-            }
             // Overview tab: start/stop all routes for selected integration (not infra)
-            if (tab == TAB_OVERVIEW && ke.isChar('p') && ctx.selectedPid != null && !ctx.infraTableFocused) {
+            if (tab == TAB_OVERVIEW && ke.isChar('p') && ctx.selectedPid != null && !isInfraSelected()) {
                 IntegrationInfo selInfo = findSelectedIntegration();
                 if (selInfo != null) {
                     String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
@@ -634,7 +611,7 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             // Overview tab: cold restart (stop + re-launch) for selected integration
-            if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !ctx.infraTableFocused) {
+            if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !isInfraSelected()) {
                 restartSelectedProcess();
                 return true;
             }
@@ -787,30 +764,28 @@ public class CamelMonitor extends CamelCommand {
             }
             ctx.selectedPid = null;
         }
-        if (ctx.infraTableFocused) {
-            List<InfraInfo> infras = infraData.get();
-            Integer sel = infraTableState.selected();
-            if (sel != null && sel >= 0 && sel < infras.size()) {
-                ctx.selectedPid = infras.get(sel).pid;
+        List<IntegrationInfo> infos = sortedOverviewInfos();
+        List<InfraInfo> infras = infraData.get();
+        Integer sel = overviewTableState.selected();
+        if (sel != null && sel >= 0) {
+            String pid = overviewIndexToPid(infos, infras, sel);
+            if (pid != null) {
+                ctx.selectedPid = pid;
             }
-        } else {
-            List<IntegrationInfo> infos = sortedOverviewInfos();
-            Integer sel = overviewTableState.selected();
-            if (sel != null && sel >= 0 && sel < infos.size()) {
-                ctx.selectedPid = infos.get(sel).pid;
-            } else if (infos.size() == 1) {
-                ctx.selectedPid = infos.get(0).pid;
-            }
+        } else if (infos.size() == 1) {
+            ctx.selectedPid = infos.get(0).pid;
         }
     }
 
-    private void syncSelectedPidFromOverview() {
+    private void syncSelectedPid() {
         List<IntegrationInfo> infos = sortedOverviewInfos();
+        List<InfraInfo> infras = infraData.get();
         Integer sel = overviewTableState.selected();
         String newPid = null;
-        if (sel != null && sel >= 0 && sel < infos.size()) {
-            newPid = infos.get(sel).pid;
-        } else if (infos.size() == 1) {
+        if (sel != null && sel >= 0) {
+            newPid = overviewIndexToPid(infos, infras, sel);
+        }
+        if (newPid == null && infos.size() == 1) {
             newPid = infos.get(0).pid;
         }
         if (newPid != null && !newPid.equals(ctx.selectedPid)) {
@@ -820,18 +795,15 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
-    private void syncSelectedPidFromInfra() {
-        List<InfraInfo> infras = infraData.get();
-        Integer sel = infraTableState.selected();
-        String newPid = null;
-        if (sel != null && sel >= 0 && sel < infras.size()) {
-            newPid = infras.get(sel).pid;
+    private String overviewIndexToPid(List<IntegrationInfo> infos, List<InfraInfo> infras, int index) {
+        if (index < infos.size()) {
+            return infos.get(index).pid;
         }
-        if (newPid != null && !newPid.equals(ctx.selectedPid)) {
-            ctx.selectedPid = newPid;
-            ctx.lastSelectedName = null;
-            resetIntegrationTabState();
+        int infraIndex = index - infos.size() - (overviewDividerIndex >= 0 ? 1 : 0);
+        if (infraIndex >= 0 && infraIndex < infras.size()) {
+            return infras.get(infraIndex).pid;
         }
+        return null;
     }
 
     private void resetIntegrationTabState() {
@@ -846,13 +818,13 @@ public class CamelMonitor extends CamelCommand {
         if (tab != null) {
             tab.navigateUp();
         } else {
-            if (ctx.infraTableFocused) {
-                infraTableState.selectPrevious();
-                syncSelectedPidFromInfra();
-            } else {
+            overviewTableState.selectPrevious();
+            // Skip the divider row
+            Integer sel = overviewTableState.selected();
+            if (sel != null && overviewDividerIndex >= 0 && sel == overviewDividerIndex) {
                 overviewTableState.selectPrevious();
-                syncSelectedPidFromOverview();
             }
+            syncSelectedPid();
         }
     }
 
@@ -861,14 +833,21 @@ public class CamelMonitor extends CamelCommand {
         if (tab != null) {
             tab.navigateDown();
         } else {
-            if (ctx.infraTableFocused) {
-                infraTableState.selectNext(infraData.get().size());
-                syncSelectedPidFromInfra();
-            } else {
-                overviewTableState.selectNext(sortedOverviewInfos().size());
-                syncSelectedPidFromOverview();
+            int totalRows = overviewTotalRows();
+            overviewTableState.selectNext(totalRows);
+            // Skip the divider row
+            Integer sel = overviewTableState.selected();
+            if (sel != null && overviewDividerIndex >= 0 && sel == overviewDividerIndex) {
+                overviewTableState.selectNext(totalRows);
             }
+            syncSelectedPid();
         }
+    }
+
+    private int overviewTotalRows() {
+        int integrations = sortedOverviewInfos().size();
+        int infra = infraData.get().size();
+        return integrations + (infra > 0 ? 1 : 0) + infra;
     }
 
     // ---- Rendering ----
@@ -1134,27 +1113,31 @@ public class CamelMonitor extends CamelCommand {
         List<IntegrationInfo> infos = sortedOverviewInfos();
         List<InfraInfo> infraInfos = infraData.get();
 
+        // Build unified row list: integrations, then divider, then infra
+        int integrationCount = infos.size();
+        int infraCount = infraInfos.size();
+        overviewDividerIndex = infraCount > 0 ? integrationCount : -1;
+
         // Keep the table selection index tracking the same PID across sort changes and data refreshes
-        if (ctx.selectedPid != null && !ctx.infraTableFocused) {
+        if (ctx.selectedPid != null) {
             for (int i = 0; i < infos.size(); i++) {
                 if (ctx.selectedPid.equals(infos.get(i).pid)) {
                     overviewTableState.select(i);
                     break;
                 }
             }
-        }
-        if (ctx.selectedPid != null && ctx.infraTableFocused) {
             for (int i = 0; i < infraInfos.size(); i++) {
                 if (ctx.selectedPid.equals(infraInfos.get(i).pid)) {
-                    infraTableState.select(i);
+                    int tableIndex = integrationCount + (overviewDividerIndex >= 0 ? 1 : 0) + i;
+                    overviewTableState.select(tableIndex);
                     break;
                 }
             }
         }
 
-        // Split: one table (integrations or infra, toggled by 'i') + chart or info panel
-        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !ctx.infraTableFocused;
-        boolean showInfoPanel = ctx.infraTableFocused && findSelectedInfra() != null && !hasSparkline;
+        // Split: table + chart or info panel
+        boolean hasSparkline = chartMode != CHART_OFF && !throughputHistory.isEmpty() && !isInfraSelected();
+        boolean showInfoPanel = isInfraSelected() && findSelectedInfra() != null && !hasSparkline;
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.fill());
         if (hasSparkline) {
@@ -1175,9 +1158,10 @@ public class CamelMonitor extends CamelCommand {
                 int gray = (int) (100 * fade);
                 Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
 
+                String vanishName = "\ud83d\udc2b " + (info.name != null ? info.name : "");
                 rows.add(Row.from(
                         Cell.from(Span.styled(info.pid, dimStyle)),
-                        Cell.from(Span.styled(info.name != null ? info.name : "", dimStyle)),
+                        Cell.from(Span.styled(vanishName, dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("\u2716 Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
@@ -1199,11 +1183,12 @@ public class CamelMonitor extends CamelCommand {
 
                 String sinceLastDisplay = formatSinceLast(info);
 
+                String nameText = "🐫 " + (info.name != null ? info.name : "");
                 Line nameLine = info.devMode
                         ? Line.from(
-                                Span.styled(info.name != null ? info.name : "", Style.EMPTY.fg(Color.CYAN)),
+                                Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)),
                                 Span.styled(" [dev]", Style.EMPTY.fg(Color.YELLOW).dim()))
-                        : Line.from(Span.styled(info.name != null ? info.name : "", Style.EMPTY.fg(Color.CYAN)));
+                        : Line.from(Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)));
                 rows.add(Row.from(
                         Cell.from(info.pid),
                         Cell.from(nameLine),
@@ -1234,35 +1219,93 @@ public class CamelMonitor extends CamelCommand {
                 rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
                 Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
 
-        if (ctx.infraTableFocused) {
-            // Show infra table only
-            renderInfraTable(frame, chunks.get(0), infraInfos);
-        } else {
-            // Show integrations table only
-            Style integrationHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
-            Table table = Table.builder()
-                    .rows(rows)
-                    .header(header)
-                    .widths(
-                            Constraint.length(8),
-                            Constraint.fill(),
-                            Constraint.length(16),
-                            Constraint.length(5),
-                            Constraint.length(10),
-                            Constraint.length(8),
-                            Constraint.length(7),
-                            Constraint.length(8),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(12))
-                    .highlightStyle(integrationHighlight)
-                    .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                    .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
-                    .build();
-
-            frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
+        // Divider row between integrations and infra services
+        if (overviewDividerIndex >= 0) {
+            rows.add(Row.from(
+                    Cell.from(""),
+                    Cell.from(Span.styled("─── Infra Services ───", Style.EMPTY.dim())),
+                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
+                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
+                    Cell.from(""), Cell.from("")));
         }
+
+        // Infra rows adapted to 12-column layout
+        for (InfraInfo info : infraInfos) {
+            if (info.vanishing) {
+                long elapsed = System.currentTimeMillis() - info.vanishStart;
+                float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
+                int gray = (int) (100 * fade);
+                Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
+                String vanishAlias = "🔧  " + info.alias;
+                rows.add(Row.from(
+                        Cell.from(Span.styled(info.pid, dimStyle)),
+                        Cell.from(Span.styled(vanishAlias, dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("✖ Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle))));
+            } else {
+                Style statusStyle = info.alive ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
+                String statusText = info.alive ? "Running" : "Stopped";
+                String port = objToString(info.properties.get("getPort"));
+                String host = objToString(info.properties.get("getHost"));
+                if (host.isEmpty()) {
+                    host = objToString(info.properties.get("getHostname"));
+                }
+                String portHost = "";
+                if (!port.isEmpty() && !host.isEmpty()) {
+                    portHost = host + ":" + port;
+                } else if (!port.isEmpty()) {
+                    portHost = ":" + port;
+                } else if (!host.isEmpty()) {
+                    portHost = host;
+                }
+                String infraAlias = "🔧  " + info.alias;
+                rows.add(Row.from(
+                        Cell.from(info.pid),
+                        Cell.from(Span.styled(infraAlias, Style.EMPTY.fg(Color.MAGENTA))),
+                        Cell.from(""),
+                        Cell.from(""),
+                        Cell.from(Span.styled(statusText, statusStyle)),
+                        Cell.from(""),
+                        Cell.from(""),
+                        Cell.from(""),
+                        Cell.from(""),
+                        Cell.from(""),
+                        Cell.from(""),
+                        Cell.from(portHost)));
+            }
+        }
+
+        Style overviewHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
+        Table table = Table.builder()
+                .rows(rows)
+                .header(header)
+                .widths(
+                        Constraint.length(8),
+                        Constraint.fill(),
+                        Constraint.length(16),
+                        Constraint.length(5),
+                        Constraint.length(10),
+                        Constraint.length(8),
+                        Constraint.length(7),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(6),
+                        Constraint.length(8),
+                        Constraint.length(12))
+                .highlightStyle(overviewHighlight)
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Overview ").build())
+                .build();
+
+        frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
 
         // Split green/red throughput bar chart with Y and X axes
         if (hasSparkline && chunks.size() > 1) {
@@ -1416,7 +1459,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderOverviewInfoPanel(Frame frame, Rect area) {
         // Check if an infra service is selected — show connection details instead
-        InfraInfo infraSel = ctx.infraTableFocused ? findSelectedInfra() : null;
+        InfraInfo infraSel = findSelectedInfra();
         if (infraSel != null) {
             renderInfraInfoPanel(frame, area, infraSel);
             return;
@@ -1524,64 +1567,6 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
     }
 
-    // ---- Infra table (overview sub-section) ----
-
-    private void renderInfraTable(Frame frame, Rect area, List<InfraInfo> infraInfos) {
-        List<Row> infraRows = new ArrayList<>();
-        for (InfraInfo info : infraInfos) {
-            if (info.vanishing) {
-                long elapsed = System.currentTimeMillis() - info.vanishStart;
-                float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
-                int gray = (int) (100 * fade);
-                Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
-                infraRows.add(Row.from(
-                        Cell.from(Span.styled(info.pid, dimStyle)),
-                        Cell.from(Span.styled(info.alias, dimStyle)),
-                        Cell.from(Span.styled("✖ Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
-                        Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle))));
-            } else {
-                Style statusStyle = info.alive ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
-                String statusText = info.alive ? "Running" : "Stopped";
-                String port = objToString(info.properties.get("getPort"));
-                String host = objToString(info.properties.get("getHost"));
-                if (host.isEmpty()) {
-                    host = objToString(info.properties.get("getHostname"));
-                }
-                infraRows.add(Row.from(
-                        Cell.from(info.pid),
-                        Cell.from(Span.styled(info.alias, Style.EMPTY.fg(Color.MAGENTA))),
-                        Cell.from(Span.styled(statusText, statusStyle)),
-                        Cell.from(port),
-                        Cell.from(host)));
-            }
-        }
-
-        Row infraHeader = Row.from(
-                Cell.from(Span.styled("PID", Style.EMPTY.bold())),
-                Cell.from(Span.styled("SERVICE", Style.EMPTY.bold())),
-                Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
-                Cell.from(Span.styled("PORT", Style.EMPTY.bold())),
-                Cell.from(Span.styled("HOST", Style.EMPTY.bold())));
-
-        Style infraHighlight = Style.EMPTY.fg(Color.WHITE).bold().onBlue();
-        Table infraTable = Table.builder()
-                .rows(infraRows)
-                .header(infraHeader)
-                .widths(
-                        Constraint.length(8),
-                        Constraint.fill(),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(20))
-                .highlightStyle(infraHighlight)
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Infrastructure ").build())
-                .build();
-
-        frame.renderStatefulWidget(infraTable, area, infraTableState);
-    }
-
     private void renderInfraInfoPanel(Frame frame, Rect area, InfraInfo infra) {
         Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).build();
         frame.renderWidget(infoBlock, area);
@@ -1655,7 +1640,7 @@ public class CamelMonitor extends CamelCommand {
         } catch (NumberFormatException e) {
             return;
         }
-        if (ctx.infraTableFocused) {
+        if (isInfraSelected()) {
             InfraInfo infra = findSelectedInfra();
             if (infra != null) {
                 Path camelDir = CommandLineHelper.getCamelDir();
@@ -1686,7 +1671,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void restartSelectedProcess() {
-        if (ctx.selectedPid == null || ctx.infraTableFocused) {
+        if (ctx.selectedPid == null || isInfraSelected()) {
             return;
         }
         long pid;
@@ -1972,13 +1957,10 @@ public class CamelMonitor extends CamelCommand {
         hint(spans, "q", "quit");
         hint(spans, "F2", "actions");
         if (ctx.selectedPid != null) {
-            hint(spans, "Esc", ctx.infraTableFocused ? "integrations" : "unselect");
+            hint(spans, "Esc", "unselect");
         }
         hint(spans, "↑↓", "navigate");
-        if (!infraData.get().isEmpty()) {
-            hint(spans, "i", ctx.infraTableFocused ? "integrations" : "infra");
-        }
-        if (!ctx.infraTableFocused) {
+        if (!isInfraSelected()) {
             hint(spans, "s", "sort");
             hint(spans, "a", "chart " + switch (chartMode) {
                 case CHART_ALL -> "[all]";
@@ -1986,14 +1968,14 @@ public class CamelMonitor extends CamelCommand {
                 default -> "[off]";
             });
         }
-        if (ctx.selectedPid != null && !ctx.infraTableFocused) {
+        if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
             if (selInfo != null) {
                 hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
             }
         }
         if (ctx.selectedPid != null) {
-            if (!ctx.infraTableFocused) {
+            if (!isInfraSelected()) {
                 hint(spans, "r", "restart");
             }
             hint(spans, "x", "stop");
@@ -2103,7 +2085,7 @@ public class CamelMonitor extends CamelCommand {
             data.set(infos);
 
             // Clear stale selection when the selected integration is gone
-            if (ctx.selectedPid != null && !ctx.infraTableFocused) {
+            if (ctx.selectedPid != null && !isInfraSelected()) {
                 boolean stillAlive = infos.stream()
                         .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
                 if (!stillAlive) {
@@ -2124,7 +2106,6 @@ public class CamelMonitor extends CamelCommand {
                 for (IntegrationInfo info : infos) {
                     if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
                         ctx.selectedPid = info.pid;
-                        ctx.infraTableFocused = false;
                         ctx.lastSelectedName = null;
                         actionsPopup.clearPendingAutoSelect();
                         break;
@@ -2133,7 +2114,7 @@ public class CamelMonitor extends CamelCommand {
             }
 
             // Auto-reselect by remembered name when the integration restarts
-            if (ctx.selectedPid == null && ctx.lastSelectedName != null && !ctx.infraTableFocused) {
+            if (ctx.selectedPid == null && ctx.lastSelectedName != null && !isInfraSelected()) {
                 for (IntegrationInfo info : infos) {
                     if (!info.vanishing && ctx.lastSelectedName.equalsIgnoreCase(info.name)) {
                         ctx.selectedPid = info.pid;
@@ -2146,14 +2127,15 @@ public class CamelMonitor extends CamelCommand {
             // Discover running infra services
             refreshInfraData();
 
-            // Auto-focus infra table when no active integrations exist
-            if (!ctx.infraTableFocused && !infraData.get().isEmpty()
+            // Auto-select first infra service when no active integrations exist
+            if (ctx.selectedPid == null && !infraData.get().isEmpty()
                     && infos.stream().noneMatch(i -> !i.vanishing)) {
-                ctx.infraTableFocused = true;
-                if (infraTableState.selected() == null) {
-                    infraTableState.select(0);
+                List<InfraInfo> infras = infraData.get();
+                if (!infras.isEmpty()) {
+                    int firstInfraIndex = infos.size() + (infras.size() > 0 ? 1 : 0);
+                    overviewTableState.select(firstInfraIndex);
+                    ctx.selectedPid = infras.get(0).pid;
                 }
-                syncSelectedPidFromInfra();
             }
 
             // Refresh log data only when the Log tab is visible
@@ -3637,7 +3619,6 @@ public class CamelMonitor extends CamelCommand {
             if (nameOrPid.equals(info.pid)
                     || (info.name != null && info.name.equalsIgnoreCase(nameOrPid))) {
                 ctx.selectedPid = info.pid;
-                ctx.infraTableFocused = false;
                 return info.name != null ? info.name : info.pid;
             }
         }
