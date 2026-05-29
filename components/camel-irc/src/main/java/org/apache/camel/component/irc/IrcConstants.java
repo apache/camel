@@ -23,27 +23,27 @@ import org.apache.camel.spi.Metadata;
  */
 public final class IrcConstants {
     @Metadata(description = "The type of message", javaType = "String")
-    public static final String IRC_MESSAGE_TYPE = "irc.messageType";
+    public static final String IRC_MESSAGE_TYPE = "CamelIrcMessageType";
     @Metadata(description = "The target", javaType = "String")
-    public static final String IRC_TARGET = "irc.target";
+    public static final String IRC_TARGET = "CamelIrcTarget";
     @Metadata(description = "The nickname or channel the message should be sent to.", javaType = "String")
-    public static final String IRC_SEND_TO = "irc.sendTo";
+    public static final String IRC_SEND_TO = "CamelIrcSendTo";
     @Metadata(description = "The nickname of the user who is kicked from a channel (passive).", javaType = "String")
-    public static final String IRC_USER_KICKED = "irc.user.kicked";
+    public static final String IRC_USER_KICKED = "CamelIrcUserKicked";
     @Metadata(description = "The host of the person who sent the line.", javaType = "String")
-    public static final String IRC_USER_HOST = "irc.user.host";
+    public static final String IRC_USER_HOST = "CamelIrcUserHost";
     @Metadata(description = "The nickname of the person who sent the line or the server name of the server which sent the line.",
               javaType = "String")
-    public static final String IRC_USER_NICK = "irc.user.nick";
+    public static final String IRC_USER_NICK = "CamelIrcUserNick";
     @Metadata(description = "The server name of the server which sent the line or the nickname of the person who sent the line.",
               javaType = "String")
-    public static final String IRC_USER_SERVERNAME = "irc.user.servername";
+    public static final String IRC_USER_SERVERNAME = "CamelIrcUserServername";
     @Metadata(description = "The username of the person who sent the line.", javaType = "String")
-    public static final String IRC_USER_USERNAME = "irc.user.username";
+    public static final String IRC_USER_USERNAME = "CamelIrcUserUsername";
     @Metadata(description = "The numeric reply.", javaType = "int")
-    public static final String IRC_NUM = "irc.num";
+    public static final String IRC_NUM = "CamelIrcNum";
     @Metadata(description = "The first part of the message", javaType = "String")
-    public static final String IRC_VALUE = "irc.value";
+    public static final String IRC_VALUE = "CamelIrcValue";
 
     private IrcConstants() {
         // Utility class
