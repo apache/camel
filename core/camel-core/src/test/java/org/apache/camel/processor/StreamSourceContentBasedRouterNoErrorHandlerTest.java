@@ -32,7 +32,7 @@ public class StreamSourceContentBasedRouterNoErrorHandlerTest extends StreamSour
                 // is enabled and make sure the predicates can be evaluated
                 // multiple times
 
-                from("direct:start").streamCaching().choice().when().xpath("/message/text() = 'xx'").to("mock:x").when()
+                from("direct:start").streamCache(true).choice().when().xpath("/message/text() = 'xx'").to("mock:x").when()
                         .xpath("/message/text() = 'yy'").to("mock:y").end();
             }
         };

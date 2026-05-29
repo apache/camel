@@ -65,7 +65,7 @@ public class JettyWithXPathChoiceTest extends BaseJettyTest {
             public void configure() {
                 from("jetty:http://localhost:{{port}}/myworld")
                         // use stream caching
-                        .streamCaching().choice().when().xpath("/one").to("mock:x").when().xpath("/two").to("mock:y")
+                        .streamCache(true).choice().when().xpath("/one").to("mock:x").when().xpath("/two").to("mock:y")
                         .otherwise().to("mock:z").end();
 
             }

@@ -53,7 +53,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").noStreamCaching().to("mock:a");
+                from("direct:a").streamCache(false).to("mock:a");
             }
         });
         context.start();
@@ -96,9 +96,9 @@ public class NoStreamCachingTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").noStreamCaching().to("mock:a");
+                from("direct:a").streamCache(false).to("mock:a");
 
-                from("direct:b").streamCaching().to("mock:b");
+                from("direct:b").streamCache(true).to("mock:b");
             }
         });
         context.start();

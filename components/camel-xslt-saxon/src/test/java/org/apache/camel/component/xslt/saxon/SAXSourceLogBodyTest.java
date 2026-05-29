@@ -49,7 +49,7 @@ public class SAXSourceLogBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").streamCaching()
+                from("direct:start").streamCache(true)
                         // attach a SaxSource to body
                         .process(new Processor() {
                             @Override

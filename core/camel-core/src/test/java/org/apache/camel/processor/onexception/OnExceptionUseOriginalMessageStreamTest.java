@@ -109,30 +109,30 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
                         .convertBodyTo(String.class)
                         .handled(true);
 
-                from("direct:convertBodyWithStreamCache").streamCaching()
+                from("direct:convertBodyWithStreamCache").streamCache(true)
                         .convertBodyTo(String.class)
                         .throwException(new ExceptionOne());
 
-                from("direct:convertBodyWithoutStreamCache").noStreamCaching()
+                from("direct:convertBodyWithoutStreamCache").streamCache(false)
                         .convertBodyTo(String.class)
                         .throwException(new ExceptionOne());
 
-                from("direct:unmarshallWithStreamCache").streamCaching()
+                from("direct:unmarshallWithStreamCache").streamCache(true)
                         .unmarshal(new MyDataFormat())
                         .throwException(new ExceptionOne());
 
-                from("direct:unmarshallWithoutStreamCache").noStreamCaching()
+                from("direct:unmarshallWithoutStreamCache").streamCache(false)
                         .unmarshal(new MyDataFormat())
                         .throwException(new ExceptionOne());
 
-                from("direct:convertBodyInvalidUnmarshallWithoutStreamCache").noStreamCaching()
+                from("direct:convertBodyInvalidUnmarshallWithoutStreamCache").streamCache(false)
                         .convertBodyTo(String.class)
                         .unmarshal(new MyDataFormat());
 
-                from("direct:noStreamReading").streamCaching()
+                from("direct:noStreamReading").streamCache(true)
                         .throwException(new ExceptionOne());
 
-                from("direct:setBodyAsExchangeProperty").noStreamCaching()
+                from("direct:setBodyAsExchangeProperty").streamCache(false)
                         .convertBodyTo(String.class)
                         .setProperty("OriginalBody", body())
                         .throwException(new ExceptionTwo());
