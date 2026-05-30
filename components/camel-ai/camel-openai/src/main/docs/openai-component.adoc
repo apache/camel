@@ -511,7 +511,13 @@ set `apiKey` if it requires one, and use the same operations and options as with
 
 === Ollama (local)
 
-Ollama runs models locally and does not require an API key.
+https://ollama.com[Ollama] runs models locally and does not require an API key. Install Ollama and
+pull the model used in the example below:
+
+[source,bash]
+----
+ollama run llama3.2
+----
 
 [tabs]
 ====
@@ -542,7 +548,8 @@ Provider* table below).
 
 === LM Studio (local)
 
-LM Studio serves the model currently loaded in the app. Set `model` to the identifier shown in its UI.
+https://lmstudio.ai[LM Studio] serves the model currently loaded in the app. Set `model` to the
+identifier shown in its UI.
 
 [source,java]
 ----
@@ -552,6 +559,14 @@ from("direct:chat")
 
 === vLLM (self-hosted)
 
+https://docs.vllm.ai[vLLM] is a high-throughput LLM serving engine. Install it with `pip install vllm`
+and start the model used in the example below:
+
+[source,bash]
+----
+vllm serve meta-llama/Llama-3.1-8B-Instruct --port 8000
+----
+
 [source,java]
 ----
 from("direct:chat")
@@ -560,6 +575,13 @@ from("direct:chat")
 ----
 
 If vLLM was started with `--api-key`, pass the same value via the `apiKey` option.
+
+On Apple Silicon, the `vllm-mlx` variant uses Apple's MLX framework and runs the same way:
+
+[source,bash]
+----
+vllm-mlx serve mlx-community/Qwen2.5-7B-Instruct-4bit --port 8000
+----
 
 === OpenRouter
 
