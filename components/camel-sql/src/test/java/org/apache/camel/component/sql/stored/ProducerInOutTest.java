@@ -33,6 +33,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ProducerInOutTest extends CamelTestSupport {
 
+    /* This is necessary when debugging tests to enable HSQLDB to find
+       the classes in the classpath. */
+    /*
+    static {
+        if (System.getProperty("hsqldb.method_class_names") == null) {
+            System.setProperty(
+                    "hsqldb.method_class_names",
+                    "org.apache.camel.component.sql.stored.*");
+        }
+    }
+    */
+
     EmbeddedDatabase db;
 
     @Override
@@ -40,7 +52,7 @@ public class ProducerInOutTest extends CamelTestSupport {
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.HSQL)
                 .addScript("sql/storedProcedureTest.sql").build();
 
     }
@@ -81,7 +93,7 @@ public class ProducerInOutTest extends CamelTestSupport {
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
                 from("direct:query")
-                        .to("sql-stored:INOUTDEMO(INTEGER ${headers.in1},INOUT INTEGER ${headers.in2} out1,OUT INTEGER out2)")
+                        .to("sql-stored:INOUTDEMO(INTEGER ${headers.in1}, INOUT INTEGER ${headers.in2} out1, OUT INTEGER out2)")
                         .to("mock:query");
             }
         };
