@@ -19,9 +19,9 @@ package org.apache.camel.component.servicenow;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
@@ -113,9 +113,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
                 Map<String, String> responseAttributes = null;
 
                 if (root != null) {
-                    Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
-                    while (fields.hasNext()) {
-                        final Map.Entry<String, JsonNode> entry = fields.next();
+                    for (Entry<String, JsonNode> entry : root.properties()) {
                         final String key = entry.getKey();
                         final JsonNode node = entry.getValue();
 

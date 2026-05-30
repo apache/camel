@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -532,9 +533,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         if (ObjectHelper.isNotEmpty(response.getHeaderString(HttpHeaders.CONTENT_TYPE))) {
             JsonNode root = response.readEntity(JsonNode.class);
             if (root != null) {
-                Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
-                while (fields.hasNext()) {
-                    final Map.Entry<String, JsonNode> entry = fields.next();
+                for (Entry<String, JsonNode> entry : root.properties()) {
                     final String key = entry.getKey();
                     final JsonNode node = entry.getValue();
 
