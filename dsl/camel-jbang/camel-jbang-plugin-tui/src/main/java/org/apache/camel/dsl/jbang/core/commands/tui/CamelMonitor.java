@@ -971,6 +971,11 @@ public class CamelMonitor extends CamelCommand {
         beansTab.onIntegrationChanged();
         browseTab.onIntegrationChanged();
         threadsTab.onIntegrationChanged();
+        startupTab.onIntegrationChanged();
+        configurationTab.onIntegrationChanged();
+        consumersTab.onIntegrationChanged();
+        circuitBreakerTab.onIntegrationChanged();
+        inflightTab.onIntegrationChanged();
     }
 
     private void navigateUp() {
