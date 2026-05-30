@@ -87,6 +87,9 @@ class MemoryTab implements MonitorTab {
         if (info.metaspaceUsed > 0) {
             statsHeight += 2;
         }
+        if (info.threadCount > 0) {
+            statsHeight += 2;
+        }
         List<Rect> chunks = Layout.vertical()
                 .constraints(Constraint.length(statsHeight), Constraint.length(15))
                 .split(area);
@@ -167,6 +170,18 @@ class MemoryTab implements MonitorTab {
                     info.metaspaceMax > 0
                             ? Span.styled("  max: " + formatBytes(info.metaspaceMax), Style.EMPTY.dim())
                             : Span.raw("")));
+        }
+
+        // Threads
+        if (info.threadCount > 0) {
+            lines.add(Line.from(Span.raw("")));
+            List<Span> threadSpans = new ArrayList<>();
+            threadSpans.add(Span.styled("  Threads", Style.EMPTY.fg(Color.CYAN).bold()));
+            threadSpans.add(Span.styled("  current: ", Style.EMPTY.dim()));
+            threadSpans.add(Span.styled(String.valueOf(info.threadCount), Style.EMPTY.fg(Color.WHITE).bold()));
+            threadSpans.add(Span.styled("  peak: ", Style.EMPTY.dim()));
+            threadSpans.add(Span.raw(String.valueOf(info.peakThreadCount)));
+            lines.add(Line.from(threadSpans));
         }
 
         // GC and class loading on the same line
