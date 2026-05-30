@@ -665,8 +665,8 @@ class ActionsPopup {
         int popupW = 40;
         int popupH = 2 + count;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
         String divider = "  ─────────────────────────────────";

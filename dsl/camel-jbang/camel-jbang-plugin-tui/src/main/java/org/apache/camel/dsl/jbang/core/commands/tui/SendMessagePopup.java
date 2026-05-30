@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -309,6 +310,13 @@ class SendMessagePopup {
         resultError = false;
 
         String body = bodyState.text();
+        if (body != null && body.startsWith("file:")) {
+            File f = new File(body.substring(5));
+            if (f.exists() && f.isFile()) {
+                body = "file:" + f.getAbsolutePath();
+            }
+        }
+        String sendBody = body;
         RouteInfo route = routes.get(selectedRouteIndex);
         String endpoint = route.routeId;
         String mep = inOut ? "InOut" : "InOnly";
@@ -323,7 +331,7 @@ class SendMessagePopup {
                 JsonObject root = new JsonObject();
                 root.put("action", "send");
                 root.put("endpoint", endpoint);
-                root.put("body", body);
+                root.put("body", sendBody);
                 root.put("exchangePattern", mep);
                 root.put("pollTimeout", 20000);
                 root.put("poll", false);
@@ -398,8 +406,8 @@ class SendMessagePopup {
         int baseH = routes.size() > 1 ? 14 : 12;
         int popupH = baseH + (headerCount > 0 ? headerCount + 1 : 0);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -410,7 +418,7 @@ class SendMessagePopup {
         title += " ";
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(title)
+                .title(Title.from(Line.from(Span.styled(title, Style.EMPTY.fg(Color.YELLOW).bold()))))
                 .titleBottom(Title.from(Line.from(
                         Span.styled(" +", MonitorContext.HINT_KEY_STYLE),
                         Span.raw(" header │"),
@@ -450,6 +458,7 @@ class SendMessagePopup {
         if (selectedField == FIELD_BODY && !sending) {
             TextInput textInput = TextInput.builder()
                     .cursorStyle(Style.EMPTY.reversed())
+                    .placeholder("body text or file:payload.json")
                     .build();
             frame.renderStatefulWidget(textInput, bodyArea, bodyState);
         } else {

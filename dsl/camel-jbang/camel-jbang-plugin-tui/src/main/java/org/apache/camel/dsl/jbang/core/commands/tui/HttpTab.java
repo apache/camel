@@ -16,10 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -661,6 +663,17 @@ class HttpTab implements MonitorTab {
         String method = PROBE_METHODS[probeMethodIndex];
         String path = probePathState.text();
         String body = probeBodyState.text();
+        if (body != null && body.startsWith("file:")) {
+            try {
+                body = Files.readString(Path.of(body.substring(5)));
+            } catch (IOException e) {
+                probeResponseStatus = "Error reading file: " + e.getMessage();
+                probeResponseError = true;
+                probeSending.set(false);
+                return;
+            }
+        }
+        String sendBody = body;
         String baseUrl = probeBaseUrl;
 
         // Snapshot headers
@@ -677,7 +690,7 @@ class HttpTab implements MonitorTab {
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                doProbeRequestInBackground(baseUrl, method, path, body, hdrs);
+                doProbeRequestInBackground(baseUrl, method, path, sendBody, hdrs);
             } finally {
                 probeSending.set(false);
             }
@@ -965,7 +978,10 @@ class HttpTab implements MonitorTab {
         renderProbeLabel(frame, innerX, row, labelW, "Body:", probeField == PROBE_BODY);
         Rect bodyArea = new Rect(innerX + labelW, row, fieldW, 1);
         if (probeField == PROBE_BODY && !probeSending.get()) {
-            TextInput textInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
+            TextInput textInput = TextInput.builder()
+                    .cursorStyle(Style.EMPTY.reversed())
+                    .placeholder("body text or file:payload.json")
+                    .build();
             frame.renderStatefulWidget(textInput, bodyArea, probeBodyState);
         } else {
             String bodyText = probeBodyState.text();
