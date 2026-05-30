@@ -50,14 +50,6 @@ class StartupTab implements MonitorTab {
     private static final Style VALUE = Style.EMPTY.fg(Color.WHITE).bold();
     private static final Style HEADER = Style.EMPTY.fg(Color.YELLOW).bold();
 
-    private static final Style[] BAND_STYLES = {
-            Style.EMPTY.fg(Color.GREEN),
-            Style.EMPTY.fg(Color.LIGHT_GREEN),
-            Style.EMPTY.fg(Color.YELLOW),
-            Style.EMPTY.fg(Color.rgb(0xFF, 0xA5, 0x00)),
-            Style.EMPTY.fg(Color.RED),
-    };
-
     private final MonitorContext ctx;
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
@@ -250,13 +242,7 @@ class StartupTab implements MonitorTab {
     }
 
     private Style colorForDuration(long duration) {
-        if (maxDurationColor <= minDurationColor) {
-            return BAND_STYLES[0];
-        }
-        double ratio = (Math.log1p(duration) - Math.log1p(minDurationColor))
-                       / (Math.log1p(maxDurationColor) - Math.log1p(minDurationColor));
-        int bandIndex = Math.min((int) (ratio * 5), 4);
-        return BAND_STYLES[bandIndex];
+        return TuiHelper.colorForDuration(duration, minDurationColor, maxDurationColor);
     }
 
     @Override

@@ -835,6 +835,17 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    private List<Long> selectedPidAsList() {
+        if (ctx.selectedPid == null) {
+            return Collections.emptyList();
+        }
+        try {
+            return List.of(Long.parseLong(ctx.selectedPid));
+        } catch (NumberFormatException e) {
+            return Collections.emptyList();
+        }
+    }
+
     private void syncSelectedPid() {
         List<IntegrationInfo> infos = sortedOverviewInfos();
         List<InfraInfo> infras = infraData.get();
@@ -2273,18 +2284,21 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
 
+            // Scope history/error/trace refresh to the selected integration only
+            List<Long> selectedPids = selectedPidAsList();
+
             // Refresh error data only when the Errors tab is visible
-            if (tabsState.selected() == TAB_ERRORS) {
-                refreshErrorData(pids);
+            if (tabsState.selected() == TAB_ERRORS && !selectedPids.isEmpty()) {
+                refreshErrorData(selectedPids);
             }
 
             // Refresh trace data only when the History tab is visible
-            if (tabsState.selected() == TAB_HISTORY) {
+            if (tabsState.selected() == TAB_HISTORY && !selectedPids.isEmpty()) {
                 if (historyTab.historyRefreshRequested) {
                     historyTab.historyRefreshRequested = false;
-                    refreshHistoryData(pids);
+                    refreshHistoryData(selectedPids);
                 }
-                refreshTraceData(pids);
+                refreshTraceData(selectedPids);
             }
         } catch (Exception e) {
             // ignore refresh errors
@@ -2670,21 +2684,6 @@ public class CamelMonitor extends CamelCommand {
         entry.last = json.getBooleanOrDefault("last", false);
         entry.nodeLevel = json.getIntegerOrDefault("nodeLevel", 0);
 
-        // timestamp is epoch millis (number)
-        Object tsObj = json.get("timestamp");
-        if (tsObj instanceof Number n) {
-            long epochMs = n.longValue();
-            entry.epochMs = epochMs;
-            entry.timestamp = Instant.ofEpochMilli(epochMs)
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalTime().toString();
-            if (entry.timestamp.length() > 12) {
-                entry.timestamp = entry.timestamp.substring(0, 12);
-            }
-        } else if (tsObj != null) {
-            entry.timestamp = tsObj.toString();
-        }
-
         // Derive status from done/failed booleans
         boolean done = Boolean.TRUE.equals(json.get("done"));
         boolean failed = Boolean.TRUE.equals(json.get("failed"));
@@ -2706,6 +2705,24 @@ public class CamelMonitor extends CamelCommand {
             } catch (NumberFormatException e) {
                 // ignore
             }
+        }
+
+        // Timestamp — last entries carry the start time, so add elapsed to get completion time
+        Object tsObj = json.get("timestamp");
+        if (tsObj instanceof Number n) {
+            long epochMs = n.longValue();
+            if (entry.last && entry.elapsed > 0) {
+                epochMs += entry.elapsed;
+            }
+            entry.epochMs = epochMs;
+            entry.timestamp = Instant.ofEpochMilli(epochMs)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalTime().toString();
+            if (entry.timestamp.length() > 12) {
+                entry.timestamp = entry.timestamp.substring(0, 12);
+            }
+        } else if (tsObj != null) {
+            entry.timestamp = tsObj.toString();
         }
 
         // Compute direction and processor label
@@ -2841,10 +2858,13 @@ public class CamelMonitor extends CamelCommand {
             entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
         }
 
-        // Timestamp
+        // Timestamp — last entries carry the start time, so add elapsed to get completion time
         Object tsObj = json.get("timestamp");
         if (tsObj instanceof Number n) {
             long epochMs = n.longValue();
+            if (entry.last && entry.elapsed > 0) {
+                epochMs += entry.elapsed;
+            }
             entry.epochMs = epochMs;
             entry.timestamp = Instant.ofEpochMilli(epochMs)
                     .atZone(ZoneId.systemDefault())
