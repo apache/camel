@@ -28,7 +28,5 @@ public class IggyHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public IggyHeaderFilterStrategy() {
         setLowerCase(true);
-        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 }

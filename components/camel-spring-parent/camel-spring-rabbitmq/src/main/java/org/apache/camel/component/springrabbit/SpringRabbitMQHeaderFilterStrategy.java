@@ -29,8 +29,6 @@ public class SpringRabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrat
         this.getOutFilter().add("content-length");
         this.getOutFilter().add("content-type");
         this.setLowerCase(true);
-        this.setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-        this.setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 
 }

@@ -22,7 +22,5 @@ public class CometdHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public CometdHeaderFilterStrategy() {
         setLowerCase(true);
-        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 }

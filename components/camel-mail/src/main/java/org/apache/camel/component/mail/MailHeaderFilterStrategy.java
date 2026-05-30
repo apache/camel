@@ -28,8 +28,6 @@ public class MailHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     protected void initialize() {
         setLowerCase(true);
-        // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
         // on the inbound path also filter the Camel-internal mail.smtp.* / mail.smtps.* namespace so an
         // external mail message cannot inject JavaMail session properties (CAMEL-23522)
         String[] inFilter = Arrays.copyOf(CAMEL_FILTER_STARTS_WITH, CAMEL_FILTER_STARTS_WITH.length + 2);

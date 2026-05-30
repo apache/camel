@@ -69,6 +69,15 @@ your own code or tooling, add `org.jspecify:jspecify` explicitly to your project
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
+The `DefaultHeaderFilterStrategy` now blocks headers whose names start with `Camel`, `camel`, or
+`org.apache.camel.` (case-insensitive) by default in both the inbound (external to Camel) and outbound
+(Camel to external) directions. The `CAMEL_FILTER_STARTS_WITH` constant has been updated to include
+`org.apache.camel.`. Previously this required each component to explicitly call
+`setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH)` and `setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH)`.
+Users who configure `DefaultHeaderFilterStrategy` directly and need these headers to pass through
+must now explicitly opt out by calling `setInFilterStartsWith((String[]) null)` and/or
+`setOutFilterStartsWith((String[]) null)`, or by supplying a custom filter array.
+
 ==== Error Registry SPI changes
 
 The `ErrorRegistry` SPI has been enhanced to capture rich exchange data snapshots at error time,

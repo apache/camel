@@ -36,10 +36,6 @@ public class HttpHeaderFilterStrategy extends org.apache.camel.http.base.HttpHea
 
         setLowerCase(true);
 
-        // filter headers begin with "Camel" or "org.apache.camel"
-        // must ignore case for Http based transports
-        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 
 }
