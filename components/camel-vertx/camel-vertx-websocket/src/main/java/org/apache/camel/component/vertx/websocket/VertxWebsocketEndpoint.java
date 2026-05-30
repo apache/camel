@@ -41,6 +41,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -132,7 +133,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
-            headerFilterStrategy = new VertxWebsocketHeaderFilterStrategy();
+            headerFilterStrategy = new DefaultHeaderFilterStrategy();
         }
         return headerFilterStrategy;
     }

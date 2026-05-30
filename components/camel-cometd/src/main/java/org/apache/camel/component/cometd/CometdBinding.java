@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultMessage;
 import org.cometd.bayeux.server.ServerChannel;
@@ -57,7 +58,7 @@ public class CometdBinding {
     }
 
     public CometdBinding(BayeuxServerImpl bayeux, boolean enableSessionHeader) {
-        this(bayeux, enableSessionHeader, new CometdHeaderFilterStrategy());
+        this(bayeux, enableSessionHeader, new DefaultHeaderFilterStrategy());
     }
 
     public CometdBinding(BayeuxServerImpl bayeux, boolean enableSessionHeader, HeaderFilterStrategy headerFilterStrategy) {

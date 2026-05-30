@@ -42,31 +42,32 @@ import org.apache.camel.spi.Metadata;
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
-     * A filter pattern that only accepts keys starting with <tt>Camel</tt>.
+     * A filter pattern that only accepts keys starting with <tt>Camel</tt> or <tt>org.apache.camel</tt>.
      *
      * @deprecated use {@link #CAMEL_FILTER_STARTS_WITH}
      */
     @Deprecated(since = "3.9.0")
-    public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)Camel[.a-zA-z0-9]*");
+    public static final Pattern CAMEL_FILTER_PATTERN
+            = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[.a-zA-Z0-9]*");
 
     /**
-     * A filter pattern for keys starting with <tt>Camel</tt>, <tt>camel</tt>, or <tt>org.apache.camel.</tt>.
+     * A filter pattern for keys starting with <tt>Camel</tt>, <tt>camel</tt>, or <tt>org.apache.camel</tt>.
      */
-    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel", "org.apache.camel." };
+    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel", "org.apache.camel" };
 
     @Metadata(javaType = "java.lang.String",
               description = "Sets the in direction filter set. The in direction is referred to copying headers from an external message to a Camel message."
                             + " Multiple patterns can be separated by comma")
     private Set<String> inFilter;
     private Pattern inFilterPattern;
-    private String[] inFilterStartsWith = CAMEL_FILTER_STARTS_WITH;
+    private String[] inFilterStartsWith = CAMEL_FILTER_STARTS_WITH.clone();
 
     @Metadata(javaType = "java.lang.String",
               description = "Sets the out direction filter set. The out direction is referred to copying headers from a Camel message to an external message."
                             + " Multiple patterns can be separated by comma")
     private Set<String> outFilter;
     private Pattern outFilterPattern;
-    private String[] outFilterStartsWith = CAMEL_FILTER_STARTS_WITH;
+    private String[] outFilterStartsWith = CAMEL_FILTER_STARTS_WITH.clone();
 
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Whether header names should be converted to lower case before checking it with the filter Set. This ensures that all variations of header names will be taken into account."
@@ -379,7 +380,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     private boolean tryPattern(String headerName, String lower, Pattern pattern) {
         // optimize if it's the default pattern as we know the pattern is to check for keys starting with Camel
         if (pattern == CAMEL_FILTER_PATTERN) {
-            boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel");
+            boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel")
+                    || headerName.startsWith("org.apache.camel");
             if (match) {
                 return true;
             }
@@ -387,7 +389,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                 if (lower == null) {
                     lower = headerName.toLowerCase();
                 }
-                match = lower.startsWith("camel");
+                match = lower.startsWith("camel") || lower.startsWith("org.apache.camel");
                 if (match) {
                     return true;
                 }

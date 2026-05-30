@@ -222,8 +222,9 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertFalse(comp.applyFilterToExternalHeaders("content-type", "text/plain", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("CamelVersion", "4.21", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("camelJettySession", "true", exchange));
-        assertTrue(comp.applyFilterToExternalHeaders("CAMELFooBar", "x", exchange)); // lowerCase=true catches mixed-case
+        assertTrue(comp.applyFilterToExternalHeaders("CAMELFooBar", "x", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("org.apache.camel.foo", "x", exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("org.apache.camel", "x", exchange)); // exact prefix, no dot
     }
 
     @Test
@@ -236,8 +237,9 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertFalse(comp.applyFilterToCamelHeaders("content-type", "text/plain", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("CamelVersion", "4.21", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("camelJettySession", "true", exchange));
-        assertTrue(comp.applyFilterToCamelHeaders("CAMELFooBar", "x", exchange)); // lowerCase=true catches mixed-case
+        assertTrue(comp.applyFilterToCamelHeaders("CAMELFooBar", "x", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("org.apache.camel.foo", "x", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("org.apache.camel", "x", exchange)); // exact prefix, no dot
     }
 
     @Test

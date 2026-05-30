@@ -26,6 +26,7 @@ import io.nats.client.api.AckPolicy;
 import io.nats.client.api.ConsumerConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -115,7 +116,7 @@ public class NatsConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private boolean traceConnection;
     @UriParam(label = "advanced")
-    private HeaderFilterStrategy headerFilterStrategy = new NatsHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     public NatsConfiguration copy() {
         try {

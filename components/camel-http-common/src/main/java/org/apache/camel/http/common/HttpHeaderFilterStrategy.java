@@ -33,9 +33,6 @@ public class HttpHeaderFilterStrategy extends org.apache.camel.http.base.HttpHea
     protected void initialize() {
         final Set<String> outFilter = getOutFilter();
         HttpUtil.addCommonFilters(outFilter);
-
-        setLowerCase(true);
-
     }
 
 }
