@@ -3343,21 +3343,24 @@ public class CamelMonitor extends CamelCommand {
         JsonObject inflightObj = (JsonObject) root.get("inflight");
         if (inflightObj != null) {
             info.inflightBrowseEnabled = inflightObj.getBooleanOrDefault("inflightBrowseEnabled", false);
-            JsonArray inflArr = (JsonArray) inflightObj.get("exchanges");
-            if (inflArr != null) {
-                for (Object ie : inflArr) {
-                    JsonObject ij = (JsonObject) ie;
-                    InflightInfo ii = new InflightInfo();
-                    ii.exchangeId = ij.getString("exchangeId");
-                    ii.fromRouteId = ij.getString("fromRouteId");
-                    Boolean remote = ij.getBoolean("fromRemoteEndpoint");
-                    ii.fromRemoteEndpoint = remote != null && remote;
-                    ii.atRouteId = ij.getString("atRouteId");
-                    ii.nodeId = ij.getString("nodeId");
-                    ii.elapsed = ij.getLongOrDefault("elapsed", 0L);
-                    ii.duration = ij.getLongOrDefault("duration", 0L);
-                    ii.blocked = false;
-                    info.inflightExchanges.add(ii);
+            int inflightCount = inflightObj.getIntegerOrDefault("inflight", 0);
+            if (inflightCount > 0) {
+                JsonArray inflArr = (JsonArray) inflightObj.get("exchanges");
+                if (inflArr != null) {
+                    for (Object ie : inflArr) {
+                        JsonObject ij = (JsonObject) ie;
+                        InflightInfo ii = new InflightInfo();
+                        ii.exchangeId = ij.getString("exchangeId");
+                        ii.fromRouteId = ij.getString("fromRouteId");
+                        Boolean remote = ij.getBoolean("fromRemoteEndpoint");
+                        ii.fromRemoteEndpoint = remote != null && remote;
+                        ii.atRouteId = ij.getString("atRouteId");
+                        ii.nodeId = ij.getString("nodeId");
+                        ii.elapsed = ij.getLongOrDefault("elapsed", 0L);
+                        ii.duration = ij.getLongOrDefault("duration", 0L);
+                        ii.blocked = false;
+                        info.inflightExchanges.add(ii);
+                    }
                 }
             }
         }
@@ -3365,17 +3368,20 @@ public class CamelMonitor extends CamelCommand {
         // Parse blocked exchanges
         JsonObject blockedObj = (JsonObject) root.get("blocked");
         if (blockedObj != null) {
-            JsonArray blkArr = (JsonArray) blockedObj.get("exchanges");
-            if (blkArr != null) {
-                for (Object be : blkArr) {
-                    JsonObject bj = (JsonObject) be;
-                    InflightInfo ii = new InflightInfo();
-                    ii.exchangeId = bj.getString("exchangeId");
-                    ii.atRouteId = bj.getString("routeId");
-                    ii.nodeId = bj.getString("nodeId");
-                    ii.duration = bj.getLongOrDefault("duration", 0L);
-                    ii.blocked = true;
-                    info.inflightExchanges.add(ii);
+            int blockedCount = blockedObj.getIntegerOrDefault("blocked", 0);
+            if (blockedCount > 0) {
+                JsonArray blkArr = (JsonArray) blockedObj.get("exchanges");
+                if (blkArr != null) {
+                    for (Object be : blkArr) {
+                        JsonObject bj = (JsonObject) be;
+                        InflightInfo ii = new InflightInfo();
+                        ii.exchangeId = bj.getString("exchangeId");
+                        ii.atRouteId = bj.getString("routeId");
+                        ii.nodeId = bj.getString("nodeId");
+                        ii.duration = bj.getLongOrDefault("duration", 0L);
+                        ii.blocked = true;
+                        info.inflightExchanges.add(ii);
+                    }
                 }
             }
         }

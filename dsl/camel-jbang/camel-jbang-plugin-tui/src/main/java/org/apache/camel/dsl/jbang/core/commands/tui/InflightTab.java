@@ -41,7 +41,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class InflightTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "duration", "route", "exchange", "status" };
+    private static final String[] SORT_COLUMNS = { "status", "exchange", "route", "duration" };
 
     // Duration thresholds for color coding
     private static final long THRESHOLD_YELLOW = 1000;  // 1 second
@@ -53,7 +53,7 @@ class InflightTab implements MonitorTab {
     private final MonitorContext ctx;
     private final TableState tableState = new TableState();
     private String sort = "duration";
-    private int sortIndex;
+    private int sortIndex = 3;
     private boolean sortReversed;
 
     InflightTab(MonitorContext ctx) {
