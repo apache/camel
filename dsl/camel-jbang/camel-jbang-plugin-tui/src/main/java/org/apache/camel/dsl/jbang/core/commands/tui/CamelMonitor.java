@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -483,48 +484,56 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return true;
             }
-            // Quit: q or Ctrl+c
-            if (ke.isCharIgnoreCase('q') || ke.isCtrlC()) {
+            // Quit: q or Ctrl+c (skip when probe is editing text)
+            boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
+            if (!probeEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
                 runner.quit();
                 return true;
             }
-            // Tab switching with number keys
+            if (ke.isCtrlC()) {
+                runner.quit();
+                return true;
+            }
+            // Tab switching with number keys (skip when probe is editing text)
             // When infra is selected, only Overview (1) and Log (2) are available
-            if (ke.isChar('1')) {
-                return handleTabKey(TAB_OVERVIEW);
-            }
-            if (ke.isChar('2')) {
-                return handleTabKey(TAB_LOG);
-            }
-            if (!isInfraSelected()) {
-                if (ke.isChar('3')) {
-                    return handleTabKey(TAB_ROUTES);
+            if (!probeEditing) {
+                if (ke.isChar('1')) {
+                    return handleTabKey(TAB_OVERVIEW);
                 }
-                if (ke.isChar('4')) {
-                    return handleTabKey(TAB_ENDPOINTS);
+                if (ke.isChar('2')) {
+                    return handleTabKey(TAB_LOG);
                 }
-                if (ke.isChar('5')) {
-                    return handleTabKey(TAB_HTTP);
-                }
-                if (ke.isChar('6')) {
-                    return handleTabKey(TAB_HEALTH);
-                }
-                if (ke.isChar('7')) {
-                    return handleTabKey(TAB_HISTORY);
-                }
-                if (ke.isChar('8')) {
-                    return handleTabKey(TAB_ERRORS);
-                }
-                if (ke.isChar('9')) {
-                    return handleTabKey(TAB_METRICS);
-                }
-                if (ke.isChar('0')) {
-                    return handleTabKey(TAB_MORE);
+                if (!isInfraSelected()) {
+                    if (ke.isChar('3')) {
+                        return handleTabKey(TAB_ROUTES);
+                    }
+                    if (ke.isChar('4')) {
+                        return handleTabKey(TAB_ENDPOINTS);
+                    }
+                    if (ke.isChar('5')) {
+                        return handleTabKey(TAB_HTTP);
+                    }
+                    if (ke.isChar('6')) {
+                        return handleTabKey(TAB_HEALTH);
+                    }
+                    if (ke.isChar('7')) {
+                        return handleTabKey(TAB_HISTORY);
+                    }
+                    if (ke.isChar('8')) {
+                        return handleTabKey(TAB_ERRORS);
+                    }
+                    if (ke.isChar('9')) {
+                        return handleTabKey(TAB_METRICS);
+                    }
+                    if (ke.isChar('0')) {
+                        return handleTabKey(TAB_MORE);
+                    }
                 }
             }
 
             // Tab cycling (check Shift+Tab before Tab since Tab binding also matches Shift+Tab)
-            if (ke.isFocusPrevious()) {
+            // Skip tab cycling when HTTP probe is active (Tab navigates fields)
+            if (ke.isFocusPrevious() && !(tabsState.selected() == TAB_HTTP && httpTab.isProbeMode())) {
                 if (isInfraSelected()) {
                     // Cycle between Overview and Log only
                     int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
@@ -538,7 +547,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return true;
             }
-            if (ke.isFocusNext()) {
+            if (ke.isFocusNext() && !(tabsState.selected() == TAB_HTTP && httpTab.isProbeMode())) {
                 if (isInfraSelected()) {
                     int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                     tabsState.select(next);
@@ -676,6 +685,10 @@ public class CamelMonitor extends CamelCommand {
         if (event instanceof PasteEvent pe) {
             if (actionsPopup.isVisible()) {
                 actionsPopup.handlePaste(pe.text());
+                return true;
+            }
+            if (httpTab.isProbeMode()) {
+                httpTab.handlePaste(pe.text());
                 return true;
             }
         }
@@ -3361,6 +3374,9 @@ public class CamelMonitor extends CamelCommand {
             parseHttpEndpoints(phpObj, "managementEndpoints", true, info);
         }
 
+        // Fix REST DSL URLs that are missing the port by resolving from platform-http endpoints
+        fixRestUrlPorts(info);
+
         // Parse configuration properties (from PropertiesDevConsole)
         JsonObject propsObj = (JsonObject) root.get("properties");
         if (propsObj != null) {
@@ -3403,6 +3419,47 @@ public class CamelMonitor extends CamelCommand {
             ep.consumes = ej.getString("consumes");
             ep.produces = ej.getString("produces");
             info.httpEndpoints.add(ep);
+        }
+    }
+
+    private static void fixRestUrlPorts(IntegrationInfo info) {
+        // Find a base URL with port from platform-http endpoints
+        String baseWithPort = null;
+        for (HttpEndpointInfo ep : info.httpEndpoints) {
+            if (!ep.fromRest && ep.url != null) {
+                try {
+                    URI uri = URI.create(ep.url);
+                    if (uri.getPort() > 0) {
+                        baseWithPort = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort();
+                        break;
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+        if (baseWithPort == null) {
+            return;
+        }
+        // Fix REST DSL endpoints missing port
+        for (HttpEndpointInfo ep : info.httpEndpoints) {
+            if (ep.fromRest && ep.url != null) {
+                String path = extractPath(ep.url);
+                if (path != null) {
+                    // Check if URL has no port by looking at the host portion
+                    int schemeEnd = ep.url.indexOf("://");
+                    if (schemeEnd > 0) {
+                        String hostPart = ep.url.substring(schemeEnd + 3);
+                        int slash = hostPart.indexOf('/');
+                        if (slash > 0) {
+                            hostPart = hostPart.substring(0, slash);
+                        }
+                        if (!hostPart.contains(":")) {
+                            ep.url = baseWithPort + path;
+                        }
+                    }
+                }
+            }
         }
     }
 
