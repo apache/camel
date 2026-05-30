@@ -30,6 +30,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -291,6 +292,10 @@ public class CamelMonitor extends CamelCommand {
     private MemoryTab memoryTab;
     private ThreadsTab threadsTab;
 
+    // "Switch integration" popup state
+    private boolean showSwitchPopup;
+    private final ListState switchPopupState = new ListState();
+
     // "More" dropdown state
     private boolean showMorePopup;
     private final ListState morePopupState = new ListState();
@@ -450,9 +455,14 @@ public class CamelMonitor extends CamelCommand {
                     morePopupState.selectNext(9);
                     return true;
                 }
-                if (ke.isConfirm()) {
+                // Shortcut keys for quick selection
+                int shortcutSel = morePopupShortcut(ke);
+                if (shortcutSel >= 0) {
+                    morePopupState.select(shortcutSel);
+                }
+                if (ke.isConfirm() || shortcutSel >= 0) {
                     showMorePopup = false;
-                    Integer sel = morePopupState.selected();
+                    Integer sel = shortcutSel >= 0 ? shortcutSel : morePopupState.selected();
                     if (sel != null) {
                         lastMoreSelection = sel;
                         activeMoreTab = switch (sel) {
@@ -472,6 +482,34 @@ public class CamelMonitor extends CamelCommand {
                             tabsState.select(TAB_MORE);
                             activeMoreTab.onTabSelected();
                         }
+                    }
+                    return true;
+                }
+                return true;
+            }
+            // "Switch integration" popup
+            if (showSwitchPopup) {
+                if (ke.isCancel()) {
+                    showSwitchPopup = false;
+                    return true;
+                }
+                List<IntegrationInfo> switchList = getNonVanishingIntegrations();
+                if (ke.isUp()) {
+                    switchPopupState.selectPrevious();
+                    return true;
+                }
+                if (ke.isDown()) {
+                    switchPopupState.selectNext(switchList.size());
+                    return true;
+                }
+                if (ke.isConfirm()) {
+                    showSwitchPopup = false;
+                    Integer sel = switchPopupState.selected();
+                    if (sel != null && sel >= 0 && sel < switchList.size()) {
+                        IntegrationInfo chosen = switchList.get(sel);
+                        ctx.selectedPid = chosen.pid;
+                        ctx.lastSelectedName = chosen.name;
+                        resetIntegrationTabState();
                     }
                     return true;
                 }
@@ -594,6 +632,22 @@ public class CamelMonitor extends CamelCommand {
                     actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
                 }
                 actionsPopup.open();
+                return true;
+            }
+
+            // F3 opens switch integration popup
+            if (ke.isKey(KeyCode.F3)) {
+                List<IntegrationInfo> switchList = getNonVanishingIntegrations();
+                if (switchList.size() > 1) {
+                    showSwitchPopup = true;
+                    // Pre-select the currently active integration
+                    for (int i = 0; i < switchList.size(); i++) {
+                        if (switchList.get(i).pid.equals(ctx.selectedPid)) {
+                            switchPopupState.select(i);
+                            break;
+                        }
+                    }
+                }
                 return true;
             }
 
@@ -1200,6 +1254,10 @@ public class CamelMonitor extends CamelCommand {
         if (showMorePopup) {
             renderMorePopup(frame, area);
         }
+        // Render "Switch integration" popup overlay when visible
+        if (showSwitchPopup) {
+            renderSwitchPopup(frame, area);
+        }
     }
 
     private void renderMorePopup(Frame frame, Rect area) {
@@ -1224,16 +1282,17 @@ public class CamelMonitor extends CamelCommand {
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
+        Style keyStyle = Style.EMPTY.fg(Color.YELLOW).bold();
         ListItem[] items = {
-                ListItem.from("  Beans"),
-                ListItem.from("  Browse"),
-                ListItem.from("  Circuit Breaker"),
-                ListItem.from("  Configuration"),
-                ListItem.from("  Consumers"),
-                ListItem.from("  Inflight"),
-                ListItem.from("  Memory"),
-                ListItem.from("  Startup"),
-                ListItem.from("  Threads"),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("B", keyStyle), Span.raw("eans"))),
+                ListItem.from(Line.from(Span.raw("  Bro"), Span.styled("w", keyStyle), Span.raw("se"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("C", keyStyle), Span.raw("ircuit Breaker"))),
+                ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
+                ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
         };
         ListWidget list = ListWidget.builder()
                 .items(items)
@@ -1246,6 +1305,92 @@ public class CamelMonitor extends CamelCommand {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, morePopupState);
+    }
+
+    private void renderSwitchPopup(Frame frame, Rect area) {
+        List<IntegrationInfo> integrations = getNonVanishingIntegrations();
+        if (integrations.isEmpty()) {
+            showSwitchPopup = false;
+            return;
+        }
+
+        int maxLabelLen = integrations.stream()
+                .mapToInt(i -> {
+                    String n = i.name != null ? i.name : "?";
+                    return n.length() + i.pid.length() + 14;
+                })
+                .max().orElse(30);
+        int popupW = Math.min(area.width() - 4, Math.max(40, maxLabelLen + 4));
+        int popupH = Math.min(area.height() - 4, integrations.size() + 2);
+
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        ListItem[] items = new ListItem[integrations.size()];
+        for (int i = 0; i < integrations.size(); i++) {
+            IntegrationInfo info = integrations.get(i);
+            String name = info.name != null ? info.name : "?";
+            boolean current = info.pid.equals(ctx.selectedPid);
+            String label = String.format("  🐪 %s (pid:%s)%s", name, info.pid, current ? " ●" : "");
+            if (current) {
+                items[i] = ListItem.from(Line.from(Span.styled(label, Style.EMPTY.fg(Color.CYAN))));
+            } else {
+                items[i] = ListItem.from(label);
+            }
+        }
+
+        ListWidget list = ListWidget.builder()
+                .items(items)
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(Title.from(Line.from(Span.styled(" Switch Integration ", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, switchPopupState);
+    }
+
+    private List<IntegrationInfo> getNonVanishingIntegrations() {
+        return data.get().stream()
+                .filter(i -> !i.vanishing && i.name != null)
+                .sorted(Comparator.comparing(i -> i.name, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+    }
+
+    private static int morePopupShortcut(KeyEvent ke) {
+        if (ke.isChar('b')) {
+            return 0;
+        }
+        if (ke.isChar('w')) {
+            return 1;
+        }
+        if (ke.isChar('c')) {
+            return 2;
+        }
+        if (ke.isChar('g')) {
+            return 3;
+        }
+        if (ke.isChar('n')) {
+            return 4;
+        }
+        if (ke.isChar('i')) {
+            return 5;
+        }
+        if (ke.isChar('m')) {
+            return 6;
+        }
+        if (ke.isChar('s')) {
+            return 7;
+        }
+        if (ke.isChar('t')) {
+            return 8;
+        }
+        return -1;
     }
 
     private MonitorTab activeTab() {
@@ -1314,7 +1459,7 @@ public class CamelMonitor extends CamelCommand {
                 int gray = (int) (100 * fade);
                 Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
 
-                String vanishName = "\ud83d\udc2b " + (info.name != null ? info.name : "");
+                String vanishName = "\ud83d\udc2a " + (info.name != null ? info.name : "");
                 rows.add(Row.from(
                         Cell.from(Span.styled(info.pid, dimStyle)),
                         Cell.from(Span.styled(vanishName, dimStyle)),
@@ -1339,7 +1484,7 @@ public class CamelMonitor extends CamelCommand {
 
                 String sinceLastDisplay = formatSinceLast(info);
 
-                String nameText = "🐫 " + (info.name != null ? info.name : "");
+                String nameText = "🐪 " + (info.name != null ? info.name : "");
                 Line nameLine = info.devMode
                         ? Line.from(
                                 Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)),
@@ -2033,7 +2178,11 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        if (showMorePopup) {
+        if (showSwitchPopup) {
+            hint(spans, "Up/Down", "select");
+            hint(spans, "Enter", "switch");
+            hint(spans, "Esc", "close");
+        } else if (showMorePopup) {
             hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "open");
             hint(spans, "Esc", "close");
@@ -2042,11 +2191,14 @@ public class CamelMonitor extends CamelCommand {
 
             if (tab != null) {
                 tab.renderFooter(spans);
-                // Insert F2 after the first hint (Esc) — each hint is 2 spans (key + label)
+                // Insert F2/F3 after the first hint (Esc) — each hint is 2 spans (key + label)
                 int insertPos = Math.min(2, spans.size());
-                List<Span> f2Spans = new ArrayList<>();
-                hint(f2Spans, "F2", "actions");
-                spans.addAll(insertPos, f2Spans);
+                List<Span> fKeySpans = new ArrayList<>();
+                hint(fKeySpans, "F2", "actions");
+                if (getNonVanishingIntegrations().size() > 1) {
+                    hint(fKeySpans, "F3", "switch");
+                }
+                spans.addAll(insertPos, fKeySpans);
             } else {
                 renderOverviewFooter(spans);
             }
@@ -2109,6 +2261,9 @@ public class CamelMonitor extends CamelCommand {
         }
         hint(spans, "q", "quit");
         hint(spans, "F2", "actions");
+        if (getNonVanishingIntegrations().size() > 1) {
+            hint(spans, "F3", "switch");
+        }
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", "unselect");
         }

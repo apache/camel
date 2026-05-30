@@ -88,6 +88,7 @@ class ThreadsTab implements MonitorTab {
         showTrace = false;
         traceScroll = 0;
         lastPid = null;
+        loadThreads();
     }
 
     @Override

@@ -104,6 +104,7 @@ class BrowseTab implements MonitorTab {
         view = VIEW_ENDPOINTS;
         detailScroll = 0;
         lastPid = null;
+        loadEndpoints();
     }
 
     @Override

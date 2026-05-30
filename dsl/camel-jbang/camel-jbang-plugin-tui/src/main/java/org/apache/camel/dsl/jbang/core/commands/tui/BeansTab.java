@@ -85,6 +85,7 @@ class BeansTab implements MonitorTab {
         showDetail = false;
         detailScroll = 0;
         lastPid = null;
+        loadBeans();
     }
 
     @Override

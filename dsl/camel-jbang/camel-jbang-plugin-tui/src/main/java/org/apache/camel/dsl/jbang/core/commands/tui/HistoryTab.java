@@ -268,6 +268,23 @@ class HistoryTab implements MonitorTab {
     }
 
     @Override
+    public void onIntegrationChanged() {
+        historyEntries = Collections.emptyList();
+        historyRefreshRequested = true;
+        historyDetailScroll = 0;
+        historyDetailHScroll = 0;
+        traceFilePositions.clear();
+        traces.set(Collections.emptyList());
+        traceDetailView = false;
+        traceSelectedExchangeId = null;
+        traceDetailScroll = 0;
+        traceDetailHScroll = 0;
+        showWaterfall = false;
+        waterfallScroll = 0;
+        diagram.reset();
+    }
+
+    @Override
     public boolean handleEscape() {
         if (diagram.handleEscape()) {
             return true;
