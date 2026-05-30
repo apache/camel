@@ -256,17 +256,6 @@ from("direct:conversation")
     .log("Second response: ${body}"); // Will remember "Alice"
 ----
 
-=== Using Third-Party or Local OpenAI-Compatible Endpoint
-
-.Usage example:
-[source,java]
-----
-from("direct:local")
-    .setBody(constant("Hello from local LLM"))
-    .to("openai:chat-completion?baseUrl=http://localhost:1234/v1&model=local-model")
-    .log("${body}");
-----
-
 == Input Handling
 
 The component accepts the following types of input in the message body:
@@ -498,6 +487,9 @@ Because the component speaks the OpenAI API, you do not need a separate componen
 gateways or local model servers that expose an OpenAI-compatible API. Point `baseUrl` at the provider,
 set `apiKey` if it requires one, and use the same operations and options as with OpenAI.
 
+NOTE: Ensure the provider supports the chat completions and/or embeddings endpoint format you use.
+Authentication requirements and minor API variations differ between providers.
+
 [cols="1,2,2",options="header"]
 |===
 | Provider | `baseUrl` | Notes
@@ -619,19 +611,6 @@ OpenRouter's optional attribution headers (`HTTP-Referer` and `X-Title`, which i
 the OpenRouter rankings) are sent as HTTP request headers, not body properties. The component does not
 currently expose a way to set custom HTTP request headers, so they cannot be configured today. They
 are optional and do not affect chat completions.
-====
-
-== Compatibility
-
-This component works with any OpenAI API-compatible endpoint by setting the `baseUrl` parameter. This includes:
-
-- OpenAI official API (`https://api.openai.com/v1`)
-- Local LLM servers (e.g., Ollama, LM Studio, LocalAI)
-- Third-party OpenAI-compatible providers
-
-[NOTE]
-====
-When using local or third-party providers, ensure they support the chat completions and/or embeddings API endpoint format. Some providers may have different authentication requirements or API variations.
 ====
 
 === Embedding Models by Provider
