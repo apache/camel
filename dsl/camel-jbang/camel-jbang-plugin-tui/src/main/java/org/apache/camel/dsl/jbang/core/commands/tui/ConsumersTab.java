@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +102,7 @@ class ConsumersTab implements MonitorTab {
                             : Style.EMPTY.fg(Color.LIGHT_RED));
             String statusText = healthDown ? "⚠ " + status : status;
             String type = consumerType(ci);
-            String period = consumerPeriod(ci);
+            String schedule = consumerSchedule(ci);
             String sinceLast = consumerSinceLast(ci);
             String uri = healthDown && hc.message != null
                     ? hc.message
@@ -112,7 +114,7 @@ class ConsumersTab implements MonitorTab {
                     Cell.from(type),
                     rightCell(String.valueOf(ci.inflight), 8),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
-                    rightCell(period, 10),
+                    Cell.from(schedule),
                     Cell.from(sinceLast),
                     Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
         }
@@ -132,16 +134,16 @@ class ConsumersTab implements MonitorTab {
                         Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),
                         rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
-                        rightCell("PERIOD", 10, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("SCHEDULE", Style.EMPTY.bold())),
                         Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri")))))
                 .widths(
                         Constraint.length(20),
                         Constraint.length(10),
-                        Constraint.length(20),
+                        Constraint.length(16),
                         Constraint.length(8),
                         Constraint.length(8),
-                        Constraint.length(10),
+                        Constraint.length(22),
                         Constraint.length(22),
                         Constraint.fill())
                 .block(Block.builder().borderType(BorderType.ROUNDED)
@@ -230,13 +232,82 @@ class ConsumersTab implements MonitorTab {
         return null;
     }
 
-    private static String consumerPeriod(ConsumerInfo ci) {
-        if (ci.period != null) {
-            return ci.period + "ms";
-        } else if (ci.delay != null) {
-            return ci.delay + "ms";
+    static String consumerSchedule(ConsumerInfo ci) {
+        // Try to extract cron expression from URI for cron/quartz components
+        String cron = extractCronFromUri(ci.uri);
+        if (cron != null) {
+            return cron;
+        }
+        // Fall back to period/delay for timer and poll consumers
+        if (ci.period != null && ci.period > 0) {
+            return "every " + humanDuration(ci.period);
+        } else if (ci.delay != null && ci.delay > 0) {
+            return "every " + humanDuration(ci.delay);
         }
         return "";
+    }
+
+    private static String extractCronFromUri(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        // cron:name?schedule=0/5+*+*+*+*+?
+        if (uri.startsWith("cron:")) {
+            String expr = extractParam(uri, "schedule");
+            if (expr != null) {
+                return decodeCron(expr);
+            }
+        }
+        // quartz:group/name?cron=0/5+*+*+*+*+?
+        if (uri.startsWith("quartz:")) {
+            String expr = extractParam(uri, "cron");
+            if (expr != null) {
+                return decodeCron(expr);
+            }
+            String trigger = extractParam(uri, "trigger.repeatInterval");
+            if (trigger != null) {
+                try {
+                    return "every " + humanDuration(Long.parseLong(trigger));
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String extractParam(String uri, String param) {
+        int q = uri.indexOf('?');
+        if (q < 0) {
+            return null;
+        }
+        String query = uri.substring(q + 1);
+        for (String part : query.split("&")) {
+            if (part.startsWith(param + "=")) {
+                return part.substring(param.length() + 1);
+            }
+        }
+        return null;
+    }
+
+    private static String decodeCron(String encoded) {
+        try {
+            return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return encoded.replace('+', ' ');
+        }
+    }
+
+    private static String humanDuration(long ms) {
+        if (ms >= 60000 && ms % 60000 == 0) {
+            long min = ms / 60000;
+            return min + (min == 1 ? "min" : "min");
+        }
+        if (ms >= 1000 && ms % 1000 == 0) {
+            long sec = ms / 1000;
+            return sec + "s";
+        }
+        return ms + "ms";
     }
 
     private static String consumerSinceLast(ConsumerInfo ci) {
