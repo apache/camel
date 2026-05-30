@@ -281,6 +281,7 @@ public class CamelMonitor extends CamelCommand {
     private ConfigurationTab configurationTab;
     private BeansTab beansTab;
     private BrowseTab browseTab;
+    private InflightTab inflightTab;
     private ThreadsTab threadsTab;
 
     // "More" dropdown state
@@ -343,6 +344,7 @@ public class CamelMonitor extends CamelCommand {
         configurationTab = new ConfigurationTab(ctx);
         beansTab = new BeansTab(ctx);
         browseTab = new BrowseTab(ctx);
+        inflightTab = new InflightTab(ctx);
         threadsTab = new ThreadsTab(ctx);
 
         // Initial data load (synchronous before TUI starts)
@@ -437,7 +439,7 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (ke.isDown()) {
-                    morePopupState.selectNext(7);
+                    morePopupState.selectNext(8);
                     return true;
                 }
                 if (ke.isConfirm()) {
@@ -451,8 +453,9 @@ public class CamelMonitor extends CamelCommand {
                             case 2 -> circuitBreakerTab;
                             case 3 -> configurationTab;
                             case 4 -> consumersTab;
-                            case 5 -> startupTab;
-                            case 6 -> threadsTab;
+                            case 5 -> inflightTab;
+                            case 6 -> startupTab;
+                            case 7 -> threadsTab;
                             default -> null;
                         };
                         if (activeMoreTab != null) {
@@ -1192,7 +1195,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 9;
+        int popupH = 10;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -1218,6 +1221,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from("  Circuit Breaker"),
                 ListItem.from("  Configuration"),
                 ListItem.from("  Consumers"),
+                ListItem.from("  Inflight"),
                 ListItem.from("  Startup"),
                 ListItem.from("  Threads"),
         };
@@ -3333,6 +3337,47 @@ public class CamelMonitor extends CamelCommand {
         JsonObject errorsObj = (JsonObject) root.get("errors");
         if (errorsObj != null) {
             info.errorCount = errorsObj.getIntegerOrDefault("size", 0);
+        }
+
+        // Parse inflight exchanges
+        JsonObject inflightObj = (JsonObject) root.get("inflight");
+        if (inflightObj != null) {
+            info.inflightBrowseEnabled = inflightObj.getBooleanOrDefault("inflightBrowseEnabled", false);
+            JsonArray inflArr = (JsonArray) inflightObj.get("exchanges");
+            if (inflArr != null) {
+                for (Object ie : inflArr) {
+                    JsonObject ij = (JsonObject) ie;
+                    InflightInfo ii = new InflightInfo();
+                    ii.exchangeId = ij.getString("exchangeId");
+                    ii.fromRouteId = ij.getString("fromRouteId");
+                    Boolean remote = ij.getBoolean("fromRemoteEndpoint");
+                    ii.fromRemoteEndpoint = remote != null && remote;
+                    ii.atRouteId = ij.getString("atRouteId");
+                    ii.nodeId = ij.getString("nodeId");
+                    ii.elapsed = ij.getLongOrDefault("elapsed", 0L);
+                    ii.duration = ij.getLongOrDefault("duration", 0L);
+                    ii.blocked = false;
+                    info.inflightExchanges.add(ii);
+                }
+            }
+        }
+
+        // Parse blocked exchanges
+        JsonObject blockedObj = (JsonObject) root.get("blocked");
+        if (blockedObj != null) {
+            JsonArray blkArr = (JsonArray) blockedObj.get("exchanges");
+            if (blkArr != null) {
+                for (Object be : blkArr) {
+                    JsonObject bj = (JsonObject) be;
+                    InflightInfo ii = new InflightInfo();
+                    ii.exchangeId = bj.getString("exchangeId");
+                    ii.atRouteId = bj.getString("routeId");
+                    ii.nodeId = bj.getString("nodeId");
+                    ii.duration = bj.getLongOrDefault("duration", 0L);
+                    ii.blocked = true;
+                    info.inflightExchanges.add(ii);
+                }
+            }
         }
 
         // Parse micrometer metrics (optional, only present when --observe is used)
