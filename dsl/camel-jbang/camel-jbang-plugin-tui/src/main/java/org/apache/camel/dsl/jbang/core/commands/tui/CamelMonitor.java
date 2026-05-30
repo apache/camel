@@ -111,6 +111,8 @@ public class CamelMonitor extends CamelCommand {
     private static final long DEFAULT_REFRESH_MS = 100;
     private static final int MAX_SPARKLINE_POINTS = 60;
     private static final int MAX_ENDPOINT_CHART_POINTS = 60;
+    private static final int MAX_HEAP_HISTORY_POINTS = 120;
+    private static final long HEAP_SAMPLE_INTERVAL_MS = 5000;
     private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 10;
@@ -205,6 +207,10 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LinkedList<long[]>> cbThroughputSamples = new ConcurrentHashMap<>();
     private final Map<String, Long> previousCbTime = new ConcurrentHashMap<>();
 
+    // Heap memory usage history per PID (one point per 5 seconds, in bytes)
+    private final Map<String, LinkedList<Long>> heapMemHistory = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousHeapTime = new ConcurrentHashMap<>();
+
     // Load averages (EWMA) — CPU%, per PID (inflight EWMA is read from the management JSON)
     private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
     private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
@@ -282,6 +288,7 @@ public class CamelMonitor extends CamelCommand {
     private BeansTab beansTab;
     private BrowseTab browseTab;
     private InflightTab inflightTab;
+    private MemoryTab memoryTab;
     private ThreadsTab threadsTab;
 
     // "More" dropdown state
@@ -345,6 +352,7 @@ public class CamelMonitor extends CamelCommand {
         beansTab = new BeansTab(ctx);
         browseTab = new BrowseTab(ctx);
         inflightTab = new InflightTab(ctx);
+        memoryTab = new MemoryTab(ctx, heapMemHistory);
         threadsTab = new ThreadsTab(ctx);
 
         // Initial data load (synchronous before TUI starts)
@@ -439,7 +447,7 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (ke.isDown()) {
-                    morePopupState.selectNext(8);
+                    morePopupState.selectNext(9);
                     return true;
                 }
                 if (ke.isConfirm()) {
@@ -454,8 +462,9 @@ public class CamelMonitor extends CamelCommand {
                             case 3 -> configurationTab;
                             case 4 -> consumersTab;
                             case 5 -> inflightTab;
-                            case 6 -> startupTab;
-                            case 7 -> threadsTab;
+                            case 6 -> memoryTab;
+                            case 7 -> startupTab;
+                            case 8 -> threadsTab;
                             default -> null;
                         };
                         if (activeMoreTab != null) {
@@ -1195,7 +1204,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 10;
+        int popupH = 11;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -1222,6 +1231,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from("  Configuration"),
                 ListItem.from("  Consumers"),
                 ListItem.from("  Inflight"),
+                ListItem.from("  Memory"),
                 ListItem.from("  Startup"),
                 ListItem.from("  Threads"),
         };
@@ -1957,6 +1967,9 @@ public class CamelMonitor extends CamelCommand {
         perEndpointOutHistory.keySet().removeIf(k -> k.startsWith(perEpPrefix));
         perEndpointSamples.keySet().removeIf(k -> k.startsWith(perEpPrefix));
         previousPerEndpointTime.keySet().removeIf(k -> k.startsWith(perEpPrefix));
+        // Clear local sparkline history — heap memory
+        heapMemHistory.remove(pid);
+        previousHeapTime.remove(pid);
     }
 
     private void sendRouteCommand(String pid, String routeId, String command) {
@@ -2161,6 +2174,7 @@ public class CamelMonitor extends CamelCommand {
                                 updateThroughputHistory(info);
                                 updateEndpointHistory(info);
                                 updateCbHistory(info);
+                                updateHeapHistory(info);
                                 updateLoadMetrics(ph, info);
                             }
                         }
@@ -2200,6 +2214,8 @@ public class CamelMonitor extends CamelCommand {
                     endpointOutSizeHistory.remove(entry.getKey());
                     previousEndpointSizeTime.remove(entry.getKey());
                     previousEndpointRemoteStubTime.remove(entry.getKey());
+                    heapMemHistory.remove(entry.getKey());
+                    previousHeapTime.remove(entry.getKey());
                     cpuLoadAvg.remove(entry.getKey());
                     prevCpuSample.remove(entry.getKey());
                     String vanishCbPrefix = entry.getKey() + "/";
@@ -2613,6 +2629,21 @@ public class CamelMonitor extends CamelCommand {
         }
 
         traces.set(allTraces);
+    }
+
+    private void updateHeapHistory(IntegrationInfo info) {
+        if (info.heapMemUsed > 0) {
+            long now = System.currentTimeMillis();
+            Long lastTime = previousHeapTime.get(info.pid);
+            if (lastTime == null || now - lastTime >= HEAP_SAMPLE_INTERVAL_MS) {
+                previousHeapTime.put(info.pid, now);
+                LinkedList<Long> hist = heapMemHistory.computeIfAbsent(info.pid, k -> new LinkedList<>());
+                hist.add(info.heapMemUsed);
+                while (hist.size() > MAX_HEAP_HISTORY_POINTS) {
+                    hist.remove(0);
+                }
+            }
+        }
     }
 
     private void updateLoadMetrics(ProcessHandle ph, IntegrationInfo info) {
@@ -3107,8 +3138,28 @@ public class CamelMonitor extends CamelCommand {
         JsonObject mem = (JsonObject) root.get("memory");
         if (mem != null) {
             info.heapMemUsed = mem.getLongOrDefault("heapMemoryUsed", 0L);
+            info.heapMemCommitted = mem.getLongOrDefault("heapMemoryCommitted", 0L);
             info.heapMemMax = mem.getLongOrDefault("heapMemoryMax", 0L);
             info.nonHeapMemUsed = mem.getLongOrDefault("nonHeapMemoryUsed", 0L);
+            info.nonHeapMemCommitted = mem.getLongOrDefault("nonHeapMemoryCommitted", 0L);
+            info.oldGenUsed = mem.getLongOrDefault("oldGenUsed", 0L);
+            info.oldGenCommitted = mem.getLongOrDefault("oldGenCommitted", 0L);
+            info.oldGenMax = mem.getLongOrDefault("oldGenMax", 0L);
+            info.metaspaceUsed = mem.getLongOrDefault("metaspaceUsed", 0L);
+            info.metaspaceCommitted = mem.getLongOrDefault("metaspaceCommitted", 0L);
+            info.metaspaceMax = mem.getLongOrDefault("metaspaceMax", 0L);
+        }
+
+        JsonObject gc = (JsonObject) root.get("gc");
+        if (gc != null) {
+            info.gcCollectionCount = gc.getLongOrDefault("collectionCount", 0L);
+            info.gcCollectionTime = gc.getLongOrDefault("collectionTime", 0L);
+        }
+
+        JsonObject classLoading = (JsonObject) root.get("classLoading");
+        if (classLoading != null) {
+            info.loadedClassCount = classLoading.getIntegerOrDefault("loadedClassCount", 0);
+            info.totalLoadedClassCount = classLoading.getLongOrDefault("totalLoadedClassCount", 0L);
         }
 
         JsonObject threads = (JsonObject) root.get("threads");
