@@ -280,6 +280,7 @@ public class CamelMonitor extends CamelCommand {
     private StartupTab startupTab;
     private ConfigurationTab configurationTab;
     private BeansTab beansTab;
+    private BrowseTab browseTab;
     private ThreadsTab threadsTab;
 
     // "More" dropdown state
@@ -341,6 +342,7 @@ public class CamelMonitor extends CamelCommand {
         startupTab = new StartupTab(ctx);
         configurationTab = new ConfigurationTab(ctx);
         beansTab = new BeansTab(ctx);
+        browseTab = new BrowseTab(ctx);
         threadsTab = new ThreadsTab(ctx);
 
         // Initial data load (synchronous before TUI starts)
@@ -435,7 +437,7 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (ke.isDown()) {
-                    morePopupState.selectNext(6);
+                    morePopupState.selectNext(7);
                     return true;
                 }
                 if (ke.isConfirm()) {
@@ -445,11 +447,12 @@ public class CamelMonitor extends CamelCommand {
                         lastMoreSelection = sel;
                         activeMoreTab = switch (sel) {
                             case 0 -> beansTab;
-                            case 1 -> circuitBreakerTab;
-                            case 2 -> configurationTab;
-                            case 3 -> consumersTab;
-                            case 4 -> startupTab;
-                            case 5 -> threadsTab;
+                            case 1 -> browseTab;
+                            case 2 -> circuitBreakerTab;
+                            case 3 -> configurationTab;
+                            case 4 -> consumersTab;
+                            case 5 -> startupTab;
+                            case 6 -> threadsTab;
                             default -> null;
                         };
                         if (activeMoreTab != null) {
@@ -900,6 +903,7 @@ public class CamelMonitor extends CamelCommand {
         logTab.onIntegrationChanged();
         historyTab.onIntegrationChanged();
         beansTab.onIntegrationChanged();
+        browseTab.onIntegrationChanged();
         threadsTab.onIntegrationChanged();
     }
 
@@ -1188,7 +1192,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 8;
+        int popupH = 9;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -1210,6 +1214,7 @@ public class CamelMonitor extends CamelCommand {
 
         ListItem[] items = {
                 ListItem.from("  Beans"),
+                ListItem.from("  Browse"),
                 ListItem.from("  Circuit Breaker"),
                 ListItem.from("  Configuration"),
                 ListItem.from("  Consumers"),
