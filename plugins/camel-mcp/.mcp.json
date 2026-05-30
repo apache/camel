@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "camel": {
+      "command": "jbang",
+      "args": [
+        "-Dquarkus.log.level=WARN",
+        "org.apache.camel:camel-jbang-mcp:LATEST:runner"
+      ]
+    }
+  }
+}
