@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,9 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -55,6 +58,10 @@ class MemoryTab implements MonitorTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isChar('g')) {
+            triggerGC();
+            return true;
+        }
         return false;
     }
 
@@ -80,7 +87,7 @@ class MemoryTab implements MonitorTab {
         }
 
         // Layout: stats panel + chart row (14 + 1 for axis)
-        int statsHeight = 10;
+        int statsHeight = 11;
         if (info.oldGenUsed > 0) {
             statsHeight += 2;
         }
@@ -112,24 +119,34 @@ class MemoryTab implements MonitorTab {
     private void renderStats(Frame frame, Rect area, IntegrationInfo info) {
         List<Line> lines = new ArrayList<>();
 
-        // Heap memory with gauge bar
+        // Heap memory with two gauge bars (used/committed and used/max)
         if (info.heapMemUsed > 0) {
-            long pct = info.heapMemMax > 0 ? info.heapMemUsed * 100 / info.heapMemMax : 0;
-            String gauge = buildGaugeBar(pct, 30);
-            Color gaugeColor = pct >= 80 ? Color.LIGHT_RED : pct >= 60 ? Color.YELLOW : Color.GREEN;
-
             lines.add(Line.from(
                     Span.styled("  Heap Memory", Style.EMPTY.fg(Color.CYAN).bold())));
             lines.add(Line.from(
                     Span.styled("  used:      ", Style.EMPTY.dim()),
-                    Span.styled(String.format("%-10s", formatBytes(info.heapMemUsed)), Style.EMPTY.fg(Color.WHITE).bold()),
-                    Span.styled(gauge, Style.EMPTY.fg(gaugeColor)),
-                    Span.styled(String.format("  %d%%", pct), Style.EMPTY.fg(gaugeColor).bold())));
-            lines.add(Line.from(
-                    Span.styled("  committed: ", Style.EMPTY.dim()),
-                    Span.raw(formatBytes(info.heapMemCommitted)),
-                    Span.styled("    max: ", Style.EMPTY.dim()),
-                    Span.raw(formatBytes(info.heapMemMax))));
+                    Span.styled(formatBytes(info.heapMemUsed), Style.EMPTY.fg(Color.WHITE).bold())));
+
+            if (info.heapMemCommitted > 0) {
+                long pctComm = info.heapMemUsed * 100 / info.heapMemCommitted;
+                String gaugeComm = buildGaugeBar(pctComm, 30);
+                Color colorComm = pctComm >= 80 ? Color.LIGHT_RED : pctComm >= 60 ? Color.YELLOW : Color.GREEN;
+                lines.add(Line.from(
+                        Span.styled("  committed: ", Style.EMPTY.dim()),
+                        Span.styled(String.format("%-10s", formatBytes(info.heapMemCommitted)), Style.EMPTY),
+                        Span.styled(gaugeComm, Style.EMPTY.fg(colorComm)),
+                        Span.styled(String.format("  %d%%", pctComm), Style.EMPTY.fg(colorComm).bold())));
+            }
+            if (info.heapMemMax > 0) {
+                long pctMax = info.heapMemUsed * 100 / info.heapMemMax;
+                String gaugeMax = buildGaugeBar(pctMax, 30);
+                Color colorMax = pctMax >= 80 ? Color.LIGHT_RED : pctMax >= 60 ? Color.YELLOW : Color.GREEN;
+                lines.add(Line.from(
+                        Span.styled("  max:       ", Style.EMPTY.dim()),
+                        Span.styled(String.format("%-10s", formatBytes(info.heapMemMax)), Style.EMPTY),
+                        Span.styled(gaugeMax, Style.EMPTY.fg(colorMax)),
+                        Span.styled(String.format("  %d%%", pctMax), Style.EMPTY.fg(colorMax).bold())));
+            }
         }
 
         // Old Gen pool
@@ -309,6 +326,18 @@ class MemoryTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
+        hint(spans, "g", "gc");
+    }
+
+    private void triggerGC() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        JsonObject root = new JsonObject();
+        root.put("action", "gc");
+        Path actionFile = ctx.getActionFile(info.pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
     }
 
     private static String buildGaugeBar(long pct, int width) {
