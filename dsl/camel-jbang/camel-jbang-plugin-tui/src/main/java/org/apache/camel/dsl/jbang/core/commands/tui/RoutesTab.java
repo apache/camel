@@ -164,11 +164,6 @@ class RoutesTab implements MonitorTab {
             if (ke.isCharIgnoreCase('m')) {
                 diagramMetrics = !diagramMetrics;
                 diagram.endLoad();
-                loadDiagramForSelectedRoute();
-                return true;
-            }
-            if (!diagram.isDiagramTextMode() && ke.isKey(KeyCode.F5)) {
-                diagram.endLoad();
                 reloadDiagramQuietly();
                 return true;
             }
@@ -475,12 +470,7 @@ class RoutesTab implements MonitorTab {
             hintLast(spans, "Home/End", "top/bottom");
         } else if (diagram.isShowDiagram()) {
             diagram.renderFooterHints(spans);
-            if (diagramMetrics && !diagram.isDiagramTextMode()) {
-                hint(spans, "m", "metrics [on]");
-                hintLast(spans, "F5", "refresh counters");
-            } else {
-                hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
-            }
+            hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
@@ -511,7 +501,7 @@ class RoutesTab implements MonitorTab {
     }
 
     void refreshDiagramIfNeeded() {
-        if (diagram.isShowDiagram() && diagram.isDiagramTextMode() && diagramMetrics) {
+        if (diagram.isShowDiagram() && diagramMetrics) {
             reloadDiagramQuietly();
         }
     }
