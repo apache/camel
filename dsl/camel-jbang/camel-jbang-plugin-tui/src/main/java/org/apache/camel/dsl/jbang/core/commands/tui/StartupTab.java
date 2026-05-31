@@ -128,6 +128,7 @@ class StartupTab implements MonitorTab {
         scrollOffset = 0;
         errorMessage = null;
         dataLoaded = false;
+        loadStartupData();
     }
 
     @Override

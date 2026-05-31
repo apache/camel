@@ -52,7 +52,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class MetricsTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "name", "type", "value" };
+    private static final String[] SORT_COLUMNS = { "type", "name", "value" };
     private static final String[] FILTER_TYPES = { "all", "counter", "gauge", "timer", "longTaskTimer", "distribution" };
 
     private static final Style LABEL = Style.EMPTY.dim();
@@ -68,7 +68,7 @@ class MetricsTab implements MonitorTab {
     private boolean tableMode;
     private int lastRowCount;
     private String sort = "name";
-    private int sortIndex;
+    private int sortIndex = 1;
     private boolean sortReversed;
     private String filterType = "all";
     private int filterIndex;

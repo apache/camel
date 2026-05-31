@@ -18,10 +18,13 @@
 - route:
     id: cron-log
     from:
-      uri: timer:cron
+      uri: cron:tab
       parameters:
-        period: "{{cron.period}}"
+        schedule: "0/5 * * * * ?"
       steps:
         - setBody:
-            simple: "{{cron.message}} ${date:now:HH:mm:ss}"
-        - log: "${body}"
+            expression:
+              simple:
+                expression: "{{cron.message}} ${date:now:HH:mm:ss}"
+        - log:
+            message: "${body}"
