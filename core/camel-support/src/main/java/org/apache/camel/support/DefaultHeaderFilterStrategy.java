@@ -51,9 +51,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[.a-zA-Z0-9]*");
 
     /**
-     * A filter pattern for keys starting with <tt>Camel</tt>, <tt>camel</tt>, or <tt>org.apache.camel</tt>.
+     * A filter pattern for keys starting with <tt>Camel</tt> or <tt>camel</tt>.
      */
-    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel", "org.apache.camel" };
+    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel" };
 
     @Metadata(javaType = "java.lang.String",
               description = "Sets the in direction filter set. The in direction is referred to copying headers from an external message to a Camel message."

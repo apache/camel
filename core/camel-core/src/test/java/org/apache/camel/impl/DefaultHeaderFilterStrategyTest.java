@@ -223,8 +223,8 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertTrue(comp.applyFilterToExternalHeaders("CamelVersion", "4.21", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("camelJettySession", "true", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("CAMELFooBar", "x", exchange));
-        assertTrue(comp.applyFilterToExternalHeaders("org.apache.camel.foo", "x", exchange));
-        assertTrue(comp.applyFilterToExternalHeaders("org.apache.camel", "x", exchange)); // exact prefix, no dot
+        assertFalse(comp.applyFilterToExternalHeaders("org.apache.camel.foo", "x", exchange));
+        assertFalse(comp.applyFilterToExternalHeaders("org.apache.camel", "x", exchange));
     }
 
     @Test
@@ -238,8 +238,8 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertTrue(comp.applyFilterToCamelHeaders("CamelVersion", "4.21", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("camelJettySession", "true", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("CAMELFooBar", "x", exchange));
-        assertTrue(comp.applyFilterToCamelHeaders("org.apache.camel.foo", "x", exchange));
-        assertTrue(comp.applyFilterToCamelHeaders("org.apache.camel", "x", exchange)); // exact prefix, no dot
+        assertFalse(comp.applyFilterToCamelHeaders("org.apache.camel.foo", "x", exchange));
+        assertFalse(comp.applyFilterToCamelHeaders("org.apache.camel", "x", exchange));
     }
 
     @Test

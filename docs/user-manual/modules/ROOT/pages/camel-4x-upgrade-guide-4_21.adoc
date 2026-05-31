@@ -69,10 +69,9 @@ your own code or tooling, add `org.jspecify:jspecify` explicitly to your project
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
-The `DefaultHeaderFilterStrategy` now blocks headers whose names start with `Camel`, `camel`, or
-`org.apache.camel` (case-insensitive) by default in both the inbound (external to Camel) and outbound
-(Camel to external) directions. The `CAMEL_FILTER_STARTS_WITH` constant has been updated to include
-`org.apache.camel`. Previously this required each component to explicitly call
+The `DefaultHeaderFilterStrategy` now blocks headers whose names start with `Camel` or `camel`
+(case-insensitive) by default in both the inbound (external to Camel) and outbound
+(Camel to external) directions. Previously this required each component to explicitly call
 `setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH)` and `setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH)`.
 
 This affects anyone who:
@@ -83,6 +82,18 @@ This affects anyone who:
 If these headers need to pass through, opt out by calling `setInFilterStartsWith((String[]) null)` and/or
 `setOutFilterStartsWith((String[]) null)`, or by supplying a custom filter array.
 See `ClassicJmsHeaderFilterStrategy` for a worked example of the opt-out pattern.
+
+The following component-specific header filter strategy classes have been removed because
+`DefaultHeaderFilterStrategy` now provides equivalent behavior by default:
+
+* `CoAPHeaderFilterStrategy`
+* `CometdHeaderFilterStrategy`
+* `IggyHeaderFilterStrategy`
+* `NatsHeaderFilterStrategy`
+* `VertxWebsocketHeaderFilterStrategy`
+* `XmppHeaderFilterStrategy`
+
+If your code references any of these classes directly, replace them with `DefaultHeaderFilterStrategy`.
 
 ==== Error Registry SPI changes
 

@@ -26,14 +26,8 @@ public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
-
         getOutFilter().add(CxfConstants.OPERATION_NAME.toLowerCase());
 
         getOutFilter().add("Content-Type".toLowerCase());
-        // Support to filter the Content-Type case insensitive
-        setLowerCase(true);
-
-
     }
-
 }
