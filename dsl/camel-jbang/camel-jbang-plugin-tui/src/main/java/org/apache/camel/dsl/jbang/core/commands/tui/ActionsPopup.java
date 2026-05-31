@@ -589,6 +589,10 @@ class ActionsPopup {
     }
 
     void renderFooter(List<Span> spans) {
+        if (sendMessagePopup.isVisible()) {
+            sendMessagePopup.renderFooter(spans);
+            return;
+        }
         if (captionOverlay.isInlineMode()) {
             captionOverlay.renderFooter(spans);
             return;

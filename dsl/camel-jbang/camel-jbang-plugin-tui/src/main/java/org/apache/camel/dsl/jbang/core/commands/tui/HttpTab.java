@@ -43,6 +43,7 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
@@ -99,7 +100,7 @@ class HttpTab implements MonitorTab {
     private int probeMethodIndex;
     private final TextInputState probePathState = new TextInputState("");
     private final TextInputState probeBodyState = new TextInputState("");
-    private List<HeaderEntry> probeHeaders;
+    private List<FormHelper.HeaderEntry> probeHeaders;
     private int probeSelectedHeader;
     private boolean probeEditingHeaderKey;
     private final AtomicBoolean probeSending = new AtomicBoolean(false);
@@ -289,18 +290,10 @@ class HttpTab implements MonitorTab {
     }
 
     void handlePaste(String text) {
-        if (!probeMode || probeSending.get() || text == null || text.isEmpty()) {
+        if (!probeMode || probeSending.get()) {
             return;
         }
-        TextInputState target = probeActiveTextInput();
-        if (target != null) {
-            for (int i = 0; i < text.length(); i++) {
-                char ch = text.charAt(i);
-                if (ch != '\n' && ch != '\r') {
-                    target.insert(ch);
-                }
-            }
-        }
+        FormHelper.handlePaste(text, probeActiveTextInput());
     }
 
     // ---- Probe mode ----
@@ -374,7 +367,7 @@ class HttpTab implements MonitorTab {
         for (int i = 0; i < value.length(); i++) {
             valState.insert(value.charAt(i));
         }
-        probeHeaders.add(new HeaderEntry(keyState, valState));
+        probeHeaders.add(new FormHelper.HeaderEntry(keyState, valState));
     }
 
     private boolean handleProbeKeyEvent(KeyEvent ke) {
@@ -453,7 +446,7 @@ class HttpTab implements MonitorTab {
                 addProbeHeaderEmpty();
                 return true;
             }
-            handleTextInput(ke, probePathState);
+            FormHelper.handleTextInput(ke, probePathState);
             return true;
         }
         if (probeField == PROBE_HEADERS) {
@@ -482,7 +475,7 @@ class HttpTab implements MonitorTab {
                 addProbeHeaderEmpty();
                 return true;
             }
-            handleTextInput(ke, probeBodyState);
+            FormHelper.handleTextInput(ke, probeBodyState);
             return true;
         }
         if (probeField == PROBE_HISTORY) {
@@ -510,8 +503,8 @@ class HttpTab implements MonitorTab {
     }
 
     private boolean handleProbeHeaderKeyEvent(KeyEvent ke) {
-        HeaderEntry current = probeHeaders.get(probeSelectedHeader);
-        TextInputState activeInput = probeEditingHeaderKey ? current.keyInput : current.valueInput;
+        FormHelper.HeaderEntry current = probeHeaders.get(probeSelectedHeader);
+        TextInputState activeInput = probeEditingHeaderKey ? current.keyInput() : current.valueInput();
 
         if (ke.isChar('+')) {
             addProbeHeaderEmpty();
@@ -542,7 +535,7 @@ class HttpTab implements MonitorTab {
             return true;
         }
         if (ke.isDeleteBackward()) {
-            if (probeEditingHeaderKey && current.keyInput.text().isEmpty()) {
+            if (probeEditingHeaderKey && current.keyInput().text().isEmpty()) {
                 probeHeaders.remove(probeSelectedHeader);
                 if (probeHeaders.isEmpty()) {
                     probeHeaders = null;
@@ -594,7 +587,7 @@ class HttpTab implements MonitorTab {
         if (probeHeaders == null) {
             probeHeaders = new ArrayList<>();
         }
-        probeHeaders.add(new HeaderEntry(new TextInputState(""), new TextInputState("")));
+        probeHeaders.add(new FormHelper.HeaderEntry(new TextInputState(""), new TextInputState("")));
         probeField = PROBE_HEADERS;
         probeSelectedHeader = probeHeaders.size() - 1;
         probeEditingHeaderKey = true;
@@ -612,8 +605,8 @@ class HttpTab implements MonitorTab {
             return probeBodyState;
         }
         if (probeField == PROBE_HEADERS && hasProbeHeaders()) {
-            HeaderEntry he = probeHeaders.get(probeSelectedHeader);
-            return probeEditingHeaderKey ? he.keyInput : he.valueInput;
+            FormHelper.HeaderEntry he = probeHeaders.get(probeSelectedHeader);
+            return probeEditingHeaderKey ? he.keyInput() : he.valueInput();
         }
         return null;
     }
@@ -638,8 +631,8 @@ class HttpTab implements MonitorTab {
         }
         probeHeaders = null;
         if (entry.headers != null) {
-            for (HeaderEntry he : entry.headers) {
-                addProbeHeader(he.keyInput.text(), he.valueInput.text());
+            for (FormHelper.HeaderEntry he : entry.headers) {
+                addProbeHeader(he.keyInput().text(), he.valueInput().text());
             }
         }
         probeField = PROBE_BODY;
@@ -677,16 +670,16 @@ class HttpTab implements MonitorTab {
         String baseUrl = probeBaseUrl;
 
         // Snapshot headers
-        List<HeaderEntry> headerSnapshot = null;
+        List<FormHelper.HeaderEntry> headerSnapshot = null;
         if (hasProbeHeaders()) {
             headerSnapshot = new ArrayList<>();
-            for (HeaderEntry he : probeHeaders) {
-                headerSnapshot.add(new HeaderEntry(
-                        new TextInputState(he.keyInput.text()),
-                        new TextInputState(he.valueInput.text())));
+            for (FormHelper.HeaderEntry he : probeHeaders) {
+                headerSnapshot.add(new FormHelper.HeaderEntry(
+                        new TextInputState(he.keyInput().text()),
+                        new TextInputState(he.valueInput().text())));
             }
         }
-        List<HeaderEntry> hdrs = headerSnapshot;
+        List<FormHelper.HeaderEntry> hdrs = headerSnapshot;
 
         ctx.runner.scheduler().execute(() -> {
             try {
@@ -698,7 +691,7 @@ class HttpTab implements MonitorTab {
     }
 
     private void doProbeRequestInBackground(
-            String baseUrl, String method, String path, String body, List<HeaderEntry> hdrs) {
+            String baseUrl, String method, String path, String body, List<FormHelper.HeaderEntry> hdrs) {
 
         String url = baseUrl + path;
         String statusText;
@@ -725,9 +718,9 @@ class HttpTab implements MonitorTab {
 
             // Add user headers
             if (hdrs != null) {
-                for (HeaderEntry he : hdrs) {
-                    String k = he.keyInput.text().trim();
-                    String v = he.valueInput.text();
+                for (FormHelper.HeaderEntry he : hdrs) {
+                    String k = he.keyInput().text().trim();
+                    String v = he.valueInput().text();
                     if (!k.isEmpty()) {
                         reqBuilder.header(k, v);
                     }
@@ -770,7 +763,7 @@ class HttpTab implements MonitorTab {
         }
 
         // Build history entry
-        List<HeaderEntry> histHeaders = null;
+        List<FormHelper.HeaderEntry> histHeaders = null;
         if (hdrs != null && !hdrs.isEmpty()) {
             histHeaders = new ArrayList<>(hdrs);
         }
@@ -860,6 +853,14 @@ class HttpTab implements MonitorTab {
     // ---- Probe rendering ----
 
     private void renderProbe(Frame frame, Rect area) {
+        frame.renderWidget(Clear.INSTANCE, area);
+
+        int padX = 2;
+        int padY = 1;
+        Rect inner = new Rect(
+                area.left() + padX, area.top() + padY,
+                area.width() - padX * 2, area.height() - padY * 2);
+
         int headerCount = hasProbeHeaders() ? probeHeaders.size() : 0;
         int requestHeight = 7 + headerCount + (headerCount > 0 ? 1 : 0);
         int historyHeight = Math.min(4 + 2, probeHistory.size() + 2);
@@ -872,7 +873,7 @@ class HttpTab implements MonitorTab {
                         Constraint.length(requestHeight),
                         Constraint.fill(),
                         Constraint.length(historyHeight))
-                .split(area);
+                .split(inner);
 
         renderProbeRequest(frame, chunks.get(0));
         renderProbeResponse(frame, chunks.get(1));
@@ -896,7 +897,7 @@ class HttpTab implements MonitorTab {
         int row = area.top() + 1;
 
         // Method selector
-        renderProbeLabel(frame, innerX, row, labelW, "Method:", probeField == PROBE_METHOD);
+        FormHelper.renderLabel(frame, innerX, row, labelW, "Method:", probeField == PROBE_METHOD);
         Rect methodArea = new Rect(innerX + labelW, row, fieldW, 1);
         Style methodSt = methodStyle(method);
         String leftArr = probeField == PROBE_METHOD ? "◀ " : "  ";
@@ -908,7 +909,7 @@ class HttpTab implements MonitorTab {
 
         // Full URL (read-only)
         row++;
-        renderProbeLabel(frame, innerX, row, labelW, "URL:", false);
+        FormHelper.renderLabel(frame, innerX, row, labelW, "URL:", false);
         String fullUrl = (probeBaseUrl != null ? probeBaseUrl : "") + probePathState.text();
         Rect urlArea = new Rect(innerX + labelW, row, fieldW, 1);
         frame.renderWidget(Paragraph.from(Line.from(
@@ -916,7 +917,7 @@ class HttpTab implements MonitorTab {
 
         // Path input
         row++;
-        renderProbeLabel(frame, innerX, row, labelW, "Path:", probeField == PROBE_PATH);
+        FormHelper.renderLabel(frame, innerX, row, labelW, "Path:", probeField == PROBE_PATH);
         Rect pathArea = new Rect(innerX + labelW, row, fieldW, 1);
         if (probeField == PROBE_PATH && !probeSending.get()) {
             TextInput textInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
@@ -937,18 +938,18 @@ class HttpTab implements MonitorTab {
                 row++;
                 boolean isSelected = probeField == PROBE_HEADERS && probeSelectedHeader == i;
                 String label = i == 0 ? "Headers:" : "";
-                renderProbeLabel(frame, innerX, row, labelW, label,
+                FormHelper.renderLabel(frame, innerX, row, labelW, label,
                         isSelected || (i == 0 && probeField == PROBE_HEADERS));
 
-                HeaderEntry he = probeHeaders.get(i);
+                FormHelper.HeaderEntry he = probeHeaders.get(i);
                 int fieldX = innerX + labelW;
 
                 Rect keyArea = new Rect(fieldX, row, keyW, 1);
                 if (isSelected && probeEditingHeaderKey && !probeSending.get()) {
                     TextInput keyInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-                    frame.renderStatefulWidget(keyInput, keyArea, he.keyInput);
+                    frame.renderStatefulWidget(keyInput, keyArea, he.keyInput());
                 } else {
-                    String keyText = he.keyInput.text();
+                    String keyText = he.keyInput().text();
                     Style keyStyle = keyText.isEmpty() ? Style.EMPTY.dim()
                             : isSelected ? Style.EMPTY.bold() : Style.EMPTY;
                     frame.renderWidget(Paragraph.from(Line.from(
@@ -962,9 +963,9 @@ class HttpTab implements MonitorTab {
                 Rect valArea = new Rect(fieldX + keyW + 3, row, valW, 1);
                 if (isSelected && !probeEditingHeaderKey && !probeSending.get()) {
                     TextInput valInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-                    frame.renderStatefulWidget(valInput, valArea, he.valueInput);
+                    frame.renderStatefulWidget(valInput, valArea, he.valueInput());
                 } else {
-                    String valText = he.valueInput.text();
+                    String valText = he.valueInput().text();
                     Style valStyle = valText.isEmpty() ? Style.EMPTY.dim()
                             : isSelected ? Style.EMPTY.bold() : Style.EMPTY;
                     frame.renderWidget(Paragraph.from(Line.from(
@@ -975,7 +976,7 @@ class HttpTab implements MonitorTab {
 
         // Body input
         row++;
-        renderProbeLabel(frame, innerX, row, labelW, "Body:", probeField == PROBE_BODY);
+        FormHelper.renderLabel(frame, innerX, row, labelW, "Body:", probeField == PROBE_BODY);
         Rect bodyArea = new Rect(innerX + labelW, row, fieldW, 1);
         if (probeField == PROBE_BODY && !probeSending.get()) {
             TextInput textInput = TextInput.builder()
@@ -1095,7 +1096,7 @@ class HttpTab implements MonitorTab {
             String statusStr = entry.error ? "ERR" : entry.statusText;
             String elapsedStr = entry.elapsed > 0 ? entry.elapsed + "ms" : "";
             String bodySnippet = entry.body != null && !entry.body.isEmpty()
-                    ? " " + truncate(entry.body, 30)
+                    ? " " + TuiHelper.truncate(entry.body, 30)
                     : "";
 
             Style lineStyle = selected ? Style.EMPTY.bold() : Style.EMPTY;
@@ -1114,12 +1115,6 @@ class HttpTab implements MonitorTab {
                         .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
                         .build(),
                 area);
-    }
-
-    private void renderProbeLabel(Frame frame, int x, int y, int w, String label, boolean selected) {
-        Style style = selected ? Style.EMPTY.bold() : Style.EMPTY.dim();
-        Rect labelArea = new Rect(x, y, w, 1);
-        frame.renderWidget(Paragraph.from(Line.from(Span.styled(label, style))), labelArea);
     }
 
     private static Style statusStyle(String status) {
@@ -1545,31 +1540,6 @@ class HttpTab implements MonitorTab {
         return MonitorContext.sortStyle(column, sort);
     }
 
-    private static void handleTextInput(KeyEvent ke, TextInputState state) {
-        if (ke.isDeleteBackward()) {
-            state.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            state.deleteForward();
-        } else if (ke.isLeft()) {
-            state.moveCursorLeft();
-        } else if (ke.isRight()) {
-            state.moveCursorRight();
-        } else if (ke.isHome()) {
-            state.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            state.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            state.insert(ke.character());
-        }
-    }
-
-    private static String truncate(String s, int max) {
-        if (s == null) {
-            return "";
-        }
-        return s.length() <= max ? s : s.substring(0, max - 1) + "…";
-    }
-
     @Override
     public SelectionContext getSelectionContext() {
         IntegrationInfo info = ctx.findSelectedIntegration();
@@ -1584,12 +1554,9 @@ class HttpTab implements MonitorTab {
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "HTTP");
     }
 
-    record HeaderEntry(TextInputState keyInput, TextInputState valueInput) {
-    }
-
     record ProbeHistoryEntry(
             String method, String path,
-            List<HeaderEntry> headers, String body,
+            List<FormHelper.HeaderEntry> headers, String body,
             int statusCode, long elapsed,
             String statusText, boolean error) {
     }
