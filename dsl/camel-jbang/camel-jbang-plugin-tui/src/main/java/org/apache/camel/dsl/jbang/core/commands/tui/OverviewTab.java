@@ -239,7 +239,7 @@ class OverviewTab implements MonitorTab {
         if (dividerIndex >= 0) {
             rows.add(Row.from(
                     Cell.from(""),
-                    Cell.from(Span.styled("─── Infra Services ───", Style.EMPTY.dim())),
+                    Cell.from(Span.styled("─── Dev/Infra Services ───", Style.EMPTY.dim())),
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     Cell.from(""), Cell.from("")));
@@ -759,6 +759,23 @@ class OverviewTab implements MonitorTab {
                 - **Meta** — Metaspace usage (where Java class definitions are stored)
                 - **Threads** — JVM thread count
                 - **Load avg** — Three comma-separated load averages over 1-minute, 5-minute, and 15-minute windows. These measure message throughput, not CPU usage — similar concept to Unix load average but for Camel exchanges
+
+                ## Dev/Infra Services
+
+                Dev/Infra Services are backing services (databases, message brokers, etc.)
+                running in containers via Docker or Podman. This is similar to Quarkus Dev Services
+                and Spring Boot Development-time Services.
+
+                For example, if your integration uses Kafka, you can start a Kafka broker
+                directly from the TUI using `F2` → `Run Dev/Infra Service...` → select `kafka`.
+                The service starts in the background and appears below the integrations list,
+                separated by a divider line.
+
+                When running an example that requires infra services, they are started
+                automatically before the example launches.
+
+                Selecting an infra service in the list shows its connection properties
+                (host, port, etc.) in the info panel on the right.
 
                 ## Keys
 

@@ -70,6 +70,7 @@ class ActionsPopup {
     enum Action {
         SEND_MESSAGE,
         RUN_EXAMPLE,
+        RUN_FOLDER,
         RUN_INFRA,
         SHOW_DOCS,
         DOCTOR,
@@ -85,7 +86,7 @@ class ActionsPopup {
         MCP_LOG
     }
 
-    private static final int[] GROUP_SIZES = { 4, 4, 5 };
+    private static final int[] GROUP_SIZES = { 5, 4, 5 };
     private static final int MCP_GROUP_SIZE = 2;
 
     private final Supplier<Set<String>> runningNames;
@@ -131,6 +132,12 @@ class ActionsPopup {
     private InfraServiceEntry selectedInfraService;
     private int infraImplIndex;
     private TextInputState infraPortState;
+
+    private boolean showFolderInput;
+    private TextInputState folderInputState;
+    private final List<String> folderHistory = new ArrayList<>();
+    private int folderHistoryIndex = -1;
+    private String selectedFolder;
 
     private final McpLogPopup mcpLogPopup = new McpLogPopup();
 
@@ -254,7 +261,8 @@ class ActionsPopup {
     }
 
     boolean isVisible() {
-        return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
+        return showActionsMenu || showExampleBrowser || showFolderInput || runOptionsForm.isVisible()
+                || showDocPicker || showDocViewer
                 || showInfraBrowser || showInfraPortDialog
                 || mcpLogPopup.isVisible() || doctorPopup.isVisible()
                 || sendMessagePopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
@@ -264,7 +272,7 @@ class ActionsPopup {
         if (showInfraBrowser && infraCatalog != null) {
             List<String> items = infraCatalog.stream().map(e -> e.alias).collect(Collectors.toList());
             Integer sel = infraBrowserState.selected();
-            return new SelectionContext("list", items, sel != null ? sel : -1, infraCatalog.size(), "Infra Services");
+            return new SelectionContext("list", items, sel != null ? sel : -1, infraCatalog.size(), "Dev/Infra Services");
         }
         if (showExampleBrowser && exampleCatalog != null) {
             List<String> items = new ArrayList<>();
@@ -302,7 +310,8 @@ class ActionsPopup {
         // Group 1: User Actions
         labels.add("Send Message");
         labels.add("Run an example...");
-        labels.add("Run Infra Service...");
+        labels.add("Run from folder...");
+        labels.add("Run Dev/Infra Service...");
         labels.add("Show Integration Doc");
         labels.add("───");
         // Group 2: Diagnostics
@@ -334,6 +343,7 @@ class ActionsPopup {
     void close() {
         showActionsMenu = false;
         showExampleBrowser = false;
+        showFolderInput = false;
         runOptionsForm.close();
         showDocPicker = false;
         showDocViewer = false;
@@ -444,11 +454,34 @@ class ActionsPopup {
         if (runOptionsForm.isVisible()) {
             if (ke.isCancel()) {
                 runOptionsForm.close();
-                showExampleBrowser = true;
+                if (selectedFolder != null) {
+                    showFolderInput = true;
+                } else {
+                    showExampleBrowser = true;
+                }
             } else if (ke.isConfirm()) {
-                launchWithName();
+                if (selectedFolder != null) {
+                    launchFolder();
+                } else {
+                    launchWithName();
+                }
             } else {
                 runOptionsForm.handleKeyEvent(ke);
+            }
+            return true;
+        }
+        if (showFolderInput) {
+            if (ke.isCancel()) {
+                showFolderInput = false;
+                showActionsMenu = true;
+            } else if (ke.isConfirm()) {
+                confirmFolderInput();
+            } else if (ke.isUp()) {
+                navigateFolderHistory(-1);
+            } else if (ke.isDown()) {
+                navigateFolderHistory(1);
+            } else {
+                handleFolderTextInput(ke);
             }
             return true;
         }
@@ -496,6 +529,8 @@ class ActionsPopup {
                     Action action = resolveAction(sel);
                     if (action == Action.RUN_EXAMPLE) {
                         openExampleBrowser();
+                    } else if (action == Action.RUN_FOLDER) {
+                        openFolderInput();
                     } else if (action == Action.SHOW_DOCS) {
                         openDocPicker();
                     } else if (action == Action.SCREENSHOT) {
@@ -558,6 +593,9 @@ class ActionsPopup {
         }
         if (showInfraPortDialog) {
             renderInfraPortDialog(frame, area);
+        }
+        if (showFolderInput) {
+            renderFolderInput(frame, area);
         }
         if (showExampleBrowser) {
             renderExampleBrowser(frame, area);
@@ -624,6 +662,14 @@ class ActionsPopup {
             runOptionsForm.renderFooter(spans);
             return;
         }
+        if (showFolderInput) {
+            if (!folderHistory.isEmpty()) {
+                hint(spans, "↑↓", "history");
+            }
+            hint(spans, "Enter", "run...");
+            hintLast(spans, "Esc", "back");
+            return;
+        }
         if (showInfraPortDialog) {
             hint(spans, "Enter", "run");
             hintLast(spans, "Esc", "back");
@@ -685,7 +731,8 @@ class ActionsPopup {
         // Group 1: User Actions
         items.add(ListItem.from("  📩 Send Message"));
         items.add(ListItem.from("  🐪 Run an example..."));
-        items.add(ListItem.from("  🔧 Run Infra Service..."));
+        items.add(ListItem.from("  📂 Run from folder..."));
+        items.add(ListItem.from("  🔧 Run Dev/Infra Service..."));
         items.add(ListItem.from("  📖 Show Integration Doc"));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics
@@ -1099,6 +1146,152 @@ class ActionsPopup {
         mcpLogPopup.open();
     }
 
+    // ---- Folder Input ----
+
+    private void openFolderInput() {
+        showActionsMenu = false;
+        showFolderInput = true;
+        folderInputState = new TextInputState("");
+        folderHistoryIndex = -1;
+    }
+
+    private void confirmFolderInput() {
+        String folder = folderInputState.text().trim();
+        if (folder.isEmpty()) {
+            return;
+        }
+        folderHistory.remove(folder);
+        folderHistory.add(0, folder);
+        if (folderHistory.size() > 20) {
+            folderHistory.remove(folderHistory.size() - 1);
+        }
+        selectedFolder = folder;
+        showFolderInput = false;
+        String displayName = Path.of(folder).getFileName().toString();
+        runOptionsForm.open(displayName, displayName, false);
+    }
+
+    private void navigateFolderHistory(int direction) {
+        if (folderHistory.isEmpty()) {
+            return;
+        }
+        if (direction < 0) {
+            if (folderHistoryIndex < folderHistory.size() - 1) {
+                folderHistoryIndex++;
+            }
+        } else {
+            if (folderHistoryIndex > 0) {
+                folderHistoryIndex--;
+            } else if (folderHistoryIndex == 0) {
+                folderHistoryIndex = -1;
+                folderInputState = new TextInputState("");
+                return;
+            }
+        }
+        if (folderHistoryIndex >= 0 && folderHistoryIndex < folderHistory.size()) {
+            folderInputState = new TextInputState(folderHistory.get(folderHistoryIndex));
+        }
+    }
+
+    private void handleFolderTextInput(KeyEvent ke) {
+        if (folderInputState == null) {
+            return;
+        }
+        if (ke.isDeleteBackward()) {
+            folderInputState.deleteBackward();
+        } else if (ke.isDeleteForward()) {
+            folderInputState.deleteForward();
+        } else if (ke.isLeft()) {
+            folderInputState.moveCursorLeft();
+        } else if (ke.isRight()) {
+            folderInputState.moveCursorRight();
+        } else if (ke.isHome()) {
+            folderInputState.moveCursorToStart();
+        } else if (ke.isEnd()) {
+            folderInputState.moveCursorToEnd();
+        } else if (ke.code() == KeyCode.CHAR) {
+            folderInputState.insert(ke.character());
+        }
+    }
+
+    private void renderFolderInput(Frame frame, Rect area) {
+        int popupW = Math.min(70, area.width() - 4);
+        int popupH = 4;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        List<Span> bottomSpans = new ArrayList<>();
+        if (!folderHistory.isEmpty()) {
+            bottomSpans.add(Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE));
+            bottomSpans.add(Span.raw(" history │"));
+        }
+        bottomSpans.add(Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE));
+        bottomSpans.add(Span.raw(" run... │"));
+        bottomSpans.add(Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE));
+        bottomSpans.add(Span.raw(" back "));
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Run from folder ")
+                .titleBottom(Title.from(Line.from(bottomSpans)))
+                .build();
+        frame.renderWidget(block, popup);
+        Rect inner = block.inner(popup);
+
+        int labelW = 9;
+        int fieldW = inner.width() - labelW;
+        int row = inner.top();
+        int ix = inner.left();
+
+        Rect labelArea = new Rect(ix, row, labelW, 1);
+        frame.renderWidget(Paragraph.from(Line.from(Span.styled("Folder:", Style.EMPTY.bold()))), labelArea);
+        Rect inputArea = new Rect(ix + labelW, row, fieldW, 1);
+        TextInput textInput = TextInput.builder()
+                .cursorStyle(Style.EMPTY.reversed())
+                .placeholder("/path/to/folder")
+                .build();
+        frame.renderStatefulWidget(textInput, inputArea, folderInputState);
+    }
+
+    private void launchFolder() {
+        if (selectedFolder == null) {
+            return;
+        }
+        String folder = selectedFolder;
+        String displayName = runOptionsForm.name();
+        if (displayName.isEmpty()) {
+            displayName = Path.of(folder).getFileName().toString();
+        }
+        List<String> extraArgs = runOptionsForm.buildArgs();
+        runOptionsForm.close();
+        selectedFolder = null;
+        doLaunchFolder(folder, displayName, extraArgs);
+    }
+
+    private void doLaunchFolder(String folder, String displayName, List<String> extraArgs) {
+        try {
+            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+            cmd.add("run");
+            cmd.add(folder);
+            cmd.add("--logging-color=true");
+            cmd.addAll(extraArgs);
+            Path outputFile = Files.createTempFile("camel-folder-", ".log");
+            outputFile.toFile().deleteOnExit();
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(outputFile.toFile());
+            Process process = pb.start();
+            pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
+            pendingAutoSelect = displayName;
+            setNotification("Starting: " + displayName, false);
+        } catch (Exception e) {
+            setNotification("Failed to start: " + folder + " - " + e.getMessage(), true);
+        }
+    }
+
     // ---- Name Input ----
 
     private void openNameInput() {
@@ -1474,7 +1667,7 @@ class ActionsPopup {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
-                        .title(" Run Infra Service (" + available + "/" + infraCatalog.size() + ") ")
+                        .title(" Run Dev/Infra Service (" + available + "/" + infraCatalog.size() + ") ")
                         .titleBottom(Title.from(Line.from(
                                 Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" select │"),
                                 Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
