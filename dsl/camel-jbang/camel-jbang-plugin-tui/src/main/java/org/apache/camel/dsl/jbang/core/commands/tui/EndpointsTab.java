@@ -663,4 +663,53 @@ class EndpointsTab implements MonitorTab {
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Endpoints");
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Endpoints
+
+                Endpoints are the addresses that messages flow to and from. Every Camel
+                component (kafka, http, file, log, etc.) provides endpoints that routes
+                use to receive and send data.
+
+                ## Table Columns
+
+                - **COMPONENT** — The Camel component (e.g., `kafka`, `http`, `file`, `log`)
+                - **ROUTE** — Which route uses this endpoint
+                - **DIR** — Direction: `in` (consuming from), `out` (producing to), or `both`
+                - **TOTAL** — Number of times this endpoint has been used (hit count)
+                - **BODY** — Average message body size passing through this endpoint
+                - **HDR** — Average message headers size
+                - **STUB** — Marked `x` if the endpoint is replaced by a stub (for testing)
+                - **REMOTE** — Marked `x` if the endpoint connects to an external system
+                - **URI** — Full endpoint URI with parameters
+
+                ## Flow Chart
+
+                The bottom panel shows message flow as a mirrored sparkline:
+
+                ```
+                ┌─────────┐                      ┌──────────┐
+                │  kafka  │ ──▸ [integration] ──▸ │   http   │
+                │  file   │                      │   log    │
+                └─────────┘                      └──────────┘
+                 inbound                          outbound
+                ```
+
+                - **Left side (green)**: inbound messages per second
+                - **Right side (cyan)**: outbound messages per second
+
+                ## Payload Size Chart
+
+                When message size tracking is available, a chart shows body sizes over time.
+                This helps identify large messages or size anomalies.
+
+                ## Keys
+
+                - `Up/Down` — select endpoint
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                """;
+    }
 }

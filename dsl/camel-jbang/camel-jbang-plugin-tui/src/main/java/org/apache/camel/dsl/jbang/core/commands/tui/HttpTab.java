@@ -1556,4 +1556,53 @@ class HttpTab implements MonitorTab {
             int statusCode, long elapsed,
             String statusText, boolean error) {
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # HTTP
+
+                The HTTP tab shows all HTTP endpoints exposed by this integration and
+                lets you send test requests interactively.
+
+                ## Endpoint List
+
+                - **METHOD** — HTTP method: GET, POST, PUT, DELETE, PATCH, etc.
+                - **PATH** — URL path for this endpoint
+                - **TOTAL** — Number of requests received
+                - **CONSUMES** — Content-Type this endpoint accepts (e.g., `application/json`)
+                - **PRODUCES** — Content-Type this endpoint returns
+                - **SOURCE** — How the endpoint was defined
+                - **STATE** — Endpoint state
+
+                ### SOURCE types
+
+                - **REST(code)** — defined in Camel REST DSL code
+                - **REST(contract)** — generated from an OpenAPI/Swagger contract
+                - **HTTP** — registered via platform-http component
+                - **Mgmt** — management endpoint (health, metrics, etc.)
+
+                ## HTTP Probe
+
+                Press `Enter` on an endpoint to open the interactive HTTP probe.
+                This lets you send test requests and inspect responses in real time.
+
+                - **Method**: use `Left/Right` arrows to cycle HTTP methods
+                - **Path**: editable URL path
+                - **Headers**: add custom headers with `+`, edit key and value
+                - **Body**: request body (or `file:filename.json` to load from file)
+                - **Response**: shows status code, headers, and body
+                - **History**: recent requests with replay support
+
+                Press `p` to toggle pretty-print for JSON responses.
+
+                ## Keys
+
+                - `Up/Down` — select endpoint
+                - `Enter` — open HTTP probe for selected endpoint
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — close probe view
+                """;
+    }
 }

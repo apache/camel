@@ -504,4 +504,47 @@ class ThreadsTab implements MonitorTab {
         String lockName;
         List<String> stackTrace;
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Threads
+
+                The Threads tab shows all JVM threads with their state, CPU time,
+                and stack traces. This helps diagnose deadlocks, thread contention,
+                and excessive thread creation.
+
+                ## Table Columns
+
+                - **ID** — Thread ID
+                - **NAME** — Thread name
+                - **STATE** — Thread state: `RUNNABLE`, `WAITING`, `TIMED_WAITING`, `BLOCKED`
+                - **CPU** — CPU time consumed by this thread
+                - **BLOCKED** — Number of times and total time this thread was blocked
+                - **WAITED** — Number of times and total time this thread waited
+                - **LOCK** — Lock the thread is waiting on (if any)
+
+                ## Thread States
+
+                - **RUNNABLE**: Actively executing or ready to run
+                - **WAITING**: Waiting indefinitely for another thread
+                - **TIMED_WAITING**: Waiting with a timeout (e.g., `Thread.sleep`)
+                - **BLOCKED**: Waiting to acquire a monitor lock (contention)
+
+                Many `BLOCKED` threads may indicate lock contention. Many `WAITING`
+                threads are normal for thread pools waiting for work.
+
+                ## Detail View
+
+                Press `Enter` to see the full stack trace of a thread.
+
+                ## Keys
+
+                - `Up/Down` — select thread
+                - `Enter` — view stack trace
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back
+                """;
+    }
 }

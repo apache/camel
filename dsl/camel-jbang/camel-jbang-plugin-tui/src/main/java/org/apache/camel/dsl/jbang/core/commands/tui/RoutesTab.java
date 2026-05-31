@@ -1103,4 +1103,57 @@ class RoutesTab implements MonitorTab {
         Integer sel = routeTableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Routes");
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Routes
+
+                Routes are the building blocks of a Camel integration. Each route defines
+                a message flow: where messages come from, how they are processed, and where
+                they are sent to.
+
+                ```
+                from(timer) ──▸ process ──▸ choice
+                                              ├──▸ when(condition) ──▸ to(kafka)
+                                              └──▸ otherwise ──▸ to(log)
+                ```
+
+                ## Route Table Columns
+
+                - **ROUTE** — Unique route identifier
+                - **FROM** — The endpoint that triggers this route (e.g., `timer`, `kafka`, `file`)
+                - **STATUS** — Route state: `Started`, `Stopped`, or `Suspended`
+                - **COVER** — Percentage of route nodes that have processed at least one message. Helps identify dead code paths — nodes that are defined but never reached
+                - **MSG/S** — Current message throughput (messages per second)
+                - **TOTAL** — Total exchanges processed since startup
+                - **FAIL** — Exchanges that ended with an error
+                - **INFLIGHT** — Exchanges currently being processed
+                - **MIN** — Fastest exchange processing time (milliseconds)
+                - **MEAN** — Average exchange processing time (milliseconds)
+                - **MAX** — Slowest exchange processing time (milliseconds)
+                - **SINCE-LAST** — Time since the last exchange was processed
+
+                ## Top Mode
+
+                Press `t` to switch to **Top mode** — a performance-focused view
+                that includes processor-level breakdown and load averages.
+
+                - **LOAD** — Throughput averages over 1m/5m/15m windows, similar to Unix load average but measuring message throughput instead of CPU
+
+                ## Views
+
+                - `d` — **Diagram**: visual flow chart of the route showing all EIP nodes
+                - `s` — **Source**: the original route source code (YAML, XML, or Java)
+                - `Enter` — view detailed route info
+                - `t` — toggle Top mode
+
+                ## Keys
+
+                - `Up/Down` — select route
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back to route list
+                """;
+    }
 }

@@ -200,4 +200,41 @@ class HealthTab implements MonitorTab {
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Health");
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Health
+
+                Health checks verify that the integration and its dependencies are functioning
+                correctly. They are essential for container orchestration platforms like Kubernetes.
+
+                ## Table Columns
+
+                - **GROUP** — Category of the health check (e.g., `camel`, `routes`, `consumers`)
+                - **NAME** — Specific check name (e.g., route ID, consumer name)
+                - **STATUS** — Health state: `UP` (healthy), `DOWN` (unhealthy), `UNKNOWN`
+                - **KIND** — Check type: `R` = Readiness, `L` = Liveness, `R/L` = both
+                - **MESSAGE** — Status message with details (especially useful when DOWN)
+
+                ## Readiness vs Liveness
+
+                These concepts come from Kubernetes but apply to any deployment:
+
+                - **Liveness** (`L`): Is the process alive and not stuck? If a liveness check
+                  fails, the process should be restarted.
+
+                - **Readiness** (`R`): Is the process ready to accept traffic? During startup,
+                  a process may be alive but not yet ready (e.g., still connecting to a database).
+                  If readiness fails, traffic should be routed elsewhere.
+
+                A health check marked `R/L` serves both purposes.
+
+                ## Keys
+
+                - `Up/Down` — select health check
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                """;
+    }
 }

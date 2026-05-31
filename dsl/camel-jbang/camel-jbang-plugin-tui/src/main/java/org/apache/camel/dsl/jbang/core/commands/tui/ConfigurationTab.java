@@ -237,4 +237,29 @@ class ConfigurationTab implements MonitorTab {
         String source;
         String location;
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Configuration
+
+                The Configuration tab shows all configuration properties of the running
+                integration. This includes Camel settings, component options, and
+                application properties.
+
+                ## Table Columns
+
+                - **KEY** — Property name (e.g., `camel.main.name`, `camel.component.kafka.brokers`)
+                - **VALUE** — Current property value
+                - **DEFAULT** — Default value (if different from current)
+                - **SOURCE** — Where the property was set (e.g., `application.properties`, `ENV`, `SYS`)
+
+                ## Keys
+
+                - `Up/Down` — navigate properties
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back
+                """;
+    }
 }

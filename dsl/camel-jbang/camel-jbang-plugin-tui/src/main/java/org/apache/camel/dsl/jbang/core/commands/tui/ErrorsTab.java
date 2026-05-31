@@ -448,4 +448,52 @@ class ErrorsTab implements MonitorTab {
             }
         });
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Errors
+
+                The Errors tab shows exchanges that have failed with exceptions. This is
+                your primary tool for debugging integration problems.
+
+                ## Error List
+
+                - **ID** — Exchange identifier
+                - **AGO** — How long ago the error occurred
+                - **ROUTE** — Route where the error happened
+                - **NODE** — The specific processor/node in the route where the error occurred
+                - **HANDLED** — `true` if the error was caught by an error handler or dead letter channel, `false` if it propagated up
+                - **EXCEPTION** — Exception class name (short form)
+                - **MESSAGE** — Exception message text
+
+                ## Understanding HANDLED
+
+                - **handled=true**: The error was caught by Camel's error handling (e.g.,
+                  `onException`, `errorHandler`, `deadLetterChannel`). The route may have
+                  retried, logged, or redirected the message.
+
+                - **handled=false**: The error was not caught and propagated to the caller.
+                  This usually means the exchange failed completely.
+
+                ## Detail View
+
+                Press `Enter` on an error to see the full details:
+
+                - **Stack trace**: complete Java exception trace
+                - **Message History**: every step the exchange visited before failing,
+                  helping you trace exactly where things went wrong
+                - **Headers/Body/Properties**: the exchange state at the time of failure
+
+                ## Keys
+
+                - `Up/Down` — select error
+                - `Enter` — view error details
+                - `h` — toggle headers
+                - `b` — toggle body
+                - `p` — toggle properties
+                - `v` — toggle variables
+                - `Esc` — back to list
+                """;
+    }
 }

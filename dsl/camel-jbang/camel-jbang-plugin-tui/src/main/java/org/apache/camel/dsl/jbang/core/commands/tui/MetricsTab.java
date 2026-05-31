@@ -886,4 +886,56 @@ class MetricsTab implements MonitorTab {
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Metrics");
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Metrics
+
+                The Metrics tab shows Micrometer metrics collected by the integration.
+                There are three views you can switch between.
+
+                ## Dashboard Mode (default)
+
+                A high-level overview organized into panels:
+
+                **Camel Exchanges:**
+                - Total, Succeeded, Failed, Inflight, Ext Reloaded
+
+                **Route Timers:**
+                - Per-route mean and max processing time in milliseconds
+
+                **Event Notifiers:**
+                - Timing of exchange lifecycle events (created, sent, completed)
+
+                **JVM:**
+                - Memory: heap used/max/committed, non-heap, metaspace
+                - CPU: process and system CPU usage percentages
+                - Threads: current, peak, daemon thread counts
+                - GC: per-cause collection count and total time
+
+                ## Table Mode
+
+                Press `t` to switch to a table view showing all individual meters:
+
+                - **TYPE** — Meter type: `counter` (cumulative count), `gauge` (current value), `timer` (duration), `dist` (distribution summary)
+                - **NAME** — Metric name (e.g., `camel.exchanges.total`, `jvm.memory.used`)
+                - **VALUE** — Current metric value with appropriate formatting
+                - **TAGS** — Key-value tags that identify the metric dimension (e.g., `routeId=myRoute`)
+
+                ## Raw Mode
+
+                Press `r` to see the raw Prometheus exposition format. This is the same
+                output you would get from the `/observe/metrics` HTTP endpoint, useful
+                for debugging Prometheus scraping or Grafana dashboards.
+
+                ## Keys
+
+                - `t` — toggle table mode
+                - `r` — toggle raw Prometheus mode
+                - `Up/Down` — navigate (in table or raw mode)
+                - `s` — cycle sort column (in table mode)
+                - `S` — reverse sort order
+                """;
+    }
 }

@@ -422,4 +422,33 @@ class LogTab implements MonitorTab {
         }
         return entry;
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Log
+
+                The Log tab shows live log output from the running integration.
+                Log entries are color-coded by level:
+
+                - **ERROR** (red): Something went wrong — check the message for details
+                - **WARN** (yellow): Potential issues that may need attention
+                - **INFO** (green): Normal operational messages
+                - **DEBUG** (blue): Detailed diagnostic information
+                - **TRACE** (dim): Very fine-grained debugging output
+
+                ## Log Level Filter
+
+                Press `l` to open the log level picker. Selecting a level filters the
+                display to show only messages at that level and above. For example,
+                selecting WARN shows only WARN and ERROR messages.
+
+                ## Keys
+
+                - `Up/Down` — scroll log
+                - `PgUp/PgDn` — scroll log by page
+                - `l` — change log level filter
+                - `Esc` — back
+                """;
+    }
 }

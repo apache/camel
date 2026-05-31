@@ -49,4 +49,8 @@ interface MonitorTab {
     default SelectionContext getSelectionContext() {
         return null;
     }
+
+    default String getHelpText() {
+        return null;
+    }
 }

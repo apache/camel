@@ -255,4 +255,39 @@ class InflightTab implements MonitorTab {
         };
         return sortReversed ? -result : result;
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Inflight
+
+                The Inflight tab shows exchanges that are currently being processed or
+                are blocked waiting for a response. This is useful for identifying slow
+                or stuck messages.
+
+                ## Table Columns
+
+                - **STATUS** — `inflight` (actively processing) or `blocked` (waiting)
+                - **EXCHANGE ID** — Unique identifier for this exchange
+                - **ROUTE/NODE** — Which route and processor node is handling the exchange
+                - **DURATION** — Time elapsed since processing started
+                - **ELAPSED** — Visual duration bar — longer bars mean longer processing
+
+                ## Duration Colors
+
+                - **Green**: less than 1 second — normal
+                - **Yellow**: 1-10 seconds — getting slow
+                - **Red**: over 10 seconds — potentially stuck
+
+                If you see exchanges staying red for extended periods, they may be stuck
+                waiting for an unresponsive external service.
+
+                ## Keys
+
+                - `Up/Down` — select exchange
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back
+                """;
+    }
 }

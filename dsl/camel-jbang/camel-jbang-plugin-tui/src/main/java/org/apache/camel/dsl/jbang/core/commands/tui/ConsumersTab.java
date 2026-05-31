@@ -328,4 +328,38 @@ class ConsumersTab implements MonitorTab {
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Consumers");
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Consumers
+
+                Consumers are the **input** side of a Camel route. They listen for or poll
+                data from external systems (message brokers, file directories, databases,
+                timers, etc.) and create exchanges that flow through the route.
+
+                ## Table Columns
+
+                - **ROUTE** — The route this consumer belongs to
+                - **STATUS** — Consumer state (`Started`, `Polling`, etc.). Shows a health warning if the consumer is `DOWN`
+                - **TYPE** — The component type (e.g., `kafka`, `file`, `timer`, `cron`)
+                - **POLLS** — Total number of poll cycles the scheduler has run. This counts poll **attempts**, not messages received — a poll may return zero messages
+                - **SCHEDULE** — How often the consumer polls: a fixed interval (e.g., `1s`, `5000ms`) or a cron expression
+                - **SINCE-LAST** — Three timestamps separated by `/`: **started** (last exchange created) / **completed** (last success) / **failed** (last failure)
+                - **URI** — The full endpoint URI. If the consumer is DOWN, the health check message is shown instead
+
+                ## Understanding POLLS
+
+                A scheduled consumer (like `file`, `ftp`, `sql`) runs on a timer. Each time the
+                timer fires, the consumer checks for new data — that is one poll. Even if no data
+                is found, the poll counter increments. A high POLLS count with no TOTAL exchanges
+                means the consumer is polling but finding nothing.
+
+                ## Keys
+
+                - `Up/Down` — select consumer
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                """;
+    }
 }

@@ -464,4 +464,30 @@ class BeansTab implements MonitorTab {
             String value;
         }
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Beans
+
+                The Beans tab shows all beans registered in the Camel registry. Beans are
+                reusable Java objects that routes can reference by name — for example, a
+                database connection pool, a custom processor, or a type converter.
+
+                ## Table Columns
+
+                - **NAME** — Bean name used to look it up in routes
+                - **TYPE** — Java class of the bean
+
+                ## Detail View
+
+                Press `Enter` on a bean to see its properties and current values.
+
+                ## Keys
+
+                - `Up/Down` — select bean
+                - `Enter` — view bean details
+                - `Esc` — back
+                """;
+    }
 }

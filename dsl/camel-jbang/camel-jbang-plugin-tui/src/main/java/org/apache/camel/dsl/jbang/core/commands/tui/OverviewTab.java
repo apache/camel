@@ -702,4 +702,59 @@ class OverviewTab implements MonitorTab {
     private Style sortStyle(String column) {
         return MonitorContext.sortStyle(column, sort);
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Overview
+
+                The Overview tab shows all running Camel integrations at a glance.
+                Select an integration to monitor it in detail on the other tabs.
+
+                ## Integration List
+
+                - **PID** — Process ID of the JVM running this integration
+                - **NAME** — Name of the integration (from the route file or application)
+                - **VERSION** — Camel version the integration is running on
+                - **STATUS** — Current state: `Running`, `Started`, or `Stopped`
+                - **AGE** — How long the integration has been running
+                - **MSG/S** — Messages processed per second (current throughput)
+                - **TOTAL** — Total number of exchanges (messages) processed since startup
+                - **FAIL** — Number of exchanges that ended with an error
+                - **INFLIGHT** — Exchanges currently being processed right now
+                - **SINCE-LAST** — Time elapsed since the last exchange was processed
+
+                ## Sparkline Chart
+
+                The sparkline at the bottom shows message throughput over time:
+
+                - **Green bars** represent successful messages
+                - **Red bars** represent failed messages
+                - The Y-axis shows messages per second
+
+                This helps you spot traffic patterns, load spikes, and error bursts.
+
+                ## Info Panel
+
+                When an integration is selected, the right panel shows detailed information:
+
+                - **Runtime** and **Profile** — Camel runtime type and active profile
+                - **Reload** — Number of times routes have been live-reloaded
+                - **JVM** — Java version and vendor
+                - **Uptime** — Integration uptime
+                - **Heap** — JVM heap memory usage
+                - **Meta** — Metaspace (class metadata) usage
+                - **Threads** — JVM thread count
+                - **Load avg** — CPU and inflight load averages (1m/5m/15m)
+
+                ## Keys
+
+                - `Up/Down` — select integration
+                - `Enter` — view routes for selected integration
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `F2` — actions menu
+                - `F3` — switch integration
+                """;
+    }
 }

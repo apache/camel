@@ -678,4 +678,32 @@ class BrowseTab implements MonitorTab {
         String body;
         long timestamp;
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Browse
+
+                The Browse tab lets you inspect messages currently queued in browsable
+                endpoints like `seda` or `browse`. This is useful for debugging message
+                flow and inspecting message content without consuming the messages.
+
+                ## Endpoint List
+
+                Select a browsable endpoint to see the messages waiting in its queue.
+
+                ## Message View
+
+                Each message shows:
+                - **Exchange Pattern** — InOnly or InOut
+                - **Headers** — message headers as key-value pairs
+                - **Body** — message body content
+
+                ## Keys
+
+                - `Up/Down` — navigate
+                - `Enter` — browse selected endpoint
+                - `Esc` — back
+                """;
+    }
 }

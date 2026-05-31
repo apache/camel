@@ -1285,4 +1285,45 @@ class HistoryTab implements MonitorTab {
         Integer sel = historyTableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "History");
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Inspect
+
+                The Inspect tab shows a history of recent exchanges (messages) that have
+                been processed. Select an exchange to see its full journey through the
+                integration, including every step it passed through.
+
+                ## Exchange List
+
+                - **ID** — Unique exchange identifier
+                - **STATUS** — Whether the exchange completed successfully or failed
+                - **ROUTE** — The route that processed this exchange
+                - **AGO** — How long ago this exchange was processed
+                - **ELAPSED** — Total processing time
+
+                ## Detail View
+
+                Press `Enter` on an exchange to see its full details:
+
+                - **Exchange info**: ID, route, elapsed time, thread name
+                - **Message History**: step-by-step trace of every node the exchange
+                  visited — shows the exact path the message took through the route
+                - **Headers**: exchange message headers (key-value pairs)
+                - **Body**: the message body content
+                - **Properties**: exchange-level properties
+                - **Variables**: exchange variables
+
+                Use `h`, `b`, `p`, `v` to toggle headers, body, properties, and variables.
+
+                ## Keys
+
+                - `Up/Down` — select exchange
+                - `Enter` — view exchange details
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back to list
+                """;
+    }
 }

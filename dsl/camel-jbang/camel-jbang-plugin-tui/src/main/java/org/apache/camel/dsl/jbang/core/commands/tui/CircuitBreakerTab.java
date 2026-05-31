@@ -422,4 +422,60 @@ class CircuitBreakerTab implements MonitorTab {
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Circuit Breakers");
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Circuit Breakers
+
+                Circuit breakers protect your integration from cascading failures. When a
+                downstream service starts failing, the circuit breaker stops sending requests
+                to it, giving it time to recover.
+
+                ## State Machine
+
+                ```
+                CLOSED ──(failures exceed threshold)──> OPEN
+                   ^                                      |
+                   |                              (wait timeout)
+                   |                                      v
+                   +────(success in trial)──── HALF_OPEN
+                ```
+
+                - **CLOSED** (normal): Requests flow through normally. Failures are counted
+                  in a sliding window.
+                - **OPEN** (tripped): Too many failures detected. All requests are immediately
+                  rejected without calling the downstream service. After a wait timeout, the
+                  circuit moves to HALF_OPEN.
+                - **HALF_OPEN** (testing): A limited number of trial requests are allowed
+                  through. If they succeed, the circuit closes. If they fail, it opens again.
+
+                ## Table Columns
+
+                - **ROUTE** — Route containing this circuit breaker
+                - **ID** — Circuit breaker identifier
+                - **COMPONENT** — Implementation (e.g., `resilience4j`)
+                - **STATE** — Current state: `CLOSED`, `OPEN`, or `HALF_OPEN`
+                - **WINDOW** — Number of calls in the current sliding window
+                - **INFLIGHT** — Calls currently in progress
+                - **SUCCESS** — Successful calls count
+                - **FAIL** — Failed calls count
+                - **RATE%** — Failure rate percentage in the sliding window. When this exceeds the configured threshold, the circuit opens
+                - **REJECT** — Calls rejected (not permitted) because the circuit is OPEN
+                - **SINCE-LAST** — Time since last started/success/fail
+
+                ## Detail View
+
+                The bottom panel shows:
+                - A failure rate gauge bar (green/yellow/red based on threshold)
+                - A mirrored sparkline: successful calls (green, up) vs failed calls (red, down)
+                - Detailed metrics: total, fail, inflight, reject, mean/min/max time
+
+                ## Keys
+
+                - `Up/Down` — select circuit breaker
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                """;
+    }
 }

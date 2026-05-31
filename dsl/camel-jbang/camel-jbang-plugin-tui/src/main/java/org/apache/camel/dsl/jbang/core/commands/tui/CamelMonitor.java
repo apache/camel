@@ -221,6 +221,7 @@ public class CamelMonitor extends CamelCommand {
     private final Queue<PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
     private final List<KeyRecord> recentKeys = new ArrayList<>();
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
+    private final HelpOverlay helpOverlay = new HelpOverlay();
 
     private final ActionsPopup actionsPopup = new ActionsPopup(
             () -> data.get().stream()
@@ -413,6 +414,9 @@ public class CamelMonitor extends CamelCommand {
                 captionOverlay.openInline();
                 return true;
             }
+            if (helpOverlay.isVisible()) {
+                return helpOverlay.handleKeyEvent(ke);
+            }
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
             }
@@ -598,6 +602,22 @@ public class CamelMonitor extends CamelCommand {
             // Screenshot: Shift+F5
             if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
                 takeScreenshot();
+                return true;
+            }
+
+            // F1 opens context-sensitive help
+            if (ke.isKey(KeyCode.F1)) {
+                if (helpOverlay.isVisible()) {
+                    helpOverlay.close();
+                } else {
+                    MonitorTab tab = activeTab();
+                    if (tab != null) {
+                        String help = tab.getHelpText();
+                        if (help != null) {
+                            helpOverlay.open(help);
+                        }
+                    }
+                }
                 return true;
             }
 
@@ -915,6 +935,9 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.render(frame, mainChunks.get(4));
         if (captionOverlay.isCaptionVisible()) {
             captionOverlay.render(frame, mainChunks.get(4));
+        }
+        if (helpOverlay.isVisible()) {
+            helpOverlay.render(frame, mainChunks.get(4));
         }
         renderFooter(frame, mainChunks.get(5));
 
@@ -1538,6 +1561,12 @@ public class CamelMonitor extends CamelCommand {
 
         List<Span> spans = new ArrayList<>();
 
+        if (helpOverlay.isVisible()) {
+            helpOverlay.renderFooter(spans);
+            frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+            return;
+        }
+
         if (captionOverlay.isCaptionVisible()) {
             captionOverlay.renderFooter(spans);
             frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -1561,6 +1590,9 @@ public class CamelMonitor extends CamelCommand {
                 tab.renderFooter(spans);
                 int insertPos = Math.min(2, spans.size());
                 List<Span> fKeySpans = new ArrayList<>();
+                if (activeTab() != null && activeTab().getHelpText() != null) {
+                    hint(fKeySpans, "F1", "help");
+                }
                 hint(fKeySpans, "F2", "actions");
                 if (getNonVanishingIntegrations().size() > 1) {
                     hint(fKeySpans, "F3", "switch");

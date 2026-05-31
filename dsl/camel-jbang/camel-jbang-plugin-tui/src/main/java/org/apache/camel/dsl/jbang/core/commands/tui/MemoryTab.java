@@ -340,6 +340,69 @@ class MemoryTab implements MonitorTab {
         PathUtils.writeTextSafely(root.toJson(), actionFile);
     }
 
+    @Override
+    public String getHelpText() {
+        return """
+                # Memory
+
+                The Memory tab shows JVM memory usage, garbage collection stats, and a
+                real-time heap usage chart. This helps you monitor memory consumption,
+                detect memory leaks, and understand GC behavior.
+
+                ## Heap Memory
+
+                The JVM heap is where Java objects live. Three values matter:
+
+                - **used**: Memory currently occupied by live objects
+                - **committed**: Memory the JVM has allocated from the operating system.
+                  This is your "working set" — the JVM can use this much without asking
+                  the OS for more.
+                - **max**: The absolute upper limit (`-Xmx`). The JVM will never use more
+                  than this.
+
+                Two gauge bars show how full the heap is:
+
+                ```
+                committed: 660 MB     ████████████████░░░░░░░░░░░░░░  53%
+                max:       16 GB      ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   2%
+                ```
+
+                The committed bar is usually more useful day-to-day. The max bar shows
+                how much headroom remains before the JVM hits its hard limit.
+
+                ## Old Gen
+
+                Long-lived objects are promoted to the Old Generation memory pool. If Old Gen
+                usage keeps growing over time without going back down after GC, it may
+                indicate a **memory leak**.
+
+                ## Non-Heap and Metaspace
+
+                - **Non-Heap**: Memory outside the heap — JIT compiled code, thread stacks
+                - **Metaspace**: Where class metadata is stored (class definitions, method
+                  data). Replaced the old PermGen space in Java 8+.
+
+                ## Garbage Collection
+
+                - **Collections**: Total number of GC cycles run
+                - **Time**: Total time spent in GC. High GC time relative to uptime means
+                  the JVM is spending too much time cleaning up.
+
+                ## Sparkline Chart
+
+                The chart at the bottom shows heap usage over time. Color indicates
+                how full the heap is relative to committed:
+                - **Green**: below 60%
+                - **Yellow**: 60-80%
+                - **Red**: above 80% (consider increasing heap or investigating leaks)
+
+                ## Keys
+
+                - `g` — trigger garbage collection on the running integration
+                - `Esc` — back
+                """;
+    }
+
     private static String buildGaugeBar(long pct, int width) {
         int filled = (int) (pct * width / 100);
         int empty = width - filled;

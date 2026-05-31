@@ -347,4 +347,33 @@ class StartupTab implements MonitorTab {
         long beginTime;
         long duration;
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Startup
+
+                The Startup tab shows a timeline of how the integration started up.
+                Each step is displayed with its duration, helping you identify slow
+                startup phases.
+
+                This is useful for optimizing startup time — for example, finding
+                components that take a long time to initialize or routes that are
+                slow to start.
+
+                ## Table Columns
+
+                - **STEP** — Name of the startup step
+                - **TYPE** — Category of the step
+                - **DURATION** — How long this step took
+                - **DESCRIPTION** — Details about what this step does
+
+                ## Keys
+
+                - `Up/Down` — navigate steps
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back
+                """;
+    }
 }
