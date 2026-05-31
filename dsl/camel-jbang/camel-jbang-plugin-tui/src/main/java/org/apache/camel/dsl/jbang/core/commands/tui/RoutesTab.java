@@ -1148,41 +1148,27 @@ class RoutesTab implements MonitorTab {
                 ## Route Diagram
 
                 Press `d` to see a visual flow chart of the selected route. The diagram
-                shows every EIP (Enterprise Integration Pattern) node and how messages
-                flow between them. Numbers on each node show how many exchanges passed
-                through it:
+                shows every EIP node and how messages flow between them. Numbers on
+                each node show how many exchanges passed through it.
+
+                Scroll down to view the diagram example:
 
                 ```
-                         ┌──────────────────────┐
-                         │  route[timer-to-log] │
-                         └──────────────────────┘
-                                     │
-                                     ▼ 29
-                         ┌──────────────────────┐
-                         │ from[timer:hello?..] │
-                         └──────────────────────┘
-                                     │
-                                     ▼ 29
-                         ┌──────────────────────┐
-                         │    setBody[simple]   │
-                         └──────────────────────┘
-                                     │
-                                     ▼ 29
-                    ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-                    ╎    ┌──────────────────────┐     ╎
-                    ╎    │       choice         │     ╎
-                    ╎    └──────────────────────┘     ╎
-                    ╎         │              │        ╎
-                    ╎         ▼ 9            ▼ 20     ╎
-                    ╎  ┌────────────┐  ┌───────────┐  ╎
-                    ╎  │ when[cond]  │  │ otherwise │  ╎
-                    ╎  └────────────┘  └───────────┘  ╎
-                    ╎         │              │        ╎
-                    ╎         ▼ 9            ▼ 20     ╎
-                    ╎  ┌────────────┐  ┌───────────┐  ╎
-                    ╎  │ log[HIGH]  │  │ log[LOW]  │  ╎
-                    ╎  └────────────┘  └───────────┘  ╎
-                    ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+                    ┌──────────────────────┐
+                    │ from[timer:hello?..] │
+                    └──────────────────────┘
+                                │
+                                ▼ 29
+                    ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+                    ╎  ┌────────────────────────┐  ╎
+                    ╎  │        choice          │  ╎
+                    ╎  └────────────────────────┘  ╎
+                    ╎       │              │       ╎
+                    ╎       ▼ 9            ▼ 20    ╎
+                    ╎  ┌──────────┐  ┌──────────┐  ╎
+                    ╎  │ log[HI]  │  │ log[LO]  │  ╎
+                    ╎  └──────────┘  └──────────┘  ╎
+                    ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
                 ```
 
                 The dotted border groups nodes that belong to the same EIP block
