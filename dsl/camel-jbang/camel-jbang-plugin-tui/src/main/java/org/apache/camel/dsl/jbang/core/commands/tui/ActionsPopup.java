@@ -76,18 +76,19 @@ class ActionsPopup {
     private static final int ACTION_DOCTOR = 4;
     private static final int ACTION_CLASSPATH = 5;
     private static final int ACTION_RESET_STATS = 6;
-    private static final int ACTION_STOP_ALL = 7;
+    private static final int ACTION_RESET_SCREEN = 7;
+    private static final int ACTION_STOP_ALL = 8;
     // Group 3: Recording & Presentation
-    private static final int ACTION_SCREENSHOT = 8;
-    private static final int ACTION_TAPE_RECORDING = 9;
-    private static final int ACTION_TAPE_INSTRUCTIONS = 10;
-    private static final int ACTION_CAPTION = 11;
-    private static final int ACTION_SHOW_KEYSTROKES = 12;
+    private static final int ACTION_SCREENSHOT = 9;
+    private static final int ACTION_TAPE_RECORDING = 10;
+    private static final int ACTION_TAPE_INSTRUCTIONS = 11;
+    private static final int ACTION_CAPTION = 12;
+    private static final int ACTION_SHOW_KEYSTROKES = 13;
     // Group 4: MCP
-    private static final int ACTION_MCP_INFO = 13;
-    private static final int ACTION_MCP_LOG = 14;
+    private static final int ACTION_MCP_INFO = 14;
+    private static final int ACTION_MCP_LOG = 15;
 
-    private static final int[] GROUP_SIZES = { 4, 4, 5 };
+    private static final int[] GROUP_SIZES = { 4, 5, 5 };
     private static final int MCP_GROUP_SIZE = 2;
 
     private final Supplier<Set<String>> runningNames;
@@ -98,6 +99,7 @@ class ActionsPopup {
     private final Supplier<Boolean> keystrokesEnabled;
     private final Runnable toggleTapeRecording;
     private Runnable resetStatsAction;
+    private Runnable resetScreenAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
     private boolean mcpEnabled;
@@ -180,6 +182,10 @@ class ActionsPopup {
 
     void setResetStatsAction(Runnable resetStatsAction) {
         this.resetStatsAction = resetStatsAction;
+    }
+
+    void setResetScreenAction(Runnable resetScreenAction) {
+        this.resetScreenAction = resetScreenAction;
     }
 
     void setMcpEnabled(
@@ -304,6 +310,7 @@ class ActionsPopup {
         labels.add("Run Doctor");
         labels.add("Show Classpath");
         labels.add("Reset Stats");
+        labels.add("Reset Screen");
         labels.add("Stop All");
         labels.add("───");
         // Group 3: Recording & Presentation
@@ -530,6 +537,11 @@ class ActionsPopup {
                         showActionsMenu = false;
                         if (resetStatsAction != null) {
                             resetStatsAction.run();
+                        }
+                    } else if (action == ACTION_RESET_SCREEN) {
+                        showActionsMenu = false;
+                        if (resetScreenAction != null) {
+                            resetScreenAction.run();
                         }
                     } else if (action == ACTION_STOP_ALL) {
                         showActionsMenu = false;

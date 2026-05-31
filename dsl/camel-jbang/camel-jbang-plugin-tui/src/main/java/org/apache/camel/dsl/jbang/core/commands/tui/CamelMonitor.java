@@ -357,6 +357,7 @@ public class CamelMonitor extends CamelCommand {
             this.runner = tui;
             ctx.runner = tui;
             actionsPopup.setScheduler(tui.scheduler());
+            actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
