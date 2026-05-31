@@ -198,13 +198,16 @@ class ActionsPopup {
     }
 
     private int visualActionCount() {
-        if (mcpEnabled) {
-            // 4 + 4 + 5 + 2 actions = 15, plus 3 dividers = 18
-            return 15 + 3;
-        } else {
-            // 4 + 4 + 5 actions = 13, plus 2 dividers = 15
-            return 13 + 2;
+        int total = 0;
+        for (int gs : GROUP_SIZES) {
+            total += gs;
         }
+        int dividers = GROUP_SIZES.length - 1;
+        if (mcpEnabled) {
+            total += MCP_GROUP_SIZE;
+            dividers++;
+        }
+        return total + dividers;
     }
 
     private boolean isDividerIndex(int visualIndex) {
@@ -708,6 +711,7 @@ class ActionsPopup {
         items.add(ListItem.from("  🩺 Run Doctor"));
         items.add(ListItem.from("  📦 Show Classpath"));
         items.add(ListItem.from("  🔄 Reset Stats"));
+        items.add(ListItem.from("  🧹 Reset Screen"));
         items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 3: Recording & Presentation
