@@ -157,7 +157,6 @@ class ConsumersTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
-        hint(spans, "1-9", "tabs");
     }
 
     private String sortLabel(String label, String column) {

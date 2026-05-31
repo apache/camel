@@ -309,7 +309,6 @@ class MemoryTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "1-9", "tabs");
     }
 
     private static String buildGaugeBar(long pct, int width) {

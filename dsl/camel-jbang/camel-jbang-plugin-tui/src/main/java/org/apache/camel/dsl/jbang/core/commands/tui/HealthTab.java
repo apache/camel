@@ -163,7 +163,6 @@ class HealthTab implements MonitorTab {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
         hint(spans, "d", "toggle DOWN");
-        hint(spans, "1-9", "tabs");
     }
 
     boolean isShowOnlyDown() {

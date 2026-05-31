@@ -167,7 +167,6 @@ class InflightTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
-        hint(spans, "1-9", "tabs");
     }
 
     private void renderBrowseDisabled(Frame frame, Rect area) {

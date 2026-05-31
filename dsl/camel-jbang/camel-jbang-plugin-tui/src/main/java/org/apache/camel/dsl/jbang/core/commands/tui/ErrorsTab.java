@@ -273,7 +273,6 @@ class ErrorsTab implements MonitorTab {
             hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
             hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
             hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
-            hint(spans, "1-0", "tabs");
         }
     }
 

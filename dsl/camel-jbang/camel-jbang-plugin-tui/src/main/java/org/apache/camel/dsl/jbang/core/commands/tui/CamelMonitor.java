@@ -1016,7 +1016,9 @@ public class CamelMonitor extends CamelCommand {
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
         long healthDownCount = hasSelection
                 ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
-        int historyCount = hasSelection ? historyTab.historyEntries.size() : 0;
+        long historyCount = hasSelection
+                ? historyTab.historyEntries.stream().map(e -> e.exchangeId).distinct().count()
+                : 0;
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
         int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
 

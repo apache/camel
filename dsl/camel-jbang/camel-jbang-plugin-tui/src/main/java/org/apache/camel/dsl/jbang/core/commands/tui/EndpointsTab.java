@@ -297,7 +297,6 @@ class EndpointsTab implements MonitorTab {
             default -> "[off]";
         };
         hint(spans, "a", "chart " + chartLabel);
-        hint(spans, "1-9", "tabs");
     }
 
     int getFilter() {

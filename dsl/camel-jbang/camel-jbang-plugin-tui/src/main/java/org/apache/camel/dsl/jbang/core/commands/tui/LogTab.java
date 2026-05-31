@@ -307,7 +307,6 @@ class LogTab implements MonitorTab {
             hint(spans, "l", "level");
         }
         hint(spans, "f", "follow" + (followMode ? " [on]" : " [off]"));
-        hint(spans, ctx.isInfraSelected() ? "1-2" : "1-9", "tabs");
     }
 
     private void renderLogLevelPopup(Frame frame, Rect area) {

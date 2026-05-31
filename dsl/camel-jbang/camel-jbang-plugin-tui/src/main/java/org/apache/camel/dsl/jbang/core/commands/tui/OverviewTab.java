@@ -593,7 +593,6 @@ class OverviewTab implements MonitorTab {
                 default -> "[off]";
             });
         }
-        hint(spans, "1-9", "tabs");
     }
 
     @Override

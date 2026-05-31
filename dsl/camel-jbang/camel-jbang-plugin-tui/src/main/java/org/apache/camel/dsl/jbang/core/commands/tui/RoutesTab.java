@@ -507,7 +507,6 @@ class RoutesTab implements MonitorTab {
                     hint(spans, "p", "start");
                 }
             }
-            hint(spans, "1-9", "tabs");
         }
     }
 

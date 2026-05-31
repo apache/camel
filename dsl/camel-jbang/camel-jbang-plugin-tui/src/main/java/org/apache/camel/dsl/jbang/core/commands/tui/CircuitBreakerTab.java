@@ -207,7 +207,6 @@ class CircuitBreakerTab implements MonitorTab {
         hint(spans, "Esc", "back");
         hint(spans, "↑↓", "navigate");
         hint(spans, "s", "sort");
-        hint(spans, "1-9", "tabs");
     }
 
     private String sortLabel(String label, String column) {

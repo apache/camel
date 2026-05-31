@@ -614,7 +614,6 @@ class MetricsTab implements MonitorTab {
         if (info != null && findMetricsUrl(info) != null) {
             hint(spans, "r", "raw");
         }
-        hint(spans, "1-9", "tabs");
     }
 
     // ---- Prometheus syntax coloring ----

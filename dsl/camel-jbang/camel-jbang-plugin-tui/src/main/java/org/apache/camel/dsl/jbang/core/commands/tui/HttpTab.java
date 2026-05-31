@@ -263,8 +263,6 @@ class HttpTab implements MonitorTab {
             hint(spans, "p", "pretty" + (probePrettyPrint ? " [on]" : ""));
             if (!probeHistory.isEmpty()) {
                 hintLast(spans, "↑↓", "history");
-            } else {
-                hintLast(spans, "1-9", "tabs");
             }
             return;
         }
@@ -284,8 +282,6 @@ class HttpTab implements MonitorTab {
         Integer hSel = tableState.selected();
         if (hSel != null && hSel >= 0 && hSel < hVisible.size() && hVisible.get(hSel).specificationUri != null) {
             hintLast(spans, "c", "spec");
-        } else {
-            hintLast(spans, "1-9", "tabs");
         }
     }
 
