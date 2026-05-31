@@ -390,6 +390,7 @@
                                     <exclude>**/javax.annotations.processing.Processor</exclude>
                                     <exclude>**/helm/etc/**</exclude>
                                     <exclude>**/examples/*</exclude>
+                                    <exclude>**/examples/**/*</exclude>
                                     <exclude>**/*.wav</exclude>
                                     <exclude>**/*.cast</exclude>
                                 </excludes>
@@ -588,6 +589,7 @@
                             <exclude>**/.camel-jbang/**/*</exclude>
                             <exclude>**/commands/edit/edit-help.txt</exclude>
                             <exclude>**/examples/*</exclude>
+                            <exclude>**/examples/**/*</exclude>
                             <exclude>**/src/main/resources/testdata/**/*</exclude>
                             <!-- Claude Code / OMC worktrees -->
                             <exclude>.claude/**/*</exclude>

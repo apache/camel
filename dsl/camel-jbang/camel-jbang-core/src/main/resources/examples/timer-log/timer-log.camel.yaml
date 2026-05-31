@@ -18,10 +18,15 @@
 - route:
     id: timer-log
     from:
-      uri: timer:tick
+      uri: timer
       parameters:
+        timerName: tick
         period: "{{timer.period}}"
       steps:
         - setBody:
-            simple: "{{greeting.message}}"
-        - log: "${body}"
+            expression:
+              simple:
+                expression: "{{greeting.message}}"
+        - log:
+            message: "${body}"
+

@@ -16,34 +16,27 @@
 #
 
 - route:
-    id: route-1681
     from:
-      id: from-1133
       uri: once
       parameters:
         name: validate
       steps:
         - setHeader:
-            id: setHeader-4262
-            constant:
-              expression: user@example.com
             name: contactEmail
+            expression:
+              constant:
+                expression: user@example.com
         - choice:
-            id: choice-1178
-            otherwise:
-              id: otherwise-1234
-              steps:
-                - log:
-                    id: log-3646
-                    message: "Invalid email: ${header.contactEmail}"
             when:
-              - id: when-1441
+              - expression:
+                  groovy:
+                    expression: |-
+                      import org.apache.commons.validator.routines.EmailValidator
+                      EmailValidator.getInstance().isValid(request.headers['contactEmail'])
                 steps:
                   - log:
-                      id: log-2349
                       message: "Valid contact: ${header.contactEmail}"
-                groovy:
-                  expression: >-
-                    import org.apache.commons.validator.routines.EmailValidator
-
-                    EmailValidator.getInstance().isValid(request.headers['contactEmail'])
+            otherwise:
+              steps:
+                - log:
+                    message: "Invalid email: ${header.contactEmail}"

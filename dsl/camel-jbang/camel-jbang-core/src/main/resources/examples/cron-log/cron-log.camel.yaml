@@ -18,9 +18,10 @@
 - route:
     id: cron-log
     from:
-      uri: cron:tab
+      uri: timer
       parameters:
-        schedule: "0/5 * * * * ?"
+        timerName: cron
+        period: "{{cron.period}}"
       steps:
         - setBody:
             expression:
@@ -28,3 +29,4 @@
                 expression: "{{cron.message}} ${date:now:HH:mm:ss}"
         - log:
             message: "${body}"
+

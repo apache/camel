@@ -1,31 +1,61 @@
-# XSLT Transformation
+## XSLT Transformation
 
 This example shows a basic XML transformation using XSLT style sheet.
 
-## How to run
+### Install JBang
 
-You can run this example using:
+First install JBang according to https://www.jbang.dev
+
+When JBang is installed then you should be able to run from a shell:
 
 ```sh
-camel run *
+$ jbang --version
 ```
 
-This reads the XML input file from `./input/account.xml` and applies XSL transformation.
+This will output the version of JBang.
 
-## Live updates of message transformation
+To run this example you can either install Camel on JBang via:
+
+```sh
+$ jbang app install camel@apache/camel
+```
+
+Which allows to run Camel JBang with `camel` as shown below.
+
+### How to run
+
+Then you can run this example using:
+
+```sh
+$ camel run *
+```
+
+This reads the XML input file from _./input/account.xml_ and applies XSL transformation.
+
+### Live updates of message transformation
 
 You can do live changes to the stylesheet and see the output in real-time with Camel JBang by running:
 
-```sh
-camel transform message --body=file:input/account.xml --component=xslt --template=file:stylesheet.xsl --pretty --watch
+```bash
+$ camel transform message --body=file:input/account.xml --component=xslt --template=file:stylesheet.xsl --pretty --watch
 ```
 
 You can then edit the `stylesheet.xsl` file, and save the file, and watch the terminal for updated result.
 
-## Run directly from GitHub
+### Run directly from GitHub
 
 The example can also be run directly by referring to the GitHub URL as shown:
 
 ```sh
-camel run https://github.com/apache/camel-jbang-examples/tree/main/xslt
+$ camel run https://github.com/apache/camel-jbang-examples/tree/main/xslt
 ```
+
+### Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+[let us know](https://camel.apache.org/community/support/).
+
+We also love contributors, so
+[get involved](https://camel.apache.org/community/contributing/) :-)
+
+The Camel riders!
