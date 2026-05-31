@@ -526,19 +526,23 @@ class DiagramSupport {
             lines = resultLines;
             counterPositions = positions;
             routeTitleRows = titleRows;
-            imageData = resultImageData;
             fullImageData = resultFullImageData;
             protocol = resultProtocol;
             if (!wasShowing) {
+                imageData = resultImageData;
                 scrollY = 0;
                 scrollX = 0;
                 cropX = -1;
                 cropY = -1;
                 cropW = -1;
                 cropH = -1;
-            }
-            if (wasShowing) {
+            } else {
                 showDiagram = true;
+                // invalidate crop cache so next render re-crops at current scroll position
+                cropX = -1;
+                cropY = -1;
+                cropW = -1;
+                cropH = -1;
             }
         });
     }

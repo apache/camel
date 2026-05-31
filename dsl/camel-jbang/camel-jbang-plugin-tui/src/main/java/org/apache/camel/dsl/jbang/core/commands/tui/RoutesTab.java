@@ -169,7 +169,7 @@ class RoutesTab implements MonitorTab {
             }
             if (!diagram.isDiagramTextMode() && ke.isKey(KeyCode.F5)) {
                 diagram.endLoad();
-                loadDiagramForSelectedRoute();
+                reloadDiagramQuietly();
                 return true;
             }
         }
@@ -512,7 +512,7 @@ class RoutesTab implements MonitorTab {
 
     void refreshDiagramIfNeeded() {
         if (diagram.isShowDiagram() && diagram.isDiagramTextMode() && diagramMetrics) {
-            loadDiagramForSelectedRoute();
+            reloadDiagramQuietly();
         }
     }
 
@@ -931,6 +931,14 @@ class RoutesTab implements MonitorTab {
     // ---- Async loading ----
 
     private void loadDiagramForSelectedRoute() {
+        loadDiagramForSelectedRoute(true);
+    }
+
+    private void reloadDiagramQuietly() {
+        loadDiagramForSelectedRoute(false);
+    }
+
+    private void loadDiagramForSelectedRoute(boolean showPlaceholder) {
         if (ctx.selectedPid == null || ctx.runner == null) {
             return;
         }
@@ -961,7 +969,9 @@ class RoutesTab implements MonitorTab {
         String routeId = diagramAllRoutes ? null : selectedRoute.routeId;
 
         diagramRouteId = routeId != null ? routeId : "all";
-        diagram.setLoadingPlaceholder();
+        if (showPlaceholder) {
+            diagram.setLoadingPlaceholder();
+        }
 
         ctx.runner.scheduler().execute(() -> {
             try {

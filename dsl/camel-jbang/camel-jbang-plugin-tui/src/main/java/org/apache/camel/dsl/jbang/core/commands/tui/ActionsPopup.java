@@ -67,28 +67,25 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.hintLa
 
 class ActionsPopup {
 
-    // Group 1: User Actions
-    private static final int ACTION_SEND_MESSAGE = 0;
-    private static final int ACTION_RUN_EXAMPLE = 1;
-    private static final int ACTION_RUN_INFRA = 2;
-    private static final int ACTION_SHOW_DOCS = 3;
-    // Group 2: Diagnostics
-    private static final int ACTION_DOCTOR = 4;
-    private static final int ACTION_CLASSPATH = 5;
-    private static final int ACTION_RESET_STATS = 6;
-    private static final int ACTION_RESET_SCREEN = 7;
-    private static final int ACTION_STOP_ALL = 8;
-    // Group 3: Recording & Presentation
-    private static final int ACTION_SCREENSHOT = 9;
-    private static final int ACTION_TAPE_RECORDING = 10;
-    private static final int ACTION_TAPE_INSTRUCTIONS = 11;
-    private static final int ACTION_CAPTION = 12;
-    private static final int ACTION_SHOW_KEYSTROKES = 13;
-    // Group 4: MCP
-    private static final int ACTION_MCP_INFO = 14;
-    private static final int ACTION_MCP_LOG = 15;
+    enum Action {
+        SEND_MESSAGE,
+        RUN_EXAMPLE,
+        RUN_INFRA,
+        SHOW_DOCS,
+        DOCTOR,
+        RESET_STATS,
+        RESET_SCREEN,
+        STOP_ALL,
+        SCREENSHOT,
+        TAPE_RECORDING,
+        TAPE_INSTRUCTIONS,
+        CAPTION,
+        SHOW_KEYSTROKES,
+        MCP_INFO,
+        MCP_LOG
+    }
 
-    private static final int[] GROUP_SIZES = { 4, 5, 5 };
+    private static final int[] GROUP_SIZES = { 4, 4, 5 };
     private static final int MCP_GROUP_SIZE = 2;
 
     private final Supplier<Set<String>> runningNames;
@@ -138,7 +135,6 @@ class ActionsPopup {
     private final McpLogPopup mcpLogPopup = new McpLogPopup();
 
     private final DoctorPopup doctorPopup = new DoctorPopup();
-    private final ClasspathPopup classpathPopup = new ClasspathPopup();
     private final SendMessagePopup sendMessagePopup = new SendMessagePopup();
     private final StopAllPopup stopAllPopup;
     private final CaptionOverlay captionOverlay;
@@ -225,7 +221,7 @@ class ActionsPopup {
         return false;
     }
 
-    private int resolveAction(int visualIndex) {
+    private Action resolveAction(int visualIndex) {
         int dividers = 0;
         int pos = 0;
         int groupCount = mcpEnabled ? GROUP_SIZES.length + 1 : GROUP_SIZES.length;
@@ -240,7 +236,7 @@ class ActionsPopup {
                 pos++;
             }
         }
-        return visualIndex - dividers;
+        return Action.values()[visualIndex - dividers];
     }
 
     private void navigateActionsMenu(int direction) {
@@ -260,7 +256,7 @@ class ActionsPopup {
     boolean isVisible() {
         return showActionsMenu || showExampleBrowser || runOptionsForm.isVisible() || showDocPicker || showDocViewer
                 || showInfraBrowser || showInfraPortDialog
-                || mcpLogPopup.isVisible() || doctorPopup.isVisible() || classpathPopup.isVisible()
+                || mcpLogPopup.isVisible() || doctorPopup.isVisible()
                 || sendMessagePopup.isVisible() || stopAllPopup.isVisible() || captionOverlay.isInlineMode();
     }
 
@@ -307,11 +303,10 @@ class ActionsPopup {
         labels.add("Send Message");
         labels.add("Run an example...");
         labels.add("Run Infra Service...");
-        labels.add("Show Documentation");
+        labels.add("Show Integration Doc");
         labels.add("───");
         // Group 2: Diagnostics
         labels.add("Run Doctor");
-        labels.add("Show Classpath");
         labels.add("Reset Stats");
         labels.add("Reset Screen");
         labels.add("Stop All");
@@ -346,7 +341,6 @@ class ActionsPopup {
         showInfraPortDialog = false;
         mcpLogPopup.close();
         doctorPopup.close();
-        classpathPopup.close();
         sendMessagePopup.close();
         stopAllPopup.close();
         captionOverlay.close();
@@ -482,9 +476,6 @@ class ActionsPopup {
         if (captionOverlay.isInlineMode()) {
             return captionOverlay.handleKeyEvent(ke);
         }
-        if (classpathPopup.handleKeyEvent(ke)) {
-            return true;
-        }
         if (stopAllPopup.handleKeyEvent(ke)) {
             checkStopAllNotification();
             return true;
@@ -502,55 +493,52 @@ class ActionsPopup {
             } else if (ke.isConfirm()) {
                 Integer sel = actionsMenuState.selected();
                 if (sel != null) {
-                    int action = resolveAction(sel);
-                    if (action == ACTION_RUN_EXAMPLE) {
+                    Action action = resolveAction(sel);
+                    if (action == Action.RUN_EXAMPLE) {
                         openExampleBrowser();
-                    } else if (action == ACTION_SHOW_DOCS) {
+                    } else if (action == Action.SHOW_DOCS) {
                         openDocPicker();
-                    } else if (action == ACTION_SCREENSHOT) {
+                    } else if (action == Action.SCREENSHOT) {
                         showActionsMenu = false;
                         screenshotAction.run();
-                    } else if (action == ACTION_SHOW_KEYSTROKES) {
+                    } else if (action == Action.SHOW_KEYSTROKES) {
                         showActionsMenu = false;
                         toggleKeystrokes.run();
-                    } else if (action == ACTION_TAPE_RECORDING) {
+                    } else if (action == Action.TAPE_RECORDING) {
                         showActionsMenu = false;
                         toggleTapeRecording.run();
-                    } else if (action == ACTION_TAPE_INSTRUCTIONS) {
+                    } else if (action == Action.TAPE_INSTRUCTIONS) {
                         showActionsMenu = false;
                         openTapeInstructions();
-                    } else if (action == ACTION_DOCTOR) {
+                    } else if (action == Action.DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
-                    } else if (action == ACTION_CLASSPATH) {
-                        showActionsMenu = false;
-                        openClasspath();
-                    } else if (action == ACTION_RUN_INFRA) {
+                    } else if (action == Action.RUN_INFRA) {
                         openInfraBrowser();
-                    } else if (action == ACTION_MCP_INFO) {
+                    } else if (action == Action.MCP_INFO) {
                         showActionsMenu = false;
                         openMcpInfo();
-                    } else if (action == ACTION_MCP_LOG) {
+                    } else if (action == Action.MCP_LOG) {
                         showActionsMenu = false;
                         openMcpLog();
-                    } else if (action == ACTION_SEND_MESSAGE) {
+                    } else if (action == Action.SEND_MESSAGE) {
                         showActionsMenu = false;
                         openSendMessage();
-                    } else if (action == ACTION_RESET_STATS) {
+                    } else if (action == Action.RESET_STATS) {
                         showActionsMenu = false;
                         if (resetStatsAction != null) {
                             resetStatsAction.run();
                         }
-                    } else if (action == ACTION_RESET_SCREEN) {
+                    } else if (action == Action.RESET_SCREEN) {
                         showActionsMenu = false;
                         if (resetScreenAction != null) {
                             resetScreenAction.run();
                         }
-                    } else if (action == ACTION_STOP_ALL) {
+                    } else if (action == Action.STOP_ALL) {
                         showActionsMenu = false;
                         stopAllPopup.open();
                         checkStopAllNotification();
-                    } else if (action == ACTION_CAPTION) {
+                    } else if (action == Action.CAPTION) {
                         showActionsMenu = false;
                         captionOverlay.openInline();
                     }
@@ -592,9 +580,6 @@ class ActionsPopup {
         if (stopAllPopup.isVisible()) {
             stopAllPopup.render(frame, area);
         }
-        if (classpathPopup.isVisible()) {
-            classpathPopup.render(frame, area);
-        }
         if (sendMessagePopup.isVisible()) {
             sendMessagePopup.render(frame, area);
         }
@@ -610,10 +595,6 @@ class ActionsPopup {
         }
         if (captionOverlay.isInlineMode()) {
             captionOverlay.renderFooter(spans);
-            return;
-        }
-        if (classpathPopup.isVisible()) {
-            classpathPopup.renderFooter(spans);
             return;
         }
         if (stopAllPopup.isVisible()) {
@@ -705,11 +686,10 @@ class ActionsPopup {
         items.add(ListItem.from("  📩 Send Message"));
         items.add(ListItem.from("  🐪 Run an example..."));
         items.add(ListItem.from("  🔧 Run Infra Service..."));
-        items.add(ListItem.from("  📖 Show Documentation"));
+        items.add(ListItem.from("  📖 Show Integration Doc"));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics
         items.add(ListItem.from("  🩺 Run Doctor"));
-        items.add(ListItem.from("  📦 Show Classpath"));
         items.add(ListItem.from("  🔄 Reset Stats"));
         items.add(ListItem.from("  🧹 Reset Screen"));
         items.add(ListItem.from(stopLabel));
@@ -818,8 +798,8 @@ class ActionsPopup {
     // ---- Doc Viewer & Picker ----
 
     private void renderDocViewer(Frame frame, Rect area) {
+        frame.renderWidget(Clear.INSTANCE, area);
         Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
-        frame.renderWidget(Clear.INSTANCE, popup);
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(" " + docTitle + " ")
@@ -871,7 +851,7 @@ class ActionsPopup {
                 .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
-                        .title(" Show Documentation ")
+                        .title(" Show Integration Doc ")
                         .titleBottom(Title.from(Line.from(
                                 Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" view │"),
                                 Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
@@ -1117,29 +1097,6 @@ class ActionsPopup {
 
     private void openMcpLog() {
         mcpLogPopup.open();
-    }
-
-    private void openClasspath() {
-        if (ctx == null) {
-            return;
-        }
-        String pid = ctx.selectedPid;
-        if (pid == null) {
-            List<IntegrationInfo> ints = integrations.get();
-            List<IntegrationInfo> alive = ints.stream().filter(i -> !i.vanishing && i.pid != null).toList();
-            if (alive.size() == 1) {
-                pid = alive.get(0).pid;
-            }
-        }
-        if (pid == null) {
-            setNotification("Select an integration first", true);
-            return;
-        }
-        classpathPopup.open(ctx, pid, ctx.selectedName());
-        String err = classpathPopup.consumeError();
-        if (err != null) {
-            setNotification(err, true);
-        }
     }
 
     // ---- Name Input ----

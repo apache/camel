@@ -259,6 +259,7 @@ public class CamelMonitor extends CamelCommand {
     private ConfigurationTab configurationTab;
     private BeansTab beansTab;
     private BrowseTab browseTab;
+    private ClasspathTab classpathTab;
     private InflightTab inflightTab;
     private MemoryTab memoryTab;
     private ThreadsTab threadsTab;
@@ -328,6 +329,7 @@ public class CamelMonitor extends CamelCommand {
         configurationTab = new ConfigurationTab(ctx);
         beansTab = new BeansTab(ctx);
         browseTab = new BrowseTab(ctx);
+        classpathTab = new ClasspathTab(ctx);
         inflightTab = new InflightTab(ctx);
         memoryTab = new MemoryTab(ctx, heapMemHistory);
         threadsTab = new ThreadsTab(ctx);
@@ -431,7 +433,7 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (ke.isDown()) {
-                    morePopupState.selectNext(9);
+                    morePopupState.selectNext(10);
                     return true;
                 }
                 // Shortcut keys for quick selection
@@ -448,12 +450,13 @@ public class CamelMonitor extends CamelCommand {
                             case 0 -> beansTab;
                             case 1 -> browseTab;
                             case 2 -> circuitBreakerTab;
-                            case 3 -> configurationTab;
-                            case 4 -> consumersTab;
-                            case 5 -> inflightTab;
-                            case 6 -> memoryTab;
-                            case 7 -> startupTab;
-                            case 8 -> threadsTab;
+                            case 3 -> classpathTab;
+                            case 4 -> configurationTab;
+                            case 5 -> consumersTab;
+                            case 6 -> inflightTab;
+                            case 7 -> memoryTab;
+                            case 8 -> startupTab;
+                            case 9 -> threadsTab;
                             default -> null;
                         };
                         if (activeMoreTab != null) {
@@ -1186,6 +1189,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("B", keyStyle), Span.raw("eans"))),
                 ListItem.from(Line.from(Span.raw("  Bro"), Span.styled("w", keyStyle), Span.raw("se"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("C", keyStyle), Span.raw("ircuit Breaker"))),
+                ListItem.from(Line.from(Span.raw("  Cl"), Span.styled("a", keyStyle), Span.raw("sspath"))),
                 ListItem.from(Line.from(Span.raw("  Confi"), Span.styled("g", keyStyle), Span.raw("uration"))),
                 ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
@@ -1271,23 +1275,26 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isChar('c')) {
             return 2;
         }
-        if (ke.isChar('g')) {
+        if (ke.isChar('a')) {
             return 3;
         }
-        if (ke.isChar('n')) {
+        if (ke.isChar('g')) {
             return 4;
         }
-        if (ke.isChar('i')) {
+        if (ke.isChar('n')) {
             return 5;
         }
-        if (ke.isChar('m')) {
+        if (ke.isChar('i')) {
             return 6;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('m')) {
             return 7;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 8;
+        }
+        if (ke.isChar('t')) {
+            return 9;
         }
         return -1;
     }
@@ -1551,7 +1558,7 @@ public class CamelMonitor extends CamelCommand {
     private void renderFooter(Frame frame, Rect area) {
         // Show screenshot flash message briefly
         String msg = screenshotMessage;
-        if (msg != null && System.currentTimeMillis() - screenshotMessageTime < 3000) {
+        if (msg != null && System.currentTimeMillis() - screenshotMessageTime < 5000) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled(" " + msg, Style.EMPTY.fg(Color.GREEN)))),
                     area);
