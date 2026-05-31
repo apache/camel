@@ -464,4 +464,55 @@ class BeansTab implements MonitorTab {
             String value;
         }
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Beans
+
+                The Beans tab shows all beans registered in the Camel registry. Beans
+                are reusable Java objects that routes can reference by name — for
+                example, a database connection pool, a custom processor, a REST
+                configuration, or a type converter.
+
+                In Camel, beans can be registered in several ways:
+
+                - **YAML DSL** — defined in a `beans:` section of your YAML route file
+                - **Java** — bound to the registry via `bindToRegistry()` or annotations
+                - **Spring/Quarkus** — injected as managed beans (`@Component`, `@Named`)
+                - **Camel auto-discovery** — components and languages auto-register their beans
+
+                ## Table Columns
+
+                - **NAME** — Bean name used to look it up from routes. In a route you reference this with `.bean("myService")` or `${bean:myService}`
+                - **TYPE** — Java class of the bean (e.g., `com.example.MyService`, `java.util.HashMap`)
+
+                ## Example Screen
+
+                ```
+                 NAME              TYPE
+                 greeter           com.example.Greeter
+                 myDataSource      com.zaxxer.hikari.HikariDataSource
+                 restConfiguration org.apache.camel.spi.RestConfiguration
+                 json-jackson      org.apache.camel.component.jackson.JacksonDataFormat
+                ```
+
+                ## Detail View
+
+                Press `Enter` on a bean to inspect its properties and current values.
+                Camel uses Java bean introspection to read property values, showing
+                you the runtime state of each bean. This is useful for verifying
+                configuration — for example, checking that a database connection pool
+                has the correct URL, or that a data format is configured with the
+                right options.
+
+                ## Keys
+
+                - `Up/Down` — select bean
+                - `Enter` — view bean properties
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back
+                """;
+    }
 }

@@ -237,4 +237,65 @@ class ConfigurationTab implements MonitorTab {
         String source;
         String location;
     }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Configuration
+
+                The Configuration tab shows all configuration properties of the running
+                integration. This provides a complete view of how the integration is
+                configured at runtime — including Camel settings, component options,
+                and application properties.
+
+                Properties can come from multiple sources and Camel merges them with
+                a defined priority order.
+
+                ## Table Columns
+
+                - **KEY** — Property name following Camel's naming convention (e.g., `camel.main.name`, `camel.component.kafka.brokers`, `greeting.message`)
+                - **VALUE** — Current resolved property value. Sensitive values (passwords, tokens) are masked as `xxxxxx` for security
+                - **DEFAULT** — Default value (shown only if different from current value). Helps identify which properties were explicitly configured vs using defaults
+                - **SOURCE** — Where the property was set:
+                  - `application.properties` — from the main properties file
+                  - `ENV` — from an environment variable
+                  - `SYS` — from a Java system property (`-D`)
+                  - `camel-component` — default from a Camel component
+                  - `override` — set programmatically in code
+                  - `initial` — set during context initialization
+
+                ## Example Screen
+
+                ```
+                 KEY                              VALUE              DEFAULT      SOURCE
+                 camel.main.name                  camel-demo                      application.properties
+                 camel.main.shutdownTimeout       30                 300          application.properties
+                 camel.component.kafka.brokers    localhost:9092                   application.properties
+                 greeting.message                 Hello World                     application.properties
+                ```
+
+                ## Property Namespaces
+
+                Common property prefixes and what they configure:
+
+                - `camel.main.*` — Core Camel settings (name, shutdown timeout, tracing, etc.)
+                - `camel.component.*` — Component-level defaults (applied to all endpoints of that component)
+                - `camel.dataformat.*` — Data format defaults (JSON, XML, CSV serialization options)
+                - `camel.language.*` — Expression language settings
+                - `camel.server.*` — Embedded HTTP server configuration (port, host, CORS)
+
+                ## Use Cases
+
+                - **Verify configuration**: Confirm that properties from files, environment variables, and system properties are being applied correctly
+                - **Debug overrides**: When a property has an unexpected value, check the SOURCE column to see where it was set
+                - **Audit security**: Verify that sensitive properties (passwords, API keys) are properly masked
+
+                ## Keys
+
+                - `Up/Down` — navigate properties
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back
+                """;
+    }
 }

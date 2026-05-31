@@ -17,8 +17,9 @@
 
 - route:
     from:
-      uri: file://input
+      uri: file
       parameters:
+        directoryName: input
         fileName: account.xml
         noop: true
       steps:
@@ -27,4 +28,5 @@
             parameters:
               resourceUri: stylesheet.xsl
         - log:
-            message: Transformed data:\n ${prettyBody}
+            message: "Transformed data:\\n ${prettyBody}"
+

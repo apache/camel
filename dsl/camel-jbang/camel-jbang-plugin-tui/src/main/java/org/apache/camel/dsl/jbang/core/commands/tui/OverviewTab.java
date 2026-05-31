@@ -239,7 +239,7 @@ class OverviewTab implements MonitorTab {
         if (dividerIndex >= 0) {
             rows.add(Row.from(
                     Cell.from(""),
-                    Cell.from(Span.styled("─── Infra Services ───", Style.EMPTY.dim())),
+                    Cell.from(Span.styled("─── Dev/Infra Services ───", Style.EMPTY.dim())),
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     Cell.from(""), Cell.from("")));
@@ -593,7 +593,6 @@ class OverviewTab implements MonitorTab {
                 default -> "[off]";
             });
         }
-        hint(spans, "1-9", "tabs");
     }
 
     @Override
@@ -702,5 +701,90 @@ class OverviewTab implements MonitorTab {
 
     private Style sortStyle(String column) {
         return MonitorContext.sortStyle(column, sort);
+    }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Overview
+
+                The Overview tab shows all running Camel integrations at a glance.
+                Select an integration to monitor it in detail on the other tabs.
+
+                ## Integration List
+
+                Each row represents one running Camel integration:
+
+                - **PID** — Process ID of the JVM running this integration
+                - **NAME** — Name of the integration (from the route file or application configuration). Example: `camel-demo`, `my-app`
+                - **VERSION** — Camel version the integration is running on (e.g., `4.21.0`)
+                - **STATUS** — Current lifecycle state: `Running` (processing messages), `Started` (ready), or `Stopped`
+                - **AGE** — How long the integration has been running (e.g., `2m30s`, `1h15m`)
+                - **MSG/S** — Messages processed per second (current throughput). This is the overall rate across all routes
+                - **TOTAL** — Total number of exchanges (messages) processed since the integration started
+                - **FAIL** — Number of exchanges that ended with an unhandled error
+                - **INFLIGHT** — Exchanges currently being processed right now. A consistently high inflight count may indicate slow downstream services
+                - **SINCE-LAST** — Time elapsed since the last exchange was processed. A long idle time might indicate that consumers have stopped receiving data
+
+                ## Example Screen
+
+                ```
+                 PID   NAME         VERSION    STATUS   AGE    MSG/S  TOTAL  FAIL  INFLIGHT  SINCE-LAST
+                 73136 camel-demo   4.21.0     Running  2m30s  1.00   142    0     0         0s
+                 64628 my-routes    4.21.0     Running  1h15m  0.50   2850   3     1         2s
+                ```
+
+                ## Sparkline Chart
+
+                The sparkline at the bottom shows message throughput over time.
+                Each vertical bar represents one sample interval:
+
+                - **Green bars** — successful messages per second
+                - **Red bars** — failed messages per second
+
+                This helps you spot traffic patterns, load spikes, and error bursts
+                at a glance. A sudden drop in throughput may indicate a problem with
+                an external system. A spike in red bars means errors are occurring.
+
+                ## Info Panel
+
+                When an integration is selected, the right panel shows:
+
+                - **Runtime** — Camel runtime type (e.g., `Camel`, `Spring Boot`, `Quarkus`)
+                - **Profile** — Active profile (`dev` for development, `prod` for production)
+                - **Reload** — Number of times routes have been live-reloaded (useful in `dev` mode where file changes trigger automatic reload)
+                - **JVM** — Java version and vendor (e.g., `21.0.5 Azul Systems`)
+                - **Uptime** — Integration uptime
+                - **Heap** — JVM heap memory usage (used / committed). See the Memory tab for details
+                - **Meta** — Metaspace usage (where Java class definitions are stored)
+                - **Threads** — JVM thread count
+                - **Load avg** — Three comma-separated load averages over 1-minute, 5-minute, and 15-minute windows. These measure message throughput, not CPU usage — similar concept to Unix load average but for Camel exchanges
+
+                ## Dev/Infra Services
+
+                Dev/Infra Services are backing services (databases, message brokers, etc.)
+                running in containers via Docker or Podman. This is similar to Quarkus Dev Services
+                and Spring Boot Development-time Services.
+
+                For example, if your integration uses Kafka, you can start a Kafka broker
+                directly from the TUI using `F2` → `Run Dev/Infra Service...` → select `kafka`.
+                The service starts in the background and appears below the integrations list,
+                separated by a divider line.
+
+                When running an example that requires infra services, they are started
+                automatically before the example launches.
+
+                Selecting an infra service in the list shows its connection properties
+                (host, port, etc.) in the info panel on the right.
+
+                ## Keys
+
+                - `Up/Down` — select integration
+                - `Enter` — view routes for selected integration
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `F2` — actions menu
+                - `F3` — switch integration
+                """;
     }
 }
