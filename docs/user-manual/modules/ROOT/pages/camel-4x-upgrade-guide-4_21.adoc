@@ -68,6 +68,8 @@ and enable compile-time null checking with tools like NullAway. If you want to l
 your own code or tooling, add `org.jspecify:jspecify` explicitly to your project dependencies.
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
+If your application relies on case-sensitive header name matching (for example, two headers that differ only in
+case such as `X-Foo` and `x-foo`), restore the previous behavior by calling `setLowerCase(false)` on your strategy.
 
 The `DefaultHeaderFilterStrategy` now blocks headers whose names start with `Camel` or `camel`
 (case-insensitive) by default in both the inbound (external to Camel) and outbound

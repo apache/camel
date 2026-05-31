@@ -25,7 +25,6 @@ public class GooglePubsubHeaderFilterStrategy extends DefaultHeaderFilterStrateg
     }
 
     public GooglePubsubHeaderFilterStrategy(boolean includeAllGoogleProperties) {
-        setLowerCase(true);
         // Filter authorization on both directions for security
         getOutFilter().add("authorization");
         getInFilter().add("authorization");

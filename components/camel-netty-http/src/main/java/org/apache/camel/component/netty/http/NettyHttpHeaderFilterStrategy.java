@@ -33,8 +33,5 @@ public class NettyHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     protected void initialize() {
         HttpUtil.addCommonFilters(getOutFilter());
-
-        setLowerCase(true);
-
     }
 }

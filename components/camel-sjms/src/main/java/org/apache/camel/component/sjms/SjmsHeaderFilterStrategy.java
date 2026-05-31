@@ -25,7 +25,6 @@ public class SjmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     public SjmsHeaderFilterStrategy(boolean includeAllJMSXProperties) {
-        setLowerCase(true);
         if (!includeAllJMSXProperties) {
             initialize();
         }

@@ -89,12 +89,9 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // is passed to the other endpoint
         getInFilter().add("content-length".toLowerCase());
 
-        setLowerCase(true);
-
         // initialize message header filter map with default SOAP filter
         messageHeaderFiltersMap = new HashMap<>();
         addToMessageHeaderFilterMap(new SoapMessageHeaderFilter());
-
     }
 
     @SuppressWarnings("unchecked")

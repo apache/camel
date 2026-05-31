@@ -30,8 +30,6 @@ public class KafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // filter out kafka record metadata
         getInFilter().add("org.apache.kafka.clients.producer.RecordMetadata");
 
-        setLowerCase(true);
-
         // filter headers beginning with Camel-internal prefixes and "kafka."
         String[] kafkaFilterStartsWith = Arrays.copyOf(CAMEL_FILTER_STARTS_WITH, CAMEL_FILTER_STARTS_WITH.length + 1);
         kafkaFilterStartsWith[CAMEL_FILTER_STARTS_WITH.length] = "kafka.";

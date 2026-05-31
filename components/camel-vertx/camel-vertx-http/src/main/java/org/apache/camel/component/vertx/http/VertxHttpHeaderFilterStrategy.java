@@ -30,9 +30,6 @@ public class VertxHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         final Set<String> outFilter = getOutFilter();
         HttpUtil.addCommonFilters(outFilter);
-
-        setLowerCase(true);
-
     }
 
 }

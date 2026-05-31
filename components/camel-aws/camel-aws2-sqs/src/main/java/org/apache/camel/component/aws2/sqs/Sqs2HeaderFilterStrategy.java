@@ -19,12 +19,12 @@ package org.apache.camel.component.aws2.sqs;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class Sqs2HeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+
     public Sqs2HeaderFilterStrategy() {
         initialize();
     }
 
     protected void initialize() {
-        setLowerCase(true);
         getOutFilter().add("breadcrumbId");
     }
 }

@@ -26,7 +26,5 @@ public class KnativeHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy
 
     protected final void initialize() {
         HttpUtil.addCommonFilters(getOutFilter());
-
-        setLowerCase(true);
     }
 }

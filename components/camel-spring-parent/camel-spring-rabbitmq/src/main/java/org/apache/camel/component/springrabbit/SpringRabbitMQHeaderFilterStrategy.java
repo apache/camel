@@ -28,7 +28,6 @@ public class SpringRabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrat
         this.getOutFilter().add("content-encoding");
         this.getOutFilter().add("content-length");
         this.getOutFilter().add("content-type");
-        this.setLowerCase(true);
     }
 
 }

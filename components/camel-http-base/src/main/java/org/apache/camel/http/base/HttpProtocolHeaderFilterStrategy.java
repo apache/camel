@@ -68,7 +68,5 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         getInFilter().add("www-authenticate");
 
         HttpUtil.addCommonFilters(getInFilter());
-
-        setLowerCase(true);
     }
 }
