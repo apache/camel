@@ -713,39 +713,52 @@ class OverviewTab implements MonitorTab {
 
                 ## Integration List
 
+                Each row represents one running Camel integration:
+
                 - **PID** — Process ID of the JVM running this integration
-                - **NAME** — Name of the integration (from the route file or application)
-                - **VERSION** — Camel version the integration is running on
-                - **STATUS** — Current state: `Running`, `Started`, or `Stopped`
-                - **AGE** — How long the integration has been running
-                - **MSG/S** — Messages processed per second (current throughput)
-                - **TOTAL** — Total number of exchanges (messages) processed since startup
-                - **FAIL** — Number of exchanges that ended with an error
-                - **INFLIGHT** — Exchanges currently being processed right now
-                - **SINCE-LAST** — Time elapsed since the last exchange was processed
+                - **NAME** — Name of the integration (from the route file or application configuration). Example: `camel-demo`, `my-app`
+                - **VERSION** — Camel version the integration is running on (e.g., `4.21.0`)
+                - **STATUS** — Current lifecycle state: `Running` (processing messages), `Started` (ready), or `Stopped`
+                - **AGE** — How long the integration has been running (e.g., `2m30s`, `1h15m`)
+                - **MSG/S** — Messages processed per second (current throughput). This is the overall rate across all routes
+                - **TOTAL** — Total number of exchanges (messages) processed since the integration started
+                - **FAIL** — Number of exchanges that ended with an unhandled error
+                - **INFLIGHT** — Exchanges currently being processed right now. A consistently high inflight count may indicate slow downstream services
+                - **SINCE-LAST** — Time elapsed since the last exchange was processed. A long idle time might indicate that consumers have stopped receiving data
+
+                ## Example Screen
+
+                ```
+                 PID   NAME         VERSION    STATUS   AGE    MSG/S  TOTAL  FAIL  INFLIGHT  SINCE-LAST
+                 73136 camel-demo   4.21.0     Running  2m30s  1.00   142    0     0         0s
+                 64628 my-routes    4.21.0     Running  1h15m  0.50   2850   3     1         2s
+                ```
 
                 ## Sparkline Chart
 
-                The sparkline at the bottom shows message throughput over time:
+                The sparkline at the bottom shows message throughput over time.
+                Each vertical bar represents one sample interval:
 
-                - **Green bars** represent successful messages
-                - **Red bars** represent failed messages
-                - The Y-axis shows messages per second
+                - **Green bars** — successful messages per second
+                - **Red bars** — failed messages per second
 
-                This helps you spot traffic patterns, load spikes, and error bursts.
+                This helps you spot traffic patterns, load spikes, and error bursts
+                at a glance. A sudden drop in throughput may indicate a problem with
+                an external system. A spike in red bars means errors are occurring.
 
                 ## Info Panel
 
-                When an integration is selected, the right panel shows detailed information:
+                When an integration is selected, the right panel shows:
 
-                - **Runtime** and **Profile** — Camel runtime type and active profile
-                - **Reload** — Number of times routes have been live-reloaded
-                - **JVM** — Java version and vendor
+                - **Runtime** — Camel runtime type (e.g., `Camel`, `Spring Boot`, `Quarkus`)
+                - **Profile** — Active profile (`dev` for development, `prod` for production)
+                - **Reload** — Number of times routes have been live-reloaded (useful in `dev` mode where file changes trigger automatic reload)
+                - **JVM** — Java version and vendor (e.g., `21.0.5 Azul Systems`)
                 - **Uptime** — Integration uptime
-                - **Heap** — JVM heap memory usage
-                - **Meta** — Metaspace (class metadata) usage
+                - **Heap** — JVM heap memory usage (used / committed). See the Memory tab for details
+                - **Meta** — Metaspace usage (where Java class definitions are stored)
                 - **Threads** — JVM thread count
-                - **Load avg** — CPU and inflight load averages (1m/5m/15m)
+                - **Load avg** — Three comma-separated load averages over 1-minute, 5-minute, and 15-minute windows. These measure message throughput, not CPU usage — similar concept to Unix load average but for Camel exchanges
 
                 ## Keys
 

@@ -455,35 +455,87 @@ class ErrorsTab implements MonitorTab {
                 # Errors
 
                 The Errors tab shows exchanges that have failed with exceptions. This is
-                your primary tool for debugging integration problems.
+                your primary tool for debugging integration problems — it captures the
+                exception, the exchange state at the time of failure, and the full path
+                the message took through the route before it failed.
+
+                Camel maintains an error registry that keeps the most recent errors
+                (up to a configurable limit). Older errors are automatically purged.
 
                 ## Error List
 
-                - **ID** — Exchange identifier
-                - **AGO** — How long ago the error occurred
+                - **ID** — Exchange identifier (e.g., `ID-myhost-1234-5`). This uniquely identifies the message that failed
+                - **AGO** — How long ago the error occurred (e.g., `5s`, `2m`, `1h`). Recent errors appear first by default
                 - **ROUTE** — Route where the error happened
-                - **NODE** — The specific processor/node in the route where the error occurred
-                - **HANDLED** — `true` if the error was caught by an error handler or dead letter channel, `false` if it propagated up
-                - **EXCEPTION** — Exception class name (short form)
-                - **MESSAGE** — Exception message text
+                - **NODE** — The specific processor/node in the route where the exception was thrown (e.g., `to1`, `bean2`, `process3`). This tells you exactly which step failed
+                - **HANDLED** — Whether the error was caught by Camel's error handling: `true` (handled) or `false` (unhandled)
+                - **EXCEPTION** — Exception class name in short form (e.g., `IOException`, `HttpOperationFailedException`)
+                - **MESSAGE** — The exception message text explaining what went wrong
+
+                ## Example Screen
+
+                ```
+                 ID                  AGO  ROUTE        NODE   HANDLED  EXCEPTION    MESSAGE
+                 ID-myhost-1234-5    5s   timer-route  to1    false    IOException  Connection refused
+                 ID-myhost-1234-3    2m   kafka-route  bean2  true     NPE          null reference in processor
+                ```
 
                 ## Understanding HANDLED
 
-                - **handled=true**: The error was caught by Camel's error handling (e.g.,
-                  `onException`, `errorHandler`, `deadLetterChannel`). The route may have
-                  retried, logged, or redirected the message.
+                - **handled=true**: The error was caught by Camel's error handling
+                  mechanism. This includes:
+                  - `onException` blocks that handle specific exception types
+                  - `errorHandler` configured on the route or context
+                  - `deadLetterChannel` that redirects failed messages to an error queue
+                  - `doTry/doCatch` blocks in the route
 
-                - **handled=false**: The error was not caught and propagated to the caller.
-                  This usually means the exchange failed completely.
+                  The route continued executing (or the message was redirected),
+                  so the caller may not even know an error occurred.
+
+                - **handled=false**: The error was not caught by any error handler.
+                  The exchange failed completely and the exception propagated back to
+                  the caller. For a consumer like Kafka, this might trigger a message
+                  redelivery. For an HTTP endpoint, the caller gets a 500 error.
 
                 ## Detail View
 
                 Press `Enter` on an error to see the full details:
 
-                - **Stack trace**: complete Java exception trace
-                - **Message History**: every step the exchange visited before failing,
-                  helping you trace exactly where things went wrong
-                - **Headers/Body/Properties**: the exchange state at the time of failure
+                - **Stack trace**: Complete Java exception chain showing exactly where
+                  in the code the error occurred. Look for your own classes and Camel
+                  component classes — framework internals can usually be skipped
+                - **Message History**: Step-by-step trace showing every node the
+                  exchange visited before failing. This is invaluable for understanding
+                  the path the message took:
+
+                ```
+                  RouteId     ProcessorId  Processor       Elapsed
+                  my-route    from1        timer://tick    0ms
+                  my-route    setBody1     setBody         0ms
+                  my-route    to1          http://api      5023ms  <-- failed here
+                ```
+
+                  The last entry is where the failure occurred. The elapsed time for
+                  that step often reveals the problem (e.g., 5023ms suggests a
+                  connection timeout).
+
+                - **Headers**: Exchange message headers at the time of failure
+                - **Body**: Message body content
+                - **Properties**: Exchange-level properties
+                - **Variables**: Exchange variables
+
+                Use `h`, `b`, `p`, `v` keys to toggle each section.
+
+                ## Common Error Patterns
+
+                - **Connection refused / timeout**: Downstream service is down or
+                  unreachable. Check network and service status.
+                - **HttpOperationFailedException**: HTTP call returned an error
+                  status code. Check the response body for details.
+                - **TypeConversionException**: Camel cannot convert a message to the
+                  required type. Check message format and data types.
+                - **NullPointerException**: A processor received unexpected null data.
+                  Check if the message body or headers are populated correctly.
 
                 ## Keys
 
@@ -493,6 +545,8 @@ class ErrorsTab implements MonitorTab {
                 - `b` — toggle body
                 - `p` — toggle properties
                 - `v` — toggle variables
+                - `s` — cycle sort column
+                - `S` — reverse sort order
                 - `Esc` — back to list
                 """;
     }

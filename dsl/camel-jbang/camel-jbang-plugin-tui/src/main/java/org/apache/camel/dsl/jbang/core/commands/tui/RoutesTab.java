@@ -1111,48 +1111,96 @@ class RoutesTab implements MonitorTab {
 
                 Routes are the building blocks of a Camel integration. Each route defines
                 a message flow: where messages come from, how they are processed, and where
-                they are sent to.
-
-                ```
-                from(timer) ──▸ process ──▸ choice
-                                              ├──▸ when(condition) ──▸ to(kafka)
-                                              └──▸ otherwise ──▸ to(log)
-                ```
+                they are sent to. A typical integration has multiple routes working together.
 
                 ## Route Table Columns
 
-                - **ROUTE** — Unique route identifier
-                - **FROM** — The endpoint that triggers this route (e.g., `timer`, `kafka`, `file`)
-                - **STATUS** — Route state: `Started`, `Stopped`, or `Suspended`
-                - **COVER** — Percentage of route nodes that have processed at least one message. Helps identify dead code paths — nodes that are defined but never reached
-                - **MSG/S** — Current message throughput (messages per second)
-                - **TOTAL** — Total exchanges processed since startup
-                - **FAIL** — Exchanges that ended with an error
-                - **INFLIGHT** — Exchanges currently being processed
-                - **MIN** — Fastest exchange processing time (milliseconds)
-                - **MEAN** — Average exchange processing time (milliseconds)
-                - **MAX** — Slowest exchange processing time (milliseconds)
-                - **SINCE-LAST** — Time since the last exchange was processed
+                - **ROUTE** — Unique route identifier (e.g., `timer-to-log`, `seda-consumer`)
+                - **FROM** — The endpoint that triggers this route (e.g., `timer`, `kafka`, `file`). This is the source of messages
+                - **STATUS** — Route state: `Started` (running), `Stopped` (not running), or `Suspended` (paused, can be resumed)
+                - **COVER** — Node coverage: what percentage of route nodes have processed at least one message. Shows as `5/10` meaning 5 of 10 nodes were reached. Helps find dead code paths — nodes that are defined but never reached. 100% coverage means all branches in the route have been exercised
+                - **MSG/S** — Current message throughput (messages per second) for this route
+                - **TOTAL** — Total exchanges processed by this route since startup
+                - **FAIL** — Exchanges that ended with an unhandled error in this route
+                - **INFLIGHT** — Exchanges currently being processed by this route
+                - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed
+                - **MEAN** — Average exchange processing time in milliseconds. A rising MEAN may indicate a downstream service getting slower
+                - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
+                - **SINCE-LAST** — Time since the last exchange was processed by this route
+
+                ## Example Screen
+
+                ```
+                 ROUTE           FROM                  STATUS   COVER  MSG/S  TOTAL  FAIL  INFLIGHT  MIN  MEAN  MAX  SINCE-LAST
+                 timer-to-log    timer://hello?p=2000  Started  5/5    0.50   142    0     0         0    0     2    1s
+                 timer-to-seda   timer://pump?p=3000   Started  2/2    0.33   95     0     0         0    0     2    2s
+                 seda-consumer   seda://queue          Started  1/1    0.33   95     0     0         0    0     0    2s
+                ```
 
                 ## Top Mode
 
-                Press `t` to switch to **Top mode** — a performance-focused view
-                that includes processor-level breakdown and load averages.
+                Press `t` to switch to **Top mode** — a performance-focused view that
+                includes processor-level breakdown and load averages. This shows every
+                processor (step) inside a route, not just the route totals.
 
-                - **LOAD** — Throughput averages over 1m/5m/15m windows, similar to Unix load average but measuring message throughput instead of CPU
+                - **LOAD** — Three throughput averages over 1m/5m/15m windows, similar to Unix load average but measuring message throughput instead of CPU. Higher values mean more messages flowing through. The three windows help you see if traffic is increasing or decreasing
 
-                ## Views
+                ## Route Diagram
 
-                - `d` — **Diagram**: visual flow chart of the route showing all EIP nodes
-                - `s` — **Source**: the original route source code (YAML, XML, or Java)
-                - `Enter` — view detailed route info
-                - `t` — toggle Top mode
+                Press `d` to see a visual flow chart of the selected route. The diagram
+                shows every EIP (Enterprise Integration Pattern) node and how messages
+                flow between them. Numbers on each node show how many exchanges passed
+                through it:
+
+                ```
+                         ┌──────────────────────┐
+                         │  route[timer-to-log] │
+                         └──────────────────────┘
+                                     │
+                                     ▼ 29
+                         ┌──────────────────────┐
+                         │ from[timer:hello?..] │
+                         └──────────────────────┘
+                                     │
+                                     ▼ 29
+                         ┌──────────────────────┐
+                         │    setBody[simple]   │
+                         └──────────────────────┘
+                                     │
+                                     ▼ 29
+                    ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+                    ╎    ┌──────────────────────┐     ╎
+                    ╎    │       choice         │     ╎
+                    ╎    └──────────────────────┘     ╎
+                    ╎         │              │        ╎
+                    ╎         ▼ 9            ▼ 20     ╎
+                    ╎  ┌────────────┐  ┌───────────┐  ╎
+                    ╎  │ when[cond]  │  │ otherwise │  ╎
+                    ╎  └────────────┘  └───────────┘  ╎
+                    ╎         │              │        ╎
+                    ╎         ▼ 9            ▼ 20     ╎
+                    ╎  ┌────────────┐  ┌───────────┐  ╎
+                    ╎  │ log[HIGH]  │  │ log[LOW]  │  ╎
+                    ╎  └────────────┘  └───────────┘  ╎
+                    ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+                ```
+
+                The dotted border groups nodes that belong to the same EIP block
+                (like `choice`, `split`, `multicast`). The numbers show how many
+                exchanges took each branch — useful for verifying routing logic.
+
+                ## Source View
+
+                Press `s` to see the original route source code (YAML, XML, or Java).
 
                 ## Keys
 
                 - `Up/Down` — select route
-                - `s` — cycle sort column
+                - `d` — show route diagram
+                - `s` — show route source / cycle sort column (context-dependent)
                 - `S` — reverse sort order
+                - `t` — toggle Top mode
+                - `Enter` — view detailed route info
                 - `Esc` — back to route list
                 """;
     }

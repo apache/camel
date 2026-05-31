@@ -1291,36 +1291,79 @@ class HistoryTab implements MonitorTab {
         return """
                 # Inspect
 
-                The Inspect tab shows a history of recent exchanges (messages) that have
-                been processed. Select an exchange to see its full journey through the
-                integration, including every step it passed through.
+                The Inspect tab shows a history of recently processed exchanges
+                (messages). This is one of the most powerful debugging tools — it
+                lets you see exactly what happened to each message as it traveled
+                through the integration, including every step it passed through.
+
+                Camel uses a BacklogTracer to record exchange details. The most
+                recent exchanges are kept in memory for inspection.
 
                 ## Exchange List
 
-                - **ID** — Unique exchange identifier
-                - **STATUS** — Whether the exchange completed successfully or failed
+                - **ID** — Unique exchange identifier (e.g., `ID-myhost-1234-5`). Every message passing through Camel gets a unique ID
+                - **STATUS** — Whether the exchange completed successfully (`done`) or failed (`fail`). Failed exchanges also appear on the Errors tab
                 - **ROUTE** — The route that processed this exchange
-                - **AGO** — How long ago this exchange was processed
-                - **ELAPSED** — Total processing time
+                - **AGO** — How long ago this exchange was processed (e.g., `2s`, `1m`, `5m`)
+                - **ELAPSED** — Total processing time from when the exchange entered the route until it completed. Long elapsed times may indicate slow downstream services
+
+                ## Example Screen
+
+                ```
+                 ID                   STATUS  ROUTE          AGO  ELAPSED
+                 ID-myhost-1234-10    done    timer-to-log   1s   0ms
+                 ID-myhost-1234-9     done    seda-consumer  2s   0ms
+                 ID-myhost-1234-8     done    timer-to-seda  2s   1ms
+                 ID-myhost-1234-7     fail    kafka-route    5s   5023ms
+                ```
+
+                The last exchange (`kafka-route`) failed after 5 seconds — likely a
+                connection timeout to the Kafka broker.
 
                 ## Detail View
 
-                Press `Enter` on an exchange to see its full details:
+                Press `Enter` on an exchange to see its full journey:
 
-                - **Exchange info**: ID, route, elapsed time, thread name
-                - **Message History**: step-by-step trace of every node the exchange
-                  visited — shows the exact path the message took through the route
-                - **Headers**: exchange message headers (key-value pairs)
-                - **Body**: the message body content
-                - **Properties**: exchange-level properties
-                - **Variables**: exchange variables
+                **Message History** — A step-by-step trace of every node the exchange
+                visited. This shows the exact path the message took through the route,
+                including which branch was taken in a `choice` and how long each step
+                took:
 
-                Use `h`, `b`, `p`, `v` to toggle headers, body, properties, and variables.
+                ```
+                 RouteId        NodeId     Processor            Elapsed
+                 timer-to-log   timer1     from[timer:hello]    0ms
+                 timer-to-log   setBody1   setBody[simple]      0ms
+                 timer-to-log   choice1    choice               0ms
+                 timer-to-log   when1      when[simple]         0ms
+                 timer-to-log   log1       log[HIGH: ${body}]   0ms
+                ```
+
+                This tells you the message entered via the timer, went through setBody,
+                reached a choice node, matched the `when` condition, and was logged.
+                The elapsed time for each step helps identify bottlenecks.
+
+                **Exchange Content** — Toggle these sections to inspect the message:
+
+                - `h` — **Headers**: Key-value pairs carried with the message (e.g., `Content-Type`, `CamelFileName`, custom headers)
+                - `b` — **Body**: The actual message content (text, JSON, XML, etc.)
+                - `p` — **Properties**: Exchange-level metadata (not forwarded to endpoints, used for internal routing)
+                - `v` — **Variables**: Exchange variables set during processing
+
+                ## Use Cases
+
+                - **Debugging routing logic**: Check which branch a `choice` or `filter` took
+                - **Verifying transformations**: Compare body before and after a `transform` or `marshal` step
+                - **Finding bottlenecks**: Look for steps with high elapsed times
+                - **Understanding failures**: See exactly where in the route a failure occurred
 
                 ## Keys
 
                 - `Up/Down` — select exchange
                 - `Enter` — view exchange details
+                - `h` — toggle headers
+                - `b` — toggle body
+                - `p` — toggle properties
+                - `v` — toggle variables
                 - `s` — cycle sort column
                 - `S` — reverse sort order
                 - `Esc` — back to list

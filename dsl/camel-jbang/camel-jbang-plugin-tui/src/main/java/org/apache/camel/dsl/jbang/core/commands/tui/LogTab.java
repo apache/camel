@@ -428,25 +428,55 @@ class LogTab implements MonitorTab {
         return """
                 # Log
 
-                The Log tab shows live log output from the running integration.
-                Log entries are color-coded by level:
+                The Log tab shows live log output from the running integration, similar
+                to `tail -f` on a log file. Log entries are color-coded by level for
+                quick visual scanning.
 
-                - **ERROR** (red): Something went wrong — check the message for details
-                - **WARN** (yellow): Potential issues that may need attention
-                - **INFO** (green): Normal operational messages
-                - **DEBUG** (blue): Detailed diagnostic information
-                - **TRACE** (dim): Very fine-grained debugging output
+                ## Log Levels
+
+                Each log message has a severity level:
+
+                - **ERROR** (red) — Something went wrong that needs attention. Check the message and stack trace. Errors often correspond to entries on the Errors tab
+                - **WARN** (yellow) — Potential issues that may need attention but are not immediately critical. Examples: deprecated features, connection retries, configuration warnings
+                - **INFO** (green) — Normal operational messages: routes starting, endpoints connecting, messages processed. This is the default level
+                - **DEBUG** (blue) — Detailed diagnostic information for troubleshooting. Shows internal decision-making, message transformations, and routing logic
+                - **TRACE** (dim) — Very fine-grained output showing every step of processing. Generates a lot of output — use only when debugging a specific problem
+
+                ## Example Screen
+
+                ```
+                 10:29:32 INFO  [main] CamelContext started in 1s234ms
+                 10:29:33 INFO  [Camel (camel-demo) thread #2] HIGH: Hello from Camel at 10:29:33
+                 10:29:34 INFO  [Camel (camel-demo) thread #2] LOW: Hello from Camel at 10:29:34
+                 10:29:35 WARN  [Camel (camel-demo) thread #3] Connection retry 1 of 3
+                 10:29:38 ERROR [Camel (camel-demo) thread #3] Connection refused: localhost:9092
+                ```
 
                 ## Log Level Filter
 
                 Press `l` to open the log level picker. Selecting a level filters the
-                display to show only messages at that level and above. For example,
-                selecting WARN shows only WARN and ERROR messages.
+                display to show only messages at that level and above:
+
+                - Select **ERROR** — shows only ERROR messages
+                - Select **WARN** — shows WARN and ERROR
+                - Select **INFO** — shows INFO, WARN, and ERROR (default)
+                - Select **DEBUG** — shows everything except TRACE
+                - Select **TRACE** — shows all messages
+
+                Filtering is useful when the log is noisy with INFO messages and you
+                want to focus on warnings and errors.
+
+                ## Thread Names
+
+                The thread name in square brackets (e.g., `[Camel (camel-demo) thread #2]`)
+                tells you which thread produced the log message. This helps correlate
+                log entries with specific routes when multiple routes run concurrently.
 
                 ## Keys
 
                 - `Up/Down` — scroll log
-                - `PgUp/PgDn` — scroll log by page
+                - `PgUp/PgDn` — scroll by page
+                - `Home/End` — jump to beginning/end of log
                 - `l` — change log level filter
                 - `Esc` — back
                 """;

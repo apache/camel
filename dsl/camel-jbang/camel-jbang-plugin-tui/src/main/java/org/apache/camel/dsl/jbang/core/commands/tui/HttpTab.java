@@ -1563,38 +1563,58 @@ class HttpTab implements MonitorTab {
                 # HTTP
 
                 The HTTP tab shows all HTTP endpoints exposed by this integration and
-                lets you send test requests interactively.
+                lets you send test requests interactively. This includes REST API
+                endpoints, management endpoints (health, metrics), and any other
+                HTTP routes.
 
                 ## Endpoint List
 
-                - **METHOD** — HTTP method: GET, POST, PUT, DELETE, PATCH, etc.
-                - **PATH** — URL path for this endpoint
-                - **TOTAL** — Number of requests received
-                - **CONSUMES** — Content-Type this endpoint accepts (e.g., `application/json`)
-                - **PRODUCES** — Content-Type this endpoint returns
-                - **SOURCE** — How the endpoint was defined
-                - **STATE** — Endpoint state
+                - **METHOD** — HTTP method: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, etc. Some endpoints support multiple methods
+                - **PATH** — URL path for this endpoint (e.g., `/api/users`, `/observe/health`)
+                - **TOTAL** — Number of HTTP requests received by this endpoint since startup
+                - **CONSUMES** — Content-Type this endpoint accepts (e.g., `application/json`, `text/xml`). Empty means any content type
+                - **PRODUCES** — Content-Type this endpoint returns in responses
+                - **SOURCE** — How the endpoint was registered (see below)
+                - **STATE** — Endpoint state: `Started` (accepting requests) or `Stopped`
 
-                ### SOURCE types
+                ## Example Screen
 
-                - **REST(code)** — defined in Camel REST DSL code
-                - **REST(contract)** — generated from an OpenAPI/Swagger contract
-                - **HTTP** — registered via platform-http component
-                - **Mgmt** — management endpoint (health, metrics, etc.)
+                ```
+                 METHOD  PATH                  TOTAL  CONSUMES          PRODUCES          SOURCE        STATE
+                 GET     /api/users            142    application/json  application/json  REST(code)    Started
+                 POST    /api/users            38     application/json  application/json  REST(code)    Started
+                 GET     /observe/health       97                                         Mgmt          Started
+                 GET     /observe/metrics      52                       text/plain        Mgmt          Started
+                 GET     /q/openapi            15                       application/json  REST(contract) Started
+                ```
+
+                ## SOURCE Types
+
+                The SOURCE column tells you how each endpoint was created:
+
+                - **REST(code)** — Defined in Camel REST DSL code. The developer wrote `rest("/api").get("/users").to("direct:getUsers")` in the route definition
+                - **REST(contract)** — Generated from an OpenAPI/Swagger specification file (contract-first approach). The API structure comes from a `.json` or `.yaml` spec file
+                - **HTTP** — Registered directly via the `platform-http` component using `from("platform-http:/path")`
+                - **Mgmt** — Management endpoint added automatically by Camel for observability: health checks, metrics, OpenAPI specs, developer console
 
                 ## HTTP Probe
 
                 Press `Enter` on an endpoint to open the interactive HTTP probe.
-                This lets you send test requests and inspect responses in real time.
+                This is a built-in HTTP client that lets you send test requests and
+                inspect responses without leaving the TUI.
 
-                - **Method**: use `Left/Right` arrows to cycle HTTP methods
-                - **Path**: editable URL path
-                - **Headers**: add custom headers with `+`, edit key and value
-                - **Body**: request body (or `file:filename.json` to load from file)
-                - **Response**: shows status code, headers, and body
-                - **History**: recent requests with replay support
+                The probe screen has these sections:
 
-                Press `p` to toggle pretty-print for JSON responses.
+                - **Method**: Use `Left/Right` arrows to cycle through HTTP methods (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS)
+                - **Path**: Editable URL path — modify it to test different routes or add query parameters
+                - **Headers**: Custom request headers. Press `+` to add a new header, then edit the key and value fields
+                - **Body**: Request body text. For file-based bodies, type `file:data.json` to load content from a file on disk
+                - **Response**: Shows the HTTP status code, response headers, and response body after sending
+                - **History**: Recent requests you have sent, with the ability to replay any previous request
+
+                Press `Ctrl+S` to send the request. Press `p` to toggle pretty-print
+                for JSON responses — this formats the response body with indentation
+                for easier reading.
 
                 ## Keys
 
