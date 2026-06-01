@@ -376,8 +376,9 @@ public final class MainHelper {
 
             if (failIfNotSet) {
                 // enrich the error with more precise details with option prefix and key
+                Throwable cause = e.getCause() != null ? e.getCause() : e;
                 throw new PropertyBindingException(
-                        e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, key, e.getCause());
+                        e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, key, cause);
             } else {
                 LOG.debug(
                         "Error configuring property ({}) with name: {}) on bean: {} with value: {}. This exception is ignored as failIfNotSet=false.",
