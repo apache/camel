@@ -35,6 +35,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.util.FileUtil;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -152,6 +153,11 @@ class ConfigurationTab implements MonitorTab {
         }
         int keyWidth = Math.min(maxKeyLen, inner.width() / 2);
 
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+        int lineWidth = hChunks.get(0).width();
+
         // Build visible lines, inserting divider at the right display position
         List<Line> lines = new ArrayList<>();
         int displayRow = 0;
@@ -167,14 +173,10 @@ class ConfigurationTab implements MonitorTab {
                 }
             }
             if (displayRow >= scrollOffset) {
-                lines.add(renderProperty(props.get(i), keyWidth));
+                lines.add(renderProperty(props.get(i), keyWidth, lineWidth));
             }
             displayRow++;
         }
-
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
 
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), hChunks.get(0));
 
@@ -187,7 +189,7 @@ class ConfigurationTab implements MonitorTab {
         }
     }
 
-    private Line renderProperty(ConfigProperty prop, int keyWidth) {
+    private Line renderProperty(ConfigProperty prop, int keyWidth, int lineWidth) {
         String key = prop.key;
         if (key.length() > keyWidth) {
             key = key.substring(0, keyWidth - 1) + "…";
@@ -200,10 +202,15 @@ class ConfigurationTab implements MonitorTab {
         String value = prop.value != null ? prop.value : "";
 
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled("  " + key + "  ", KEY_STYLE));
+        String keyPart = "  " + key + "  ";
+        spans.add(Span.styled(keyPart, KEY_STYLE));
         spans.add(Span.styled(value, valStyle));
         if (prop.source != null && !prop.source.isEmpty()) {
-            spans.add(Span.styled("  [" + prop.source + "]", SOURCE_STYLE));
+            String displaySource = FileUtil.stripPath(prop.source);
+            String sourceText = "[" + displaySource + "]";
+            int used = keyPart.length() + value.length();
+            int gap = Math.max(2, lineWidth - used - sourceText.length());
+            spans.add(Span.styled(" ".repeat(gap) + sourceText, SOURCE_STYLE));
         }
 
         return Line.from(spans);
