@@ -29,7 +29,8 @@ def MAVEN_TEST_PARAMS_ALT_ARCHS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpa
 pipeline {
 
     triggers {
-        cron(@weekly)
+        // weekly
+        cron('H H * * H')
     }
 
     environment {
