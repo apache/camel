@@ -21,9 +21,20 @@ github:
   labels:
     - camel
     - integration
-    - eip
-    - microservices
+    - integration-framework
+    - enterprise-integration-patterns
     - java
+    - spring-boot
+    - quarkus
+    - cloud-native
+    - kubernetes
+    - kafka
+    - rest-api
+    - yaml
+    - data-transformation
+    - middleware
+    - microservices
+    - mcp
   dependabot_alerts:  true
   dependabot_updates: true
   autolink_jira:
