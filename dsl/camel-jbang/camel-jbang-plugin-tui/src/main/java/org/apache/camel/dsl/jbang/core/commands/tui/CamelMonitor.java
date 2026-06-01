@@ -197,6 +197,9 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
     private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
 
+    // Cached PID list — full process scan only on Overview tab or F3 switch popup
+    private volatile List<Long> cachedPids = Collections.emptyList();
+
     // Trace/history data — shared between CamelMonitor and tabs
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
     private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
@@ -1696,6 +1699,66 @@ public class CamelMonitor extends CamelCommand {
 
     // ---- Data Loading ----
 
+    private void refreshLogData() {
+        if (tabsState.selected() != TAB_LOG) {
+            return;
+        }
+        String logPid = null;
+        String logFileName = null;
+        InfraInfo selInfra = findSelectedInfra();
+        if (selInfra != null) {
+            logPid = selInfra.pid;
+            logFileName = "infra-" + selInfra.alias + "-" + selInfra.pid + ".log";
+        } else {
+            IntegrationInfo selected = findSelectedIntegration();
+            if (selected != null) {
+                logPid = selected.pid;
+                logFileName = selected.pid + ".log";
+            }
+        }
+        if (logPid == null) {
+            return;
+        }
+        if (!logPid.equals(logTab.logFilePid)) {
+            logTab.mutableFilteredEntries.clear();
+            logTab.logFilePos = -1;
+            logTab.logTotalLinesRead = 0;
+            logTab.logLineBuffer.setLength(0);
+            logTab.logLoading = true;
+        }
+        // Load older lines when scrolled to the top or Home pressed
+        boolean loadAll = logTab.loadAllRequested;
+        if (logTab.logFileStartPos > 0
+                && (loadAll || (!logTab.followMode && logTab.scroll == 0))) {
+            logTab.loadAllRequested = false;
+            List<String> olderLines = new ArrayList<>();
+            logTab.readOlderLogLines(logFileName, loadAll, olderLines);
+            if (!olderLines.isEmpty()) {
+                List<LogEntry> olderEntries = new ArrayList<>();
+                for (String line : olderLines) {
+                    olderEntries.add(LogTab.parseLogLine(line));
+                }
+                logTab.mutableFilteredEntries.addAll(0, olderEntries);
+                logTab.logTotalLinesRead += olderLines.size();
+                logTab.scroll = olderEntries.size();
+            }
+        }
+        List<String> newRawLines = new ArrayList<>();
+        logTab.readNewLogLinesFromFile(logPid, logFileName, newRawLines);
+        if (!newRawLines.isEmpty()) {
+            logTab.logTotalLinesRead += newRawLines.size();
+            for (String line : newRawLines) {
+                logTab.mutableFilteredEntries.add(LogTab.parseLogLine(line));
+            }
+            if (logTab.mutableFilteredEntries.size() > MAX_LOG_LINES) {
+                logTab.mutableFilteredEntries.subList(0, logTab.mutableFilteredEntries.size() - MAX_LOG_LINES)
+                        .clear();
+            }
+        }
+        logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
+        logTab.logLoading = false;
+    }
+
     private void refreshData() {
         if (runner == null) {
             refreshDataSync();
@@ -1718,24 +1781,36 @@ public class CamelMonitor extends CamelCommand {
     private void refreshDataSync() {
         lastRefresh = System.currentTimeMillis();
         try {
+            // Read log data early — before the heavy PID/status scan
+            refreshLogData();
+
             List<IntegrationInfo> infos = new ArrayList<>();
-            List<Long> pids = findPids(name);
-            ProcessHandle.allProcesses()
-                    .filter(ph -> pids.contains(ph.pid()))
-                    .forEach(ph -> {
-                        JsonObject root = loadStatus(ph.pid());
-                        if (root != null) {
-                            IntegrationInfo info = StatusParser.parseIntegration(ph, root);
-                            if (info != null) {
-                                infos.add(info);
-                                updateThroughputHistory(info);
-                                updateEndpointHistory(info);
-                                updateCbHistory(info);
-                                updateHeapHistory(info);
-                                updateLoadMetrics(ph, info);
-                            }
-                        }
-                    });
+            boolean fullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
+            List<Long> pids;
+            if (fullScan) {
+                pids = findPids(name);
+                cachedPids = pids;
+            } else {
+                pids = cachedPids;
+            }
+            for (Long pid : pids) {
+                JsonObject root = loadStatus(pid);
+                if (root != null) {
+                    ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+                    if (ph == null) {
+                        continue;
+                    }
+                    IntegrationInfo info = StatusParser.parseIntegration(ph, root);
+                    if (info != null) {
+                        infos.add(info);
+                        updateThroughputHistory(info);
+                        updateEndpointHistory(info);
+                        updateCbHistory(info);
+                        updateHeapHistory(info);
+                        updateLoadMetrics(ph, info);
+                    }
+                }
+            }
 
             // Detect disappeared integrations and start vanishing
             Set<String> livePids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
@@ -1851,63 +1926,7 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
 
-            // Refresh log data only when the Log tab is visible
-            if (tabsState.selected() == TAB_LOG) {
-                String logPid = null;
-                String logFileName = null;
-                InfraInfo selInfra = findSelectedInfra();
-                if (selInfra != null) {
-                    logPid = selInfra.pid;
-                    logFileName = "infra-" + selInfra.alias + "-" + selInfra.pid + ".log";
-                } else {
-                    IntegrationInfo selected = findSelectedIntegration();
-                    if (selected != null) {
-                        logPid = selected.pid;
-                        logFileName = selected.pid + ".log";
-                    }
-                }
-                if (logPid != null) {
-                    if (!logPid.equals(logTab.logFilePid)) {
-                        logTab.mutableFilteredEntries.clear();
-                        logTab.logFilePos = -1;
-                        logTab.logTotalLinesRead = 0;
-                        logTab.logLineBuffer.setLength(0);
-                        logTab.logLoading = true;
-                    }
-                    List<String> newRawLines = new ArrayList<>();
-                    // Load older lines when scrolled to the top or Home pressed
-                    boolean loadAll = logTab.loadAllRequested;
-                    if (logTab.logFileStartPos > 0
-                            && (loadAll || (!logTab.followMode && logTab.scroll == 0))) {
-                        logTab.loadAllRequested = false;
-                        List<String> olderLines = new ArrayList<>();
-                        logTab.readOlderLogLines(logFileName, loadAll, olderLines);
-                        if (!olderLines.isEmpty()) {
-                            List<LogEntry> olderEntries = new ArrayList<>();
-                            for (String line : olderLines) {
-                                olderEntries.add(LogTab.parseLogLine(line));
-                            }
-                            logTab.mutableFilteredEntries.addAll(0, olderEntries);
-                            logTab.logTotalLinesRead += olderLines.size();
-                            // Adjust scroll to keep the same content visible
-                            logTab.scroll = olderEntries.size();
-                        }
-                    }
-                    logTab.readNewLogLinesFromFile(logPid, logFileName, newRawLines);
-                    if (!newRawLines.isEmpty()) {
-                        logTab.logTotalLinesRead += newRawLines.size();
-                        for (String line : newRawLines) {
-                            logTab.mutableFilteredEntries.add(LogTab.parseLogLine(line));
-                        }
-                        if (logTab.mutableFilteredEntries.size() > MAX_LOG_LINES) {
-                            logTab.mutableFilteredEntries.subList(0, logTab.mutableFilteredEntries.size() - MAX_LOG_LINES)
-                                    .clear();
-                        }
-                    }
-                    logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
-                    logTab.logLoading = false;
-                }
-            }
+            // Log data is now refreshed at the top of refreshDataSync() via refreshLogData()
 
             // Scope history/error/trace refresh to the selected integration only
             List<Long> selectedPids = selectedPidAsList();
