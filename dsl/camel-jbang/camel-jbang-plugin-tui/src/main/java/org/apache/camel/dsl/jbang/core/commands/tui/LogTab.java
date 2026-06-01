@@ -38,10 +38,12 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
@@ -87,12 +89,33 @@ class LogTab implements MonitorTab {
     private int hScroll;
     private boolean showLogLevelPopup;
 
+    // Highlight mode: persistent keyword highlighting
+    private String highlightTerm;
+    private Pattern highlightPattern;
+
+    // Find mode: search with next/prev navigation
+    private boolean findInputActive;
+    private boolean highlightInputActive;
+    private TextInputState searchInputState = new TextInputState("");
+    private String findTerm;
+    private Pattern findPattern;
+    private int findMatchIndex = -1;
+    private List<Integer> findMatches = Collections.emptyList();
+
+    private static final Style HIGHLIGHT_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.YELLOW);
+    private static final Style FIND_MATCH_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.YELLOW);
+    private static final Style FIND_CURRENT_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.LIGHT_GREEN);
+
     LogTab(MonitorContext ctx) {
         this.ctx = ctx;
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (findInputActive || highlightInputActive) {
+            return handleSearchInput(ke);
+        }
+
         if (showLogLevelPopup) {
             if (ke.isUp()) {
                 logLevelListState.selectPrevious();
@@ -113,6 +136,24 @@ class LogTab implements MonitorTab {
             return true;
         }
 
+        if (ke.isChar('/')) {
+            findInputActive = true;
+            searchInputState = new TextInputState("");
+            return true;
+        }
+        if (ke.isChar('h')) {
+            highlightInputActive = true;
+            searchInputState = new TextInputState("");
+            return true;
+        }
+        if (ke.isChar('n') && findTerm != null) {
+            navigateToNextMatch();
+            return true;
+        }
+        if (ke.isChar('N') && findTerm != null) {
+            navigateToPrevMatch();
+            return true;
+        }
         if (ke.isChar('l') && !ctx.isInfraSelected()) {
             showLogLevelPopup = true;
             logLevelListState.select(2);
@@ -160,10 +201,59 @@ class LogTab implements MonitorTab {
         return false;
     }
 
+    private boolean handleSearchInput(KeyEvent ke) {
+        if (ke.isKey(KeyCode.ESCAPE)) {
+            findInputActive = false;
+            highlightInputActive = false;
+            return true;
+        }
+        if (ke.isConfirm()) {
+            String text = searchInputState.text().trim();
+            if (findInputActive) {
+                if (text.isEmpty()) {
+                    findTerm = null;
+                    findPattern = null;
+                    findMatches = Collections.emptyList();
+                    findMatchIndex = -1;
+                } else {
+                    findTerm = text;
+                    findPattern = Pattern.compile(Pattern.quote(text), Pattern.CASE_INSENSITIVE);
+                    buildFindMatches();
+                    jumpToNearestMatch();
+                }
+                findInputActive = false;
+            } else if (highlightInputActive) {
+                if (text.isEmpty()) {
+                    highlightTerm = null;
+                    highlightPattern = null;
+                } else {
+                    highlightTerm = text;
+                    highlightPattern = Pattern.compile(Pattern.quote(text), Pattern.CASE_INSENSITIVE);
+                }
+                highlightInputActive = false;
+            }
+            return true;
+        }
+        FormHelper.handleTextInput(ke, searchInputState);
+        return true;
+    }
+
     @Override
     public boolean handleEscape() {
+        if (findInputActive || highlightInputActive) {
+            findInputActive = false;
+            highlightInputActive = false;
+            return true;
+        }
         if (showLogLevelPopup) {
             showLogLevelPopup = false;
+            return true;
+        }
+        if (findTerm != null) {
+            findTerm = null;
+            findPattern = null;
+            findMatches = Collections.emptyList();
+            findMatchIndex = -1;
             return true;
         }
         return false;
@@ -239,13 +329,14 @@ class LogTab implements MonitorTab {
 
         int hSkip = wordWrap ? 0 : hScroll;
 
-        if (entries != cachedLogEntries || hSkip != cachedLogHSkip) {
+        boolean entriesChanged = entries != cachedLogEntries;
+        if (entriesChanged || hSkip != cachedLogHSkip) {
             cachedLogEntries = entries;
             cachedLogHSkip = hSkip;
             List<Line> built = new ArrayList<>(entries.size());
             int maxW = 0;
-            for (LogEntry entry : entries) {
-                String raw = entry.raw != null ? entry.raw : "";
+            for (int i = 0; i < entries.size(); i++) {
+                String raw = entries.get(i).raw != null ? entries.get(i).raw : "";
                 if (!wordWrap) {
                     maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
                 }
@@ -260,9 +351,24 @@ class LogTab implements MonitorTab {
             hScroll = Math.min(hScroll, Math.max(0, cachedLogMaxWidth - visibleWidth));
         }
 
+        if (findPattern != null && entriesChanged) {
+            buildFindMatches();
+        }
+
         List<Line> allLines = cachedLogLines;
         int start = Math.min(scroll, Math.max(0, allLines.size() - visibleHeight));
         List<Line> visibleLines = allLines.subList(start, Math.min(allLines.size(), start + visibleHeight));
+
+        // Apply highlights only to visible lines
+        if (highlightPattern != null || findPattern != null) {
+            int currentMatchLine = findMatchIndex >= 0 && findMatchIndex < findMatches.size()
+                    ? findMatches.get(findMatchIndex) : -1;
+            List<Line> highlighted = new ArrayList<>(visibleLines.size());
+            for (int i = 0; i < visibleLines.size(); i++) {
+                highlighted.add(applyHighlights(visibleLines.get(i), start + i, currentMatchLine));
+            }
+            visibleLines = highlighted;
+        }
 
         List<Rect> hChunks = Layout.horizontal()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -289,20 +395,43 @@ class LogTab implements MonitorTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (findInputActive) {
+            spans.add(Span.styled(" /", HINT_KEY_STYLE));
+            spans.add(Span.raw(searchInputState.text() + "█  "));
+            hint(spans, "Enter", "search");
+            hintLast(spans, "Esc", "cancel");
+            return;
+        }
+        if (highlightInputActive) {
+            spans.add(Span.styled(" h:", HINT_KEY_STYLE));
+            spans.add(Span.raw(searchInputState.text() + "█  "));
+            hint(spans, "Enter", "set");
+            hintLast(spans, "Esc", "cancel");
+            return;
+        }
         if (showLogLevelPopup) {
             hint(spans, "↑↓", "navigate");
             hint(spans, "Enter", "set level");
             hintLast(spans, "Esc", "cancel");
             return;
         }
-        hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "scroll");
-        hint(spans, "PgUp/PgDn", "page");
-        hint(spans, "Home/End", "top/end");
-        hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
-        if (!wordWrap) {
-            hint(spans, "←→", "h-scroll");
+
+        if (findTerm != null) {
+            hint(spans, "Esc", "clear find");
+            hint(spans, "n", "next");
+            hint(spans, "N", "prev");
+            String pos = findMatches.isEmpty()
+                    ? "0/0"
+                    : (findMatchIndex + 1) + "/" + findMatches.size();
+            spans.add(Span.styled("  /", HINT_KEY_STYLE));
+            spans.add(Span.raw("\"" + findTerm + "\" [" + pos + "]  "));
+        } else {
+            hint(spans, "Esc", "back");
         }
+        hint(spans, "↑↓", "scroll");
+        hint(spans, "/", "find");
+        hint(spans, "h", "highlight" + (highlightTerm != null ? " [" + highlightTerm + "]" : ""));
+        hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
         if (!ctx.isInfraSelected()) {
             hint(spans, "l", "level");
         }
@@ -345,6 +474,130 @@ class LogTab implements MonitorTab {
         root.put("logging-level", level);
         Path actionFile = ctx.getActionFile(pid);
         org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
+    }
+
+    private void buildFindMatches() {
+        List<Integer> matches = new ArrayList<>();
+        List<LogEntry> entries = filteredLogEntries;
+        for (int i = 0; i < entries.size(); i++) {
+            String plain = TuiHelper.stripAnsi(entries.get(i).raw != null ? entries.get(i).raw : "");
+            if (findPattern.matcher(plain).find()) {
+                matches.add(i);
+            }
+        }
+        findMatches = matches;
+    }
+
+    private void jumpToNearestMatch() {
+        if (findMatches.isEmpty()) {
+            findMatchIndex = -1;
+            return;
+        }
+        for (int i = 0; i < findMatches.size(); i++) {
+            if (findMatches.get(i) >= scroll) {
+                findMatchIndex = i;
+                scrollToMatch();
+                return;
+            }
+        }
+        findMatchIndex = 0;
+        scrollToMatch();
+    }
+
+    private void navigateToNextMatch() {
+        if (findMatches.isEmpty()) {
+            return;
+        }
+        findMatchIndex = (findMatchIndex + 1) % findMatches.size();
+        scrollToMatch();
+    }
+
+    private void navigateToPrevMatch() {
+        if (findMatches.isEmpty()) {
+            return;
+        }
+        findMatchIndex = findMatchIndex <= 0 ? findMatches.size() - 1 : findMatchIndex - 1;
+        scrollToMatch();
+    }
+
+    private void scrollToMatch() {
+        if (findMatchIndex >= 0 && findMatchIndex < findMatches.size()) {
+            followMode = false;
+            scroll = findMatches.get(findMatchIndex);
+        }
+    }
+
+    boolean isSearchInputActive() {
+        return findInputActive || highlightInputActive;
+    }
+
+    void handlePaste(String text) {
+        if (findInputActive || highlightInputActive) {
+            FormHelper.handlePaste(text, searchInputState);
+        }
+    }
+
+    private Line applyHighlights(Line line, int entryIndex, int currentMatchLine) {
+        String fullText = line.rawContent();
+        if (fullText.isEmpty()) {
+            return line;
+        }
+
+        // Collect all match ranges with their styles
+        List<int[]> ranges = new ArrayList<>();
+        List<Style> styles = new ArrayList<>();
+        if (highlightPattern != null) {
+            Matcher m = highlightPattern.matcher(fullText);
+            while (m.find()) {
+                ranges.add(new int[] { m.start(), m.end() });
+                styles.add(HIGHLIGHT_STYLE);
+            }
+        }
+        if (findPattern != null) {
+            boolean isCurrentLine = entryIndex == currentMatchLine;
+            Matcher m = findPattern.matcher(fullText);
+            while (m.find()) {
+                ranges.add(new int[] { m.start(), m.end() });
+                styles.add(isCurrentLine ? FIND_CURRENT_STYLE : FIND_MATCH_STYLE);
+            }
+        }
+        if (ranges.isEmpty()) {
+            return line;
+        }
+
+        // Rebuild spans with highlights applied
+        List<Span> original = line.spans();
+        List<Span> result = new ArrayList<>();
+        int charPos = 0;
+
+        for (Span span : original) {
+            String content = span.content();
+            Style baseStyle = span.style();
+            int spanStart = charPos;
+            int spanEnd = charPos + content.length();
+            int cursor = 0;
+
+            for (int r = 0; r < ranges.size(); r++) {
+                int matchStart = ranges.get(r)[0];
+                int matchEnd = ranges.get(r)[1];
+                if (matchEnd <= spanStart || matchStart >= spanEnd) {
+                    continue;
+                }
+                int localStart = Math.max(0, matchStart - spanStart);
+                int localEnd = Math.min(content.length(), matchEnd - spanStart);
+
+                if (localStart > cursor) {
+                    result.add(Span.styled(content.substring(cursor, localStart), baseStyle));
+                }
+                result.add(Span.styled(content.substring(localStart, localEnd), styles.get(r)));
+                cursor = localEnd;
+            }
+            if (cursor < content.length()) {
+                result.add(Span.styled(content.substring(cursor), baseStyle));
+            }
+            charPos = spanEnd;
+        }
+        return Line.from(result);
     }
 
     void readNewLogLines(String pid, List<String> newLines) {
@@ -466,6 +719,23 @@ class LogTab implements MonitorTab {
                 Filtering is useful when the log is noisy with INFO messages and you
                 want to focus on warnings and errors.
 
+                ## Find and Highlight
+
+                **Find** (`/`) — search for text in the log. Type a search term and
+                press Enter to jump to the first match. Use `n` to go to the next
+                match and `N` for the previous match. The current match is shown
+                with a green background, other matches with yellow. Press `Esc`
+                to clear the search.
+
+                **Highlight** (`h`) — persistently highlight all occurrences of a
+                word in the log. Type a word and press Enter — all occurrences
+                are highlighted with a yellow background while the log continues
+                scrolling in follow mode. Press `h` again and submit an empty
+                term to clear the highlight. Both find and highlight can be
+                active at the same time.
+
+                Both find and highlight are case-insensitive.
+
                 ## Thread Names
 
                 The thread name in square brackets (e.g., `[Camel (camel-demo) thread #2]`)
@@ -477,8 +747,14 @@ class LogTab implements MonitorTab {
                 - `Up/Down` — scroll log
                 - `PgUp/PgDn` — scroll by page
                 - `Home/End` — jump to beginning/end of log
+                - `/` — find (search for text)
+                - `n` — next match
+                - `N` — previous match
+                - `h` — highlight a word
                 - `l` — change log level filter
-                - `Esc` — back
+                - `f` — toggle follow mode
+                - `w` — toggle word wrap
+                - `Esc` — clear find / back
                 """;
     }
 }

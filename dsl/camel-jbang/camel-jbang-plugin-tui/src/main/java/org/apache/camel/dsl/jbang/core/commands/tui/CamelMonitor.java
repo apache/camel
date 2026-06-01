@@ -525,9 +525,11 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return true;
             }
-            // Quit: q or Ctrl+c (skip when probe is editing text)
+            // Quit: q or Ctrl+c (skip when text input is active)
             boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
-            if (!probeEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
+            boolean logSearchActive = tabsState.selected() == TAB_LOG && logTab.isSearchInputActive();
+            boolean textEditing = probeEditing || logSearchActive;
+            if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
                 runner.quit();
                 return true;
             }
@@ -535,9 +537,9 @@ public class CamelMonitor extends CamelCommand {
                 runner.quit();
                 return true;
             }
-            // Tab switching with number keys (skip when probe is editing text)
+            // Tab switching with number keys (skip when text input is active)
             // When infra is selected, only Overview (1) and Log (2) are available
-            if (!probeEditing) {
+            if (!textEditing) {
                 if (ke.isChar('1')) {
                     return handleTabKey(TAB_OVERVIEW);
                 }
@@ -573,8 +575,8 @@ public class CamelMonitor extends CamelCommand {
             }
 
             // Tab cycling (check Shift+Tab before Tab since Tab binding also matches Shift+Tab)
-            // Skip tab cycling when HTTP probe is active (Tab navigates fields)
-            if (ke.isFocusPrevious() && !(tabsState.selected() == TAB_HTTP && httpTab.isProbeMode())) {
+            // Skip tab cycling when text input is active (Tab navigates fields)
+            if (ke.isFocusPrevious() && !textEditing) {
                 if (isInfraSelected()) {
                     // Cycle between Overview and Log only
                     int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
@@ -588,7 +590,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return true;
             }
-            if (ke.isFocusNext() && !(tabsState.selected() == TAB_HTTP && httpTab.isProbeMode())) {
+            if (ke.isFocusNext() && !textEditing) {
                 if (isInfraSelected()) {
                     int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
                     tabsState.select(next);
@@ -746,6 +748,10 @@ public class CamelMonitor extends CamelCommand {
             }
             if (httpTab.isProbeMode()) {
                 httpTab.handlePaste(pe.text());
+                return true;
+            }
+            if (logTab.isSearchInputActive()) {
+                logTab.handlePaste(pe.text());
                 return true;
             }
         }
