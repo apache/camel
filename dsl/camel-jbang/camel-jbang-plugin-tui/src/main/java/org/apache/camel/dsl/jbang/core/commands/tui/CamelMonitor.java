@@ -712,6 +712,7 @@ public class CamelMonitor extends CamelCommand {
                 overviewTab.selectCurrentIntegration();
                 if (ctx.selectedPid != null) {
                     tabsState.select(TAB_LOG);
+                    refreshLogData();
                 }
                 return true;
             }
@@ -778,11 +779,6 @@ public class CamelMonitor extends CamelCommand {
             if (recording && !recentKeys.isEmpty()) {
                 long cutoff = now - 2000;
                 recentKeys.removeIf(k -> k.timestamp() < cutoff);
-            }
-            // If log tab is loading but a full refresh is already in progress,
-            // read log data directly so it appears without waiting for the PID scan
-            if (tabsState.selected() == TAB_LOG && logTab.logLoading && refreshInProgress.get()) {
-                refreshLogData();
             }
             long interval = routesTab.isShowDiagram() ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
@@ -859,6 +855,7 @@ public class CamelMonitor extends CamelCommand {
             overviewTab.selectCurrentIntegration();
         }
         if (tab == TAB_LOG) {
+            refreshLogData();
             logTab.onTabSelected();
         }
         if (tab == TAB_HISTORY && ctx.selectedPid != null) {
