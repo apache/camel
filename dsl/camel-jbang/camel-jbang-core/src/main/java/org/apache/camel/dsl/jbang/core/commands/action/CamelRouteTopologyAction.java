@@ -19,6 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.camel.diagram.TopologyAsciiRenderer;
+import org.apache.camel.diagram.TopologyHelper;
+import org.apache.camel.diagram.TopologyLayoutEngine;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -32,7 +38,8 @@ import picocli.CommandLine.Command;
          footer = {
                  "%nExamples:",
                  "  camel cmd route-topology",
-                 "  camel cmd route-topology --json" })
+                 "  camel cmd route-topology --json",
+                 "  camel cmd route-topology --diagram" })
 public class CamelRouteTopologyAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of a running Camel integration", arity = "0..1")
@@ -41,6 +48,14 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--json" },
                         description = "Output in JSON Format")
     boolean jsonOutput;
+
+    @CommandLine.Option(names = { "--diagram" },
+                        description = "Display as visual topology diagram")
+    boolean diagram;
+
+    @CommandLine.Option(names = { "--box-width" }, defaultValue = "180",
+                        description = "Width of diagram node boxes")
+    int boxWidth = 180;
 
     public CamelRouteTopologyAction(CamelJBangMain main) {
         super(main);
@@ -68,6 +83,8 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
             if (jsonOutput) {
                 String dump = Jsoner.prettyPrint(jo.toJson(), 2);
                 printer().println(dump);
+            } else if (diagram) {
+                printDiagram(jo);
             } else {
                 printTopology(jo);
             }
@@ -109,6 +126,19 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                 }
             }
         }
+    }
+
+    private void printDiagram(JsonObject jo) {
+        List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(jo);
+        List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(jo);
+
+        TopologyLayoutEngine engine = new TopologyLayoutEngine(boxWidth);
+        TopologyLayoutResult result = engine.layout(nodes, edges);
+
+        TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
+                engine.getNodeWidth(), true);
+        String output = renderer.renderDiagram(result);
+        printer().print(output);
     }
 
 }

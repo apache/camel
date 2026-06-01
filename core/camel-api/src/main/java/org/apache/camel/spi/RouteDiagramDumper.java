@@ -123,4 +123,30 @@ public interface RouteDiagramDumper {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Dumps the route topology as ASCII art or Unicode box-drawing text
+     *
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param unicode   whether to use Unicode box-drawing characters
+     *
+     * @since           4.21
+     */
+    default String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Dumps the route topology as a PNG image
+     *
+     * @param theme     the coloring theme
+     * @param metrics   whether to include live metric counters
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param fontSize  the font size
+     *
+     * @since           4.21
+     */
+    default BufferedImage dumpTopologyAsImage(Theme theme, boolean metrics, int nodeWidth, int fontSize) {
+        throw new UnsupportedOperationException();
+    }
+
 }

@@ -19,6 +19,8 @@ camel cmd route-topology [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--box-width` | Width of diagram node boxes | 180 | int
+| `--diagram` | Display as visual topology diagram |  | boolean
 | `--json` | Output in JSON Format |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
