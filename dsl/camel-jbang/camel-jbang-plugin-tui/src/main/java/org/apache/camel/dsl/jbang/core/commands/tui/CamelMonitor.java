@@ -496,6 +496,9 @@ public class CamelMonitor extends CamelCommand {
                         ctx.selectedPid = chosen.pid;
                         ctx.lastSelectedName = chosen.name;
                         resetIntegrationTabState();
+                        if (tabsState.selected() == TAB_LOG) {
+                            refreshLogData();
+                        }
                     }
                     return true;
                 }
