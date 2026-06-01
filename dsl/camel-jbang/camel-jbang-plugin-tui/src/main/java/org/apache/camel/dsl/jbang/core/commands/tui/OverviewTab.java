@@ -190,7 +190,11 @@ class OverviewTab implements MonitorTab {
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle))));
             } else {
-                Style statusStyle = switch (extractState(info.state)) {
+                String stateText = extractState(info.state);
+                if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
+                    stateText = "Stopped";
+                }
+                Style statusStyle = switch (stateText) {
                     case "Started", "Running" -> Style.EMPTY.fg(Color.GREEN);
                     case "Stopped" -> Style.EMPTY.fg(Color.LIGHT_RED);
                     default -> Style.EMPTY.fg(Color.YELLOW);
@@ -211,7 +215,7 @@ class OverviewTab implements MonitorTab {
                         Cell.from(nameLine),
                         Cell.from(info.camelVersion != null ? info.camelVersion : ""),
                         centerCell(info.ready != null ? info.ready : "", 5),
-                        Cell.from(Span.styled(extractState(info.state), statusStyle)),
+                        Cell.from(Span.styled(stateText, statusStyle)),
                         Cell.from(info.ago != null ? info.ago : ""),
                         rightCell(info.routeStarted + "/" + info.routeTotal, 7),
                         rightCell(info.throughput != null ? info.throughput : "", 8),
