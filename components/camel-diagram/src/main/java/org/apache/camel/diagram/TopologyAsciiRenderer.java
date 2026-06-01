@@ -44,8 +44,6 @@ public class TopologyAsciiRenderer {
     private static final char UNI_T_UP = '┴';
     private static final char UNI_CROSS = '┼';
     private static final char UNI_ARROW = '▼';
-    private static final char UNI_DASH_H = '╌';
-    private static final char UNI_DASH_V = '╎';
 
     private final int nodeWidth;
     private final int boxWidth;
@@ -222,10 +220,8 @@ public class TopologyAsciiRenderer {
             return;
         }
 
-        boolean dashed = "external".equals(edge.connectionType);
-
-        char v = dashed ? (unicode ? UNI_DASH_V : ':') : (unicode ? UNI_V : '|');
-        char h = dashed ? (unicode ? UNI_DASH_H : '.') : (unicode ? UNI_H : '-');
+        char v = unicode ? UNI_V : '|';
+        char h = unicode ? UNI_H : '-';
         char arrow = unicode ? UNI_ARROW : 'v';
 
         if (fromCx == toCx) {

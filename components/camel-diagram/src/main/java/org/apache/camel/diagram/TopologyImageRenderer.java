@@ -89,16 +89,7 @@ public class TopologyImageRenderer {
                 continue;
             }
 
-            boolean dashed = "external".equals(edge.connectionType);
-            java.awt.Stroke stroke;
-            if (dashed) {
-                stroke = new BasicStroke(
-                        strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                        10.0f, new float[] { 10f, 5f }, 0.0f);
-            } else {
-                stroke = new BasicStroke(strokeWidth);
-            }
-            g.setStroke(stroke);
+            g.setStroke(new BasicStroke(strokeWidth));
             g.setColor(colors.getArrow());
 
             int fromCx = edge.from.x + nw / 2;
