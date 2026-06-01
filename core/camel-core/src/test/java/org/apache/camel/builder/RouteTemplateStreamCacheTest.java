@@ -37,7 +37,7 @@ public class RouteTemplateStreamCacheTest {
                             .templateParameter("bar")
                             .templateParameter("mask")
                             .route()
-                            .noStreamCaching()
+                            .streamCache(false)
                             .messageHistory()
                             .logMask("{{mask}}")
                             .from("direct:{{foo}}")

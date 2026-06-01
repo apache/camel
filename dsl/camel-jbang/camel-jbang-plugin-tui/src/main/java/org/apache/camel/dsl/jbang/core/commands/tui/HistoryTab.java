@@ -80,6 +80,10 @@ class HistoryTab implements MonitorTab {
     private int traceDetailScroll;
     private int traceDetailHScroll;
 
+    private boolean showWaterfall;
+    private int waterfallScroll;
+    private final ScrollbarState waterfallScrollState = new ScrollbarState();
+
     private final DiagramSupport diagram = new DiagramSupport();
 
     volatile List<HistoryEntry> historyEntries = Collections.emptyList();
@@ -119,17 +123,33 @@ class HistoryTab implements MonitorTab {
 
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             if (tracerActive && traceDetailView) {
-                traceDetailScroll = Math.max(0, traceDetailScroll - 5);
+                if (showWaterfall) {
+                    waterfallScroll = Math.max(0, waterfallScroll - 10);
+                } else {
+                    traceDetailScroll = Math.max(0, traceDetailScroll - 5);
+                }
             } else {
-                historyDetailScroll = Math.max(0, historyDetailScroll - 5);
+                if (showWaterfall) {
+                    waterfallScroll = Math.max(0, waterfallScroll - 10);
+                } else {
+                    historyDetailScroll = Math.max(0, historyDetailScroll - 5);
+                }
             }
             return true;
         }
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
             if (tracerActive && traceDetailView) {
-                traceDetailScroll += 5;
+                if (showWaterfall) {
+                    waterfallScroll += 10;
+                } else {
+                    traceDetailScroll += 5;
+                }
             } else {
-                historyDetailScroll += 5;
+                if (showWaterfall) {
+                    waterfallScroll += 10;
+                } else {
+                    historyDetailScroll += 5;
+                }
             }
             return true;
         }
@@ -173,6 +193,11 @@ class HistoryTab implements MonitorTab {
                 traceWordWrap = !traceWordWrap;
                 traceDetailScroll = 0;
                 traceDetailHScroll = 0;
+                return true;
+            }
+            if (ke.isCharIgnoreCase('g')) {
+                showWaterfall = !showWaterfall;
+                waterfallScroll = 0;
                 return true;
             }
         } else if (tracerActive) {
@@ -226,6 +251,11 @@ class HistoryTab implements MonitorTab {
                 historyDetailHScroll = 0;
                 return true;
             }
+            if (ke.isCharIgnoreCase('g')) {
+                showWaterfall = !showWaterfall;
+                waterfallScroll = 0;
+                return true;
+            }
             if (ke.isKey(KeyCode.F5)) {
                 historyEntries = Collections.emptyList();
                 historyDetailScroll = 0;
@@ -238,6 +268,23 @@ class HistoryTab implements MonitorTab {
     }
 
     @Override
+    public void onIntegrationChanged() {
+        historyEntries = Collections.emptyList();
+        historyRefreshRequested = true;
+        historyDetailScroll = 0;
+        historyDetailHScroll = 0;
+        traceFilePositions.clear();
+        traces.set(Collections.emptyList());
+        traceDetailView = false;
+        traceSelectedExchangeId = null;
+        traceDetailScroll = 0;
+        traceDetailHScroll = 0;
+        showWaterfall = false;
+        waterfallScroll = 0;
+        diagram.reset();
+    }
+
+    @Override
     public boolean handleEscape() {
         if (diagram.handleEscape()) {
             return true;
@@ -246,6 +293,8 @@ class HistoryTab implements MonitorTab {
             traceDetailView = false;
             traceSelectedExchangeId = null;
             traceDetailScroll = 0;
+            showWaterfall = false;
+            waterfallScroll = 0;
             return true;
         }
         return false;
@@ -349,16 +398,19 @@ class HistoryTab implements MonitorTab {
         if (tracerActive && traceDetailView) {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
-            hint(spans, "PgUp/PgDn", "scroll detail");
-            if (!traceWordWrap) {
+            hint(spans, "PgUp/PgDn", "scroll");
+            if (!showWaterfall && !traceWordWrap) {
                 hint(spans, "←→", "h-scroll");
             }
-            hint(spans, "d", "diagram");
-            hint(spans, "D", "text diagram");
-            hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
-            hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
-            hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
-            hint(spans, "b", "body" + (showTraceBody ? " [on]" : " [off]"));
+            hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
+            if (!showWaterfall) {
+                hint(spans, "d", "diagram");
+                hint(spans, "D", "text diagram");
+                hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
+                hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
+                hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
+                hint(spans, "b", "body" + (showTraceBody ? " [on]" : " [off]"));
+            }
             hintLast(spans, "w", "wrap" + (traceWordWrap ? " [on]" : " [off]"));
         } else if (tracerActive) {
             hint(spans, "Esc", "back");
@@ -371,17 +423,20 @@ class HistoryTab implements MonitorTab {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
-            hint(spans, "PgUp/PgDn", "scroll detail");
-            if (!historyWordWrap) {
+            hint(spans, "PgUp/PgDn", "scroll");
+            if (!showWaterfall && !historyWordWrap) {
                 hint(spans, "←→", "h-scroll");
             }
-            hint(spans, "d", "diagram");
-            hint(spans, "D", "text diagram");
-            hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
-            hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
-            hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
-            hint(spans, "b", "body" + (showHistoryBody ? " [on]" : " [off]"));
-            hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
+            hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
+            if (!showWaterfall) {
+                hint(spans, "d", "diagram");
+                hint(spans, "D", "text diagram");
+                hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
+                hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
+                hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
+                hint(spans, "b", "body" + (showHistoryBody ? " [on]" : " [off]"));
+                hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
+            }
             hintLast(spans, "F5", "refresh");
         }
     }
@@ -568,7 +623,7 @@ class HistoryTab implements MonitorTab {
         List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
 
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(10), Constraint.fill())
+                .constraints(Constraint.length(10), Constraint.length(1), Constraint.fill())
                 .split(area);
 
         List<Row> rows = new ArrayList<>();
@@ -582,7 +637,11 @@ class HistoryTab implements MonitorTab {
         frame.renderStatefulWidget(
                 buildStepTable(rows, stepTitle), chunks.get(0), traceStepTableState);
 
-        renderTraceStepDetail(frame, chunks.get(1), steps);
+        if (showWaterfall) {
+            renderWaterfall(frame, chunks.get(2), steps.stream().map(WaterfallStep::fromTrace).toList());
+        } else {
+            renderTraceStepDetail(frame, chunks.get(2), steps);
+        }
     }
 
     private void renderTraceStepDetail(Frame frame, Rect area, List<TraceEntry> steps) {
@@ -626,6 +685,162 @@ class HistoryTab implements MonitorTab {
         traceDetailHScroll = hScroll[0];
     }
 
+    record WaterfallStep(String nodeId, String processor, String direction, boolean first, boolean last,
+            int nodeLevel, long elapsed) {
+
+        static WaterfallStep fromTrace(TraceEntry e) {
+            return new WaterfallStep(e.nodeId, e.processor, e.direction, e.first, e.last, e.nodeLevel, e.elapsed);
+        }
+
+        static WaterfallStep fromHistory(HistoryEntry e) {
+            return new WaterfallStep(e.nodeId, e.processor, e.direction, e.first, e.last, e.nodeLevel, e.elapsed);
+        }
+
+        WaterfallStep withElapsed(long newElapsed) {
+            return new WaterfallStep(nodeId, processor, direction, first, last, nodeLevel, newElapsed);
+        }
+
+        String label() {
+            if (nodeId != null && !nodeId.isEmpty()) {
+                return nodeId;
+            }
+            if (processor != null) {
+                return processor.stripLeading();
+            }
+            return "";
+        }
+    }
+
+    private void renderWaterfall(Frame frame, Rect area, List<WaterfallStep> allSteps) {
+        // Copy the elapsed from matching last entries onto first entries
+        // (first entries have elapsed=0, the total is on the last entry)
+        List<WaterfallStep> forward = new ArrayList<>();
+        for (WaterfallStep e : allSteps) {
+            if ("<--".equals(e.direction)) {
+                continue;
+            }
+            if (e.first) {
+                long totalElapsed = e.elapsed;
+                for (WaterfallStep other : allSteps) {
+                    if (other.last && nodeIdEquals(e.nodeId, other.nodeId)) {
+                        totalElapsed = other.elapsed;
+                        break;
+                    }
+                }
+                forward.add(totalElapsed != e.elapsed ? e.withElapsed(totalElapsed) : e);
+            } else {
+                forward.add(e);
+            }
+        }
+
+        if (forward.isEmpty()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled("  No steps to display.", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                                    .title(" Waterfall ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        long maxElapsed = 0;
+        long minDuration = Long.MAX_VALUE;
+        long maxDuration = 0;
+        for (WaterfallStep e : forward) {
+            maxElapsed = Math.max(maxElapsed, e.elapsed);
+            if (!e.first) {
+                minDuration = Math.min(minDuration, e.elapsed);
+                maxDuration = Math.max(maxDuration, e.elapsed);
+            }
+        }
+        if (minDuration == Long.MAX_VALUE) {
+            minDuration = 0;
+        }
+
+        String title = String.format(" Waterfall — %d steps ", forward.size());
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(title)
+                .build();
+        Rect inner = block.inner(area);
+        frame.renderWidget(block, area);
+
+        if (inner.height() < 1 || inner.width() < 10) {
+            return;
+        }
+
+        int visibleLines = inner.height();
+        int maxScroll = Math.max(0, forward.size() - visibleLines);
+        waterfallScroll = Math.min(waterfallScroll, maxScroll);
+
+        int labelWidth = 0;
+        for (WaterfallStep e : forward) {
+            int indent = e.nodeLevel * 2;
+            labelWidth = Math.max(labelWidth, indent + e.label().length());
+        }
+        labelWidth = Math.min(labelWidth + 2, inner.width() / 3);
+
+        int barMaxWidth = Math.max(10, inner.width() - labelWidth - 12);
+
+        int end = Math.min(waterfallScroll + visibleLines, forward.size());
+        List<Line> lines = new ArrayList<>();
+        for (int i = waterfallScroll; i < end; i++) {
+            lines.add(renderWaterfallStep(forward.get(i), labelWidth, barMaxWidth,
+                    maxElapsed, minDuration, maxDuration));
+        }
+
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), hChunks.get(0));
+
+        if (forward.size() > visibleLines) {
+            waterfallScrollState
+                    .contentLength(forward.size())
+                    .viewportContentLength(visibleLines)
+                    .position(waterfallScroll);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), waterfallScrollState);
+        }
+    }
+
+    private static Line renderWaterfallStep(
+            WaterfallStep entry, int labelWidth, int maxBarWidth,
+            long maxElapsed, long minDuration, long maxDuration) {
+        String indent = "  ".repeat(entry.nodeLevel);
+        String label = indent + entry.label();
+        if (label.length() > labelWidth) {
+            label = label.substring(0, labelWidth - 1) + "…";
+        } else {
+            label = String.format("%-" + labelWidth + "s", label);
+        }
+
+        boolean isRoute = entry.first;
+        Style bandStyle = isRoute ? Style.EMPTY.dim() : TuiHelper.colorForDuration(entry.elapsed, minDuration, maxDuration);
+
+        double ratio = maxElapsed > 0 ? (double) entry.elapsed / maxElapsed : 0;
+        int barWidth = Math.max(1, (int) Math.round(ratio * maxBarWidth));
+        String bar = "█".repeat(barWidth);
+
+        String durationStr = entry.elapsed + "ms";
+        int pad = Math.max(1, 8 - durationStr.length());
+
+        return Line.from(
+                Span.styled(label, Style.EMPTY.fg(Color.CYAN)),
+                Span.styled(bar, bandStyle),
+                Span.raw(" ".repeat(pad)),
+                Span.styled(durationStr, isRoute ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE).bold()));
+    }
+
+    private static boolean nodeIdEquals(String a, String b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        return a.equals(b);
+    }
+
     // ---- History (Last) rendering ----
 
     private void renderHistory(Frame frame, Rect area) {
@@ -638,7 +853,7 @@ class HistoryTab implements MonitorTab {
         List<HistoryEntry> current = historyEntries;
 
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(10), Constraint.fill())
+                .constraints(Constraint.length(10), Constraint.length(1), Constraint.fill())
                 .split(area);
 
         List<Row> rows = new ArrayList<>();
@@ -652,7 +867,11 @@ class HistoryTab implements MonitorTab {
         frame.renderStatefulWidget(
                 buildStepTable(rows, historyTitle), chunks.get(0), historyTableState);
 
-        renderHistoryDetail(frame, chunks.get(1), current);
+        if (showWaterfall) {
+            renderWaterfall(frame, chunks.get(2), current.stream().map(WaterfallStep::fromHistory).toList());
+        } else {
+            renderHistoryDetail(frame, chunks.get(2), current);
+        }
     }
 
     private void renderHistoryDetail(Frame frame, Rect area, List<HistoryEntry> current) {
@@ -1065,5 +1284,89 @@ class HistoryTab implements MonitorTab {
                 .toList();
         Integer sel = historyTableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "History");
+    }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Inspect
+
+                The Inspect tab shows a history of recently processed exchanges
+                (messages). This is one of the most powerful debugging tools — it
+                lets you see exactly what happened to each message as it traveled
+                through the integration, including every step it passed through.
+
+                Camel uses a BacklogTracer to record exchange details. The most
+                recent exchanges are kept in memory for inspection.
+
+                ## Exchange List
+
+                - **ID** — Unique exchange identifier (e.g., `ID-myhost-1234-5`). Every message passing through Camel gets a unique ID
+                - **STATUS** — Whether the exchange completed successfully (`done`) or failed (`fail`). Failed exchanges also appear on the Errors tab
+                - **ROUTE** — The route that processed this exchange
+                - **AGO** — How long ago this exchange was processed (e.g., `2s`, `1m`, `5m`)
+                - **ELAPSED** — Total processing time from when the exchange entered the route until it completed. Long elapsed times may indicate slow downstream services
+
+                ## Example Screen
+
+                ```
+                 ID                   STATUS  ROUTE          AGO  ELAPSED
+                 ID-myhost-1234-10    done    timer-to-log   1s   0ms
+                 ID-myhost-1234-9     done    seda-consumer  2s   0ms
+                 ID-myhost-1234-8     done    timer-to-seda  2s   1ms
+                 ID-myhost-1234-7     fail    kafka-route    5s   5023ms
+                ```
+
+                The last exchange (`kafka-route`) failed after 5 seconds — likely a
+                connection timeout to the Kafka broker.
+
+                ## Detail View
+
+                Press `Enter` on an exchange to see its full journey:
+
+                **Message History** — A step-by-step trace of every node the exchange
+                visited. This shows the exact path the message took through the route,
+                including which branch was taken in a `choice` and how long each step
+                took:
+
+                ```
+                 RouteId        NodeId     Processor            Elapsed
+                 timer-to-log   timer1     from[timer:hello]    0ms
+                 timer-to-log   setBody1   setBody[simple]      0ms
+                 timer-to-log   choice1    choice               0ms
+                 timer-to-log   when1      when[simple]         0ms
+                 timer-to-log   log1       log[HIGH: ${body}]   0ms
+                ```
+
+                This tells you the message entered via the timer, went through setBody,
+                reached a choice node, matched the `when` condition, and was logged.
+                The elapsed time for each step helps identify bottlenecks.
+
+                **Exchange Content** — Toggle these sections to inspect the message:
+
+                - `h` — **Headers**: Key-value pairs carried with the message (e.g., `Content-Type`, `CamelFileName`, custom headers)
+                - `b` — **Body**: The actual message content (text, JSON, XML, etc.)
+                - `p` — **Properties**: Exchange-level metadata (not forwarded to endpoints, used for internal routing)
+                - `v` — **Variables**: Exchange variables set during processing
+
+                ## Use Cases
+
+                - **Debugging routing logic**: Check which branch a `choice` or `filter` took
+                - **Verifying transformations**: Compare body before and after a `transform` or `marshal` step
+                - **Finding bottlenecks**: Look for steps with high elapsed times
+                - **Understanding failures**: See exactly where in the route a failure occurred
+
+                ## Keys
+
+                - `Up/Down` — select exchange
+                - `Enter` — view exchange details
+                - `h` — toggle headers
+                - `b` — toggle body
+                - `p` — toggle properties
+                - `v` — toggle variables
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                - `Esc` — back to list
+                """;
     }
 }

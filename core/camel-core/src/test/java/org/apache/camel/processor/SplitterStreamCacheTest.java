@@ -52,7 +52,7 @@ public class SplitterStreamCacheTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 
-                from("seda:parallel?concurrentConsumers=5").streamCaching().split(xpath("//person/city")).to("mock:result");
+                from("seda:parallel?concurrentConsumers=5").streamCache(true).split(xpath("//person/city")).to("mock:result");
             }
         };
     }

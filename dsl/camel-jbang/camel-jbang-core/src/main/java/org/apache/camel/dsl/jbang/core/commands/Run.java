@@ -482,47 +482,30 @@ public class Run extends CamelCommand {
 
     private int runGithubExample(JsonObject entry) throws Exception {
         String eName = entry.getString("name");
-        String url = ExampleHelper.getGithubUrl(entry);
+        List<String> exampleFiles = ExampleHelper.getFiles(entry);
 
         printer().println("Fetching example from GitHub: " + eName);
         if (ExampleHelper.requiresDocker(entry)) {
             printer().println("Note: this example requires Docker/Podman");
         }
 
-        StringJoiner routes = new StringJoiner(",");
-        StringJoiner kamelets = new StringJoiner(",");
-        StringJoiner properties = new StringJoiner(",");
+        Path tempDir;
         try {
-            fetchGithubUrls(url, routes, kamelets, properties);
+            tempDir = ExampleHelper.downloadGithubExample(entry);
         } catch (Exception e) {
             printer().printErr("Failed to fetch example from GitHub: " + e.getMessage());
             printer().printErr("This example requires an internet connection.");
             return 1;
         }
 
-        if (routes.length() == 0 && kamelets.length() == 0 && properties.length() == 0) {
-            printer().printErr("No files found for example: " + eName);
-            return 1;
-        }
-
-        if (routes.length() > 0) {
-            for (String r : routes.toString().split(",")) {
-                files.add(r);
-            }
-        }
-        if (kamelets.length() > 0) {
-            for (String k : kamelets.toString().split(",")) {
-                files.add(k);
-            }
-        }
-        if (properties.length() > 0) {
-            for (String p : properties.toString().split(",")) {
-                files.add(p);
-            }
+        for (String f : exampleFiles) {
+            files.add(tempDir.resolve(f).toString());
         }
         if ("CamelJBang".equals(name)) {
             name = eName;
         }
+
+        exportBaseDir = tempDir;
 
         if (!exportRun) {
             printConfigurationValues("Running integration with the following configuration:");
@@ -1137,7 +1120,7 @@ public class Run extends CamelCommand {
             });
             StringBuilder locations = new StringBuilder();
             for (String file : names) {
-                if (!file.startsWith("file:")) {
+                if (!file.startsWith("file:") && !file.startsWith("github:") && !file.startsWith("gist:")) {
                     if (!file.startsWith("/")) {
                         file = Paths.get(FileSystems.getDefault().getPath("").toAbsolutePath().toString(), file).toString();
                     }

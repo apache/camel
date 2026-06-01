@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -83,7 +84,7 @@ public final class GistHelper {
             throws Exception {
 
         // use JDK http client to call github api
-        HttpClient hc = HttpClient.newHttpClient();
+        HttpClient hc = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
         HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(20)).build(),
                 HttpResponse.BodyHandlers.ofString());
 

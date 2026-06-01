@@ -89,16 +89,16 @@ public class CouchDbProducer extends DefaultProducer {
 
     JsonElement getBodyAsJsonElement(Exchange exchange) throws InvalidPayloadException {
         Object body = exchange.getIn().getMandatoryBody();
-        if (body instanceof String) {
+        if (body instanceof String bodyString) {
             try {
-                return new JsonParser().parse((String) body);
+                return JsonParser.parseString(bodyString);
             } catch (JsonSyntaxException jse) {
                 throw new InvalidPayloadException(exchange, body.getClass());
             }
-        } else if (body instanceof JsonElement) {
-            return (JsonElement) body;
+        } else if (body instanceof JsonElement bodyJsonElement) {
+            return bodyJsonElement;
         } else if (body instanceof Document document) {
-            return new JsonParser().parse(document.toString());
+            return JsonParser.parseString(document.toString());
         } else {
             throw new InvalidPayloadException(exchange, body != null ? body.getClass() : null);
         }

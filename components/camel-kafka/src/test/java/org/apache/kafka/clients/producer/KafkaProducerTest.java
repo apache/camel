@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.KafkaComponent;
+import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaEndpoint;
 import org.apache.camel.component.kafka.KafkaProducer;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -56,8 +57,8 @@ public class KafkaProducerTest {
         camelProducer.setKafkaProducer(kafkaProducer);
         when(exchange.getIn()).thenReturn(message);
         when(exchange.getContext()).thenReturn(context);
-        when(message.getHeader("kafka.PARTITION_KEY", Integer.class)).thenReturn(0);
-        when(message.getHeader("kafka.KEY")).thenReturn("key");
+        when(message.getHeader(KafkaConstants.PARTITION_KEY, Integer.class)).thenReturn(0);
+        when(message.getHeader(KafkaConstants.KEY)).thenReturn("key");
     }
 
     @AfterEach
@@ -67,9 +68,9 @@ public class KafkaProducerTest {
 
     @Test
     public void testSendOverrideTopic() throws Exception {
-        when(message.removeHeader("kafka.OVERRIDE_TOPIC")).thenReturn("overridden-topic");
+        when(message.removeHeader(KafkaConstants.OVERRIDE_TOPIC)).thenReturn("overridden-topic");
         camelProducer.process(exchange);
-        when(message.removeHeader("kafka.OVERRIDE_TOPIC")).thenReturn(new TextNode("overridden-topic-jackson"));
+        when(message.removeHeader(KafkaConstants.OVERRIDE_TOPIC)).thenReturn(new TextNode("overridden-topic-jackson"));
         camelProducer.process(exchange);
         List<ProducerRecord<Object, Object>> records = kafkaProducer.history();
         assertThat(records.get(0).topic(), Is.is("overridden-topic"));

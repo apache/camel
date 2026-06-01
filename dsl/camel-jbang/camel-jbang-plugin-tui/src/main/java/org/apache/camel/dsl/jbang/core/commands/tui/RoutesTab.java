@@ -164,12 +164,7 @@ class RoutesTab implements MonitorTab {
             if (ke.isCharIgnoreCase('m')) {
                 diagramMetrics = !diagramMetrics;
                 diagram.endLoad();
-                loadDiagramForSelectedRoute();
-                return true;
-            }
-            if (!diagram.isDiagramTextMode() && ke.isKey(KeyCode.F5)) {
-                diagram.endLoad();
-                loadDiagramForSelectedRoute();
+                reloadDiagramQuietly();
                 return true;
             }
         }
@@ -475,12 +470,7 @@ class RoutesTab implements MonitorTab {
             hintLast(spans, "Home/End", "top/bottom");
         } else if (diagram.isShowDiagram()) {
             diagram.renderFooterHints(spans);
-            if (diagramMetrics && !diagram.isDiagramTextMode()) {
-                hint(spans, "m", "metrics [on]");
-                hintLast(spans, "F5", "refresh counters");
-            } else {
-                hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
-            }
+            hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
@@ -507,13 +497,12 @@ class RoutesTab implements MonitorTab {
                     hint(spans, "p", "start");
                 }
             }
-            hint(spans, "1-9", "tabs");
         }
     }
 
     void refreshDiagramIfNeeded() {
-        if (diagram.isShowDiagram() && diagram.isDiagramTextMode() && diagramMetrics) {
-            loadDiagramForSelectedRoute();
+        if (diagram.isShowDiagram() && diagramMetrics) {
+            reloadDiagramQuietly();
         }
     }
 
@@ -932,6 +921,14 @@ class RoutesTab implements MonitorTab {
     // ---- Async loading ----
 
     private void loadDiagramForSelectedRoute() {
+        loadDiagramForSelectedRoute(true);
+    }
+
+    private void reloadDiagramQuietly() {
+        loadDiagramForSelectedRoute(false);
+    }
+
+    private void loadDiagramForSelectedRoute(boolean showPlaceholder) {
         if (ctx.selectedPid == null || ctx.runner == null) {
             return;
         }
@@ -962,7 +959,9 @@ class RoutesTab implements MonitorTab {
         String routeId = diagramAllRoutes ? null : selectedRoute.routeId;
 
         diagramRouteId = routeId != null ? routeId : "all";
-        diagram.setLoadingPlaceholder();
+        if (showPlaceholder) {
+            diagram.setLoadingPlaceholder();
+        }
 
         ctx.runner.scheduler().execute(() -> {
             try {
@@ -1103,5 +1102,92 @@ class RoutesTab implements MonitorTab {
         List<String> items = sorted.stream().map(r -> r.routeId != null ? r.routeId : "").toList();
         Integer sel = routeTableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Routes");
+    }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Routes
+
+                Routes are the building blocks of a Camel integration. Each route defines
+                a message flow: where messages come from, how they are processed, and where
+                they are sent to. A typical integration has multiple routes working together.
+
+                ## Route Table Columns
+
+                - **ROUTE** — Unique route identifier (e.g., `timer-to-log`, `seda-consumer`)
+                - **FROM** — The endpoint that triggers this route (e.g., `timer`, `kafka`, `file`). This is the source of messages
+                - **STATUS** — Route state: `Started` (running), `Stopped` (not running), or `Suspended` (paused, can be resumed)
+                - **COVER** — Node coverage: what percentage of route nodes have processed at least one message. Shows as `5/10` meaning 5 of 10 nodes were reached. Helps find dead code paths — nodes that are defined but never reached. 100% coverage means all branches in the route have been exercised
+                - **MSG/S** — Current message throughput (messages per second) for this route
+                - **TOTAL** — Total exchanges processed by this route since startup
+                - **FAIL** — Exchanges that ended with an unhandled error in this route
+                - **INFLIGHT** — Exchanges currently being processed by this route
+                - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed
+                - **MEAN** — Average exchange processing time in milliseconds. A rising MEAN may indicate a downstream service getting slower
+                - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
+                - **SINCE-LAST** — Time since the last exchange was processed by this route
+
+                ## Example Screen
+
+                ```
+                 ROUTE           FROM                  STATUS   COVER  MSG/S  TOTAL  FAIL  INFLIGHT  MIN  MEAN  MAX  SINCE-LAST
+                 timer-to-log    timer://hello?p=2000  Started  5/5    0.50   142    0     0         0    0     2    1s
+                 timer-to-seda   timer://pump?p=3000   Started  2/2    0.33   95     0     0         0    0     2    2s
+                 seda-consumer   seda://queue          Started  1/1    0.33   95     0     0         0    0     0    2s
+                ```
+
+                ## Top Mode
+
+                Press `t` to switch to **Top mode** — a performance-focused view that
+                includes processor-level breakdown and load averages. This shows every
+                processor (step) inside a route, not just the route totals.
+
+                - **LOAD** — Three throughput averages over 1m/5m/15m windows, similar to Unix load average but measuring message throughput instead of CPU. Higher values mean more messages flowing through. The three windows help you see if traffic is increasing or decreasing
+
+                ## Route Diagram
+
+                Press `d` to see a visual flow chart of the selected route. The diagram
+                shows every EIP node and how messages flow between them. Numbers on
+                each node show how many exchanges passed through it.
+
+                Scroll down to view the diagram example:
+
+                ```
+                    ┌──────────────────────┐
+                    │ from[timer:hello?..] │
+                    └──────────────────────┘
+                                │
+                                ▼ 29
+                    ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+                    ╎  ┌────────────────────────┐  ╎
+                    ╎  │        choice          │  ╎
+                    ╎  └────────────────────────┘  ╎
+                    ╎       │              │       ╎
+                    ╎       ▼ 9            ▼ 20    ╎
+                    ╎  ┌──────────┐  ┌──────────┐  ╎
+                    ╎  │ log[HI]  │  │ log[LO]  │  ╎
+                    ╎  └──────────┘  └──────────┘  ╎
+                    ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+                ```
+
+                The dotted border groups nodes that belong to the same EIP block
+                (like `choice`, `split`, `multicast`). The numbers show how many
+                exchanges took each branch — useful for verifying routing logic.
+
+                ## Source View
+
+                Press `s` to see the original route source code (YAML, XML, or Java).
+
+                ## Keys
+
+                - `Up/Down` — select route
+                - `d` — show route diagram
+                - `s` — show route source / cycle sort column (context-dependent)
+                - `S` — reverse sort order
+                - `t` — toggle Top mode
+                - `Enter` — view detailed route info
+                - `Esc` — back to route list
+                """;
     }
 }

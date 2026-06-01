@@ -78,8 +78,8 @@ public class IrcMultiChannelRouteIT extends IrcIntegrationITSupport {
      * Lets send messages once the consumer has joined
      */
     protected void sendMessages() {
-        template.sendBodyAndHeader(sendUri(), body1, "irc.sendTo", properties.get("channel1"));
-        template.sendBodyAndHeader(sendUri(), body2, "irc.sendTo", properties.get("channel2"));
+        template.sendBodyAndHeader(sendUri(), body1, IrcConstants.IRC_SEND_TO, properties.get("channel1"));
+        template.sendBodyAndHeader(sendUri(), body2, IrcConstants.IRC_SEND_TO, properties.get("channel2"));
         template.sendBody(sendUri(), body3);
     }
 

@@ -72,7 +72,7 @@ public class StorageQueueBase extends CamelTestSupport {
 
     @BeforeAll
     public void initProperties() {
-        queueName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        queueName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         configuration = new QueueConfiguration();
         configuration.setCredentials(new StorageSharedKeyCredential(

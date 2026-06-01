@@ -105,7 +105,7 @@ public class WatsonLanguageEndpoint extends DefaultEndpoint implements EndpointS
     }
 
     private NaturalLanguageUnderstanding createNluClient() {
-        IamAuthenticator authenticator = new IamAuthenticator(configuration.getApiKey());
+        IamAuthenticator authenticator = (new IamAuthenticator.Builder()).apikey(configuration.getApiKey()).build();
         NaturalLanguageUnderstanding service = new NaturalLanguageUnderstanding("2022-04-07", authenticator);
 
         if (configuration.getServiceUrl() != null) {

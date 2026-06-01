@@ -62,7 +62,7 @@ class EventHubsConsumerIT extends CamelTestSupport {
 
     @BeforeAll
     public void prepare() throws Exception {
-        containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        containerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
 
@@ -84,8 +84,8 @@ class EventHubsConsumerIT extends CamelTestSupport {
         final EventHubProducerAsyncClient producerAsyncClient
                 = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
 
-        final String messageBody = RandomStringUtils.randomAlphabetic(30);
-        final String messageKey = RandomStringUtils.randomAlphabetic(5);
+        final String messageBody = RandomStringUtils.secure().nextAlphabetic(30);
+        final String messageKey = RandomStringUtils.secure().nextAlphabetic(5);
 
         producerAsyncClient
                 .send(Collections.singletonList(new EventData(messageBody)), new SendOptions().setPartitionKey(messageKey))

@@ -18,12 +18,17 @@
 - route:
     id: greeting-route
     from:
-      uri: timer:start
+      uri: timer
       parameters:
+        timerName: start
         period: 1000
       steps:
         - setBody:
-            simple: I'm ${routeId}
+            expression:
+              simple:
+                expression: "I'm ${routeId}"
         - bean:
             ref: greeter
-        - log: ${body}
+        - log:
+            message: "${body}"
+

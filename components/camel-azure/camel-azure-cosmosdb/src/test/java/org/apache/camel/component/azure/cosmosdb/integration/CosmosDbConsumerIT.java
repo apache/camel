@@ -40,9 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 })
 class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
 
-    private static final String DATABASE_NAME = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-    private String containerName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
-    private String leaseDatabaseName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+    private static final String DATABASE_NAME = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+    private String containerName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+    private String leaseDatabaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
     @BeforeEach
     void createDatabaseContainerAndItems() {

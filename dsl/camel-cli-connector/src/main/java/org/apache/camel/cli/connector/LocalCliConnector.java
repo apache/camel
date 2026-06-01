@@ -24,6 +24,8 @@ import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MemoryType;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.nio.file.Files;
@@ -1544,9 +1546,25 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             root.put("heapMemoryMax", mb.getHeapMemoryUsage().getMax());
             root.put("nonHeapMemoryUsed", mb.getNonHeapMemoryUsage().getUsed());
             root.put("nonHeapMemoryCommitted", mb.getNonHeapMemoryUsage().getCommitted());
+            collectMemoryPools(root);
             return root;
         }
         return null;
+    }
+
+    private void collectMemoryPools(JsonObject root) {
+        for (MemoryPoolMXBean pool : ManagementFactory.getMemoryPoolMXBeans()) {
+            String name = pool.getName().toLowerCase(Locale.ROOT);
+            if (pool.getType() == MemoryType.HEAP && (name.contains("old") || name.contains("tenured"))) {
+                root.put("oldGenUsed", pool.getUsage().getUsed());
+                root.put("oldGenCommitted", pool.getUsage().getCommitted());
+                root.put("oldGenMax", pool.getUsage().getMax());
+            } else if (name.contains("metaspace")) {
+                root.put("metaspaceUsed", pool.getUsage().getUsed());
+                root.put("metaspaceCommitted", pool.getUsage().getCommitted());
+                root.put("metaspaceMax", pool.getUsage().getMax());
+            }
+        }
     }
 
     private JsonObject collectClassLoading() {

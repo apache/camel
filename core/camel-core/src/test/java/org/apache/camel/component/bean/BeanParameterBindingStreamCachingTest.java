@@ -39,7 +39,7 @@ public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").streamCaching().bean(Foo.class).to("mock:result");
+                from("direct:start").streamCache(true).bean(Foo.class).to("mock:result");
             }
         };
     }

@@ -380,6 +380,24 @@ final class TuiHelper {
         return style;
     }
 
+    static final Style[] DURATION_BAND_STYLES = {
+            Style.EMPTY.fg(Color.GREEN),
+            Style.EMPTY.fg(Color.LIGHT_GREEN),
+            Style.EMPTY.fg(Color.YELLOW),
+            Style.EMPTY.fg(Color.rgb(0xFF, 0xA5, 0x00)),
+            Style.EMPTY.fg(Color.RED),
+    };
+
+    static Style colorForDuration(long duration, long minDuration, long maxDuration) {
+        if (maxDuration <= minDuration) {
+            return DURATION_BAND_STYLES[0];
+        }
+        double ratio = (Math.log1p(duration) - Math.log1p(minDuration))
+                       / (Math.log1p(maxDuration) - Math.log1p(minDuration));
+        int bandIndex = Math.min((int) (ratio * 5), 4);
+        return DURATION_BAND_STYLES[bandIndex];
+    }
+
     static String shortTypeName(String type) {
         if (type == null) {
             return "null";

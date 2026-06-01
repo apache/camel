@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +102,7 @@ class ConsumersTab implements MonitorTab {
                             : Style.EMPTY.fg(Color.LIGHT_RED));
             String statusText = healthDown ? "⚠ " + status : status;
             String type = consumerType(ci);
-            String period = consumerPeriod(ci);
+            String schedule = consumerSchedule(ci);
             String sinceLast = consumerSinceLast(ci);
             String uri = healthDown && hc.message != null
                     ? hc.message
@@ -112,7 +114,7 @@ class ConsumersTab implements MonitorTab {
                     Cell.from(type),
                     rightCell(String.valueOf(ci.inflight), 8),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
-                    rightCell(period, 10),
+                    Cell.from(schedule),
                     Cell.from(sinceLast),
                     Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
         }
@@ -132,16 +134,16 @@ class ConsumersTab implements MonitorTab {
                         Cell.from(Span.styled(sortLabel("TYPE", "type"), sortStyle("type"))),
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),
                         rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
-                        rightCell("PERIOD", 10, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("SCHEDULE", Style.EMPTY.bold())),
                         Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri")))))
                 .widths(
                         Constraint.length(20),
                         Constraint.length(10),
-                        Constraint.length(20),
+                        Constraint.length(16),
                         Constraint.length(8),
                         Constraint.length(8),
-                        Constraint.length(10),
+                        Constraint.length(22),
                         Constraint.length(22),
                         Constraint.fill())
                 .block(Block.builder().borderType(BorderType.ROUNDED)
@@ -155,7 +157,6 @@ class ConsumersTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
         hint(spans, "s", "sort");
-        hint(spans, "1-9", "tabs");
     }
 
     private String sortLabel(String label, String column) {
@@ -230,13 +231,82 @@ class ConsumersTab implements MonitorTab {
         return null;
     }
 
-    private static String consumerPeriod(ConsumerInfo ci) {
-        if (ci.period != null) {
-            return ci.period + "ms";
-        } else if (ci.delay != null) {
-            return ci.delay + "ms";
+    static String consumerSchedule(ConsumerInfo ci) {
+        // Try to extract cron expression from URI for cron/quartz components
+        String cron = extractCronFromUri(ci.uri);
+        if (cron != null) {
+            return cron;
+        }
+        // Fall back to period/delay for timer and poll consumers
+        if (ci.period != null && ci.period > 0) {
+            return "every " + humanDuration(ci.period);
+        } else if (ci.delay != null && ci.delay > 0) {
+            return "every " + humanDuration(ci.delay);
         }
         return "";
+    }
+
+    private static String extractCronFromUri(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        // cron:name?schedule=0/5+*+*+*+*+?
+        if (uri.startsWith("cron:")) {
+            String expr = extractParam(uri, "schedule");
+            if (expr != null) {
+                return decodeCron(expr);
+            }
+        }
+        // quartz:group/name?cron=0/5+*+*+*+*+?
+        if (uri.startsWith("quartz:")) {
+            String expr = extractParam(uri, "cron");
+            if (expr != null) {
+                return decodeCron(expr);
+            }
+            String trigger = extractParam(uri, "trigger.repeatInterval");
+            if (trigger != null) {
+                try {
+                    return "every " + humanDuration(Long.parseLong(trigger));
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String extractParam(String uri, String param) {
+        int q = uri.indexOf('?');
+        if (q < 0) {
+            return null;
+        }
+        String query = uri.substring(q + 1);
+        for (String part : query.split("&")) {
+            if (part.startsWith(param + "=")) {
+                return part.substring(param.length() + 1);
+            }
+        }
+        return null;
+    }
+
+    private static String decodeCron(String encoded) {
+        try {
+            return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return encoded.replace('+', ' ');
+        }
+    }
+
+    private static String humanDuration(long ms) {
+        if (ms >= 60000 && ms % 60000 == 0) {
+            long min = ms / 60000;
+            return min + (min == 1 ? "min" : "min");
+        }
+        if (ms >= 1000 && ms % 1000 == 0) {
+            long sec = ms / 1000;
+            return sec + "s";
+        }
+        return ms + "ms";
     }
 
     private static String consumerSinceLast(ConsumerInfo ci) {
@@ -257,5 +327,72 @@ class ConsumersTab implements MonitorTab {
         List<String> items = sorted.stream().map(c -> c.id != null ? c.id : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Consumers");
+    }
+
+    @Override
+    public String getHelpText() {
+        return """
+                # Consumers
+
+                Consumers are the **input** side of a Camel route. They listen for or poll
+                data from external systems (message brokers, file directories, databases,
+                timers, etc.) and create exchanges that flow through the route.
+
+                There are two types of consumers:
+
+                - **Event-driven** (e.g., `seda`, `direct`, `platform-http`): React instantly
+                  when a message arrives. No polling — messages are pushed to the consumer.
+                - **Polling** (e.g., `file`, `ftp`, `sql`, `timer`): Run on a scheduler that
+                  periodically checks for new data. The POLLS column tracks these cycles.
+
+                ## Table Columns
+
+                - **ROUTE** — The route this consumer belongs to. Each route has exactly one consumer (its `from` endpoint)
+                - **STATUS** — Consumer state: `Started` (running normally), `Polling` (currently in a poll cycle). Shows a health warning icon if the consumer health check is `DOWN`
+                - **TYPE** — The Camel component type (e.g., `kafka`, `file`, `timer`, `cron`, `seda`)
+                - **POLLS** — Total number of poll cycles the scheduler has executed. This counts poll **attempts**, not messages received — a poll may check for new files and find none. For event-driven consumers (like `seda`), this column is empty
+                - **SCHEDULE** — How often the consumer polls: a fixed interval like `1s` or `5000ms`, or a cron expression like `0 0/5 * * *`. Only shown for polling consumers
+                - **SINCE-LAST** — Three timestamps showing **started** / **completed** / **failed**: when the last exchange was created, when the last exchange completed successfully, and when the last exchange failed. Helps identify stale consumers or recurring failures
+                - **URI** — The full endpoint URI (e.g., `timer://hello?period=2000`). If the consumer health check is DOWN, the failure message is shown here instead
+
+                ## Example Screen
+
+                ```
+                 ROUTE           STATUS   TYPE     POLLS  SCHEDULE  SINCE-LAST        URI
+                 timer-to-log    Started  timer    17     2s        1s/1s/-           timer://hello?period=2000
+                 timer-to-seda   Started  timer    12     3s        0s/0s/-           timer://pump?period=3000
+                 seda-consumer   Started  seda                      0s/0s/-           seda://queue
+                ```
+
+                Notice that `seda-consumer` has no POLLS or SCHEDULE because it is
+                event-driven — it reacts immediately when a message is put into the
+                SEDA queue by another route.
+
+                ## Understanding POLLS vs TOTAL
+
+                A common confusion: POLLS counts how many times the scheduler fired,
+                not how many messages were received. Consider a file consumer polling
+                every 5 seconds:
+
+                - After 1 minute: POLLS = 12 (polled 12 times)
+                - But TOTAL might be 3 (only 3 files were found and processed)
+                - The other 9 polls found no new files
+
+                A high POLLS count with zero TOTAL exchanges means the consumer is
+                actively checking but finding no new data — which is normal for many
+                use cases (e.g., watching a directory for new files).
+
+                ## Backoff
+
+                Some consumers support backoff — reducing poll frequency when polls
+                return no data. This saves resources when the source is idle. The
+                consumer automatically returns to normal frequency when data appears.
+
+                ## Keys
+
+                - `Up/Down` — select consumer
+                - `s` — cycle sort column
+                - `S` — reverse sort order
+                """;
     }
 }

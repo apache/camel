@@ -49,7 +49,7 @@ class BlobFindBlobsByTagsIT extends Base {
 
     @BeforeAll
     public void setup() throws Exception {
-        randomBlobName = RandomStringUtils.randomAlphabetic(10);
+        randomBlobName = RandomStringUtils.secure().nextAlphabetic(10);
 
         blobServiceClientWrapper = new BlobServiceClientWrapper(serviceClient);
         blobContainerClientWrapper = blobServiceClientWrapper.getBlobContainerClientWrapper(configuration.getContainerName());

@@ -291,6 +291,40 @@ class KameletTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "kamelet (definition with local bean via bean ref)"() {
+        setup:
+            loadRoutes '''
+                - routeTemplate:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myCounter"
+                        type: java.util.concurrent.atomic.AtomicInteger
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - bean:
+                            ref: "{{myCounter}}"
+                            method: "getAndIncrement"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "kamelet:myTemplate"
+                      - to: "mock:result"
+            '''
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived '0'
+            }
+        when:
+            withTemplate {
+                to('direct:start').withBody('hello').send()
+            }
+
+        then:
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "kamelet (definition with default parameters)"() {
         setup:
             loadRoutes """

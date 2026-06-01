@@ -380,7 +380,7 @@ public class RouteDiagramRenderer {
     private void drawArrowFromMerge(
             Graphics2D g, LayoutNode to, DiagramColors colors,
             boolean highlighted, RouteDiagramHelper.HighlightStyle highlightStyle) {
-        var stat = to.treeNode.info.stat;
+        var stat = metrics ? to.treeNode.info.stat : null;
         long total = stat != null ? stat.exchangesTotal : 0;
         long failed = stat != null ? stat.exchangesFailed : 0;
         long ok = total - failed;

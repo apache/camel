@@ -73,7 +73,7 @@ class BlobOperationsIT extends Base {
 
     @BeforeAll
     public void setup() throws Exception {
-        randomBlobName = RandomStringUtils.randomAlphabetic(10);
+        randomBlobName = RandomStringUtils.secure().nextAlphabetic(10);
 
         blobContainerClientWrapper = new BlobServiceClientWrapper(serviceClient)
                 .getBlobContainerClientWrapper(configuration.getContainerName());

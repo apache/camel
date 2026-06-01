@@ -29,7 +29,6 @@ public class JMXMonitorTypeStringMatchesTest extends SimpleBeanFixture {
         ISimpleMXBean simpleBean = getSimpleMXBean();
 
         simpleBean.setStringValue("bogus");
-        Thread.sleep(600);
         simpleBean.setStringValue("initial");
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/stringMatches.xml"));
