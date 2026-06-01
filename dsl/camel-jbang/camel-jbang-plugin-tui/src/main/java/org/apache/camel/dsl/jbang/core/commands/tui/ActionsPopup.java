@@ -1168,7 +1168,7 @@ class ActionsPopup {
         selectedFolder = folder;
         showFolderInput = false;
         String displayName = Path.of(folder).getFileName().toString();
-        runOptionsForm.open(displayName, displayName, false);
+        runOptionsForm.open(displayName, displayName, false, true);
     }
 
     private void navigateFolderHistory(int direction) {
@@ -1275,7 +1275,7 @@ class ActionsPopup {
         try {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
             cmd.add("run");
-            cmd.add(folder);
+            cmd.add("--source-dir=" + folder);
             cmd.add("--logging-color=true");
             cmd.addAll(extraArgs);
             Path outputFile = Files.createTempFile("camel-folder-", ".log");

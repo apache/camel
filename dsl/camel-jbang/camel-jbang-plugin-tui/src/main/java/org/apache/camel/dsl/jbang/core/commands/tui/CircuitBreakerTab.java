@@ -476,7 +476,7 @@ class CircuitBreakerTab implements MonitorTab {
                 - **FAIL** — Total number of failed calls (exceptions thrown by the protected code)
                 - **RATE%** — Current failure rate percentage in the sliding window. When this exceeds the configured threshold, the circuit trips to OPEN
                 - **REJECT** — Calls rejected because the circuit is OPEN. These calls never reach the downstream service — they fail fast with a fallback
-                - **SINCE-LAST** — Time since last started/success/fail events
+                - **SINCE-LAST** — Time since the last circuit breaker activity, shown as up to two values separated by `/`: success/failed (e.g., `3s/1m14s`). Values are omitted when there is no activity of that type
 
                 ## Example Screen
 

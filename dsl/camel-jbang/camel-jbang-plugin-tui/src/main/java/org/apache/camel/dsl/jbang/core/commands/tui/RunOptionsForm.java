@@ -81,11 +81,15 @@ class RunOptionsForm {
     }
 
     void open(String defaultName, String exampleName, boolean bundled) {
+        open(defaultName, exampleName, bundled, false);
+    }
+
+    void open(String defaultName, String exampleName, boolean bundled, boolean dev) {
         nameInput = new TextInputState(defaultName != null ? defaultName : "");
         portInput = new TextInputState("");
         maxInput = new TextInputState("");
         maxMode = 0;
-        devMode = false;
+        devMode = dev;
         observe = false;
         backlogTrace = false;
         selectedRow = ROW_NAME;

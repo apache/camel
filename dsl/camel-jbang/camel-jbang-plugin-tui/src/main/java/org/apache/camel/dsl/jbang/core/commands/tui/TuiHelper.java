@@ -183,6 +183,9 @@ final class TuiHelper {
         if (line == null || line.isEmpty()) {
             return line;
         }
+        if (line.indexOf('\u001B') < 0 && line.indexOf('\r') < 0 && line.indexOf('\t') < 0) {
+            return line;
+        }
         StringBuilder sb = new StringBuilder(line.length());
         int i = 0;
         while (i < line.length()) {

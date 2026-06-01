@@ -44,6 +44,8 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -81,6 +83,7 @@ class RoutesTab implements MonitorTab {
     private boolean showSource;
     private List<String> sourceLines = Collections.emptyList();
     private String sourceTitle;
+    private SyntaxHighlighter.Language sourceLanguage = SyntaxHighlighter.Language.PLAIN;
     private int sourceScroll;
     private int sourceScrollX;
     private final ScrollbarState sourceVScrollState = new ScrollbarState();
@@ -480,7 +483,7 @@ class RoutesTab implements MonitorTab {
                 hint(spans, "c", "source");
                 hint(spans, "d", "diagram");
                 hint(spans, "D", "text diagram");
-                hint(spans, "a", diagramAllRoutes ? "all [on]" : "all [off]");
+                hint(spans, "a", "diagram " + (diagramAllRoutes ? "[all]" : "[single]"));
                 String routeState = selectedRouteState();
                 boolean supSus = selectedRouteSupportsSuspension();
                 if ("Started".equals(routeState)) {
@@ -732,7 +735,7 @@ class RoutesTab implements MonitorTab {
         List<Line> visible = new ArrayList<>();
         for (int i = sourceScroll; i < end; i++) {
             String raw = sourceLines.get(i);
-            visible.add(TuiHelper.ansiToLine(raw, sourceScrollX));
+            visible.add(highlightSourceLine(raw, sourceScrollX));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
 
@@ -746,6 +749,48 @@ class RoutesTab implements MonitorTab {
             sourceHScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(sourceScrollX);
             frame.renderStatefulWidget(Scrollbar.horizontal(), inner, sourceHScrollState);
         }
+    }
+
+    private Line highlightSourceLine(String raw, int hSkip) {
+        // Split line number prefix from code content
+        int prefixEnd = 0;
+        while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
+            prefixEnd++;
+        }
+
+        String prefix = raw.substring(0, prefixEnd);
+        String code = raw.substring(prefixEnd);
+
+        Line highlighted = SyntaxHighlighter.highlightLine(code, sourceLanguage);
+
+        // Prepend dim line-number prefix
+        List<Span> spans = new ArrayList<>();
+        if (!prefix.isEmpty()) {
+            spans.add(Span.styled(prefix, Style.EMPTY.dim()));
+        }
+        spans.addAll(highlighted.spans());
+
+        Line full = Line.from(spans);
+
+        // Apply horizontal scroll by skipping characters from spans
+        if (hSkip <= 0) {
+            return full;
+        }
+        List<Span> scrolled = new ArrayList<>();
+        int skipped = 0;
+        for (Span span : full.spans()) {
+            String content = span.content();
+            if (skipped >= hSkip) {
+                scrolled.add(span);
+            } else if (skipped + content.length() > hSkip) {
+                int offset = hSkip - skipped;
+                scrolled.add(Span.styled(content.substring(offset), span.style()));
+                skipped = hSkip;
+            } else {
+                skipped += content.length();
+            }
+        }
+        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
     }
 
     // ---- Sorting ----
@@ -1065,7 +1110,12 @@ class RoutesTab implements MonitorTab {
             idx++;
         }
 
-        int scrollTo = matchLine > 0 ? Math.max(0, matchLine - 2) : 0;
+        int scrollTo;
+        if (matchLine > 0) {
+            scrollTo = Math.max(0, matchLine - 2);
+        } else {
+            scrollTo = findLicenseHeaderEnd(codeLines);
+        }
         applySourceResult(routeId, sourceLocation, lines, scrollTo);
     }
 
@@ -1081,10 +1131,46 @@ class RoutesTab implements MonitorTab {
             if (!showSource) {
                 return;
             }
-            sourceTitle = location != null ? routeId + "  " + location : routeId;
+            String displayLoc = location != null ? FileUtil.stripPath(LoggerHelper.sourceNameOnly(location)) : null;
+            sourceTitle = displayLoc != null ? routeId + "  " + displayLoc : routeId;
+            sourceLanguage = SyntaxHighlighter.detectLanguage(location);
             sourceLines = lines;
             sourceScroll = scrollTo;
         });
+    }
+
+    private static int findLicenseHeaderEnd(List<JsonObject> codeLines) {
+        // Auto-scroll past leading license/comment headers
+        boolean inBlock = false;
+        int lastCommentLine = -1;
+        for (int i = 0; i < codeLines.size(); i++) {
+            String code = objToString(codeLines.get(i).get("code")).trim();
+            if (i == 0 && code.isEmpty()) {
+                continue;
+            }
+            if (!inBlock && code.startsWith("/*")) {
+                inBlock = true;
+            }
+            if (inBlock) {
+                lastCommentLine = i;
+                if (code.contains("*/")) {
+                    inBlock = false;
+                }
+                continue;
+            }
+            // YAML/shell comment lines or XML comment lines at the top
+            if (code.startsWith("#") || code.startsWith("##") || code.startsWith("<!--")) {
+                lastCommentLine = i;
+                continue;
+            }
+            // Empty line right after comment block
+            if (lastCommentLine >= 0 && code.isEmpty()) {
+                lastCommentLine = i;
+                continue;
+            }
+            break;
+        }
+        return lastCommentLine >= 0 ? lastCommentLine + 1 : 0;
     }
 
     private static String objToString(Object o) {
@@ -1126,7 +1212,7 @@ class RoutesTab implements MonitorTab {
                 - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed
                 - **MEAN** — Average exchange processing time in milliseconds. A rising MEAN may indicate a downstream service getting slower
                 - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
-                - **SINCE-LAST** — Time since the last exchange was processed by this route
+                - **SINCE-LAST** — Time since the last exchange activity on this route, shown as up to three values separated by `/`: started/completed/failed (e.g., `1s/3s/1m14s`). Values are omitted when there is no activity of that type
 
                 ## Example Screen
 
@@ -1182,11 +1268,16 @@ class RoutesTab implements MonitorTab {
                 ## Keys
 
                 - `Up/Down` — select route
+                - `p` — start/stop selected route
+                - `P` — suspend/resume selected route
                 - `d` — show route diagram
-                - `s` — show route source / cycle sort column (context-dependent)
+                - `D` — show text diagram
+                - `a` — toggle diagram scope (single route or all routes)
+                - `c` — show route source code
+                - `m` — toggle metrics in diagram
+                - `s` — cycle sort column
                 - `S` — reverse sort order
                 - `t` — toggle Top mode
-                - `Enter` — view detailed route info
                 - `Esc` — back to route list
                 """;
     }
