@@ -117,6 +117,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("resume-route", new CommandLine(new CamelRouteResumeAction(this)))
                         .addSubcommand("route-diagram", new CommandLine(new CamelRouteDiagramAction(this)))
                         .addSubcommand("route-structure", new CommandLine(new CamelRouteStructureAction(this)))
+                        .addSubcommand("route-topology", new CommandLine(new CamelRouteTopologyAction(this)))
                         .addSubcommand("send", new CommandLine(new CamelSendAction(this)))
                         .addSubcommand("start-group", new CommandLine(new CamelRouteGroupStartAction(this)))
                         .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(this)))

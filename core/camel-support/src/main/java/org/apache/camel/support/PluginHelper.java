@@ -56,6 +56,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.RouteFactory;
+import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -581,6 +582,20 @@ public final class PluginHelper {
      */
     public static ModelToStructureDumper getModelToStructureDumper(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ModelToStructureDumper.class);
+    }
+
+    /**
+     * Gets the {@link RouteTopologyDumper} to use.
+     */
+    public static RouteTopologyDumper getRouteTopologyDumper(CamelContext camelContext) {
+        return getRouteTopologyDumper(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RouteTopologyDumper} to use.
+     */
+    public static RouteTopologyDumper getRouteTopologyDumper(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RouteTopologyDumper.class);
     }
 
     /**

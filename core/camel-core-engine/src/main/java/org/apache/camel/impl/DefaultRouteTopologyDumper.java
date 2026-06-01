@@ -1,0 +1,89 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.impl;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.EndpointRequiredDefinition;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.RouteTopologyDumper;
+import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.util.URISupport;
+
+@JdkService(RouteTopologyDumper.FACTORY)
+public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
+
+    private static final Set<String> TRIGGER_SCHEMES = Set.of("timer", "quartz", "cron", "scheduler");
+    private static final Set<String> INTERNAL_SCHEMES = Set.of("direct", "seda", "vertx", "disruptor", "disruptor-vm");
+
+    @Override
+    public TopologyResult dumpTopology(CamelContext context) {
+        Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+        List<RouteDefinition> routeDefs = model.getRouteDefinitions();
+
+        List<TopologyNode> nodes = new ArrayList<>();
+        Map<String, List<String>> inputUriToRouteIds = new HashMap<>();
+
+        for (RouteDefinition rd : routeDefs) {
+            String inputUri = rd.getInput().getEndpointUri();
+            String normalizedInput = URISupport.stripQuery(inputUri);
+            String scheme = extractScheme(normalizedInput);
+            String nodeType = TRIGGER_SCHEMES.contains(scheme) ? "trigger" : "route";
+
+            nodes.add(new TopologyNode(rd.getRouteId(), normalizedInput, scheme, nodeType));
+            inputUriToRouteIds
+                    .computeIfAbsent(normalizedInput, k -> new ArrayList<>())
+                    .add(rd.getRouteId());
+        }
+
+        List<TopologyEdge> edges = new ArrayList<>();
+        for (RouteDefinition rd : routeDefs) {
+            Collection<EndpointRequiredDefinition> outputs
+                    = ProcessorDefinitionHelper.filterTypeInOutputs(
+                            rd.getOutputs(), EndpointRequiredDefinition.class);
+
+            for (EndpointRequiredDefinition erd : outputs) {
+                String outputUri = URISupport.stripQuery(erd.getEndpointUri());
+                String scheme = extractScheme(outputUri);
+
+                List<String> targetRouteIds = inputUriToRouteIds.get(outputUri);
+                if (targetRouteIds != null) {
+                    String connType = INTERNAL_SCHEMES.contains(scheme) ? "internal" : "external";
+                    for (String targetId : targetRouteIds) {
+                        edges.add(new TopologyEdge(rd.getRouteId(), targetId, outputUri, connType));
+                    }
+                }
+            }
+        }
+
+        return new TopologyResult(nodes, edges);
+    }
+
+    private static String extractScheme(String uri) {
+        int idx = uri.indexOf(':');
+        return idx > 0 ? uri.substring(0, idx) : uri;
+    }
+
+}
