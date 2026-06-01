@@ -728,7 +728,7 @@ class OverviewTab implements MonitorTab {
                 - **TOTAL** — Total number of exchanges (messages) processed since the integration started
                 - **FAIL** — Number of exchanges that ended with an unhandled error
                 - **INFLIGHT** — Exchanges currently being processed right now. A consistently high inflight count may indicate slow downstream services
-                - **SINCE-LAST** — Time elapsed since the last exchange was processed. A long idle time might indicate that consumers have stopped receiving data
+                - **SINCE-LAST** — Time since the last exchange activity, shown as up to three values separated by `/`: started/completed/failed. For example, `1s/3s/1m14s` means the last exchange started 1s ago, the last completed 3s ago, and the last failure was 1m14s ago. Values are omitted when there is no activity of that type
 
                 ## Example Screen
 

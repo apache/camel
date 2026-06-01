@@ -1212,7 +1212,7 @@ class RoutesTab implements MonitorTab {
                 - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed
                 - **MEAN** — Average exchange processing time in milliseconds. A rising MEAN may indicate a downstream service getting slower
                 - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
-                - **SINCE-LAST** — Time since the last exchange was processed by this route
+                - **SINCE-LAST** — Time since the last exchange activity on this route, shown as up to three values separated by `/`: started/completed/failed (e.g., `1s/3s/1m14s`). Values are omitted when there is no activity of that type
 
                 ## Example Screen
 
