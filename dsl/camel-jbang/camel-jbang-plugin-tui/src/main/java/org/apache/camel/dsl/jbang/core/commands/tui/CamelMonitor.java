@@ -197,8 +197,9 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
     private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
 
-    // Cached PID list — full process scan only on Overview tab or F3 switch popup
+    // Cached PID list — full process scan throttled to every 2 seconds
     private volatile List<Long> cachedPids = Collections.emptyList();
+    private volatile long lastFullScanTime;
 
     // Trace/history data — shared between CamelMonitor and tabs
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
@@ -777,6 +778,11 @@ public class CamelMonitor extends CamelCommand {
             if (recording && !recentKeys.isEmpty()) {
                 long cutoff = now - 2000;
                 recentKeys.removeIf(k -> k.timestamp() < cutoff);
+            }
+            // If log tab is loading but a full refresh is already in progress,
+            // read log data directly so it appears without waiting for the PID scan
+            if (tabsState.selected() == TAB_LOG && logTab.logLoading && refreshInProgress.get()) {
+                refreshLogData();
             }
             long interval = routesTab.isShowDiagram() ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
@@ -1790,11 +1796,14 @@ public class CamelMonitor extends CamelCommand {
             refreshLogData();
 
             List<IntegrationInfo> infos = new ArrayList<>();
-            boolean fullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
+            long now = System.currentTimeMillis();
+            boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
+            boolean fullScan = wantFullScan && (now - lastFullScanTime >= 2000);
             List<Long> pids;
             if (fullScan) {
                 pids = findPids(name);
                 cachedPids = pids;
+                lastFullScanTime = now;
             } else {
                 pids = cachedPids;
             }
@@ -1848,7 +1857,6 @@ public class CamelMonitor extends CamelCommand {
             }
 
             // Expire old vanishing entries
-            long now = System.currentTimeMillis();
             Iterator<Map.Entry<String, VanishingInfo>> it = vanishing.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, VanishingInfo> entry = it.next();
