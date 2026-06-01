@@ -61,6 +61,14 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
+        // Toggle description
+        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('n')) {
+            diagram.setShowDescription(!diagram.isShowDescription());
+            diagram.endLoad();
+            reloadDiagram();
+            return true;
+        }
+
         // Drill down into route diagram (Enter)
         if (topologyMode && ke.isConfirm()) {
             // For now, drill-down is a future feature
@@ -143,6 +151,7 @@ class DiagramTab implements MonitorTab {
         if (diagram.isShowDiagram()) {
             diagram.renderFooterHints(spans);
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         }
     }
 
@@ -240,7 +249,7 @@ class DiagramTab implements MonitorTab {
                                 - `m` — toggle metrics on/off (default: on)
                                 - `↑↓←→` — scroll diagram
                                 - `PgUp/PgDn` — page scroll
-                                - `Home/End` — top/bottom
+                                - `Home/End` — top/end
                                 - `Esc` — close diagram
                 """;
     }

@@ -67,6 +67,7 @@ class DiagramSupport {
     private boolean showDiagram;
     private boolean diagramTextMode;
     private boolean topologyMode;
+    private boolean showDescription;
     private List<RouteDiagramAsciiRenderer.CounterPos> counterPositions = Collections.emptyList();
     private Set<Integer> routeTitleRows = Collections.emptySet();
     private List<String> lines = Collections.emptyList();
@@ -97,6 +98,14 @@ class DiagramSupport {
 
     void setTopologyMode(boolean topologyMode) {
         this.topologyMode = topologyMode;
+    }
+
+    boolean isShowDescription() {
+        return showDescription;
+    }
+
+    void setShowDescription(boolean showDescription) {
+        this.showDescription = showDescription;
     }
 
     boolean hasDiagramData() {
@@ -201,7 +210,7 @@ class DiagramSupport {
         hint(spans, closeKey + "/Esc", "close");
         hint(spans, "↑↓←→", "scroll");
         hint(spans, "PgUp/PgDn", "page");
-        hintLast(spans, "Home/End", "top/bottom");
+        hint(spans, "Home/End", "top/end");
     }
 
     // ---- Rendering ----
@@ -441,7 +450,7 @@ class DiagramSupport {
 
         if (textMode) {
             TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
-                    engine.getNodeWidth(), true, metrics, false);
+                    engine.getNodeWidth(), true, metrics, showDescription);
             String text = renderer.renderDiagramPlain(result);
 
             List<String> resultLines = new ArrayList<>();
@@ -513,9 +522,12 @@ class DiagramSupport {
             List<RouteDiagramLayoutEngine.RouteInfo> routes, boolean metrics,
             Set<String> highlightNodeIds, RouteDiagramHelper.HighlightStyle hlStyle) {
         if (textMode) {
+            RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
+                    ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
+                    : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                     RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                    RouteDiagramLayoutEngine.NodeLabelMode.CODE);
+                    labelMode);
 
             List<String> result = new ArrayList<>();
             List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();

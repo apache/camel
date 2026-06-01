@@ -413,7 +413,7 @@ class StartupTab implements MonitorTab {
 
                 - `Up/Down` — scroll through steps
                 - `PgUp/PgDn` — scroll by page
-                - `Home/End` — jump to top/bottom
+                - `Home/End` — jump to top/end
                 - `F5` — reload startup data
                 - `Esc` — back
                 """;

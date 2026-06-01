@@ -212,6 +212,14 @@ class RoutesTab implements MonitorTab {
             return true;
         }
 
+        // Toggle description in diagram
+        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('n')) {
+            diagram.setShowDescription(!diagram.isShowDescription());
+            diagram.endLoad();
+            loadDiagramForSelectedRoute();
+            return true;
+        }
+
         // Source viewer toggle
         if (ke.isChar('c')) {
             if (showSource) {
@@ -465,10 +473,11 @@ class RoutesTab implements MonitorTab {
             hint(spans, "c/Esc", "close");
             hint(spans, "↑↓←→", "scroll");
             hint(spans, "PgUp/PgDn", "page");
-            hintLast(spans, "Home/End", "top/bottom");
+            hintLast(spans, "Home/End", "top/end");
         } else if (diagram.isShowDiagram()) {
             diagram.renderFooterHints(spans);
-            hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            hintLast(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
