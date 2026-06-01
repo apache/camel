@@ -43,6 +43,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -72,7 +73,10 @@ class LogTab implements MonitorTab {
     private final ListState logLevelListState = new ListState();
 
     volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
+    volatile boolean logLoading;
+    volatile boolean loadAllRequested;
     long logFilePos = -1;
+    long logFileStartPos = -1;
     long logTotalLinesRead;
     String logFilePid;
     final StringBuilder logLineBuffer = new StringBuilder();
@@ -82,9 +86,9 @@ class LogTab implements MonitorTab {
     private int cachedLogHSkip = -1;
     private int cachedLogMaxWidth;
     private List<Line> cachedLogLines = Collections.emptyList();
-    private int scroll;
+    int scroll;
     private long evictedSeen;
-    private boolean followMode = true;
+    boolean followMode = true;
     private boolean wordWrap = true;
     private int hScroll;
     private boolean showLogLevelPopup;
@@ -108,6 +112,21 @@ class LogTab implements MonitorTab {
 
     LogTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    @Override
+    public void onIntegrationChanged() {
+        filteredLogEntries = new ArrayList<>();
+        logLoading = true;
+        loadAllRequested = false;
+        logFilePid = null;
+        logFilePos = -1;
+        logFileStartPos = -1;
+        logTotalLinesRead = 0;
+        logLineBuffer.setLength(0);
+        mutableFilteredEntries.clear();
+        cachedLogEntries = null;
+        cachedLogLines = Collections.emptyList();
     }
 
     @Override
@@ -192,6 +211,7 @@ class LogTab implements MonitorTab {
             followMode = false;
             scroll = 0;
             hScroll = 0;
+            loadAllRequested = true;
             return true;
         }
         if (ke.isEnd()) {
@@ -292,24 +312,44 @@ class LogTab implements MonitorTab {
             return;
         }
 
+        if (logLoading && filteredLogEntries.isEmpty()) {
+            Block loadingBlock = Block.builder()
+                    .borderType(BorderType.ROUNDED)
+                    .title(" Log ")
+                    .build();
+            frame.renderWidget(loadingBlock, area);
+            Rect loadingInner = loadingBlock.inner(area);
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(Line.from(Span.raw("(Loading logs...)"))))
+                            .build(),
+                    loadingInner);
+            return;
+        }
+
         List<LogEntry> entries = filteredLogEntries;
         int contentHeight = entries.size();
 
-        long totalRead = logTotalLinesRead;
-        String chunkSuffix = totalRead > entries.size()
-                ? " #" + (totalRead - entries.size() + 1) + "-" + totalRead
-                : "";
-        String logTitle;
+        boolean hasNew = !followMode && scroll < contentHeight - Math.max(1, area.height() - 2);
+        String logLabel;
         if (infraSel != null) {
-            logTitle = " Log [" + infraSel.alias + "]" + chunkSuffix + " ";
+            logLabel = " Log [" + infraSel.alias + "]";
         } else if (info != null && info.rootLogLevel != null) {
-            logTitle = " Log level:" + info.rootLogLevel + chunkSuffix + " ";
+            logLabel = " Log level:" + info.rootLogLevel;
         } else {
-            logTitle = " Log" + chunkSuffix + " ";
+            logLabel = " Log";
+        }
+        Line titleLine;
+        if (hasNew) {
+            titleLine = Line.from(
+                    Span.raw(logLabel + " "),
+                    Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(" "));
+        } else {
+            titleLine = Line.from(Span.raw(logLabel + " "));
         }
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(logTitle)
+                .title(Title.from(titleLine))
                 .build();
         frame.renderWidget(block, area);
 
@@ -615,14 +655,17 @@ class LogTab implements MonitorTab {
         try (RandomAccessFile raf = new RandomAccessFile(logFile.toFile(), "r")) {
             long length = raf.length();
             if (logFilePos < 0 || logFilePos > length) {
-                logFilePos = Math.max(0, length - 1024 * 1024);
+                // Initial load: only read last 8KB for fast first render
+                logFilePos = Math.max(0, length - 8 * 1024);
+                logFileStartPos = logFilePos;
                 logLineBuffer.setLength(0);
             }
             if (logFilePos >= length) {
                 return;
             }
             raf.seek(logFilePos);
-            byte[] buf = new byte[(int) Math.min(length - logFilePos, 4 * 1024 * 1024)];
+            // Cap per-tick read to 64KB to avoid blocking the refresh cycle
+            byte[] buf = new byte[(int) Math.min(length - logFilePos, 64 * 1024)];
             raf.readFully(buf);
             logFilePos += buf.length;
 
@@ -639,6 +682,53 @@ class LogTab implements MonitorTab {
             }
             if (start < chunk.length()) {
                 logLineBuffer.append(chunk, start, chunk.length());
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+    }
+
+    void readOlderLogLines(String fileName, boolean loadAll, List<String> olderLines) {
+        if (logFilePid == null || logFileStartPos <= 0) {
+            return;
+        }
+        Path logFile = CommandLineHelper.getCamelDir().resolve(fileName);
+        if (!Files.exists(logFile)) {
+            return;
+        }
+        try (RandomAccessFile raf = new RandomAccessFile(logFile.toFile(), "r")) {
+            long readEnd = logFileStartPos;
+            // Load all: read from start of file (cap at 2MB), otherwise 64KB chunk
+            long readStart;
+            if (loadAll) {
+                readStart = Math.max(0, readEnd - 2 * 1024 * 1024);
+            } else {
+                readStart = Math.max(0, readEnd - 64 * 1024);
+            }
+            if (readStart >= readEnd) {
+                return;
+            }
+            raf.seek(readStart);
+            byte[] buf = new byte[(int) (readEnd - readStart)];
+            raf.readFully(buf);
+            logFileStartPos = readStart;
+
+            String chunk = new String(buf, StandardCharsets.UTF_8);
+            // If we didn't read from the start of the file, skip the first partial line
+            int start = 0;
+            if (readStart > 0) {
+                int firstNewline = chunk.indexOf('\n');
+                if (firstNewline >= 0) {
+                    start = firstNewline + 1;
+                }
+            }
+            int end;
+            while ((end = chunk.indexOf('\n', start)) >= 0) {
+                String line = TuiHelper.fixControlChars(chunk.substring(start, end));
+                if (!line.isEmpty()) {
+                    olderLines.add(line);
+                }
+                start = end + 1;
             }
         } catch (IOException e) {
             // ignore

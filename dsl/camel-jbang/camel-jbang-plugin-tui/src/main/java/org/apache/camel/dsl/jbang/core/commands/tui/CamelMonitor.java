@@ -1872,8 +1872,27 @@ public class CamelMonitor extends CamelCommand {
                         logTab.logFilePos = -1;
                         logTab.logTotalLinesRead = 0;
                         logTab.logLineBuffer.setLength(0);
+                        logTab.logLoading = true;
                     }
                     List<String> newRawLines = new ArrayList<>();
+                    // Load older lines when scrolled to the top or Home pressed
+                    boolean loadAll = logTab.loadAllRequested;
+                    if (logTab.logFileStartPos > 0
+                            && (loadAll || (!logTab.followMode && logTab.scroll == 0))) {
+                        logTab.loadAllRequested = false;
+                        List<String> olderLines = new ArrayList<>();
+                        logTab.readOlderLogLines(logFileName, loadAll, olderLines);
+                        if (!olderLines.isEmpty()) {
+                            List<LogEntry> olderEntries = new ArrayList<>();
+                            for (String line : olderLines) {
+                                olderEntries.add(LogTab.parseLogLine(line));
+                            }
+                            logTab.mutableFilteredEntries.addAll(0, olderEntries);
+                            logTab.logTotalLinesRead += olderLines.size();
+                            // Adjust scroll to keep the same content visible
+                            logTab.scroll = olderEntries.size();
+                        }
+                    }
                     logTab.readNewLogLinesFromFile(logPid, logFileName, newRawLines);
                     if (!newRawLines.isEmpty()) {
                         logTab.logTotalLinesRead += newRawLines.size();
@@ -1884,8 +1903,9 @@ public class CamelMonitor extends CamelCommand {
                             logTab.mutableFilteredEntries.subList(0, logTab.mutableFilteredEntries.size() - MAX_LOG_LINES)
                                     .clear();
                         }
-                        logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
                     }
+                    logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
+                    logTab.logLoading = false;
                 }
             }
 
