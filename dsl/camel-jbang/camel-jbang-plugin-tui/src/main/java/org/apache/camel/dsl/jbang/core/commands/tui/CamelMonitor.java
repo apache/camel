@@ -1727,6 +1727,7 @@ public class CamelMonitor extends CamelCommand {
             logTab.logLoading = true;
         }
         // Load older lines when scrolled to the top or Home pressed
+        boolean changed = false;
         boolean loadAll = logTab.loadAllRequested;
         if (logTab.logFileStartPos > 0
                 && (loadAll || (!logTab.followMode && logTab.scroll == 0))) {
@@ -1734,6 +1735,7 @@ public class CamelMonitor extends CamelCommand {
             List<String> olderLines = new ArrayList<>();
             logTab.readOlderLogLines(logFileName, loadAll, olderLines);
             if (!olderLines.isEmpty()) {
+                changed = true;
                 List<LogEntry> olderEntries = new ArrayList<>();
                 for (String line : olderLines) {
                     olderEntries.add(LogTab.parseLogLine(line));
@@ -1745,7 +1747,8 @@ public class CamelMonitor extends CamelCommand {
         }
         List<String> newRawLines = new ArrayList<>();
         logTab.readNewLogLinesFromFile(logPid, logFileName, newRawLines);
-        if (!newRawLines.isEmpty()) {
+        changed |= !newRawLines.isEmpty();
+        if (changed) {
             logTab.logTotalLinesRead += newRawLines.size();
             for (String line : newRawLines) {
                 logTab.mutableFilteredEntries.add(LogTab.parseLogLine(line));
@@ -1755,7 +1758,9 @@ public class CamelMonitor extends CamelCommand {
                         .clear();
             }
         }
-        logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
+        if (changed || logTab.logLoading) {
+            logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
+        }
         logTab.logLoading = false;
     }
 
@@ -1793,7 +1798,19 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 pids = cachedPids;
             }
-            for (Long pid : pids) {
+
+            // On non-Overview tabs, only refresh the selected integration for speed
+            List<Long> refreshPids;
+            if (!fullScan && ctx.selectedPid != null) {
+                try {
+                    refreshPids = List.of(Long.parseLong(ctx.selectedPid));
+                } catch (NumberFormatException e) {
+                    refreshPids = pids;
+                }
+            } else {
+                refreshPids = pids;
+            }
+            for (Long pid : refreshPids) {
                 JsonObject root = loadStatus(pid);
                 if (root != null) {
                     ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
@@ -1808,6 +1825,15 @@ public class CamelMonitor extends CamelCommand {
                         updateCbHistory(info);
                         updateHeapHistory(info);
                         updateLoadMetrics(ph, info);
+                    }
+                }
+            }
+            // Carry forward non-selected integrations from previous data so they don't vanish
+            if (!fullScan && ctx.selectedPid != null) {
+                List<IntegrationInfo> previous = data.get();
+                for (IntegrationInfo prev : previous) {
+                    if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
+                        infos.add(prev);
                     }
                 }
             }
@@ -1912,8 +1938,10 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
 
-            // Discover running infra services
-            refreshInfraData();
+            // Discover running infra services (only on Overview or switch popup)
+            if (fullScan) {
+                refreshInfraData();
+            }
 
             // Auto-select first infra service when no active integrations exist
             if (ctx.selectedPid == null && !infraData.get().isEmpty()
