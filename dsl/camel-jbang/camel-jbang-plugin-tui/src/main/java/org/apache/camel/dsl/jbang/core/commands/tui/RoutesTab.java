@@ -1110,7 +1110,12 @@ class RoutesTab implements MonitorTab {
             idx++;
         }
 
-        int scrollTo = matchLine > 0 ? Math.max(0, matchLine - 2) : 0;
+        int scrollTo;
+        if (matchLine > 0) {
+            scrollTo = Math.max(0, matchLine - 2);
+        } else {
+            scrollTo = findLicenseHeaderEnd(codeLines);
+        }
         applySourceResult(routeId, sourceLocation, lines, scrollTo);
     }
 
@@ -1132,6 +1137,40 @@ class RoutesTab implements MonitorTab {
             sourceLines = lines;
             sourceScroll = scrollTo;
         });
+    }
+
+    private static int findLicenseHeaderEnd(List<JsonObject> codeLines) {
+        // Auto-scroll past leading license/comment headers
+        boolean inBlock = false;
+        int lastCommentLine = -1;
+        for (int i = 0; i < codeLines.size(); i++) {
+            String code = objToString(codeLines.get(i).get("code")).trim();
+            if (i == 0 && code.isEmpty()) {
+                continue;
+            }
+            if (!inBlock && code.startsWith("/*")) {
+                inBlock = true;
+            }
+            if (inBlock) {
+                lastCommentLine = i;
+                if (code.contains("*/")) {
+                    inBlock = false;
+                }
+                continue;
+            }
+            // YAML/shell comment lines or XML comment lines at the top
+            if (code.startsWith("#") || code.startsWith("##") || code.startsWith("<!--")) {
+                lastCommentLine = i;
+                continue;
+            }
+            // Empty line right after comment block
+            if (lastCommentLine >= 0 && code.isEmpty()) {
+                lastCommentLine = i;
+                continue;
+            }
+            break;
+        }
+        return lastCommentLine >= 0 ? lastCommentLine + 1 : 0;
     }
 
     private static String objToString(Object o) {
