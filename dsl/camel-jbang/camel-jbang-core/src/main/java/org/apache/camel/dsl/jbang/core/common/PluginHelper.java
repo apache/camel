@@ -118,7 +118,11 @@ public final class PluginHelper {
      */
     public static void addPlugins(CommandLine commandLine, CamelJBangMain main, String... args) {
         // first arg is the command name (ie camel generate xxx)
+        // if the first arg is a flag (e.g. --help), treat as no target so all plugins load
         String target = args != null && args.length > 0 ? args[0] : null;
+        if (target != null && target.startsWith("-")) {
+            target = null;
+        }
 
         // First, try to load embedded plugins from classpath (fat-jar scenario)
         boolean foundEmbeddedPlugins = false;
@@ -536,7 +540,7 @@ public final class PluginHelper {
         return Optional.ofNullable(getPluginConfig()).orElseGet(PluginHelper::createPluginConfig);
     }
 
-    static JsonObject getPluginConfig() {
+    public static JsonObject getPluginConfig() {
         try {
             Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
             if (Files.exists(f)) {

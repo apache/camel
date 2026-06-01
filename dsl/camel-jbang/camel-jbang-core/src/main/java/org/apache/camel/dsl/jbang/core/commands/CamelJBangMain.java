@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -59,7 +63,9 @@ import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
+import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -232,6 +238,9 @@ public class CamelJBangMain implements Callable<Integer> {
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
         preExecute(commandLine, args);
         int exitCode = commandLine.execute(args);
+        if (isHelpRequest(args)) {
+            printAvailablePlugins();
+        }
         postExecute(commandLine, args, exitCode);
         quit(exitCode);
     }
@@ -269,6 +278,58 @@ public class CamelJBangMain implements Callable<Integer> {
     public Integer call() throws Exception {
         commandLine.execute("--help");
         return 0;
+    }
+
+    private static boolean isHelpRequest(String[] args) {
+        if (args == null || args.length == 0) {
+            return true;
+        }
+        for (String arg : args) {
+            if ("--help".equals(arg) || "-h".equals(arg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void printAvailablePlugins() {
+        Set<String> installed = new HashSet<>();
+        JsonObject config = PluginHelper.getPluginConfig();
+        if (config != null) {
+            JsonObject plugins = config.getMap("plugins");
+            if (plugins != null) {
+                installed.addAll(plugins.keySet());
+            }
+        }
+        // also consider already registered subcommands as installed
+        Set<String> registered = commandLine.getSubcommands().keySet();
+
+        List<String[]> rows = new ArrayList<>();
+        for (PluginType pt : PluginType.values()) {
+            if (!installed.contains(pt.getName()) && !registered.contains(pt.getCommand())) {
+                rows.add(new String[] { pt.getCommand(), pt.getDescription() });
+            }
+        }
+        for (JsonObject kp : PluginHelper.loadKnownPlugins()) {
+            String name = kp.getString("name");
+            String command = kp.getStringOrDefault("command", name);
+            if (!installed.contains(name) && !registered.contains(command)
+                    && PluginType.findByName(name).isEmpty()) {
+                rows.add(new String[] { command, kp.getStringOrDefault("description", "") });
+            }
+        }
+
+        if (!rows.isEmpty()) {
+            int maxCmd = rows.stream().mapToInt(r -> r[0].length()).max().orElse(0);
+            out.println();
+            out.println("Plugins (not installed):");
+            for (String[] row : rows) {
+                out.printf("  %-" + maxCmd + "s   %s%n", row[0], row[1]);
+            }
+            out.println();
+            out.println("Tip: Install with: camel plugin add <name>");
+            out.println("     Bundled plugins are auto-installed on first use.");
+        }
     }
 
     /**
