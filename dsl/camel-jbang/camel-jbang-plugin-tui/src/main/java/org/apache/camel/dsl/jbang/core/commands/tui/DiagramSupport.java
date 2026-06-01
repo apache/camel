@@ -165,6 +165,16 @@ class DiagramSupport {
         }
     }
 
+    void switchToImageMode() {
+        diagramTextMode = false;
+        showDiagram = true;
+    }
+
+    void switchToTextMode() {
+        diagramTextMode = true;
+        showDiagram = true;
+    }
+
     boolean handleEscape() {
         if (showDiagram) {
             close();

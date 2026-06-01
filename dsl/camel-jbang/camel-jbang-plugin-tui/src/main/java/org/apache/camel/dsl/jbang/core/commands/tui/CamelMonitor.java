@@ -794,7 +794,7 @@ public class CamelMonitor extends CamelCommand {
                 diagramTab.refreshDiagramIfNeeded();
                 return true;
             }
-            return !routesTab.hasImageDiagram();
+            return true;
         }
         return false;
     }

@@ -61,17 +61,6 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
-        // Image diagram toggle
-        if (ke.isChar('d')) {
-            diagram.toggleImageDiagram(this::loadDiagram);
-            return true;
-        }
-        // Text diagram toggle
-        if (ke.isChar('D')) {
-            diagram.toggleTextDiagram(this::loadDiagram);
-            return true;
-        }
-
         // Drill down into route diagram (Enter)
         if (topologyMode && ke.isConfirm()) {
             // For now, drill-down is a future feature
@@ -141,7 +130,7 @@ class DiagramTab implements MonitorTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(Line.from(Span.styled(
-                                "Press d for image diagram or D for text diagram",
+                                "Loading diagram...",
                                 Style.EMPTY.dim()))))
                         .block(Block.builder().borderType(BorderType.ROUNDED)
                                 .title(" Diagram ").build())
@@ -154,9 +143,6 @@ class DiagramTab implements MonitorTab {
         if (diagram.isShowDiagram()) {
             diagram.renderFooterHints(spans);
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
-        } else {
-            hint(spans, "d", "diagram");
-            hint(spans, "D", "text diagram");
         }
     }
 
@@ -183,7 +169,6 @@ class DiagramTab implements MonitorTab {
         }
 
         String pid = ctx.selectedPid;
-        boolean textMode = diagram.isDiagramTextMode();
         boolean showMetrics = diagramMetrics;
 
         if (showPlaceholder) {
@@ -194,10 +179,10 @@ class DiagramTab implements MonitorTab {
             try {
                 if (topologyMode) {
                     diagram.setTopologyMode(true);
-                    diagram.loadTopologyDiagramInBackground(ctx, pid, textMode, showMetrics);
+                    diagram.loadTopologyDiagramInBackground(ctx, pid, true, showMetrics);
                 } else {
                     diagram.setTopologyMode(false);
-                    diagram.loadRouteDiagramInBackground(ctx, pid, textMode, drillDownRouteId, showMetrics);
+                    diagram.loadRouteDiagramInBackground(ctx, pid, true, drillDownRouteId, showMetrics);
                 }
             } finally {
                 diagram.endLoad();
@@ -252,8 +237,6 @@ class DiagramTab implements MonitorTab {
 
                                 ## Keys
 
-                                - `d` — toggle image diagram
-                                - `D` — toggle text diagram (default)
                                 - `m` — toggle metrics on/off (default: on)
                                 - `↑↓←→` — scroll diagram
                                 - `PgUp/PgDn` — page scroll

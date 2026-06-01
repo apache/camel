@@ -206,13 +206,8 @@ class RoutesTab implements MonitorTab {
             return true;
         }
 
-        // Image diagram toggle
-        if (ke.isChar('d')) {
-            diagram.toggleImageDiagram(this::loadDiagramForSelectedRoute);
-            return true;
-        }
         // Text diagram toggle
-        if (ke.isChar('D')) {
+        if (ke.isCharIgnoreCase('d')) {
             diagram.toggleTextDiagram(this::loadDiagramForSelectedRoute);
             return true;
         }
@@ -482,7 +477,6 @@ class RoutesTab implements MonitorTab {
             if (!routeTopMode) {
                 hint(spans, "c", "source");
                 hint(spans, "d", "diagram");
-                hint(spans, "D", "text diagram");
                 hint(spans, "a", "diagram " + (diagramAllRoutes ? "[all]" : "[single]"));
                 String routeState = selectedRouteState();
                 boolean supSus = selectedRouteSupportsSuspension();
@@ -1271,7 +1265,6 @@ class RoutesTab implements MonitorTab {
                 - `p` — start/stop selected route
                 - `P` — suspend/resume selected route
                 - `d` — show route diagram
-                - `D` — show text diagram
                 - `a` — toggle diagram scope (single route or all routes)
                 - `c` — show route source code
                 - `m` — toggle metrics in diagram
