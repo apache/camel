@@ -44,6 +44,8 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -81,6 +83,7 @@ class RoutesTab implements MonitorTab {
     private boolean showSource;
     private List<String> sourceLines = Collections.emptyList();
     private String sourceTitle;
+    private SyntaxHighlighter.Language sourceLanguage = SyntaxHighlighter.Language.PLAIN;
     private int sourceScroll;
     private int sourceScrollX;
     private final ScrollbarState sourceVScrollState = new ScrollbarState();
@@ -732,7 +735,7 @@ class RoutesTab implements MonitorTab {
         List<Line> visible = new ArrayList<>();
         for (int i = sourceScroll; i < end; i++) {
             String raw = sourceLines.get(i);
-            visible.add(TuiHelper.ansiToLine(raw, sourceScrollX));
+            visible.add(highlightSourceLine(raw, sourceScrollX));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
 
@@ -746,6 +749,48 @@ class RoutesTab implements MonitorTab {
             sourceHScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(sourceScrollX);
             frame.renderStatefulWidget(Scrollbar.horizontal(), inner, sourceHScrollState);
         }
+    }
+
+    private Line highlightSourceLine(String raw, int hSkip) {
+        // Split line number prefix from code content
+        int prefixEnd = 0;
+        while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
+            prefixEnd++;
+        }
+
+        String prefix = raw.substring(0, prefixEnd);
+        String code = raw.substring(prefixEnd);
+
+        Line highlighted = SyntaxHighlighter.highlightLine(code, sourceLanguage);
+
+        // Prepend dim line-number prefix
+        List<Span> spans = new ArrayList<>();
+        if (!prefix.isEmpty()) {
+            spans.add(Span.styled(prefix, Style.EMPTY.dim()));
+        }
+        spans.addAll(highlighted.spans());
+
+        Line full = Line.from(spans);
+
+        // Apply horizontal scroll by skipping characters from spans
+        if (hSkip <= 0) {
+            return full;
+        }
+        List<Span> scrolled = new ArrayList<>();
+        int skipped = 0;
+        for (Span span : full.spans()) {
+            String content = span.content();
+            if (skipped >= hSkip) {
+                scrolled.add(span);
+            } else if (skipped + content.length() > hSkip) {
+                int offset = hSkip - skipped;
+                scrolled.add(Span.styled(content.substring(offset), span.style()));
+                skipped = hSkip;
+            } else {
+                skipped += content.length();
+            }
+        }
+        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
     }
 
     // ---- Sorting ----
@@ -1081,7 +1126,9 @@ class RoutesTab implements MonitorTab {
             if (!showSource) {
                 return;
             }
-            sourceTitle = location != null ? routeId + "  " + location : routeId;
+            String displayLoc = location != null ? FileUtil.stripPath(LoggerHelper.sourceNameOnly(location)) : null;
+            sourceTitle = displayLoc != null ? routeId + "  " + displayLoc : routeId;
+            sourceLanguage = SyntaxHighlighter.detectLanguage(location);
             sourceLines = lines;
             sourceScroll = scrollTo;
         });
