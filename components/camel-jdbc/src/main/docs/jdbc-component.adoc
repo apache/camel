@@ -106,7 +106,7 @@ First we register our datasource in the Camel registry as `testdb`:
 [source,java]
 ----
 EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-      .setType(EmbeddedDatabaseType.DERBY).addScript("sql/init.sql").build();
+      .setType(EmbeddedDatabaseType.H2).addScript("sql/init.sql").build();
 
 CamelContext context = ...
 context.getRegistry().bind("testdb", db);
