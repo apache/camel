@@ -2873,12 +2873,18 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         for (Map.Entry<PropertyOptionKey, OrderedLocationProperties> entry : properties.entrySet()) {
+            Object instance = entry.getKey().getInstance();
+            boolean failFast = mainConfigurationProperties.isAutoConfigurationFailFast();
+            // stubbed components do not have the same properties as the original component
+            if ("StubComponent".equals(instance.getClass().getSimpleName())) {
+                failFast = false;
+            }
             setPropertiesOnTarget(
                     camelContext,
-                    entry.getKey().getInstance(),
+                    instance,
                     entry.getValue(),
                     entry.getKey().getOptionPrefix(),
-                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    failFast,
                     true,
                     autoConfiguredProperties);
         }
