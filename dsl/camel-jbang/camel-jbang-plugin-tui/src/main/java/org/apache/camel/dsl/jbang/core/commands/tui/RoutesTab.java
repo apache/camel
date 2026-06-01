@@ -206,14 +206,17 @@ class RoutesTab implements MonitorTab {
             return true;
         }
 
-        // Image diagram toggle
-        if (ke.isChar('d')) {
-            diagram.toggleImageDiagram(this::loadDiagramForSelectedRoute);
+        // Text diagram toggle
+        if (ke.isCharIgnoreCase('d')) {
+            diagram.toggleTextDiagram(this::loadDiagramForSelectedRoute);
             return true;
         }
-        // Text diagram toggle
-        if (ke.isChar('D')) {
-            diagram.toggleTextDiagram(this::loadDiagramForSelectedRoute);
+
+        // Toggle description in diagram
+        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('n')) {
+            diagram.setShowDescription(!diagram.isShowDescription());
+            diagram.endLoad();
+            loadDiagramForSelectedRoute();
             return true;
         }
 
@@ -470,10 +473,11 @@ class RoutesTab implements MonitorTab {
             hint(spans, "c/Esc", "close");
             hint(spans, "↑↓←→", "scroll");
             hint(spans, "PgUp/PgDn", "page");
-            hintLast(spans, "Home/End", "top/bottom");
+            hintLast(spans, "Home/End", "top/end");
         } else if (diagram.isShowDiagram()) {
             diagram.renderFooterHints(spans);
-            hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            hintLast(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
@@ -482,7 +486,6 @@ class RoutesTab implements MonitorTab {
             if (!routeTopMode) {
                 hint(spans, "c", "source");
                 hint(spans, "d", "diagram");
-                hint(spans, "D", "text diagram");
                 hint(spans, "a", "diagram " + (diagramAllRoutes ? "[all]" : "[single]"));
                 String routeState = selectedRouteState();
                 boolean supSus = selectedRouteSupportsSuspension();
@@ -1271,7 +1274,6 @@ class RoutesTab implements MonitorTab {
                 - `p` — start/stop selected route
                 - `P` — suspend/resume selected route
                 - `d` — show route diagram
-                - `D` — show text diagram
                 - `a` — toggle diagram scope (single route or all routes)
                 - `c` — show route source code
                 - `m` — toggle metrics in diagram

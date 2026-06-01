@@ -110,11 +110,7 @@ class HistoryTab implements MonitorTab {
         if (diagram.handleScrollKeys(ke)) {
             return true;
         }
-        if (ke.isChar('d')) {
-            diagram.toggleImageDiagram(this::loadDiagramForCurrentView);
-            return true;
-        }
-        if (ke.isChar('D')) {
+        if (ke.isCharIgnoreCase('d')) {
             diagram.toggleTextDiagram(this::loadDiagramForCurrentView);
             return true;
         }
@@ -405,7 +401,6 @@ class HistoryTab implements MonitorTab {
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
             if (!showWaterfall) {
                 hint(spans, "d", "diagram");
-                hint(spans, "D", "text diagram");
                 hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
                 hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
                 hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
@@ -417,7 +412,6 @@ class HistoryTab implements MonitorTab {
             hint(spans, "↑↓", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "d", "diagram");
-            hint(spans, "D", "text diagram");
             hint(spans, "Enter", "details");
             hintLast(spans, "F5", "refresh");
         } else {
@@ -430,7 +424,6 @@ class HistoryTab implements MonitorTab {
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
             if (!showWaterfall) {
                 hint(spans, "d", "diagram");
-                hint(spans, "D", "text diagram");
                 hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
                 hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
                 hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));

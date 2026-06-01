@@ -50,6 +50,13 @@ import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
 import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramRenderer;
+import org.apache.camel.diagram.TopologyAsciiRenderer;
+import org.apache.camel.diagram.TopologyHelper;
+import org.apache.camel.diagram.TopologyImageRenderer;
+import org.apache.camel.diagram.TopologyLayoutEngine;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonObject;
 
@@ -59,6 +66,8 @@ class DiagramSupport {
 
     private boolean showDiagram;
     private boolean diagramTextMode;
+    private boolean topologyMode;
+    private boolean showDescription;
     private List<RouteDiagramAsciiRenderer.CounterPos> counterPositions = Collections.emptyList();
     private Set<Integer> routeTitleRows = Collections.emptySet();
     private List<String> lines = Collections.emptyList();
@@ -81,6 +90,22 @@ class DiagramSupport {
 
     boolean isDiagramTextMode() {
         return diagramTextMode;
+    }
+
+    boolean isTopologyMode() {
+        return topologyMode;
+    }
+
+    void setTopologyMode(boolean topologyMode) {
+        this.topologyMode = topologyMode;
+    }
+
+    boolean isShowDescription() {
+        return showDescription;
+    }
+
+    void setShowDescription(boolean showDescription) {
+        this.showDescription = showDescription;
     }
 
     boolean hasDiagramData() {
@@ -149,6 +174,16 @@ class DiagramSupport {
         }
     }
 
+    void switchToImageMode() {
+        diagramTextMode = false;
+        showDiagram = true;
+    }
+
+    void switchToTextMode() {
+        diagramTextMode = true;
+        showDiagram = true;
+    }
+
     boolean handleEscape() {
         if (showDiagram) {
             close();
@@ -175,7 +210,7 @@ class DiagramSupport {
         hint(spans, closeKey + "/Esc", "close");
         hint(spans, "↑↓←→", "scroll");
         hint(spans, "PgUp/PgDn", "page");
-        hintLast(spans, "Home/End", "top/bottom");
+        hint(spans, "Home/End", "top/end");
     }
 
     // ---- Rendering ----
@@ -395,14 +430,104 @@ class DiagramSupport {
         renderRoutes(ctx, textMode, routes, metrics, null, null);
     }
 
+    void loadTopologyDiagramInBackground(
+            MonitorContext ctx, String pid, boolean textMode, boolean metrics) {
+        JsonObject jo = requestRouteTopology(ctx, pid);
+        if (jo == null) {
+            applyResult(ctx, List.of("(No response from integration)"), null, null, null);
+            return;
+        }
+
+        List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(jo);
+        List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(jo);
+        if (nodes.isEmpty()) {
+            applyResult(ctx, List.of("(No routes in response)"), null, null, null);
+            return;
+        }
+
+        TopologyLayoutEngine engine = new TopologyLayoutEngine();
+        TopologyLayoutResult result = engine.layout(nodes, edges);
+
+        if (textMode) {
+            TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
+                    engine.getNodeWidth(), true, metrics, showDescription);
+            String text = renderer.renderDiagramPlain(result);
+
+            List<String> resultLines = new ArrayList<>();
+            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
+            String[] rawLines = text.split("\n", -1);
+            int[] rowMapping = new int[rawLines.length];
+            int newRow = 0;
+            for (int i = 0; i < rawLines.length; i++) {
+                if (!rawLines[i].isEmpty()) {
+                    rowMapping[i] = newRow++;
+                    resultLines.add(rawLines[i]);
+                } else {
+                    rowMapping[i] = -1;
+                }
+            }
+
+            for (TopologyAsciiRenderer.CounterPos cp : renderer.getCounterPositions()) {
+                if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
+                    RouteDiagramAsciiRenderer.CounterType mapped = switch (cp.type()) {
+                        case OK -> RouteDiagramAsciiRenderer.CounterType.OK;
+                        case FAIL -> RouteDiagramAsciiRenderer.CounterType.FAIL;
+                        case TRIGGER -> RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_SUCCESS;
+                        case EXTERNAL -> RouteDiagramAsciiRenderer.CounterType.OK;
+                    };
+                    positions.add(new RouteDiagramAsciiRenderer.CounterPos(
+                            rowMapping[cp.row()], cp.col(), cp.length(), mapped));
+                }
+            }
+
+            applyResult(ctx, resultLines, null, null, null, positions, Collections.emptySet());
+        } else {
+            TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
+            if (caps.supportsNativeImages()) {
+                RouteDiagramRenderer.DiagramColors colors
+                        = RouteDiagramRenderer.DiagramColors.parse("transparent");
+                java.awt.image.BufferedImage image = TopologyImageRenderer.renderImage(
+                        result, colors, TopologyLayoutEngine.DEFAULT_FONT_SIZE,
+                        TopologyLayoutEngine.DEFAULT_NODE_WIDTH, metrics, false);
+                ImageData full = ImageData.fromBufferedImage(image);
+                ImageData resized = full.resize(full.width() / 2, full.height() / 2);
+                ImageProtocol proto = caps.bestProtocol();
+                applyResult(ctx, Collections.emptyList(), resized, resized, proto);
+            } else {
+                applyResult(ctx, List.of(
+                        "(Terminal does not support image rendering)",
+                        "(Press Shift+D for text diagram)"), null, null, null);
+            }
+        }
+    }
+
+    private JsonObject requestRouteTopology(MonitorContext ctx, String pid) {
+        Path outputFile = ctx.getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "route-topology");
+        root.put("metric", "true");
+
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 5000);
+        PathUtils.deleteFile(outputFile);
+        return jo;
+    }
+
     private void renderRoutes(
             MonitorContext ctx, boolean textMode,
             List<RouteDiagramLayoutEngine.RouteInfo> routes, boolean metrics,
             Set<String> highlightNodeIds, RouteDiagramHelper.HighlightStyle hlStyle) {
         if (textMode) {
+            RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
+                    ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
+                    : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                     RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                    RouteDiagramLayoutEngine.NodeLabelMode.CODE);
+                    labelMode);
 
             List<String> result = new ArrayList<>();
             List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();

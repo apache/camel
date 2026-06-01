@@ -34,9 +34,9 @@ public class TopologyLayoutEngine {
     static final int V_GAP = 50 * SCALE;
     static final int H_GAP = 30 * SCALE;
     static final int PADDING = RouteDiagramLayoutEngine.PADDING;
-    static final int DEFAULT_NODE_WIDTH = 180;
+    public static final int DEFAULT_NODE_WIDTH = 180;
     static final int DEFAULT_NODE_HEIGHT = 40;
-    static final int DEFAULT_FONT_SIZE = 12;
+    public static final int DEFAULT_FONT_SIZE = 12;
 
     private final int nodeWidth;
     private final int nodeHeight;
