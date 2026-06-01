@@ -480,7 +480,7 @@ class RoutesTab implements MonitorTab {
                 hint(spans, "c", "source");
                 hint(spans, "d", "diagram");
                 hint(spans, "D", "text diagram");
-                hint(spans, "a", diagramAllRoutes ? "all [on]" : "all [off]");
+                hint(spans, "a", "diagram " + (diagramAllRoutes ? "[all]" : "[single]"));
                 String routeState = selectedRouteState();
                 boolean supSus = selectedRouteSupportsSuspension();
                 if ("Started".equals(routeState)) {
@@ -1182,11 +1182,16 @@ class RoutesTab implements MonitorTab {
                 ## Keys
 
                 - `Up/Down` — select route
+                - `p` — start/stop selected route
+                - `P` — suspend/resume selected route
                 - `d` — show route diagram
-                - `s` — show route source / cycle sort column (context-dependent)
+                - `D` — show text diagram
+                - `a` — toggle diagram scope (single route or all routes)
+                - `c` — show route source code
+                - `m` — toggle metrics in diagram
+                - `s` — cycle sort column
                 - `S` — reverse sort order
                 - `t` — toggle Top mode
-                - `Enter` — view detailed route info
                 - `Esc` — back to route list
                 """;
     }
