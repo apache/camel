@@ -52,14 +52,14 @@ public class TopologyAsciiRenderer {
     private final boolean showDescription;
     private final List<CounterPos> counterPositions = new ArrayList<>();
 
-    enum CounterType {
+    public enum CounterType {
         OK,
         FAIL,
         TRIGGER,
         EXTERNAL
     }
 
-    record CounterPos(int row, int col, int length, CounterType type) {
+    public record CounterPos(int row, int col, int length, CounterType type) {
     }
 
     public TopologyAsciiRenderer(int nodeWidth, boolean unicode) {
@@ -78,7 +78,16 @@ public class TopologyAsciiRenderer {
         return boxWidth;
     }
 
+    public List<CounterPos> getCounterPositions() {
+        return counterPositions;
+    }
+
     public String renderDiagram(TopologyLayoutResult result) {
+        String plain = renderDiagramPlain(result);
+        return applyAnsiColors(plain);
+    }
+
+    public String renderDiagramPlain(TopologyLayoutResult result) {
         counterPositions.clear();
 
         int gridWidth = toCol(result.totalWidth) + boxWidth + 4;
@@ -110,8 +119,7 @@ public class TopologyAsciiRenderer {
             drawNode(grid, node);
         }
 
-        String plain = gridToString(grid);
-        return applyAnsiColors(plain);
+        return gridToString(grid);
     }
 
     private void drawNode(char[][] grid, TopologyLayoutNode node) {
@@ -129,22 +137,31 @@ public class TopologyAsciiRenderer {
         lines.addAll(wrapText(line1, boxWidth - 4));
         if (!showDescription) {
             String line2 = "(" + node.from + ")";
-            lines.addAll(wrapText(line2, boxWidth - 4));
+            List<String> fromLines = wrapText(line2, boxWidth - 4);
+            lines.addAll(fromLines);
+            // Always reserve 2 lines for from so all boxes have the same height
+            if (fromLines.size() < 2) {
+                lines.add("");
+            }
         }
 
-        if (metrics && (node.exchangesTotal > 0 || node.exchangesFailed > 0)) {
-            long ok = node.exchangesTotal - node.exchangesFailed;
-            StringBuilder sb = new StringBuilder();
-            if (ok > 0) {
-                sb.append(ok);
-            }
-            if (node.exchangesFailed > 0) {
-                if (!sb.isEmpty()) {
-                    sb.append("/");
+        if (metrics) {
+            if (node.exchangesTotal > 0 || node.exchangesFailed > 0) {
+                long ok = node.exchangesTotal - node.exchangesFailed;
+                StringBuilder sb = new StringBuilder();
+                if (ok > 0) {
+                    sb.append(ok);
                 }
-                sb.append(node.exchangesFailed).append("!");
+                if (node.exchangesFailed > 0) {
+                    if (!sb.isEmpty()) {
+                        sb.append("/");
+                    }
+                    sb.append(node.exchangesFailed).append("!");
+                }
+                lines.add(sb.toString());
+            } else {
+                lines.add("");
             }
-            lines.add(sb.toString());
         }
 
         // Trim to MAX_WRAP_LINES
@@ -191,10 +208,6 @@ public class TopologyAsciiRenderer {
             int textCol = col + 2 + Math.max(0, (innerWidth - text.length()) / 2);
             drawText(grid, r, textCol, text);
 
-            // Record ANSI color for trigger nodes and metrics
-            if (i == 0 && "trigger".equals(node.nodeType)) {
-                counterPositions.add(new CounterPos(r, textCol, text.length(), CounterType.TRIGGER));
-            }
             if (metrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
                 long ok = node.exchangesTotal - node.exchangesFailed;
                 if (ok > 0) {
@@ -278,8 +291,8 @@ public class TopologyAsciiRenderer {
     }
 
     private int boxHeight(TopologyLayoutNode node) {
-        int lines = 2; // routeId + from
-        if (metrics && node.exchangesTotal > 0) {
+        int lines = 3; // routeId + from (2 lines reserved)
+        if (metrics) {
             lines++;
         }
         return 2 + Math.min(lines, MAX_WRAP_LINES + 1);

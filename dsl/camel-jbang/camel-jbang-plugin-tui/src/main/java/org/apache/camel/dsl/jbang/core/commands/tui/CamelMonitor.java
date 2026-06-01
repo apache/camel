@@ -107,13 +107,13 @@ public class CamelMonitor extends CamelCommand {
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
     private static final int TAB_LOG = 1;
-    private static final int TAB_ROUTES = 2;
-    private static final int TAB_ENDPOINTS = 3;
-    private static final int TAB_HTTP = 4;
-    private static final int TAB_HEALTH = 5;
-    private static final int TAB_HISTORY = 6;
-    private static final int TAB_ERRORS = 7;
-    private static final int TAB_METRICS = 8;
+    private static final int TAB_DIAGRAM = 2;
+    private static final int TAB_ROUTES = 3;
+    private static final int TAB_ENDPOINTS = 4;
+    private static final int TAB_HTTP = 5;
+    private static final int TAB_HEALTH = 6;
+    private static final int TAB_HISTORY = 7;
+    private static final int TAB_ERRORS = 8;
     private static final int TAB_MORE = 9;
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -250,6 +250,7 @@ public class CamelMonitor extends CamelCommand {
 
     private MonitorContext ctx;
     private LogTab logTab;
+    private DiagramTab diagramTab;
     private RoutesTab routesTab;
     private ConsumersTab consumersTab;
     private EndpointsTab endpointsTab;
@@ -314,6 +315,7 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setContext(ctx);
         actionsPopup.setResetStatsAction(this::resetStats);
         logTab = new LogTab(ctx);
+        diagramTab = new DiagramTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
         endpointsTab = new EndpointsTab(
@@ -437,7 +439,7 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
                 if (ke.isDown()) {
-                    morePopupState.selectNext(10);
+                    morePopupState.selectNext(11);
                     return true;
                 }
                 // Shortcut keys for quick selection
@@ -459,8 +461,9 @@ public class CamelMonitor extends CamelCommand {
                             case 5 -> consumersTab;
                             case 6 -> inflightTab;
                             case 7 -> memoryTab;
-                            case 8 -> startupTab;
-                            case 9 -> threadsTab;
+                            case 8 -> metricsTab;
+                            case 9 -> startupTab;
+                            case 10 -> threadsTab;
                             default -> null;
                         };
                         if (activeMoreTab != null) {
@@ -555,25 +558,25 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (!isInfraSelected()) {
                     if (ke.isChar('3')) {
-                        return handleTabKey(TAB_ROUTES);
+                        return handleTabKey(TAB_DIAGRAM);
                     }
                     if (ke.isChar('4')) {
-                        return handleTabKey(TAB_ENDPOINTS);
+                        return handleTabKey(TAB_ROUTES);
                     }
                     if (ke.isChar('5')) {
-                        return handleTabKey(TAB_HTTP);
+                        return handleTabKey(TAB_ENDPOINTS);
                     }
                     if (ke.isChar('6')) {
-                        return handleTabKey(TAB_HEALTH);
+                        return handleTabKey(TAB_HTTP);
                     }
                     if (ke.isChar('7')) {
-                        return handleTabKey(TAB_HISTORY);
+                        return handleTabKey(TAB_HEALTH);
                     }
                     if (ke.isChar('8')) {
-                        return handleTabKey(TAB_ERRORS);
+                        return handleTabKey(TAB_HISTORY);
                     }
                     if (ke.isChar('9')) {
-                        return handleTabKey(TAB_METRICS);
+                        return handleTabKey(TAB_ERRORS);
                     }
                     if (ke.isChar('0')) {
                         return handleTabKey(TAB_MORE);
@@ -783,10 +786,12 @@ public class CamelMonitor extends CamelCommand {
                 long cutoff = now - 2000;
                 recentKeys.removeIf(k -> k.timestamp() < cutoff);
             }
-            long interval = routesTab.isShowDiagram() ? Math.max(refreshInterval, 1000) : refreshInterval;
+            boolean anyDiagramShowing = routesTab.isShowDiagram() || diagramTab.isShowDiagram();
+            long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
                 refreshData();
                 routesTab.refreshDiagramIfNeeded();
+                diagramTab.refreshDiagramIfNeeded();
                 return true;
             }
             return !routesTab.hasImageDiagram();
@@ -861,6 +866,9 @@ public class CamelMonitor extends CamelCommand {
             refreshLogData();
             logTab.onTabSelected();
         }
+        if (tab == TAB_DIAGRAM) {
+            diagramTab.onTabSelected();
+        }
         if (tab == TAB_HISTORY && ctx.selectedPid != null) {
             try {
                 long pid = Long.parseLong(ctx.selectedPid);
@@ -904,6 +912,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void resetIntegrationTabState() {
+        diagramTab.onIntegrationChanged();
         routesTab.onIntegrationChanged();
         httpTab.onIntegrationChanged();
         logTab.onIntegrationChanged();
@@ -1064,19 +1073,17 @@ public class CamelMonitor extends CamelCommand {
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
         int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
 
-        int metricsCount = hasSelection ? sel.meters.size() : 0;
-
         // Row 0: label-only titles — fixed width so the tab bar never shifts when badges appear
         Line[] labels = {
                 Line.from(" 1 Overview "),
                 Line.from(" 2 Log "),
-                Line.from(routesTab.isTopMode() ? " 3  Top  " : " 3 Route "),
-                Line.from(" 4 Endpoint "),
-                Line.from(" 5 HTTP "),
-                Line.from(" 6 Health "),
-                Line.from(" 7 Inspect "),
-                Line.from(" 8 Errors "),
-                Line.from(" 9 Metrics "),
+                Line.from(" 3 Diagram "),
+                Line.from(routesTab.isTopMode() ? " 4  Top  " : " 4 Route "),
+                Line.from(" 5 Endpoint "),
+                Line.from(" 6 HTTP "),
+                Line.from(" 7 Health "),
+                Line.from(" 8 Inspect "),
+                Line.from(" 9 Errors "),
                 Line.from(" 0 More▾ "),
         };
         currentTabLabels = labels;
@@ -1111,6 +1118,7 @@ public class CamelMonitor extends CamelCommand {
                 badgeTexts[TAB_OVERVIEW] = "(" + activeCount + ")";
             }
             if (routeCount > 0) {
+                badgeTexts[TAB_DIAGRAM] = "(1)";
                 badgeTexts[TAB_ROUTES] = "(" + routeCount + ")";
             }
             if (endpointCount > 0) {
@@ -1130,9 +1138,6 @@ public class CamelMonitor extends CamelCommand {
                 badgeStyles[TAB_HISTORY] = cyan;
             } else if (historyCount > 0) {
                 badgeTexts[TAB_HISTORY] = "(" + historyCount + ")";
-            }
-            if (metricsCount > 0) {
-                badgeTexts[TAB_METRICS] = "(" + metricsCount + ")";
             }
             if (cbOpenCount > 0) {
                 badgeTexts[TAB_MORE] = "(" + cbOpenCount + " OPEN)";
@@ -1179,7 +1184,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 11;
+        int popupH = 12;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -1209,6 +1214,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from(Line.from(Span.raw("  Co"), Span.styled("n", keyStyle), Span.raw("sumers"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
+                ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
         };
@@ -1305,11 +1311,14 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isChar('m')) {
             return 7;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('e')) {
             return 8;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 9;
+        }
+        if (ke.isChar('t')) {
+            return 10;
         }
         return -1;
     }
@@ -1318,13 +1327,13 @@ public class CamelMonitor extends CamelCommand {
         return switch (tabsState.selected()) {
             case TAB_OVERVIEW -> overviewTab;
             case TAB_LOG -> logTab;
+            case TAB_DIAGRAM -> diagramTab;
             case TAB_ROUTES -> routesTab;
             case TAB_ENDPOINTS -> endpointsTab;
             case TAB_HEALTH -> healthTab;
             case TAB_HISTORY -> historyTab;
             case TAB_HTTP -> httpTab;
             case TAB_ERRORS -> errorsTab;
-            case TAB_METRICS -> metricsTab;
             case TAB_MORE -> activeMoreTab;
             default -> null;
         };
@@ -2571,8 +2580,8 @@ public class CamelMonitor extends CamelCommand {
     // ---- MCP accessor methods ----
 
     private static final String[] TAB_NAMES = {
-            "Overview", "Log", "Routes", "Endpoints",
-            "HTTP", "Health", "Inspect", "Errors", "Circuit Breaker", "Consumers"
+            "Overview", "Log", "Diagram", "Routes", "Endpoints",
+            "HTTP", "Health", "Inspect", "Errors", "More"
     };
 
     Buffer getLastBuffer() {
