@@ -293,7 +293,19 @@ public class CamelJBangMain implements Callable<Integer> {
         return false;
     }
 
-    private void printAvailablePlugins() {
+    void printAvailablePlugins() {
+        // check if the plugin banner is disabled via global config
+        boolean[] enabled = { true };
+        CommandLineHelper.loadProperties(properties -> {
+            String v = properties.getProperty("camel.jbang.plugin.banner");
+            if ("false".equalsIgnoreCase(v)) {
+                enabled[0] = false;
+            }
+        });
+        if (!enabled[0]) {
+            return;
+        }
+
         Set<String> installed = new HashSet<>();
         JsonObject config = PluginHelper.getPluginConfig();
         if (config != null) {
@@ -330,6 +342,7 @@ public class CamelJBangMain implements Callable<Integer> {
             out.println();
             out.println("Tip: Install with: camel plugin add <name>");
             out.println("     Bundled plugins are auto-installed on first use.");
+            out.println("     Turn off: camel config set camel.jbang.plugin.banner=false");
         }
     }
 
