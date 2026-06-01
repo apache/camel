@@ -19,6 +19,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-config.adoc[camel config] | Get and set user configuration values
 | xref:jbang-commands/camel-jbang-debug.adoc[camel debug] | Debug local Camel integration
 | xref:jbang-commands/camel-jbang-dependency.adoc[camel dependency] | Displays all Camel dependencies required to run
+| xref:jbang-commands/camel-jbang-dev.adoc[camel dev] | Run in dev mode with live reload
 | xref:jbang-commands/camel-jbang-dirty.adoc[camel dirty] | Check if there are dirty files from previous Camel runs that did not terminate gracefully
 | xref:jbang-commands/camel-jbang-doc.adoc[camel doc] | Shows documentation for kamelet, component, and other Camel resources
 | xref:jbang-commands/camel-jbang-doctor.adoc[camel doctor] | Checks the environment and reports potential issues
