@@ -1682,6 +1682,7 @@ public class CamelMonitor extends CamelCommand {
         // Insert F2/F3 after first hint (q) — each hint is 2 spans (key + label)
         int insertPos = Math.min(2, spans.size());
         List<Span> fKeySpans = new ArrayList<>();
+        hint(fKeySpans, "F1", "help");
         hint(fKeySpans, "F2", "actions");
         if (getNonVanishingIntegrations().size() > 1) {
             hint(fKeySpans, "F3", "switch");
