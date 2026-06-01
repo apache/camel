@@ -51,6 +51,7 @@ public class TopologyAsciiRenderer {
     private final int boxWidth;
     private final boolean unicode;
     private final boolean metrics;
+    private final boolean showDescription;
     private final List<CounterPos> counterPositions = new ArrayList<>();
 
     enum CounterType {
@@ -64,14 +65,15 @@ public class TopologyAsciiRenderer {
     }
 
     public TopologyAsciiRenderer(int nodeWidth, boolean unicode) {
-        this(nodeWidth, unicode, false);
+        this(nodeWidth, unicode, false, false);
     }
 
-    public TopologyAsciiRenderer(int nodeWidth, boolean unicode, boolean metrics) {
+    public TopologyAsciiRenderer(int nodeWidth, boolean unicode, boolean metrics, boolean showDescription) {
         this.nodeWidth = nodeWidth;
         this.boxWidth = Math.max(MIN_BOX_WIDTH, nodeWidth / X_DIVISOR);
         this.unicode = unicode;
         this.metrics = metrics;
+        this.showDescription = showDescription;
     }
 
     public int getBoxWidth() {
@@ -118,12 +120,19 @@ public class TopologyAsciiRenderer {
         int col = toCol(node.x);
         int row = toRow(node.y);
 
-        String line1 = node.routeId;
-        String line2 = "(" + node.from + ")";
+        String line1;
+        if (showDescription && node.description != null && !node.description.isBlank()) {
+            line1 = node.description;
+        } else {
+            line1 = node.routeId;
+        }
 
         List<String> lines = new ArrayList<>();
         lines.addAll(wrapText(line1, boxWidth - 4));
-        lines.addAll(wrapText(line2, boxWidth - 4));
+        if (!showDescription) {
+            String line2 = "(" + node.from + ")";
+            lines.addAll(wrapText(line2, boxWidth - 4));
+        }
 
         if (metrics && (node.exchangesTotal > 0 || node.exchangesFailed > 0)) {
             long ok = node.exchangesTotal - node.exchangesFailed;
@@ -251,28 +260,6 @@ public class TopologyAsciiRenderer {
             setChar(grid, toTop - 1, toCx, arrow);
         }
 
-        // Draw edge label at midpoint
-        String label = edge.endpoint;
-        if (label != null && !label.isEmpty()) {
-            int labelRow;
-            int labelCol;
-            if (fromCx == toCx) {
-                labelRow = fromBottom + (toTop - fromBottom) / 2;
-                labelCol = fromCx + 2;
-            } else {
-                int midRow = fromBottom + (toTop - fromBottom) / 2;
-                labelRow = midRow - 1;
-                labelCol = Math.min(fromCx, toCx) + 1;
-            }
-            if (label.length() > boxWidth) {
-                label = label.substring(0, boxWidth - 3) + "...";
-            }
-            drawText(grid, labelRow, labelCol, label);
-
-            if (dashed) {
-                counterPositions.add(new CounterPos(labelRow, labelCol, label.length(), CounterType.EXTERNAL));
-            }
-        }
     }
 
     private void drawSelfLoop(char[][] grid, TopologyLayoutEdge edge) {
@@ -292,13 +279,6 @@ public class TopologyAsciiRenderer {
         setChar(grid, topRow, col + 2, unicode ? UNI_TR : '+');
         setChar(grid, botRow, col + 2, unicode ? UNI_BR : '+');
 
-        String label = edge.endpoint;
-        if (label != null && !label.isEmpty()) {
-            if (label.length() > 10) {
-                label = label.substring(0, 7) + "...";
-            }
-            drawText(grid, topRow + 1, col + 4, label);
-        }
     }
 
     private int boxHeight(TopologyLayoutNode node) {

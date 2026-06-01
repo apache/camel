@@ -35,13 +35,14 @@ public interface RouteTopologyDumper {
     /**
      * A node in the topology representing a route.
      *
-     * @param routeId    the route id
-     * @param from       the input endpoint URI (scheme:context-path, query parameters stripped)
-     * @param fromScheme the component scheme of the input endpoint
-     * @param nodeType   the type of node: "route" for regular routes, "trigger" for timer/quartz/cron/scheduler
-     * @since            4.21
+     * @param routeId     the route id
+     * @param description the route description (may be null)
+     * @param from        the input endpoint URI (scheme:context-path, query parameters stripped)
+     * @param fromScheme  the component scheme of the input endpoint
+     * @param nodeType    the type of node: "route" for regular routes, "trigger" for timer/quartz/cron/scheduler
+     * @since             4.21
      */
-    record TopologyNode(String routeId, String from, String fromScheme, String nodeType) {
+    record TopologyNode(String routeId, String description, String from, String fromScheme, String nodeType) {
     }
 
     /**

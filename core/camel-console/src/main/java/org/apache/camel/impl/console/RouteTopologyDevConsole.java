@@ -18,6 +18,8 @@ package org.apache.camel.impl.console;
 
 import java.util.Map;
 
+import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyEdge;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyNode;
@@ -30,6 +32,8 @@ import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "route-topology", description = "Route topology showing inter-route connections")
 public class RouteTopologyDevConsole extends AbstractDevConsole {
+
+    private static final String METRIC = "metric";
 
     public RouteTopologyDevConsole() {
         super("camel", "route-topology", "Route Topology", "Route topology showing inter-route connections");
@@ -69,13 +73,30 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         }
         TopologyResult result = dumper.dumpTopology(getCamelContext());
 
+        boolean metric = "true".equals(options.get(METRIC));
+        ManagedCamelContext mcc = metric
+                ? getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                : null;
+
         JsonArray nodesArr = new JsonArray();
         for (TopologyNode node : result.nodes()) {
             JsonObject jo = new JsonObject();
             jo.put("routeId", node.routeId());
+            if (node.description() != null) {
+                jo.put("description", node.description());
+            }
             jo.put("from", node.from());
             jo.put("fromScheme", node.fromScheme());
             jo.put("nodeType", node.nodeType());
+
+            if (mcc != null) {
+                ManagedRouteMBean mrb = mcc.getManagedRoute(node.routeId());
+                if (mrb != null) {
+                    jo.put("exchangesTotal", mrb.getExchangesTotal());
+                    jo.put("exchangesFailed", mrb.getExchangesFailed());
+                }
+            }
+
             nodesArr.add(jo);
         }
         root.put("nodes", nodesArr);

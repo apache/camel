@@ -245,8 +245,10 @@ public class TopologyLayoutEngine {
                 TopologyNodeInfo info = nodeMap.get(routeId);
                 int x = startX + i * (nodeWidth + H_GAP);
                 TopologyLayoutNode ln = new TopologyLayoutNode(
-                        routeId, info.from, info.nodeType, info.connectionType,
+                        routeId, info.description, info.from, info.nodeType, info.connectionType,
                         x, y, nodeWidth, nodeHeight, layerIdx);
+                ln.exchangesTotal = info.exchangesTotal;
+                ln.exchangesFailed = info.exchangesFailed;
                 layoutNodes.put(routeId, ln);
             }
         }
@@ -257,6 +259,7 @@ public class TopologyLayoutEngine {
     // Input data structures
     public static class TopologyNodeInfo {
         public String routeId;
+        public String description;
         public String from;
         public String fromScheme;
         public String nodeType;
@@ -275,6 +278,7 @@ public class TopologyLayoutEngine {
     // Layout output
     public static class TopologyLayoutNode {
         public final String routeId;
+        public final String description;
         public final String from;
         public final String nodeType;
         public final String connectionType;
@@ -287,9 +291,10 @@ public class TopologyLayoutEngine {
         public long exchangesFailed;
 
         public TopologyLayoutNode(
-                                  String routeId, String from, String nodeType, String connectionType,
+                                  String routeId, String description, String from, String nodeType, String connectionType,
                                   int x, int y, int width, int height, int layer) {
             this.routeId = routeId;
+            this.description = description;
             this.from = from;
             this.nodeType = nodeType;
             this.connectionType = connectionType;

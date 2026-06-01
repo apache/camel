@@ -16,11 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
+import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.diagram.TopologyAsciiRenderer;
 import org.apache.camel.diagram.TopologyHelper;
+import org.apache.camel.diagram.TopologyImageRenderer;
 import org.apache.camel.diagram.TopologyLayoutEngine;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
@@ -30,6 +37,10 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+import org.jline.terminal.impl.TerminalGraphics;
+import org.jline.terminal.impl.TerminalGraphicsManager;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -39,7 +50,9 @@ import picocli.CommandLine.Command;
                  "%nExamples:",
                  "  camel cmd route-topology",
                  "  camel cmd route-topology --json",
-                 "  camel cmd route-topology --diagram" })
+                 "  camel cmd route-topology --theme=unicode",
+                 "  camel cmd route-topology --theme=dark",
+                 "  camel cmd route-topology --theme=dark --output=topology.png" })
 public class CamelRouteTopologyAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of a running Camel integration", arity = "0..1")
@@ -49,13 +62,31 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Option(names = { "--diagram" },
-                        description = "Display as visual topology diagram")
-    boolean diagram;
+    @CommandLine.Option(names = { "--theme" },
+                        description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
+                                      + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). "
+                                      + "Use ascii/unicode for plain text output.")
+    String theme;
+
+    @CommandLine.Option(names = { "--output" },
+                        description = "Save diagram to a file (PNG for image themes, text for ascii theme)")
+    String output;
 
     @CommandLine.Option(names = { "--box-width" }, defaultValue = "180",
                         description = "Width of diagram node boxes")
     int boxWidth = 180;
+
+    @CommandLine.Option(names = { "--font-size" },
+                        description = "Font size in logical pixels for node text", defaultValue = "12")
+    int fontSize;
+
+    @CommandLine.Option(names = { "--description" },
+                        description = "Prefer route description over route id in node labels")
+    boolean description;
+
+    @CommandLine.Option(names = { "--metric" }, defaultValue = "true",
+                        description = "Whether to include live metrics")
+    boolean metric;
 
     public CamelRouteTopologyAction(CamelJBangMain main) {
         super(main);
@@ -76,6 +107,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
 
         long pid = pids.get(0);
         Path outputFile = prepareAction(Long.toString(pid), "route-topology", root -> {
+            root.put("metric", String.valueOf(metric));
         });
 
         JsonObject jo = getJsonObject(outputFile);
@@ -83,8 +115,12 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
             if (jsonOutput) {
                 String dump = Jsoner.prettyPrint(jo.toJson(), 2);
                 printer().println(dump);
-            } else if (diagram) {
-                printDiagram(jo);
+            } else if (theme != null) {
+                if (isTextTheme()) {
+                    printTextDiagram(jo);
+                } else {
+                    printImageDiagram(jo);
+                }
             } else {
                 printTopology(jo);
             }
@@ -128,7 +164,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         }
     }
 
-    private void printDiagram(JsonObject jo) {
+    private void printTextDiagram(JsonObject jo) throws Exception {
         List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(jo);
         List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(jo);
 
@@ -136,9 +172,75 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         TopologyLayoutResult result = engine.layout(nodes, edges);
 
         TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
-                engine.getNodeWidth(), true);
-        String output = renderer.renderDiagram(result);
-        printer().print(output);
+                engine.getNodeWidth(), isUnicodeTheme(), metric, description);
+        String text = renderer.renderDiagram(result);
+
+        if (output != null) {
+            String fileName = output.endsWith(".png")
+                    ? output.substring(0, output.length() - 4) + ".txt" : output;
+            File file = new File(fileName);
+            File parentDir = file.getParentFile();
+            if (parentDir != null) {
+                parentDir.mkdirs();
+            }
+            Files.writeString(file.toPath(), text);
+            printer().println("Diagram saved to: " + file.getAbsolutePath());
+        } else {
+            printer().print(text);
+        }
+    }
+
+    private void printImageDiagram(JsonObject jo) throws Exception {
+        System.setProperty("java.awt.headless", "true");
+
+        List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(jo);
+        List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(jo);
+
+        TopologyLayoutEngine engine = new TopologyLayoutEngine(boxWidth);
+        TopologyLayoutResult result = engine.layout(nodes, edges);
+
+        String colorSpec = System.getenv("DIAGRAM_COLORS");
+        DiagramColors colors = DiagramColors.parse(colorSpec != null ? colorSpec : theme);
+
+        BufferedImage image = TopologyImageRenderer.renderImage(
+                result, colors, fontSize, boxWidth, metric, description);
+
+        if (output != null) {
+            File file = new File(output);
+            File parentDir = file.getParentFile();
+            if (parentDir != null) {
+                parentDir.mkdirs();
+            }
+            ImageIO.write(image, "PNG", file);
+            printer().println("Diagram saved to: " + file.getAbsolutePath());
+        } else {
+            Terminal terminal = TerminalBuilder.builder().system(true).build();
+            try {
+                TerminalGraphics terminalGraphics = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
+                if (terminalGraphics == null) {
+                    printer().println("Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
+                    printer().println(
+                            "Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
+                    printer().println("Or use --theme=ascii or --theme=unicode for plain text output.");
+                    return;
+                }
+                TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions()
+                        .preserveAspectRatio(true);
+                terminalGraphics.displayImage(terminal, image, opts);
+                terminal.writer().println();
+                terminal.flush();
+            } finally {
+                terminal.close();
+            }
+        }
+    }
+
+    private boolean isTextTheme() {
+        return "ascii".equalsIgnoreCase(theme) || "unicode".equalsIgnoreCase(theme);
+    }
+
+    private boolean isUnicodeTheme() {
+        return "unicode".equalsIgnoreCase(theme);
     }
 
 }

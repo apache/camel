@@ -43,9 +43,12 @@ public final class TopologyHelper {
             JsonObject no = arr.getJsonObject(i);
             TopologyNodeInfo node = new TopologyNodeInfo();
             node.routeId = no.getString("routeId");
+            node.description = no.getString("description");
             node.from = no.getString("from");
             node.fromScheme = no.getString("fromScheme");
             node.nodeType = no.getStringOrDefault("nodeType", "route");
+            node.exchangesTotal = no.getLongOrDefault("exchangesTotal", 0);
+            node.exchangesFailed = no.getLongOrDefault("exchangesFailed", 0);
             nodes.add(node);
         }
         return nodes;

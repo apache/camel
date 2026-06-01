@@ -51,8 +51,9 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
             String normalizedInput = URISupport.stripQuery(inputUri);
             String scheme = extractScheme(normalizedInput);
             String nodeType = TRIGGER_SCHEMES.contains(scheme) ? "trigger" : "route";
+            String description = rd.getDescriptionText();
 
-            nodes.add(new TopologyNode(rd.getRouteId(), normalizedInput, scheme, nodeType));
+            nodes.add(new TopologyNode(rd.getRouteId(), description, normalizedInput, scheme, nodeType));
             inputUriToRouteIds
                     .computeIfAbsent(normalizedInput, k -> new ArrayList<>())
                     .add(rd.getRouteId());
