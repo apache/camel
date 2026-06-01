@@ -64,6 +64,11 @@ public class DiagramDevConsole extends AbstractDevConsole {
      */
     public static final String AUTO_REFRESH = "autoRefresh";
 
+    /**
+     * Diagram mode: route (default) or topology
+     */
+    public static final String MODE = "mode";
+
     public DiagramDevConsole() {
         super("camel", "route-diagram", "Route Diagram", "Visual route diagrams");
     }
@@ -72,6 +77,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         final StringJoiner sj = new StringJoiner("\n");
 
+        String mode = (String) options.getOrDefault(MODE, "route");
         String filter = (String) options.getOrDefault(FILTER, "*");
         String theme = (String) options.getOrDefault(THEME, RouteDiagramDumper.Theme.TRANSPARENT.name());
         int fontSize
@@ -84,7 +90,9 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
-            if (isTextTheme(theme)) {
+            if ("topology".equalsIgnoreCase(mode)) {
+                sj.add(doCallTopologyText(dumper, theme, nodeWidth, metric, fontSize, refresh));
+            } else if (isTextTheme(theme)) {
                 String text = dumper.dumpRoutesAsAsciiArt(filter,
                         RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
                         nodeWidth, isUnicodeTheme(theme));
@@ -112,6 +120,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String mode = (String) options.getOrDefault(MODE, "route");
         String filter = (String) options.getOrDefault(FILTER, "*");
         String theme = (String) options.getOrDefault(THEME, RouteDiagramDumper.Theme.TRANSPARENT.name());
         int fontSize
@@ -124,7 +133,9 @@ public class DiagramDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
-            if (isTextTheme(theme)) {
+            if ("topology".equalsIgnoreCase(mode)) {
+                return doCallTopologyJson(dumper, theme, nodeWidth, metric, fontSize);
+            } else if (isTextTheme(theme)) {
                 String text = dumper.dumpRoutesAsAsciiArt(filter,
                         RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
                         nodeWidth, isUnicodeTheme(theme));
@@ -140,6 +151,48 @@ public class DiagramDevConsole extends AbstractDevConsole {
             // ignore
         }
 
+        return root;
+    }
+
+    private String doCallTopologyText(
+            RouteDiagramDumper dumper, String theme, int nodeWidth,
+            boolean metric, int fontSize, boolean refresh)
+            throws Exception {
+        if (isTextTheme(theme)) {
+            return dumper.dumpTopologyAsAsciiArt(nodeWidth, isUnicodeTheme(theme));
+        } else {
+            BufferedImage image = dumper.dumpTopologyAsImage(
+                    RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize);
+            if (image == null) {
+                return "";
+            }
+            String base64 = dumper.imageToBase64(image);
+            String html = String.format(
+                    "  <body>\n    <img src=\"data:image/png;base64,%s\" alt=\"Route Topology\">\n  </body>\n",
+                    base64);
+            if (refresh) {
+                html = "<head><meta http-equiv=\"refresh\" content=\"5\"></head>\n" + html;
+            }
+            return "<html>\n" + html + "</html>\n";
+        }
+    }
+
+    private Map<String, Object> doCallTopologyJson(
+            RouteDiagramDumper dumper, String theme, int nodeWidth,
+            boolean metric, int fontSize)
+            throws Exception {
+        JsonObject root = new JsonObject();
+        if (isTextTheme(theme)) {
+            String text = dumper.dumpTopologyAsAsciiArt(nodeWidth, isUnicodeTheme(theme));
+            root.put("text", text);
+        } else {
+            BufferedImage image = dumper.dumpTopologyAsImage(
+                    RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize);
+            if (image != null) {
+                String base64 = dumper.imageToBase64(image);
+                root.put("image", base64);
+            }
+        }
         return root;
     }
 

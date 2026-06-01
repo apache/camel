@@ -194,4 +194,57 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         return renderAscii(routes, nodeWidth, nodeLabel, unicode, null, null);
     }
 
+    @Override
+    public String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode) {
+        DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("route-topology");
+        if (dc == null) {
+            return "";
+        }
+        JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+
+        var nodes = TopologyHelper.parseNodes(root);
+        var edges = TopologyHelper.parseEdges(root);
+
+        TopologyLayoutEngine engine = new TopologyLayoutEngine(nodeWidth);
+        TopologyLayoutEngine.TopologyLayoutResult result = engine.layout(nodes, edges);
+
+        TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
+                nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode);
+        return renderer.renderDiagram(result);
+    }
+
+    @Override
+    public BufferedImage dumpTopologyAsImage(Theme theme, boolean metrics, int nodeWidth, int fontSize) {
+        DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("route-topology");
+        if (dc == null) {
+            return null;
+        }
+        JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+
+        var nodes = TopologyHelper.parseNodes(root);
+        var edges = TopologyHelper.parseEdges(root);
+
+        // Enrich with metrics from route-structure console
+        if (metrics) {
+            DevConsole structureDc = getCamelContext().getCamelContextExtension()
+                    .getContextPlugin(DevConsoleRegistry.class)
+                    .resolveById("route-structure");
+            if (structureDc != null) {
+                JsonObject structureJson = (JsonObject) structureDc.call(
+                        DevConsole.MediaType.JSON, Map.of("filter", "*", "metric", "true"));
+                TopologyHelper.enrichWithMetrics(nodes, structureJson);
+            }
+        }
+
+        TopologyLayoutEngine engine = new TopologyLayoutEngine(nodeWidth);
+        TopologyLayoutEngine.TopologyLayoutResult result = engine.layout(nodes, edges);
+
+        // Render as image
+        String themeStr = theme != null ? theme.name() : "dark";
+        RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse(themeStr.toLowerCase());
+        return TopologyImageRenderer.renderImage(result, colors, fontSize, nodeWidth, metrics, false);
+    }
+
 }

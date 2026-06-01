@@ -168,6 +168,7 @@ import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RouteTemplateParameterSource;
+import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -414,6 +415,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(SimpleFunctionRegistry.class, this::createSimpleFunctionRegistry);
         camelContextExtension.lazyAddContextPlugin(RestRegistry.class, this::createRestRegistry);
         camelContextExtension.lazyAddContextPlugin(RouteDiagramDumper.class, this::createRouteDiagramDumper);
+        camelContextExtension.lazyAddContextPlugin(RouteTopologyDumper.class, this::createRouteTopologyDumper);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -4389,6 +4391,13 @@ public abstract class AbstractCamelContext extends BaseService
                 RouteDiagramDumper.FACTORY,
                 RouteDiagramDumper.class,
                 "camel-diagram");
+    }
+
+    protected RouteTopologyDumper createRouteTopologyDumper() {
+        return ResolverHelper.resolveMandatoryService(getCamelContextReference(),
+                RouteTopologyDumper.FACTORY,
+                RouteTopologyDumper.class,
+                "camel-core-engine");
     }
 
     @Override
