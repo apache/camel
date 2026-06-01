@@ -97,6 +97,9 @@ The following component-specific header filter strategy classes have been remove
 
 If your code references any of these classes directly, replace them with `DefaultHeaderFilterStrategy`.
 
+The class `org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy` has been deprecated.
+Use `org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy` directly instead.
+
 ==== Error Registry SPI changes
 
 The `ErrorRegistry` SPI has been enhanced to capture rich exchange data snapshots at error time,
