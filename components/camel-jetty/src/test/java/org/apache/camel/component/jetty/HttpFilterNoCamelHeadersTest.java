@@ -39,7 +39,7 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).header("bar").isEqualTo(123);
-        getMockEndpoint("mock:result").message(0).header(Exchange.FILE_NAME).isEqualTo("test.txt");
+        getMockEndpoint("mock:result").message(0).header(Exchange.FILE_NAME).isNull();
         getMockEndpoint("mock:result").message(0).header("CamelDummy").isNull();
 
         Exchange out = template.request("direct:start", new Processor() {
