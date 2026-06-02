@@ -225,6 +225,7 @@ public class CamelMonitor extends CamelCommand {
     private final Queue<PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
     private final List<KeyRecord> recentKeys = new ArrayList<>();
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
+    private final DrawOverlay drawOverlay = new DrawOverlay();
     private final HelpOverlay helpOverlay = new HelpOverlay();
 
     private final ActionsPopup actionsPopup = new ActionsPopup(
@@ -781,6 +782,7 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             actionsPopup.tick(now);
+            drawOverlay.tick(now);
             captionOverlay.tick(now);
             if (recording && !recentKeys.isEmpty()) {
                 long cutoff = now - 2000;
@@ -956,6 +958,9 @@ public class CamelMonitor extends CamelCommand {
         renderTabs(frame, mainChunks.get(2));
         // mainChunks.get(3) is the empty spacer row between tabs and content
         renderContent(frame, mainChunks.get(4));
+        if (drawOverlay.isVisible()) {
+            drawOverlay.render(frame, mainChunks.get(4));
+        }
         if (showKillConfirm) {
             renderKillConfirm(frame, mainChunks.get(4));
         }
@@ -2673,6 +2678,22 @@ public class CamelMonitor extends CamelCommand {
 
     void showCaption(String text, int durationSeconds) {
         captionOverlay.showCaption(text, durationSeconds);
+    }
+
+    boolean isDrawVisible() {
+        return drawOverlay.isVisible();
+    }
+
+    void setDrawing(List<DrawOverlay.DrawCell> cells, int durationSeconds) {
+        drawOverlay.setDrawing(cells, durationSeconds);
+    }
+
+    void appendDrawing(List<DrawOverlay.DrawCell> cells) {
+        drawOverlay.appendDrawing(cells);
+    }
+
+    void clearDrawing() {
+        drawOverlay.clear();
     }
 
     String navigateToTab(String tabName) {

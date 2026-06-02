@@ -318,6 +318,34 @@ class TuiMcpServer {
                 Map.of("seconds", propDef("integer",
                         "Number of seconds to sleep (1-30)")),
                 List.of("seconds")));
+        toolList.add(toolDef(
+                "tui_draw",
+                "Draws characters at specific screen coordinates as an overlay on top of the TUI. "
+                            + "Use this to highlight areas, annotate the screen for the human, "
+                            + "draw shapes, or create fun emoji art. "
+                            + "All cells are sent in a single call to avoid chatty networking. "
+                            + "Coordinates are 0-based and match the screen grid from tui_get_screen. "
+                            + "Characters can be any unicode including emoji. "
+                            + "The drawing overlays on top of existing content without modifying it. "
+                            + "Use with tui_show_caption to explain what you drew.",
+                Map.of("cells", propDef("array",
+                        "Array of cell objects to draw. Each cell has: "
+                                                 + "x (integer, column), y (integer, row), "
+                                                 + "char (string, character to draw), "
+                                                 + "fg (string, optional foreground color: red/green/blue/yellow/cyan/magenta/white/gray/black), "
+                                                 + "bg (string, optional background color, same values), "
+                                                 + "bold (boolean, optional)"),
+                        "duration", propDef("integer",
+                                "Auto-dismiss drawing after this many seconds. "
+                                                       + "If omitted, drawing stays until cleared with tui_draw_clear or replaced by another tui_draw call."),
+                        "append", propDef("boolean",
+                                "If true, add cells to the existing drawing instead of replacing it. Default false.")),
+                List.of("cells")));
+        toolList.add(toolDef(
+                "tui_draw_clear",
+                "Clears the drawing overlay and restores the screen to its normal state. "
+                                  + "The underlying content is unchanged since drawing is an overlay.",
+                Map.of()));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -350,6 +378,8 @@ class TuiMcpServer {
                 case "tui_tape_start" -> callTapeStart(args);
                 case "tui_tape_stop" -> callTapeStop(args);
                 case "tui_sleep" -> callSleep(args);
+                case "tui_draw" -> callDraw(args);
+                case "tui_draw_clear" -> callDrawClear();
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -743,6 +773,75 @@ class TuiMcpServer {
         }
 
         return "Slept for " + seconds + "s";
+    }
+
+    @SuppressWarnings("unchecked")
+    private String callDraw(Map<String, Object> args) {
+        Object cellsArg = args.get("cells");
+        if (!(cellsArg instanceof List)) {
+            return "Error: cells must be an array";
+        }
+        List<Object> cellsList = (List<Object>) cellsArg;
+        if (cellsList.isEmpty()) {
+            return "Error: cells array is empty";
+        }
+
+        List<DrawOverlay.DrawCell> drawCells = new ArrayList<>();
+        for (Object item : cellsList) {
+            if (!(item instanceof Map)) {
+                continue;
+            }
+            Map<String, Object> cell = (Map<String, Object>) item;
+
+            int x = cell.get("x") instanceof Number n ? n.intValue() : -1;
+            int y = cell.get("y") instanceof Number n ? n.intValue() : -1;
+            String ch = cell.get("char") instanceof String s ? s : " ";
+            if (x < 0 || y < 0) {
+                continue;
+            }
+
+            dev.tamboui.style.Style style = dev.tamboui.style.Style.EMPTY;
+            dev.tamboui.style.Color fg = DrawOverlay.parseColor(
+                    cell.get("fg") instanceof String s ? s : null);
+            dev.tamboui.style.Color bg = DrawOverlay.parseColor(
+                    cell.get("bg") instanceof String s ? s : null);
+            if (fg != null) {
+                style = style.fg(fg);
+            }
+            if (bg != null) {
+                style = style.bg(bg);
+            }
+            if (Boolean.TRUE.equals(cell.get("bold"))) {
+                style = style.bold();
+            }
+
+            drawCells.add(new DrawOverlay.DrawCell(x, y, ch, style));
+        }
+
+        if (drawCells.isEmpty()) {
+            return "Error: no valid cells in array";
+        }
+
+        boolean append = Boolean.TRUE.equals(args.get("append"));
+        int duration = 0;
+        if (args.get("duration") instanceof Number n) {
+            duration = n.intValue();
+        }
+
+        if (append) {
+            monitor.appendDrawing(drawCells);
+        } else {
+            monitor.setDrawing(drawCells, duration);
+        }
+
+        return "Drawing " + drawCells.size() + " cell(s)"
+               + (append ? " (appended)" : "")
+               + (duration > 0 ? ", auto-dismiss in " + duration + "s" : "");
+    }
+
+    private String callDrawClear() {
+        monitor.clearDrawing();
+        return "Drawing cleared";
     }
 
     private static JsonArray toJsonArray(List<String> list) {
