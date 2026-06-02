@@ -38,6 +38,13 @@ public class JaegerContainer extends GenericContainer<JaegerContainer> {
 
     public JaegerContainer(String imageName) {
         super(DockerImageName.parse(imageName));
+
+        this.withNetworkAliases(CONTAINER_NAME)
+                .withExposedPorts(
+                        JaegerProperties.DEFAULT_COLLECTOR_GRPC_PORT,
+                        JaegerProperties.DEFAULT_COLLECTOR_HTTP_PORT,
+                        JaegerProperties.DEFAULT_QUERY_UI_PORT)
+                .waitingFor(Wait.forHttp("/").forPort(JaegerProperties.DEFAULT_QUERY_UI_PORT));
     }
 
     public JaegerContainer withFixedPort(int hostPort, int containerPort) {
