@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Color;
+import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -847,9 +848,18 @@ class ActionsPopup {
     private void renderDocViewer(Frame frame, Rect area) {
         frame.renderWidget(Clear.INSTANCE, area);
         Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
+        Title title;
+        if (docTitle != null && docTitle.startsWith("Failed:")) {
+            String rest = docTitle.substring("Failed:".length());
+            title = Title.from(Line.from(
+                    Span.styled(" Failed:", Style.EMPTY.fg(Color.LIGHT_RED).bold()),
+                    Span.raw(rest + " ")));
+        } else {
+            title = Title.from(" " + docTitle + " ");
+        }
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(" " + docTitle + " ")
+                .title(title)
                 .titleBottom(Title.from(Line.from(
                         Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" scroll │"),
                         Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
@@ -861,9 +871,13 @@ class ActionsPopup {
             int totalLines = docLines.size();
             int clampedScroll = Math.min(docScroll, Math.max(0, totalLines - visibleLines));
             int end = Math.min(clampedScroll + visibleLines, totalLines);
-            List<Line> visible = docLines.subList(clampedScroll, end);
+            List<Line> visible = new ArrayList<>(docLines.subList(clampedScroll, end));
+            while (visible.size() < visibleLines) {
+                visible.add(Line.from(""));
+            }
             frame.renderWidget(
-                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
+                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new)))
+                            .overflow(Overflow.CLIP).build(),
                     inner);
         } else {
             MarkdownView view = MarkdownView.builder()
@@ -1333,16 +1347,19 @@ class ActionsPopup {
             displayName = exampleName;
         }
         List<String> extraArgs = runOptionsForm.buildArgs();
+        boolean stub = runOptionsForm.isStubMode();
         runOptionsForm.close();
 
-        List<String> missing = findMissingInfraServices(selectedExample);
-        if (!missing.isEmpty()) {
-            if (!isContainerRuntimeAvailable()) {
-                setNotification("Docker/Podman required for infra services. Run Doctor for details", true);
+        if (!stub) {
+            List<String> missing = findMissingInfraServices(selectedExample);
+            if (!missing.isEmpty()) {
+                if (!isContainerRuntimeAvailable()) {
+                    setNotification("Docker/Podman required for infra services. Run Doctor for details", true);
+                    return;
+                }
+                startMissingInfraAndDeferExample(missing, exampleName, displayName, extraArgs);
                 return;
             }
-            startMissingInfraAndDeferExample(missing, exampleName, displayName, extraArgs);
-            return;
         }
 
         doLaunchExample(exampleName, displayName, extraArgs);
@@ -1916,11 +1933,7 @@ class ActionsPopup {
                     launchNotificationError = false;
                     launchNotificationExpiry = now + 5000;
                 } else {
-                    String detail = readFirstLine(pl.outputFile());
-                    launchNotification = "Failed: " + pl.name()
-                                         + (detail != null ? " - " + detail : "");
-                    launchNotificationError = true;
-                    launchNotificationExpiry = now + 10000;
+                    showFailureLog(pl.name(), pl.outputFile());
                 }
                 it.remove();
             } else if (now - pl.startTime() > 8000) {
@@ -1929,6 +1942,30 @@ class ActionsPopup {
                 launchNotificationExpiry = now + 5000;
                 it.remove();
             }
+        }
+    }
+
+    private void showFailureLog(String name, Path logFile) {
+        List<String> logLines = readAllLines(logFile);
+        if (logLines.isEmpty()) {
+            setNotification("Failed: " + name + " (no output)", true);
+            return;
+        }
+        docTitle = "Failed: " + name;
+        docContent = null;
+        docLines = logLines.stream()
+                .map(line -> TuiHelper.ansiToLine(line.replace("\t", "        "), 0))
+                .collect(Collectors.toList());
+        docScroll = 0;
+        showDocViewer = true;
+        docViewerFromExampleBrowser = false;
+    }
+
+    private static List<String> readAllLines(Path file) {
+        try {
+            return Files.readAllLines(file);
+        } catch (IOException e) {
+            return List.of();
         }
     }
 
