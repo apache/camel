@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
@@ -72,7 +72,7 @@ public final class DirectFunctionFactory implements SimpleLanguageFunctionFactor
         } else if (ObjectHelper.equal(function, "stepId")) {
             return ExpressionBuilder.stepIdExpression();
         } else if (ObjectHelper.equal(function, "null")) {
-            return SimpleExpressionBuilder.nullExpression();
+            return MiscExpressionBuilder.nullExpression();
         }
 
         return null;

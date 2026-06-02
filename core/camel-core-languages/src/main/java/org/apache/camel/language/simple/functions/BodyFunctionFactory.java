@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.OgnlExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -71,7 +71,7 @@ public final class BodyFunctionFactory implements SimpleLanguageFunctionFactory 
                 if (invalid) {
                     throw new SimpleParserException("Valid syntax: ${bodyAs(type).OGNL} was: " + function, index);
                 }
-                return SimpleExpressionBuilder.bodyOgnlExpression(type, remainder);
+                return OgnlExpressionBuilder.bodyOgnlExpression(type, remainder);
             } else {
                 return ExpressionBuilder.bodyExpression(type);
             }
@@ -92,9 +92,9 @@ public final class BodyFunctionFactory implements SimpleLanguageFunctionFactory 
                     throw new SimpleParserException(
                             "Valid syntax: ${mandatoryBodyAs(type).OGNL} was: " + function, index);
                 }
-                return SimpleExpressionBuilder.mandatoryBodyOgnlExpression(type, remainder);
+                return OgnlExpressionBuilder.mandatoryBodyOgnlExpression(type, remainder);
             } else {
-                return SimpleExpressionBuilder.mandatoryBodyExpression(type);
+                return OgnlExpressionBuilder.mandatoryBodyExpression(type);
             }
         }
 
@@ -109,7 +109,7 @@ public final class BodyFunctionFactory implements SimpleLanguageFunctionFactory 
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${body.OGNL} was: " + function, index);
             }
-            return SimpleExpressionBuilder.bodyOgnlExpression(remainder);
+            return OgnlExpressionBuilder.bodyOgnlExpression(remainder);
         }
 
         return null;

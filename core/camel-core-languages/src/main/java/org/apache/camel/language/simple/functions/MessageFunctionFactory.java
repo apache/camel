@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.OgnlExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -48,7 +48,7 @@ public final class MessageFunctionFactory implements SimpleLanguageFunctionFacto
                 if (invalid) {
                     throw new SimpleParserException("Valid syntax: ${messageAs(type).OGNL} was: " + function, index);
                 }
-                return SimpleExpressionBuilder.messageOgnlExpression(type, remainder);
+                return OgnlExpressionBuilder.messageOgnlExpression(type, remainder);
             } else {
                 return ExpressionBuilder.messageExpression(type);
             }

@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 
 import static org.apache.camel.language.simple.SimpleFunctionHelper.appendClass;
@@ -36,9 +36,9 @@ public final class TypeFunctionFactory implements SimpleLanguageFunctionFactory 
     public Expression createFunction(CamelContext camelContext, String function, int index) {
         String remainder = ifStartsWithReturnRemainder("type:", function);
         if (remainder != null) {
-            Expression exp = SimpleExpressionBuilder.typeExpression(remainder);
+            Expression exp = MiscExpressionBuilder.typeExpression(remainder);
             exp.init(camelContext);
-            return SimpleExpressionBuilder.cacheExpression(exp);
+            return MiscExpressionBuilder.cacheExpression(exp);
         }
         return null;
     }

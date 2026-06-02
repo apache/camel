@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.DateExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 
@@ -39,16 +39,16 @@ public final class DateFunctionFactory implements SimpleLanguageFunctionFactory 
                 throw new SimpleParserException(
                         "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, index);
             }
-            return SimpleExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
+            return DateExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
         }
 
         remainder = ifStartsWithReturnRemainder("date:", function);
         if (remainder != null) {
             String[] parts = remainder.split(":", 2);
             if (parts.length == 1) {
-                return SimpleExpressionBuilder.dateExpression(parts[0]);
+                return DateExpressionBuilder.dateExpression(parts[0]);
             } else {
-                return SimpleExpressionBuilder.dateExpression(parts[0], parts[1]);
+                return DateExpressionBuilder.dateExpression(parts[0], parts[1]);
             }
         }
 

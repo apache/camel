@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.BaseSimpleParser;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.FileExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
 import org.apache.camel.language.simple.SimplePredicateParser;
@@ -157,33 +157,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     private Expression createSimpleFileExpression(String remainder, boolean strict) {
         if (ObjectHelper.equal(remainder, "name")) {
-            return SimpleExpressionBuilder.fileNameExpression();
+            return FileExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
-            return SimpleExpressionBuilder.fileNameNoExtensionExpression();
+            return FileExpressionBuilder.fileNameNoExtensionExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext.single")) {
-            return SimpleExpressionBuilder.fileNameNoExtensionSingleExpression();
+            return FileExpressionBuilder.fileNameNoExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "name.ext") || ObjectHelper.equal(remainder, "ext")) {
-            return SimpleExpressionBuilder.fileExtensionExpression();
+            return FileExpressionBuilder.fileExtensionExpression();
         } else if (ObjectHelper.equal(remainder, "name.ext.single")) {
-            return SimpleExpressionBuilder.fileExtensionSingleExpression();
+            return FileExpressionBuilder.fileExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname")) {
-            return SimpleExpressionBuilder.fileOnlyNameExpression();
+            return FileExpressionBuilder.fileOnlyNameExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
-            return SimpleExpressionBuilder.fileOnlyNameNoExtensionExpression();
+            return FileExpressionBuilder.fileOnlyNameNoExtensionExpression();
         } else if (ObjectHelper.equal(remainder, "onlyname.noext.single")) {
-            return SimpleExpressionBuilder.fileOnlyNameNoExtensionSingleExpression();
+            return FileExpressionBuilder.fileOnlyNameNoExtensionSingleExpression();
         } else if (ObjectHelper.equal(remainder, "parent")) {
-            return SimpleExpressionBuilder.fileParentExpression();
+            return FileExpressionBuilder.fileParentExpression();
         } else if (ObjectHelper.equal(remainder, "path")) {
-            return SimpleExpressionBuilder.filePathExpression();
+            return FileExpressionBuilder.filePathExpression();
         } else if (ObjectHelper.equal(remainder, "absolute")) {
-            return SimpleExpressionBuilder.fileAbsoluteExpression();
+            return FileExpressionBuilder.fileAbsoluteExpression();
         } else if (ObjectHelper.equal(remainder, "absolute.path")) {
-            return SimpleExpressionBuilder.fileAbsolutePathExpression();
+            return FileExpressionBuilder.fileAbsolutePathExpression();
         } else if (ObjectHelper.equal(remainder, "length") || ObjectHelper.equal(remainder, "size")) {
-            return SimpleExpressionBuilder.fileSizeExpression();
+            return FileExpressionBuilder.fileSizeExpression();
         } else if (ObjectHelper.equal(remainder, "modified")) {
-            return SimpleExpressionBuilder.fileLastModifiedExpression();
+            return FileExpressionBuilder.fileLastModifiedExpression();
         }
         if (strict) {
             throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());

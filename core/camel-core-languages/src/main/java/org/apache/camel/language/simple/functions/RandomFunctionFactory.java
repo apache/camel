@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -48,9 +48,9 @@ public final class RandomFunctionFactory implements SimpleLanguageFunctionFactor
                 throw new SimpleParserException(
                         "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, index);
             }
-            return SimpleExpressionBuilder.randomExpression(tokens[0].trim(), tokens[1].trim());
+            return MiscExpressionBuilder.randomExpression(tokens[0].trim(), tokens[1].trim());
         }
-        return SimpleExpressionBuilder.randomExpression("0", values.trim());
+        return MiscExpressionBuilder.randomExpression("0", values.trim());
     }
 
     @Override

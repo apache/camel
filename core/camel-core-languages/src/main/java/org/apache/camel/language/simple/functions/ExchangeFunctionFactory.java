@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.OgnlExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -47,7 +47,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, index);
             }
-            return SimpleExpressionBuilder.camelContextOgnlExpression(remainder);
+            return OgnlExpressionBuilder.camelContextOgnlExpression(remainder);
         }
 
         // Exception OGNL — exchangeProperty/exchange checked separately, no prefix clash here
@@ -57,7 +57,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${exception.OGNL} was: " + function, index);
             }
-            return SimpleExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
+            return OgnlExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
         }
 
         // exchangeProperty must be checked before exchange to avoid prefix clash
@@ -78,7 +78,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
             }
 
             if (OgnlHelper.isValidOgnlExpression(remainder)) {
-                return SimpleExpressionBuilder.propertyOgnlExpression(remainder);
+                return OgnlExpressionBuilder.propertyOgnlExpression(remainder);
             } else {
                 return ExpressionBuilder.exchangePropertyExpression(remainder);
             }
@@ -91,7 +91,7 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${exchange.OGNL} was: " + function, index);
             }
-            return SimpleExpressionBuilder.exchangeOgnlExpression(remainder);
+            return OgnlExpressionBuilder.exchangeOgnlExpression(remainder);
         }
 
         return null;

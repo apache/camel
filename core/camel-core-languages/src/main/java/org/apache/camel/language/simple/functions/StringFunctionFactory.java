@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.StringExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -62,7 +62,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (tokens.length == 3) {
                 exp = tokens[2];
             }
-            return SimpleExpressionBuilder.replaceExpression(exp, from, to);
+            return StringExpressionBuilder.replaceExpression(exp, from, to);
         }
 
         remainder = ifStartsWithReturnRemainder("substring(", function);
@@ -88,7 +88,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (tokens.length == 3) {
                 exp = tokens[2];
             }
-            return SimpleExpressionBuilder.substringExpression(exp, num1, num2);
+            return StringExpressionBuilder.substringExpression(exp, num1, num2);
         }
 
         remainder = ifStartsWithReturnRemainder("substringBefore(", function);
@@ -111,7 +111,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             } else {
                 before = tokens[0];
             }
-            return SimpleExpressionBuilder.substringBeforeExpression(exp1, before);
+            return StringExpressionBuilder.substringBeforeExpression(exp1, before);
         }
 
         remainder = ifStartsWithReturnRemainder("substringAfter(", function);
@@ -134,7 +134,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             } else {
                 after = tokens[0];
             }
-            return SimpleExpressionBuilder.substringAfterExpression(exp1, after);
+            return StringExpressionBuilder.substringAfterExpression(exp1, after);
         }
 
         remainder = ifStartsWithReturnRemainder("substringBetween(", function);
@@ -164,7 +164,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 after = tokens[0];
                 before = tokens[1];
             }
-            return SimpleExpressionBuilder.substringBetweenExpression(exp1, after, before);
+            return StringExpressionBuilder.substringBetweenExpression(exp1, after, before);
         }
 
         remainder = ifStartsWithReturnRemainder("contains(", function);
@@ -187,7 +187,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 exp = tokens[0];
                 pattern = tokens[1];
             }
-            return SimpleExpressionBuilder.containsExpression(exp, pattern);
+            return StringExpressionBuilder.containsExpression(exp, pattern);
         }
 
         remainder = ifStartsWithReturnRemainder("trim(", function);
@@ -197,7 +197,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.trimExpression(exp);
+            return StringExpressionBuilder.trimExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("val(", function);
@@ -217,7 +217,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.capitalizeExpression(exp);
+            return StringExpressionBuilder.capitalizeExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("pad(", function);
@@ -241,7 +241,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (tokens.length == 3) {
                 separator = StringHelper.removeQuotes(tokens[2]);
             }
-            return SimpleExpressionBuilder.padExpression(exp, len, separator);
+            return StringExpressionBuilder.padExpression(exp, len, separator);
         }
 
         remainder = ifStartsWithReturnRemainder("concat(", function);
@@ -272,7 +272,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             } else {
                 exp2 = StringHelper.removeQuotes(values.trim());
             }
-            return SimpleExpressionBuilder.concatExpression(exp1, exp2, separator);
+            return StringExpressionBuilder.concatExpression(exp1, exp2, separator);
         }
 
         remainder = ifStartsWithReturnRemainder("quote(", function);
@@ -282,7 +282,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.quoteExpression(exp);
+            return StringExpressionBuilder.quoteExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("safeQuote(", function);
@@ -292,7 +292,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.safeQuoteExpression(exp);
+            return StringExpressionBuilder.safeQuoteExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("unquote(", function);
@@ -302,7 +302,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.unquoteExpression(exp);
+            return StringExpressionBuilder.unquoteExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("uppercase(", function);
@@ -312,7 +312,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.uppercaseExpression(exp);
+            return StringExpressionBuilder.uppercaseExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("lowercase(", function);
@@ -322,7 +322,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.lowercaseExpression(exp);
+            return StringExpressionBuilder.lowercaseExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("length(", function);
@@ -332,7 +332,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.lengthExpression(exp);
+            return StringExpressionBuilder.lengthExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("size(", function);
@@ -342,7 +342,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.sizeExpression(exp);
+            return StringExpressionBuilder.sizeExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("normalizeWhitespace(", function);
@@ -352,7 +352,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.normalizeWhitespaceExpression(exp);
+            return StringExpressionBuilder.normalizeWhitespaceExpression(exp);
         }
 
         return null;

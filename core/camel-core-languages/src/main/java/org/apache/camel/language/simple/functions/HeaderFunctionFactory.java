@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.OgnlExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -85,7 +85,7 @@ public final class HeaderFunctionFactory implements SimpleLanguageFunctionFactor
             }
 
             if (OgnlHelper.isValidOgnlExpression(key)) {
-                return SimpleExpressionBuilder.headersOgnlExpression(key);
+                return OgnlExpressionBuilder.headersOgnlExpression(key);
             } else {
                 return ExpressionBuilder.headerExpression(key);
             }

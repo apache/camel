@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -101,7 +101,7 @@ public final class QueryLanguageFunctionFactory implements SimpleLanguageFunctio
                 exp = exp.trim();
             }
         }
-        return SimpleExpressionBuilder.simpleJsonPathExpression(input, exp);
+        return MiscExpressionBuilder.simpleJsonPathExpression(input, exp);
     }
 
     private static boolean hasInputSource(String exp) {

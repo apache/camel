@@ -20,7 +20,7 @@ import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.MathExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -43,36 +43,36 @@ public final class MathFunctionFactory implements SimpleLanguageFunctionFactory 
         remainder = ifStartsWithReturnRemainder("abs(", function);
         if (remainder != null) {
             String value = StringHelper.beforeLast(remainder, ")");
-            return SimpleExpressionBuilder
-                    .absExpression(ObjectHelper.isNotEmpty(value) ? StringHelper.removeQuotes(value) : null);
+            return MathExpressionBuilder.absExpression(
+                    ObjectHelper.isNotEmpty(value) ? StringHelper.removeQuotes(value) : null);
         }
         remainder = ifStartsWithReturnRemainder("floor(", function);
         if (remainder != null) {
             String value = StringHelper.beforeLast(remainder, ")");
-            return SimpleExpressionBuilder.floorExpression(
+            return MathExpressionBuilder.floorExpression(
                     ObjectHelper.isNotEmpty(value) ? StringHelper.removeQuotes(value) : null);
         }
         remainder = ifStartsWithReturnRemainder("ceil(", function);
         if (remainder != null) {
             String value = StringHelper.beforeLast(remainder, ")");
-            return SimpleExpressionBuilder.ceilExpression(
+            return MathExpressionBuilder.ceilExpression(
                     ObjectHelper.isNotEmpty(value) ? StringHelper.removeQuotes(value) : null);
         }
         remainder = ifStartsWithReturnRemainder("sum(", function);
         if (remainder != null) {
-            return SimpleExpressionBuilder.sumExpression(parseVariadicTokens(remainder));
+            return MathExpressionBuilder.sumExpression(parseVariadicTokens(remainder));
         }
         remainder = ifStartsWithReturnRemainder("max(", function);
         if (remainder != null) {
-            return SimpleExpressionBuilder.maxExpression(parseVariadicTokens(remainder));
+            return MathExpressionBuilder.maxExpression(parseVariadicTokens(remainder));
         }
         remainder = ifStartsWithReturnRemainder("min(", function);
         if (remainder != null) {
-            return SimpleExpressionBuilder.minExpression(parseVariadicTokens(remainder));
+            return MathExpressionBuilder.minExpression(parseVariadicTokens(remainder));
         }
         remainder = ifStartsWithReturnRemainder("average(", function);
         if (remainder != null) {
-            return SimpleExpressionBuilder.averageExpression(parseVariadicTokens(remainder));
+            return MathExpressionBuilder.averageExpression(parseVariadicTokens(remainder));
         }
 
         return null;
