@@ -53,8 +53,8 @@ public class ExchangeSentEvent extends AbstractExchangeEvent implements CamelEve
     }
 
     @Override
-    public String toString() {
-        return getExchange().getExchangeId() + " exchange " + getExchange() + " sent to: " + endpoint + " took: " + timeTaken
+    public final String toString() {
+        return getExchange().getExchangeId() + " exchange sent to: " + endpoint + " took: " + timeTaken
                + " ms.";
     }
 
