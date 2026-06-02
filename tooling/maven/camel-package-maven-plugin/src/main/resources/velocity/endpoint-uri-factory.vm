@@ -41,15 +41,20 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
 #set( $props = $mojo.newTreeSet() )
 #set( $secretProps = $mojo.newTreeSet() )
+#set( $identityProps = $mojo.newTreeSet() )
 #set( $prefixes = $mojo.newTreeMap() )
 #foreach( $opt in $model.endpointOptions )
     #set( $foo = $props.add( $opt.name ) )
     #if ( $opt.secret )
         #set( $foo = $secretProps.add( $opt.name ) )
+    #end
+    #if ( $opt.endpointIdentity )
+        #set( $foo = $identityProps.add( $opt.name ) )
     #end
     #if ( $opt.multiValue )
         #set( $foo = $prefixes.put( $opt.name, $opt.prefix ) )
@@ -61,6 +66,9 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
             #set( $foo = $props.add( $opt.name ) )
             #if ( $opt.secret )
                 #set( $foo = $secretProps.add( $opt.name ) )
+            #end
+            #if ( $opt.endpointIdentity )
+                #set( $foo = $identityProps.add( $opt.name ) )
             #end
             #if ( $opt.multiValue )
                 #set( $foo = $prefixes.put( $opt.name, $opt.prefix ) )
@@ -85,6 +93,15 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
         secretProps.add("${prop}");
     #end
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+#end
+#if ( $identityProps.empty )
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
+#else
+        Set<String> identityProps = new HashSet<>(${identityProps.size()});
+    #foreach ( $prop in $identityProps )
+        identityProps.add("${prop}");
+    #end
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.unmodifiableSet(identityProps);
 #end
 #if ( $prefixes.isEmpty() )
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
@@ -142,6 +159,11 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

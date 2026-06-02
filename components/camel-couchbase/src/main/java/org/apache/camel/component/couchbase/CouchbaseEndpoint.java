@@ -72,7 +72,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     @UriPath(defaultValue = "8091")
     private int port;
 
-    @UriParam
+    @UriParam(endpointIdentity = true)
     @Metadata(required = true)
     private String bucket;
 

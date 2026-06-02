@@ -85,8 +85,9 @@ public class DaprConfiguration implements Cloneable {
     @UriParam(label = "common", description = "The name of the Dapr Pub/Sub component to use. This identifies which underlying "
                                               + "messaging system Dapr will interact with for publishing or subscribing to events.")
     private String pubSubName;
-    @UriParam(label = "common", description = "The name of the topic to subscribe to. The topic must exist in the Pub/Sub "
-                                              + "component configured under the given pubsubName.")
+    @UriParam(label = "common", endpointIdentity = true,
+              description = "The name of the topic to subscribe to. The topic must exist in the Pub/Sub "
+                            + "component configured under the given pubsubName.")
     private String topic;
     @UriParam(label = "common", description = "The contentType for the Pub/Sub component to use.")
     private String contentType;

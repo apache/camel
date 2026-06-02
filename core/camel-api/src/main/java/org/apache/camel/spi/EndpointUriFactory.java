@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,6 +68,20 @@ public interface EndpointUriFactory extends CamelContextAware {
      * Returns the names of the secret properties this endpoint supports.
      */
     Set<String> secretPropertyNames();
+
+    /**
+     * Returns the names of the endpoint identity properties.
+     * <p>
+     * Endpoint identity properties are query parameters that form part of the endpoint's destination identity (e.g.,
+     * bucket name, database name, topic). Most components encode the destination in the URI context path, but some use
+     * query parameters instead. This metadata allows tooling to include these parameters when building canonical URIs
+     * for endpoint matching.
+     *
+     * @since 4.21
+     */
+    default Set<String> endpointIdentityPropertyNames() {
+        return Collections.emptySet();
+    }
 
     /**
      * Returns the prefixes (option name = prefix) of the multi-valued properties this endpoint supports.

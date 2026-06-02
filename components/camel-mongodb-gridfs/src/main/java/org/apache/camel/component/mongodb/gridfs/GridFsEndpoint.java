@@ -50,7 +50,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String connectionBean;
-    @UriParam
+    @UriParam(endpointIdentity = true)
     @Metadata(required = true)
     private String database;
     @UriParam(defaultValue = "fs")

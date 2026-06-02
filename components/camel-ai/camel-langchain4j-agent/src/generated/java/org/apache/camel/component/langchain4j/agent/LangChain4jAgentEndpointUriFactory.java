@@ -21,6 +21,7 @@ public class LangChain4jAgentEndpointUriFactory extends org.apache.camel.support
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(7);
@@ -33,6 +34,7 @@ public class LangChain4jAgentEndpointUriFactory extends org.apache.camel.support
         props.add("tags");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);
         prefixes.put("mcpServer", "mcpServer.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
@@ -63,6 +65,11 @@ public class LangChain4jAgentEndpointUriFactory extends org.apache.camel.support
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

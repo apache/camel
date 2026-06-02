@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -30,6 +31,7 @@ import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.URISupport;
@@ -50,7 +52,7 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
 
         for (RouteDefinition rd : routeDefs) {
             String inputUri = rd.getInput().getEndpointUri();
-            String normalizedInput = URISupport.stripQuery(inputUri);
+            String normalizedInput = normalizeUri(context, inputUri);
             String scheme = extractScheme(normalizedInput);
             String nodeType = TRIGGER_SCHEMES.contains(scheme) ? "trigger" : "route";
             String description = rd.getDescriptionText();
@@ -68,7 +70,7 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
                             rd.getOutputs(), EndpointRequiredDefinition.class);
 
             for (EndpointRequiredDefinition erd : outputs) {
-                String outputUri = URISupport.stripQuery(erd.getEndpointUri());
+                String outputUri = normalizeUri(context, erd.getEndpointUri());
                 String scheme = extractScheme(outputUri);
 
                 List<String> targetRouteIds = inputUriToRouteIds.get(outputUri);
@@ -162,6 +164,59 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
 
     private static boolean isStubEndpoint(Endpoint ep) {
         return "StubEndpoint".equals(ep.getClass().getSimpleName());
+    }
+
+    /**
+     * Normalizes an endpoint URI for topology matching. Strips all query parameters except those marked as endpoint
+     * identity parameters in the component metadata.
+     */
+    private static String normalizeUri(CamelContext context, String uri) {
+        String base = URISupport.stripQuery(uri);
+        String scheme = extractScheme(uri);
+
+        EndpointUriFactory factory = context.getCamelContextExtension().getEndpointUriFactory(scheme);
+        if (factory == null) {
+            return base;
+        }
+
+        Set<String> identityNames = factory.endpointIdentityPropertyNames();
+        if (identityNames == null || identityNames.isEmpty()) {
+            return base;
+        }
+
+        String query = URISupport.extractQuery(uri);
+        if (query == null || query.isEmpty()) {
+            return base;
+        }
+
+        try {
+            Map<String, Object> params = URISupport.parseQuery(query);
+            // extract only identity params (sorted for deterministic matching)
+            Map<String, String> identityParams = new TreeMap<>();
+            for (String name : identityNames) {
+                Object value = params.get(name);
+                if (value != null) {
+                    identityParams.put(name, value.toString());
+                }
+            }
+            if (!identityParams.isEmpty()) {
+                StringBuilder sb = new StringBuilder(base);
+                sb.append('?');
+                boolean first = true;
+                for (Map.Entry<String, String> entry : identityParams.entrySet()) {
+                    if (!first) {
+                        sb.append('&');
+                    }
+                    sb.append(entry.getKey()).append('=').append(entry.getValue());
+                    first = false;
+                }
+                return sb.toString();
+            }
+        } catch (Exception e) {
+            // ignore parse errors, fall back to base
+        }
+
+        return base;
     }
 
     private static String extractScheme(String uri) {
