@@ -21,6 +21,7 @@ public class RedisEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(12);
@@ -38,6 +39,7 @@ public class RedisEndpointUriFactory extends org.apache.camel.support.component.
         props.add("serializer");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
@@ -67,6 +69,11 @@ public class RedisEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

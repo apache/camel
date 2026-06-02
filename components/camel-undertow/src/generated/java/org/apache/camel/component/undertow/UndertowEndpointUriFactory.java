@@ -21,6 +21,7 @@ public class UndertowEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(30);
@@ -56,6 +57,7 @@ public class UndertowEndpointUriFactory extends org.apache.camel.support.compone
         props.add("useStreaming");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);
         prefixes.put("options", "option.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
@@ -86,6 +88,11 @@ public class UndertowEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override
