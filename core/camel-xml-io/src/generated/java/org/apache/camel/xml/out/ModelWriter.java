@@ -2399,6 +2399,7 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("parser", def.getParser(), null);
         doWriteAttribute("validate", def.getValidate(), "true");
+        doWriteAttribute("targetFormat", def.getTargetFormat(), null);
         endElement(name);
     }
     protected void doWriteIcalDataFormat(String name, IcalDataFormat def) throws IOException {

@@ -265,6 +265,62 @@ separators anymore by converting `\n` to `\r`. If you  +
 `Expression` for this purpose.
 
 
+=== Target Format
+
+By default, the HL7 DataFormat works with HAPI `Message` objects and ER7 (pipe-delimited) encoding.
+The `targetFormat` option can be set to `XML` to change the output format:
+
+* *marshal* encodes the HAPI Message to HL7 XML bytes instead of ER7.
+* *unmarshal* returns an `org.w3c.dom.Document` instead of a HAPI `Message`.
+
+The input format is always auto-detected. Both ER7 and XML inputs are accepted by the parser.
+For marshal, the input body can be a HAPI `Message` or an XML `Document` — the registered
+TypeConverter handles `Document` to `Message` conversion automatically.
+
+==== EDI to XML conversion
+
+[source,java]
+----
+  HL7DataFormat hl7xml = new HL7DataFormat();
+  hl7xml.setTargetFormat("XML");
+
+  from("direct:hl7in")
+    .unmarshal(hl7xml)
+    .to("direct:xmlout");
+----
+
+In this example, the HL7 EDI input is unmarshalled directly to an XML `Document`.
+
+==== XML to Message conversion
+
+[source,java]
+----
+  HL7DataFormat hl7xml = new HL7DataFormat();
+  hl7xml.setTargetFormat("XML");
+
+  from("direct:messageIn")
+    .marshal(hl7xml)
+    .to("direct:xmlout");
+----
+
+Here, a HAPI `Message` is marshalled to HL7 XML bytes.
+
+==== Round-trip EDI to XML to EDI
+
+[source,java]
+----
+  HL7DataFormat hl7xml = new HL7DataFormat();
+  hl7xml.setTargetFormat("XML");
+  HL7DataFormat hl7 = new HL7DataFormat();
+
+  from("direct:hl7in")
+    .unmarshal(hl7xml)
+    .marshal(hl7)
+    .to("direct:hl7out");
+----
+
+The EDI input is converted to an XML Document, then back to EDI.
+
 === Charset
 
 Both `marshal and unmarshal` evaluate the charset

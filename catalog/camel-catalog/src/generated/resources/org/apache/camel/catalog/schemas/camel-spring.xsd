@@ -8924,6 +8924,17 @@ Whether to validate the HL7 message Is by default true. Default value: true
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="targetFormat" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and unmarshal
+returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns an XML DOM
+Document.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

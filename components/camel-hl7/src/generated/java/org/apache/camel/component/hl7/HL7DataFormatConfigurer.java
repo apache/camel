@@ -23,6 +23,7 @@ public class HL7DataFormatConfigurer extends org.apache.camel.support.component.
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Parser", ca.uhn.hl7v2.parser.Parser.class);
+        map.put("TargetFormat", java.lang.String.class);
         map.put("Validate", boolean.class);
         ALL_OPTIONS = map;
     }
@@ -32,6 +33,8 @@ public class HL7DataFormatConfigurer extends org.apache.camel.support.component.
         HL7DataFormat target = (HL7DataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "parser": target.setParser(property(camelContext, ca.uhn.hl7v2.parser.Parser.class, value)); return true;
+        case "targetformat":
+        case "targetFormat": target.setTargetFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "validate": target.setValidate(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
@@ -46,6 +49,8 @@ public class HL7DataFormatConfigurer extends org.apache.camel.support.component.
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "parser": return ca.uhn.hl7v2.parser.Parser.class;
+        case "targetformat":
+        case "targetFormat": return java.lang.String.class;
         case "validate": return boolean.class;
         default: return null;
         }
@@ -56,6 +61,8 @@ public class HL7DataFormatConfigurer extends org.apache.camel.support.component.
         HL7DataFormat target = (HL7DataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "parser": return target.getParser();
+        case "targetformat":
+        case "targetFormat": return target.getTargetFormat();
         case "validate": return target.isValidate();
         default: return null;
         }

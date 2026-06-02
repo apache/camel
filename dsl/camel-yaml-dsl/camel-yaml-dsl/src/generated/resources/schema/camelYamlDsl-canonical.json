@@ -7248,6 +7248,12 @@
             "title" : "Parser",
             "description" : "To use a custom HL7 parser"
           },
+          "targetFormat" : {
+            "type" : "string",
+            "title" : "Target Format",
+            "description" : "The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and unmarshal returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns an XML DOM Document.",
+            "enum" : [ "XML" ]
+          },
           "validate" : {
             "type" : "boolean",
             "title" : "Validate",

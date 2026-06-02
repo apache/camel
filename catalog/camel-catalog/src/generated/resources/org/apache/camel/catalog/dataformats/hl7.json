@@ -18,6 +18,7 @@
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
     "parser": { "index": 1, "kind": "attribute", "displayName": "Parser", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "ca.uhn.hl7v2.parser.Parser", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom HL7 parser" },
-    "validate": { "index": 2, "kind": "attribute", "displayName": "Validate", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to validate the HL7 message Is by default true." }
+    "validate": { "index": 2, "kind": "attribute", "displayName": "Validate", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to validate the HL7 message Is by default true." },
+    "targetFormat": { "index": 3, "kind": "attribute", "displayName": "Target Format", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "XML" ], "deprecated": false, "autowired": false, "secret": false, "description": "The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and unmarshal returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns an XML DOM Document." }
   }
 }
