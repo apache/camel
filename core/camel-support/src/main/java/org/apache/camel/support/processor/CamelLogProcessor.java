@@ -22,6 +22,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.IdAware;
@@ -29,6 +30,7 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,8 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
     private ExchangeFormatter formatter;
     private MaskingFormatter maskingFormatter;
     private final Set<LogListener> listeners;
+    private boolean routeLogMaskAware;
+    private Boolean endpointLogMask;
 
     public CamelLogProcessor() {
         this(new CamelLogger(CamelLogProcessor.class.getName()));
@@ -109,7 +113,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (logger.shouldLog()) {
             String output = formatter.format(exchange);
-            if (maskingFormatter != null) {
+            if (shouldMask(exchange)) {
                 output = maskingFormatter.format(output);
             }
             output = fireListeners(exchange, output);
@@ -123,7 +127,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
     public void process(Exchange exchange, Throwable exception) {
         if (logger.shouldLog()) {
             String output = formatter.format(exchange);
-            if (maskingFormatter != null) {
+            if (shouldMask(exchange)) {
                 output = maskingFormatter.format(output);
             }
             output = fireListeners(exchange, output);
@@ -135,7 +139,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
     public void process(Exchange exchange, String message) {
         if (logger.shouldLog()) {
             String output = formatter.format(exchange) + message;
-            if (maskingFormatter != null) {
+            if (shouldMask(exchange)) {
                 output = maskingFormatter.format(output);
             }
             output = fireListeners(exchange, output);
@@ -202,6 +206,56 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
 
     public void setMaskingFormatter(MaskingFormatter maskingFormatter) {
         this.maskingFormatter = maskingFormatter;
+    }
+
+    public void setRouteLogMaskAware(boolean routeLogMaskAware) {
+        this.routeLogMaskAware = routeLogMaskAware;
+    }
+
+    public void setEndpointLogMask(Boolean endpointLogMask) {
+        this.endpointLogMask = endpointLogMask;
+    }
+
+    private boolean shouldMask(Exchange exchange) {
+        if (!routeLogMaskAware) {
+            return maskingFormatter != null;
+        }
+
+        // endpoint-level explicit setting takes highest priority
+        if (endpointLogMask != null) {
+            if (!endpointLogMask) {
+                return false;
+            }
+            if (maskingFormatter == null) {
+                resolveMaskingFormatter(exchange);
+            }
+            return maskingFormatter != null;
+        }
+
+        // check route-level logMask (falls back to context-level)
+        UnitOfWork uow = exchange.getUnitOfWork();
+        if (uow != null) {
+            Route route = uow.getRoute();
+            if (route != null) {
+                if (!route.isLogMask()) {
+                    return false;
+                }
+                if (maskingFormatter == null) {
+                    resolveMaskingFormatter(exchange);
+                }
+                return maskingFormatter != null;
+            }
+        }
+
+        return maskingFormatter != null;
+    }
+
+    private void resolveMaskingFormatter(Exchange exchange) {
+        maskingFormatter = exchange.getContext().getRegistry()
+                .lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+        if (maskingFormatter == null) {
+            maskingFormatter = new DefaultMaskingFormatter(exchange.getContext());
+        }
     }
 
     /**
