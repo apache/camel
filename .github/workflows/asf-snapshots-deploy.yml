@@ -29,7 +29,7 @@ jobs:
       matrix:
         java: [ '1.8' ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Set up JDK ${{ matrix.java }}
@@ -51,7 +51,7 @@ jobs:
       NEXUS_DEPLOY_USERNAME: ${{ secrets.NEXUS_USER }}
       NEXUS_DEPLOY_PASSWORD: ${{ secrets.NEXUS_PW }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         persist-credentials: false
     - name: Set up JDK 11

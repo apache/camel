@@ -28,7 +28,7 @@ jobs:
     name: Backport
     steps:
       - name: "Checkout Camel"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
           submodules: recursive
