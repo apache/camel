@@ -37,7 +37,8 @@ import org.apache.camel.tooling.model.OtherModel;
 public final class DependencyDownloaderComponentResolver extends DefaultComponentResolver {
 
     private static final String[] ACCEPTED_STUB_NAMES = {
-            "stub", "bean", "class", "direct", "kamelet", "log", "platform-http", "rest", "seda"
+            "stub", "bean", "class", "cron", "direct", "kamelet", "log", "platform-http", "rest", "scheduler", "seda",
+            "timer"
     };
 
     private static final String[] ACCEPTED_TRANSFORM_NAMES = {
