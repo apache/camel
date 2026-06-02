@@ -59,7 +59,7 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("file:src/test/data/?fileName=terminate.xml&noop=true").routeId("foo").noAutoStartup()
+                from("file:src/test/data/?fileName=terminate.xml&noop=true").routeId("foo").autoStartup(false)
                         .to("xslt-saxon:org/apache/camel/component/xslt/terminate.xsl")
                         .to("log:foo")
                         .to("mock:result");

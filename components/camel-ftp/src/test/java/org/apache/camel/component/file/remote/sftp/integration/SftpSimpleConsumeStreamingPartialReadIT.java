@@ -70,7 +70,7 @@ public class SftpSimpleConsumeStreamingPartialReadIT extends SftpServerTestSuppo
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
                      + "&move=done&moveFailed=failed&knownHostsFile=" + service.getKnownHostsFile())
-                        .routeId("foo").noAutoStartup().process(new Processor() {
+                        .routeId("foo").autoStartup(false).process(new Processor() {
 
                             @Override
                             public void process(Exchange exchange) throws Exception {

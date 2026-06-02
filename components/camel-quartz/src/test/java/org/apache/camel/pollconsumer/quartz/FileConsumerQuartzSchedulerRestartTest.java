@@ -53,7 +53,7 @@ public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
             public void configure() {
                 from(TestSupport.fileUri(testDirectory,
                         "?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?&scheduler.triggerGroup=myGroup&scheduler.triggerId=myId"))
-                        .routeId("foo").noAutoStartup()
+                        .routeId("foo").autoStartup(false)
                         .to("mock:result");
             }
         };

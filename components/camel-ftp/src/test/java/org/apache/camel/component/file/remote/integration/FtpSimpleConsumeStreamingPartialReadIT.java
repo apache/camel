@@ -68,7 +68,7 @@ public class FtpSimpleConsumeStreamingPartialReadIT extends FtpServerTestSupport
                 from("ftp://localhost:{{ftp.server.port}}"
                      + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
                      + "&move=done&moveFailed=failed&stepwise=false")
-                        .routeId("foo").noAutoStartup().process(new Processor() {
+                        .routeId("foo").autoStartup(false).process(new Processor() {
 
                             @Override
                             public void process(Exchange exchange) throws Exception {

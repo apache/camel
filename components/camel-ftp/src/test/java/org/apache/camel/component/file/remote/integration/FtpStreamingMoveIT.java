@@ -60,7 +60,7 @@ public class FtpStreamingMoveIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().to("mock:result");
+                from(getFtpUrl()).routeId("foo").autoStartup(false).to("mock:result");
             }
         };
     }

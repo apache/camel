@@ -97,7 +97,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").id("route1").autoStartup("false").to("mock:result");
+                from("direct:start").id("route1").autoStartup(false).to("mock:result");
             }
         });
         context.start();

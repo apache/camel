@@ -90,7 +90,7 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delete=true&knownHostsFile="
                      + service.getKnownHostsFile())
-                        .routeId("foo").noAutoStartup().process(new Processor() {
+                        .routeId("foo").autoStartup(false).process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 service.disconnectAllSessions(); // disconnect all Sessions from
@@ -98,7 +98,7 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
                             }
                         }).to("mock:result");
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
+                     + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").autoStartup(false)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {

@@ -64,7 +64,7 @@ public class FtpCronScheduledRoutePolicyManualTest extends CamelTestSupport {
                 policy.setTimeUnit(TimeUnit.SECONDS);
 
                 from(ftp)
-                        .noAutoStartup().routePolicy(policy).shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
+                        .autoStartup(false).routePolicy(policy).shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                         .log("Processing ${file:name}")
                         .to("log:done");
             }

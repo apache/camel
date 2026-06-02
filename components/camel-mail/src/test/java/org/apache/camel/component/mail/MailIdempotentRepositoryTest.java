@@ -95,7 +95,7 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(jones.uriPrefix(Protocol.imap) + "&idempotentRepository=#myRepo&initialDelay=100&delay=100")
-                        .routeId("foo").noAutoStartup()
+                        .routeId("foo").autoStartup(false)
                         .to("mock:result");
             }
         };
