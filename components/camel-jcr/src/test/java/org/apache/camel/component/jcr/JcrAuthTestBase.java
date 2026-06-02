@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jcr;
 
-import java.io.File;
-
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.security.AccessControlList;
@@ -42,9 +40,11 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
 
     protected static final String BASE_REPO_PATH = "/home/test";
 
+    protected static final String CONFIG_FILE = "target/test-classes/repository.xml";
+
     protected static final String REPO_PATH = "target/repository";
 
-    private static Repository repository = new TransientRepository(new File(REPO_PATH));
+    private static Repository repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
 
     @BeforeAll
     public static void cleanupDirectory() {
