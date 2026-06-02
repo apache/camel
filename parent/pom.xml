@@ -224,7 +224,7 @@
         <hazelcast-version>5.4.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.1.0.Final</hibernate-validator-version>
-        <hibernate-version>6.3.2.Final</hibernate-version>
+        <hibernate-version>7.4.0.Final</hibernate-version>
         <hsqldb-version>2.7.4</hsqldb-version>
         <mariadb-version>3.5.8</mariadb-version>
         <mariadb4j-version>3.3.1</mariadb4j-version>
