@@ -51,7 +51,7 @@ public class DMSEndpoint extends DefaultEndpoint {
     private String region;
 
     @UriParam(description = "DMS url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Service endpoint", secret = false)
+              displayName = "Service endpoint")
     @Metadata(required = false)
     private String endpoint;
 
