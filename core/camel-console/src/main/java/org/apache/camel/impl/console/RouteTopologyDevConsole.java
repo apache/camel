@@ -183,7 +183,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                 continue;
             }
             try {
-                String epUri = URISupport.normalizeUri(ep.uri());
+                String epUri = URISupport.stripQuery(ep.uri());
                 ManagedRouteMBean mrb = mcc.getManagedRoute(ep.routeId());
                 if (mrb == null) {
                     continue;
@@ -194,8 +194,8 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                     if (sp == null) {
                         continue;
                     }
-                    String dest = URISupport.normalizeUri(URISupport.stripQuery(sp.getDestination()));
-                    if (epUri.equals(dest)) {
+                    String dest = URISupport.stripQuery(sp.getDestination());
+                    if (matchEndpointUri(epUri, dest)) {
                         String key = ep.routeId() + "|" + ep.uri();
                         long[] existing = metrics.get(key);
                         if (existing != null) {
@@ -211,6 +211,18 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
             }
         }
         return metrics;
+    }
+
+    private static boolean matchEndpointUri(String uri1, String uri2) {
+        return stripDoubleSlash(uri1).equals(stripDoubleSlash(uri2));
+    }
+
+    private static String stripDoubleSlash(String uri) {
+        int idx = uri.indexOf("://");
+        if (idx > 0) {
+            return uri.substring(0, idx + 1) + uri.substring(idx + 3);
+        }
+        return uri;
     }
 
 }

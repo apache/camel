@@ -141,11 +141,18 @@ public class TopologyImageRenderer {
 
             // Node box
             g.setColor(nodeColor);
-            g.setStroke(new BasicStroke(strokeWidth));
+            if (isExternalNode(node)) {
+                float[] dash = { 6 * strokeWidth, 4 * strokeWidth };
+                g.setStroke(
+                        new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dash, 0f));
+            } else {
+                g.setStroke(new BasicStroke(strokeWidth));
+            }
             g.fillRoundRect(node.x, node.y, nw, node.height, arc, arc);
 
             g.setColor(nodeColor.brighter());
             g.drawRoundRect(node.x, node.y, nw, node.height, arc, arc);
+            g.setStroke(new BasicStroke(strokeWidth));
 
             // Text
             g.setColor(colors.getText());

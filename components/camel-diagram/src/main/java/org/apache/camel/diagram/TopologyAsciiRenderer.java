@@ -182,8 +182,9 @@ public class TopologyAsciiRenderer {
             return;
         }
 
-        char h = unicode ? UNI_H : '-';
-        char v = unicode ? UNI_V : '|';
+        boolean ext = isExternalNode(node);
+        char h = ext ? (unicode ? UNI_DASH_H : '-') : (unicode ? UNI_H : '-');
+        char v = ext ? (unicode ? UNI_DASH_V : ':') : (unicode ? UNI_V : '|');
 
         // Top border
         setChar(grid, row, col, unicode ? UNI_TL : '+');
