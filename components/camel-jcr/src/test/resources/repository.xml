@@ -21,9 +21,15 @@
           PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.0//EN"
           "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
 
-<!-- Example Repository Configuration File
-     Used by
-     - org.apache.jackrabbit.core.config.RepositoryConfigTest.java
+<!--
+    Repository Configuration for Authentication Tests
+
+    This configuration is used by JcrAuthTestBase (and its subclasses: JcrAuthLoginTest,
+    JcrAuthLoginFailureTest). It differs from repository-simple-security.xml in that it uses
+    DefaultSecurityManager instead of SimpleSecurityManager, because the auth tests need to
+    programmatically create users via the UserManager API, which is not supported by
+    SimpleSecurityManager. Both configurations use H2PersistenceManager for database-backed
+    storage (replacing the retired Apache Derby).
 -->
 <Repository>
     <!--
@@ -47,24 +53,15 @@
             security manager:
             class: FQN of class implementing the JackrabbitSecurityManager interface
         -->
-        <SecurityManager class="org.apache.jackrabbit.core.security.simple.SimpleSecurityManager" workspaceName="security">
-            <!--
-            workspace access:
-            class: FQN of class implementing the WorkspaceAccessManager interface
-            -->
-            <!-- <WorkspaceAccessManager class="..."/> -->
-            <!-- <param name="config" value="${rep.home}/security.xml"/> -->
-        </SecurityManager>
+        <SecurityManager class="org.apache.jackrabbit.core.DefaultSecurityManager" workspaceName="security"/>
 
         <!--
             access manager:
             class: FQN of class implementing the AccessManager interface
         -->
-        <AccessManager class="org.apache.jackrabbit.core.security.simple.SimpleAccessManager">
-            <!-- <param name="config" value="${rep.home}/access.xml"/> -->
-        </AccessManager>
+        <AccessManager class="org.apache.jackrabbit.core.security.DefaultAccessManager"/>
 
-        <LoginModule class="org.apache.jackrabbit.core.security.simple.SimpleLoginModule">
+        <LoginModule class="org.apache.jackrabbit.core.security.authentication.DefaultLoginModule">
            <!--
               anonymous user name ('anonymous' is the default value)
             -->
@@ -142,12 +139,5 @@
         <param name="path" value="${rep.home}/repository/index"/>
         <param name="supportHighlighting" value="true"/>
     </SearchIndex>
-
-    <!--
-        Run with a cluster journal
-    -->
-    <Cluster id="node1">
-        <Journal class="org.apache.jackrabbit.core.journal.MemoryJournal"/>
-    </Cluster>
 
 </Repository>
