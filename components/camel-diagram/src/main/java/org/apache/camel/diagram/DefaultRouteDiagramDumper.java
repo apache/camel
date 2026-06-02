@@ -195,6 +195,20 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     }
 
     @Override
+    public void dumpTopologyToFolder(Theme theme, boolean external, File folder) throws IOException {
+        BufferedImage image = dumpTopologyAsImage(theme, false, 180, 12);
+        if (image != null) {
+            folder.mkdirs();
+            String name = camelContext.getName();
+            if (name == null || name.isBlank()) {
+                name = "camel";
+            }
+            File f = new File(folder, name + "-topology.png");
+            ImageIO.write(image, "png", f);
+        }
+    }
+
+    @Override
     public String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode) {
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-topology");

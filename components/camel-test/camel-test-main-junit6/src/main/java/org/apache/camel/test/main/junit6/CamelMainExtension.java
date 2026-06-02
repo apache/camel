@@ -196,11 +196,15 @@ final class CamelMainExtension
         String folder = getRouteDumpDiagramFolder(context);
         if (folder != null) {
             LOG.info("Dumping route diagrams to: {}", folder);
+            CamelMainTest annotation = context.getRequiredTestInstances().getAllInstances().get(0).getClass()
+                    .getAnnotation(CamelMainTest.class);
             final ModelCamelContext camelContext = getContextStore(context).get(CONTEXT, CamelMainContext.class).context();
             DumpRoutesStrategy drs = camelContext.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
             drs.setOutput(folder);
             drs.setInclude("*");
             drs.setLog(false);
+            drs.setTopology(annotation.dumpRouteDiagramTopology());
+            drs.setTopologyExternal(annotation.dumpRouteDiagramTopologyExternal());
             drs.dumpRoutes("png");
         }
     }

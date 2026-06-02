@@ -84,6 +84,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     private boolean log = true;
     private String output;
     private String outputFileName;
+    private boolean topology = true;
+    private boolean topologyExternal = true;
 
     @Override
     public CamelContext getCamelContext() {
@@ -152,6 +154,22 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         this.uriAsParameters = uriAsParameters;
     }
 
+    public boolean isTopology() {
+        return topology;
+    }
+
+    public void setTopology(boolean topology) {
+        this.topology = topology;
+    }
+
+    public boolean isTopologyExternal() {
+        return topologyExternal;
+    }
+
+    public void setTopologyExternal(boolean topologyExternal) {
+        this.topologyExternal = topologyExternal;
+    }
+
     @Override
     public void dumpRoutes(String format) {
         if ("yaml".equalsIgnoreCase(format)) {
@@ -189,6 +207,13 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     LOG.info("Dumping route diagrams as PNG files to folder: {}", folder);
                 }
                 dumper.dumpRoutesToFolder(filter, RouteDiagramDumper.Theme.LIGHT, new File(folder));
+            }
+            if (topology) {
+                if (log) {
+                    LOG.info("Dumping route topology diagram as PNG to folder: {}", folder != null ? folder : ".");
+                }
+                dumper.dumpTopologyToFolder(RouteDiagramDumper.Theme.LIGHT, topologyExternal,
+                        new File(folder != null ? folder : "."));
             }
         } catch (IOException e) {
             LOG.warn("Error dumping routes diagrams. This exception is ignored.", e);

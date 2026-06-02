@@ -124,6 +124,19 @@ public interface RouteDiagramDumper {
     }
 
     /**
+     * Dumps the route topology as a PNG file in the given folder
+     *
+     * @param theme    the coloring theme
+     * @param external whether to include external systems (kafka, http, etc.)
+     * @param folder   the folder to store the file
+     *
+     * @since          4.21
+     */
+    default void dumpTopologyToFolder(Theme theme, boolean external, File folder) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Dumps the route topology as ASCII art or Unicode box-drawing text
      *
      * @param nodeWidth the width in pixels of the node boxes
