@@ -2397,6 +2397,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "parser", def.getParser(), null);
         doWriteAttribute(jo, "validate", def.getValidate(), "true");
+        doWriteAttribute(jo, "targetFormat", def.getTargetFormat(), null);
         return jo;
     }
     protected JsonObject doWriteIcalDataFormat(IcalDataFormat def) {

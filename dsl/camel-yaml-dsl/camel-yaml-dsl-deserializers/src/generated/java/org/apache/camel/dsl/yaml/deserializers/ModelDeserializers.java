@@ -6419,6 +6419,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "parser", type = "string", description = "To use a custom HL7 parser", displayName = "Parser"),
+                    @YamlProperty(name = "targetFormat", type = "enum:XML", description = "The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and unmarshal returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns an XML DOM Document.", displayName = "Target Format"),
                     @YamlProperty(name = "validate", type = "boolean", defaultValue = "true", description = "Whether to validate the HL7 message Is by default true.", displayName = "Validate")
             }
     )
@@ -6445,6 +6446,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "parser": {
                     String val = asText(node);
                     target.setParser(val);
+                    break;
+                }
+                case "targetFormat": {
+                    String val = asText(node);
+                    target.setTargetFormat(val);
                     break;
                 }
                 case "validate": {

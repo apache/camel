@@ -18,6 +18,9 @@ package org.apache.camel.component.hl7;
 
 import java.io.IOException;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -25,6 +28,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum;
+import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -70,6 +74,32 @@ public final class HL7Converter {
     @Converter
     public static Message toMessage(byte[] body, Exchange exchange) throws HL7Exception, IOException {
         return DEFAULT_CONTEXT.getGenericParser().parse(IOConverter.toString(body, exchange));
+    }
+
+    @Converter
+    public static Message toMessage(Document doc) throws HL7Exception {
+        String version = getVersionFromDocument(doc);
+        return ((XMLParser) DEFAULT_CONTEXT.getXMLParser()).parseDocument(doc, version);
+    }
+
+    private static final String HL7_V2_XML_NAMESPACE = "urn:hl7-org:v2xml";
+
+    static String getVersionFromDocument(Document doc) {
+        NodeList nodes = doc.getElementsByTagNameNS(HL7_V2_XML_NAMESPACE, "VID.1");
+        if (nodes.getLength() > 0) {
+            String version = nodes.item(0).getTextContent();
+            if (version != null && !version.trim().isEmpty()) {
+                return version.trim();
+            }
+        }
+        nodes = doc.getElementsByTagNameNS(HL7_V2_XML_NAMESPACE, "MSH.12");
+        if (nodes.getLength() > 0) {
+            String version = nodes.item(0).getTextContent();
+            if (version != null && !version.trim().isEmpty()) {
+                return version.trim();
+            }
+        }
+        return null;
     }
 
 }
