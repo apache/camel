@@ -35,6 +35,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,6 +54,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Uses a real Artemis broker over TCP (via Testcontainers) so that connection close truly kills sessions and consumers,
  * matching the behavior of Oracle AQ and other remote JMS providers.
  */
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "The container image cannot be started for this test. Maybe because it is using the ArtemisContainer instead fo the service.")
 public class SjmsConnectionRecoveryTest extends CamelTestSupport {
 
     private static final String SJMS_QUEUE_NAME = "sjms:queue:SjmsConnectionRecoveryTest";
