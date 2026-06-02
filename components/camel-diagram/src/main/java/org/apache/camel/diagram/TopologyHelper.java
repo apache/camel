@@ -101,6 +101,9 @@ public final class TopologyHelper {
             int colonIdx = uri.indexOf(':');
             node.description = colonIdx > 0 ? uri.substring(colonIdx + 1) : uri;
 
+            node.exchangesTotal = eo.getLongOrDefault("exchangesTotal", 0);
+            node.exchangesFailed = eo.getLongOrDefault("exchangesFailed", 0);
+
             nodes.add(node);
 
             // Create an edge connecting this external endpoint to/from its route

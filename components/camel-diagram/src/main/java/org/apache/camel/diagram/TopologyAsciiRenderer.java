@@ -153,7 +153,7 @@ public class TopologyAsciiRenderer {
             }
         }
 
-        if (metrics && !isExternalNode(node)) {
+        if (metrics) {
             if (node.exchangesTotal > 0 || node.exchangesFailed > 0) {
                 long ok = node.exchangesTotal - node.exchangesFailed;
                 StringBuilder sb = new StringBuilder();
@@ -167,7 +167,7 @@ public class TopologyAsciiRenderer {
                     sb.append(node.exchangesFailed).append("!");
                 }
                 lines.add(sb.toString());
-            } else {
+            } else if (!isExternalNode(node)) {
                 lines.add("");
             }
         }
@@ -219,7 +219,8 @@ public class TopologyAsciiRenderer {
             // Track counter positions for ANSI coloring
             if (isExternalNode(node) && i == 0) {
                 counterPositions.add(new CounterPos(r, textCol, text.length(), CounterType.EXTERNAL));
-            } else if (metrics && !isExternalNode(node) && i == lines.size() - 1 && node.exchangesTotal > 0) {
+            }
+            if (metrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
                 long ok = node.exchangesTotal - node.exchangesFailed;
                 if (ok > 0) {
                     String okStr = "" + ok;
@@ -304,7 +305,11 @@ public class TopologyAsciiRenderer {
 
     private int boxHeight(TopologyLayoutNode node) {
         if (isExternalNode(node)) {
-            return 3;
+            int lines = 1; // URI
+            if (metrics && node.exchangesTotal > 0) {
+                lines++;
+            }
+            return 2 + lines;
         }
         int lines = 3; // routeId + from (2 lines reserved)
         if (metrics) {

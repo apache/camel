@@ -179,8 +179,8 @@ public class TopologyImageRenderer {
                 g.setFont(font);
             }
 
-            // Metrics (not shown for external nodes)
-            if (metrics && !isExternalNode(node) && node.exchangesTotal > 0) {
+            // Metrics
+            if (metrics && node.exchangesTotal > 0) {
                 long ok = node.exchangesTotal - node.exchangesFailed;
                 Font metricsFont = font.deriveFont((float) (fontSizeScaled * 0.75));
                 g.setFont(metricsFont);

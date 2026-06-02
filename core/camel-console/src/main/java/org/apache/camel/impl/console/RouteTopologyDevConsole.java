@@ -16,10 +16,13 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyEdge;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyExternalEndpoint;
@@ -28,6 +31,7 @@ import org.apache.camel.spi.RouteTopologyDumper.TopologyResult;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -126,6 +130,9 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         root.put("edges", edgesArr);
 
         if (external && !result.externalEndpoints().isEmpty()) {
+            // Collect per-endpoint metrics for producers (direction=out)
+            Map<String, long[]> endpointMetrics = collectEndpointMetrics(mcc, result);
+
             JsonArray extArr = new JsonArray();
             for (TopologyExternalEndpoint ep : result.externalEndpoints()) {
                 JsonObject jo = new JsonObject();
@@ -134,12 +141,75 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                 jo.put("scheme", ep.scheme());
                 jo.put("direction", ep.direction());
                 jo.put("routeId", ep.routeId());
+
+                if (mcc != null) {
+                    if ("in".equals(ep.direction())) {
+                        // Consumer: use route-level metrics (route has exactly 1 consumer)
+                        ManagedRouteMBean mrb = mcc.getManagedRoute(ep.routeId());
+                        if (mrb != null) {
+                            jo.put("exchangesTotal", mrb.getExchangesTotal());
+                            jo.put("exchangesFailed", mrb.getExchangesFailed());
+                        }
+                    } else {
+                        // Producer: use processor-level metrics
+                        String key = ep.routeId() + "|" + ep.uri();
+                        long[] stats = endpointMetrics.get(key);
+                        if (stats != null) {
+                            jo.put("exchangesTotal", stats[0]);
+                            jo.put("exchangesFailed", stats[1]);
+                        }
+                    }
+                }
+
                 extArr.add(jo);
             }
             root.put("externalEndpoints", extArr);
         }
 
         return root;
+    }
+
+    /**
+     * Collects per-endpoint metrics for producer endpoints by iterating managed send processors. Returns a map keyed by
+     * "routeId|normalizedUri" with value [exchangesTotal, exchangesFailed].
+     */
+    private Map<String, long[]> collectEndpointMetrics(ManagedCamelContext mcc, TopologyResult result) {
+        Map<String, long[]> metrics = new HashMap<>();
+        if (mcc == null) {
+            return metrics;
+        }
+        for (TopologyExternalEndpoint ep : result.externalEndpoints()) {
+            if (!"out".equals(ep.direction())) {
+                continue;
+            }
+            try {
+                ManagedRouteMBean mrb = mcc.getManagedRoute(ep.routeId());
+                if (mrb == null) {
+                    continue;
+                }
+                Collection<String> ids = mrb.processorIds();
+                for (String pid : ids) {
+                    ManagedSendProcessorMBean sp = mcc.getManagedProcessor(pid, ManagedSendProcessorMBean.class);
+                    if (sp == null) {
+                        continue;
+                    }
+                    String dest = URISupport.stripQuery(sp.getDestination());
+                    if (ep.uri().equals(dest)) {
+                        String key = ep.routeId() + "|" + ep.uri();
+                        long[] existing = metrics.get(key);
+                        if (existing != null) {
+                            existing[0] += sp.getExchangesTotal();
+                            existing[1] += sp.getExchangesFailed();
+                        } else {
+                            metrics.put(key, new long[] { sp.getExchangesTotal(), sp.getExchangesFailed() });
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return metrics;
     }
 
 }
