@@ -313,7 +313,7 @@ public class SimpleScheduledRoutePolicyTest {
 
                         from("direct:start")
                                 .routeId("test")
-                                .noAutoStartup()
+                                .autoStartup(false)
                                 .routePolicy(policy)
                                 .to("mock:success");
                     }
@@ -356,7 +356,7 @@ public class SimpleScheduledRoutePolicyTest {
 
                                         from("direct:dynamic")
                                                 .routeId("dynamic")
-                                                .noAutoStartup()
+                                                .autoStartup(false)
                                                 .routePolicy(policy)
                                                 .to("mock:success");
                                     }

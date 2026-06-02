@@ -71,10 +71,10 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor-vm:foo?size=128&blockWhenFull=false").routeId("foo").noAutoStartup()
+                from("disruptor-vm:foo?size=128&blockWhenFull=false").routeId("foo").autoStartup(false)
                         .to("mock:foo");
 
-                from("disruptor-vm:bar").routeId("bar").noAutoStartup()
+                from("disruptor-vm:bar").routeId("bar").autoStartup(false)
                         .to("mock:bar");
             }
         };

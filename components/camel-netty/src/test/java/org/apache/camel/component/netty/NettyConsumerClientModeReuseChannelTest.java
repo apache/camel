@@ -96,7 +96,7 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
                             }
                         })
                         .to("mock:receive")
-                        .noAutoStartup();
+                        .autoStartup(false);
             }
         };
     }

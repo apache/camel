@@ -129,7 +129,7 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
                         DATABASE_NAME, containerName, leaseDatabaseName))
                         .routeId("readEventsRoute")
                         .to("mock:readEvents")
-                        .setAutoStartup("false");
+                        .autoStartup(false);
             }
         };
     }

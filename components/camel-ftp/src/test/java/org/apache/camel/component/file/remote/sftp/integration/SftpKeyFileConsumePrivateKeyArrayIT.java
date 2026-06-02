@@ -56,7 +56,7 @@ public class SftpKeyFileConsumePrivateKeyArrayIT extends SftpServerTestSupport {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&knownHostsFile="
                      + service.getKnownHostsFile()
                      + "&privateKey=#myKey&privateKeyPassphrase=secret&delay=10000&disconnect=true")
-                        .routeId("foo").noAutoStartup().to("mock:result");
+                        .routeId("foo").autoStartup(false).to("mock:result");
             }
         };
     }

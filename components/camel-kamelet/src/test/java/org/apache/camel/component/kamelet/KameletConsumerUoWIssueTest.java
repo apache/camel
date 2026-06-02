@@ -63,7 +63,7 @@ public class KameletConsumerUoWIssueTest extends CamelTestSupport {
                             }
                         }).to("kamelet:sink");
 
-                from("kamelet:tick").noAutoStartup().routeId("tick")
+                from("kamelet:tick").autoStartup(false).routeId("tick")
                         .to("mock:foo");
             }
         };

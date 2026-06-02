@@ -206,7 +206,7 @@ public class SftpCertUserAuthIT extends BaseServerTestSupport {
                      + "&knownHostsFile=" + service.getKnownHostsFile()
                      + "&useUserKnownHostsFile=false"
                      + "&delay=10000&disconnect=true")
-                        .routeId("certFileRoute").noAutoStartup()
+                        .routeId("certFileRoute").autoStartup(false)
                         .to("mock:certFile");
 
                 // Route 2: certUri — certificate loaded from classpath
@@ -217,7 +217,7 @@ public class SftpCertUserAuthIT extends BaseServerTestSupport {
                      + "&knownHostsFile=" + service.getKnownHostsFile()
                      + "&useUserKnownHostsFile=false"
                      + "&delay=10000&disconnect=true")
-                        .routeId("certUriRoute").noAutoStartup()
+                        .routeId("certUriRoute").autoStartup(false)
                         .to("mock:certUri");
 
                 // Route 3: certBytes — certificate loaded as byte array via bean reference
@@ -228,7 +228,7 @@ public class SftpCertUserAuthIT extends BaseServerTestSupport {
                      + "&knownHostsFile=" + service.getKnownHostsFile()
                      + "&useUserKnownHostsFile=false"
                      + "&delay=10000&disconnect=true")
-                        .routeId("certBytesRoute").noAutoStartup()
+                        .routeId("certBytesRoute").autoStartup(false)
                         .to("mock:certBytes");
 
                 // Route 4: no cert — should fail because server rejects raw public keys
@@ -238,7 +238,7 @@ public class SftpCertUserAuthIT extends BaseServerTestSupport {
                      + "&knownHostsFile=" + service.getKnownHostsFile()
                      + "&useUserKnownHostsFile=false"
                      + "&delay=10000&disconnect=true")
-                        .routeId("noCertRoute").noAutoStartup()
+                        .routeId("noCertRoute").autoStartup(false)
                         .to("mock:noCert");
             }
         };

@@ -97,7 +97,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
                                 String body = exchange.getIn().getBody(String.class);
                                 exchange.getMessage().setBody("Bye " + body);
                             }
-                        }).to("log:receive").to("mock:receive").noAutoStartup();
+                        }).to("log:receive").to("mock:receive").autoStartup(false);
             }
         };
     }

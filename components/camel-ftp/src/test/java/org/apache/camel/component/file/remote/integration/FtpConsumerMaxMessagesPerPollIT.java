@@ -58,7 +58,7 @@ public class FtpConsumerMaxMessagesPerPollIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).noAutoStartup().routeId("foo").to("mock:result");
+                from(getFtpUrl()).autoStartup(false).routeId("foo").to("mock:result");
             }
         };
     }

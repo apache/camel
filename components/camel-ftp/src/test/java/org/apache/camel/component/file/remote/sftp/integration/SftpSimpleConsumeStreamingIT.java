@@ -57,7 +57,7 @@ public class SftpSimpleConsumeStreamingIT extends SftpServerTestSupport {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&knownHostsFile="
                      + service.getKnownHostsFile()).routeId("foo")
-                        .noAutoStartup().to("mock:result");
+                        .autoStartup(false).to("mock:result");
             }
         };
     }
