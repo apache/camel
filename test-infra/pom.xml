@@ -99,6 +99,7 @@
         <module>camel-test-infra-ibmmq</module>
         <module>camel-test-infra-docling</module>
         <module>camel-test-infra-iggy</module>
+        <module>camel-test-infra-jaeger</module>
         <module>camel-test-infra-mcp-everything</module>
         <module>camel-test-infra-all</module>
     </modules>
