@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -812,7 +813,9 @@ public class KameletMain extends MainCommandLineSupport {
         answer.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
         answer.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
         answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Short.class, String.class, ec);
         answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Duration.class, String.class, ec);
         answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
 
         // turn of validator in onException during export
