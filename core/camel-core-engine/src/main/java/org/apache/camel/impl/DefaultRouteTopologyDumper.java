@@ -92,8 +92,12 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
             Map<String, List<String>> inputUriToRouteIds) {
 
         // Build scheme -> isRemote map from endpoint registry
+        // Skip stub endpoints — they mask the real component's remote status
         Map<String, Boolean> schemeRemoteMap = new HashMap<>();
         for (Endpoint ep : context.getEndpoints()) {
+            if (isStubEndpoint(ep)) {
+                continue;
+            }
             String scheme = extractScheme(ep.getEndpointUri());
             schemeRemoteMap.putIfAbsent(scheme, ep.isRemote());
         }
@@ -144,6 +148,10 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
         }
         // Fallback: internal and trigger schemes are not remote
         return !INTERNAL_SCHEMES.contains(scheme) && !TRIGGER_SCHEMES.contains(scheme);
+    }
+
+    private static boolean isStubEndpoint(Endpoint ep) {
+        return "StubEndpoint".equals(ep.getClass().getSimpleName());
     }
 
     private static String extractScheme(String uri) {
