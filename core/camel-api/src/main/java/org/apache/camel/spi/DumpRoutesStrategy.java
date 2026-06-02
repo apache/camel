@@ -87,4 +87,22 @@ public interface DumpRoutesStrategy extends StaticService {
      */
     void setOutput(String output);
 
+    boolean isTopology();
+
+    /**
+     * Whether to also dump route topology diagram when dumping route diagrams. Default is true.
+     *
+     * @since 4.21
+     */
+    void setTopology(boolean topology);
+
+    boolean isTopologyExternal();
+
+    /**
+     * Whether to include external systems (kafka, http, etc.) in the topology diagram. Default is true.
+     *
+     * @since 4.21
+     */
+    void setTopologyExternal(boolean topologyExternal);
+
 }

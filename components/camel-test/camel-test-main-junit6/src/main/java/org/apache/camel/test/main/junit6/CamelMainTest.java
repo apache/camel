@@ -239,6 +239,16 @@ public @interface CamelMainTest {
     String dumpRouteDiagramFolder() default "";
 
     /**
+     * Whether to also dump the route topology diagram showing how routes connect to each other.
+     */
+    boolean dumpRouteDiagramTopology() default true;
+
+    /**
+     * Whether to include external systems (kafka, http, etc.) in the topology diagram.
+     */
+    boolean dumpRouteDiagramTopologyExternal() default true;
+
+    /**
      * Whether JMX should be used during testing.
      *
      * @return <tt>false</tt> by default.

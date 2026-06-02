@@ -39,4 +39,14 @@ public @interface EnableRouteDiagramDump {
      */
     String folder();
 
+    /**
+     * Whether to also dump the route topology diagram showing how routes connect to each other.
+     */
+    boolean topology() default true;
+
+    /**
+     * Whether to include external systems (kafka, http, etc.) in the topology diagram.
+     */
+    boolean topologyExternal() default true;
+
 }

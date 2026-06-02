@@ -32,6 +32,9 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "output": target.setOutput(property(camelContext, java.lang.String.class, value)); return true;
         case "resolveplaceholders":
         case "resolvePlaceholders": target.setResolvePlaceholders(property(camelContext, boolean.class, value)); return true;
+        case "topology": target.setTopology(property(camelContext, boolean.class, value)); return true;
+        case "topologyexternal":
+        case "topologyExternal": target.setTopologyExternal(property(camelContext, boolean.class, value)); return true;
         case "uriasparameters":
         case "uriAsParameters": target.setUriAsParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -50,6 +53,9 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "output": return java.lang.String.class;
         case "resolveplaceholders":
         case "resolvePlaceholders": return boolean.class;
+        case "topology": return boolean.class;
+        case "topologyexternal":
+        case "topologyExternal": return boolean.class;
         case "uriasparameters":
         case "uriAsParameters": return boolean.class;
         default: return null;
@@ -69,6 +75,9 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "output": return target.getOutput();
         case "resolveplaceholders":
         case "resolvePlaceholders": return target.isResolvePlaceholders();
+        case "topology": return target.isTopology();
+        case "topologyexternal":
+        case "topologyExternal": return target.isTopologyExternal();
         case "uriasparameters":
         case "uriAsParameters": return target.isUriAsParameters();
         default: return null;

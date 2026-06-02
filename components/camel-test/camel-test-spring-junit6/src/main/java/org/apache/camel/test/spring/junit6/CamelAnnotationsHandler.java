@@ -266,6 +266,7 @@ public final class CamelAnnotationsHandler {
         }
         if (folder != null && !folder.isBlank()) {
             final String dir = folder;
+            final EnableRouteDiagramDump annotation = testClass.getAnnotation(EnableRouteDiagramDump.class);
             CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
@@ -274,6 +275,8 @@ public final class CamelAnnotationsHandler {
                     drs.setOutput(dir);
                     drs.setInclude("*");
                     drs.setLog(false);
+                    drs.setTopology(annotation.topology());
+                    drs.setTopologyExternal(annotation.topologyExternal());
                     drs.dumpRoutes("png");
                 }
             });
