@@ -65,7 +65,8 @@ public class RouteDiagramAsciiRenderer {
         OK,
         FAIL,
         HIGHLIGHT_SUCCESS,
-        HIGHLIGHT_FAIL
+        HIGHLIGHT_FAIL,
+        EXTERNAL
     }
 
     public record CounterPos(int row, int col, int length, CounterType type) {

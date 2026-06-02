@@ -36,6 +36,7 @@ class DiagramTab implements MonitorTab {
     private final MonitorContext ctx;
     private final DiagramSupport diagram = new DiagramSupport();
     private boolean diagramMetrics = true;
+    private boolean showExternal;
     private boolean topologyMode = true;
     private String drillDownRouteId;
 
@@ -56,6 +57,14 @@ class DiagramTab implements MonitorTab {
         // Toggle metrics
         if (diagram.isShowDiagram() && ke.isCharIgnoreCase('m')) {
             diagramMetrics = !diagramMetrics;
+            diagram.endLoad();
+            reloadDiagram();
+            return true;
+        }
+
+        // Toggle external systems
+        if (diagram.isShowDiagram() && topologyMode && ke.isCharIgnoreCase('e')) {
+            showExternal = !showExternal;
             diagram.endLoad();
             reloadDiagram();
             return true;
@@ -151,6 +160,7 @@ class DiagramTab implements MonitorTab {
         if (diagram.isShowDiagram()) {
             diagram.renderFooterHints(spans);
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            hint(spans, "e", "external" + (showExternal ? " [on]" : " [off]"));
             hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         }
     }
@@ -179,6 +189,7 @@ class DiagramTab implements MonitorTab {
 
         String pid = ctx.selectedPid;
         boolean showMetrics = diagramMetrics;
+        boolean external = showExternal;
 
         if (showPlaceholder) {
             diagram.setLoadingPlaceholder();
@@ -188,7 +199,7 @@ class DiagramTab implements MonitorTab {
             try {
                 if (topologyMode) {
                     diagram.setTopologyMode(true);
-                    diagram.loadTopologyDiagramInBackground(ctx, pid, true, showMetrics);
+                    diagram.loadTopologyDiagramInBackground(ctx, pid, true, showMetrics, external);
                 } else {
                     diagram.setTopologyMode(false);
                     diagram.loadRouteDiagramInBackground(ctx, pid, true, drillDownRouteId, showMetrics);
@@ -244,9 +255,21 @@ class DiagramTab implements MonitorTab {
                                 - **Red** number with `!` — failed exchanges
                                 - Combined as `3748/12!` means 3748 ok and 12 failed
 
+                                ## External Systems
+
+                                When external systems are enabled, the diagram shows a three-band layout:
+                                - **Top band** — external consumers sending messages INTO Camel
+                                - **Middle band** — the Camel routes and their internal connections
+                                - **Bottom band** — external producers where Camel sends messages OUT
+
+                                External system boxes are drawn with dashed borders to distinguish
+                                them from route boxes. Dashed edges connect routes to external systems.
+
                                 ## Keys
 
                                 - `m` — toggle metrics on/off (default: on)
+                                - `e` — toggle external systems on/off (default: off)
+                                - `n` — toggle description labels on/off (default: off)
                                 - `↑↓←→` — scroll diagram
                                 - `PgUp/PgDn` — page scroll
                                 - `Home/End` — top/end

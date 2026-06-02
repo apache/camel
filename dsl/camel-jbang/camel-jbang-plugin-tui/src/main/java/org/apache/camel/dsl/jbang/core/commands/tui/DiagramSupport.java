@@ -431,8 +431,8 @@ class DiagramSupport {
     }
 
     void loadTopologyDiagramInBackground(
-            MonitorContext ctx, String pid, boolean textMode, boolean metrics) {
-        JsonObject jo = requestRouteTopology(ctx, pid);
+            MonitorContext ctx, String pid, boolean textMode, boolean metrics, boolean external) {
+        JsonObject jo = requestRouteTopology(ctx, pid, external);
         if (jo == null) {
             applyResult(ctx, List.of("(No response from integration)"), null, null, null);
             return;
@@ -440,6 +440,9 @@ class DiagramSupport {
 
         List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(jo);
         List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(jo);
+        if (external) {
+            TopologyHelper.addExternalEndpoints(nodes, edges, jo);
+        }
         if (nodes.isEmpty()) {
             applyResult(ctx, List.of("(No routes in response)"), null, null, null);
             return;
@@ -473,7 +476,7 @@ class DiagramSupport {
                         case OK -> RouteDiagramAsciiRenderer.CounterType.OK;
                         case FAIL -> RouteDiagramAsciiRenderer.CounterType.FAIL;
                         case TRIGGER -> RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_SUCCESS;
-                        case EXTERNAL -> RouteDiagramAsciiRenderer.CounterType.OK;
+                        case EXTERNAL -> RouteDiagramAsciiRenderer.CounterType.EXTERNAL;
                     };
                     positions.add(new RouteDiagramAsciiRenderer.CounterPos(
                             rowMapping[cp.row()], cp.col(), cp.length(), mapped));
@@ -501,13 +504,16 @@ class DiagramSupport {
         }
     }
 
-    private JsonObject requestRouteTopology(MonitorContext ctx, String pid) {
+    private JsonObject requestRouteTopology(MonitorContext ctx, String pid, boolean external) {
         Path outputFile = ctx.getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "route-topology");
         root.put("metric", "true");
+        if (external) {
+            root.put("external", "true");
+        }
 
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
@@ -689,6 +695,7 @@ class DiagramSupport {
                     end = Math.min(end, text.length());
                     int colorFlag = switch (cp.type()) {
                         case OK, HIGHLIGHT_SUCCESS -> 1; // green
+                        case EXTERNAL -> 3; // cyan
                         default -> 2; // red
                     };
                     counterRanges.add(new int[] { start, end, colorFlag });
@@ -737,7 +744,7 @@ class DiagramSupport {
                     spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(defaultColor)));
                 }
                 int counterEnd = Math.min(cr[1], to);
-                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.LIGHT_RED;
+                Color counterColor = cr[2] == 1 ? Color.GREEN : cr[2] == 3 ? Color.CYAN : Color.LIGHT_RED;
                 spans.add(Span.styled(text.substring(cr[0], counterEnd), Style.EMPTY.fg(counterColor).bold()));
                 pos = counterEnd;
             } else {

@@ -1,0 +1,97 @@
+# Order Processing System
+# This example demonstrates inter-route topology with triggers, shared routes, and external systems.
+# Use "camel cmd route-topology" to visualize how the routes connect to each other.
+
+# Trigger: generates a new order every 5 seconds
+- route:
+    id: order-generator
+    description: Generate Orders
+    from:
+      uri: timer
+      parameters:
+        timerName: orders
+        period: 5000
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: '{"orderId": "${exchangeId}", "item": "Camel T-Shirt", "quantity": 1}'
+        - to:
+            uri: direct:process-order
+
+# HTTP entry point: receives orders from external clients
+- route:
+    id: order-api
+    description: Order REST API
+    from:
+      uri: platform-http
+      parameters:
+        path: /api/orders
+        httpMethodRestrict: POST
+      steps:
+        - to:
+            uri: direct:process-order
+
+# Shared route: validates and publishes orders (used by both order-generator and order-api)
+- route:
+    id: process-order
+    description: Process Order
+    from:
+      uri: direct:process-order
+      steps:
+        - to:
+            uri: direct:validate-order
+        - log:
+            message: "Processing order: ${body}"
+        - to:
+            uri: kafka:orders
+
+# Validation: checks order contents
+- route:
+    id: validate-order
+    description: Validate Order
+    from:
+      uri: direct:validate-order
+      steps:
+        - log:
+            message: "Validating order: ${body}"
+
+# Kafka consumer: picks up orders and fans out to fulfillment and notifications
+- route:
+    id: order-dispatcher
+    description: Dispatch Order
+    from:
+      uri: kafka:orders
+      steps:
+        - log:
+            message: "Dispatching order: ${body}"
+        - multicast:
+            steps:
+              - to:
+                  uri: kafka:fulfillment
+              - to:
+                  uri: kafka:notifications
+
+# Kafka consumer: handles fulfillment and reports to warehouse
+- route:
+    id: fulfillment
+    description: Fulfill Order
+    from:
+      uri: kafka:fulfillment
+      steps:
+        - log:
+            message: "Fulfilling order: ${body}"
+        - to:
+            uri: kafka:warehouse-shipments
+
+# Kafka consumer: sends notifications via external email service
+- route:
+    id: notification
+    description: Send Notification
+    from:
+      uri: kafka:notifications
+      steps:
+        - log:
+            message: "Sending notification for: ${body}"
+        - to:
+            uri: kafka:email-outbox
