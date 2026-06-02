@@ -102,21 +102,32 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
             schemeRemoteMap.putIfAbsent(scheme, ep.isRemote());
         }
 
+        // Collect all output URIs to determine which "from" endpoints are truly external
+        Set<String> allOutputUris = new HashSet<>();
+        for (RouteDefinition rd : routeDefs) {
+            Collection<EndpointRequiredDefinition> outputs
+                    = ProcessorDefinitionHelper.filterTypeInOutputs(
+                            rd.getOutputs(), EndpointRequiredDefinition.class);
+            for (EndpointRequiredDefinition erd : outputs) {
+                allOutputUris.add(URISupport.stripQuery(erd.getEndpointUri()));
+            }
+        }
+
         List<TopologyExternalEndpoint> externalEndpoints = new ArrayList<>();
         Set<String> seenOutgoing = new HashSet<>();
 
         for (RouteDefinition rd : routeDefs) {
             String routeId = rd.getRouteId();
 
-            // Consumer (direction=in): each route has exactly 1 "from" endpoint
+            // Consumer (direction=in): only if no route sends to this URI (truly from outside Camel)
             String inputUri = URISupport.stripQuery(rd.getInput().getEndpointUri());
             String inputScheme = extractScheme(inputUri);
-            if (isRemoteScheme(inputScheme, schemeRemoteMap)) {
+            if (isRemoteScheme(inputScheme, schemeRemoteMap) && !allOutputUris.contains(inputUri)) {
                 externalEndpoints.add(
                         new TopologyExternalEndpoint("in-" + routeId, inputUri, inputScheme, "in", routeId));
             }
 
-            // Producers (direction=out): 0..N output endpoints per route
+            // Producers (direction=out): only if no route consumes from this URI (truly leaving Camel)
             Collection<EndpointRequiredDefinition> outputs
                     = ProcessorDefinitionHelper.filterTypeInOutputs(
                             rd.getOutputs(), EndpointRequiredDefinition.class);
@@ -125,8 +136,7 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
             for (EndpointRequiredDefinition erd : outputs) {
                 String outputUri = URISupport.stripQuery(erd.getEndpointUri());
                 String outputScheme = extractScheme(outputUri);
-                if (isRemoteScheme(outputScheme, schemeRemoteMap)) {
-                    // Deduplicate per route: same route sending to same URI only listed once
+                if (isRemoteScheme(outputScheme, schemeRemoteMap) && !inputUriToRouteIds.containsKey(outputUri)) {
                     String dedupeKey = routeId + "|" + outputUri;
                     if (seenOutgoing.add(dedupeKey)) {
                         externalEndpoints.add(

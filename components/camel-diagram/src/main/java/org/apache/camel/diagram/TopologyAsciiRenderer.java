@@ -44,6 +44,8 @@ public class TopologyAsciiRenderer {
     private static final char UNI_T_UP = '┴';
     private static final char UNI_CROSS = '┼';
     private static final char UNI_ARROW = '▼';
+    private static final char UNI_DASH_V = '┆';
+    private static final char UNI_DASH_H = '┄';
 
     private final int nodeWidth;
     private final int boxWidth;
@@ -242,8 +244,9 @@ public class TopologyAsciiRenderer {
             return;
         }
 
-        char v = unicode ? UNI_V : '|';
-        char h = unicode ? UNI_H : '-';
+        boolean dashed = "external".equals(edge.connectionType);
+        char v = dashed ? (unicode ? UNI_DASH_V : ':') : (unicode ? UNI_V : '|');
+        char h = dashed ? (unicode ? UNI_DASH_H : '-') : (unicode ? UNI_H : '-');
         char arrow = unicode ? UNI_ARROW : 'v';
 
         if (fromCx == toCx) {
@@ -400,11 +403,11 @@ public class TopologyAsciiRenderer {
     }
 
     private boolean isVertical(char ch) {
-        return ch == '|' || ch == UNI_V;
+        return ch == '|' || ch == UNI_V || ch == ':' || ch == UNI_DASH_V;
     }
 
     private boolean isHorizontal(char ch) {
-        return ch == '-' || ch == UNI_H;
+        return ch == '-' || ch == UNI_H || ch == UNI_DASH_H;
     }
 
     private void plotLine(char[][] grid, int row, int col, char ch) {

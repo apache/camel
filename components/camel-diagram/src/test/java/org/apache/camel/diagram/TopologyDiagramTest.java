@@ -391,7 +391,9 @@ class TopologyDiagramTest {
 
     @Test
     void testOrderProcessingWithExternalEndpoints() {
-        // Full order processing topology with external endpoints
+        // Full order processing topology
+        // Only platform-http is truly external (no route sends to it).
+        // All kafka topics link routes internally, so they are NOT external.
         List<TopologyNodeInfo> nodes = new ArrayList<>(
                 List.of(
                         node("order-generator", "timer:orders", "trigger"),
@@ -411,38 +413,22 @@ class TopologyDiagramTest {
                         edge("order-dispatcher", "fulfillment", "kafka:fulfillment", "external"),
                         edge("order-dispatcher", "notification", "kafka:notifications", "external")));
 
-        // Consumers (external-in)
+        // Only platform-http is truly external (messages arrive from outside Camel)
         nodes.add(node("in-order-api", "platform-http:/api/orders", "external-in"));
         edges.add(edge("in-order-api", "order-api", "platform-http:/api/orders", "external"));
-        nodes.add(node("in-order-dispatcher", "kafka:orders", "external-in"));
-        edges.add(edge("in-order-dispatcher", "order-dispatcher", "kafka:orders", "external"));
-        nodes.add(node("in-fulfillment", "kafka:fulfillment", "external-in"));
-        edges.add(edge("in-fulfillment", "fulfillment", "kafka:fulfillment", "external"));
-        nodes.add(node("in-notification", "kafka:notifications", "external-in"));
-        edges.add(edge("in-notification", "notification", "kafka:notifications", "external"));
-
-        // Producers (external-out)
-        nodes.add(node("out-process-order-0", "kafka:orders", "external-out"));
-        edges.add(edge("process-order", "out-process-order-0", "kafka:orders", "external"));
-        nodes.add(node("out-order-dispatcher-0", "kafka:fulfillment", "external-out"));
-        edges.add(edge("order-dispatcher", "out-order-dispatcher-0", "kafka:fulfillment", "external"));
-        nodes.add(node("out-order-dispatcher-1", "kafka:notifications", "external-out"));
-        edges.add(edge("order-dispatcher", "out-order-dispatcher-1", "kafka:notifications", "external"));
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine();
         TopologyLayoutResult result = engine.layout(nodes, edges);
 
-        // 7 routes + 4 consumers + 3 producers = 14 nodes
-        assertEquals(14, result.nodes.size());
+        // 7 routes + 1 external consumer = 8 nodes
+        assertEquals(8, result.nodes.size());
 
         // Verify three-band ordering
         TopologyLayoutNode extIn = findNode(result, "in-order-api");
         TopologyLayoutNode route = findNode(result, "process-order");
-        TopologyLayoutNode extOut = findNode(result, "out-process-order-0");
 
         assertEquals(0, extIn.layer, "External-in should be at layer 0");
         assertTrue(route.layer > extIn.layer, "Routes should be below external-in band");
-        assertTrue(extOut.layer > route.layer, "External-out should be below route band");
     }
 
     @Test
