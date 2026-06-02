@@ -169,6 +169,15 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         return root;
     }
 
+    private static String normalizeScheme(String uri) {
+        // Normalize "scheme://path" to "scheme:path" for consistent matching
+        int idx = uri.indexOf("://");
+        if (idx > 0) {
+            return uri.substring(0, idx) + ":" + uri.substring(idx + 3);
+        }
+        return uri;
+    }
+
     /**
      * Collects per-endpoint metrics for producer endpoints by iterating managed send processors. Returns a map keyed by
      * "routeId|normalizedUri" with value [exchangesTotal, exchangesFailed].
@@ -193,8 +202,8 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                     if (sp == null) {
                         continue;
                     }
-                    String dest = URISupport.stripQuery(sp.getDestination());
-                    if (ep.uri().equals(dest)) {
+                    String dest = normalizeScheme(URISupport.stripQuery(sp.getDestination()));
+                    if (normalizeScheme(ep.uri()).equals(dest)) {
                         String key = ep.routeId() + "|" + ep.uri();
                         long[] existing = metrics.get(key);
                         if (existing != null) {
