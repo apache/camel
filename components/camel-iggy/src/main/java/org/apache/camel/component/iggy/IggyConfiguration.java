@@ -42,7 +42,7 @@ public class IggyConfiguration implements Cloneable {
     private boolean autoCreateTopic = true;
     @UriParam(description = "Stream identifier")
     private Long streamId;
-    @UriParam(description = "Stream name")
+    @UriParam(description = "Stream name", endpointIdentity = true)
     private String streamName;
     @UriParam(defaultValue = "1", description = "Number of partitions for the topic")
     private Long partitionsCount = 1L;

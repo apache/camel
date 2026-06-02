@@ -137,4 +137,13 @@ public @interface UriParam {
      */
     String optionalPrefix() default "";
 
+    /**
+     * Whether this query parameter is part of the endpoint's destination identity.
+     *
+     * Most components encode the destination (queue name, topic, bucket, etc.) in the URI context path. Some
+     * components, however, use a query parameter for this purpose. Marking such parameters allows tooling — such as the
+     * route topology service — to include them when building canonical URIs for endpoint matching.
+     */
+    boolean endpointIdentity() default false;
+
 }

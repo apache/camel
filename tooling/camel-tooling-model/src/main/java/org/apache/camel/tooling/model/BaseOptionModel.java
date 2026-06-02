@@ -58,6 +58,7 @@ public abstract class BaseOptionModel {
     protected boolean largeInput;
     protected String inputLanguage;
     protected boolean important;
+    protected boolean endpointIdentity;
 
     // todo: move this as a helper method
     protected boolean newGroup; // special for documentation rendering
@@ -337,6 +338,14 @@ public abstract class BaseOptionModel {
 
     public void setImportant(boolean important) {
         this.important = important;
+    }
+
+    public boolean isEndpointIdentity() {
+        return endpointIdentity;
+    }
+
+    public void setEndpointIdentity(boolean endpointIdentity) {
+        this.endpointIdentity = endpointIdentity;
     }
 
     public String getShortGroup() {
