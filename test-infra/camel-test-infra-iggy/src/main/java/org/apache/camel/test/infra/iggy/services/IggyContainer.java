@@ -50,7 +50,7 @@ public class IggyContainer extends GenericContainer<IggyContainer> {
                     cmd.getHostConfig()
                             .withCapAdd(Capability.SYS_NICE)
                             .withSecurityOpts(List.of("seccomp:unconfined"))
-                            .withUlimits(List.of(new Ulimit("memlock", -1, -1)));
+                            .withUlimits(List.of(new Ulimit("memlock", -1L, -1L)));
                 });
 
                 if (!fixedPort) {
