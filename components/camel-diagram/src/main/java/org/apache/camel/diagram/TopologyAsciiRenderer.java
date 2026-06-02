@@ -18,6 +18,7 @@ package org.apache.camel.diagram;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
@@ -364,7 +365,10 @@ public class TopologyAsciiRenderer {
             return plain;
         }
         String[] lines = plain.split("\n", -1);
-        for (CounterPos cp : counterPositions) {
+        List<CounterPos> sorted = new ArrayList<>(counterPositions);
+        sorted.sort(
+                Comparator.comparingInt(CounterPos::row).thenComparing(Comparator.comparingInt(CounterPos::col).reversed()));
+        for (CounterPos cp : sorted) {
             if (cp.row >= 0 && cp.row < lines.length) {
                 String line = lines[cp.row];
                 if (cp.col >= 0 && cp.col + cp.length <= line.length()) {
