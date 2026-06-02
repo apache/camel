@@ -43,6 +43,7 @@ import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.kafka.clients.consumer.CloseOptions;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -219,7 +220,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
             if (consumer != null) {
                 consumer.unsubscribe();
                 try {
-                    consumer.close(Duration.ofSeconds(5));
+                    consumer.close(CloseOptions.timeout(Duration.ofSeconds(5)));
                 } catch (Exception e) {
                     LOG.warn("Error closing the consumer: {} (this error will be ignored)", e.getMessage(), e);
                 }
