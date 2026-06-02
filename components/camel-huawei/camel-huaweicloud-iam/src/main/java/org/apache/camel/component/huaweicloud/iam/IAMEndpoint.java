@@ -40,20 +40,19 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.CLOUD }, producerOnly = true)
 public class IAMEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
+    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "IAM service region",
-              displayName = "Service region", secret = false)
+    @UriParam(description = "IAM service region", displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false)
+    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port", secret = false)
+    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
     @Metadata(required = false)
     private int proxyPort;
 

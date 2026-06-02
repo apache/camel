@@ -57,15 +57,15 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "Cloud project ID", displayName = "Project ID", secret = false)
+    @UriParam(description = "Cloud project ID", displayName = "Project ID")
     @Metadata(required = true)
     private String projectId;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false)
+    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port", secret = false)
+    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
     @Metadata(required = false)
     private int proxyPort;
 
@@ -78,16 +78,16 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     private String proxyPassword;
 
     @UriParam(description = "SMN service region. This is lower precedence than endpoint based configuration",
-              displayName = "Service region", secret = false)
+              displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
     @UriParam(description = "Fully qualified smn service url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Service endpoint", secret = false)
+              displayName = "Service endpoint")
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(description = "TTL for published message", displayName = "Message TTL", secret = false, defaultValue = "3600")
+    @UriParam(description = "TTL for published message", displayName = "Message TTL", defaultValue = "3600")
     @Metadata(required = false)
     private int messageTtl = 3600;
 
