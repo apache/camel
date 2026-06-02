@@ -949,4 +949,36 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         return answer;
     }
 
+    @Test
+    public void testLocalBeanWithParamValueClash() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateParameter("scheme")
+                        .templateBean("counter").typeClass(AtomicInteger.class).end()
+                        .from("direct:{{foo}}")
+                        .to("bean:{{counter}}?method=getAndIncrement");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("scheme", "counter")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals(0, out);
+        out = template.requestBody("direct:one", "World");
+        assertEquals(1, out);
+
+        context.stop();
+    }
+
 }
