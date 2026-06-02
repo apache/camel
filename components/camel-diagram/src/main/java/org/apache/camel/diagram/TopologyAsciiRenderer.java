@@ -244,7 +244,7 @@ public class TopologyAsciiRenderer {
             return;
         }
 
-        boolean dashed = "external".equals(edge.connectionType);
+        boolean dashed = isExternalNode(edge.from) || isExternalNode(edge.to);
         char v = dashed ? (unicode ? UNI_DASH_V : ':') : (unicode ? UNI_V : '|');
         char h = dashed ? (unicode ? UNI_DASH_H : '-') : (unicode ? UNI_H : '-');
         char arrow = unicode ? UNI_ARROW : 'v';

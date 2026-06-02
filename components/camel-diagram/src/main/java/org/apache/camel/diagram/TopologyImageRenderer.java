@@ -89,7 +89,7 @@ public class TopologyImageRenderer {
                 continue;
             }
 
-            boolean isExternalEdge = "external".equals(edge.connectionType);
+            boolean isExternalEdge = isExternalNode(edge.from) || isExternalNode(edge.to);
             if (isExternalEdge) {
                 float[] dash = { 8 * strokeWidth, 6 * strokeWidth };
                 g.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dash, 0f));
