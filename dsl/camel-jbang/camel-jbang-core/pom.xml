@@ -308,6 +308,10 @@
                                         <sync-example name="rest-api" file="README.md"/>
                                         <sync-example name="rest-api" file="application.properties"/>
                                         <sync-example name="rest-api" file="rest-api.camel.yaml"/>
+                                        <!-- route-topology -->
+                                        <sync-example name="route-topology" file="README.md"/>
+                                        <sync-example name="route-topology" file="application.properties"/>
+                                        <sync-example name="route-topology" file="route-topology.camel.yaml"/>
                                         <!-- routes -->
                                         <sync-example name="routes" file="Greeter.java"/>
                                         <sync-example name="routes" file="README.md"/>

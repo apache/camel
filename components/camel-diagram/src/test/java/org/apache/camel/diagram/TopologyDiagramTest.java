@@ -16,6 +16,7 @@
  */
 package org.apache.camel.diagram;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
@@ -322,6 +323,164 @@ class TopologyDiagramTest {
         assertTrue(output.contains("order-generator"));
         assertTrue(output.contains("process-order"));
         assertTrue(output.contains("fulfillment"));
+    }
+
+    @Test
+    void testExternalEndpointBands() {
+        // Routes
+        List<TopologyNodeInfo> nodes = new ArrayList<>(
+                List.of(
+                        node("order-api", "platform-http:/api/orders", "route"),
+                        node("process-order", "direct:process-order", "route")));
+
+        // Inter-route edges
+        List<TopologyEdgeInfo> edges = new ArrayList<>(
+                List.of(
+                        edge("order-api", "process-order", "direct:process-order", "internal")));
+
+        // External endpoints: 1 consumer (in) and 1 producer (out)
+        nodes.add(node("in-order-api", "platform-http:/api/orders", "external-in"));
+        edges.add(edge("in-order-api", "order-api", "platform-http:/api/orders", "external"));
+        nodes.add(node("out-process-order-0", "kafka:orders", "external-out"));
+        edges.add(edge("process-order", "out-process-order-0", "kafka:orders", "external"));
+
+        TopologyLayoutEngine engine = new TopologyLayoutEngine();
+        TopologyLayoutResult result = engine.layout(nodes, edges);
+
+        assertEquals(4, result.nodes.size());
+
+        TopologyLayoutNode extIn = findNode(result, "in-order-api");
+        TopologyLayoutNode orderApi = findNode(result, "order-api");
+        TopologyLayoutNode processOrder = findNode(result, "process-order");
+        TopologyLayoutNode extOut = findNode(result, "out-process-order-0");
+
+        // Three-band layout: external-in at top, routes in middle, external-out at bottom
+        assertEquals(0, extIn.layer);
+        assertTrue(orderApi.layer > extIn.layer, "Route should be below external-in");
+        assertTrue(processOrder.layer > extIn.layer, "Route should be below external-in");
+        assertTrue(extOut.layer > orderApi.layer, "External-out should be below routes");
+        assertTrue(extOut.layer > processOrder.layer, "External-out should be below routes");
+
+        // Verify Y coordinates follow the band ordering
+        assertTrue(extIn.y < orderApi.y, "External-in should be visually above routes");
+        assertTrue(extOut.y > processOrder.y, "External-out should be visually below routes");
+    }
+
+    @Test
+    void testExternalEndpointRendering() {
+        List<TopologyNodeInfo> nodes = new ArrayList<>(
+                List.of(
+                        node("myroute", "direct:start", "route")));
+        List<TopologyEdgeInfo> edges = new ArrayList<>();
+
+        // Add external-out node
+        nodes.add(node("out-myroute-0", "kafka:events", "external-out"));
+        edges.add(edge("myroute", "out-myroute-0", "kafka:events", "external"));
+
+        TopologyLayoutEngine engine = new TopologyLayoutEngine();
+        TopologyLayoutResult result = engine.layout(nodes, edges);
+
+        TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
+                TopologyLayoutEngine.DEFAULT_NODE_WIDTH * TopologyLayoutEngine.SCALE, true);
+        String output = renderer.renderDiagram(result);
+
+        assertNotNull(output);
+        assertTrue(output.contains("myroute"));
+        assertTrue(output.contains("kafka:events"));
+    }
+
+    @Test
+    void testOrderProcessingWithExternalEndpoints() {
+        // Full order processing topology
+        // Only platform-http is truly external (no route sends to it).
+        // All kafka topics link routes internally, so they are NOT external.
+        List<TopologyNodeInfo> nodes = new ArrayList<>(
+                List.of(
+                        node("order-generator", "timer:orders", "trigger"),
+                        node("order-api", "platform-http:/api/orders", "route"),
+                        node("process-order", "direct:process-order", "route"),
+                        node("validate-order", "direct:validate-order", "route"),
+                        node("order-dispatcher", "kafka:orders", "route"),
+                        node("fulfillment", "kafka:fulfillment", "route"),
+                        node("notification", "kafka:notifications", "route")));
+
+        List<TopologyEdgeInfo> edges = new ArrayList<>(
+                List.of(
+                        edge("order-generator", "process-order", "direct:process-order", "internal"),
+                        edge("order-api", "process-order", "direct:process-order", "internal"),
+                        edge("process-order", "validate-order", "direct:validate-order", "internal"),
+                        edge("process-order", "order-dispatcher", "kafka:orders", "external"),
+                        edge("order-dispatcher", "fulfillment", "kafka:fulfillment", "external"),
+                        edge("order-dispatcher", "notification", "kafka:notifications", "external")));
+
+        // Only platform-http is truly external (messages arrive from outside Camel)
+        nodes.add(node("in-order-api", "platform-http:/api/orders", "external-in"));
+        edges.add(edge("in-order-api", "order-api", "platform-http:/api/orders", "external"));
+
+        TopologyLayoutEngine engine = new TopologyLayoutEngine();
+        TopologyLayoutResult result = engine.layout(nodes, edges);
+
+        // 7 routes + 1 external consumer = 8 nodes
+        assertEquals(8, result.nodes.size());
+
+        // Verify three-band ordering
+        TopologyLayoutNode extIn = findNode(result, "in-order-api");
+        TopologyLayoutNode route = findNode(result, "process-order");
+
+        assertEquals(0, extIn.layer, "External-in should be at layer 0");
+        assertTrue(route.layer > extIn.layer, "Routes should be below external-in band");
+    }
+
+    @Test
+    void testJsonParsingWithExternalEndpoints() {
+        String json = """
+                {
+                  "nodes": [
+                    {"routeId": "r1", "from": "direct:start", "fromScheme": "direct", "nodeType": "route"}
+                  ],
+                  "edges": [],
+                  "externalEndpoints": [
+                    {"id": "in-r1", "uri": "kafka:input", "scheme": "kafka", "direction": "in", "routeId": "r1"},
+                    {"id": "out-r1-0", "uri": "kafka:output", "scheme": "kafka", "direction": "out", "routeId": "r1"}
+                  ]
+                }
+                """;
+        org.apache.camel.util.json.JsonObject jo;
+        try {
+            jo = (org.apache.camel.util.json.JsonObject) org.apache.camel.util.json.Jsoner.deserialize(json);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(jo);
+        List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(jo);
+        TopologyHelper.addExternalEndpoints(nodes, edges, jo);
+
+        // 1 route + 2 external endpoints = 3 nodes
+        assertEquals(3, nodes.size());
+        // 2 edges (one for each external endpoint)
+        assertEquals(2, edges.size());
+
+        // Verify external-in node
+        TopologyNodeInfo extIn = nodes.stream().filter(n -> "in-r1".equals(n.routeId)).findFirst().orElse(null);
+        assertNotNull(extIn);
+        assertEquals("external-in", extIn.nodeType);
+        assertEquals("kafka:input", extIn.from);
+
+        // Verify external-out node
+        TopologyNodeInfo extOut = nodes.stream().filter(n -> "out-r1-0".equals(n.routeId)).findFirst().orElse(null);
+        assertNotNull(extOut);
+        assertEquals("external-out", extOut.nodeType);
+        assertEquals("kafka:output", extOut.from);
+
+        // Verify edges: in -> r1, r1 -> out
+        TopologyEdgeInfo inEdge = edges.stream().filter(e -> "in-r1".equals(e.fromRouteId)).findFirst().orElse(null);
+        assertNotNull(inEdge);
+        assertEquals("r1", inEdge.toRouteId);
+
+        TopologyEdgeInfo outEdge = edges.stream().filter(e -> "out-r1-0".equals(e.toRouteId)).findFirst().orElse(null);
+        assertNotNull(outEdge);
+        assertEquals("r1", outEdge.fromRouteId);
     }
 
     private static TopologyNodeInfo node(String routeId, String from, String nodeType) {

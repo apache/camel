@@ -373,6 +373,29 @@
         ]
     },
     {
+        "name": "route-topology",
+        "title": "Route Topology",
+        "description": "Demonstrates inter-route topology with triggers, shared routes, and external systems",
+        "level": "intermediate",
+        "tags": [
+            "topology",
+            "direct",
+            "kafka",
+            "timer"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "application.properties",
+            "route-topology.camel.yaml"
+        ],
+        "infraServices": [
+            "kafka"
+        ]
+    },
+    {
         "name": "routes",
         "title": "Routes",
         "description": "Define routes in YAML with Java beans",

@@ -49,7 +49,8 @@ class RunOptionsForm {
     private static final int ROW_DEV = 3;
     private static final int ROW_OBSERVE = 4;
     private static final int ROW_TRACE = 5;
-    private static final int ROW_COUNT = 6;
+    private static final int ROW_STUB = 6;
+    private static final int ROW_COUNT = 7;
 
     private boolean visible;
     private int page;
@@ -68,6 +69,7 @@ class RunOptionsForm {
     private boolean devMode;
     private boolean observe;
     private boolean backlogTrace;
+    private boolean stubMode;
 
     private String exampleTitle;
 
@@ -92,6 +94,7 @@ class RunOptionsForm {
         devMode = dev;
         observe = false;
         backlogTrace = false;
+        stubMode = false;
         selectedRow = ROW_NAME;
         page = PAGE_OPTIONS;
         selectedProperty = 0;
@@ -106,6 +109,10 @@ class RunOptionsForm {
 
     String name() {
         return nameInput != null ? nameInput.text().trim() : "";
+    }
+
+    boolean isStubMode() {
+        return stubMode;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -182,6 +189,9 @@ class RunOptionsForm {
         if (backlogTrace) {
             args.add("--backlog-trace");
         }
+        if (stubMode) {
+            args.add("--stub=all");
+        }
         if (properties != null) {
             for (PropertyEntry pe : properties) {
                 String current = pe.valueInput().text();
@@ -205,7 +215,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isDown()) {
-            if (selectedRow == ROW_TRACE && hasProperties()) {
+            if (selectedRow == ROW_STUB && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -214,7 +224,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isFocusNext()) {
-            if (selectedRow == ROW_TRACE && hasProperties()) {
+            if (selectedRow == ROW_STUB && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -226,7 +236,7 @@ class RunOptionsForm {
             selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
             return true;
         }
-        if (ke.isRight() && hasProperties() && selectedRow >= ROW_DEV) {
+        if (ke.isRight() && hasProperties() && selectedRow >= ROW_STUB) {
             page = PAGE_PROPERTIES;
             selectedProperty = 0;
             return true;
@@ -250,6 +260,7 @@ class RunOptionsForm {
                 case ROW_DEV -> devMode = !devMode;
                 case ROW_OBSERVE -> observe = !observe;
                 case ROW_TRACE -> backlogTrace = !backlogTrace;
+                case ROW_STUB -> stubMode = !stubMode;
             }
             return true;
         }
@@ -276,7 +287,7 @@ class RunOptionsForm {
             editingKey = false;
             if (selectedProperty == 0) {
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_TRACE;
+                selectedRow = ROW_STUB;
             } else {
                 selectedProperty--;
             }
@@ -306,7 +317,7 @@ class RunOptionsForm {
             } else if (selectedProperty == 0) {
                 editingKey = false;
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_TRACE;
+                selectedRow = ROW_STUB;
             } else {
                 editingKey = false;
                 selectedProperty--;
@@ -322,7 +333,7 @@ class RunOptionsForm {
                     return true;
                 }
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_TRACE;
+                selectedRow = ROW_STUB;
                 editingKey = false;
                 return true;
             }
@@ -337,7 +348,7 @@ class RunOptionsForm {
                     }
                     if (properties.isEmpty()) {
                         page = PAGE_OPTIONS;
-                        selectedRow = ROW_TRACE;
+                        selectedRow = ROW_STUB;
                     }
                     return true;
                 }
@@ -365,7 +376,7 @@ class RunOptionsForm {
 
     private void renderOptionsPage(Frame frame, Rect area) {
         int popupW = Math.min(56, area.width() - 4);
-        int popupH = 10;
+        int popupH = 11;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -427,6 +438,9 @@ class RunOptionsForm {
         rowY++;
 
         renderCheckbox(frame, innerX, rowY, innerW, "Backlog trace", backlogTrace, selectedRow == ROW_TRACE);
+        rowY++;
+
+        renderCheckbox(frame, innerX, rowY, innerW, "Stub (no Docker needed)", stubMode, selectedRow == ROW_STUB);
     }
 
     private void renderPropertiesPage(Frame frame, Rect area) {

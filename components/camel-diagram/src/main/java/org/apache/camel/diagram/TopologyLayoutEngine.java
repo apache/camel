@@ -27,12 +27,16 @@ import java.util.Set;
 /**
  * Layered directed graph layout engine for route topology diagrams. Uses a simplified Sugiyama algorithm: layer
  * assignment, crossing minimization, and coordinate assignment.
+ *
+ * When external endpoint nodes are present (nodeType "external-in" or "external-out"), the layout uses a three-band
+ * approach: consumers at top, routes in middle, producers at bottom.
  */
 public class TopologyLayoutEngine {
 
     static final int SCALE = RouteDiagramLayoutEngine.SCALE;
     static final int V_GAP = 50 * SCALE;
     static final int H_GAP = 30 * SCALE;
+    static final int BAND_GAP = 80 * SCALE;
     static final int PADDING = RouteDiagramLayoutEngine.PADDING;
     public static final int DEFAULT_NODE_WIDTH = 180;
     static final int DEFAULT_NODE_HEIGHT = 40;
@@ -63,6 +67,20 @@ public class TopologyLayoutEngine {
             return new TopologyLayoutResult(Collections.emptyList(), Collections.emptyList(), 0, 0);
         }
 
+        // Separate external nodes from route nodes
+        List<TopologyNodeInfo> externalInNodes = new ArrayList<>();
+        List<TopologyNodeInfo> externalOutNodes = new ArrayList<>();
+        List<TopologyNodeInfo> routeNodes = new ArrayList<>();
+        for (TopologyNodeInfo n : nodes) {
+            if ("external-in".equals(n.nodeType)) {
+                externalInNodes.add(n);
+            } else if ("external-out".equals(n.nodeType)) {
+                externalOutNodes.add(n);
+            } else {
+                routeNodes.add(n);
+            }
+        }
+
         Map<String, TopologyNodeInfo> nodeMap = new HashMap<>();
         for (TopologyNodeInfo n : nodes) {
             nodeMap.put(n.routeId, n);
@@ -81,8 +99,32 @@ public class TopologyLayoutEngine {
             }
         }
 
-        // Layer assignment
-        Map<String, Integer> layers = assignLayers(nodes, successors, predecessors);
+        boolean hasExternalIn = !externalInNodes.isEmpty();
+        boolean hasExternalOut = !externalOutNodes.isEmpty();
+
+        // Layer assignment for route nodes only
+        Map<String, Integer> layers = assignRouteLayers(routeNodes, successors, predecessors);
+
+        // Shift route layers to make room for external-in band
+        if (hasExternalIn) {
+            for (Map.Entry<String, Integer> entry : layers.entrySet()) {
+                entry.setValue(entry.getValue() + 1);
+            }
+        }
+
+        // Place external-in nodes at layer 0
+        for (TopologyNodeInfo n : externalInNodes) {
+            layers.put(n.routeId, 0);
+        }
+
+        // Place external-out nodes at max route layer + 1
+        int maxRouteLayer = layers.values().stream()
+                .filter(l -> !externalOutNodes.stream().anyMatch(n -> layers.getOrDefault(n.routeId, -1).equals(l)))
+                .mapToInt(Integer::intValue).max().orElse(0);
+        int outLayer = maxRouteLayer + 1;
+        for (TopologyNodeInfo n : externalOutNodes) {
+            layers.put(n.routeId, outLayer);
+        }
 
         // Group nodes by layer
         int maxLayer = layers.values().stream().mapToInt(Integer::intValue).max().orElse(0);
@@ -98,8 +140,11 @@ public class TopologyLayoutEngine {
         // Minimize crossings (barycenter heuristic)
         minimizeCrossings(layerGroups, successors, predecessors);
 
-        // Assign coordinates
-        Map<String, TopologyLayoutNode> layoutNodes = assignCoordinates(layerGroups, nodeMap);
+        // Assign coordinates with extra gap between bands
+        int externalInLayer = hasExternalIn ? 0 : -1;
+        int externalOutLayer = hasExternalOut ? outLayer : -1;
+        Map<String, TopologyLayoutNode> layoutNodes
+                = assignCoordinates(layerGroups, nodeMap, externalInLayer, externalOutLayer);
 
         // Build layout edges
         List<TopologyLayoutEdge> layoutEdges = new ArrayList<>();
@@ -121,37 +166,42 @@ public class TopologyLayoutEngine {
                 new ArrayList<>(layoutNodes.values()), layoutEdges, totalWidth, totalHeight);
     }
 
-    private Map<String, Integer> assignLayers(
-            List<TopologyNodeInfo> nodes,
+    private Map<String, Integer> assignRouteLayers(
+            List<TopologyNodeInfo> routeNodes,
             Map<String, List<String>> successors,
             Map<String, List<String>> predecessors) {
 
         Map<String, Integer> layers = new HashMap<>();
+        Set<String> routeIds = new HashSet<>();
+        for (TopologyNodeInfo n : routeNodes) {
+            routeIds.add(n.routeId);
+        }
 
-        // Triggers and nodes with no predecessors go to layer 0
+        // Triggers and nodes with no route predecessors go to layer 0
         Set<String> assigned = new HashSet<>();
-        for (TopologyNodeInfo n : nodes) {
-            if ("trigger".equals(n.nodeType) || predecessors.get(n.routeId).isEmpty()) {
+        for (TopologyNodeInfo n : routeNodes) {
+            boolean hasRoutePredecessor = predecessors.get(n.routeId).stream().anyMatch(routeIds::contains);
+            if ("trigger".equals(n.nodeType) || !hasRoutePredecessor) {
                 layers.put(n.routeId, 0);
                 assigned.add(n.routeId);
             }
         }
 
         // If nothing assigned (all cycles), pick first node
-        if (assigned.isEmpty() && !nodes.isEmpty()) {
-            layers.put(nodes.get(0).routeId, 0);
-            assigned.add(nodes.get(0).routeId);
+        if (assigned.isEmpty() && !routeNodes.isEmpty()) {
+            layers.put(routeNodes.get(0).routeId, 0);
+            assigned.add(routeNodes.get(0).routeId);
         }
 
-        // BFS-style layer assignment
+        // BFS-style layer assignment (only follow edges to other route nodes)
         boolean changed = true;
         while (changed) {
             changed = false;
-            for (TopologyNodeInfo n : nodes) {
+            for (TopologyNodeInfo n : routeNodes) {
                 if (assigned.contains(n.routeId)) {
                     for (String succ : successors.get(n.routeId)) {
-                        if (succ.equals(n.routeId)) {
-                            continue; // skip self-loops
+                        if (succ.equals(n.routeId) || !routeIds.contains(succ)) {
+                            continue;
                         }
                         int newLayer = layers.get(n.routeId) + 1;
                         if (!assigned.contains(succ) || layers.get(succ) < newLayer) {
@@ -164,8 +214,8 @@ public class TopologyLayoutEngine {
             }
         }
 
-        // Handle any unassigned nodes (isolated or in pure cycles)
-        for (TopologyNodeInfo n : nodes) {
+        // Handle any unassigned route nodes (isolated or in pure cycles)
+        for (TopologyNodeInfo n : routeNodes) {
             layers.putIfAbsent(n.routeId, 0);
         }
 
@@ -223,7 +273,9 @@ public class TopologyLayoutEngine {
 
     private Map<String, TopologyLayoutNode> assignCoordinates(
             List<List<String>> layerGroups,
-            Map<String, TopologyNodeInfo> nodeMap) {
+            Map<String, TopologyNodeInfo> nodeMap,
+            int externalInLayer,
+            int externalOutLayer) {
 
         Map<String, TopologyLayoutNode> layoutNodes = new HashMap<>();
 
@@ -234,11 +286,11 @@ public class TopologyLayoutEngine {
             maxLayerWidth = Math.max(maxLayerWidth, width);
         }
 
+        int cumulativeY = PADDING;
         for (int layerIdx = 0; layerIdx < layerGroups.size(); layerIdx++) {
             List<String> layer = layerGroups.get(layerIdx);
             int layerWidth = layer.size() * (nodeWidth + H_GAP) - H_GAP;
             int startX = PADDING + (maxLayerWidth - layerWidth) / 2;
-            int y = PADDING + layerIdx * (nodeHeight + V_GAP);
 
             for (int i = 0; i < layer.size(); i++) {
                 String routeId = layer.get(i);
@@ -246,11 +298,18 @@ public class TopologyLayoutEngine {
                 int x = startX + i * (nodeWidth + H_GAP);
                 TopologyLayoutNode ln = new TopologyLayoutNode(
                         routeId, info.description, info.from, info.nodeType, info.connectionType,
-                        x, y, nodeWidth, nodeHeight, layerIdx);
+                        x, cumulativeY, nodeWidth, nodeHeight, layerIdx);
                 ln.exchangesTotal = info.exchangesTotal;
                 ln.exchangesFailed = info.exchangesFailed;
                 layoutNodes.put(routeId, ln);
             }
+
+            // Add vertical gap; use larger gap at band boundaries
+            int gap = V_GAP;
+            if (layerIdx == externalInLayer || (externalOutLayer >= 0 && layerIdx == externalOutLayer - 1)) {
+                gap = BAND_GAP;
+            }
+            cumulativeY += nodeHeight + gap;
         }
 
         return layoutNodes;

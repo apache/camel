@@ -755,7 +755,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 .resolveById("route-topology");
         if (dc != null) {
             String metric = root.getStringOrDefault("metric", "false");
-            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("metric", metric));
+            String external = root.getStringOrDefault("external", "false");
+            JsonObject json
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("metric", metric, "external", external));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

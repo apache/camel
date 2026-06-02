@@ -18,6 +18,7 @@ package org.apache.camel.diagram;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
@@ -44,6 +45,8 @@ public class TopologyAsciiRenderer {
     private static final char UNI_T_UP = '┴';
     private static final char UNI_CROSS = '┼';
     private static final char UNI_ARROW = '▼';
+    private static final char UNI_DASH_V = '┆';
+    private static final char UNI_DASH_H = '┄';
 
     private final int nodeWidth;
     private final int boxWidth;
@@ -122,12 +125,18 @@ public class TopologyAsciiRenderer {
         return gridToString(grid);
     }
 
+    private static boolean isExternalNode(TopologyLayoutNode node) {
+        return "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType);
+    }
+
     private void drawNode(char[][] grid, TopologyLayoutNode node) {
         int col = toCol(node.x);
         int row = toRow(node.y);
 
         String line1;
-        if (showDescription && node.description != null && !node.description.isBlank()) {
+        if (isExternalNode(node)) {
+            line1 = node.from;
+        } else if (showDescription && node.description != null && !node.description.isBlank()) {
             line1 = node.description;
         } else {
             line1 = node.routeId;
@@ -135,7 +144,7 @@ public class TopologyAsciiRenderer {
 
         List<String> lines = new ArrayList<>();
         lines.addAll(wrapText(line1, boxWidth - 4));
-        if (!showDescription) {
+        if (!isExternalNode(node) && !showDescription) {
             String line2 = "(" + node.from + ")";
             List<String> fromLines = wrapText(line2, boxWidth - 4);
             lines.addAll(fromLines);
@@ -159,7 +168,7 @@ public class TopologyAsciiRenderer {
                     sb.append(node.exchangesFailed).append("!");
                 }
                 lines.add(sb.toString());
-            } else {
+            } else if (!isExternalNode(node)) {
                 lines.add("");
             }
         }
@@ -174,8 +183,9 @@ public class TopologyAsciiRenderer {
             return;
         }
 
-        char h = unicode ? UNI_H : '-';
-        char v = unicode ? UNI_V : '|';
+        boolean ext = isExternalNode(node);
+        char h = ext ? (unicode ? UNI_DASH_H : '-') : (unicode ? UNI_H : '-');
+        char v = ext ? (unicode ? UNI_DASH_V : ':') : (unicode ? UNI_V : '|');
 
         // Top border
         setChar(grid, row, col, unicode ? UNI_TL : '+');
@@ -208,6 +218,10 @@ public class TopologyAsciiRenderer {
             int textCol = col + 2 + Math.max(0, (innerWidth - text.length()) / 2);
             drawText(grid, r, textCol, text);
 
+            // Track counter positions for ANSI coloring
+            if (isExternalNode(node) && i == 0) {
+                counterPositions.add(new CounterPos(r, textCol, text.length(), CounterType.EXTERNAL));
+            }
             if (metrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
                 long ok = node.exchangesTotal - node.exchangesFailed;
                 if (ok > 0) {
@@ -233,8 +247,9 @@ public class TopologyAsciiRenderer {
             return;
         }
 
-        char v = unicode ? UNI_V : '|';
-        char h = unicode ? UNI_H : '-';
+        boolean dashed = isExternalNode(edge.from) || isExternalNode(edge.to);
+        char v = dashed ? (unicode ? UNI_DASH_V : ':') : (unicode ? UNI_V : '|');
+        char h = dashed ? (unicode ? UNI_DASH_H : '-') : (unicode ? UNI_H : '-');
         char arrow = unicode ? UNI_ARROW : 'v';
 
         if (fromCx == toCx) {
@@ -291,6 +306,13 @@ public class TopologyAsciiRenderer {
     }
 
     private int boxHeight(TopologyLayoutNode node) {
+        if (isExternalNode(node)) {
+            int lines = 1; // URI
+            if (metrics && node.exchangesTotal > 0) {
+                lines++;
+            }
+            return 2 + lines;
+        }
         int lines = 3; // routeId + from (2 lines reserved)
         if (metrics) {
             lines++;
@@ -343,7 +365,10 @@ public class TopologyAsciiRenderer {
             return plain;
         }
         String[] lines = plain.split("\n", -1);
-        for (CounterPos cp : counterPositions) {
+        List<CounterPos> sorted = new ArrayList<>(counterPositions);
+        sorted.sort(
+                Comparator.comparingInt(CounterPos::row).thenComparing(Comparator.comparingInt(CounterPos::col).reversed()));
+        for (CounterPos cp : sorted) {
             if (cp.row >= 0 && cp.row < lines.length) {
                 String line = lines[cp.row];
                 if (cp.col >= 0 && cp.col + cp.length <= line.length()) {
@@ -388,11 +413,11 @@ public class TopologyAsciiRenderer {
     }
 
     private boolean isVertical(char ch) {
-        return ch == '|' || ch == UNI_V;
+        return ch == '|' || ch == UNI_V || ch == ':' || ch == UNI_DASH_V;
     }
 
     private boolean isHorizontal(char ch) {
-        return ch == '-' || ch == UNI_H;
+        return ch == '-' || ch == UNI_H || ch == UNI_DASH_H;
     }
 
     private void plotLine(char[][] grid, int row, int col, char ch) {
