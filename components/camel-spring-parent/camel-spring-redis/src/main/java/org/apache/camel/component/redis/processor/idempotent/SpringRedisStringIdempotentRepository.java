@@ -72,14 +72,15 @@ public class SpringRedisStringIdempotentRepository extends SpringRedisIdempotent
             @Override
             public List<byte[]> doInRedis(RedisConnection connection) throws DataAccessException {
                 List<byte[]> binaryKeys = new ArrayList<>();
-                Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match("*" + createRedisKey("*")).build());
+                Cursor<byte[]> cursor
+                        = connection.keyCommands().scan(ScanOptions.scanOptions().match("*" + createRedisKey("*")).build());
 
                 while (cursor.hasNext()) {
                     byte[] key = cursor.next();
                     binaryKeys.add(key);
                 }
                 if (!binaryKeys.isEmpty()) {
-                    connection.del(binaryKeys.toArray(new byte[][] {}));
+                    connection.keyCommands().del(binaryKeys.toArray(new byte[][] {}));
                 }
                 return binaryKeys;
             }

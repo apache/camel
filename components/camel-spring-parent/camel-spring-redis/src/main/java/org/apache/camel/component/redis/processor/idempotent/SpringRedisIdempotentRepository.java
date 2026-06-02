@@ -104,7 +104,7 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        redisTemplate.getConnectionFactory().getConnection().flushDb();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushDb();
     }
 
     public void setRepositoryName(String repositoryName) {
@@ -133,7 +133,7 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
         ObjectHelper.notNull(this.redisTemplate, "redisTemplate", this);
         this.setOperations = redisTemplate.opsForSet();
         if (flushOnStartup) {
-            redisTemplate.getConnectionFactory().getConnection().flushDb();
+            redisTemplate.getConnectionFactory().getConnection().serverCommands().flushDb();
         }
     }
 
