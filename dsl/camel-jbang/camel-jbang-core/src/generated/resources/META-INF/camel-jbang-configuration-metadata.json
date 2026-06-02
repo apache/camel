@@ -48,7 +48,7 @@
     { "name": "camel.jbang.scriptFiles", "required": false, "description": "Additional shell script files to export to src\/main\/scripts directory", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.sourceDir", "required": false, "description": "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.", "label": "advanced", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.springBootVersion", "required": false, "description": "Spring Boot version", "label": "spring-boot", "type": "string", "javaType": "String", "secret": false },
-    { "name": "camel.jbang.stub", "required": false, "description": "Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = everything).", "type": "string", "javaType": "String", "secret": false },
+    { "name": "camel.jbang.stub", "required": false, "description": "Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints, remote = stub only remote components).", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.tlsFiles", "required": false, "description": "Additional SSL\/TLS files to export to src\/main\/tls directory", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.verbose", "required": false, "description": "Verbose output of startup activity (dependency resolution and downloading", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false }
   ]
