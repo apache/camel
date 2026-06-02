@@ -464,6 +464,16 @@ Then only the `jms:inbox` endpoint is stubbed.
 
 TIP: You can stub multiple components separated by comma, such as `--stub=jms,sql`
 
+You can also use `--stub=all` to stub all components, or `--stub=remote` to stub only
+remote components (components that connect to external systems such as messaging brokers, databases, cloud services, etc.).
+The `remote` flag uses the Camel catalog to determine which components are remote, so it automatically
+handles new components without needing a hardcoded list.
+
+[source,bash]
+----
+camel run syncToDatabase.java --stub=remote
+----
+
 Camel JBang comes with the `camel cmd stub` command that allows to list all endpoints that
 has been stubbed, and also browse any messages that are currently present in their internal queues.
 A stub endpoint is based on the `seda` component.
@@ -4292,7 +4302,7 @@ The camel.jbang supports 48 options, which are listed below.
 | *camel.jbang.scriptFiles* | Additional shell script files to export to src/main/scripts directory |  | String
 | *camel.jbang.sourceDir* | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | *camel.jbang.springBootVersion* | Spring Boot version |  | String
-| *camel.jbang.stub* | Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = everything). |  | String
+| *camel.jbang.stub* | Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints, remote = stub only remote components). |  | String
 | *camel.jbang.tlsFiles* | Additional SSL/TLS files to export to src/main/tls directory |  | String
 | *camel.jbang.verbose* | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 |===

@@ -283,7 +283,8 @@ public class Run extends CamelCommand {
     public String[] property;
 
     @Option(names = { "--stub" }, description = "Stubs all the matching endpoint uri with the given component name or pattern."
-                                                + " Multiple names can be separated by comma. (all = stub all endpoints).")
+                                                + " Multiple names can be separated by comma."
+                                                + " (all = stub all endpoints, remote = stub only remote components).")
     String stub;
 
     // jfr and jfrProfile options are in DebugOptions @ArgGroup
@@ -734,19 +735,24 @@ public class Run extends CamelCommand {
             if ("all".equals(stub)) {
                 // stub all components only
                 stub = "component:*";
+            } else if ("remote".equals(stub)) {
+                // stub only remote components (resolved via catalog)
+                stub = "component:remote";
             }
-            // we need to match by wildcard, to make it easier
-            StringJoiner sj = new StringJoiner(",");
-            for (String n : stub.split(",")) {
-                // you can either refer to a name or a specific endpoint
-                // if there is a colon then we assume it's a specific endpoint then we should not add wildcard
-                boolean colon = n.contains(":");
-                if (!colon && !n.endsWith("*")) {
-                    n = "component:" + n + "*";
+            if (!"component:remote".equals(stub)) {
+                // we need to match by wildcard, to make it easier
+                StringJoiner sj = new StringJoiner(",");
+                for (String n : stub.split(",")) {
+                    // you can either refer to a name or a specific endpoint
+                    // if there is a colon then we assume it's a specific endpoint then we should not add wildcard
+                    boolean colon = n.contains(":");
+                    if (!colon && !n.endsWith("*")) {
+                        n = "component:" + n + "*";
+                    }
+                    sj.add(n);
                 }
-                sj.add(n);
+                stub = sj.toString();
             }
-            stub = sj.toString();
             writeSetting(main, profileProperties, STUB, stub);
             main.setStubPattern(stub);
         }
