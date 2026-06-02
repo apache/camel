@@ -19,11 +19,13 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -79,7 +81,69 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
             }
         }
 
-        return new TopologyResult(nodes, edges);
+        // Compute external endpoints (remote systems that routes communicate with)
+        List<TopologyExternalEndpoint> externalEndpoints = computeExternalEndpoints(context, routeDefs, inputUriToRouteIds);
+
+        return new TopologyResult(nodes, edges, externalEndpoints);
+    }
+
+    private List<TopologyExternalEndpoint> computeExternalEndpoints(
+            CamelContext context, List<RouteDefinition> routeDefs,
+            Map<String, List<String>> inputUriToRouteIds) {
+
+        // Build scheme -> isRemote map from endpoint registry
+        Map<String, Boolean> schemeRemoteMap = new HashMap<>();
+        for (Endpoint ep : context.getEndpoints()) {
+            String scheme = extractScheme(ep.getEndpointUri());
+            schemeRemoteMap.putIfAbsent(scheme, ep.isRemote());
+        }
+
+        List<TopologyExternalEndpoint> externalEndpoints = new ArrayList<>();
+        Set<String> seenOutgoing = new HashSet<>();
+
+        for (RouteDefinition rd : routeDefs) {
+            String routeId = rd.getRouteId();
+
+            // Consumer (direction=in): each route has exactly 1 "from" endpoint
+            String inputUri = URISupport.stripQuery(rd.getInput().getEndpointUri());
+            String inputScheme = extractScheme(inputUri);
+            if (isRemoteScheme(inputScheme, schemeRemoteMap)) {
+                externalEndpoints.add(
+                        new TopologyExternalEndpoint("in-" + routeId, inputUri, inputScheme, "in", routeId));
+            }
+
+            // Producers (direction=out): 0..N output endpoints per route
+            Collection<EndpointRequiredDefinition> outputs
+                    = ProcessorDefinitionHelper.filterTypeInOutputs(
+                            rd.getOutputs(), EndpointRequiredDefinition.class);
+
+            int outIdx = 0;
+            for (EndpointRequiredDefinition erd : outputs) {
+                String outputUri = URISupport.stripQuery(erd.getEndpointUri());
+                String outputScheme = extractScheme(outputUri);
+                if (isRemoteScheme(outputScheme, schemeRemoteMap)) {
+                    // Deduplicate per route: same route sending to same URI only listed once
+                    String dedupeKey = routeId + "|" + outputUri;
+                    if (seenOutgoing.add(dedupeKey)) {
+                        externalEndpoints.add(
+                                new TopologyExternalEndpoint(
+                                        "out-" + routeId + "-" + outIdx, outputUri, outputScheme, "out", routeId));
+                        outIdx++;
+                    }
+                }
+            }
+        }
+
+        return externalEndpoints;
+    }
+
+    private boolean isRemoteScheme(String scheme, Map<String, Boolean> schemeRemoteMap) {
+        Boolean remote = schemeRemoteMap.get(scheme);
+        if (remote != null) {
+            return remote;
+        }
+        // Fallback: internal and trigger schemes are not remote
+        return !INTERNAL_SCHEMES.contains(scheme) && !TRIGGER_SCHEMES.contains(scheme);
     }
 
     private static String extractScheme(String uri) {

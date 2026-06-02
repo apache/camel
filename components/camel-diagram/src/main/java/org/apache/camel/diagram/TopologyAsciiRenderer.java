@@ -122,12 +122,18 @@ public class TopologyAsciiRenderer {
         return gridToString(grid);
     }
 
+    private static boolean isExternalNode(TopologyLayoutNode node) {
+        return "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType);
+    }
+
     private void drawNode(char[][] grid, TopologyLayoutNode node) {
         int col = toCol(node.x);
         int row = toRow(node.y);
 
         String line1;
-        if (showDescription && node.description != null && !node.description.isBlank()) {
+        if (isExternalNode(node)) {
+            line1 = node.from;
+        } else if (showDescription && node.description != null && !node.description.isBlank()) {
             line1 = node.description;
         } else {
             line1 = node.routeId;
@@ -135,7 +141,7 @@ public class TopologyAsciiRenderer {
 
         List<String> lines = new ArrayList<>();
         lines.addAll(wrapText(line1, boxWidth - 4));
-        if (!showDescription) {
+        if (!isExternalNode(node) && !showDescription) {
             String line2 = "(" + node.from + ")";
             List<String> fromLines = wrapText(line2, boxWidth - 4);
             lines.addAll(fromLines);
@@ -145,7 +151,7 @@ public class TopologyAsciiRenderer {
             }
         }
 
-        if (metrics) {
+        if (metrics && !isExternalNode(node)) {
             if (node.exchangesTotal > 0 || node.exchangesFailed > 0) {
                 long ok = node.exchangesTotal - node.exchangesFailed;
                 StringBuilder sb = new StringBuilder();
@@ -208,7 +214,10 @@ public class TopologyAsciiRenderer {
             int textCol = col + 2 + Math.max(0, (innerWidth - text.length()) / 2);
             drawText(grid, r, textCol, text);
 
-            if (metrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
+            // Track counter positions for ANSI coloring
+            if (isExternalNode(node) && i == 0) {
+                counterPositions.add(new CounterPos(r, textCol, text.length(), CounterType.EXTERNAL));
+            } else if (metrics && !isExternalNode(node) && i == lines.size() - 1 && node.exchangesTotal > 0) {
                 long ok = node.exchangesTotal - node.exchangesFailed;
                 if (ok > 0) {
                     String okStr = "" + ok;
@@ -291,6 +300,9 @@ public class TopologyAsciiRenderer {
     }
 
     private int boxHeight(TopologyLayoutNode node) {
+        if (isExternalNode(node)) {
+            return 3;
+        }
         int lines = 3; // routeId + from (2 lines reserved)
         if (metrics) {
             lines++;

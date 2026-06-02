@@ -72,6 +72,52 @@ public final class TopologyHelper {
         return edges;
     }
 
+    /**
+     * Parses external endpoints from the JSON and adds them as nodes and edges to the existing lists. External
+     * endpoints with direction "in" (consumers) become nodes connected TO their route. External endpoints with
+     * direction "out" (producers) become nodes connected FROM their route.
+     */
+    public static void addExternalEndpoints(List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges, JsonObject jo) {
+        JsonArray arr = jo.getJsonArray("externalEndpoints");
+        if (arr == null) {
+            return;
+        }
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject eo = arr.getJsonObject(i);
+            String id = eo.getString("id");
+            String uri = eo.getString("uri");
+            String scheme = eo.getString("scheme");
+            String direction = eo.getString("direction");
+            String routeId = eo.getString("routeId");
+
+            // Create a node for this external endpoint
+            TopologyNodeInfo node = new TopologyNodeInfo();
+            node.routeId = id;
+            node.from = uri;
+            node.fromScheme = scheme;
+            node.nodeType = "in".equals(direction) ? "external-in" : "external-out";
+
+            // Extract context-path from URI for use as description
+            int colonIdx = uri.indexOf(':');
+            node.description = colonIdx > 0 ? uri.substring(colonIdx + 1) : uri;
+
+            nodes.add(node);
+
+            // Create an edge connecting this external endpoint to/from its route
+            TopologyEdgeInfo edge = new TopologyEdgeInfo();
+            edge.endpoint = uri;
+            edge.connectionType = "external";
+            if ("in".equals(direction)) {
+                edge.fromRouteId = id;
+                edge.toRouteId = routeId;
+            } else {
+                edge.fromRouteId = routeId;
+                edge.toRouteId = id;
+            }
+            edges.add(edge);
+        }
+    }
+
     public static void enrichWithMetrics(List<TopologyNodeInfo> nodes, JsonObject routeStructureJson) {
         if (routeStructureJson == null) {
             return;

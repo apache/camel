@@ -88,6 +88,10 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                         description = "Whether to include live metrics")
     boolean metric;
 
+    @CommandLine.Option(names = { "--external" },
+                        description = "Include external systems (consumers at top, producers at bottom)")
+    boolean external;
+
     public CamelRouteTopologyAction(CamelJBangMain main) {
         super(main);
     }
@@ -108,6 +112,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         long pid = pids.get(0);
         Path outputFile = prepareAction(Long.toString(pid), "route-topology", root -> {
             root.put("metric", String.valueOf(metric));
+            root.put("external", String.valueOf(external));
         });
 
         JsonObject jo = getJsonObject(outputFile);
@@ -167,6 +172,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     private void printTextDiagram(JsonObject jo) throws Exception {
         List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(jo);
         List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(jo);
+        TopologyHelper.addExternalEndpoints(nodes, edges, jo);
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine(boxWidth);
         TopologyLayoutResult result = engine.layout(nodes, edges);
@@ -195,6 +201,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
 
         List<TopologyNodeInfo> nodes = TopologyHelper.parseNodes(jo);
         List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(jo);
+        TopologyHelper.addExternalEndpoints(nodes, edges, jo);
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine(boxWidth);
         TopologyLayoutResult result = engine.layout(nodes, edges);

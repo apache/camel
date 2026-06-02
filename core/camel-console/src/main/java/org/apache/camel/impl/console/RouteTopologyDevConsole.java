@@ -22,6 +22,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyEdge;
+import org.apache.camel.spi.RouteTopologyDumper.TopologyExternalEndpoint;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyNode;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyResult;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -34,6 +35,7 @@ import org.apache.camel.util.json.JsonObject;
 public class RouteTopologyDevConsole extends AbstractDevConsole {
 
     private static final String METRIC = "metric";
+    private static final String EXTERNAL = "external";
 
     public RouteTopologyDevConsole() {
         super("camel", "route-topology", "Route Topology", "Route topology showing inter-route connections");
@@ -46,6 +48,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
             return "";
         }
         TopologyResult result = dumper.dumpTopology(getCamelContext());
+        boolean external = "true".equals(options.get(EXTERNAL));
 
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Route Topology (%d routes, %d connections)%n%n",
@@ -61,6 +64,15 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                 }
             }
         }
+
+        if (external && !result.externalEndpoints().isEmpty()) {
+            sb.append(String.format("%nExternal Endpoints:%n"));
+            for (TopologyExternalEndpoint ep : result.externalEndpoints()) {
+                sb.append(String.format("  [%s] %s (%s) route=%s%n",
+                        ep.direction(), ep.uri(), ep.scheme(), ep.routeId()));
+            }
+        }
+
         return sb.toString();
     }
 
@@ -74,6 +86,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         TopologyResult result = dumper.dumpTopology(getCamelContext());
 
         boolean metric = "true".equals(options.get(METRIC));
+        boolean external = "true".equals(options.get(EXTERNAL));
         ManagedCamelContext mcc = metric
                 ? getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
                 : null;
@@ -111,6 +124,20 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
             edgesArr.add(jo);
         }
         root.put("edges", edgesArr);
+
+        if (external && !result.externalEndpoints().isEmpty()) {
+            JsonArray extArr = new JsonArray();
+            for (TopologyExternalEndpoint ep : result.externalEndpoints()) {
+                JsonObject jo = new JsonObject();
+                jo.put("id", ep.id());
+                jo.put("uri", ep.uri());
+                jo.put("scheme", ep.scheme());
+                jo.put("direction", ep.direction());
+                jo.put("routeId", ep.routeId());
+                extArr.add(jo);
+            }
+            root.put("externalEndpoints", extArr);
+        }
 
         return root;
     }

@@ -89,7 +89,13 @@ public class TopologyImageRenderer {
                 continue;
             }
 
-            g.setStroke(new BasicStroke(strokeWidth));
+            boolean isExternalEdge = "external".equals(edge.connectionType);
+            if (isExternalEdge) {
+                float[] dash = { 8 * strokeWidth, 6 * strokeWidth };
+                g.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dash, 0f));
+            } else {
+                g.setStroke(new BasicStroke(strokeWidth));
+            }
             g.setColor(colors.getArrow());
 
             int fromCx = edge.from.x + nw / 2;
@@ -107,10 +113,15 @@ public class TopologyImageRenderer {
             }
 
             // Arrow head
+            g.setStroke(new BasicStroke(strokeWidth));
             int[] xPoints = { toCx - arrowSize, toCx + arrowSize, toCx };
             int[] yPoints = { toTy - arrowSize, toTy - arrowSize, toTy };
             g.fillPolygon(xPoints, yPoints, 3);
         }
+    }
+
+    private static boolean isExternalNode(TopologyLayoutNode node) {
+        return "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType);
     }
 
     private static void drawNodes(
@@ -120,7 +131,9 @@ public class TopologyImageRenderer {
 
         for (TopologyLayoutNode node : result.nodes) {
             Color nodeColor;
-            if ("trigger".equals(node.nodeType)) {
+            if (isExternalNode(node)) {
+                nodeColor = colors.getNodeExternal();
+            } else if ("trigger".equals(node.nodeType)) {
                 nodeColor = colors.getNodeFrom();
             } else {
                 nodeColor = colors.getNodeDefault();
@@ -137,7 +150,10 @@ public class TopologyImageRenderer {
             // Text
             g.setColor(colors.getText());
             String line1;
-            if (showDescription && node.description != null && !node.description.isBlank()) {
+            if (isExternalNode(node)) {
+                // External nodes show scheme as primary, context-path as secondary
+                line1 = node.from;
+            } else if (showDescription && node.description != null && !node.description.isBlank()) {
                 line1 = node.description;
             } else {
                 line1 = node.routeId;
@@ -145,7 +161,7 @@ public class TopologyImageRenderer {
             int lineHeight = fm.getHeight();
             int textY;
 
-            if (showDescription) {
+            if (isExternalNode(node) || showDescription) {
                 textY = node.y + (node.height - lineHeight) / 2 + fm.getAscent();
                 int line1Width = fm.stringWidth(line1);
                 g.drawString(line1, node.x + (nw - line1Width) / 2, textY);
@@ -163,8 +179,8 @@ public class TopologyImageRenderer {
                 g.setFont(font);
             }
 
-            // Metrics
-            if (metrics && node.exchangesTotal > 0) {
+            // Metrics (not shown for external nodes)
+            if (metrics && !isExternalNode(node) && node.exchangesTotal > 0) {
                 long ok = node.exchangesTotal - node.exchangesFailed;
                 Font metricsFont = font.deriveFont((float) (fontSizeScaled * 0.75));
                 g.setFont(metricsFont);

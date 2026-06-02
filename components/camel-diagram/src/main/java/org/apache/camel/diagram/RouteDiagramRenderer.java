@@ -119,6 +119,7 @@ public class RouteDiagramRenderer {
         private Color nodeDefault;
         private Color nodeTransform;
         private Color nodeProcessor;
+        private Color nodeExternal;
 
         public static DiagramColors parse(String spec) {
             String resolved = COLOR_PRESETS.getOrDefault(spec, spec);
@@ -149,6 +150,7 @@ public class RouteDiagramRenderer {
             c.nodeDefault = parseColor(map.getOrDefault("default", "#455a64"));
             c.nodeTransform = parseColor(map.getOrDefault("transform", "#00838f"));
             c.nodeProcessor = parseColor(map.getOrDefault("processor", "#d84315"));
+            c.nodeExternal = parseColor(map.getOrDefault("external", "#0277bd"));
             return c;
         }
 
@@ -220,6 +222,10 @@ public class RouteDiagramRenderer {
 
         public Color getNodeProcessor() {
             return nodeProcessor;
+        }
+
+        public Color getNodeExternal() {
+            return nodeExternal;
         }
     }
 

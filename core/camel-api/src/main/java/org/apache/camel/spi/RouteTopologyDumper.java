@@ -58,13 +58,29 @@ public interface RouteTopologyDumper {
     }
 
     /**
+     * An external endpoint representing a remote system that a route communicates with.
+     *
+     * @param id        a synthetic unique identifier
+     * @param uri       the endpoint URI (scheme:context-path, query parameters stripped)
+     * @param scheme    the component scheme
+     * @param direction "in" for consumers (remote systems sending messages into Camel) or "out" for producers (Camel
+     *                  sending messages to remote systems)
+     * @param routeId   the route id that uses this external endpoint
+     * @since           4.21
+     */
+    record TopologyExternalEndpoint(String id, String uri, String scheme, String direction, String routeId) {
+    }
+
+    /**
      * The result of computing route topology.
      *
-     * @param nodes the route nodes
-     * @param edges the connections between routes
-     * @since       4.21
+     * @param nodes             the route nodes
+     * @param edges             the connections between routes
+     * @param externalEndpoints the external endpoints (remote systems) that routes communicate with (may be empty)
+     * @since                   4.21
      */
-    record TopologyResult(List<TopologyNode> nodes, List<TopologyEdge> edges) {
+    record TopologyResult(List<TopologyNode> nodes, List<TopologyEdge> edges,
+            List<TopologyExternalEndpoint> externalEndpoints) {
     }
 
     /**
