@@ -32,9 +32,9 @@
     <class>org.apache.camel.examples.Order</class>
 
     <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
-      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-      <property name="hibernate.connection.url" value="jdbc:derby:target/derby;create=true"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+      <property name="hibernate.connection.url" value="jdbc:h2:./target/h2;DB_CLOSE_DELAY=-1"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
   </persistence-unit>
@@ -46,9 +46,9 @@
     <class>org.apache.camel.examples.SendEmail</class>
 
     <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
-      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-      <property name="hibernate.connection.url" value="jdbc:derby:target/custom;create=true"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+      <property name="hibernate.connection.url" value="jdbc:h2:./target/custom;DB_CLOSE_DELAY=-1"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
   </persistence-unit>
@@ -59,9 +59,9 @@
     <class>org.apache.camel.examples.SendEmail</class>
 
     <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
-      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-      <property name="hibernate.connection.url" value="jdbc:derby:target/custom;create=true"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+      <property name="hibernate.connection.url" value="jdbc:h2:./target/custom;DB_CLOSE_DELAY=-1"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
   </persistence-unit>
@@ -72,9 +72,9 @@
     <class>org.apache.camel.processor.idempotent.jpa.MessageProcessed</class>
 
     <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
-      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-      <property name="hibernate.connection.url" value="jdbc:derby:target/idempotentTest;create=true"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+      <property name="hibernate.connection.url" value="jdbc:h2:./target/idempotentTest;DB_CLOSE_DELAY=-1"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
   </persistence-unit>
@@ -85,11 +85,10 @@
     <class>org.apache.camel.examples.VersionedItem</class>
 
     <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
-      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-      <property name="hibernate.connection.url" value="jdbc:derby:target/derby;create=true"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+      <property name="hibernate.connection.url" value="jdbc:h2:./target/h2;DB_CLOSE_DELAY=-1"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
   </persistence-unit>
-  
 </persistence>

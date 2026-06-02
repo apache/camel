@@ -40,8 +40,8 @@
     <class>org.apache.camel.examples.Order</class>
 
     <properties>
-      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/derby;create=true"/>
-      <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="openjpa.ConnectionURL" value="jdbc:h2:./target/h2;DB_CLOSE_DELAY=-1"/>
+      <property name="openjpa.ConnectionDriverName" value="org.h2.Driver"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
       <!-- <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO, SQL=TRACE"/> -->
       <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
@@ -54,8 +54,8 @@
     <class>org.apache.camel.examples.SendEmail</class>
 
     <properties>
-      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/custom;create=true"/>
-      <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="openjpa.ConnectionURL" value="jdbc:h2:./target/custom;DB_CLOSE_DELAY=-1"/>
+      <property name="openjpa.ConnectionDriverName" value="org.h2.Driver"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
       <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
       <property name="openjpa.Multithreaded" value="true"/>
@@ -67,8 +67,8 @@
 
     <properties>
       <property name="openjpa.ConnectionProperties"
-                value="DriverClassName=org.apache.derby.jdbc.EmbeddedDriver,
-                   Url=jdbc:derby:target/custom;create=true,
+                value="DriverClassName=org.h2.Driver,
+                   Url=jdbc:h2:./target/custom;DB_CLOSE_DELAY=-1,
                    MaxTotal=1,
                    MaxWaitMillis=1000,
                    TestOnBorrow=true"/>
@@ -84,8 +84,8 @@
     <class>org.apache.camel.processor.idempotent.jpa.MessageProcessed</class>
 
     <properties>
-      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/idempotentTest;create=true"/>
-      <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="openjpa.ConnectionURL" value="jdbc:h2:./target/idempotentTest;DB_CLOSE_DELAY=-1"/>
+      <property name="openjpa.ConnectionDriverName" value="org.h2.Driver"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
       <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
       <property name="openjpa.Multithreaded" value="true"/>
@@ -94,16 +94,15 @@
   <!-- END SNIPPET: e1 -->
 
   <persistence-unit name="skipLockedEntiy" transaction-type="RESOURCE_LOCAL">
-  	<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
     <class>org.apache.camel.examples.VersionedItem</class>
-	
+
   <properties>
-      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/derby;create=true"/>
-      <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="openjpa.ConnectionURL" value="jdbc:h2:./target/h2;DB_CLOSE_DELAY=-1"/>
+      <property name="openjpa.ConnectionDriverName" value="org.h2.Driver"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
       <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
       <property name="openjpa.Multithreaded" value="false"/>
     </properties>
   </persistence-unit>
-  
 </persistence>

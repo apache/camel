@@ -118,7 +118,7 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
         entityManager.getTransaction().begin();
         Connection connection = entityManager.unwrap(Connection.class);
         connection.createStatement()
-                .execute("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout', '" + timeout + "')");
+                .execute("SET LOCK_TIMEOUT " + timeout);
         entityManager.getTransaction().commit();
     }
 
