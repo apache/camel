@@ -182,20 +182,29 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
             if (!"out".equals(ep.direction())) {
                 continue;
             }
+            String epUri = stripDoubleSlash(URISupport.stripQuery(ep.uri()));
+            ManagedRouteMBean mrb = mcc.getManagedRoute(ep.routeId());
+            if (mrb == null) {
+                continue;
+            }
+            Collection<String> ids;
             try {
-                String epUri = URISupport.stripQuery(ep.uri());
-                ManagedRouteMBean mrb = mcc.getManagedRoute(ep.routeId());
-                if (mrb == null) {
-                    continue;
-                }
-                Collection<String> ids = mrb.processorIds();
-                for (String pid : ids) {
+                ids = mrb.processorIds();
+            } catch (Exception e) {
+                continue;
+            }
+            for (String pid : ids) {
+                try {
                     ManagedSendProcessorMBean sp = mcc.getManagedProcessor(pid, ManagedSendProcessorMBean.class);
                     if (sp == null) {
                         continue;
                     }
-                    String dest = URISupport.stripQuery(sp.getDestination());
-                    if (matchEndpointUri(epUri, dest)) {
+                    String dest = sp.getDestination();
+                    if (dest == null) {
+                        continue;
+                    }
+                    dest = stripDoubleSlash(URISupport.stripQuery(dest));
+                    if (epUri.equals(dest)) {
                         String key = ep.routeId() + "|" + ep.uri();
                         long[] existing = metrics.get(key);
                         if (existing != null) {
@@ -205,16 +214,12 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                             metrics.put(key, new long[] { sp.getExchangesTotal(), sp.getExchangesFailed() });
                         }
                     }
+                } catch (Exception e) {
+                    // skip this processor
                 }
-            } catch (Exception e) {
-                // ignore
             }
         }
         return metrics;
-    }
-
-    private static boolean matchEndpointUri(String uri1, String uri2) {
-        return stripDoubleSlash(uri1).equals(stripDoubleSlash(uri2));
     }
 
     private static String stripDoubleSlash(String uri) {
