@@ -42,6 +42,7 @@ class DiagramTab implements MonitorTab {
 
     private final MonitorContext ctx;
     private final DiagramSupport diagram = new DiagramSupport();
+    private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramMetrics = true;
     private boolean showExternal;
     private boolean topologyMode = true;
@@ -58,6 +59,17 @@ class DiagramTab implements MonitorTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        // Source view scrolling (takes priority when active)
+        if (sourceViewer.handleKeyEvent(ke)) {
+            return true;
+        }
+
+        // Source viewer toggle
+        if (!topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
+            loadSourceForSelectedNode();
+            return true;
+        }
+
         // Node selection navigation in topology mode
         if (topologyMode && diagram.isShowDiagram() && diagram.hasDiagramData()
                 && !diagram.getNodeBoxes().isEmpty()) {
@@ -176,6 +188,10 @@ class DiagramTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
+        if (sourceViewer.isVisible()) {
+            sourceViewer.hide();
+            return true;
+        }
         if (!topologyMode) {
             if (!routeNavigationStack.isEmpty()) {
                 // Go back to the previous route in the stack
@@ -235,12 +251,17 @@ class DiagramTab implements MonitorTab {
             return;
         }
 
+        if (sourceViewer.isVisible()) {
+            sourceViewer.render(frame, area);
+            return;
+        }
+
         if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
             String title;
             if (topologyMode) {
                 title = " Topology ";
             } else {
-                title = " Route [" + drillDownRouteId + "] ";
+                title = " Route [" + buildBreadcrumb() + "] ";
             }
 
             String selectedRouteId = topologyMode ? diagram.getSelectedRouteId() : drillDownRouteId;
@@ -482,6 +503,10 @@ class DiagramTab implements MonitorTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (sourceViewer.isVisible()) {
+            sourceViewer.renderFooter(spans);
+            return;
+        }
         if (diagram.isShowDiagram()) {
             if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "back");
@@ -490,6 +515,7 @@ class DiagramTab implements MonitorTab {
                     hint(spans, "Enter", "jump to route");
                 }
                 hint(spans, "PgUp/PgDn", "page");
+                hint(spans, "c", "source");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
                 hint(spans, "↑↓←→", "scroll");
@@ -661,6 +687,31 @@ class DiagramTab implements MonitorTab {
         result.put("diagram", String.join("\n", lines));
         result.put("lines", lines.size());
         return result;
+    }
+
+    private String buildBreadcrumb() {
+        if (routeNavigationStack.isEmpty()) {
+            return drillDownRouteId;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (var it = routeNavigationStack.descendingIterator(); it.hasNext();) {
+            sb.append(it.next()).append(" → ");
+        }
+        sb.append(drillDownRouteId);
+        return sb.toString();
+    }
+
+    private void loadSourceForSelectedNode() {
+        if (drillDownRouteId == null) {
+            return;
+        }
+        int targetLine = 0;
+        var selected = diagram.getSelectedEipNodeBox();
+        if (selected != null && selected.layoutNode() != null
+                && selected.layoutNode().treeNode != null) {
+            targetLine = selected.layoutNode().treeNode.info.line;
+        }
+        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine);
     }
 
     private static int numWidth(long... values) {

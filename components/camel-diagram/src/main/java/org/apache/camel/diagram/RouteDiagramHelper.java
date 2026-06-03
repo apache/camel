@@ -77,6 +77,8 @@ public final class RouteDiagramHelper {
                     node.description = line.getString("description");
                     Integer level = line.getInteger("level");
                     node.level = level != null ? level : 0;
+                    Integer lineNum = line.getInteger("line");
+                    node.line = lineNum != null ? lineNum : 0;
 
                     if (line.containsKey("statistics")) {
                         JsonObject ls = line.getJsonObject("statistics");

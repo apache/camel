@@ -18,9 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -31,23 +29,17 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.support.LoggerHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -74,20 +66,10 @@ class RoutesTab implements MonitorTab {
 
     // Diagram support (shared rendering/loading logic)
     private final DiagramSupport diagram = new DiagramSupport();
+    private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramAllRoutes;
     private boolean diagramMetrics = true;
     private String diagramRouteId;
-
-    // Source viewer state
-    private boolean showSource;
-    private List<String> sourceLines = Collections.emptyList();
-    private String sourceTitle;
-    private SyntaxHighlighter.Language sourceLanguage = SyntaxHighlighter.Language.PLAIN;
-    private int sourceScroll;
-    private int sourceScrollX;
-    private final ScrollbarState sourceVScrollState = new ScrollbarState();
-    private final ScrollbarState sourceHScrollState = new ScrollbarState();
-    private final AtomicBoolean sourceLoading = new AtomicBoolean(false);
 
     RoutesTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -110,37 +92,13 @@ class RoutesTab implements MonitorTab {
     }
 
     boolean isShowSource() {
-        return showSource;
+        return sourceViewer.isVisible();
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         // Source view scrolling
-        if (showSource) {
-            if (ke.isChar('c') || ke.isCancel()) {
-                showSource = false;
-                return true;
-            }
-            if (ke.isUp()) {
-                sourceScroll = Math.max(0, sourceScroll - 1);
-            } else if (ke.isDown()) {
-                sourceScroll++;
-            } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                sourceScroll = Math.max(0, sourceScroll - 20);
-            } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                sourceScroll += 20;
-            } else if (ke.isLeft()) {
-                sourceScrollX = Math.max(0, sourceScrollX - 1);
-            } else if (ke.isRight()) {
-                sourceScrollX++;
-            } else if (ke.isHome()) {
-                sourceScroll = 0;
-                sourceScrollX = 0;
-            } else if (ke.isEnd()) {
-                sourceScroll = Integer.MAX_VALUE;
-            } else {
-                return false;
-            }
+        if (sourceViewer.handleKeyEvent(ke)) {
             return true;
         }
 
@@ -182,13 +140,13 @@ class RoutesTab implements MonitorTab {
         }
 
         // Toggle top mode (only when not in source or diagram view)
-        if (!showSource && !diagram.isShowDiagram() && ke.isCharIgnoreCase('t')) {
+        if (!sourceViewer.isVisible() && !diagram.isShowDiagram() && ke.isCharIgnoreCase('t')) {
             routeTopMode = !routeTopMode;
             return true;
         }
 
         // Toggle all routes diagram flag
-        if (!showSource && !diagram.isShowDiagram() && ke.isCharIgnoreCase('a')) {
+        if (!sourceViewer.isVisible() && !diagram.isShowDiagram() && ke.isCharIgnoreCase('a')) {
             diagramAllRoutes = !diagramAllRoutes;
             return true;
         }
@@ -209,8 +167,8 @@ class RoutesTab implements MonitorTab {
 
         // Source viewer toggle
         if (ke.isChar('c')) {
-            if (showSource) {
-                showSource = false;
+            if (sourceViewer.isVisible()) {
+                sourceViewer.hide();
             } else {
                 loadSourceForSelectedRoute();
             }
@@ -218,13 +176,13 @@ class RoutesTab implements MonitorTab {
         }
 
         // Route start/stop
-        if (!showSource && !diagram.isShowDiagram() && ke.isChar('p')) {
+        if (!sourceViewer.isVisible() && !diagram.isShowDiagram() && ke.isChar('p')) {
             toggleRouteStartStop();
             return true;
         }
 
         // Route suspend/resume
-        if (!showSource && !diagram.isShowDiagram() && ke.isChar('P') && selectedRouteSupportsSuspension()) {
+        if (!sourceViewer.isVisible() && !diagram.isShowDiagram() && ke.isChar('P') && selectedRouteSupportsSuspension()) {
             toggleRouteSuspendResume();
             return true;
         }
@@ -234,8 +192,8 @@ class RoutesTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
-        if (showSource) {
-            showSource = false;
+        if (sourceViewer.isVisible()) {
+            sourceViewer.hide();
             return true;
         }
         return diagram.handleEscape();
@@ -254,11 +212,7 @@ class RoutesTab implements MonitorTab {
 
     @Override
     public void onIntegrationChanged() {
-        showSource = false;
-        sourceLines = Collections.emptyList();
-        sourceTitle = null;
-        sourceScroll = 0;
-        sourceScrollX = 0;
+        sourceViewer.reset();
         diagram.reset();
         routeTableState.select(0);
     }
@@ -272,12 +226,12 @@ class RoutesTab implements MonitorTab {
         }
 
         // Fullscreen source view
-        if (showSource) {
+        if (sourceViewer.isVisible()) {
             List<Rect> fullChunks = Layout.vertical()
                     .constraints(Constraint.length(4), Constraint.fill())
                     .split(area);
             renderRouteHeader(frame, fullChunks.get(0), info);
-            renderSource(frame, fullChunks.get(1));
+            sourceViewer.render(frame, fullChunks.get(1));
             return;
         }
 
@@ -456,11 +410,8 @@ class RoutesTab implements MonitorTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        if (showSource) {
-            hint(spans, "c/Esc", "close");
-            hint(spans, "↑↓←→", "scroll");
-            hint(spans, "PgUp/PgDn", "page");
-            hintLast(spans, "Home/End", "top/end");
+        if (sourceViewer.isVisible()) {
+            sourceViewer.renderFooter(spans);
         } else if (diagram.isShowDiagram()) {
             diagram.renderFooterHints(spans);
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
@@ -701,88 +652,6 @@ class RoutesTab implements MonitorTab {
         frame.renderStatefulWidget(table, area, routeHeaderTableState);
     }
 
-    private void renderSource(Frame frame, Rect area) {
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(" Source [" + (sourceTitle != null ? sourceTitle : "") + "] ")
-                .build();
-        Rect inner = block.inner(area);
-        frame.renderWidget(block, area);
-
-        if (sourceLines.isEmpty()) {
-            return;
-        }
-
-        int visibleLines = inner.height();
-        int maxScroll = Math.max(0, sourceLines.size() - visibleLines);
-        sourceScroll = Math.min(sourceScroll, maxScroll);
-
-        int maxLineWidth = sourceLines.stream().mapToInt(String::length).max().orElse(0);
-        int maxHScroll = Math.max(0, maxLineWidth - inner.width());
-        sourceScrollX = Math.min(sourceScrollX, maxHScroll);
-
-        int end = Math.min(sourceScroll + visibleLines, sourceLines.size());
-        List<Line> visible = new ArrayList<>();
-        for (int i = sourceScroll; i < end; i++) {
-            String raw = sourceLines.get(i);
-            visible.add(highlightSourceLine(raw, sourceScrollX));
-        }
-        frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
-
-        // Vertical scrollbar
-        if (sourceLines.size() > visibleLines) {
-            sourceVScrollState.contentLength(sourceLines.size()).viewportContentLength(visibleLines).position(sourceScroll);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), inner, sourceVScrollState);
-        }
-        // Horizontal scrollbar
-        if (maxHScroll > 0) {
-            sourceHScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(sourceScrollX);
-            frame.renderStatefulWidget(Scrollbar.horizontal(), inner, sourceHScrollState);
-        }
-    }
-
-    private Line highlightSourceLine(String raw, int hSkip) {
-        // Split line number prefix from code content
-        int prefixEnd = 0;
-        while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
-            prefixEnd++;
-        }
-
-        String prefix = raw.substring(0, prefixEnd);
-        String code = raw.substring(prefixEnd);
-
-        Line highlighted = SyntaxHighlighter.highlightLine(code, sourceLanguage);
-
-        // Prepend dim line-number prefix
-        List<Span> spans = new ArrayList<>();
-        if (!prefix.isEmpty()) {
-            spans.add(Span.styled(prefix, Style.EMPTY.dim()));
-        }
-        spans.addAll(highlighted.spans());
-
-        Line full = Line.from(spans);
-
-        // Apply horizontal scroll by skipping characters from spans
-        if (hSkip <= 0) {
-            return full;
-        }
-        List<Span> scrolled = new ArrayList<>();
-        int skipped = 0;
-        for (Span span : full.spans()) {
-            String content = span.content();
-            if (skipped >= hSkip) {
-                scrolled.add(span);
-            } else if (skipped + content.length() > hSkip) {
-                int offset = hSkip - skipped;
-                scrolled.add(Span.styled(content.substring(offset), span.style()));
-                skipped = hSkip;
-            } else {
-                skipped += content.length();
-            }
-        }
-        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
-    }
-
     // ---- Sorting ----
 
     private int sortRoute(RouteInfo a, RouteInfo b) {
@@ -1007,15 +876,8 @@ class RoutesTab implements MonitorTab {
     }
 
     private void loadSourceForSelectedRoute() {
-        if (ctx.selectedPid == null || ctx.runner == null) {
-            return;
-        }
-        if (!sourceLoading.compareAndSet(false, true)) {
-            return;
-        }
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null || info.routes.isEmpty()) {
-            sourceLoading.set(false);
             return;
         }
         List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
@@ -1023,147 +885,7 @@ class RoutesTab implements MonitorTab {
         Integer sel = routeTableState.selected();
         RouteInfo selectedRoute = (sel != null && sel >= 0 && sel < sortedRoutes.size())
                 ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-
-        sourceLines = List.of("(Loading source...)");
-        sourceTitle = selectedRoute.routeId;
-        sourceScroll = 0;
-        sourceScrollX = 0;
-        showSource = true;
-
-        String pid = ctx.selectedPid;
-        String routeId = selectedRoute.routeId;
-        ctx.runner.scheduler().execute(() -> {
-            try {
-                loadSourceInBackground(pid, routeId);
-            } finally {
-                sourceLoading.set(false);
-            }
-        });
-    }
-
-    private void loadSourceInBackground(String pid, String routeId) {
-        Path outputFile = ctx.getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "source");
-        root.put("filter", routeId);
-
-        Path actionFile = ctx.getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), actionFile);
-
-        JsonObject jo = pollJsonResponse(outputFile, 5000);
-        PathUtils.deleteFile(outputFile);
-
-        if (jo == null) {
-            applySourceResult(routeId, null, List.of("(No response from integration)"));
-            return;
-        }
-
-        JsonArray routes = (JsonArray) jo.get("routes");
-        if (routes == null || routes.isEmpty()) {
-            applySourceResult(routeId, null, List.of("(No source available for route: " + routeId + ")"));
-            return;
-        }
-
-        JsonObject routeObj = (JsonObject) routes.get(0);
-        String sourceLocation = objToString(routeObj.get("source"));
-        List<JsonObject> codeLines = routeObj.getCollection("code");
-        if (codeLines == null || codeLines.isEmpty()) {
-            applySourceResult(routeId, sourceLocation, List.of("(No source code available)"));
-            return;
-        }
-
-        List<String> lines = new ArrayList<>();
-        int maxLineNum = 0;
-        for (JsonObject codeLine : codeLines) {
-            Integer lineNum = codeLine.getInteger("line");
-            if (lineNum != null && lineNum > maxLineNum) {
-                maxLineNum = lineNum;
-            }
-        }
-        int lineNumWidth = String.valueOf(maxLineNum).length();
-        int matchLine = -1;
-        int idx = 0;
-        for (JsonObject codeLine : codeLines) {
-            Integer lineNum = codeLine.getInteger("line");
-            String code = Jsoner.unescape(objToString(codeLine.get("code")));
-            Boolean match = codeLine.getBoolean("match");
-            String prefix = lineNum != null
-                    ? String.format("%" + lineNumWidth + "d  ", lineNum)
-                    : String.format("%" + lineNumWidth + "s  ", "");
-            lines.add(prefix + code);
-            if (Boolean.TRUE.equals(match) && matchLine < 0) {
-                matchLine = idx;
-            }
-            idx++;
-        }
-
-        int scrollTo;
-        if (matchLine > 0) {
-            scrollTo = Math.max(0, matchLine - 2);
-        } else {
-            scrollTo = findLicenseHeaderEnd(codeLines);
-        }
-        applySourceResult(routeId, sourceLocation, lines, scrollTo);
-    }
-
-    private void applySourceResult(String routeId, String location, List<String> lines) {
-        applySourceResult(routeId, location, lines, 0);
-    }
-
-    private void applySourceResult(String routeId, String location, List<String> lines, int scrollTo) {
-        if (ctx.runner == null) {
-            return;
-        }
-        ctx.runner.runOnRenderThread(() -> {
-            if (!showSource) {
-                return;
-            }
-            String displayLoc = location != null ? FileUtil.stripPath(LoggerHelper.sourceNameOnly(location)) : null;
-            sourceTitle = displayLoc != null ? routeId + "  " + displayLoc : routeId;
-            sourceLanguage = SyntaxHighlighter.detectLanguage(location);
-            sourceLines = lines;
-            sourceScroll = scrollTo;
-        });
-    }
-
-    private static int findLicenseHeaderEnd(List<JsonObject> codeLines) {
-        // Auto-scroll past leading license/comment headers
-        boolean inBlock = false;
-        int lastCommentLine = -1;
-        for (int i = 0; i < codeLines.size(); i++) {
-            String code = objToString(codeLines.get(i).get("code")).trim();
-            if (i == 0 && code.isEmpty()) {
-                continue;
-            }
-            if (!inBlock && code.startsWith("/*")) {
-                inBlock = true;
-            }
-            if (inBlock) {
-                lastCommentLine = i;
-                if (code.contains("*/")) {
-                    inBlock = false;
-                }
-                continue;
-            }
-            // YAML/shell comment lines or XML comment lines at the top
-            if (code.startsWith("#") || code.startsWith("##") || code.startsWith("<!--")) {
-                lastCommentLine = i;
-                continue;
-            }
-            // Empty line right after comment block
-            if (lastCommentLine >= 0 && code.isEmpty()) {
-                lastCommentLine = i;
-                continue;
-            }
-            break;
-        }
-        return lastCommentLine >= 0 ? lastCommentLine + 1 : 0;
-    }
-
-    private static String objToString(Object o) {
-        return o != null ? o.toString() : "";
+        sourceViewer.loadSource(ctx, selectedRoute.routeId, 0);
     }
 
     @Override
