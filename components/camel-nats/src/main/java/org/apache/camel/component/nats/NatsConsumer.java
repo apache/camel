@@ -36,6 +36,7 @@ import io.nats.client.api.AckPolicy;
 import io.nats.client.api.ConsumerConfiguration;
 import io.nats.client.api.StreamConfiguration;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
@@ -346,6 +347,11 @@ public class NatsConsumer extends DefaultConsumer {
                 }
                 try {
                     exchange.getIn().setBody(msg.getData());
+                    // auto-set InOut pattern when message has a replyTo (request/reply)
+                    if (msg.getReplyTo() != null && !NatsConsumingTask.this.configuration.isReplyToDisabled()
+                            && !exchange.getPattern().isOutCapable()) {
+                        exchange.setPattern(ExchangePattern.InOut);
+                    }
                     exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
                     exchange.getIn().setHeader(NatsConstants.NATS_SID, msg.getSID());
                     exchange.getIn().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
@@ -384,9 +390,10 @@ public class NatsConsumer extends DefaultConsumer {
 
                     NatsConsumer.this.processor.process(exchange);
 
-                    // is there a reply?
+                    // is there a reply? only send reply if exchange pattern supports output (InOut)
                     if (!NatsConsumingTask.this.configuration.isReplyToDisabled()
-                            && msg.getReplyTo() != null && msg.getConnection() != null) {
+                            && msg.getReplyTo() != null && msg.getConnection() != null
+                            && exchange.getPattern().isOutCapable()) {
                         final Connection con = msg.getConnection();
                         final byte[] data = exchange.getMessage().getBody(byte[].class);
                         if (data != null) {
