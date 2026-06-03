@@ -347,6 +347,49 @@ class TuiMcpServer {
                                   + "The underlying content is unchanged since drawing is an overlay.",
                 Map.of()));
 
+        // --- Structured data tools ---
+
+        toolList.add(toolDef(
+                "tui_get_table",
+                "Returns the currently visible table data as structured JSON with typed values. "
+                                 + "Much more reliable than parsing screen text. "
+                                 + "Returns tab name, rows array with all fields, totalRows, and selectedIndex.",
+                Map.of("tab", propDef("string",
+                        "Tab name to get data from (e.g. 'Routes', 'Endpoints', 'Health'). "
+                                                + "If omitted, uses the active tab."))));
+        toolList.add(toolDef(
+                "tui_action",
+                "Invokes a TUI action by name, bypassing fragile key sequences. "
+                              + "Actions: reset-stats, reset-screen, screenshot, show-keystrokes, "
+                              + "tape-recording, doctor, caption, mcp-info, mcp-log.",
+                Map.of("action", propDef("string", "Action name in kebab-case (e.g. 'reset-stats', 'screenshot')")),
+                List.of("action")));
+        toolList.add(toolDef(
+                "tui_get_log",
+                "Returns recent log lines as structured data with optional filtering. "
+                               + "Returns newest entries first.",
+                Map.of("limit", propDef("integer", "Maximum lines to return (default 50)"),
+                        "filter", propDef("string", "Case-insensitive substring filter on log message"),
+                        "level", propDef("string", "Filter by log level (INFO, WARN, ERROR, DEBUG, TRACE)"))));
+        toolList.add(toolDef(
+                "tui_get_errors",
+                "Returns structured error data from the Errors tab. "
+                                  + "Includes routeId, exchangeId, exception details, stack trace, body, and headers.",
+                Map.of()));
+        toolList.add(toolDef(
+                "tui_get_diagram",
+                "Returns the route topology diagram as text. "
+                                   + "Shows the ASCII/Unicode art diagram of routes and their connections.",
+                Map.of()));
+        toolList.add(toolDef(
+                "tui_send_message",
+                "Sends a message to a Camel endpoint in the selected integration. "
+                                    + "Uses the file-based IPC protocol to deliver the message directly.",
+                Map.of("endpoint", propDef("string", "Endpoint URI to send to (e.g. 'direct:myRoute', 'seda:queue')"),
+                        "body", propDef("string", "Message body to send"),
+                        "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
+                List.of("endpoint")));
+
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
         return result;
@@ -380,6 +423,12 @@ class TuiMcpServer {
                 case "tui_sleep" -> callSleep(args);
                 case "tui_draw" -> callDraw(args);
                 case "tui_draw_clear" -> callDrawClear();
+                case "tui_get_table" -> callGetTable(args);
+                case "tui_action" -> callAction(args);
+                case "tui_get_log" -> callGetLog(args);
+                case "tui_get_errors" -> callGetErrors();
+                case "tui_get_diagram" -> callGetDiagram();
+                case "tui_send_message" -> callSendMessage(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -842,6 +891,74 @@ class TuiMcpServer {
     private String callDrawClear() {
         monitor.clearDrawing();
         return "Drawing cleared";
+    }
+
+    private String callGetTable(Map<String, Object> args) {
+        String tab = args.get("tab") instanceof String s ? s : null;
+        JsonObject data = monitor.getTableData(tab);
+        if (data == null) {
+            return "No table data available" + (tab != null ? " for tab: " + tab : "");
+        }
+        return Jsoner.serialize(data);
+    }
+
+    private String callAction(Map<String, Object> args) {
+        String action = (String) args.get("action");
+        if (action == null || action.isBlank()) {
+            return "Error: action is required";
+        }
+        boolean executed = monitor.executeAction(action);
+        if (executed) {
+            return "Action '" + action + "' executed";
+        }
+        return "Unknown or unsupported action: " + action
+               + ". Available: reset-stats, reset-screen, screenshot, show-keystrokes, "
+               + "tape-recording, doctor, caption, mcp-info, mcp-log";
+    }
+
+    private String callGetLog(Map<String, Object> args) {
+        int limit = 50;
+        if (args.get("limit") instanceof Number n) {
+            limit = Math.max(1, Math.min(1000, n.intValue()));
+        }
+        String filter = args.get("filter") instanceof String s ? s : null;
+        String level = args.get("level") instanceof String s ? s : null;
+        JsonObject data = monitor.getLogData(limit, filter, level);
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetErrors() {
+        JsonObject data = monitor.getTableData("Errors");
+        if (data == null) {
+            JsonObject empty = new JsonObject();
+            empty.put("tab", "Errors");
+            empty.put("rows", new JsonArray());
+            empty.put("totalRows", 0);
+            return Jsoner.serialize(empty);
+        }
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetDiagram() {
+        JsonObject data = monitor.getDiagramData();
+        if (data == null) {
+            return "No diagram available. Navigate to the Diagram tab first.";
+        }
+        return Jsoner.serialize(data);
+    }
+
+    private String callSendMessage(Map<String, Object> args) {
+        String endpoint = (String) args.get("endpoint");
+        if (endpoint == null || endpoint.isBlank()) {
+            return "Error: endpoint is required";
+        }
+        String body = args.get("body") instanceof String s ? s : null;
+        String headers = args.get("headers") instanceof String s ? s : null;
+        JsonObject response = monitor.sendMessage(endpoint, body, headers);
+        if (response == null) {
+            return "Error: no integration selected or PID unavailable";
+        }
+        return Jsoner.serialize(response);
     }
 
     private static JsonArray toJsonArray(List<String> list) {

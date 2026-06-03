@@ -84,6 +84,10 @@ class DiagramSupport {
     private int cropH = -1;
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
+    List<String> getLines() {
+        return lines;
+    }
+
     boolean isShowDiagram() {
         return showDiagram;
     }

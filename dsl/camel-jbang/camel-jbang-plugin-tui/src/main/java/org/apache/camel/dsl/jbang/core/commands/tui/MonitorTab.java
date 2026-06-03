@@ -22,6 +22,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * Interface for TUI monitor tabs. Each tab handles its own events, rendering, and footer hints.
@@ -51,6 +52,10 @@ interface MonitorTab {
     }
 
     default String getHelpText() {
+        return null;
+    }
+
+    default JsonObject getTableDataAsJson() {
         return null;
     }
 }

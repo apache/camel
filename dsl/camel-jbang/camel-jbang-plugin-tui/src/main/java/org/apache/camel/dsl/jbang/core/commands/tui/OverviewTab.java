@@ -43,6 +43,8 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
@@ -790,5 +792,38 @@ class OverviewTab implements MonitorTab {
                 - `F2` — actions menu
                 - `F3` — switch integration
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        List<IntegrationInfo> integrations = ctx.data.get();
+        if (integrations == null || integrations.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Overview");
+        JsonArray rows = new JsonArray();
+        for (IntegrationInfo info : integrations) {
+            JsonObject row = new JsonObject();
+            row.put("pid", info.pid);
+            row.put("name", info.name);
+            row.put("camelVersion", info.camelVersion);
+            row.put("platform", info.platform);
+            row.put("state", info.state);
+            row.put("ready", info.ready);
+            row.put("uptime", info.uptime);
+            row.put("exchangesTotal", info.exchangesTotal);
+            row.put("failed", info.failed);
+            row.put("inflight", info.inflight);
+            row.put("throughput", info.throughput);
+            row.put("routeStarted", info.routeStarted);
+            row.put("routeTotal", info.routeTotal);
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", integrations.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

@@ -41,6 +41,8 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -748,5 +750,41 @@ class EndpointsTab implements MonitorTab {
                 - `S` — reverse sort order
                 - `f` — cycle filter mode
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Endpoints");
+        JsonArray rows = new JsonArray();
+        for (EndpointInfo ei : info.endpoints) {
+            JsonObject row = new JsonObject();
+            row.put("uri", ei.uri);
+            row.put("component", ei.component);
+            row.put("direction", ei.direction);
+            row.put("routeId", ei.routeId);
+            row.put("hits", ei.hits);
+            row.put("remote", ei.remote);
+            row.put("stub", ei.stub);
+            if (ei.meanBodySize >= 0) {
+                row.put("meanBodySize", ei.meanBodySize);
+            }
+            if (ei.maxBodySize >= 0) {
+                row.put("maxBodySize", ei.maxBodySize);
+            }
+            if (ei.meanHeadersSize >= 0) {
+                row.put("meanHeadersSize", ei.meanHeadersSize);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.endpoints.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

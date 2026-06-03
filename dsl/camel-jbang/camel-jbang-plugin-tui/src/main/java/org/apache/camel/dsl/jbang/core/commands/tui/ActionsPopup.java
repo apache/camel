@@ -2034,6 +2034,42 @@ class ActionsPopup {
     record InfraServiceEntry(String alias, String description, List<String> implementations, boolean running) {
     }
 
+    boolean executeActionByName(String name) {
+        if (name == null || name.isBlank()) {
+            return false;
+        }
+        String normalized = name.replace("-", "_").toUpperCase();
+        Action action;
+        try {
+            action = Action.valueOf(normalized);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        switch (action) {
+            case RESET_STATS -> {
+                if (resetStatsAction != null) {
+                    resetStatsAction.run();
+                }
+            }
+            case RESET_SCREEN -> {
+                if (resetScreenAction != null) {
+                    resetScreenAction.run();
+                }
+            }
+            case SCREENSHOT -> screenshotAction.run();
+            case SHOW_KEYSTROKES -> toggleKeystrokes.run();
+            case TAPE_RECORDING -> toggleTapeRecording.run();
+            case DOCTOR -> doctorPopup.open();
+            case CAPTION -> captionOverlay.openInline();
+            case MCP_INFO -> openMcpInfo();
+            case MCP_LOG -> openMcpLog();
+            default -> {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private record PendingLaunch(String name, Process process, Path outputFile, long startTime) {
     }
 

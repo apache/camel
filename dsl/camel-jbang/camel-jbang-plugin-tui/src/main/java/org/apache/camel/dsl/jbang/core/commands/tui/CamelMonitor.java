@@ -79,6 +79,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -2820,6 +2821,47 @@ public class CamelMonitor extends CamelCommand {
             return KeyEvent.ofChar(remainder.charAt(0), mods);
         }
         return null;
+    }
+
+    JsonObject getTableData(String tabName) {
+        if (tabName != null && !tabName.isBlank()) {
+            String prev = getActiveTabName();
+            String switched = navigateToTab(tabName);
+            if (switched == null) {
+                return null;
+            }
+        }
+        MonitorTab tab = activeTab();
+        return tab != null ? tab.getTableDataAsJson() : null;
+    }
+
+    boolean executeAction(String actionName) {
+        return actionsPopup.executeActionByName(actionName);
+    }
+
+    JsonObject getLogData(int limit, String filter, String level) {
+        return logTab.getLogDataAsJson(limit, filter, level);
+    }
+
+    JsonObject getDiagramData() {
+        MonitorTab tab = activeTab();
+        if (tab instanceof DiagramTab dt) {
+            return dt.getTableDataAsJson();
+        }
+        return diagramTab.getTableDataAsJson();
+    }
+
+    JsonObject sendMessage(String endpoint, String body, String headers) {
+        if (ctx.selectedPid == null) {
+            return null;
+        }
+        long pid;
+        try {
+            pid = Long.parseLong(ctx.selectedPid);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        return RuntimeHelper.sendMessage(pid, endpoint, body, headers);
     }
 
     private record PendingKey(KeyEvent event, long fireAt) {

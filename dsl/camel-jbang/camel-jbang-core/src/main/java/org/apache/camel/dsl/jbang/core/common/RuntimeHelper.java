@@ -253,6 +253,25 @@ public final class RuntimeHelper {
         return readStatusFromFile(historyFile);
     }
 
+    public static JsonObject sendMessage(long pid, String endpoint, String body, String headers) {
+        String result = executeAction(pid, "send", root -> {
+            root.put("endpoint", endpoint);
+            if (body != null) {
+                root.put("body", body);
+            }
+            if (headers != null) {
+                root.put("headers", headers);
+            }
+        });
+        try {
+            return (JsonObject) Jsoner.deserialize(result);
+        } catch (Exception e) {
+            JsonObject wrapper = new JsonObject();
+            wrapper.put("result", result);
+            return wrapper;
+        }
+    }
+
     public static JsonObject readStatusFromFile(Path path) {
         try {
             if (Files.exists(path) && path.toFile().length() > 0) {

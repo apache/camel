@@ -36,6 +36,8 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -309,5 +311,33 @@ class InflightTab implements MonitorTab {
                 - `S` — reverse sort order
                 - `Esc` — back
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Inflight");
+        JsonArray rows = new JsonArray();
+        for (InflightInfo ii : info.inflightExchanges) {
+            JsonObject row = new JsonObject();
+            row.put("exchangeId", ii.exchangeId);
+            row.put("fromRouteId", ii.fromRouteId);
+            row.put("fromRemoteEndpoint", ii.fromRemoteEndpoint);
+            row.put("atRouteId", ii.atRouteId);
+            row.put("nodeId", ii.nodeId);
+            row.put("elapsed", ii.elapsed);
+            row.put("duration", ii.duration);
+            row.put("blocked", ii.blocked);
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.inflightExchanges.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

@@ -1283,4 +1283,39 @@ class RoutesTab implements MonitorTab {
                 - `Esc` — back to route list
                 """;
     }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Routes");
+        JsonArray rows = new JsonArray();
+        for (RouteInfo ri : info.routes) {
+            JsonObject row = new JsonObject();
+            row.put("routeId", ri.routeId);
+            row.put("from", ri.from);
+            row.put("state", ri.state);
+            row.put("uptime", ri.uptime);
+            row.put("total", ri.total);
+            row.put("failed", ri.failed);
+            row.put("inflight", ri.inflight);
+            row.put("mean", ri.meanTime);
+            row.put("max", ri.maxTime);
+            row.put("min", ri.minTime);
+            row.put("last", ri.lastTime);
+            row.put("throughput", ri.throughput);
+            if (ri.group != null) {
+                row.put("group", ri.group);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.routes.size());
+        Integer sel = routeTableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
+    }
 }
