@@ -23,7 +23,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -239,9 +238,9 @@ public class SimplePredicateParser extends BaseSimpleParser {
         SimpleNode lastSingle = null;
         SimpleNode lastDouble = null;
         SimpleNode lastFunction = null;
-        AtomicBoolean startSingle = new AtomicBoolean();
-        AtomicBoolean startDouble = new AtomicBoolean();
-        AtomicBoolean startFunction = new AtomicBoolean();
+        boolean[] startSingle = { false };
+        boolean[] startDouble = { false };
+        boolean[] startFunction = { false };
 
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {
@@ -287,15 +286,15 @@ public class SimplePredicateParser extends BaseSimpleParser {
         }
 
         // validate the single, double quote pairs and functions is in balance
-        if (startSingle.get()) {
+        if (startSingle[0]) {
             int index = evalIndex(lastSingle);
             throw new SimpleParserException("single quote has no ending quote", index);
         }
-        if (startDouble.get()) {
+        if (startDouble[0]) {
             int index = evalIndex(lastDouble);
             throw new SimpleParserException("double quote has no ending quote", index);
         }
-        if (startFunction.get()) {
+        if (startFunction[0]) {
             // we have a start function, but no ending function
             int index = evalIndex(lastFunction);
             throw new SimpleParserException("function has no ending token", index);
@@ -334,25 +333,25 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * Creates a node from the given token
      *
      * @param  token         the token
-     * @param  startSingle   state of single quoted blocks
-     * @param  startDouble   state of double quoted blocks
-     * @param  startFunction state of function blocks
+     * @param  startSingle   state of single quoted blocks (single-element boolean array used as a mutable holder)
+     * @param  startDouble   state of double quoted blocks (single-element boolean array used as a mutable holder)
+     * @param  startFunction state of function blocks (single-element boolean array used as a mutable holder)
      * @return               the created node, or <tt>null</tt> to let a default node be created instead.
      */
     private SimpleNode createNode(
-            SimpleToken token, AtomicBoolean startSingle, AtomicBoolean startDouble,
-            AtomicBoolean startFunction) {
+            SimpleToken token, boolean[] startSingle, boolean[] startDouble,
+            boolean[] startFunction) {
         if (token.getType().isFunctionStart()) {
-            startFunction.set(true);
+            startFunction[0] = true;
             return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
         } else if (token.getType().isFunctionEnd()) {
-            startFunction.set(false);
+            startFunction[0] = false;
             return new SimpleFunctionEnd(token);
         }
 
         // if we are inside a function, then we do not support any other kind of tokens
         // as we want all the tokens to be literal instead
-        if (startFunction.get()) {
+        if (startFunction[0]) {
             return null;
         }
 
@@ -365,7 +364,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         // if we are inside a quote, then we do not support any further kind of tokens
         // as we want to only support embedded functions and all other kinds to be literal tokens
-        if (startSingle.get() || startDouble.get()) {
+        if (startSingle[0] || startDouble[0]) {
             return null;
         }
 
@@ -393,29 +392,29 @@ public class SimplePredicateParser extends BaseSimpleParser {
         return null;
     }
 
-    private static SimpleNode createDoubleQuoted(SimpleToken token, AtomicBoolean startDouble) {
+    private static SimpleNode createDoubleQuoted(SimpleToken token, boolean[] startDouble) {
         SimpleNode answer;
-        boolean start = startDouble.get();
+        boolean start = startDouble[0];
         if (!start) {
             answer = new DoubleQuoteStart(token);
         } else {
             answer = new DoubleQuoteEnd(token);
         }
         // flip state on start/end flag
-        startDouble.set(!start);
+        startDouble[0] = !start;
         return answer;
     }
 
-    private static SimpleNode createSingleQuoted(SimpleToken token, AtomicBoolean startSingle) {
+    private static SimpleNode createSingleQuoted(SimpleToken token, boolean[] startSingle) {
         SimpleNode answer;
-        boolean start = startSingle.get();
+        boolean start = startSingle[0];
         if (!start) {
             answer = new SingleQuoteStart(token);
         } else {
             answer = new SingleQuoteEnd(token);
         }
         // flip state on start/end flag
-        startSingle.set(!start);
+        startSingle[0] = !start;
         return answer;
     }
 

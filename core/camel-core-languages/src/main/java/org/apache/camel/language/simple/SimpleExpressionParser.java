@@ -19,7 +19,6 @@ package org.apache.camel.language.simple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -242,8 +241,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     protected void parseAndCreateAstModel() {
         // we loop the tokens and create a sequence of ast nodes
 
-        // counter to keep track of number of functions in the tokens
-        AtomicInteger functions = new AtomicInteger();
+        // single-element array used as a mutable counter (no concurrency; AtomicInteger is not needed here)
+        int[] functions = { 0 };
 
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {
@@ -288,15 +287,15 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
     }
 
-    private SimpleNode createNode(SimpleToken token, AtomicInteger functions) {
+    private SimpleNode createNode(SimpleToken token, int[] functions) {
         // expression only support functions, unary operators, operators, and other operators
         if (token.getType().isFunctionStart()) {
             // starting a new function
-            functions.incrementAndGet();
+            functions[0]++;
             return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
-        } else if (functions.get() > 0 && token.getType().isFunctionEnd()) {
+        } else if (functions[0] > 0 && token.getType().isFunctionEnd()) {
             // there must be a start function already, to let this be an end function
-            functions.decrementAndGet();
+            functions[0]--;
             return new SimpleFunctionEnd(token);
         } else if (token.getType().isUnary()) {
             // there must be an end function as previous, to let this be a unary function
