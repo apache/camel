@@ -34,7 +34,7 @@ public abstract class AbstractJdbcTestSupport extends CamelTestSupport {
     public void setupResources() {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/init.sql").build();
     }
 
