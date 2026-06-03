@@ -16,12 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AskCliToolsTest {
+
+    // ---- tokenizeCommand tests ----
 
     @Test
     void tokenizeSimpleCommand() {
@@ -62,5 +72,102 @@ class AskCliToolsTest {
         assertArrayEquals(
                 new String[] { "ps" },
                 Ask.tokenizeCommand("ps"));
+    }
+
+    // ---- collectCommands tests ----
+
+    @Test
+    void collectCommandsNoFilter() {
+        List<JsonObject> commands = buildTestCommands();
+        List<JsonObject> result = new ArrayList<>();
+        Ask.collectCommands(commands, result, null);
+        assertEquals(3, result.size());
+    }
+
+    @Test
+    void collectCommandsWithFilter() {
+        List<JsonObject> commands = buildTestCommands();
+        List<JsonObject> result = new ArrayList<>();
+        Ask.collectCommands(commands, result, "error");
+        assertEquals(1, result.size());
+        assertEquals("get error", result.get(0).getString("command"));
+    }
+
+    @Test
+    void collectCommandsFilterByDescription() {
+        List<JsonObject> commands = buildTestCommands();
+        List<JsonObject> result = new ArrayList<>();
+        Ask.collectCommands(commands, result, "routing");
+        assertEquals(1, result.size());
+        assertEquals("get error", result.get(0).getString("command"));
+    }
+
+    @Test
+    void collectCommandsFilterNoMatch() {
+        List<JsonObject> commands = buildTestCommands();
+        List<JsonObject> result = new ArrayList<>();
+        Ask.collectCommands(commands, result, "nonexistent");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void collectCommandsIncludesSubcommandMetadata() {
+        List<JsonObject> commands = buildTestCommands();
+        List<JsonObject> result = new ArrayList<>();
+        Ask.collectCommands(commands, result, "get");
+        JsonObject getCmd = result.stream()
+                .filter(r -> "get".equals(r.getString("command")))
+                .findFirst().orElse(null);
+        assertNotNull(getCmd);
+        assertTrue((Boolean) getCmd.get("hasSubcommands"));
+        assertEquals(1, ((Number) getCmd.get("subcommandCount")).intValue());
+    }
+
+    // ---- findCommand tests ----
+
+    @Test
+    void findCommandTopLevel() {
+        List<JsonObject> commands = buildTestCommands();
+        JsonObject found = Ask.findCommand(commands, "ps");
+        assertNotNull(found);
+        assertEquals("ps", found.getString("fullName"));
+    }
+
+    @Test
+    void findCommandNested() {
+        List<JsonObject> commands = buildTestCommands();
+        JsonObject found = Ask.findCommand(commands, "get error");
+        assertNotNull(found);
+        assertEquals("get error", found.getString("fullName"));
+    }
+
+    @Test
+    void findCommandNotFound() {
+        List<JsonObject> commands = buildTestCommands();
+        assertNull(Ask.findCommand(commands, "nonexistent"));
+    }
+
+    // ---- test data helpers ----
+
+    private static List<JsonObject> buildTestCommands() {
+        JsonObject errorCmd = new JsonObject();
+        errorCmd.put("name", "error");
+        errorCmd.put("fullName", "get error");
+        errorCmd.put("description", "Get captured routing errors");
+
+        JsonObject getCmd = new JsonObject();
+        getCmd.put("name", "get");
+        getCmd.put("fullName", "get");
+        getCmd.put("description", "Get status of Camel integrations");
+        JsonArray getSubs = new JsonArray();
+        getSubs.add(errorCmd);
+        getCmd.put("subcommands", getSubs);
+
+        JsonObject psCmd = new JsonObject();
+        psCmd.put("name", "ps");
+        psCmd.put("fullName", "ps");
+        psCmd.put("description", "List running Camel integrations");
+
+        return List.of(getCmd, psCmd);
     }
 }

@@ -114,7 +114,7 @@ public class Ask extends CamelCommand {
 
     private long targetPid;
     private CamelCatalog catalog;
-    private List<JsonObject> commandMetadataCache;
+    private volatile List<JsonObject> commandMetadataCache;
 
     public Ask(CamelJBangMain main) {
         super(main);
@@ -443,7 +443,7 @@ public class Ask extends CamelCommand {
                         "command", stringProp("Full command name (e.g., 'get error', 'catalog component', 'run')")))));
         tools.add(new LlmClient.ToolDef(
                 "cli_exec",
-                "Execute any Camel CLI command and return its output. Use cli_list_commands and cli_command_help first to discover commands and their options.",
+                "Execute any Camel CLI command and return its output. Use cli_list_commands and cli_command_help first to discover commands and their options. CAUTION: some commands (stop, cmd stop-route, cmd stop-group) are destructive and will affect running integrations. Always confirm with the user before executing destructive commands.",
                 objectParams(Map.of(
                         "command", stringProp(
                                 "The full command line to execute (e.g., 'get error --diagram', 'catalog component --filter=kafka')")))));
@@ -773,13 +773,13 @@ public class Ask extends CamelCommand {
                 return commandMetadataCache;
             }
         } catch (Exception e) {
-            // ignore
+            printer().printErr("Failed to load CLI command metadata: " + e.getMessage());
         }
         return List.of();
     }
 
     @SuppressWarnings("unchecked")
-    private void collectCommands(List<JsonObject> commands, List<JsonObject> result, String filter) {
+    static void collectCommands(List<JsonObject> commands, List<JsonObject> result, String filter) {
         for (JsonObject cmd : commands) {
             String fullName = cmd.getString("fullName");
             String description = cmd.getString("description");
@@ -822,7 +822,7 @@ public class Ask extends CamelCommand {
     }
 
     @SuppressWarnings("unchecked")
-    private JsonObject findCommand(List<JsonObject> commands, String fullName) {
+    static JsonObject findCommand(List<JsonObject> commands, String fullName) {
         for (JsonObject cmd : commands) {
             if (fullName.equals(cmd.getString("fullName"))) {
                 return cmd;
@@ -916,12 +916,12 @@ public class Ask extends CamelCommand {
         Printer capturingPrinter = new Printer() {
             @Override
             public void println() {
-                captured.append(System.lineSeparator());
+                captured.append('\n');
             }
 
             @Override
             public void println(String line) {
-                captured.append(line).append(System.lineSeparator());
+                captured.append(line).append('\n');
             }
 
             @Override
