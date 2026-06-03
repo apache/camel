@@ -19,6 +19,7 @@ package org.apache.camel.language.simple;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
@@ -99,8 +100,12 @@ public class SimplePredicateParser extends BaseSimpleParser {
                         part = part.substring(1);
                     }
                     this.expression = part;
-                    // use $$key as local variable in the expression afterwards
-                    for (String key : initParser.getInitKeys()) {
+                    // use $$key as local variable in the expression afterwards.
+                    // Sort by descending length so a longer key (e.g. "$ab") is replaced before any
+                    // shorter prefix (e.g. "$a"), preventing "$ab" from becoming "${variable.a}b".
+                    List<String> sortedKeys = new ArrayList<>(initParser.getInitKeys());
+                    sortedKeys.sort(Comparator.comparingInt(String::length).reversed());
+                    for (String key : sortedKeys) {
                         this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
                     }
                 }
