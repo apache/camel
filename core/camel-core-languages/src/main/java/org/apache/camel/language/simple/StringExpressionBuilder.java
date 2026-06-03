@@ -282,7 +282,13 @@ public final class StringExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 String answer = exp.evaluate(exchange, String.class);
+                if (answer == null) {
+                    return null;
+                }
                 Integer width = len.evaluate(exchange, Integer.class);
+                if (width == null) {
+                    throw new IllegalArgumentException("pad length expression evaluated to null: " + length);
+                }
                 String sep = separator;
                 if (sep == null || sep.isEmpty()) {
                     sep = " ";

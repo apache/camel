@@ -156,7 +156,7 @@ public final class CollectionExpressionBuilder {
 
             @Override
             public String toString() {
-                return "reverse(" + Arrays.toString(values) + ")";
+                return "shuffle(" + Arrays.toString(values) + ")";
             }
         };
     }
@@ -232,7 +232,7 @@ public final class CollectionExpressionBuilder {
 
             @Override
             public String toString() {
-                return "map(" + Arrays.toString(values) + ")";
+                return "map(" + Arrays.toString(pairs) + ")";
             }
         };
     }

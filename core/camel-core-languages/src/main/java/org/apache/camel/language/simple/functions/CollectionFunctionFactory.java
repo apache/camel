@@ -485,7 +485,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 }
                 return "rangeList(exchange, " + before + ", " + after + ")";
             } else {
-                return "rangeList(exchange, 0, " + values.trim() + ")";
+                return "rangeList(exchange, 1, " + values.trim() + ")";
             }
         }
 

@@ -99,7 +99,7 @@ public final class MathExpressionBuilder {
                 }
                 if (value != null) {
                     double d = Math.floor(value);
-                    return (int) d;
+                    return (long) d;
                 }
                 return value;
             }
@@ -141,7 +141,7 @@ public final class MathExpressionBuilder {
                 }
                 if (value != null) {
                     double d = Math.ceil(value);
-                    return (int) d;
+                    return (long) d;
                 }
                 return value;
             }

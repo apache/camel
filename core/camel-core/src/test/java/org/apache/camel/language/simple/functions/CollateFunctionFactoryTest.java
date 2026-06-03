@@ -121,6 +121,32 @@ public class CollateFunctionFactoryTest extends AbstractSimpleFunctionFactoryTes
     }
 
     @Test
+    public void testCollateDynamicEvaluatedTwiceProducesCorrectChunks() {
+        // pre-fix: collateExpression(String, String) overwrote the 'exp' field inside evaluate(),
+        // so a second call wrapped an already-grouped iterator instead of the raw body expression,
+        // producing iterators-of-iterators instead of list chunks.
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        exchange.getIn().setBody(data);
+        exchange.getIn().setHeader("num", 2);
+
+        Iterator<?> first = (Iterator<?>) evaluate("collate(${header.num})");
+        assertEquals(List.of("A", "B"), first.next());
+        assertEquals(List.of("C", "D"), first.next());
+        assertFalse(first.hasNext());
+
+        // second evaluation on the same route exchange must produce the same shape
+        exchange.getIn().setBody(data);
+        Iterator<?> second = (Iterator<?>) evaluate("collate(${header.num})");
+        Object chunk = second.next();
+        assertFalse(chunk instanceof Iterator, "chunk must be a List of elements, not a nested iterator");
+        assertEquals(List.of("A", "B"), chunk);
+    }
+
+    @Test
     public void testCreateCode() {
         assertEquals("collate(exchange, 10)", createCode("collate(10)"));
         assertEquals("collate(exchange, ${header.max})", createCode("collate(${header.max})"));

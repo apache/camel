@@ -25,6 +25,7 @@ import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -93,7 +94,40 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
 
     @Test
     public void testCreateCodeRangeMax() {
-        assertEquals("rangeList(exchange, 0, 3)", createCode("range(3)"));
+        // pre-fix: csimple generated rangeList(exchange, 0, N) while simple used min=1,
+        // causing ${range(N)} to produce different results in the two execution modes.
+        assertEquals("rangeList(exchange, 1, 3)", createCode("range(3)"));
+    }
+
+    // --- shuffle toString ---
+
+    @Test
+    public void testShuffleToStringReportsShuffleNotReverse() {
+        // pre-fix: shuffleExpression.toString() returned "reverse(...)" due to a copy-paste
+        // error; any error message or log showing the expression would be completely misleading.
+        org.apache.camel.Expression expr
+                = context.resolveLanguage("simple").createExpression("${shuffle(${body})}");
+        expr.init(context);
+        String repr = expr.toString();
+        assertTrue(repr.contains("shuffle"), "toString should contain 'shuffle', got: " + repr);
+        assertFalse(repr.startsWith("reverse"), "toString must not start with 'reverse', got: " + repr);
+    }
+
+    // --- map toString ---
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testMapToStringShowsSourcePairsNotCompiledExpressions() {
+        // pre-fix: mapExpression.toString() printed the compiled Expression[] array (JVM object refs)
+        // instead of the original String[] pairs, making diagnostic output useless.
+        org.apache.camel.Expression expr
+                = context.resolveLanguage("simple").createExpression("${map('k1','v1')}");
+        expr.init(context);
+        String repr = expr.toString();
+        assertTrue(repr.contains("k1"), "toString should contain source key 'k1', got: " + repr);
+        assertTrue(repr.contains("v1"), "toString should contain source value 'v1', got: " + repr);
+        assertFalse(repr.contains("ExpressionAdapter"),
+                "toString must not expose compiled objects, got: " + repr);
     }
 
     // --- distinct ---

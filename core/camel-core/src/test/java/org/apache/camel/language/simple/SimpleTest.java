@@ -3680,15 +3680,20 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testThrowException() {
+        // RuntimeException subclasses must propagate unwrapped so that typed onException handlers match.
+        // Pre-fix: the catch(Exception) block re-wrapped the just-thrown RuntimeException in a second
+        // RuntimeException, so e.getCause() held the intended exception instead of e itself.
         try {
             Expression expression = context.resolveLanguage("simple").createExpression("${throwException('Forced error')}");
             expression.evaluate(exchange, Object.class);
             fail();
         } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced error", e.getCause().getMessage());
+            assertIsInstanceOf(IllegalArgumentException.class, e);
+            assertEquals("Forced error", e.getMessage());
         }
 
+        // Checked exceptions are wrapped in RuntimeCamelException (one layer, not two).
+        // Pre-fix: they were wrapped twice: RuntimeException(RuntimeCamelException(IOException)).
         try {
             Expression expression
                     = context.resolveLanguage("simple")
@@ -3696,8 +3701,8 @@ public class SimpleTest extends LanguageTestSupport {
             expression.evaluate(exchange, Object.class);
             fail();
         } catch (Exception e) {
-            assertIsInstanceOf(IOException.class, e.getCause().getCause());
-            assertEquals("Some IO error", e.getCause().getCause().getMessage());
+            assertIsInstanceOf(IOException.class, e.getCause());
+            assertEquals("Some IO error", e.getCause().getMessage());
         }
     }
 

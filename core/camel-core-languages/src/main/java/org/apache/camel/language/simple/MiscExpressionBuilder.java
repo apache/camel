@@ -149,9 +149,9 @@ public final class MiscExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Integer n = num.evaluate(exchange, Integer.class);
-                exp = ExpressionBuilder.groupIteratorExpression(exp, null, Integer.toString(n), false);
-                exp.init(exchange.getContext());
-                return exp.evaluate(exchange, Object.class);
+                Expression grouped = ExpressionBuilder.groupIteratorExpression(exp, null, Integer.toString(n), false);
+                grouped.init(exchange.getContext());
+                return grouped.evaluate(exchange, Object.class);
             }
 
             @Override
@@ -204,7 +204,10 @@ public final class MiscExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                int n = num.evaluate(exchange, Integer.class);
+                Integer n = num.evaluate(exchange, Integer.class);
+                if (n == null) {
+                    throw new IllegalArgumentException("skip number expression evaluated to null: " + number);
+                }
                 return skipIteratorExpression(exp, n).evaluate(exchange, Object.class);
             }
 
@@ -502,17 +505,17 @@ public final class MiscExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
+                String text = exp.evaluate(exchange, String.class);
                 try {
-                    String text = exp.evaluate(exchange, String.class);
-                    // create a new exception to that type, and provide the message as
+                    // create a new exception of that type, and provide the message
                     Constructor<?> constructor = clazz.getConstructor(String.class);
                     Exception cause = (Exception) constructor.newInstance(text);
                     if (cause instanceof RuntimeException re) {
                         throw re;
-                    } else {
-                        RuntimeException re = new RuntimeCamelException(cause);
-                        throw re;
                     }
+                    throw new RuntimeCamelException(cause);
+                } catch (RuntimeException re) {
+                    throw re;
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

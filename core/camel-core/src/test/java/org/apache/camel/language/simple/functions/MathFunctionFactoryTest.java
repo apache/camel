@@ -46,9 +46,23 @@ public class MathFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
     }
 
     @Test
+    public void testFloorLargeValueNoOverflow() {
+        // pre-fix: (int) Math.floor(3_000_000_000.9) silently overflowed to a negative int
+        exchange.getIn().setBody(3_000_000_000.9);
+        assertEquals(3_000_000_000L, evaluate("floor(${body})", Long.class));
+    }
+
+    @Test
     public void testCeil() {
         exchange.getIn().setBody(3.2);
         assertEquals(4L, evaluate("ceil(${body})", Long.class));
+    }
+
+    @Test
+    public void testCeilLargeValueNoOverflow() {
+        // pre-fix: (int) Math.ceil(2_147_483_648.0) silently overflowed to Integer.MIN_VALUE
+        exchange.getIn().setBody(2_147_483_648.0);
+        assertEquals(2_147_483_648L, evaluate("ceil(${body})", Long.class));
     }
 
     @Test
