@@ -594,7 +594,7 @@ class DiagramSupport {
                 && !"from".equals(type)) {
             return null;
         }
-        String baseUri = stripQueryParams(box.layoutNode().treeNode.info.uri);
+        String baseUri = getBaseUri(box.layoutNode().treeNode.info);
         if (baseUri == null || baseUri.isBlank()) {
             return null;
         }
@@ -627,7 +627,7 @@ class DiagramSupport {
                 if (!lr.nodes.isEmpty()) {
                     var firstNode = lr.nodes.get(0);
                     if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
-                        String fromBaseUri = stripQueryParams(firstNode.treeNode.info.uri);
+                        String fromBaseUri = getBaseUri(firstNode.treeNode.info);
                         if (baseUri.equals(fromBaseUri)) {
                             return entry.getKey();
                         }
@@ -636,6 +636,23 @@ class DiagramSupport {
             }
         }
         return null;
+    }
+
+    static String getBaseUri(RouteDiagramLayoutEngine.NodeInfo info) {
+        String uri = info.uri;
+        if (uri == null) {
+            uri = extractUriFromCode(info.code);
+        }
+        return stripQueryParams(uri);
+    }
+
+    private static String extractUriFromCode(String code) {
+        if (code == null) {
+            return null;
+        }
+        int open = code.indexOf('[');
+        int close = code.lastIndexOf(']');
+        return (open >= 0 && close > open) ? code.substring(open + 1, close) : code;
     }
 
     static String stripQueryParams(String uri) {
@@ -751,7 +768,7 @@ class DiagramSupport {
         if (currentLayout != null && !currentLayout.nodes.isEmpty()) {
             var fromNode = currentLayout.nodes.get(0);
             if ("from".equals(fromNode.type) && fromNode.treeNode != null) {
-                currentFromUri = stripQueryParams(fromNode.treeNode.info.uri);
+                currentFromUri = getBaseUri(fromNode.treeNode.info);
             }
         }
 
@@ -764,7 +781,7 @@ class DiagramSupport {
                 // Add "from" URIs of other routes (linkable from "to" nodes)
                 var firstNode = lr.nodes.get(0);
                 if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
-                    String uri = stripQueryParams(firstNode.treeNode.info.uri);
+                    String uri = getBaseUri(firstNode.treeNode.info);
                     if (uri != null) {
                         endpoints.add(uri);
                     }
@@ -775,7 +792,7 @@ class DiagramSupport {
                         String type = node.type;
                         if (("to".equals(type) || "toD".equals(type) || "wireTap".equals(type))
                                 && node.treeNode != null) {
-                            String uri = stripQueryParams(node.treeNode.info.uri);
+                            String uri = getBaseUri(node.treeNode.info);
                             if (currentFromUri.equals(uri)) {
                                 endpoints.add(currentFromUri);
                             }

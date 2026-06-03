@@ -141,7 +141,7 @@ class DiagramTab implements MonitorTab {
             if (linkedRouteId != null && diagram.getRouteLayout(linkedRouteId) != null) {
                 routeNavigationStack.push(drillDownRouteId);
                 drillDownRouteId = linkedRouteId;
-                diagram.setSelectedEipNodeIndex(-1);
+                diagram.setSelectedEipNodeIndex(0);
                 diagram.resetScroll();
                 return true;
             }
@@ -158,7 +158,7 @@ class DiagramTab implements MonitorTab {
                     drillDownRouteId = selectedRouteId;
                     topologyMode = false;
                     diagram.setTopologyMode(false);
-                    diagram.setSelectedEipNodeIndex(-1);
+                    diagram.setSelectedEipNodeIndex(0);
                     diagram.resetScroll();
                     diagram.endLoad();
                     // Use cached route layout if available (no IPC needed)
@@ -180,7 +180,7 @@ class DiagramTab implements MonitorTab {
             if (!routeNavigationStack.isEmpty()) {
                 // Go back to the previous route in the stack
                 drillDownRouteId = routeNavigationStack.pop();
-                diagram.setSelectedEipNodeIndex(-1);
+                diagram.setSelectedEipNodeIndex(0);
                 diagram.resetScroll();
                 return true;
             }
