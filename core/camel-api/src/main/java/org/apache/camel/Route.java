@@ -32,12 +32,21 @@ import org.apache.camel.spi.RoutePolicy;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A <a href="https://camel.apache.org/routes.html">Route</a> defines the processing used on an inbound message exchange
- * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}.
+ * A <a href="https://camel.apache.org/manual/routes.html">Route</a> defines the processing applied to an inbound
+ * {@link Exchange} arriving at a specific {@link Endpoint} within a {@link CamelContext}.
  * <p/>
- * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route, such as starting and
- * stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)} and
- * {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
+ * Each route has a unique id, an input {@link Endpoint}, and a chain of {@link Processor}s that transform or route the
+ * exchange. Routes are built using a DSL ({@link RoutesBuilder}, {@code RouteBuilder} in Java DSL, YAML DSL, XML DSL)
+ * and are registered in the {@link CamelContext} at startup.
+ * <p/>
+ * The lifecycle of a route (start, stop, suspend, resume) is managed through the
+ * {@link org.apache.camel.spi.RouteController}. A route can also carry optional
+ * {@link org.apache.camel.spi.RoutePolicy} objects that apply governance rules such as throttling or scheduling.
+ *
+ * @see RoutesBuilder
+ * @see CamelContext
+ * @see org.apache.camel.spi.RouteController
+ * @see org.apache.camel.spi.RoutePolicy
  */
 public interface Route extends RuntimeConfiguration {
 

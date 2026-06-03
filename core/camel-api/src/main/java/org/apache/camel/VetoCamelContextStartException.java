@@ -19,11 +19,15 @@ package org.apache.camel;
 import java.util.Objects;
 
 /**
- * An exception to veto starting {@link CamelContext}.
+ * Thrown by a {@link org.apache.camel.spi.LifecycleStrategy} to abort the startup of a {@link CamelContext}.
  * <p/>
- * The option rethrowException can be used to control whether to rethrow this exception when starting CamelContext or
- * not.
+ * Any {@link org.apache.camel.spi.LifecycleStrategy} registered with the context can veto startup by throwing this
+ * exception from its {@code onContextStarting} callback. Whether the exception propagates out of
+ * {@link CamelContext#start()} is controlled by {@link #isRethrowException()}: when {@code true} (the default) the
+ * exception is re-thrown and the application sees a startup failure; when {@code false} the veto is silent and the
+ * context is simply not started.
  *
+ * @see CamelContext
  * @see org.apache.camel.spi.LifecycleStrategy
  */
 public class VetoCamelContextStartException extends Exception {

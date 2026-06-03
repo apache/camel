@@ -25,8 +25,20 @@ import org.apache.camel.spi.HasCamelContext;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The context used during creating a {@link Route} from a route template.
+ * Contextual environment provided to a <a href="https://camel.apache.org/manual/route-template.html">route template</a>
+ * while it is being instantiated into a concrete {@link Route}.
+ * <p/>
+ * A route template is a parameterized route blueprint registered in the {@link CamelContext}. When the template is
+ * instantiated (for example by a Kamelet), the framework creates a {@code RouteTemplateContext} that carries the
+ * parameter bindings and a local bean repository. Template beans ({@link BeanSupplier}) declared inside the template
+ * are resolved through this context rather than the global registry, so each instantiation gets its own private set of
+ * beans.
+ * <p/>
+ * Implementors provide this context to the template engine; application developers typically interact with it only when
+ * writing custom {@code RouteTemplateParameterSource} or Kamelet binding code.
  *
+ * @see   CamelContext
+ * @see   org.apache.camel.spi.BeanRepository
  * @since 3.10
  */
 public interface RouteTemplateContext extends HasCamelContext {

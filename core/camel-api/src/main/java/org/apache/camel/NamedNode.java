@@ -22,7 +22,18 @@ import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Represents a node in the {@link org.apache.camel.model routes} which is identified by an id.
+ * Represents an identifiable node in the Camel route model.
+ * <p/>
+ * The route model (in the {@code org.apache.camel.model} package) is the abstract syntax tree built by the DSL before
+ * routes are started. Every model element — from the route itself down to individual EIP steps such as
+ * {@code .filter()}, {@code .choice()}, and {@code .to()} — implements {@code NamedNode} so that it can be located by
+ * id, referenced in logs and management output, and traversed by tooling (debuggers, tracers, visualizers).
+ * <p/>
+ * The {@link #getId()} is auto-generated when not explicitly set, and the optional {@link #getNodePrefixId()} is used
+ * when routes share a common id prefix to avoid collisions in composite applications.
+ *
+ * @see NamedRoute
+ * @see Navigate
  */
 public interface NamedNode extends LineNumberAware {
 

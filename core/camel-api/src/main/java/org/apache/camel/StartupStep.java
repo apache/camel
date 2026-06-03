@@ -17,9 +17,16 @@
 package org.apache.camel;
 
 /**
- * Recording state of steps during startup to capture execution time, and being able to emit events to diagnostic tools
- * such as Java Flight Recorder.
+ * Represents a single timed step in the {@link CamelContext} startup sequence, used for diagnostics and performance
+ * profiling.
+ * <p/>
+ * Steps are hierarchically nested (each step has a parent id) and are recorded by the
+ * {@link org.apache.camel.spi.StartupStepRecorder}. When Java Flight Recorder is on the classpath the recorder emits
+ * each step as a JFR event, making startup timings visible in tools such as JDK Mission Control. Steps are opened at
+ * the start of a discrete initialization phase and closed with {@link #endStep()} when the phase completes.
  *
+ * @see   org.apache.camel.spi.StartupStepRecorder
+ * @see   StartupListener
  * @since 3.8
  */
 public interface StartupStep {

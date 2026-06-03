@@ -17,7 +17,20 @@
 package org.apache.camel;
 
 /**
- * Factory for creating {@link org.apache.camel.spi.ErrorHandler}s.
+ * Factory that creates and configures an <a href="https://camel.apache.org/manual/error-handler.html">error handler</a>
+ * for a {@link Route}.
+ * <p/>
+ * Each route gets its own private error handler instance to avoid cross-route interference. The factory is therefore
+ * cloned once per route via {@link #cloneBuilder()} before the route is started. The resulting
+ * {@link org.apache.camel.spi.ErrorHandler} wraps every {@link Processor} in the route's pipeline and intercepts any
+ * exception thrown during processing, applying the configured retry, redelivery, and dead-letter-channel policies.
+ * <p/>
+ * Built-in implementations include the default error handler, the dead letter channel, and the no-error-handler (a
+ * pass-through). Route configurations can override the factory used for a set of routes via
+ * {@link RouteConfigurationsBuilder}.
+ *
+ * @see org.apache.camel.spi.ErrorHandler
+ * @see RouteConfigurationsBuilder
  */
 public interface ErrorHandlerFactory {
 
