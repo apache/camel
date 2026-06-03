@@ -285,6 +285,80 @@ public class RuntimeTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Get the inter-route topology showing how routes connect to each other \
+                  and to external endpoints. Returns nodes and edges describing the route graph.""")
+    public JsonObject camel_runtime_route_topology(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = "Include live metrics (message counts, throughput) on nodes and edges") Boolean metric,
+            @ToolArg(description = "Include external systems (databases, messaging brokers, etc.) as nodes") Boolean external) {
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return runtimeService.executeAction(p.pid(), "route-topology", root -> {
+            root.put("metric", metric != null && metric ? "true" : "false");
+            root.put("external", external != null && external ? "true" : "false");
+        });
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Get captured routing errors from the running Camel application. \
+                  Returns error details including exception, exchange context, and route information.""")
+    public JsonObject camel_runtime_errors(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return runtimeService.readErrorFile(p.pid());
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get a JVM thread dump showing thread names, states, and stack traces.")
+    public JsonObject camel_runtime_thread_dump(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return runtimeService.executeAction(p.pid(), "thread-dump", null);
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Get the message history trace of the last completed exchange. \
+                  This is always captured (no need to enable tracing) and shows the single most recent exchange \
+                  with its route path, processors visited, headers, body, and timing.""")
+    public JsonObject camel_runtime_history(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return runtimeService.readHistoryFile(p.pid());
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Initiate graceful shutdown of a running Camel application. \
+                  The application will finish processing in-flight exchanges before stopping.""")
+    public JsonObject camel_runtime_stop(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        String result = runtimeService.stopApplication(p.pid());
+        JsonObject response = new JsonObject();
+        response.put("result", result);
+        return response;
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Receive (poll) a message from a Camel endpoint in the running application. \
+                  This is the complement to camel_runtime_send — it consumes one message from the endpoint.""")
+    public JsonObject camel_runtime_receive(
+            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = "Endpoint URI to receive from") String endpoint) {
+        if (endpoint == null || endpoint.isBlank()) {
+            throw new ToolCallException("endpoint is required", null);
+        }
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        return runtimeService.executeAction(p.pid(), "receive", root -> {
+            root.put("enabled", "true");
+            root.put("endpoint", endpoint);
+        });
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Browse messages in a Camel endpoint (e.g., browse messages queued in a SEDA endpoint).")
     public JsonObject camel_runtime_browse(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,

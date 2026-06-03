@@ -99,6 +99,30 @@ public class RuntimeService {
         return new JsonObject();
     }
 
+    public JsonObject readErrorFile(long pid) {
+        JsonObject result = RuntimeHelper.readErrorFile(pid);
+        if (result == null) {
+            JsonObject empty = new JsonObject();
+            empty.put("errors", new org.apache.camel.util.json.JsonArray());
+            return empty;
+        }
+        return result;
+    }
+
+    public JsonObject readHistoryFile(long pid) {
+        JsonObject result = RuntimeHelper.readHistoryFile(pid);
+        if (result == null) {
+            JsonObject empty = new JsonObject();
+            empty.put("message", "No message history available for PID " + pid);
+            return empty;
+        }
+        return result;
+    }
+
+    public String stopApplication(long pid) {
+        return RuntimeHelper.stopApplication(pid);
+    }
+
     public JsonObject executeAction(long pid, String action, Consumer<JsonObject> configure) {
         String result = RuntimeHelper.executeAction(pid, action, configure);
         if (result != null && result.startsWith("Timeout")) {
