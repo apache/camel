@@ -56,15 +56,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
     @Override
     public Expression createExpression(CamelContext camelContext, String expression) {
         String function = text.toString();
+        String cacheKey = FUNCTION_CACHE_KEY_PREFIX + function;
 
-        Expression answer = cacheExpression != null ? cacheExpression.get(function) : null;
+        Expression answer = cacheExpression != null ? cacheExpression.get(cacheKey) : null;
         if (answer == null) {
             answer = createSimpleExpression(camelContext, function, true);
             if (answer != null) {
                 answer.init(camelContext);
             }
             if (cacheExpression != null && answer != null) {
-                cacheExpression.put(function, answer);
+                cacheExpression.put(cacheKey, answer);
             }
         }
         return answer;
@@ -96,6 +97,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
         return exp;
     }
+
+    // Prefix that separates function-level cache entries from the top-level expression cache entries
+    // written by SimpleLanguage (which uses "@SIMPLE@" + fullExpression). The two keyspaces share the
+    // same LRUCache instance, so distinct prefixes are needed to prevent accidental collisions.
+    private static final String FUNCTION_CACHE_KEY_PREFIX = "@FUNC@";
 
     private static final DirectFunctionFactory DIRECT_FACTORY = new DirectFunctionFactory();
 
