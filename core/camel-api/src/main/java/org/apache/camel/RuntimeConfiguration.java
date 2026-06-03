@@ -19,8 +19,20 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Various runtime configuration options used by {@link org.apache.camel.CamelContext} and {@link Route} for cross
- * cutting functions such as tracing, delayer, stream cache and the like.
+ * Cross-cutting runtime configuration options shared by {@link CamelContext} and individual {@link Route}s.
+ * <p/>
+ * Settings on a {@link Route} override the same setting on the {@link CamelContext} for that route only, allowing
+ * fine-grained per-route tuning. Options covered include:
+ * <ul>
+ * <li>Stream caching (buffer non-repeatable streams to allow re-reading)</li>
+ * <li>Tracing (enable the backlog tracer for debugging)</li>
+ * <li>Message history (record the EIP node sequence an exchange passed through)</li>
+ * <li>Log mask (hide sensitive values in logs)</li>
+ * <li>Startup order and auto-startup behavior per route</li>
+ * </ul>
+ *
+ * @see CamelContext
+ * @see Route
  */
 public interface RuntimeConfiguration {
 

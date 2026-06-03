@@ -17,7 +17,13 @@
 package org.apache.camel;
 
 /**
- * Interface to be implemented by objects that should be orderable, such as with a {@link java.util.Collection}.
+ * Implemented by objects that carry an explicit ordering position within a sorted collection.
+ * <p/>
+ * Camel uses this interface wherever the evaluation or application sequence matters: {@link Processor} chains,
+ * interceptors, {@link org.apache.camel.spi.LifecycleStrategy} callbacks, and bean-method resolution all sort their
+ * participants by {@link #getOrder()}. Lower values run first; {@link #HIGHEST} ({@code Integer.MIN_VALUE}) gives the
+ * absolute earliest slot and {@link #LOWEST} gives a near-last slot (values above {@code LOWEST} are reserved for
+ * internal Camel use).
  */
 public interface Ordered {
 
