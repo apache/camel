@@ -55,6 +55,8 @@ import org.apache.camel.diagram.TopologyHelper;
 import org.apache.camel.diagram.TopologyImageRenderer;
 import org.apache.camel.diagram.TopologyLayoutEngine;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -83,6 +85,13 @@ class DiagramSupport {
     private int cropW = -1;
     private int cropH = -1;
     private final AtomicBoolean loading = new AtomicBoolean(false);
+    private List<TopologyAsciiRenderer.NodeBox> nodeBoxes = Collections.emptyList();
+    private List<TopologyLayoutNode> topologyNodes = Collections.emptyList();
+    private List<TopologyLayoutEdge> topologyEdges = Collections.emptyList();
+    private int selectedNodeIndex = -1;
+    private String pendingSelectionRouteId;
+    private int lastVisibleHeight;
+    private int lastVisibleWidth;
 
     List<String> getLines() {
         return lines;
@@ -110,6 +119,54 @@ class DiagramSupport {
 
     void setShowDescription(boolean showDescription) {
         this.showDescription = showDescription;
+    }
+
+    List<TopologyAsciiRenderer.NodeBox> getNodeBoxes() {
+        return nodeBoxes;
+    }
+
+    int getSelectedNodeIndex() {
+        return selectedNodeIndex;
+    }
+
+    void setSelectedNodeIndex(int idx) {
+        this.selectedNodeIndex = idx;
+    }
+
+    void setPendingSelectionRouteId(String routeId) {
+        this.pendingSelectionRouteId = routeId;
+    }
+
+    String getSelectedRouteId() {
+        if (selectedNodeIndex >= 0 && selectedNodeIndex < nodeBoxes.size()) {
+            return nodeBoxes.get(selectedNodeIndex).routeId();
+        }
+        return null;
+    }
+
+    TopologyLayoutNode getSelectedTopologyNode() {
+        String routeId = getSelectedRouteId();
+        if (routeId == null) {
+            return null;
+        }
+        for (TopologyLayoutNode node : topologyNodes) {
+            if (routeId.equals(node.routeId)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    String getConnectedRouteId(String externalNodeId) {
+        for (TopologyLayoutEdge edge : topologyEdges) {
+            if (externalNodeId.equals(edge.from.routeId)) {
+                return edge.to.routeId;
+            }
+            if (externalNodeId.equals(edge.to.routeId)) {
+                return edge.from.routeId;
+            }
+        }
+        return null;
     }
 
     boolean hasDiagramData() {
@@ -205,6 +262,10 @@ class DiagramSupport {
     void reset() {
         close();
         lines = Collections.emptyList();
+        nodeBoxes = Collections.emptyList();
+        topologyNodes = Collections.emptyList();
+        topologyEdges = Collections.emptyList();
+        selectedNodeIndex = -1;
         scrollY = 0;
         scrollX = 0;
     }
@@ -215,6 +276,181 @@ class DiagramSupport {
         hint(spans, "↑↓←→", "scroll");
         hint(spans, "PgUp/PgDn", "page");
         hint(spans, "Home/End", "top/end");
+    }
+
+    // ---- Node selection ----
+
+    private static int findTopLeftNode(List<TopologyAsciiRenderer.NodeBox> boxes) {
+        int bestIdx = 0;
+        for (int i = 1; i < boxes.size(); i++) {
+            TopologyAsciiRenderer.NodeBox nb = boxes.get(i);
+            TopologyAsciiRenderer.NodeBox best = boxes.get(bestIdx);
+            if (nb.startRow() < best.startRow()
+                    || (nb.startRow() == best.startRow() && nb.startCol() < best.startCol())) {
+                bestIdx = i;
+            }
+        }
+        return bestIdx;
+    }
+
+    // ---- Node selection navigation ----
+
+    void selectNodeUp() {
+        if (nodeBoxes.isEmpty()) {
+            return;
+        }
+        if (selectedNodeIndex < 0) {
+            selectedNodeIndex = 0;
+            return;
+        }
+        TopologyAsciiRenderer.NodeBox current = nodeBoxes.get(selectedNodeIndex);
+        int currentMidCol = (current.startCol() + current.endCol()) / 2;
+        int bestIdx = -1;
+        int bestDist = Integer.MAX_VALUE;
+        for (int i = 0; i < nodeBoxes.size(); i++) {
+            TopologyAsciiRenderer.NodeBox nb = nodeBoxes.get(i);
+            if (nb.layer() < current.layer()) {
+                int midCol = (nb.startCol() + nb.endCol()) / 2;
+                int dist = Math.abs(midCol - currentMidCol);
+                if (nb.layer() > (bestIdx >= 0 ? nodeBoxes.get(bestIdx).layer() : -1) || dist < bestDist) {
+                    bestIdx = i;
+                    bestDist = dist;
+                }
+            }
+        }
+        if (bestIdx >= 0) {
+            // find the closest layer above, then pick closest column within that layer
+            int targetLayer = nodeBoxes.get(bestIdx).layer();
+            bestIdx = -1;
+            bestDist = Integer.MAX_VALUE;
+            for (int i = 0; i < nodeBoxes.size(); i++) {
+                TopologyAsciiRenderer.NodeBox nb = nodeBoxes.get(i);
+                if (nb.layer() == targetLayer) {
+                    int midCol = (nb.startCol() + nb.endCol()) / 2;
+                    int dist = Math.abs(midCol - currentMidCol);
+                    if (dist < bestDist) {
+                        bestIdx = i;
+                        bestDist = dist;
+                    }
+                }
+            }
+            if (bestIdx >= 0) {
+                selectedNodeIndex = bestIdx;
+            }
+        }
+    }
+
+    void selectNodeDown() {
+        if (nodeBoxes.isEmpty()) {
+            return;
+        }
+        if (selectedNodeIndex < 0) {
+            selectedNodeIndex = 0;
+            return;
+        }
+        TopologyAsciiRenderer.NodeBox current = nodeBoxes.get(selectedNodeIndex);
+        int currentMidCol = (current.startCol() + current.endCol()) / 2;
+        int bestIdx = -1;
+        for (int i = 0; i < nodeBoxes.size(); i++) {
+            TopologyAsciiRenderer.NodeBox nb = nodeBoxes.get(i);
+            if (nb.layer() > current.layer()) {
+                if (bestIdx < 0 || nb.layer() < nodeBoxes.get(bestIdx).layer()) {
+                    bestIdx = i;
+                }
+            }
+        }
+        if (bestIdx >= 0) {
+            int targetLayer = nodeBoxes.get(bestIdx).layer();
+            bestIdx = -1;
+            int bestDist = Integer.MAX_VALUE;
+            for (int i = 0; i < nodeBoxes.size(); i++) {
+                TopologyAsciiRenderer.NodeBox nb = nodeBoxes.get(i);
+                if (nb.layer() == targetLayer) {
+                    int midCol = (nb.startCol() + nb.endCol()) / 2;
+                    int dist = Math.abs(midCol - currentMidCol);
+                    if (dist < bestDist) {
+                        bestIdx = i;
+                        bestDist = dist;
+                    }
+                }
+            }
+            if (bestIdx >= 0) {
+                selectedNodeIndex = bestIdx;
+            }
+        }
+    }
+
+    void selectNodeLeft() {
+        if (nodeBoxes.isEmpty()) {
+            return;
+        }
+        if (selectedNodeIndex < 0) {
+            selectedNodeIndex = 0;
+            return;
+        }
+        TopologyAsciiRenderer.NodeBox current = nodeBoxes.get(selectedNodeIndex);
+        int bestIdx = -1;
+        int bestCol = -1;
+        for (int i = 0; i < nodeBoxes.size(); i++) {
+            TopologyAsciiRenderer.NodeBox nb = nodeBoxes.get(i);
+            if (nb.layer() == current.layer() && nb.startCol() < current.startCol()) {
+                if (nb.startCol() > bestCol) {
+                    bestIdx = i;
+                    bestCol = nb.startCol();
+                }
+            }
+        }
+        if (bestIdx >= 0) {
+            selectedNodeIndex = bestIdx;
+        }
+    }
+
+    void selectNodeRight() {
+        if (nodeBoxes.isEmpty()) {
+            return;
+        }
+        if (selectedNodeIndex < 0) {
+            selectedNodeIndex = 0;
+            return;
+        }
+        TopologyAsciiRenderer.NodeBox current = nodeBoxes.get(selectedNodeIndex);
+        int bestIdx = -1;
+        int bestCol = Integer.MAX_VALUE;
+        for (int i = 0; i < nodeBoxes.size(); i++) {
+            TopologyAsciiRenderer.NodeBox nb = nodeBoxes.get(i);
+            if (nb.layer() == current.layer() && nb.startCol() > current.startCol()) {
+                if (nb.startCol() < bestCol) {
+                    bestIdx = i;
+                    bestCol = nb.startCol();
+                }
+            }
+        }
+        if (bestIdx >= 0) {
+            selectedNodeIndex = bestIdx;
+        }
+    }
+
+    void scrollToSelectedNode() {
+        if (selectedNodeIndex < 0 || selectedNodeIndex >= nodeBoxes.size()) {
+            return;
+        }
+        TopologyAsciiRenderer.NodeBox box = nodeBoxes.get(selectedNodeIndex);
+        if (lastVisibleHeight > 0) {
+            if (box.startRow() < scrollY + 1) {
+                scrollY = Math.max(0, box.startRow() - 1);
+            }
+            if (box.endRow() >= scrollY + lastVisibleHeight - 1) {
+                scrollY = box.endRow() - lastVisibleHeight + 2;
+            }
+        }
+        if (lastVisibleWidth > 0) {
+            if (box.startCol() < scrollX + 1) {
+                scrollX = Math.max(0, box.startCol() - 1);
+            }
+            if (box.endCol() >= scrollX + lastVisibleWidth - 1) {
+                scrollX = box.endCol() - lastVisibleWidth + 2;
+            }
+        }
     }
 
     // ---- Rendering ----
@@ -238,6 +474,8 @@ class DiagramSupport {
         Rect inner = block.inner(area);
         int visibleLines = Math.max(1, inner.height() - 1);
         int visibleCols = Math.max(1, inner.width() - 1);
+        lastVisibleHeight = visibleLines;
+        lastVisibleWidth = visibleCols;
 
         int maxVScroll = Math.max(0, lines.size() - visibleLines);
         int maxHScroll = Math.max(0, maxWidth - visibleCols);
@@ -487,7 +725,20 @@ class DiagramSupport {
                 }
             }
 
-            applyResult(ctx, resultLines, null, null, null, positions, Collections.emptySet());
+            List<TopologyAsciiRenderer.NodeBox> boxes = new ArrayList<>();
+            for (TopologyAsciiRenderer.NodeBox nb : renderer.getNodeBoxes()) {
+                int mappedStart = (nb.startRow() >= 0 && nb.startRow() < rowMapping.length)
+                        ? rowMapping[nb.startRow()] : -1;
+                int mappedEnd = (nb.endRow() >= 0 && nb.endRow() < rowMapping.length)
+                        ? rowMapping[nb.endRow()] : -1;
+                if (mappedStart >= 0 && mappedEnd >= 0) {
+                    boxes.add(new TopologyAsciiRenderer.NodeBox(
+                            nb.routeId(), mappedStart, mappedEnd, nb.startCol(), nb.endCol(), nb.layer()));
+                }
+            }
+
+            applyResult(ctx, resultLines, null, null, null, positions, Collections.emptySet(), boxes,
+                    result.nodes, result.edges);
         } else {
             TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
             if (caps.supportsNativeImages()) {
@@ -645,7 +896,8 @@ class DiagramSupport {
             List<String> resultLines, ImageData resultImageData, ImageData resultFullImageData,
             ImageProtocol resultProtocol) {
         applyResult(ctx, resultLines, resultImageData, resultFullImageData, resultProtocol,
-                Collections.emptyList(), Collections.emptySet());
+                Collections.emptyList(), Collections.emptySet(), Collections.emptyList(),
+                Collections.emptyList(), Collections.emptyList());
     }
 
     private void applyResult(
@@ -653,6 +905,19 @@ class DiagramSupport {
             List<String> resultLines, ImageData resultImageData, ImageData resultFullImageData,
             ImageProtocol resultProtocol,
             List<RouteDiagramAsciiRenderer.CounterPos> positions, Set<Integer> titleRows) {
+        applyResult(ctx, resultLines, resultImageData, resultFullImageData, resultProtocol,
+                positions, titleRows, Collections.emptyList(),
+                Collections.emptyList(), Collections.emptyList());
+    }
+
+    private void applyResult(
+            MonitorContext ctx,
+            List<String> resultLines, ImageData resultImageData, ImageData resultFullImageData,
+            ImageProtocol resultProtocol,
+            List<RouteDiagramAsciiRenderer.CounterPos> positions, Set<Integer> titleRows,
+            List<TopologyAsciiRenderer.NodeBox> resultNodeBoxes,
+            List<TopologyLayoutNode> resultTopologyNodes,
+            List<TopologyLayoutEdge> resultTopologyEdges) {
         if (ctx.runner == null) {
             return;
         }
@@ -663,6 +928,31 @@ class DiagramSupport {
             routeTitleRows = titleRows;
             fullImageData = resultFullImageData;
             protocol = resultProtocol;
+            topologyNodes = resultTopologyNodes;
+            topologyEdges = resultTopologyEdges;
+
+            // Preserve selection across refreshes by matching routeId
+            String prevSelectedRouteId = getSelectedRouteId();
+            if (prevSelectedRouteId == null && pendingSelectionRouteId != null) {
+                prevSelectedRouteId = pendingSelectionRouteId;
+            }
+            pendingSelectionRouteId = null;
+            nodeBoxes = resultNodeBoxes;
+            if (prevSelectedRouteId != null && !resultNodeBoxes.isEmpty()) {
+                int newIdx = -1;
+                for (int i = 0; i < resultNodeBoxes.size(); i++) {
+                    if (prevSelectedRouteId.equals(resultNodeBoxes.get(i).routeId())) {
+                        newIdx = i;
+                        break;
+                    }
+                }
+                selectedNodeIndex = newIdx >= 0 ? newIdx : 0;
+            } else if (!resultNodeBoxes.isEmpty() && selectedNodeIndex < 0) {
+                selectedNodeIndex = findTopLeftNode(resultNodeBoxes);
+            } else if (resultNodeBoxes.isEmpty()) {
+                selectedNodeIndex = -1;
+            }
+
             if (!wasShowing) {
                 imageData = resultImageData;
                 scrollY = 0;
@@ -673,7 +963,6 @@ class DiagramSupport {
                 cropH = -1;
             } else {
                 showDiagram = true;
-                // invalidate crop cache so next render re-crops at current scroll position
                 cropX = -1;
                 cropY = -1;
                 cropW = -1;
@@ -687,6 +976,17 @@ class DiagramSupport {
     private Line styleDiagramLine(String text, int row, int hScrollX) {
         if (routeTitleRows.contains(row)) {
             return Line.from(Span.styled(text, Style.EMPTY.fg(Color.WHITE).bold()));
+        }
+
+        // Check if this row is within the selected node
+        int selStartCol = -1;
+        int selEndCol = -1;
+        if (selectedNodeIndex >= 0 && selectedNodeIndex < nodeBoxes.size()) {
+            TopologyAsciiRenderer.NodeBox box = nodeBoxes.get(selectedNodeIndex);
+            if (row >= box.startRow() && row <= box.endRow()) {
+                selStartCol = box.startCol() - hScrollX;
+                selEndCol = box.endCol() - hScrollX;
+            }
         }
 
         List<int[]> counterRanges = new ArrayList<>();
@@ -735,7 +1035,44 @@ class DiagramSupport {
             }
             idx = labelEnd;
         }
+
+        // Apply selection highlighting as background overlay
+        if (selStartCol >= 0 && selEndCol >= 0) {
+            spans = applySelectionHighlight(spans, selStartCol, selEndCol);
+        }
+
         return Line.from(spans);
+    }
+
+    private static List<Span> applySelectionHighlight(List<Span> spans, int startCol, int endCol) {
+        List<Span> result = new ArrayList<>();
+        int pos = 0;
+        for (Span span : spans) {
+            String content = span.content();
+            int spanStart = pos;
+            int spanEnd = pos + content.length();
+            pos = spanEnd;
+
+            if (spanEnd <= startCol || spanStart >= endCol + 1) {
+                result.add(span);
+                continue;
+            }
+
+            // Split span at selection boundaries
+            if (spanStart < startCol) {
+                result.add(Span.styled(content.substring(0, startCol - spanStart), span.style()));
+            }
+            int hlStart = Math.max(0, startCol - spanStart);
+            int hlEnd = Math.min(content.length(), endCol + 1 - spanStart);
+            if (hlStart < hlEnd) {
+                Style hlStyle = span.style().bg(Color.DARK_GRAY);
+                result.add(Span.styled(content.substring(hlStart, hlEnd), hlStyle));
+            }
+            if (spanStart + content.length() > endCol + 1) {
+                result.add(Span.styled(content.substring(endCol + 1 - spanStart), span.style()));
+            }
+        }
+        return result;
     }
 
     private static void addStyledSegment(

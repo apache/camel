@@ -16,9 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -51,6 +55,31 @@ class DiagramTab implements MonitorTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        // Node selection navigation in topology mode
+        if (topologyMode && diagram.isShowDiagram() && diagram.hasDiagramData()
+                && !diagram.getNodeBoxes().isEmpty()) {
+            if (ke.isUp()) {
+                diagram.selectNodeUp();
+                diagram.scrollToSelectedNode();
+                return true;
+            }
+            if (ke.isDown()) {
+                diagram.selectNodeDown();
+                diagram.scrollToSelectedNode();
+                return true;
+            }
+            if (ke.isLeft()) {
+                diagram.selectNodeLeft();
+                diagram.scrollToSelectedNode();
+                return true;
+            }
+            if (ke.isRight()) {
+                diagram.selectNodeRight();
+                diagram.scrollToSelectedNode();
+                return true;
+            }
+        }
+
         if (diagram.handleScrollKeys(ke)) {
             return true;
         }
@@ -81,7 +110,17 @@ class DiagramTab implements MonitorTab {
 
         // Drill down into route diagram (Enter)
         if (topologyMode && ke.isConfirm()) {
-            // For now, drill-down is a future feature
+            String selectedRouteId = diagram.getSelectedRouteId();
+            if (selectedRouteId != null) {
+                IntegrationInfo info = ctx.findSelectedIntegration();
+                if (info != null && info.routes.stream().anyMatch(r -> selectedRouteId.equals(r.routeId))) {
+                    drillDownRouteId = selectedRouteId;
+                    topologyMode = false;
+                    diagram.setTopologyMode(false);
+                    diagram.endLoad();
+                    reloadDiagram();
+                }
+            }
             return true;
         }
 
@@ -91,6 +130,7 @@ class DiagramTab implements MonitorTab {
     @Override
     public boolean handleEscape() {
         if (!topologyMode) {
+            diagram.setPendingSelectionRouteId(drillDownRouteId);
             topologyMode = true;
             diagram.setTopologyMode(true);
             diagram.endLoad();
@@ -140,7 +180,18 @@ class DiagramTab implements MonitorTab {
             } else {
                 title = " Route [" + drillDownRouteId + "] ";
             }
-            diagram.renderDiagram(frame, area, title);
+
+            String selectedRouteId = topologyMode ? diagram.getSelectedRouteId() : drillDownRouteId;
+            if (selectedRouteId != null && area.width() > 60) {
+                int panelWidth = 30;
+                List<Rect> hChunks = Layout.horizontal()
+                        .constraints(Constraint.length(panelWidth), Constraint.fill())
+                        .split(area);
+                renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
+                diagram.renderDiagram(frame, hChunks.get(1), title);
+            } else {
+                diagram.renderDiagram(frame, area, title);
+            }
             return;
         }
 
@@ -156,12 +207,139 @@ class DiagramTab implements MonitorTab {
                 area);
     }
 
+    private void renderInfoPanel(Frame frame, Rect area, IntegrationInfo info, String routeId) {
+        RouteInfo route = null;
+        for (RouteInfo r : info.routes) {
+            if (routeId.equals(r.routeId)) {
+                route = r;
+                break;
+            }
+        }
+
+        List<Line> lines = new ArrayList<>();
+        if (route != null) {
+            lines.add(Line.from(
+                    Span.styled(" Route: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled(route.routeId, Style.EMPTY.fg(Color.WHITE).bold())));
+            lines.add(Line.from(
+                    Span.styled(" From:  ", Style.EMPTY.dim()),
+                    Span.raw(route.from != null ? route.from : "")));
+            String stateLabel = route.state != null ? route.state : "";
+            Style stateStyle = "Started".equals(route.state) ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED);
+            lines.add(Line.from(
+                    Span.styled(" State: ", Style.EMPTY.dim()),
+                    Span.styled(stateLabel, stateStyle)));
+
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled(" Uptime:     ", Style.EMPTY.dim()),
+                    Span.raw(route.uptime != null ? route.uptime : "")));
+            lines.add(Line.from(
+                    Span.styled(" Throughput: ", Style.EMPTY.dim()),
+                    Span.raw(route.throughput != null ? route.throughput : "")));
+
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled(" Total:    ", Style.EMPTY.dim()),
+                    Span.raw(String.valueOf(route.total))));
+            Style failStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+            lines.add(Line.from(
+                    Span.styled(" Failed:   ", Style.EMPTY.dim()),
+                    Span.styled(String.valueOf(route.failed), failStyle)));
+            lines.add(Line.from(
+                    Span.styled(" Inflight: ", Style.EMPTY.dim()),
+                    Span.raw(String.valueOf(route.inflight))));
+
+            lines.add(Line.from(Span.raw("")));
+            if (route.total > 0) {
+                lines.add(Line.from(
+                        Span.styled(" Mean: ", Style.EMPTY.dim()),
+                        Span.raw(route.meanTime + " ms")));
+                lines.add(Line.from(
+                        Span.styled(" Max:  ", Style.EMPTY.dim()),
+                        Span.raw(route.maxTime + " ms")));
+                lines.add(Line.from(
+                        Span.styled(" Min:  ", Style.EMPTY.dim()),
+                        Span.raw(route.minTime + " ms")));
+            }
+
+            if (route.coverage != null) {
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" Coverage: ", Style.EMPTY.dim()),
+                        Span.raw(route.coverage)));
+            }
+        } else {
+            // External endpoint — show topology node data
+            var topoNode = diagram.getSelectedTopologyNode();
+            if (topoNode != null) {
+                boolean isInbound = "external-in".equals(topoNode.nodeType);
+                lines.add(Line.from(
+                        Span.styled(isInbound ? " Inbound" : " Outbound",
+                                Style.EMPTY.fg(Color.CYAN).bold())));
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" URI: ", Style.EMPTY.dim()),
+                        Span.raw(topoNode.from != null ? topoNode.from : "")));
+                if (topoNode.description != null && !topoNode.description.isBlank()) {
+                    lines.add(Line.from(
+                            Span.styled(" Path: ", Style.EMPTY.dim()),
+                            Span.raw(topoNode.description)));
+                }
+                String connectedRoute = diagram.getConnectedRouteId(routeId);
+                if (connectedRoute != null) {
+                    lines.add(Line.from(Span.raw("")));
+                    lines.add(Line.from(
+                            Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
+                            Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                }
+                if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
+                    lines.add(Line.from(Span.raw("")));
+                    lines.add(Line.from(
+                            Span.styled(" Total:  ", Style.EMPTY.dim()),
+                            Span.raw(String.valueOf(topoNode.exchangesTotal))));
+                    if (topoNode.exchangesFailed > 0) {
+                        lines.add(Line.from(
+                                Span.styled(" Failed: ", Style.EMPTY.dim()),
+                                Span.styled(String.valueOf(topoNode.exchangesFailed),
+                                        Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+                    }
+                }
+            } else {
+                lines.add(Line.from(
+                        Span.styled(" " + routeId, Style.EMPTY.fg(Color.CYAN).bold())));
+                lines.add(Line.from(
+                        Span.styled(" (external endpoint)", Style.EMPTY.dim())));
+            }
+        }
+
+        Paragraph paragraph = Paragraph.builder()
+                .text(Text.from(lines))
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(" Info ").build())
+                .build();
+        frame.renderWidget(paragraph, area);
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
-            diagram.renderFooterHints(spans);
+            if (!topologyMode) {
+                hint(spans, "Esc", "back");
+                hint(spans, "↑↓←→", "scroll");
+                hint(spans, "PgUp/PgDn", "page");
+            } else if (!diagram.getNodeBoxes().isEmpty()) {
+                hint(spans, "Esc", "close");
+                hint(spans, "↑↓←→", "navigate");
+                hint(spans, "Enter", "drill-down");
+                hint(spans, "PgUp/PgDn", "page");
+            } else {
+                diagram.renderFooterHints(spans);
+            }
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
-            hint(spans, "e", "external" + (showExternal ? " [on]" : " [off]"));
+            if (topologyMode) {
+                hint(spans, "e", "external" + (showExternal ? " [on]" : " [off]"));
+            }
             hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         }
     }
@@ -266,15 +444,30 @@ class DiagramTab implements MonitorTab {
                                 External system boxes are drawn with dashed borders to distinguish
                                 them from route boxes. Dashed edges connect routes to external systems.
 
+                                ## Navigation
+
+                                In the topology view, use arrow keys to select route boxes:
+                                - `↑↓` moves between layers (upstream/downstream routes)
+                                - `←→` moves between routes in the same layer
+
+                                When a route is selected, an **Info panel** appears on the left
+                                showing key metrics: state, uptime, throughput, exchange counts,
+                                and processing times.
+
+                                Press `Enter` on a selected route to **drill down** into its
+                                internal EIP structure (the route diagram). Press `Esc` to
+                                return to the topology view.
+
                                 ## Keys
 
+                                - `↑↓←→` — navigate between route boxes
+                                - `Enter` — drill down into selected route
+                                - `Esc` — return to topology / close diagram
                                 - `m` — toggle metrics on/off (default: on)
                                 - `e` — toggle external systems on/off (default: off)
                                 - `n` — toggle description labels on/off (default: off)
-                                - `↑↓←→` — scroll diagram
                                 - `PgUp/PgDn` — page scroll
                                 - `Home/End` — top/end
-                                - `Esc` — close diagram
                 """;
     }
 
