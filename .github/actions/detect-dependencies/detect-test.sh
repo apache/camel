@@ -64,6 +64,7 @@ find_affected_modules() {
 
 main() {
   echo "Using MVND_OPTS=$MVND_OPTS"
+  echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
   local base_branch=${1}
   local mavenBinary=${2}
   local exclusionList="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-lucene,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-csimple-maven-plugin,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel"
@@ -90,7 +91,7 @@ main() {
   fi
 
   echo "🧪 Testing the following modules $modules_affected and its dependents"
-  $mavenBinary $MVND_OPTS clean test -pl "$modules_affected$exclusionList" -amd
+  $mavenBinary $MVND_OPTS $MAVEN_EXTRA_ARGS clean test -pl "$modules_affected$exclusionList" -amd
 }
 
 main "$@"

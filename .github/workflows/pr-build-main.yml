@@ -90,3 +90,4 @@ jobs:
         uses: ./.github/actions/detect-dependencies
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          maven-extra-args: ${{ matrix.maven_extra_args || '' }}
