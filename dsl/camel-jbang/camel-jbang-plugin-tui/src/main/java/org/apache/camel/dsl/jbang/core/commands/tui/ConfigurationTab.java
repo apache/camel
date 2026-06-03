@@ -36,6 +36,8 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -304,5 +306,34 @@ class ConfigurationTab implements MonitorTab {
                 - `S` — reverse sort order
                 - `Esc` — back
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Configuration");
+        JsonArray rows = new JsonArray();
+        for (ConfigProperty cp : info.configProperties) {
+            JsonObject row = new JsonObject();
+            row.put("key", cp.key);
+            row.put("value", cp.value);
+            if (cp.defaultValue != null) {
+                row.put("defaultValue", cp.defaultValue);
+            }
+            if (cp.source != null) {
+                row.put("source", cp.source);
+            }
+            if (cp.location != null) {
+                row.put("location", cp.location);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.configProperties.size());
+        return result;
     }
 }

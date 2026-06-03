@@ -1625,4 +1625,47 @@ class HttpTab implements MonitorTab {
                 - `Esc` — close probe view
                 """;
     }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "HTTP");
+        JsonArray rows = new JsonArray();
+        for (HttpEndpointInfo hi : info.httpEndpoints) {
+            JsonObject row = new JsonObject();
+            row.put("method", hi.method);
+            row.put("path", hi.path);
+            row.put("url", hi.url);
+            row.put("hits", hi.hits);
+            row.put("routeId", hi.routeId);
+            row.put("state", hi.state);
+            row.put("fromRest", hi.fromRest);
+            row.put("contractFirst", hi.contractFirst);
+            if (hi.consumes != null) {
+                row.put("consumes", hi.consumes);
+            }
+            if (hi.produces != null) {
+                row.put("produces", hi.produces);
+            }
+            if (hi.description != null) {
+                row.put("description", hi.description);
+            }
+            if (hi.operationId != null) {
+                row.put("operationId", hi.operationId);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.httpEndpoints.size());
+        if (info.httpServer != null) {
+            result.put("httpServer", info.httpServer);
+        }
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
+    }
 }

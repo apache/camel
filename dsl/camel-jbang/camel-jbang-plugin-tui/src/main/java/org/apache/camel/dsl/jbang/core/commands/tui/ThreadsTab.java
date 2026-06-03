@@ -576,4 +576,39 @@ class ThreadsTab implements MonitorTab {
                 - `Esc` — back
                 """;
     }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        List<ThreadData> threads = sortedThreads();
+        if (threads.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Threads");
+        JsonArray rows = new JsonArray();
+        for (ThreadData td : threads) {
+            JsonObject row = new JsonObject();
+            row.put("id", td.id);
+            row.put("name", td.name);
+            row.put("state", td.state);
+            row.put("blockedCount", td.blockedCount);
+            row.put("blockedTime", td.blockedTime);
+            row.put("waitedCount", td.waitedCount);
+            row.put("waitedTime", td.waitedTime);
+            if (td.lockName != null) {
+                row.put("lockName", td.lockName);
+            }
+            if (td.stackTrace != null && !td.stackTrace.isEmpty()) {
+                JsonArray st = new JsonArray();
+                st.addAll(td.stackTrace);
+                row.put("stackTrace", st);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", allThreads.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
+    }
 }

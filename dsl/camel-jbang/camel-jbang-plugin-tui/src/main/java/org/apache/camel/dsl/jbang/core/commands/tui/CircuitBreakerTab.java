@@ -39,6 +39,8 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -519,5 +521,40 @@ class CircuitBreakerTab implements MonitorTab {
                 - `s` — cycle sort column
                 - `S` — reverse sort order
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "CircuitBreaker");
+        JsonArray rows = new JsonArray();
+        for (CircuitBreakerInfo cb : info.circuitBreakers) {
+            JsonObject row = new JsonObject();
+            row.put("routeId", cb.routeId);
+            row.put("id", cb.id);
+            row.put("component", cb.component);
+            row.put("state", cb.state);
+            row.put("bufferedCalls", cb.bufferedCalls);
+            row.put("successfulCalls", cb.successfulCalls);
+            row.put("failedCalls", cb.failedCalls);
+            row.put("notPermittedCalls", cb.notPermittedCalls);
+            row.put("failureRate", cb.failureRate);
+            row.put("total", cb.total);
+            row.put("totalFailed", cb.totalFailed);
+            row.put("meanTime", cb.meanTime);
+            row.put("minTime", cb.minTime);
+            row.put("maxTime", cb.maxTime);
+            row.put("inflight", cb.inflight);
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.circuitBreakers.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }
