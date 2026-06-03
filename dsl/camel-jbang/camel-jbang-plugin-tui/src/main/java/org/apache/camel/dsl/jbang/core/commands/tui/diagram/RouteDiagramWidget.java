@@ -95,24 +95,18 @@ public class RouteDiagramWidget implements Widget {
     public void render(Rect area, Buffer buffer) {
         nodeBoxes.clear();
 
-        // Route label
-        int labelRow = toRow(layoutRoute.labelY);
-        String label = layoutRoute.routeId;
-        if (layoutRoute.source != null && !layoutRoute.source.isEmpty()) {
-            label += " (" + layoutRoute.source + ")";
-        }
-        writeText(buffer, area, labelRow, toCol(PADDING), label, ROUTE_ID_STYLE);
-
         // Scope boxes (behind everything)
         for (LayoutNode ln : layoutRoute.nodes) {
-            if (ln.treeNode != null && RouteDiagramLayoutEngine.hasScope(ln.treeNode)) {
+            if (!"route".equals(ln.type)
+                    && ln.treeNode != null && RouteDiagramLayoutEngine.hasScope(ln.treeNode)) {
                 drawScopeBox(buffer, area, ln);
             }
         }
 
         // Edges
         for (LayoutNode ln : layoutRoute.nodes) {
-            if (ln.parentNode != null) {
+            if (!"route".equals(ln.type) && ln.parentNode != null
+                    && !"route".equals(ln.parentNode.type)) {
                 if (ln.connectFromMerge) {
                     drawMergeArrow(buffer, area, ln);
                 } else {
@@ -121,9 +115,11 @@ public class RouteDiagramWidget implements Widget {
             }
         }
 
-        // Nodes (on top)
+        // Nodes (on top, skip the structural "route" node)
         for (LayoutNode ln : layoutRoute.nodes) {
-            drawNode(buffer, area, ln);
+            if (!"route".equals(ln.type)) {
+                drawNode(buffer, area, ln);
+            }
         }
     }
 

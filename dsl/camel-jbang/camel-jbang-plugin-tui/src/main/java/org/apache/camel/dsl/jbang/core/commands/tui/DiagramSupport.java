@@ -569,15 +569,6 @@ class DiagramSupport {
     }
 
     void selectFromNode(String routeId) {
-        var layout = routeLayouts.get(routeId);
-        if (layout != null) {
-            for (int i = 0; i < layout.nodes.size(); i++) {
-                if ("from".equals(layout.nodes.get(i).type)) {
-                    selectedEipNodeIndex = i;
-                    return;
-                }
-            }
-        }
         selectedEipNodeIndex = 0;
     }
 
