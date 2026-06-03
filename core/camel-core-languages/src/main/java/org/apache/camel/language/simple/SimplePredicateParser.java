@@ -552,7 +552,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
                 if (!logical.acceptRightNode(right)) {
                     throw new SimpleParserException(
-                            "Logical operator " + operator + " does not support right hand side token " + left.getToken(),
+                            "Logical operator " + operator + " does not support right hand side token " + right.getToken(),
                             token.getToken().getIndex());
                 }
 
