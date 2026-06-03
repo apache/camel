@@ -80,6 +80,30 @@ class DiagramTab implements MonitorTab {
             }
         }
 
+        // EIP node navigation in route drill-down mode
+        if (!topologyMode && diagram.isShowDiagram() && !diagram.getEipNodeBoxes().isEmpty()) {
+            if (ke.isUp()) {
+                diagram.selectEipNodeUp();
+                diagram.scrollToSelectedEipNode();
+                return true;
+            }
+            if (ke.isDown()) {
+                diagram.selectEipNodeDown();
+                diagram.scrollToSelectedEipNode();
+                return true;
+            }
+            if (ke.isLeft()) {
+                diagram.selectEipNodeLeft();
+                diagram.scrollToSelectedEipNode();
+                return true;
+            }
+            if (ke.isRight()) {
+                diagram.selectEipNodeRight();
+                diagram.scrollToSelectedEipNode();
+                return true;
+            }
+        }
+
         if (diagram.handleScrollKeys(ke)) {
             return true;
         }
@@ -117,7 +141,12 @@ class DiagramTab implements MonitorTab {
                     drillDownRouteId = selectedRouteId;
                     topologyMode = false;
                     diagram.setTopologyMode(false);
+                    diagram.setSelectedEipNodeIndex(-1);
                     diagram.endLoad();
+                    // Use cached route layout if available (no IPC needed)
+                    if (diagram.getRouteLayout(selectedRouteId) != null) {
+                        return true;
+                    }
                     reloadDiagram();
                 }
             }
@@ -133,6 +162,11 @@ class DiagramTab implements MonitorTab {
             diagram.setPendingSelectionRouteId(drillDownRouteId);
             topologyMode = true;
             diagram.setTopologyMode(true);
+            diagram.setSelectedEipNodeIndex(-1);
+            // If topology layout is cached, just switch view without IPC
+            if (diagram.hasNativeLayout()) {
+                return true;
+            }
             diagram.endLoad();
             reloadDiagram();
             return true;
@@ -193,6 +227,19 @@ class DiagramTab implements MonitorTab {
                     diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
                 } else {
                     diagram.renderNativeDiagram(frame, area, title, diagramMetrics);
+                }
+            } else if (!topologyMode && drillDownRouteId != null
+                    && diagram.getRouteLayout(drillDownRouteId) != null) {
+                var routeLayout = diagram.getRouteLayout(drillDownRouteId);
+                if (area.width() > 60) {
+                    int panelWidth = 30;
+                    List<Rect> hChunks = Layout.horizontal()
+                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .split(area);
+                    renderEipInfoPanel(frame, hChunks.get(0));
+                    diagram.renderNativeRouteDiagram(frame, hChunks.get(1), title, diagramMetrics, routeLayout);
+                } else {
+                    diagram.renderNativeRouteDiagram(frame, area, title, diagramMetrics, routeLayout);
                 }
             } else {
                 if (selectedRouteId != null && area.width() > 60) {
@@ -335,10 +382,81 @@ class DiagramTab implements MonitorTab {
         frame.renderWidget(paragraph, area);
     }
 
+    private void renderEipInfoPanel(Frame frame, Rect area) {
+        List<Line> lines = new ArrayList<>();
+        var selected = diagram.getSelectedEipNodeBox();
+        if (selected != null && selected.layoutNode() != null) {
+            var ln = selected.layoutNode();
+
+            String typeLabel = ln.type != null ? ln.type : "unknown";
+            Color eipColor = org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors.getEipColor(typeLabel);
+            lines.add(Line.from(
+                    Span.styled(" [" + typeLabel + "]", Style.EMPTY.fg(eipColor).bold())));
+
+            String label = String.join("", ln.wrappedLines);
+            if (!label.isBlank()) {
+                lines.add(Line.from(
+                        Span.styled(" ", Style.EMPTY.dim()),
+                        Span.raw(label)));
+            }
+
+            if (ln.id != null) {
+                lines.add(Line.from(
+                        Span.styled(" ID: ", Style.EMPTY.dim()),
+                        Span.raw(ln.id)));
+            }
+
+            if (ln.treeNode != null && ln.treeNode.info.stat != null) {
+                var stat = ln.treeNode.info.stat;
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" Total:    ", Style.EMPTY.dim()),
+                        Span.raw(String.valueOf(stat.exchangesTotal))));
+                Style failStyle = stat.exchangesFailed > 0
+                        ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
+                lines.add(Line.from(
+                        Span.styled(" Failed:   ", Style.EMPTY.dim()),
+                        Span.styled(String.valueOf(stat.exchangesFailed), failStyle)));
+                lines.add(Line.from(
+                        Span.styled(" Inflight: ", Style.EMPTY.dim()),
+                        Span.raw(String.valueOf(stat.exchangesInflight))));
+
+                if (stat.exchangesTotal > 0) {
+                    lines.add(Line.from(Span.raw("")));
+                    lines.add(Line.from(
+                            Span.styled(" Mean: ", Style.EMPTY.dim()),
+                            Span.raw(stat.meanProcessingTime + " ms")));
+                    lines.add(Line.from(
+                            Span.styled(" Max:  ", Style.EMPTY.dim()),
+                            Span.raw(stat.maxProcessingTime + " ms")));
+                    lines.add(Line.from(
+                            Span.styled(" Min:  ", Style.EMPTY.dim()),
+                            Span.raw(stat.minProcessingTime + " ms")));
+                    lines.add(Line.from(
+                            Span.styled(" Last: ", Style.EMPTY.dim()),
+                            Span.raw(stat.lastProcessingTime + " ms")));
+                }
+            }
+        } else {
+            lines.add(Line.from(Span.styled(" (no node selected)", Style.EMPTY.dim())));
+        }
+
+        Paragraph paragraph = Paragraph.builder()
+                .text(Text.from(lines))
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(" EIP Info ").build())
+                .build();
+        frame.renderWidget(paragraph, area);
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
-            if (!topologyMode) {
+            if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
+                hint(spans, "Esc", "back");
+                hint(spans, "↑↓←→", "navigate");
+                hint(spans, "PgUp/PgDn", "page");
+            } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
                 hint(spans, "↑↓←→", "scroll");
                 hint(spans, "PgUp/PgDn", "page");

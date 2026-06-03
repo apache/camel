@@ -309,6 +309,8 @@ class DiagramSupport {
         topologyNodeWidth = 0;
         routeLayouts = Collections.emptyMap();
         selectedNodeIndex = -1;
+        eipNodeBoxes = Collections.emptyList();
+        selectedEipNodeIndex = -1;
         scrollY = 0;
         scrollX = 0;
     }
@@ -570,6 +572,187 @@ class DiagramSupport {
         }
         if (!widgetBoxes.isEmpty()) {
             nodeBoxes = widgetBoxes;
+        }
+
+        vScrollState.contentLength(totalRows);
+        vScrollState.viewportContentLength(visibleLines);
+        vScrollState.position(scrollY);
+        frame.renderStatefulWidget(
+                Scrollbar.builder().build(),
+                hChunks.get(1), vScrollState);
+
+        if (totalCols > visibleCols) {
+            hScrollState.contentLength(totalCols);
+            hScrollState.viewportContentLength(visibleCols);
+            hScrollState.position(scrollX);
+            frame.renderStatefulWidget(
+                    Scrollbar.horizontal(),
+                    vChunks.get(1), hScrollState);
+        }
+    }
+
+    // ---- Route EIP node selection ----
+
+    private List<org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget.EipNodeBox> eipNodeBoxes
+            = Collections.emptyList();
+    private int selectedEipNodeIndex = -1;
+
+    List<org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget.EipNodeBox> getEipNodeBoxes() {
+        return eipNodeBoxes;
+    }
+
+    int getSelectedEipNodeIndex() {
+        return selectedEipNodeIndex;
+    }
+
+    void setSelectedEipNodeIndex(int idx) {
+        this.selectedEipNodeIndex = idx;
+    }
+
+    org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget.EipNodeBox getSelectedEipNodeBox() {
+        if (selectedEipNodeIndex >= 0 && selectedEipNodeIndex < eipNodeBoxes.size()) {
+            return eipNodeBoxes.get(selectedEipNodeIndex);
+        }
+        return null;
+    }
+
+    void selectEipNodeUp() {
+        if (eipNodeBoxes.isEmpty()) {
+            return;
+        }
+        if (selectedEipNodeIndex < 0) {
+            selectedEipNodeIndex = 0;
+            return;
+        }
+        // Move to previous node in list (follow flow upward)
+        if (selectedEipNodeIndex > 0) {
+            selectedEipNodeIndex--;
+        }
+    }
+
+    void selectEipNodeDown() {
+        if (eipNodeBoxes.isEmpty()) {
+            return;
+        }
+        if (selectedEipNodeIndex < 0) {
+            selectedEipNodeIndex = 0;
+            return;
+        }
+        if (selectedEipNodeIndex < eipNodeBoxes.size() - 1) {
+            selectedEipNodeIndex++;
+        }
+    }
+
+    void selectEipNodeLeft() {
+        if (eipNodeBoxes.isEmpty() || selectedEipNodeIndex < 0) {
+            return;
+        }
+        var current = eipNodeBoxes.get(selectedEipNodeIndex);
+        int bestIdx = -1;
+        int bestCol = -1;
+        for (int i = 0; i < eipNodeBoxes.size(); i++) {
+            var nb = eipNodeBoxes.get(i);
+            if (nb.startCol() < current.startCol()
+                    && Math.abs(nb.startRow() - current.startRow()) <= 2) {
+                if (nb.startCol() > bestCol) {
+                    bestIdx = i;
+                    bestCol = nb.startCol();
+                }
+            }
+        }
+        if (bestIdx >= 0) {
+            selectedEipNodeIndex = bestIdx;
+        }
+    }
+
+    void selectEipNodeRight() {
+        if (eipNodeBoxes.isEmpty() || selectedEipNodeIndex < 0) {
+            return;
+        }
+        var current = eipNodeBoxes.get(selectedEipNodeIndex);
+        int bestIdx = -1;
+        int bestCol = Integer.MAX_VALUE;
+        for (int i = 0; i < eipNodeBoxes.size(); i++) {
+            var nb = eipNodeBoxes.get(i);
+            if (nb.startCol() > current.startCol()
+                    && Math.abs(nb.startRow() - current.startRow()) <= 2) {
+                if (nb.startCol() < bestCol) {
+                    bestIdx = i;
+                    bestCol = nb.startCol();
+                }
+            }
+        }
+        if (bestIdx >= 0) {
+            selectedEipNodeIndex = bestIdx;
+        }
+    }
+
+    void scrollToSelectedEipNode() {
+        if (selectedEipNodeIndex < 0 || selectedEipNodeIndex >= eipNodeBoxes.size()) {
+            return;
+        }
+        var box = eipNodeBoxes.get(selectedEipNodeIndex);
+        if (lastVisibleHeight > 0) {
+            if (box.startRow() < scrollY + 1) {
+                scrollY = Math.max(0, box.startRow() - 1);
+            }
+            if (box.endRow() >= scrollY + lastVisibleHeight - 1) {
+                scrollY = box.endRow() - lastVisibleHeight + 2;
+            }
+        }
+        if (lastVisibleWidth > 0) {
+            if (box.startCol() < scrollX + 1) {
+                scrollX = Math.max(0, box.startCol() - 1);
+            }
+            if (box.endCol() >= scrollX + lastVisibleWidth - 1) {
+                scrollX = box.endCol() - lastVisibleWidth + 2;
+            }
+        }
+    }
+
+    void renderNativeRouteDiagram(
+            Frame frame, Rect area, String title, boolean metrics,
+            RouteDiagramLayoutEngine.LayoutRoute routeLayout) {
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(title)
+                .build();
+        frame.renderWidget(block, area);
+
+        Rect inner = block.inner(area);
+        int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
+
+        var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
+                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics);
+
+        int totalRows = widget.getTotalRows();
+        int totalCols = widget.getTotalCols();
+        int visibleLines = Math.max(1, inner.height() - 1);
+        int visibleCols = Math.max(1, inner.width() - 1);
+        lastVisibleHeight = visibleLines;
+        lastVisibleWidth = visibleCols;
+
+        int maxVScroll = Math.max(0, totalRows - visibleLines);
+        int maxHScroll = Math.max(0, totalCols - visibleCols);
+        scrollY = Math.min(scrollY, maxVScroll);
+        scrollX = Math.min(scrollX, maxHScroll);
+
+        var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
+                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics);
+
+        List<Rect> vChunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(vChunks.get(0));
+
+        frame.renderWidget(finalWidget, hChunks.get(0));
+
+        eipNodeBoxes = new ArrayList<>(finalWidget.getNodeBoxes());
+        if (selectedEipNodeIndex < 0 && !eipNodeBoxes.isEmpty()) {
+            selectedEipNodeIndex = 0;
         }
 
         vScrollState.contentLength(totalRows);

@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 
-final class DiagramColors {
+public final class DiagramColors {
 
     static final Color OK_COLOR = Color.GREEN;
     static final Color FAIL_COLOR = Color.LIGHT_RED;
@@ -50,7 +50,7 @@ final class DiagramColors {
     private DiagramColors() {
     }
 
-    static Color getEipColor(String type) {
+    public static Color getEipColor(String type) {
         if (type == null) {
             return Color.GRAY;
         }
