@@ -46,7 +46,7 @@ abstract class ActionBaseCommand extends CamelCommand {
 
     protected static JsonObject getJsonObject(Path outputFile, long timeout) {
         StopWatch watch = new StopWatch();
-        while (watch.taken() < 5000) {
+        while (watch.taken() < timeout) {
             File f = outputFile.toFile();
             try {
                 // give time for response to be ready
