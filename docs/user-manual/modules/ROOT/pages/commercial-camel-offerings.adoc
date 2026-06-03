@@ -30,10 +30,14 @@ https://assimbly.org[Assimbly]. The aim is to make integration as easy as possib
 and enable businesses to automate processes. We also provide cloud services, support and training.
 
 
-== http://ibm.biz/OSSupport[IBM]
+== https://www.ibm.com[IBM]
 
-http://ibm.biz/OSSupport[IBM] provides cross-platform support and consulting for
-Apache Camel and many other open source packages.
+https://www.ibm.com[IBM] provides cross-platform support and consulting for
+Apache Camel and many other open source packages. IBM's observability platform
+https://www.ibm.com/products/instana/supported-technologies/camel-monitoring[Instana]
+includes dedicated Apache Camel monitoring with automatic discovery, service mapping,
+and tracing. IBM also maintains https://github.com/IBM/ibmi-oss-examples/tree/master/camel[Apache Camel integration examples for IBM i]
+and offers enterprise Camel support through its subsidiary https://www.redhat.com[Red Hat].
 
 
 == https://linuxpolska.com/[Linux Polska]
