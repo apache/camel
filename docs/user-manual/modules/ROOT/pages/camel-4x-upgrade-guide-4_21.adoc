@@ -20,6 +20,40 @@ It implies small differences listed https://github.com/whatap/java-grok#what-is-
 
 === camel-core
 
+==== Simple language: internal builder classes reorganized
+
+The internal class `org.apache.camel.language.simple.SimpleExpressionBuilder`
+(in `camel-core-languages`) has been removed. Its methods have been split across
+seven domain-aligned builder classes:
+
+- `CollectionExpressionBuilder`
+- `DateExpressionBuilder`
+- `FileExpressionBuilder`
+- `MathExpressionBuilder`
+- `MiscExpressionBuilder`
+- `OgnlExpressionBuilder`
+- `StringExpressionBuilder`
+
+These classes are all in the `org.apache.camel.language.simple` package and are
+internal API (not part of `camel-api`). Applications and custom DSLs that import
+`SimpleExpressionBuilder` directly must update their imports to the appropriate
+replacement class.
+
+==== Simple language: `floor`/`ceil` return `long` instead of `int`
+
+The `floor` and `ceil` functions in the Simple language previously silently
+overflowed for input values larger than `Integer.MAX_VALUE` because the result
+was cast to `int`. They now return `long`. Routes that pass the result of
+`floor`/`ceil` to a method that expects `int` may require an explicit cast or
+a converter step.
+
+==== Simple language: `range(N)` starts at 1, not 0
+
+In csimple, `range(N)` previously generated a range starting at 0 (i.e., 0..N-1).
+It now starts at 1 (i.e., 1..N), consistent with the `simple` language behaviour.
+Routes using csimple with `range(N)` that relied on the range starting at 0 must
+be updated.
+
 The `camel-api` module now has an optional dependency on `org.jspecify:jspecify` for null safety annotations
 (`@NullMarked`, `@Nullable`). The dependency is `<optional>true</optional>`, so it is not pulled transitively
 into your application. The annotations are used to document nullability contracts across the Camel API surface
