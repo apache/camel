@@ -21,6 +21,10 @@ inputs:
   github-token:
     description: 'The github token to access to the API'
     required: false
+    maven-extra-args:
+      description: 'Extra Maven arguments to pass to the build (e.g. -Denforcer.phase=none)'
+      required: false
+      default: ''
 runs:
   using: "composite"
   steps:
@@ -31,5 +35,6 @@ runs:
     - name: maven test
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        MAVEN_EXTRA_ARGS: ${{ inputs.maven-extra-args }}
       shell: bash
       run: ${{ github.action_path }}/detect-test.sh ${{ github.base_ref }} ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd
