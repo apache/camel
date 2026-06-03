@@ -77,7 +77,7 @@ camel run [options]
 | `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String
-| `--stub` | Stubs all the matching endpoint uri with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints). |  | String
+| `--stub` | Stubs all the matching endpoint uri with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints, remote = stub only remote components). |  | String
 | `--trace` | Enables trace logging of the routed messages | false | boolean
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

@@ -190,7 +190,7 @@ class RunOptionsForm {
             args.add("--backlog-trace");
         }
         if (stubMode) {
-            args.add("--stub=all");
+            args.add("--stub=remote");
         }
         if (properties != null) {
             for (PropertyEntry pe : properties) {
