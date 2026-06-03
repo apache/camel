@@ -1023,11 +1023,10 @@ class DiagramSupport {
                 RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                         RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                         labelMode);
-                int currentY = RouteDiagramLayoutEngine.PADDING;
                 for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, currentY);
+                    RouteDiagramLayoutEngine.LayoutRoute lr
+                            = engine.layoutRoute(r, RouteDiagramLayoutEngine.PADDING);
                     routeMap.put(r.routeId, lr);
-                    currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
                 }
             }
         }
