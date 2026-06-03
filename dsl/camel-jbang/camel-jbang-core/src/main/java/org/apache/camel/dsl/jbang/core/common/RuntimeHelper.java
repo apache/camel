@@ -233,6 +233,26 @@ public final class RuntimeHelper {
         }
     }
 
+    /**
+     * Reads the error file for the given process.
+     *
+     * @return the parsed error data, or {@code null} if the file does not exist or is unreadable
+     */
+    public static JsonObject readErrorFile(long pid) {
+        Path errorFile = CommandLineHelper.getCamelDir().resolve(pid + "-error.json");
+        return readStatusFromFile(errorFile);
+    }
+
+    /**
+     * Reads the message history file for the given process (trace of the last completed exchange).
+     *
+     * @return the parsed history data, or {@code null} if the file does not exist or is unreadable
+     */
+    public static JsonObject readHistoryFile(long pid) {
+        Path historyFile = CommandLineHelper.getCamelDir().resolve(pid + "-history.json");
+        return readStatusFromFile(historyFile);
+    }
+
     public static JsonObject readStatusFromFile(Path path) {
         try {
             if (Files.exists(path) && path.toFile().length() > 0) {
