@@ -36,6 +36,8 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.diagram.RouteDiagramHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
@@ -549,5 +551,46 @@ class ErrorsTab implements MonitorTab {
                 - `S` — reverse sort order
                 - `Esc` — back to list
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Errors");
+        JsonArray rows = new JsonArray();
+        for (ErrorInfo ei : info.errors) {
+            JsonObject row = new JsonObject();
+            row.put("routeId", ei.routeId);
+            row.put("nodeId", ei.nodeId);
+            row.put("exchangeId", ei.exchangeId);
+            row.put("handled", ei.handled);
+            row.put("timestamp", ei.timestamp);
+            row.put("elapsed", ei.elapsed);
+            if (ei.exceptionType != null) {
+                row.put("exceptionType", ei.exceptionType);
+            }
+            if (ei.exceptionMessage != null) {
+                row.put("exceptionMessage", ei.exceptionMessage);
+            }
+            if (ei.stackTrace != null) {
+                row.put("stackTrace", ei.stackTrace);
+            }
+            if (ei.body != null) {
+                row.put("body", ei.body);
+            }
+            if (!ei.headers.isEmpty()) {
+                row.put("headers", new JsonObject(ei.headers));
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.errors.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

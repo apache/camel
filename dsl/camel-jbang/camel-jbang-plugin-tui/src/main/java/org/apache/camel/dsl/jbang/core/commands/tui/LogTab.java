@@ -53,6 +53,7 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
@@ -846,5 +847,46 @@ class LogTab implements MonitorTab {
                 - `w` — toggle word wrap
                 - `Esc` — clear find / back
                 """;
+    }
+
+    JsonObject getLogDataAsJson(int limit, String filter, String level) {
+        List<LogEntry> entries = filteredLogEntries;
+        if (entries == null || entries.isEmpty()) {
+            JsonObject result = new JsonObject();
+            result.put("lines", new JsonArray());
+            result.put("totalLines", 0);
+            result.put("returnedLines", 0);
+            return result;
+        }
+
+        List<LogEntry> filtered = new ArrayList<>();
+        for (int i = entries.size() - 1; i >= 0 && filtered.size() < limit; i--) {
+            LogEntry e = entries.get(i);
+            if (level != null && !level.isBlank() && !level.equalsIgnoreCase(e.level)) {
+                continue;
+            }
+            if (filter != null && !filter.isBlank()
+                    && !e.message.toLowerCase().contains(filter.toLowerCase())) {
+                continue;
+            }
+            filtered.add(e);
+        }
+
+        JsonObject result = new JsonObject();
+        JsonArray rows = new JsonArray();
+        for (LogEntry e : filtered) {
+            JsonObject row = new JsonObject();
+            row.put("time", e.time);
+            row.put("level", e.level);
+            if (e.logger != null) {
+                row.put("logger", e.logger);
+            }
+            row.put("message", e.message);
+            rows.add(row);
+        }
+        result.put("lines", rows);
+        result.put("totalLines", entries.size());
+        result.put("returnedLines", filtered.size());
+        return result;
     }
 }

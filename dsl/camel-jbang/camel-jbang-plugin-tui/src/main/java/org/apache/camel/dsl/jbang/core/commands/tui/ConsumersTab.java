@@ -34,6 +34,8 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -394,5 +396,37 @@ class ConsumersTab implements MonitorTab {
                 - `s` — cycle sort column
                 - `S` — reverse sort order
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Consumers");
+        JsonArray rows = new JsonArray();
+        for (ConsumerInfo ci : info.consumers) {
+            JsonObject row = new JsonObject();
+            row.put("id", ci.id);
+            row.put("uri", ci.uri);
+            row.put("state", ci.state);
+            row.put("className", ci.className);
+            row.put("scheduled", ci.scheduled);
+            row.put("inflight", ci.inflight);
+            if (ci.totalCounter != null) {
+                row.put("totalCounter", ci.totalCounter);
+            }
+            if (ci.polling != null) {
+                row.put("polling", ci.polling);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.consumers.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

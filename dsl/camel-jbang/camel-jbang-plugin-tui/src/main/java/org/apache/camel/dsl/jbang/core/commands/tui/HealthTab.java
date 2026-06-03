@@ -32,6 +32,8 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -281,5 +283,33 @@ class HealthTab implements MonitorTab {
                 - `s` — cycle sort column
                 - `S` — reverse sort order
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Health");
+        JsonArray rows = new JsonArray();
+        for (HealthCheckInfo hi : info.healthChecks) {
+            JsonObject row = new JsonObject();
+            row.put("group", hi.group);
+            row.put("name", hi.name);
+            row.put("state", hi.state);
+            row.put("readiness", hi.readiness);
+            row.put("liveness", hi.liveness);
+            if (hi.message != null) {
+                row.put("message", hi.message);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.healthChecks.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

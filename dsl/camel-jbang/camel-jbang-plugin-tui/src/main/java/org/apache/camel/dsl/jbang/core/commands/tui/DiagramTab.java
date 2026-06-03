@@ -28,6 +28,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -275,5 +276,18 @@ class DiagramTab implements MonitorTab {
                                 - `Home/End` — top/end
                                 - `Esc` — close diagram
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        List<String> lines = diagram.getLines();
+        if (lines == null || lines.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Diagram");
+        result.put("diagram", String.join("\n", lines));
+        result.put("lines", lines.size());
+        return result;
     }
 }
