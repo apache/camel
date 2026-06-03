@@ -153,7 +153,7 @@ class DiagramTab implements MonitorTab {
     @Override
     public void onTabSelected() {
         if (!diagram.isShowDiagram()) {
-            diagram.toggleTextDiagram(this::loadDiagram);
+            loadDiagram();
         }
     }
 
@@ -182,15 +182,29 @@ class DiagramTab implements MonitorTab {
             }
 
             String selectedRouteId = topologyMode ? diagram.getSelectedRouteId() : drillDownRouteId;
-            if (selectedRouteId != null && area.width() > 60) {
-                int panelWidth = 30;
-                List<Rect> hChunks = Layout.horizontal()
-                        .constraints(Constraint.length(panelWidth), Constraint.fill())
-                        .split(area);
-                renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
-                diagram.renderDiagram(frame, hChunks.get(1), title);
+
+            if (topologyMode && diagram.hasNativeLayout()) {
+                if (selectedRouteId != null && area.width() > 60) {
+                    int panelWidth = 30;
+                    List<Rect> hChunks = Layout.horizontal()
+                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .split(area);
+                    renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
+                    diagram.renderNativeDiagram(frame, hChunks.get(1), title, diagramMetrics);
+                } else {
+                    diagram.renderNativeDiagram(frame, area, title, diagramMetrics);
+                }
             } else {
-                diagram.renderDiagram(frame, area, title);
+                if (selectedRouteId != null && area.width() > 60) {
+                    int panelWidth = 30;
+                    List<Rect> hChunks = Layout.horizontal()
+                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .split(area);
+                    renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
+                    diagram.renderDiagram(frame, hChunks.get(1), title);
+                } else {
+                    diagram.renderDiagram(frame, area, title);
+                }
             }
             return;
         }
@@ -378,7 +392,7 @@ class DiagramTab implements MonitorTab {
             try {
                 if (topologyMode) {
                     diagram.setTopologyMode(true);
-                    diagram.loadTopologyDiagramInBackground(ctx, pid, true, showMetrics, external);
+                    diagram.loadAllDiagramsInBackground(ctx, pid, showMetrics, external);
                 } else {
                     diagram.setTopologyMode(false);
                     diagram.loadRouteDiagramInBackground(ctx, pid, true, drillDownRouteId, showMetrics);
