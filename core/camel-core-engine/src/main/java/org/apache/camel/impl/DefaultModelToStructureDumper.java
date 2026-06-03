@@ -46,12 +46,15 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
 
         String loc = scheme + ":" + LoggerHelper.getLineNumberLoggerName(def);
         answer.add(
-                new ModelDumpLine(loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]", def.getDescription()));
+                new ModelDumpLine(
+                        loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]", def.getDescription(),
+                        null));
         String uri = def.getInput().getLabel();
         if (brief) {
             uri = StringHelper.before(uri, "?", uri);
         }
-        answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]", def.getDescription()));
+        String fromUri = def.getInput().getEndpointUri();
+        answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]", def.getDescription(), fromUri));
 
         dumpChildren(def, scheme, brief, 2, answer);
 
@@ -69,11 +72,15 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
                 String id = output.getId();
                 boolean choice = "choice".equals(kind);
                 String code = choice || brief ? output.getShortName() : output.getLabel();
-                if (brief && output instanceof EndpointRequiredDefinition erd) {
-                    String uri = StringHelper.before(erd.getEndpointUri(), "?", erd.getEndpointUri());
-                    code = output.getShortName() + "[" + uri + "]";
+                String endpointUri = null;
+                if (output instanceof EndpointRequiredDefinition erd) {
+                    endpointUri = erd.getEndpointUri();
+                    if (brief) {
+                        String uri = StringHelper.before(endpointUri, "?", endpointUri);
+                        code = output.getShortName() + "[" + uri + "]";
+                    }
                 }
-                answer.add(new ModelDumpLine(loc, kind, id, level, code, output.getDescription()));
+                answer.add(new ModelDumpLine(loc, kind, id, level, code, output.getDescription(), endpointUri));
             }
             dumpChildren(child, scheme, brief, level + 1, answer);
         }

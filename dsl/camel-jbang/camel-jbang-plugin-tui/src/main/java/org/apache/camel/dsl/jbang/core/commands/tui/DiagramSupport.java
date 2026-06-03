@@ -594,7 +594,7 @@ class DiagramSupport {
                 && !"from".equals(type)) {
             return null;
         }
-        String baseUri = extractBaseUri(box.layoutNode().treeNode.info.code);
+        String baseUri = stripQueryParams(box.layoutNode().treeNode.info.uri);
         if (baseUri == null || baseUri.isBlank()) {
             return null;
         }
@@ -609,7 +609,7 @@ class DiagramSupport {
             } else {
                 // "to" node: find route that consumes FROM this endpoint
                 if (currentRouteId.equals(edge.from.routeId) && !currentRouteId.equals(edge.to.routeId)) {
-                    String targetFrom = extractBaseUri(edge.to.from);
+                    String targetFrom = stripQueryParams(edge.to.from);
                     if (baseUri.equals(targetFrom)) {
                         return edge.to.routeId;
                     }
@@ -617,7 +617,7 @@ class DiagramSupport {
             }
         }
 
-        // Fallback: match code against route "from" endpoints in routeLayouts
+        // Fallback: match uri against route "from" endpoints in routeLayouts
         if (!"from".equals(type)) {
             for (var entry : routeLayouts.entrySet()) {
                 if (currentRouteId.equals(entry.getKey())) {
@@ -627,7 +627,7 @@ class DiagramSupport {
                 if (!lr.nodes.isEmpty()) {
                     var firstNode = lr.nodes.get(0);
                     if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
-                        String fromBaseUri = extractBaseUri(firstNode.treeNode.info.code);
+                        String fromBaseUri = stripQueryParams(firstNode.treeNode.info.uri);
                         if (baseUri.equals(fromBaseUri)) {
                             return entry.getKey();
                         }
@@ -638,24 +638,10 @@ class DiagramSupport {
         return null;
     }
 
-    /**
-     * Extracts the bare endpoint URI from a code field like "from[direct:foo?bar=baz]" or "to[kafka:topic]". Returns
-     * the base URI without query parameters.
-     */
-    static String extractBaseUri(String code) {
-        if (code == null) {
+    static String stripQueryParams(String uri) {
+        if (uri == null) {
             return null;
         }
-        // Strip type[...] wrapper
-        int open = code.indexOf('[');
-        int close = code.lastIndexOf(']');
-        String uri;
-        if (open >= 0 && close > open) {
-            uri = code.substring(open + 1, close);
-        } else {
-            uri = code;
-        }
-        // Strip query parameters
         int q = uri.indexOf('?');
         return q >= 0 ? uri.substring(0, q) : uri;
     }
@@ -765,7 +751,7 @@ class DiagramSupport {
         if (currentLayout != null && !currentLayout.nodes.isEmpty()) {
             var fromNode = currentLayout.nodes.get(0);
             if ("from".equals(fromNode.type) && fromNode.treeNode != null) {
-                currentFromUri = extractBaseUri(fromNode.treeNode.info.code);
+                currentFromUri = stripQueryParams(fromNode.treeNode.info.uri);
             }
         }
 
@@ -778,7 +764,7 @@ class DiagramSupport {
                 // Add "from" URIs of other routes (linkable from "to" nodes)
                 var firstNode = lr.nodes.get(0);
                 if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
-                    String uri = extractBaseUri(firstNode.treeNode.info.code);
+                    String uri = stripQueryParams(firstNode.treeNode.info.uri);
                     if (uri != null) {
                         endpoints.add(uri);
                     }
@@ -789,7 +775,7 @@ class DiagramSupport {
                         String type = node.type;
                         if (("to".equals(type) || "toD".equals(type) || "wireTap".equals(type))
                                 && node.treeNode != null) {
-                            String uri = extractBaseUri(node.treeNode.info.code);
+                            String uri = stripQueryParams(node.treeNode.info.uri);
                             if (currentFromUri.equals(uri)) {
                                 endpoints.add(currentFromUri);
                             }

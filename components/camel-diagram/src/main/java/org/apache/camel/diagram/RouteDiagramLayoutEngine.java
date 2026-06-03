@@ -154,6 +154,7 @@ public class RouteDiagramLayoutEngine {
         public String type;
         public String id;
         public String code;
+        public String uri;
         public String description;
         public int level;
         public StatInfo stat;

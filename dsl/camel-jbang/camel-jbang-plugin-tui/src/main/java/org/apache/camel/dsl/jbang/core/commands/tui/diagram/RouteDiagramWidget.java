@@ -429,19 +429,13 @@ public class RouteDiagramWidget implements Widget {
                 && !"from".equals(type)) {
             return false;
         }
-        String baseUri = extractBaseUri(node.treeNode.info.code);
-        return baseUri != null && linkableEndpoints.contains(baseUri);
-    }
-
-    private static String extractBaseUri(String code) {
-        if (code == null) {
-            return null;
+        String uri = node.treeNode.info.uri;
+        if (uri == null) {
+            return false;
         }
-        int open = code.indexOf('[');
-        int close = code.lastIndexOf(']');
-        String uri = (open >= 0 && close > open) ? code.substring(open + 1, close) : code;
         int q = uri.indexOf('?');
-        return q >= 0 ? uri.substring(0, q) : uri;
+        String baseUri = q >= 0 ? uri.substring(0, q) : uri;
+        return linkableEndpoints.contains(baseUri);
     }
 
     private int toRow(int pixelY) {
