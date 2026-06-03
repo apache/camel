@@ -17,7 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -47,6 +49,8 @@ public class RouteDiagramWidget implements Widget {
     private static final char SCOPE_H = '╌';
     private static final char SCOPE_V = '╎';
 
+    private static final String LINK_INDICATOR = " ↵";
+
     private final LayoutRoute layoutRoute;
     private final int nodeWidth;
     private final int boxWidth;
@@ -54,6 +58,7 @@ public class RouteDiagramWidget implements Widget {
     private final int scrollX;
     private final int scrollY;
     private final boolean showMetrics;
+    private final Set<String> linkableEndpoints;
 
     private final List<EipNodeBox> nodeBoxes = new ArrayList<>();
 
@@ -65,6 +70,13 @@ public class RouteDiagramWidget implements Widget {
                               LayoutRoute layoutRoute, int nodeWidth,
                               int selectedNodeIndex, int scrollX, int scrollY,
                               boolean showMetrics) {
+        this(layoutRoute, nodeWidth, selectedNodeIndex, scrollX, scrollY, showMetrics, Collections.emptySet());
+    }
+
+    public RouteDiagramWidget(
+                              LayoutRoute layoutRoute, int nodeWidth,
+                              int selectedNodeIndex, int scrollX, int scrollY,
+                              boolean showMetrics, Set<String> linkableEndpoints) {
         this.layoutRoute = layoutRoute;
         this.nodeWidth = nodeWidth;
         this.boxWidth = Math.max(MIN_BOX_WIDTH, nodeWidth / X_DIVISOR);
@@ -72,6 +84,7 @@ public class RouteDiagramWidget implements Widget {
         this.scrollX = scrollX;
         this.scrollY = scrollY;
         this.showMetrics = showMetrics;
+        this.linkableEndpoints = linkableEndpoints;
     }
 
     public List<EipNodeBox> getNodeBoxes() {
@@ -176,6 +189,14 @@ public class RouteDiagramWidget implements Widget {
             } else {
                 writeText(buffer, area, r, textCol, text, style(FROM_LABEL_STYLE, selected));
             }
+        }
+
+        // Link indicator for nodes that connect to other routes
+        if (isLinkable(node)) {
+            Style linkStyle = selected
+                    ? Style.EMPTY.fg(Color.YELLOW).bold().patch(SELECTION_STYLE)
+                    : Style.EMPTY.fg(Color.YELLOW).bold();
+            writeText(buffer, area, bottom, col + boxWidth, LINK_INDICATOR, linkStyle);
         }
 
         nodeBoxes.add(new EipNodeBox(node.id, node.type, row, row + height - 1, col, col + boxWidth - 1, node));
@@ -396,6 +417,24 @@ public class RouteDiagramWidget implements Widget {
             return 0;
         }
         return pixelX * boxWidth / nodeWidth;
+    }
+
+    private boolean isLinkable(LayoutNode node) {
+        if (linkableEndpoints.isEmpty() || node.treeNode == null) {
+            return false;
+        }
+        String type = node.type;
+        if (!"to".equals(type) && !"toD".equals(type) && !"wireTap".equals(type)
+                && !"enrich".equals(type) && !"pollEnrich".equals(type)
+                && !"from".equals(type)) {
+            return false;
+        }
+        String code = node.treeNode.info.code;
+        if (code == null || code.isBlank()) {
+            return false;
+        }
+        String baseUri = code.contains("?") ? code.substring(0, code.indexOf('?')) : code;
+        return linkableEndpoints.contains(baseUri);
     }
 
     private int toRow(int pixelY) {

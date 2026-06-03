@@ -234,6 +234,11 @@ class DiagramSupport {
         return false;
     }
 
+    void resetScroll() {
+        scrollY = 0;
+        scrollX = 0;
+    }
+
     void toggleDiagram(Runnable loadTrigger) {
         if (showDiagram) {
             close();
@@ -570,6 +575,77 @@ class DiagramSupport {
         return null;
     }
 
+    /**
+     * Finds the route ID that the selected EIP node links to, by matching the node's endpoint URI against topology
+     * edges and route "from" endpoints.
+     */
+    String findLinkedRouteId(String currentRouteId) {
+        var box = getSelectedEipNodeBox();
+        if (box == null || box.layoutNode() == null || box.layoutNode().treeNode == null) {
+            return null;
+        }
+        String type = box.type();
+        if (type == null) {
+            return null;
+        }
+        // Only "to"-style nodes can link to other routes
+        if (!"to".equals(type) && !"toD".equals(type) && !"wireTap".equals(type)
+                && !"enrich".equals(type) && !"pollEnrich".equals(type)
+                && !"from".equals(type)) {
+            return null;
+        }
+        String code = box.layoutNode().treeNode.info.code;
+        if (code == null || code.isBlank()) {
+            return null;
+        }
+
+        // First try topology edges for direct matching
+        for (TopologyLayoutEdge edge : topologyEdges) {
+            if ("from".equals(type)) {
+                // "from" node: find route that sends TO this endpoint
+                if (currentRouteId.equals(edge.to.routeId) && !currentRouteId.equals(edge.from.routeId)) {
+                    return edge.from.routeId;
+                }
+            } else {
+                // "to" node: find route that consumes FROM this endpoint
+                if (currentRouteId.equals(edge.from.routeId) && !currentRouteId.equals(edge.to.routeId)) {
+                    // Match endpoint URI against the target route's from
+                    String targetFrom = edge.to.from;
+                    if (targetFrom != null && uriMatches(code, targetFrom)) {
+                        return edge.to.routeId;
+                    }
+                }
+            }
+        }
+
+        // Fallback: match code against route "from" endpoints in routeLayouts
+        if (!"from".equals(type)) {
+            for (var entry : routeLayouts.entrySet()) {
+                if (currentRouteId.equals(entry.getKey())) {
+                    continue;
+                }
+                var lr = entry.getValue();
+                if (!lr.nodes.isEmpty()) {
+                    var firstNode = lr.nodes.get(0);
+                    if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
+                        String fromCode = firstNode.treeNode.info.code;
+                        if (fromCode != null && uriMatches(code, fromCode)) {
+                            return entry.getKey();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean uriMatches(String toUri, String fromUri) {
+        // Normalize: strip query parameters for matching
+        String toBase = toUri.contains("?") ? toUri.substring(0, toUri.indexOf('?')) : toUri;
+        String fromBase = fromUri.contains("?") ? fromUri.substring(0, fromUri.indexOf('?')) : fromUri;
+        return toBase.equals(fromBase);
+    }
+
     void selectEipNodeUp() {
         if (eipNodeBoxes.isEmpty()) {
             return;
@@ -664,9 +740,60 @@ class DiagramSupport {
         }
     }
 
+    /**
+     * Computes the set of base endpoint URIs that can be navigated to from the current route. Includes both "from" URIs
+     * of other routes (for "to" nodes) and "to" URIs that target this route (for "from" nodes).
+     */
+    private Set<String> computeLinkableEndpoints(String currentRouteId) {
+        Set<String> endpoints = new HashSet<>();
+        for (var entry : routeLayouts.entrySet()) {
+            if (currentRouteId.equals(entry.getKey())) {
+                continue;
+            }
+            var lr = entry.getValue();
+            if (!lr.nodes.isEmpty()) {
+                // Add "from" URIs of other routes (linkable from "to" nodes)
+                var firstNode = lr.nodes.get(0);
+                if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
+                    String code = firstNode.treeNode.info.code;
+                    if (code != null) {
+                        endpoints.add(code.contains("?") ? code.substring(0, code.indexOf('?')) : code);
+                    }
+                }
+                // Add "to" URIs of other routes (linkable from "from" node)
+                for (var node : lr.nodes) {
+                    String type = node.type;
+                    if (("to".equals(type) || "toD".equals(type) || "wireTap".equals(type))
+                            && node.treeNode != null) {
+                        String code = node.treeNode.info.code;
+                        if (code != null) {
+                            String baseUri = code.contains("?") ? code.substring(0, code.indexOf('?')) : code;
+                            // Check if this targets our route's "from" endpoint
+                            var currentLayout = routeLayouts.get(currentRouteId);
+                            if (currentLayout != null && !currentLayout.nodes.isEmpty()) {
+                                var fromNode = currentLayout.nodes.get(0);
+                                if ("from".equals(fromNode.type) && fromNode.treeNode != null) {
+                                    String fromCode = fromNode.treeNode.info.code;
+                                    if (fromCode != null) {
+                                        String fromBase = fromCode.contains("?")
+                                                ? fromCode.substring(0, fromCode.indexOf('?')) : fromCode;
+                                        if (baseUri.equals(fromBase)) {
+                                            endpoints.add(fromBase);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return endpoints;
+    }
+
     void renderNativeRouteDiagram(
             Frame frame, Rect area, String title, boolean metrics,
-            RouteDiagramLayoutEngine.LayoutRoute routeLayout) {
+            String currentRouteId, RouteDiagramLayoutEngine.LayoutRoute routeLayout) {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(title)
@@ -675,9 +802,10 @@ class DiagramSupport {
 
         Rect inner = block.inner(area);
         int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
+        Set<String> linkable = computeLinkableEndpoints(currentRouteId);
 
         var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
-                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics);
+                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -692,7 +820,7 @@ class DiagramSupport {
         scrollX = Math.min(scrollX, maxHScroll);
 
         var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
-                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics);
+                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import dev.tamboui.layout.Constraint;
@@ -44,6 +46,7 @@ class DiagramTab implements MonitorTab {
     private boolean showExternal;
     private boolean topologyMode = true;
     private String drillDownRouteId;
+    private final Deque<String> routeNavigationStack = new ArrayDeque<>();
 
     DiagramTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -132,16 +135,31 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
-        // Drill down into route diagram (Enter)
+        // Jump to linked route from EIP node (Enter in route mode)
+        if (!topologyMode && ke.isConfirm() && !diagram.getEipNodeBoxes().isEmpty()) {
+            String linkedRouteId = diagram.findLinkedRouteId(drillDownRouteId);
+            if (linkedRouteId != null && diagram.getRouteLayout(linkedRouteId) != null) {
+                routeNavigationStack.push(drillDownRouteId);
+                drillDownRouteId = linkedRouteId;
+                diagram.setSelectedEipNodeIndex(-1);
+                diagram.resetScroll();
+                return true;
+            }
+            return true;
+        }
+
+        // Drill down into route diagram (Enter from topology)
         if (topologyMode && ke.isConfirm()) {
             String selectedRouteId = diagram.getSelectedRouteId();
             if (selectedRouteId != null) {
                 IntegrationInfo info = ctx.findSelectedIntegration();
                 if (info != null && info.routes.stream().anyMatch(r -> selectedRouteId.equals(r.routeId))) {
+                    routeNavigationStack.clear();
                     drillDownRouteId = selectedRouteId;
                     topologyMode = false;
                     diagram.setTopologyMode(false);
                     diagram.setSelectedEipNodeIndex(-1);
+                    diagram.resetScroll();
                     diagram.endLoad();
                     // Use cached route layout if available (no IPC needed)
                     if (diagram.getRouteLayout(selectedRouteId) != null) {
@@ -159,10 +177,19 @@ class DiagramTab implements MonitorTab {
     @Override
     public boolean handleEscape() {
         if (!topologyMode) {
+            if (!routeNavigationStack.isEmpty()) {
+                // Go back to the previous route in the stack
+                drillDownRouteId = routeNavigationStack.pop();
+                diagram.setSelectedEipNodeIndex(-1);
+                diagram.resetScroll();
+                return true;
+            }
+            // Go back to topology
             diagram.setPendingSelectionRouteId(drillDownRouteId);
             topologyMode = true;
             diagram.setTopologyMode(true);
             diagram.setSelectedEipNodeIndex(-1);
+            diagram.resetScroll();
             // If topology layout is cached, just switch view without IPC
             if (diagram.hasNativeLayout()) {
                 return true;
@@ -195,6 +222,7 @@ class DiagramTab implements MonitorTab {
     public void onIntegrationChanged() {
         topologyMode = true;
         drillDownRouteId = null;
+        routeNavigationStack.clear();
         diagram.reset();
         diagram.setTopologyMode(true);
     }
@@ -237,9 +265,10 @@ class DiagramTab implements MonitorTab {
                             .constraints(Constraint.length(panelWidth), Constraint.fill())
                             .split(area);
                     renderEipInfoPanel(frame, hChunks.get(0));
-                    diagram.renderNativeRouteDiagram(frame, hChunks.get(1), title, diagramMetrics, routeLayout);
+                    diagram.renderNativeRouteDiagram(
+                            frame, hChunks.get(1), title, diagramMetrics, drillDownRouteId, routeLayout);
                 } else {
-                    diagram.renderNativeRouteDiagram(frame, area, title, diagramMetrics, routeLayout);
+                    diagram.renderNativeRouteDiagram(frame, area, title, diagramMetrics, drillDownRouteId, routeLayout);
                 }
             }
             return;
@@ -395,6 +424,14 @@ class DiagramTab implements MonitorTab {
                         Span.raw(ln.id)));
             }
 
+            String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
+            if (linkedRoute != null) {
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" ↵ ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                        Span.styled(linkedRoute, Style.EMPTY.fg(Color.WHITE))));
+            }
+
             if (ln.treeNode != null && ln.treeNode.info.stat != null) {
                 var stat = ln.treeNode.info.stat;
                 lines.add(Line.from(Span.raw("")));
@@ -444,6 +481,9 @@ class DiagramTab implements MonitorTab {
             if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "back");
                 hint(spans, "↑↓←→", "navigate");
+                if (diagram.findLinkedRouteId(drillDownRouteId) != null) {
+                    hint(spans, "Enter", "jump to route");
+                }
                 hint(spans, "PgUp/PgDn", "page");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
@@ -574,14 +614,32 @@ class DiagramTab implements MonitorTab {
                                 internal EIP structure (the route diagram). Press `Esc` to
                                 return to the topology view.
 
+                                ## Route Diagram
+
+                                In the route diagram, each EIP node shows its type tag (colored)
+                                and endpoint URI or description. Nodes that connect to other routes
+                                display a `↵` indicator — press `Enter` to jump directly to the
+                                linked route's diagram.
+
+                                Navigation history is maintained as a stack: pressing `Esc` goes
+                                back to the previous route, and eventually back to the topology view.
+
                                 ## Keys
 
+                                **Topology view:**
                                 - `↑↓←→` — navigate between route boxes
                                 - `Enter` — drill down into selected route
-                                - `Esc` — return to topology / close diagram
+                                - `Esc` — close diagram
+
+                                **Route diagram:**
+                                - `↑↓←→` — navigate between EIP nodes
+                                - `Enter` — jump to linked route (when `↵` indicator shown)
+                                - `Esc` — go back (previous route or topology)
+
+                                **Common:**
                                 - `m` — toggle metrics on/off (default: on)
-                                - `e` — toggle external systems on/off (default: off)
-                                - `n` — toggle description labels on/off (default: off)
+                                - `e` — toggle external systems on/off (topology only)
+                                - `n` — toggle description labels on/off
                                 - `PgUp/PgDn` — page scroll
                                 - `Home/End` — top/end
                 """;
