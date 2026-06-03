@@ -111,6 +111,36 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    public void testUnmarshalXmlFormatViaModelDefinition() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:unmarshalXmlModel");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        template.sendBody("direct:unmarshalXmlModel", body);
+
+        MockEndpoint.assertIsSatisfied(context);
+        Object rawBody = mock.getReceivedExchanges().get(0).getIn().getBody();
+        assertNotNull(rawBody);
+        assertInstanceOf(Document.class, rawBody);
+        Document doc = (Document) rawBody;
+        assertEquals("ORM_O01", doc.getDocumentElement().getLocalName());
+    }
+
+    @Test
+    public void testRoundTripViaModelDefinition() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:roundtripModel");
+        mock.expectedMessageCount(1);
+
+        String body = createHL7AsString();
+        template.sendBody("direct:roundtripModel", body);
+
+        MockEndpoint.assertIsSatisfied(context);
+        String edi = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue(edi.contains("MSH|^~\\&|"));
+        assertTrue(edi.contains("ORM^O01"));
+    }
+
+    @Test
     public void testRoundTripEdiToXmlToEdi() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:roundtrip");
         mock.expectedMessageCount(1);
@@ -139,6 +169,13 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         final HL7DataFormat hl7Default = new HL7DataFormat();
         hl7Default.setValidate(false);
 
+        final org.apache.camel.model.dataformat.HL7DataFormat hl7XmlDef
+                = new org.apache.camel.model.dataformat.HL7DataFormat.Builder()
+                        .targetFormat("XML").validate(false).end();
+        final org.apache.camel.model.dataformat.HL7DataFormat hl7DefaultDef
+                = new org.apache.camel.model.dataformat.HL7DataFormat.Builder()
+                        .validate(false).end();
+
         return new RouteBuilder() {
             public void configure() {
                 from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
@@ -147,6 +184,9 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
                 from("direct:marshalFromDoc").marshal(hl7Default).to("mock:marshalFromDoc");
                 from("direct:marshalXmlOutput").marshal(hl7Xml).to("mock:marshalXmlOutput");
                 from("direct:roundtrip").unmarshal(hl7Xml).marshal(hl7Default).to("mock:roundtrip");
+
+                from("direct:unmarshalXmlModel").unmarshal(hl7XmlDef).to("mock:unmarshalXmlModel");
+                from("direct:roundtripModel").unmarshal(hl7XmlDef).marshal(hl7DefaultDef).to("mock:roundtripModel");
             }
         };
     }
