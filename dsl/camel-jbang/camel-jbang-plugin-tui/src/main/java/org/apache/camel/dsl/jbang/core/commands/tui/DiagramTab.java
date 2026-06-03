@@ -318,28 +318,30 @@ class DiagramTab implements MonitorTab {
                     Span.raw(route.throughput != null ? route.throughput : "")));
 
             lines.add(Line.from(Span.raw("")));
+            int w = numWidth(route.total, route.failed, route.inflight);
             lines.add(Line.from(
                     Span.styled(" Total:    ", Style.EMPTY.dim()),
-                    Span.raw(String.valueOf(route.total))));
+                    Span.raw(String.format("%" + w + "d", route.total))));
             Style failStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
             lines.add(Line.from(
                     Span.styled(" Failed:   ", Style.EMPTY.dim()),
-                    Span.styled(String.valueOf(route.failed), failStyle)));
+                    Span.styled(String.format("%" + w + "d", route.failed), failStyle)));
             lines.add(Line.from(
                     Span.styled(" Inflight: ", Style.EMPTY.dim()),
-                    Span.raw(String.valueOf(route.inflight))));
+                    Span.raw(String.format("%" + w + "d", route.inflight))));
 
             lines.add(Line.from(Span.raw("")));
             if (route.total > 0) {
+                int tw = numWidth(route.meanTime, route.maxTime, route.minTime);
                 lines.add(Line.from(
                         Span.styled(" Mean: ", Style.EMPTY.dim()),
-                        Span.raw(route.meanTime + " ms")));
+                        Span.raw(String.format("%" + tw + "d ms", route.meanTime))));
                 lines.add(Line.from(
                         Span.styled(" Max:  ", Style.EMPTY.dim()),
-                        Span.raw(route.maxTime + " ms")));
+                        Span.raw(String.format("%" + tw + "d ms", route.maxTime))));
                 lines.add(Line.from(
                         Span.styled(" Min:  ", Style.EMPTY.dim()),
-                        Span.raw(route.minTime + " ms")));
+                        Span.raw(String.format("%" + tw + "d ms", route.minTime))));
             }
 
             if (route.coverage != null) {
@@ -435,32 +437,35 @@ class DiagramTab implements MonitorTab {
             if (ln.treeNode != null && ln.treeNode.info.stat != null) {
                 var stat = ln.treeNode.info.stat;
                 lines.add(Line.from(Span.raw("")));
+                int w = numWidth(stat.exchangesTotal, stat.exchangesFailed, stat.exchangesInflight);
                 lines.add(Line.from(
                         Span.styled(" Total:    ", Style.EMPTY.dim()),
-                        Span.raw(String.valueOf(stat.exchangesTotal))));
+                        Span.raw(String.format("%" + w + "d", stat.exchangesTotal))));
                 Style failStyle = stat.exchangesFailed > 0
                         ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
                 lines.add(Line.from(
                         Span.styled(" Failed:   ", Style.EMPTY.dim()),
-                        Span.styled(String.valueOf(stat.exchangesFailed), failStyle)));
+                        Span.styled(String.format("%" + w + "d", stat.exchangesFailed), failStyle)));
                 lines.add(Line.from(
                         Span.styled(" Inflight: ", Style.EMPTY.dim()),
-                        Span.raw(String.valueOf(stat.exchangesInflight))));
+                        Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
 
                 if (stat.exchangesTotal > 0) {
                     lines.add(Line.from(Span.raw("")));
+                    int tw = numWidth(stat.meanProcessingTime, stat.maxProcessingTime,
+                            stat.minProcessingTime, stat.lastProcessingTime);
                     lines.add(Line.from(
                             Span.styled(" Mean: ", Style.EMPTY.dim()),
-                            Span.raw(stat.meanProcessingTime + " ms")));
+                            Span.raw(String.format("%" + tw + "d ms", stat.meanProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Max:  ", Style.EMPTY.dim()),
-                            Span.raw(stat.maxProcessingTime + " ms")));
+                            Span.raw(String.format("%" + tw + "d ms", stat.maxProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Min:  ", Style.EMPTY.dim()),
-                            Span.raw(stat.minProcessingTime + " ms")));
+                            Span.raw(String.format("%" + tw + "d ms", stat.minProcessingTime))));
                     lines.add(Line.from(
                             Span.styled(" Last: ", Style.EMPTY.dim()),
-                            Span.raw(stat.lastProcessingTime + " ms")));
+                            Span.raw(String.format("%" + tw + "d ms", stat.lastProcessingTime))));
                 }
             }
         } else {
@@ -656,5 +661,13 @@ class DiagramTab implements MonitorTab {
         result.put("diagram", String.join("\n", lines));
         result.put("lines", lines.size());
         return result;
+    }
+
+    private static int numWidth(long... values) {
+        long max = 0;
+        for (long v : values) {
+            max = Math.max(max, Math.abs(v));
+        }
+        return Math.max(1, String.valueOf(max).length());
     }
 }
