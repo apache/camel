@@ -23,8 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a parameter as being an injection point of the headers of an inbound {@link Message}
+ * Marks a method parameter as the entire header map of the inbound {@link Message} when Camel performs
+ * <a href="https://camel.apache.org/manual/bean-binding.html">bean binding</a>.
+ * <p/>
+ * The parameter type should be {@code Map<String, Object>} (or a compatible super-type). Unlike {@link Header}, which
+ * injects a single named header, {@code @Headers} gives the method direct access to all headers at once, useful when
+ * the set of headers to process is dynamic or unknown at compile time.
  *
+ * @see Header
+ * @see Body
  * @see Message#getHeaders()
  */
 @Retention(RetentionPolicy.RUNTIME)

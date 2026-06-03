@@ -17,8 +17,15 @@
 package org.apache.camel;
 
 /**
- * A factory for creating {@link Predicate}
+ * Deferred factory for creating a {@link Predicate} within a {@link CamelContext}.
+ * <p/>
+ * Being a {@link FunctionalInterface}, implementations are typically supplied as lambdas or method references wherever
+ * a context-aware predicate must be constructed lazily, for example when wiring filter or choice EIP definitions during
+ * route startup. The factory receives the context so it can resolve language services or configuration values needed to
+ * build the predicate.
  *
+ * @see   Predicate
+ * @see   ExpressionFactory
  * @since 3.8
  */
 @FunctionalInterface

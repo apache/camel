@@ -17,8 +17,14 @@
 package org.apache.camel;
 
 /**
- * An interface to represent an object that can be resolved as a producer {@link Endpoint}
+ * Implemented by objects that can be resolved to a producer-facing {@link Endpoint}.
+ * <p/>
+ * The DSL and annotation processor call {@link #resolve(CamelContext)} to obtain a concrete {@link Endpoint} when an
+ * object used in a {@code to()} clause is not itself an endpoint URI string. This allows richer types (for example,
+ * enum constants or wrapper objects) to be used as route destinations without requiring string parsing.
  *
+ * @see   EndpointConsumerResolver
+ * @see   Endpoint
  * @since 3.1
  */
 public interface EndpointProducerResolver {
