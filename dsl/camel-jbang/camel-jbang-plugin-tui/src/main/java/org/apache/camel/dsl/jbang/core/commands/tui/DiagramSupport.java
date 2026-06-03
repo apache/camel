@@ -594,8 +594,8 @@ class DiagramSupport {
                 && !"from".equals(type)) {
             return null;
         }
-        String code = box.layoutNode().treeNode.info.code;
-        if (code == null || code.isBlank()) {
+        String baseUri = extractBaseUri(box.layoutNode().treeNode.info.code);
+        if (baseUri == null || baseUri.isBlank()) {
             return null;
         }
 
@@ -609,9 +609,8 @@ class DiagramSupport {
             } else {
                 // "to" node: find route that consumes FROM this endpoint
                 if (currentRouteId.equals(edge.from.routeId) && !currentRouteId.equals(edge.to.routeId)) {
-                    // Match endpoint URI against the target route's from
-                    String targetFrom = edge.to.from;
-                    if (targetFrom != null && uriMatches(code, targetFrom)) {
+                    String targetFrom = extractBaseUri(edge.to.from);
+                    if (baseUri.equals(targetFrom)) {
                         return edge.to.routeId;
                     }
                 }
@@ -628,8 +627,8 @@ class DiagramSupport {
                 if (!lr.nodes.isEmpty()) {
                     var firstNode = lr.nodes.get(0);
                     if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
-                        String fromCode = firstNode.treeNode.info.code;
-                        if (fromCode != null && uriMatches(code, fromCode)) {
+                        String fromBaseUri = extractBaseUri(firstNode.treeNode.info.code);
+                        if (baseUri.equals(fromBaseUri)) {
                             return entry.getKey();
                         }
                     }
@@ -639,11 +638,26 @@ class DiagramSupport {
         return null;
     }
 
-    private static boolean uriMatches(String toUri, String fromUri) {
-        // Normalize: strip query parameters for matching
-        String toBase = toUri.contains("?") ? toUri.substring(0, toUri.indexOf('?')) : toUri;
-        String fromBase = fromUri.contains("?") ? fromUri.substring(0, fromUri.indexOf('?')) : fromUri;
-        return toBase.equals(fromBase);
+    /**
+     * Extracts the bare endpoint URI from a code field like "from[direct:foo?bar=baz]" or "to[kafka:topic]". Returns
+     * the base URI without query parameters.
+     */
+    static String extractBaseUri(String code) {
+        if (code == null) {
+            return null;
+        }
+        // Strip type[...] wrapper
+        int open = code.indexOf('[');
+        int close = code.lastIndexOf(']');
+        String uri;
+        if (open >= 0 && close > open) {
+            uri = code.substring(open + 1, close);
+        } else {
+            uri = code;
+        }
+        // Strip query parameters
+        int q = uri.indexOf('?');
+        return q >= 0 ? uri.substring(0, q) : uri;
     }
 
     void selectEipNodeUp() {
@@ -746,6 +760,15 @@ class DiagramSupport {
      */
     private Set<String> computeLinkableEndpoints(String currentRouteId) {
         Set<String> endpoints = new HashSet<>();
+        String currentFromUri = null;
+        var currentLayout = routeLayouts.get(currentRouteId);
+        if (currentLayout != null && !currentLayout.nodes.isEmpty()) {
+            var fromNode = currentLayout.nodes.get(0);
+            if ("from".equals(fromNode.type) && fromNode.treeNode != null) {
+                currentFromUri = extractBaseUri(fromNode.treeNode.info.code);
+            }
+        }
+
         for (var entry : routeLayouts.entrySet()) {
             if (currentRouteId.equals(entry.getKey())) {
                 continue;
@@ -755,33 +778,20 @@ class DiagramSupport {
                 // Add "from" URIs of other routes (linkable from "to" nodes)
                 var firstNode = lr.nodes.get(0);
                 if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
-                    String code = firstNode.treeNode.info.code;
-                    if (code != null) {
-                        endpoints.add(code.contains("?") ? code.substring(0, code.indexOf('?')) : code);
+                    String uri = extractBaseUri(firstNode.treeNode.info.code);
+                    if (uri != null) {
+                        endpoints.add(uri);
                     }
                 }
-                // Add "to" URIs of other routes (linkable from "from" node)
-                for (var node : lr.nodes) {
-                    String type = node.type;
-                    if (("to".equals(type) || "toD".equals(type) || "wireTap".equals(type))
-                            && node.treeNode != null) {
-                        String code = node.treeNode.info.code;
-                        if (code != null) {
-                            String baseUri = code.contains("?") ? code.substring(0, code.indexOf('?')) : code;
-                            // Check if this targets our route's "from" endpoint
-                            var currentLayout = routeLayouts.get(currentRouteId);
-                            if (currentLayout != null && !currentLayout.nodes.isEmpty()) {
-                                var fromNode = currentLayout.nodes.get(0);
-                                if ("from".equals(fromNode.type) && fromNode.treeNode != null) {
-                                    String fromCode = fromNode.treeNode.info.code;
-                                    if (fromCode != null) {
-                                        String fromBase = fromCode.contains("?")
-                                                ? fromCode.substring(0, fromCode.indexOf('?')) : fromCode;
-                                        if (baseUri.equals(fromBase)) {
-                                            endpoints.add(fromBase);
-                                        }
-                                    }
-                                }
+                // Add "to" URIs that target our "from" endpoint (linkable from "from" node)
+                if (currentFromUri != null) {
+                    for (var node : lr.nodes) {
+                        String type = node.type;
+                        if (("to".equals(type) || "toD".equals(type) || "wireTap".equals(type))
+                                && node.treeNode != null) {
+                            String uri = extractBaseUri(node.treeNode.info.code);
+                            if (currentFromUri.equals(uri)) {
+                                endpoints.add(currentFromUri);
                             }
                         }
                     }
