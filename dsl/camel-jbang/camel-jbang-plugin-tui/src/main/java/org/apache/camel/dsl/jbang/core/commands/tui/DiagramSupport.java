@@ -25,11 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import dev.tamboui.image.Image;
-import dev.tamboui.image.ImageData;
-import dev.tamboui.image.ImageScaling;
-import dev.tamboui.image.capability.TerminalImageCapabilities;
-import dev.tamboui.image.protocol.ImageProtocol;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -49,10 +44,8 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
 import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
-import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.TopologyAsciiRenderer;
 import org.apache.camel.diagram.TopologyHelper;
-import org.apache.camel.diagram.TopologyImageRenderer;
 import org.apache.camel.diagram.TopologyLayoutEngine;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
@@ -67,7 +60,6 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 class DiagramSupport {
 
     private boolean showDiagram;
-    private boolean diagramTextMode;
     private boolean topologyMode;
     private boolean showDescription;
     private List<RouteDiagramAsciiRenderer.CounterPos> counterPositions = Collections.emptyList();
@@ -77,13 +69,6 @@ class DiagramSupport {
     private int scrollX;
     private final ScrollbarState vScrollState = new ScrollbarState();
     private final ScrollbarState hScrollState = new ScrollbarState();
-    private ImageData imageData;
-    private ImageData fullImageData;
-    private ImageProtocol protocol;
-    private int cropX = -1;
-    private int cropY = -1;
-    private int cropW = -1;
-    private int cropH = -1;
     private final AtomicBoolean loading = new AtomicBoolean(false);
     private List<TopologyAsciiRenderer.NodeBox> nodeBoxes = Collections.emptyList();
     private List<TopologyLayoutNode> topologyNodes = Collections.emptyList();
@@ -104,10 +89,6 @@ class DiagramSupport {
 
     boolean isShowDiagram() {
         return showDiagram;
-    }
-
-    boolean isDiagramTextMode() {
-        return diagramTextMode;
     }
 
     boolean isTopologyMode() {
@@ -178,7 +159,7 @@ class DiagramSupport {
         if (topologyLayout != null || !routeLayouts.isEmpty()) {
             return true;
         }
-        return diagramTextMode ? !lines.isEmpty() : fullImageData != null;
+        return !lines.isEmpty();
     }
 
     boolean hasNativeLayout() {
@@ -211,10 +192,6 @@ class DiagramSupport {
 
     ScrollbarState getHScrollState() {
         return hScrollState;
-    }
-
-    ImageData getFullImageData() {
-        return fullImageData;
     }
 
     boolean handleScrollKeys(KeyEvent ke) {
@@ -257,32 +234,12 @@ class DiagramSupport {
         return false;
     }
 
-    void toggleImageDiagram(Runnable loadTrigger) {
+    void toggleDiagram(Runnable loadTrigger) {
         if (showDiagram) {
             close();
         } else {
-            diagramTextMode = false;
             loadTrigger.run();
         }
-    }
-
-    void toggleTextDiagram(Runnable loadTrigger) {
-        if (showDiagram) {
-            close();
-        } else {
-            diagramTextMode = true;
-            loadTrigger.run();
-        }
-    }
-
-    void switchToImageMode() {
-        diagramTextMode = false;
-        showDiagram = true;
-    }
-
-    void switchToTextMode() {
-        diagramTextMode = true;
-        showDiagram = true;
     }
 
     boolean handleEscape() {
@@ -295,8 +252,6 @@ class DiagramSupport {
 
     void close() {
         showDiagram = false;
-        imageData = null;
-        fullImageData = null;
     }
 
     void reset() {
@@ -316,8 +271,7 @@ class DiagramSupport {
     }
 
     void renderFooterHints(List<Span> spans) {
-        String closeKey = diagramTextMode ? "D" : "d";
-        hint(spans, closeKey + "/Esc", "close");
+        hint(spans, "Esc", "close");
         hint(spans, "↑↓←→", "scroll");
         hint(spans, "PgUp/PgDn", "page");
         hint(spans, "Home/End", "top/end");
@@ -772,18 +726,13 @@ class DiagramSupport {
         }
     }
 
-    // ---- Rendering (legacy text/image) ----
+    // ---- Rendering (legacy text) ----
 
     void renderDiagram(Frame frame, Rect area, String title) {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(title)
                 .build();
-
-        if (fullImageData != null) {
-            renderImageDiagram(frame, area, block);
-            return;
-        }
 
         int maxWidth = 0;
         for (String line : lines) {
@@ -843,76 +792,6 @@ class DiagramSupport {
         }
     }
 
-    private void renderImageDiagram(Frame frame, Rect area, Block block) {
-        int imgW = fullImageData.width();
-        int imgH = fullImageData.height();
-
-        Rect inner = block.inner(area);
-        int pxPerCol = protocol.resolution().widthMultiplier();
-        int pxPerRow = protocol.resolution().heightMultiplier();
-        int viewCols = Math.max(1, inner.width() - 1);
-        int viewRows = Math.max(1, inner.height() - 1);
-        int viewW = viewCols * pxPerCol;
-        int viewH = viewRows * pxPerRow;
-
-        int maxScrollY = Math.max(0, (imgH - viewH + pxPerRow - 1) / pxPerRow);
-        int maxScrollX = Math.max(0, (imgW - viewW + pxPerCol - 1) / pxPerCol);
-        scrollY = Math.min(scrollY, maxScrollY);
-        scrollX = Math.min(scrollX, maxScrollX);
-
-        int cx = Math.min(scrollX * pxPerCol, imgW);
-        int cy = Math.min(scrollY * pxPerRow, imgH);
-        int cw = Math.min(viewW, imgW - cx);
-        int ch = Math.min(viewH, imgH - cy);
-
-        if (cw > 0 && ch > 0) {
-            if (cx != cropX || cy != cropY || cw != cropW || ch != cropH) {
-                imageData = fullImageData.crop(cx, cy, cw, ch);
-                cropX = cx;
-                cropY = cy;
-                cropW = cw;
-                cropH = ch;
-            }
-        } else if (imageData != fullImageData) {
-            imageData = fullImageData;
-        }
-
-        frame.renderWidget(block, area);
-
-        List<Rect> vChunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(vChunks.get(0));
-
-        Image img = Image.builder()
-                .data(imageData)
-                .protocol(protocol)
-                .scaling(ImageScaling.FIT)
-                .build();
-        frame.renderWidget(img, hChunks.get(0));
-
-        int totalRows = (imgH + pxPerRow - 1) / pxPerRow;
-        vScrollState.contentLength(totalRows);
-        vScrollState.viewportContentLength(viewRows);
-        vScrollState.position(scrollY);
-        frame.renderStatefulWidget(
-                Scrollbar.builder().build(),
-                hChunks.get(1), vScrollState);
-
-        if (imgW > viewW) {
-            int totalCols = (imgW + pxPerCol - 1) / pxPerCol;
-            hScrollState.contentLength(totalCols);
-            hScrollState.viewportContentLength(viewCols);
-            hScrollState.position(scrollX);
-            frame.renderStatefulWidget(
-                    Scrollbar.horizontal(),
-                    vChunks.get(1), hScrollState);
-        }
-    }
-
     // ---- Async loading ----
 
     boolean beginLoad() {
@@ -925,19 +804,17 @@ class DiagramSupport {
 
     void setLoadingPlaceholder() {
         lines = List.of("(Loading diagram...)");
-        imageData = null;
-        fullImageData = null;
         showDiagram = true;
         scrollY = 0;
         scrollX = 0;
     }
 
     void loadHighlightedDiagramInBackground(
-            MonitorContext ctx, String pid, boolean textMode,
+            MonitorContext ctx, String pid,
             String[] messageHistory, RouteDiagramHelper.HighlightStyle hlStyle) {
         JsonObject jo = requestRouteStructure(ctx, pid);
         if (jo == null) {
-            applyResult(ctx, List.of("(No response from integration)"), null, null, null);
+            applyResult(ctx, List.of("(No response from integration)"));
             return;
         }
 
@@ -947,7 +824,7 @@ class DiagramSupport {
 
         List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(jo);
         if (routes.isEmpty()) {
-            applyResult(ctx, List.of("(No routes in response)"), null, null, null);
+            applyResult(ctx, List.of("(No routes in response)"));
             return;
         }
 
@@ -962,11 +839,11 @@ class DiagramSupport {
                 = new RouteDiagramHelper.HighlightInfo(nodeIds, highlightInfo.getRouteOrder(), hlStyle);
         routes = RouteDiagramHelper.filterAndOrderRoutes(routes, fullHighlight);
         if (routes.isEmpty()) {
-            applyResult(ctx, List.of("(No routes contain highlighted nodes)"), null, null, null);
+            applyResult(ctx, List.of("(No routes contain highlighted nodes)"));
             return;
         }
 
-        renderRoutes(ctx, textMode, routes, false, nodeIds, hlStyle);
+        renderRoutes(ctx, routes, false, nodeIds, hlStyle);
     }
 
     void loadAllDiagramsInBackground(
@@ -1063,17 +940,17 @@ class DiagramSupport {
     }
 
     void loadRouteDiagramInBackground(
-            MonitorContext ctx, String pid, boolean textMode,
+            MonitorContext ctx, String pid,
             String routeId, boolean metrics) {
         JsonObject jo = requestRouteStructure(ctx, pid);
         if (jo == null) {
-            applyResult(ctx, List.of("(No response from integration)"), null, null, null);
+            applyResult(ctx, List.of("(No response from integration)"));
             return;
         }
 
         List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(jo);
         if (routes.isEmpty()) {
-            applyResult(ctx, List.of("(No routes in response)"), null, null, null);
+            applyResult(ctx, List.of("(No routes in response)"));
             return;
         }
 
@@ -1081,14 +958,14 @@ class DiagramSupport {
             routes.removeIf(r -> !routeId.equals(r.routeId));
         }
 
-        renderRoutes(ctx, textMode, routes, metrics, null, null);
+        renderRoutes(ctx, routes, metrics, null, null);
     }
 
     void loadTopologyDiagramInBackground(
-            MonitorContext ctx, String pid, boolean textMode, boolean metrics, boolean external) {
+            MonitorContext ctx, String pid, boolean metrics, boolean external) {
         JsonObject jo = requestRouteTopology(ctx, pid, external, false);
         if (jo == null) {
-            applyResult(ctx, List.of("(No response from integration)"), null, null, null);
+            applyResult(ctx, List.of("(No response from integration)"));
             return;
         }
 
@@ -1098,77 +975,58 @@ class DiagramSupport {
             TopologyHelper.addExternalEndpoints(nodes, edges, jo);
         }
         if (nodes.isEmpty()) {
-            applyResult(ctx, List.of("(No routes in response)"), null, null, null);
+            applyResult(ctx, List.of("(No routes in response)"));
             return;
         }
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine();
         TopologyLayoutResult result = engine.layout(nodes, edges);
 
-        if (textMode) {
-            TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
-                    engine.getNodeWidth(), true, metrics, showDescription);
-            String text = renderer.renderDiagramPlain(result);
+        TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
+                engine.getNodeWidth(), true, metrics, showDescription);
+        String text = renderer.renderDiagramPlain(result);
 
-            List<String> resultLines = new ArrayList<>();
-            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
-            String[] rawLines = text.split("\n", -1);
-            int[] rowMapping = new int[rawLines.length];
-            int newRow = 0;
-            for (int i = 0; i < rawLines.length; i++) {
-                if (!rawLines[i].isEmpty()) {
-                    rowMapping[i] = newRow++;
-                    resultLines.add(rawLines[i]);
-                } else {
-                    rowMapping[i] = -1;
-                }
-            }
-
-            for (TopologyAsciiRenderer.CounterPos cp : renderer.getCounterPositions()) {
-                if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
-                    RouteDiagramAsciiRenderer.CounterType mapped = switch (cp.type()) {
-                        case OK -> RouteDiagramAsciiRenderer.CounterType.OK;
-                        case FAIL -> RouteDiagramAsciiRenderer.CounterType.FAIL;
-                        case TRIGGER -> RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_SUCCESS;
-                        case EXTERNAL -> RouteDiagramAsciiRenderer.CounterType.EXTERNAL;
-                    };
-                    positions.add(new RouteDiagramAsciiRenderer.CounterPos(
-                            rowMapping[cp.row()], cp.col(), cp.length(), mapped));
-                }
-            }
-
-            List<TopologyAsciiRenderer.NodeBox> boxes = new ArrayList<>();
-            for (TopologyAsciiRenderer.NodeBox nb : renderer.getNodeBoxes()) {
-                int mappedStart = (nb.startRow() >= 0 && nb.startRow() < rowMapping.length)
-                        ? rowMapping[nb.startRow()] : -1;
-                int mappedEnd = (nb.endRow() >= 0 && nb.endRow() < rowMapping.length)
-                        ? rowMapping[nb.endRow()] : -1;
-                if (mappedStart >= 0 && mappedEnd >= 0) {
-                    boxes.add(new TopologyAsciiRenderer.NodeBox(
-                            nb.routeId(), mappedStart, mappedEnd, nb.startCol(), nb.endCol(), nb.layer()));
-                }
-            }
-
-            applyResult(ctx, resultLines, null, null, null, positions, Collections.emptySet(), boxes,
-                    result.nodes, result.edges);
-        } else {
-            TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
-            if (caps.supportsNativeImages()) {
-                RouteDiagramRenderer.DiagramColors colors
-                        = RouteDiagramRenderer.DiagramColors.parse("transparent");
-                java.awt.image.BufferedImage image = TopologyImageRenderer.renderImage(
-                        result, colors, TopologyLayoutEngine.DEFAULT_FONT_SIZE,
-                        TopologyLayoutEngine.DEFAULT_NODE_WIDTH, metrics, false);
-                ImageData full = ImageData.fromBufferedImage(image);
-                ImageData resized = full.resize(full.width() / 2, full.height() / 2);
-                ImageProtocol proto = caps.bestProtocol();
-                applyResult(ctx, Collections.emptyList(), resized, resized, proto);
+        List<String> resultLines = new ArrayList<>();
+        List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
+        String[] rawLines = text.split("\n", -1);
+        int[] rowMapping = new int[rawLines.length];
+        int newRow = 0;
+        for (int i = 0; i < rawLines.length; i++) {
+            if (!rawLines[i].isEmpty()) {
+                rowMapping[i] = newRow++;
+                resultLines.add(rawLines[i]);
             } else {
-                applyResult(ctx, List.of(
-                        "(Terminal does not support image rendering)",
-                        "(Press Shift+D for text diagram)"), null, null, null);
+                rowMapping[i] = -1;
             }
         }
+
+        for (TopologyAsciiRenderer.CounterPos cp : renderer.getCounterPositions()) {
+            if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
+                RouteDiagramAsciiRenderer.CounterType mapped = switch (cp.type()) {
+                    case OK -> RouteDiagramAsciiRenderer.CounterType.OK;
+                    case FAIL -> RouteDiagramAsciiRenderer.CounterType.FAIL;
+                    case TRIGGER -> RouteDiagramAsciiRenderer.CounterType.HIGHLIGHT_SUCCESS;
+                    case EXTERNAL -> RouteDiagramAsciiRenderer.CounterType.EXTERNAL;
+                };
+                positions.add(new RouteDiagramAsciiRenderer.CounterPos(
+                        rowMapping[cp.row()], cp.col(), cp.length(), mapped));
+            }
+        }
+
+        List<TopologyAsciiRenderer.NodeBox> boxes = new ArrayList<>();
+        for (TopologyAsciiRenderer.NodeBox nb : renderer.getNodeBoxes()) {
+            int mappedStart = (nb.startRow() >= 0 && nb.startRow() < rowMapping.length)
+                    ? rowMapping[nb.startRow()] : -1;
+            int mappedEnd = (nb.endRow() >= 0 && nb.endRow() < rowMapping.length)
+                    ? rowMapping[nb.endRow()] : -1;
+            if (mappedStart >= 0 && mappedEnd >= 0) {
+                boxes.add(new TopologyAsciiRenderer.NodeBox(
+                        nb.routeId(), mappedStart, mappedEnd, nb.startCol(), nb.endCol(), nb.layer()));
+            }
+        }
+
+        applyResult(ctx, resultLines, positions, Collections.emptySet(), boxes,
+                result.nodes, result.edges);
     }
 
     private JsonObject requestRouteTopology(MonitorContext ctx, String pid, boolean external, boolean routes) {
@@ -1194,98 +1052,65 @@ class DiagramSupport {
     }
 
     private void renderRoutes(
-            MonitorContext ctx, boolean textMode,
+            MonitorContext ctx,
             List<RouteDiagramLayoutEngine.RouteInfo> routes, boolean metrics,
             Set<String> highlightNodeIds, RouteDiagramHelper.HighlightStyle hlStyle) {
-        if (textMode) {
-            RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
-                    ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
-                    : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                    labelMode);
+        RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
+                ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
+                : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
+                RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
+                labelMode);
 
-            List<String> result = new ArrayList<>();
-            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
-            Set<Integer> titleRows = new HashSet<>();
+        List<String> result = new ArrayList<>();
+        List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
+        Set<Integer> titleRows = new HashSet<>();
 
-            int currentY = RouteDiagramLayoutEngine.PADDING;
-            for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                if (!result.isEmpty()) {
-                    result.add("");
-                    result.add("");
-                }
-
-                int titleRow = result.size();
-
-                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, currentY);
-                currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
-
-                RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
-                        RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
-                String ascii;
-                if (highlightNodeIds != null && hlStyle != null) {
-                    ascii = asciiRenderer.renderDiagram(List.of(lr),
-                            lr.maxY + RouteDiagramLayoutEngine.V_GAP, highlightNodeIds, hlStyle);
-                } else {
-                    ascii = asciiRenderer.renderDiagram(List.of(lr),
-                            lr.maxY + RouteDiagramLayoutEngine.V_GAP);
-                }
-                List<RouteDiagramAsciiRenderer.CounterPos> origPositions = asciiRenderer.getCounterPositions();
-
-                String[] rawLines = ascii.split("\n", -1);
-                int[] rowMapping = new int[rawLines.length];
-                int newRow = result.size();
-                for (int i = 0; i < rawLines.length; i++) {
-                    if (!rawLines[i].isEmpty()) {
-                        rowMapping[i] = newRow++;
-                        result.add(rawLines[i]);
-                    } else {
-                        rowMapping[i] = -1;
-                    }
-                }
-                for (RouteDiagramAsciiRenderer.CounterPos cp : origPositions) {
-                    if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
-                        positions.add(new RouteDiagramAsciiRenderer.CounterPos(
-                                rowMapping[cp.row()], cp.col(), cp.length(), cp.type()));
-                    }
-                }
-                titleRows.add(titleRow);
+        int currentY = RouteDiagramLayoutEngine.PADDING;
+        for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
+            if (!result.isEmpty()) {
+                result.add("");
+                result.add("");
             }
 
-            applyResult(ctx, result, null, null, null, positions, titleRows);
-        } else {
-            TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
-            if (caps.supportsNativeImages()) {
-                RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
-                List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
-                int totalHeight = 0;
-                for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, totalHeight);
-                    layoutRoutes.add(lr);
-                    totalHeight = lr.maxY;
-                }
-                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                        engine.getNodeWidth(),
-                        RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * RouteDiagramLayoutEngine.SCALE, metrics);
-                RouteDiagramRenderer.DiagramColors colors
-                        = RouteDiagramRenderer.DiagramColors.parse("transparent");
-                java.awt.image.BufferedImage image;
-                if (highlightNodeIds != null && hlStyle != null) {
-                    image = renderer.renderDiagram(layoutRoutes, totalHeight, colors, highlightNodeIds, hlStyle);
-                } else {
-                    image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
-                }
-                ImageData full = ImageData.fromBufferedImage(image);
-                ImageData resized = full.resize(full.width() / 2, full.height() / 2);
-                ImageProtocol proto = caps.bestProtocol();
-                applyResult(ctx, Collections.emptyList(), resized, resized, proto);
+            int titleRow = result.size();
+
+            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, currentY);
+            currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+
+            RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
+                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
+            String ascii;
+            if (highlightNodeIds != null && hlStyle != null) {
+                ascii = asciiRenderer.renderDiagram(List.of(lr),
+                        lr.maxY + RouteDiagramLayoutEngine.V_GAP, highlightNodeIds, hlStyle);
             } else {
-                applyResult(ctx, List.of(
-                        "(Terminal does not support image rendering)",
-                        "(Press Shift+D for text diagram)"), null, null, null);
+                ascii = asciiRenderer.renderDiagram(List.of(lr),
+                        lr.maxY + RouteDiagramLayoutEngine.V_GAP);
             }
+            List<RouteDiagramAsciiRenderer.CounterPos> origPositions = asciiRenderer.getCounterPositions();
+
+            String[] rawLines = ascii.split("\n", -1);
+            int[] rowMapping = new int[rawLines.length];
+            int newRow = result.size();
+            for (int i = 0; i < rawLines.length; i++) {
+                if (!rawLines[i].isEmpty()) {
+                    rowMapping[i] = newRow++;
+                    result.add(rawLines[i]);
+                } else {
+                    rowMapping[i] = -1;
+                }
+            }
+            for (RouteDiagramAsciiRenderer.CounterPos cp : origPositions) {
+                if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
+                    positions.add(new RouteDiagramAsciiRenderer.CounterPos(
+                            rowMapping[cp.row()], cp.col(), cp.length(), cp.type()));
+                }
+            }
+            titleRows.add(titleRow);
         }
+
+        applyResult(ctx, result, positions, titleRows);
     }
 
     private JsonObject requestRouteStructure(MonitorContext ctx, String pid) {
@@ -1306,29 +1131,20 @@ class DiagramSupport {
         return jo;
     }
 
-    private void applyResult(
-            MonitorContext ctx,
-            List<String> resultLines, ImageData resultImageData, ImageData resultFullImageData,
-            ImageProtocol resultProtocol) {
-        applyResult(ctx, resultLines, resultImageData, resultFullImageData, resultProtocol,
-                Collections.emptyList(), Collections.emptySet(), Collections.emptyList(),
-                Collections.emptyList(), Collections.emptyList());
+    private void applyResult(MonitorContext ctx, List<String> resultLines) {
+        applyResult(ctx, resultLines, Collections.emptyList(), Collections.emptySet(),
+                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
     }
 
     private void applyResult(
-            MonitorContext ctx,
-            List<String> resultLines, ImageData resultImageData, ImageData resultFullImageData,
-            ImageProtocol resultProtocol,
+            MonitorContext ctx, List<String> resultLines,
             List<RouteDiagramAsciiRenderer.CounterPos> positions, Set<Integer> titleRows) {
-        applyResult(ctx, resultLines, resultImageData, resultFullImageData, resultProtocol,
-                positions, titleRows, Collections.emptyList(),
-                Collections.emptyList(), Collections.emptyList());
+        applyResult(ctx, resultLines, positions, titleRows,
+                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
     }
 
     private void applyResult(
-            MonitorContext ctx,
-            List<String> resultLines, ImageData resultImageData, ImageData resultFullImageData,
-            ImageProtocol resultProtocol,
+            MonitorContext ctx, List<String> resultLines,
             List<RouteDiagramAsciiRenderer.CounterPos> positions, Set<Integer> titleRows,
             List<TopologyAsciiRenderer.NodeBox> resultNodeBoxes,
             List<TopologyLayoutNode> resultTopologyNodes,
@@ -1341,8 +1157,6 @@ class DiagramSupport {
             lines = resultLines;
             counterPositions = positions;
             routeTitleRows = titleRows;
-            fullImageData = resultFullImageData;
-            protocol = resultProtocol;
             topologyNodes = resultTopologyNodes;
             topologyEdges = resultTopologyEdges;
 
@@ -1369,20 +1183,10 @@ class DiagramSupport {
             }
 
             if (!wasShowing) {
-                imageData = resultImageData;
                 scrollY = 0;
                 scrollX = 0;
-                cropX = -1;
-                cropY = -1;
-                cropW = -1;
-                cropH = -1;
-            } else {
-                showDiagram = true;
-                cropX = -1;
-                cropY = -1;
-                cropW = -1;
-                cropH = -1;
             }
+            showDiagram = true;
         });
     }
 

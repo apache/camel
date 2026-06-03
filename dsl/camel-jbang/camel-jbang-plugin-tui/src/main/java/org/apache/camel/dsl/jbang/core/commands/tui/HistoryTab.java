@@ -111,7 +111,7 @@ class HistoryTab implements MonitorTab {
             return true;
         }
         if (ke.isCharIgnoreCase('d')) {
-            diagram.toggleTextDiagram(this::loadDiagramForCurrentView);
+            diagram.toggleDiagram(this::loadDiagramForCurrentView);
             return true;
         }
 
@@ -495,7 +495,6 @@ class HistoryTab implements MonitorTab {
         }
 
         String pid = ctx.selectedPid;
-        boolean textMode = diagram.isDiagramTextMode();
         RouteDiagramHelper.HighlightStyle style = failed
                 ? RouteDiagramHelper.HighlightStyle.FAIL
                 : RouteDiagramHelper.HighlightStyle.SUCCESS;
@@ -504,7 +503,7 @@ class HistoryTab implements MonitorTab {
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                diagram.loadHighlightedDiagramInBackground(ctx, pid, textMode, messageHistory, style);
+                diagram.loadHighlightedDiagramInBackground(ctx, pid, messageHistory, style);
             } finally {
                 diagram.endLoad();
             }

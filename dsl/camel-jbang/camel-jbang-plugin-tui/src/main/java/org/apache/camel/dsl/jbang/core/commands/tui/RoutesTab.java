@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import dev.tamboui.image.ImageData;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -102,10 +101,6 @@ class RoutesTab implements MonitorTab {
         return diagram.isShowDiagram();
     }
 
-    boolean isDiagramTextMode() {
-        return diagram.isDiagramTextMode();
-    }
-
     boolean isDiagramMetrics() {
         return diagramMetrics;
     }
@@ -116,14 +111,6 @@ class RoutesTab implements MonitorTab {
 
     boolean isShowSource() {
         return showSource;
-    }
-
-    ImageData getDiagramFullImageData() {
-        return diagram.getFullImageData();
-    }
-
-    boolean hasImageDiagram() {
-        return diagram.getFullImageData() != null;
     }
 
     @Override
@@ -208,7 +195,7 @@ class RoutesTab implements MonitorTab {
 
         // Text diagram toggle
         if (ke.isCharIgnoreCase('d')) {
-            diagram.toggleTextDiagram(this::loadDiagramForSelectedRoute);
+            diagram.toggleDiagram(this::loadDiagramForSelectedRoute);
             return true;
         }
 
@@ -296,7 +283,7 @@ class RoutesTab implements MonitorTab {
 
         // Fullscreen diagram mode
         if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
-            String title = diagram.isDiagramTextMode() ? "" : " Diagram [" + diagramRouteId + "] ";
+            String title = " Diagram [" + diagramRouteId + "] ";
             if (diagramAllRoutes) {
                 diagram.renderDiagram(frame, area, title);
             } else {
@@ -447,7 +434,7 @@ class RoutesTab implements MonitorTab {
 
         // Bottom panel: diagram or processors
         if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
-            String title = diagram.isDiagramTextMode() ? "" : " Diagram [" + diagramRouteId + "] ";
+            String title = " Diagram [" + diagramRouteId + "] ";
             diagram.renderDiagram(frame, chunks.get(1), title);
         } else {
             Integer selectedRoute = routeTableState.selected();
@@ -1002,7 +989,6 @@ class RoutesTab implements MonitorTab {
         }
 
         String pid = ctx.selectedPid;
-        boolean textMode = diagram.isDiagramTextMode();
         boolean showMetrics = diagramMetrics;
         String routeId = diagramAllRoutes ? null : selectedRoute.routeId;
 
@@ -1013,7 +999,7 @@ class RoutesTab implements MonitorTab {
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                diagram.loadRouteDiagramInBackground(ctx, pid, textMode, routeId, showMetrics);
+                diagram.loadRouteDiagramInBackground(ctx, pid, routeId, showMetrics);
             } finally {
                 diagram.endLoad();
             }

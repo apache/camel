@@ -241,17 +241,6 @@ class DiagramTab implements MonitorTab {
                 } else {
                     diagram.renderNativeRouteDiagram(frame, area, title, diagramMetrics, routeLayout);
                 }
-            } else {
-                if (selectedRouteId != null && area.width() > 60) {
-                    int panelWidth = 30;
-                    List<Rect> hChunks = Layout.horizontal()
-                            .constraints(Constraint.length(panelWidth), Constraint.fill())
-                            .split(area);
-                    renderInfoPanel(frame, hChunks.get(0), info, selectedRouteId);
-                    diagram.renderDiagram(frame, hChunks.get(1), title);
-                } else {
-                    diagram.renderDiagram(frame, area, title);
-                }
             }
             return;
         }
@@ -508,13 +497,8 @@ class DiagramTab implements MonitorTab {
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                if (topologyMode) {
-                    diagram.setTopologyMode(true);
-                    diagram.loadAllDiagramsInBackground(ctx, pid, showMetrics, external);
-                } else {
-                    diagram.setTopologyMode(false);
-                    diagram.loadRouteDiagramInBackground(ctx, pid, true, drillDownRouteId, showMetrics);
-                }
+                diagram.setTopologyMode(topologyMode);
+                diagram.loadAllDiagramsInBackground(ctx, pid, showMetrics, external);
             } finally {
                 diagram.endLoad();
             }
