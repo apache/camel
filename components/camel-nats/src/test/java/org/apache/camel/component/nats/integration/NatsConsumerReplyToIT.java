@@ -53,7 +53,7 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
                 from("direct:send")
                         .to("nats:test?replySubject=myReplyQueue&flushConnection=true");
 
-                from("nats:test?flushConnection=true")
+                from("nats:test?flushConnection=true&exchangePattern=InOut")
                         .to(mockResultEndpoint)
                         .convertBodyTo(String.class)
                         .setBody().simple("Bye ${body}");
