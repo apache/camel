@@ -59,20 +59,22 @@ class MonitorContext {
     }
 
     IntegrationInfo findSelectedIntegration() {
-        if (selectedPid == null) {
+        String pid = selectedPid;
+        if (pid == null) {
             return null;
         }
         return data.get().stream()
-                .filter(i -> selectedPid.equals(i.pid) && !i.vanishing)
+                .filter(i -> pid.equals(i.pid) && !i.vanishing)
                 .findFirst().orElse(null);
     }
 
     InfraInfo findSelectedInfra() {
-        if (selectedPid == null) {
+        String pid = selectedPid;
+        if (pid == null) {
             return null;
         }
         return infraData.get().stream()
-                .filter(i -> selectedPid.equals(i.pid) && !i.vanishing)
+                .filter(i -> pid.equals(i.pid) && !i.vanishing)
                 .findFirst().orElse(null);
     }
 
