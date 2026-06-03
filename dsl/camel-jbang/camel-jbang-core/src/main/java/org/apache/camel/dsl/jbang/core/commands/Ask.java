@@ -18,9 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +34,12 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -109,6 +114,7 @@ public class Ask extends CamelCommand {
 
     private long targetPid;
     private CamelCatalog catalog;
+    private volatile List<JsonObject> commandMetadataCache;
 
     public Ask(CamelJBangMain main) {
         super(main);
@@ -279,7 +285,9 @@ public class Ask extends CamelCommand {
         }
 
         sb.append("You can search the Camel catalog (components, EIPs), browse examples, ");
-        sb.append("and read/write files to create route definitions.\n\n");
+        sb.append("read/write files, and execute any Camel CLI command.\n\n");
+        sb.append("For CLI commands beyond the built-in tools, use cli_list_commands to discover ");
+        sb.append("available commands, cli_command_help to see options, and cli_exec to run them.\n\n");
         sb.append("Guidelines:\n");
         sb.append("- When creating routes, use YAML DSL format (Camel's recommended format for JBang)\n");
         sb.append("- Look at existing files first with list_files/read_file before creating new ones\n");
@@ -422,6 +430,24 @@ public class Ask extends CamelCommand {
                         "example", stringProp("Example name (e.g., timer-log, rest-api, circuit-breaker)"),
                         "file", stringProp("File name within the example (e.g., route.camel.yaml)")))));
 
+        // CLI tools (access to all camel CLI commands)
+        tools.add(new LlmClient.ToolDef(
+                "cli_list_commands",
+                "List available Camel CLI commands. Returns command names and descriptions. Use filter to narrow results.",
+                objectParams(Map.of(
+                        "filter", stringProp("Filter by command name or description (case-insensitive substring)")))));
+        tools.add(new LlmClient.ToolDef(
+                "cli_command_help",
+                "Get detailed help for a specific Camel CLI command, including all options with types and defaults.",
+                objectParams(Map.of(
+                        "command", stringProp("Full command name (e.g., 'get error', 'catalog component', 'run')")))));
+        tools.add(new LlmClient.ToolDef(
+                "cli_exec",
+                "Execute any Camel CLI command and return its output. Use cli_list_commands and cli_command_help first to discover commands and their options. CAUTION: some commands (stop, cmd stop-route, cmd stop-group) are destructive and will affect running integrations. Always confirm with the user before executing destructive commands.",
+                objectParams(Map.of(
+                        "command", stringProp(
+                                "The full command line to execute (e.g., 'get error --diagram', 'catalog component --filter=kafka')")))));
+
         // File tools
         tools.add(new LlmClient.ToolDef(
                 "list_files",
@@ -483,6 +509,10 @@ public class Ask extends CamelCommand {
                 // Example tools
                 case "list_examples" -> executeListExamples(args);
                 case "get_example_file" -> executeGetExampleFile(args);
+                // CLI tools
+                case "cli_list_commands" -> executeCliListCommands(args);
+                case "cli_command_help" -> executeCliCommandHelp(args);
+                case "cli_exec" -> executeCliExec(args);
                 // File tools
                 case "list_files" -> executeListFiles(args);
                 case "read_file" -> executeReadFile(args);
@@ -718,6 +748,248 @@ public class Ask extends CamelCommand {
         } else {
             return "This example is not bundled. View it on GitHub: " + ExampleHelper.getGithubUrl(entry) + "/" + file;
         }
+    }
+
+    // ---- CLI tools ----
+
+    @SuppressWarnings("unchecked")
+    private List<JsonObject> loadCommandMetadata() {
+        if (commandMetadataCache != null) {
+            return commandMetadataCache;
+        }
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/camel-jbang-commands-metadata.json")) {
+            if (is == null) {
+                return List.of();
+            }
+            String json = IOHelper.loadText(is);
+            JsonObject root = (JsonObject) Jsoner.deserialize(json);
+            Object commands = root.get("commands");
+            if (commands instanceof Collection<?>) {
+                commandMetadataCache = ((Collection<Object>) commands).stream()
+                        .filter(JsonObject.class::isInstance)
+                        .map(JsonObject.class::cast)
+                        .toList();
+                return commandMetadataCache;
+            }
+        } catch (Exception e) {
+            printer().printErr("Failed to load CLI command metadata: " + e.getMessage());
+        }
+        return List.of();
+    }
+
+    @SuppressWarnings("unchecked")
+    static void collectCommands(List<JsonObject> commands, List<JsonObject> result, String filter) {
+        for (JsonObject cmd : commands) {
+            String fullName = cmd.getString("fullName");
+            String description = cmd.getString("description");
+            boolean matches = filter == null || filter.isBlank()
+                    || (fullName != null && fullName.toLowerCase().contains(filter.toLowerCase()))
+                    || (description != null && description.toLowerCase().contains(filter.toLowerCase()));
+            if (matches) {
+                JsonObject entry = new JsonObject();
+                entry.put("command", fullName);
+                entry.put("description", description);
+                Object subs = cmd.get("subcommands");
+                if (subs instanceof Collection<?> subList && !subList.isEmpty()) {
+                    entry.put("hasSubcommands", true);
+                    entry.put("subcommandCount", subList.size());
+                }
+                result.add(entry);
+            }
+            Object subs = cmd.get("subcommands");
+            if (subs instanceof Collection<?>) {
+                collectCommands(
+                        ((Collection<Object>) subs).stream()
+                                .filter(JsonObject.class::isInstance)
+                                .map(JsonObject.class::cast)
+                                .toList(),
+                        result, filter);
+            }
+        }
+    }
+
+    private String executeCliListCommands(JsonObject args) {
+        String filter = args.getString("filter");
+        List<JsonObject> commands = loadCommandMetadata();
+        List<JsonObject> result = new ArrayList<>();
+        collectCommands(commands, result, filter);
+
+        JsonObject response = new JsonObject();
+        response.put("count", result.size());
+        response.put("commands", result);
+        return response.toJson();
+    }
+
+    @SuppressWarnings("unchecked")
+    static JsonObject findCommand(List<JsonObject> commands, String fullName) {
+        for (JsonObject cmd : commands) {
+            if (fullName.equals(cmd.getString("fullName"))) {
+                return cmd;
+            }
+            Object subs = cmd.get("subcommands");
+            if (subs instanceof Collection<?>) {
+                JsonObject found = findCommand(
+                        ((Collection<Object>) subs).stream()
+                                .filter(JsonObject.class::isInstance)
+                                .map(JsonObject.class::cast)
+                                .toList(),
+                        fullName);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private String executeCliCommandHelp(JsonObject args) {
+        String command = args.getString("command");
+        if (command == null || command.isBlank()) {
+            return "Error: command name is required";
+        }
+
+        List<JsonObject> commands = loadCommandMetadata();
+        JsonObject cmd = findCommand(commands, command);
+        if (cmd == null) {
+            return "Command not found: " + command + ". Use cli_list_commands to see available commands.";
+        }
+
+        JsonObject response = new JsonObject();
+        response.put("command", cmd.getString("fullName"));
+        response.put("description", cmd.getString("description"));
+
+        Object options = cmd.get("options");
+        if (options instanceof Collection<?>) {
+            List<JsonObject> opts = ((Collection<Object>) options).stream()
+                    .filter(JsonObject.class::isInstance)
+                    .map(JsonObject.class::cast)
+                    .map(opt -> {
+                        JsonObject o = new JsonObject();
+                        o.put("names", opt.getString("names"));
+                        o.put("description", opt.getString("description"));
+                        o.put("type", opt.getString("type"));
+                        String dv = opt.getString("defaultValue");
+                        if (dv != null) {
+                            o.put("defaultValue", dv);
+                        }
+                        return o;
+                    })
+                    .toList();
+            response.put("options", opts);
+        }
+
+        Object subs = cmd.get("subcommands");
+        if (subs instanceof Collection<?> subList && !subList.isEmpty()) {
+            List<JsonObject> subSummaries = ((Collection<Object>) subList).stream()
+                    .filter(JsonObject.class::isInstance)
+                    .map(JsonObject.class::cast)
+                    .map(sub -> {
+                        JsonObject s = new JsonObject();
+                        s.put("command", sub.getString("fullName"));
+                        s.put("description", sub.getString("description"));
+                        return s;
+                    })
+                    .toList();
+            response.put("subcommands", subSummaries);
+        }
+
+        return response.toJson();
+    }
+
+    private String executeCliExec(JsonObject args) {
+        String command = args.getString("command");
+        if (command == null || command.isBlank()) {
+            return "Error: command is required";
+        }
+
+        picocli.CommandLine commandLine = CamelJBangMain.getCommandLine();
+        if (commandLine == null) {
+            return "Error: CLI not available";
+        }
+
+        String[] cmdArgs = tokenizeCommand(command.trim());
+
+        // capture output by temporarily swapping the Printer on main
+        StringBuilder captured = new StringBuilder();
+        Printer capturingPrinter = new Printer() {
+            @Override
+            public void println() {
+                captured.append('\n');
+            }
+
+            @Override
+            public void println(String line) {
+                captured.append(line).append('\n');
+            }
+
+            @Override
+            public void print(String output) {
+                captured.append(output);
+            }
+
+            @Override
+            public void printf(String format, Object... fmtArgs) {
+                captured.append(String.format(format, fmtArgs));
+            }
+        };
+
+        // also capture PicoCLI's own output (usage/help text)
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        PrintWriter originalOut = commandLine.getOut();
+        PrintWriter originalErr = commandLine.getErr();
+        commandLine.setOut(pw);
+        commandLine.setErr(pw);
+
+        Printer originalPrinter = getMain().getOut();
+        getMain().setOut(capturingPrinter);
+        try {
+            int exitCode = commandLine.execute(cmdArgs);
+            pw.flush();
+            String output = captured.toString() + sw.toString();
+            if (output.isBlank() && exitCode != 0) {
+                return "Command exited with code " + exitCode;
+            }
+            if (output.length() > 32768) {
+                output = output.substring(0, 32768) + "\n... (truncated)";
+            }
+            return output;
+        } catch (Exception e) {
+            return "Error executing command: " + e.getMessage();
+        } finally {
+            getMain().setOut(originalPrinter);
+            commandLine.setOut(originalOut);
+            commandLine.setErr(originalErr);
+        }
+    }
+
+    static String[] tokenizeCommand(String command) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inSingleQuote = false;
+        boolean inDoubleQuote = false;
+
+        for (int i = 0; i < command.length(); i++) {
+            char c = command.charAt(i);
+            if (c == '\'' && !inDoubleQuote) {
+                inSingleQuote = !inSingleQuote;
+            } else if (c == '"' && !inSingleQuote) {
+                inDoubleQuote = !inDoubleQuote;
+            } else if (Character.isWhitespace(c) && !inSingleQuote && !inDoubleQuote) {
+                if (!current.isEmpty()) {
+                    tokens.add(current.toString());
+                    current.setLength(0);
+                }
+            } else {
+                current.append(c);
+            }
+        }
+        if (!current.isEmpty()) {
+            tokens.add(current.toString());
+        }
+        return tokens.toArray(String[]::new);
     }
 
     // ---- File tools ----
