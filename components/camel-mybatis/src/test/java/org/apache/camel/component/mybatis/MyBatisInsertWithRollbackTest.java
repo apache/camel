@@ -26,6 +26,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
 
+    @Override
+    protected String getCreateStatement() {
+        // Add NOT NULL constraints to ensure inserting null values throws a
+        // constraint violation exception.
+        // This makes the rollback test work correctly across different
+        // databases (Derby, H2, etc.). Derby was by default throwing an
+        // exception when inserting a null value, but H2 is not.
+        return "create table ACCOUNT (ACC_ID INTEGER NOT NULL, "
+               + "ACC_FIRST_NAME VARCHAR(255) NOT NULL, "
+               + "ACC_LAST_NAME VARCHAR(255) NOT NULL, "
+               + "ACC_EMAIL VARCHAR(255) NOT NULL)";
+    }
+
     @Test
     public void testInsert() throws Exception {
         getMockEndpoint("mock:commit").expectedMessageCount(0);
