@@ -788,10 +788,8 @@ class DiagramSupport {
 
     void loadAllDiagramsInBackground(
             MonitorContext ctx, String pid, boolean metrics, boolean external) {
-        // Fetch topology
-        JsonObject topoJson = requestRouteTopology(ctx, pid, external);
-        // Fetch all route structures
-        JsonObject routeJson = requestRouteStructure(ctx, pid);
+        // Single IPC call: topology + route structures
+        JsonObject topoJson = requestRouteTopology(ctx, pid, external, true);
 
         TopologyLayoutResult topoResult = null;
         int nodeW = 0;
@@ -813,20 +811,23 @@ class DiagramSupport {
             }
         }
 
+        // Route structure is included in the topology response (routes=true)
         java.util.Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeMap = new java.util.LinkedHashMap<>();
-        if (routeJson != null) {
-            List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(routeJson);
-            RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
-                    ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
-                    : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                    labelMode);
-            int currentY = RouteDiagramLayoutEngine.PADDING;
-            for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, currentY);
-                routeMap.put(r.routeId, lr);
-                currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+        if (topoJson != null) {
+            List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(topoJson);
+            if (!routes.isEmpty()) {
+                RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
+                        ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
+                        : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
+                RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
+                        RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
+                        labelMode);
+                int currentY = RouteDiagramLayoutEngine.PADDING;
+                for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
+                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, currentY);
+                    routeMap.put(r.routeId, lr);
+                    currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+                }
             }
         }
 
@@ -902,7 +903,7 @@ class DiagramSupport {
 
     void loadTopologyDiagramInBackground(
             MonitorContext ctx, String pid, boolean textMode, boolean metrics, boolean external) {
-        JsonObject jo = requestRouteTopology(ctx, pid, external);
+        JsonObject jo = requestRouteTopology(ctx, pid, external, false);
         if (jo == null) {
             applyResult(ctx, List.of("(No response from integration)"), null, null, null);
             return;
@@ -987,7 +988,7 @@ class DiagramSupport {
         }
     }
 
-    private JsonObject requestRouteTopology(MonitorContext ctx, String pid, boolean external) {
+    private JsonObject requestRouteTopology(MonitorContext ctx, String pid, boolean external, boolean routes) {
         Path outputFile = ctx.getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
 
@@ -996,6 +997,9 @@ class DiagramSupport {
         root.put("metric", "true");
         if (external) {
             root.put("external", "true");
+        }
+        if (routes) {
+            root.put("routes", "true");
         }
 
         Path actionFile = ctx.getActionFile(pid);

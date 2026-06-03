@@ -756,8 +756,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (dc != null) {
             String metric = root.getStringOrDefault("metric", "false");
             String external = root.getStringOrDefault("external", "false");
+            String routes = root.getStringOrDefault("routes", "false");
             JsonObject json
-                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("metric", metric, "external", external));
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                            Map.of("metric", metric, "external", external, "routes", routes));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
