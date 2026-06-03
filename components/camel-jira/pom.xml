@@ -34,7 +34,7 @@
     <repositories>
         <repository>
             <id>atlassian</id>
-            <url>https://packages.atlassian.com/maven-external/</url>
+            <url>https://packages.atlassian.com/artifactory/maven-atlassian-all/</url>
             <name>atlassian external repo</name>
             <snapshots>
                 <enabled>false</enabled>
