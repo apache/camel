@@ -93,6 +93,16 @@ class DiagramTab implements MonitorTab {
                 diagram.scrollToSelectedNode();
                 return true;
             }
+            if (ke.isHome()) {
+                diagram.selectFirstNode();
+                diagram.scrollToSelectedNode();
+                return true;
+            }
+            if (ke.isEnd()) {
+                diagram.selectLastNode();
+                diagram.scrollToSelectedNode();
+                return true;
+            }
         }
 
         // EIP node navigation in route drill-down mode
@@ -117,6 +127,33 @@ class DiagramTab implements MonitorTab {
                 diagram.scrollToSelectedEipNode();
                 return true;
             }
+            if (ke.isHome()) {
+                diagram.selectFirstEipNode();
+                diagram.scrollToSelectedEipNode();
+                return true;
+            }
+            if (ke.isEnd()) {
+                diagram.selectLastEipNode();
+                diagram.scrollToSelectedEipNode();
+                return true;
+            }
+        }
+
+        // Jump back to topology from any depth
+        if (!topologyMode && diagram.isShowDiagram() && ke.isChar('t')) {
+            routeNavigationStack.clear();
+            diagram.setPendingSelectionRouteId(drillDownRouteId);
+            drillDownRouteId = null;
+            topologyMode = true;
+            diagram.setTopologyMode(true);
+            diagram.setSelectedEipNodeIndex(-1);
+            diagram.resetScroll();
+            if (diagram.hasNativeLayout()) {
+                return true;
+            }
+            diagram.endLoad();
+            reloadDiagram();
+            return true;
         }
 
         if (diagram.handleScrollKeys(ke)) {
@@ -268,16 +305,10 @@ class DiagramTab implements MonitorTab {
         }
 
         if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
-            String title;
-            if (topologyMode) {
-                title = " Topology ";
-            } else {
-                title = " Route [" + buildBreadcrumb() + "] ";
-            }
-
             String selectedRouteId = topologyMode ? diagram.getSelectedRouteId() : drillDownRouteId;
 
             if (topologyMode && diagram.hasNativeLayout()) {
+                String title = " Topology ";
                 if (selectedRouteId != null && area.width() > 60) {
                     int panelWidth = 30;
                     List<Rect> hChunks = Layout.horizontal()
@@ -288,8 +319,10 @@ class DiagramTab implements MonitorTab {
                 } else {
                     diagram.renderNativeDiagram(frame, area, title, diagramMetrics);
                 }
+                return;
             } else if (!topologyMode && drillDownRouteId != null
                     && diagram.getRouteLayout(drillDownRouteId) != null) {
+                Line title = buildBreadcrumbTitle();
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
                     int panelWidth = 30;
@@ -302,8 +335,8 @@ class DiagramTab implements MonitorTab {
                 } else {
                     diagram.renderNativeRouteDiagram(frame, area, title, diagramMetrics, drillDownRouteId, routeLayout);
                 }
+                return;
             }
-            return;
         }
 
         // Show placeholder when no diagram is loaded yet
@@ -521,6 +554,7 @@ class DiagramTab implements MonitorTab {
         if (diagram.isShowDiagram()) {
             if (!topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
                 hint(spans, "Esc", "back");
+                hint(spans, "t", "topology");
                 hint(spans, "↑↓←→", "navigate");
                 if (diagram.findLinkedRouteId(drillDownRouteId) != null) {
                     hint(spans, "Enter", "jump to route");
@@ -529,6 +563,7 @@ class DiagramTab implements MonitorTab {
                 hint(spans, "c", "source");
             } else if (!topologyMode) {
                 hint(spans, "Esc", "back");
+                hint(spans, "t", "topology");
                 hint(spans, "↑↓←→", "scroll");
                 hint(spans, "PgUp/PgDn", "page");
             } else if (!diagram.getNodeBoxes().isEmpty()) {
@@ -677,6 +712,7 @@ class DiagramTab implements MonitorTab {
                                 - `↑↓←→` — navigate between EIP nodes
                                 - `Enter` — jump to linked route (when `↵` indicator shown)
                                 - `Esc` — go back (previous route or topology)
+                                - `t` — jump back to topology view
 
                                 **Common:**
                                 - `m` — toggle metrics on/off (default: on)
@@ -700,16 +736,21 @@ class DiagramTab implements MonitorTab {
         return result;
     }
 
-    private String buildBreadcrumb() {
+    private Line buildBreadcrumbTitle() {
+        Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.raw(" Route ["));
         if (routeNavigationStack.isEmpty()) {
-            return drillDownRouteId;
+            spans.add(Span.styled(drillDownRouteId, nameStyle));
+        } else {
+            for (var it = routeNavigationStack.descendingIterator(); it.hasNext();) {
+                spans.add(Span.styled(it.next(), nameStyle));
+                spans.add(Span.raw(" → "));
+            }
+            spans.add(Span.styled(drillDownRouteId, nameStyle));
         }
-        StringBuilder sb = new StringBuilder();
-        for (var it = routeNavigationStack.descendingIterator(); it.hasNext();) {
-            sb.append(it.next()).append(" → ");
-        }
-        sb.append(drillDownRouteId);
-        return sb.toString();
+        spans.add(Span.raw("] "));
+        return Line.from(spans);
     }
 
     private void loadSourceForSelectedNode() {

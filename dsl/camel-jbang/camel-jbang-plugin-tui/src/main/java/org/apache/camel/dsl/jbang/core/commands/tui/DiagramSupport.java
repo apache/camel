@@ -19,9 +19,11 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,6 +40,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -434,6 +437,38 @@ class DiagramSupport {
         }
     }
 
+    void selectFirstNode() {
+        if (nodeBoxes.isEmpty()) {
+            return;
+        }
+        int bestIdx = 0;
+        for (int i = 1; i < nodeBoxes.size(); i++) {
+            var best = nodeBoxes.get(bestIdx);
+            var nb = nodeBoxes.get(i);
+            if (nb.startRow() < best.startRow()
+                    || (nb.startRow() == best.startRow() && nb.startCol() < best.startCol())) {
+                bestIdx = i;
+            }
+        }
+        selectedNodeIndex = bestIdx;
+    }
+
+    void selectLastNode() {
+        if (nodeBoxes.isEmpty()) {
+            return;
+        }
+        int bestIdx = 0;
+        for (int i = 1; i < nodeBoxes.size(); i++) {
+            var best = nodeBoxes.get(bestIdx);
+            var nb = nodeBoxes.get(i);
+            if (nb.startRow() > best.startRow()
+                    || (nb.startRow() == best.startRow() && nb.startCol() > best.startCol())) {
+                bestIdx = i;
+            }
+        }
+        selectedNodeIndex = bestIdx;
+    }
+
     void scrollToSelectedNode() {
         if (selectedNodeIndex < 0 || selectedNodeIndex >= nodeBoxes.size()) {
             return;
@@ -627,15 +662,9 @@ class DiagramSupport {
                 if (currentRouteId.equals(entry.getKey())) {
                     continue;
                 }
-                var lr = entry.getValue();
-                if (!lr.nodes.isEmpty()) {
-                    var firstNode = lr.nodes.get(0);
-                    if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
-                        String fromBaseUri = getBaseUri(firstNode.treeNode.info);
-                        if (baseUri.equals(fromBaseUri)) {
-                            return entry.getKey();
-                        }
-                    }
+                String fromBaseUri = findFromUri(entry.getValue());
+                if (baseUri.equals(fromBaseUri)) {
+                    return entry.getKey();
                 }
             }
         }
@@ -738,6 +767,38 @@ class DiagramSupport {
         }
     }
 
+    void selectFirstEipNode() {
+        if (eipNodeBoxes.isEmpty()) {
+            return;
+        }
+        int bestIdx = 0;
+        for (int i = 1; i < eipNodeBoxes.size(); i++) {
+            var best = eipNodeBoxes.get(bestIdx);
+            var nb = eipNodeBoxes.get(i);
+            if (nb.startRow() < best.startRow()
+                    || (nb.startRow() == best.startRow() && nb.startCol() < best.startCol())) {
+                bestIdx = i;
+            }
+        }
+        selectedEipNodeIndex = bestIdx;
+    }
+
+    void selectLastEipNode() {
+        if (eipNodeBoxes.isEmpty()) {
+            return;
+        }
+        int bestIdx = 0;
+        for (int i = 1; i < eipNodeBoxes.size(); i++) {
+            var best = eipNodeBoxes.get(bestIdx);
+            var nb = eipNodeBoxes.get(i);
+            if (nb.startRow() > best.startRow()
+                    || (nb.startRow() == best.startRow() && nb.startCol() > best.startCol())) {
+                bestIdx = i;
+            }
+        }
+        selectedEipNodeIndex = bestIdx;
+    }
+
     void scrollToSelectedEipNode() {
         if (selectedEipNodeIndex < 0 || selectedEipNodeIndex >= eipNodeBoxes.size()) {
             return;
@@ -762,18 +823,14 @@ class DiagramSupport {
     }
 
     /**
-     * Computes the set of base endpoint URIs that can be navigated to from the current route. Includes both "from" URIs
-     * of other routes (for "to" nodes) and "to" URIs that target this route (for "from" nodes).
+     * Computes a mapping from base endpoint URI to target route ID for navigable links from the current route.
      */
-    private Set<String> computeLinkableEndpoints(String currentRouteId) {
-        Set<String> endpoints = new HashSet<>();
+    private Map<String, String> computeLinkableEndpoints(String currentRouteId) {
+        Map<String, String> endpoints = new HashMap<>();
         String currentFromUri = null;
         var currentLayout = routeLayouts.get(currentRouteId);
-        if (currentLayout != null && !currentLayout.nodes.isEmpty()) {
-            var fromNode = currentLayout.nodes.get(0);
-            if ("from".equals(fromNode.type) && fromNode.treeNode != null) {
-                currentFromUri = getBaseUri(fromNode.treeNode.info);
-            }
+        if (currentLayout != null) {
+            currentFromUri = findFromUri(currentLayout);
         }
 
         for (var entry : routeLayouts.entrySet()) {
@@ -781,25 +838,18 @@ class DiagramSupport {
                 continue;
             }
             var lr = entry.getValue();
-            if (!lr.nodes.isEmpty()) {
-                // Add "from" URIs of other routes (linkable from "to" nodes)
-                var firstNode = lr.nodes.get(0);
-                if ("from".equals(firstNode.type) && firstNode.treeNode != null) {
-                    String uri = getBaseUri(firstNode.treeNode.info);
-                    if (uri != null) {
-                        endpoints.add(uri);
-                    }
-                }
-                // Add "to" URIs that target our "from" endpoint (linkable from "from" node)
-                if (currentFromUri != null) {
-                    for (var node : lr.nodes) {
-                        String type = node.type;
-                        if (("to".equals(type) || "toD".equals(type) || "wireTap".equals(type))
-                                && node.treeNode != null) {
-                            String uri = getBaseUri(node.treeNode.info);
-                            if (currentFromUri.equals(uri)) {
-                                endpoints.add(currentFromUri);
-                            }
+            String fromUri = findFromUri(lr);
+            if (fromUri != null) {
+                endpoints.put(fromUri, entry.getKey());
+            }
+            if (currentFromUri != null) {
+                for (var node : lr.nodes) {
+                    String type = node.type;
+                    if (("to".equals(type) || "toD".equals(type) || "wireTap".equals(type))
+                            && node.treeNode != null) {
+                        String uri = getBaseUri(node.treeNode.info);
+                        if (currentFromUri.equals(uri)) {
+                            endpoints.put(currentFromUri, entry.getKey());
                         }
                     }
                 }
@@ -808,18 +858,27 @@ class DiagramSupport {
         return endpoints;
     }
 
+    private static String findFromUri(RouteDiagramLayoutEngine.LayoutRoute lr) {
+        for (var node : lr.nodes) {
+            if ("from".equals(node.type) && node.treeNode != null) {
+                return getBaseUri(node.treeNode.info);
+            }
+        }
+        return null;
+    }
+
     void renderNativeRouteDiagram(
-            Frame frame, Rect area, String title, boolean metrics,
+            Frame frame, Rect area, Line title, boolean metrics,
             String currentRouteId, RouteDiagramLayoutEngine.LayoutRoute routeLayout) {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(title)
+                .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
         int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
-        Set<String> linkable = computeLinkableEndpoints(currentRouteId);
+        Map<String, String> linkable = computeLinkableEndpoints(currentRouteId);
 
         var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
                 routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable);
@@ -1010,6 +1069,7 @@ class DiagramSupport {
             if (!nodes.isEmpty()) {
                 TopologyLayoutEngine engine = new TopologyLayoutEngine();
                 topoResult = engine.layout(nodes, edges);
+                normalizeTopologyLayoutY(topoResult);
                 nodeW = engine.getNodeWidth();
                 topoNodes = topoResult.nodes;
                 topoEdges = topoResult.edges;
@@ -1028,8 +1088,8 @@ class DiagramSupport {
                         RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                         labelMode);
                 for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
-                    RouteDiagramLayoutEngine.LayoutRoute lr
-                            = engine.layoutRoute(r, RouteDiagramLayoutEngine.PADDING);
+                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, 0);
+                    normalizeRouteLayoutY(lr);
                     routeMap.put(r.routeId, lr);
                 }
             }
@@ -1514,5 +1574,43 @@ class DiagramSupport {
                 nodeIds.add(node.id);
             }
         }
+    }
+
+    private static void normalizeTopologyLayoutY(TopologyLayoutResult result) {
+        if (result.nodes.isEmpty()) {
+            return;
+        }
+        int minY = Integer.MAX_VALUE;
+        for (TopologyLayoutNode node : result.nodes) {
+            minY = Math.min(minY, node.y);
+        }
+        if (minY <= 0) {
+            return;
+        }
+        int shift = minY - 40;
+        for (TopologyLayoutNode node : result.nodes) {
+            node.y -= shift;
+        }
+    }
+
+    private static void normalizeRouteLayoutY(RouteDiagramLayoutEngine.LayoutRoute lr) {
+        int minY = Integer.MAX_VALUE;
+        for (RouteDiagramLayoutEngine.LayoutNode ln : lr.nodes) {
+            if (!"route".equals(ln.type)) {
+                minY = Math.min(minY, ln.y);
+            }
+        }
+        if (minY <= 0 || minY == Integer.MAX_VALUE) {
+            return;
+        }
+        int shift = minY - 40;
+        for (RouteDiagramLayoutEngine.LayoutNode ln : lr.nodes) {
+            ln.y -= shift;
+            if (ln.connectFromMerge) {
+                ln.mergeY -= shift;
+            }
+        }
+        lr.labelY -= shift;
+        lr.maxY -= shift;
     }
 }
