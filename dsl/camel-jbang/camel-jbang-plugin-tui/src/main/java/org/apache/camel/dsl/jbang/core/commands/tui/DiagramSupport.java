@@ -648,6 +648,41 @@ class DiagramSupport {
                     Scrollbar.horizontal(),
                     vChunks.get(1), hScrollState);
         }
+
+        renderTreePreview(frame, hChunks.get(0));
+    }
+
+    private void renderTreePreview(Frame frame, Rect area) {
+        String routeId = getSelectedRouteId();
+        if (routeId == null) {
+            return;
+        }
+        RouteDiagramLayoutEngine.LayoutRoute routeLayout = routeLayouts.get(routeId);
+        if (routeLayout == null || routeLayout.nodes.isEmpty()) {
+            return;
+        }
+
+        int previewW = Math.min(38, area.width() / 3);
+        int previewH = Math.min(10, area.height() / 2);
+        if (previewW < 10 || previewH < 4 || area.width() < 40 || area.height() < 12) {
+            return;
+        }
+
+        int previewX = area.x() + area.width() - previewW - 1;
+        int previewY = area.y() + area.height() - previewH - 1;
+        Rect previewRect = new Rect(previewX, previewY, previewW, previewH);
+
+        frame.renderWidget(Clear.INSTANCE, previewRect);
+
+        Block previewBlock = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(Title.from(Line.from(Span.styled(" Route ", Style.EMPTY.dim()))))
+                .build();
+        frame.renderWidget(previewBlock, previewRect);
+
+        Rect innerRect = previewBlock.inner(previewRect);
+        List<Line> treeLines = RouteTreePreview.buildTree(routeLayout, innerRect.height(), innerRect.width());
+        frame.renderWidget(Paragraph.builder().text(Text.from(treeLines)).build(), innerRect);
     }
 
     // ---- Route EIP node selection ----
