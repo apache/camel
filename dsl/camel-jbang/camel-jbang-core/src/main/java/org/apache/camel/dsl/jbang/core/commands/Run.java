@@ -1183,6 +1183,7 @@ public class Run extends CamelCommand {
 
         if (serverOptions.observe) {
             dependencies.add("camel:observability-services");
+            main.addOverrideProperty("camel.metrics.logMetricsOnShutdown", "false");
         }
         if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
