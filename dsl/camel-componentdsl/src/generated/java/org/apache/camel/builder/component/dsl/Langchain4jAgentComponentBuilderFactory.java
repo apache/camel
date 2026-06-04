@@ -67,6 +67,25 @@ public interface Langchain4jAgentComponentBuilderFactory {
         }
     
         /**
+         * AgentConfiguration used by Camel to create the agent internally. When
+         * set, Camel creates an AgentWithMemory if a ChatMemoryProvider is
+         * configured, otherwise an AgentWithoutMemory. If an agentFactory is
+         * also configured, the factory takes precedence.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.langchain4j.agent.api.AgentConfiguration&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param agentConfiguration the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder agentConfiguration(org.apache.camel.component.langchain4j.agent.api.AgentConfiguration agentConfiguration) {
+            doSetProperty("agentConfiguration", agentConfiguration);
+            return this;
+        }
+    
+        /**
          * The agent factory to use for creating agents if no Agent is provided.
          * 
          * The option is a:
@@ -221,6 +240,7 @@ public interface Langchain4jAgentComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "agent": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgent((org.apache.camel.component.langchain4j.agent.api.Agent) value); return true;
+            case "agentConfiguration": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentConfiguration((org.apache.camel.component.langchain4j.agent.api.AgentConfiguration) value); return true;
             case "agentFactory": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentFactory((org.apache.camel.component.langchain4j.agent.api.AgentFactory) value); return true;
             case "configuration": ((LangChain4jAgentComponent) component).setConfiguration((org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) value); return true;
             case "lazyStartProducer": ((LangChain4jAgentComponent) component).setLazyStartProducer((boolean) value); return true;

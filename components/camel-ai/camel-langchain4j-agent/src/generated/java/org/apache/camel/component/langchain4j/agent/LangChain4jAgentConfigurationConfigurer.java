@@ -24,6 +24,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration target = (org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": target.setAgent(property(camelContext, org.apache.camel.component.langchain4j.agent.api.Agent.class, value)); return true;
+        case "agentconfiguration":
+        case "agentConfiguration": target.setAgentConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class, value)); return true;
         case "agentfactory":
         case "agentFactory": target.setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
         case "mcpclients":
@@ -39,6 +41,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": return org.apache.camel.component.langchain4j.agent.api.Agent.class;
+        case "agentconfiguration":
+        case "agentConfiguration": return org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class;
         case "agentfactory":
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
         case "mcpclients":
@@ -55,6 +59,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration target = (org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": return target.getAgent();
+        case "agentconfiguration":
+        case "agentConfiguration": return target.getAgentConfiguration();
         case "agentfactory":
         case "agentFactory": return target.getAgentFactory();
         case "mcpclients":

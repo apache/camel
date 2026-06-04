@@ -32,7 +32,10 @@ import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithMemory;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.api.CompositeToolProvider;
 import org.apache.camel.component.langchain4j.agent.api.Headers;
@@ -63,6 +66,11 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         if (endpoint.getConfiguration().getAgent() != null) {
             agent = endpoint.getConfiguration().getAgent();
+        } else if (endpoint.getConfiguration().getAgentConfiguration() != null) {
+            AgentConfiguration agentConfiguration = endpoint.getConfiguration().getAgentConfiguration();
+            agent = agentConfiguration.getChatMemoryProvider() != null
+                    ? new AgentWithMemory(agentConfiguration)
+                    : new AgentWithoutMemory(agentConfiguration);
         } else {
             agent = endpoint.getCamelContext().getRegistry().lookupByNameAndType(endpoint.getAgentId(), Agent.class);
         }
