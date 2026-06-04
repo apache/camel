@@ -41,6 +41,10 @@ class RouteTreePreview {
     }
 
     static List<Line> buildTree(LayoutRoute layout, int maxLines, int maxWidth) {
+        return buildTree(layout, maxLines, maxWidth, null);
+    }
+
+    static List<Line> buildTree(LayoutRoute layout, int maxLines, int maxWidth, TreeNode selectedNode) {
         if (layout == null || layout.nodes.isEmpty()) {
             return List.of(Line.from(Span.styled("(no structure)", Style.EMPTY.dim())));
         }
@@ -51,16 +55,14 @@ class RouteTreePreview {
         }
 
         List<Line> result = new ArrayList<>();
-        // Render root node (the "from" node)
-        addLine(result, " ", root, maxLines, maxWidth);
-        // Render children
-        addChildren(root.children, " ", result, maxLines, maxWidth);
+        addLine(result, " ", root, maxLines, maxWidth, selectedNode);
+        addChildren(root.children, " ", result, maxLines, maxWidth, selectedNode);
         return result;
     }
 
     private static void addChildren(
             List<TreeNode> children, String parentIndent,
-            List<Line> result, int maxLines, int maxWidth) {
+            List<Line> result, int maxLines, int maxWidth, TreeNode selectedNode) {
         for (int i = 0; i < children.size(); i++) {
             if (result.size() >= maxLines) {
                 return;
@@ -76,31 +78,39 @@ class RouteTreePreview {
             String childCont = last ? "  " : "│ ";
 
             TreeNode child = children.get(i);
-            addLine(result, parentIndent + connector, child, maxLines, maxWidth);
-            addChildren(child.children, parentIndent + childCont, result, maxLines, maxWidth);
+            addLine(result, parentIndent + connector, child, maxLines, maxWidth, selectedNode);
+            addChildren(child.children, parentIndent + childCont, result, maxLines, maxWidth, selectedNode);
         }
     }
 
     private static void addLine(
-            List<Line> result, String prefix, TreeNode node, int maxLines, int maxWidth) {
+            List<Line> result, String prefix, TreeNode node,
+            int maxLines, int maxWidth, TreeNode selectedNode) {
         if (result.size() >= maxLines) {
             return;
         }
         String label = buildLabel(node);
+        boolean selected = (node == selectedNode);
 
         List<Span> spans = new ArrayList<>();
         spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.DARK_GRAY)));
-        spans.add(styledLabel(node.info.type, truncate(label, maxWidth - prefix.length())));
+        spans.add(styledLabel(node.info.type, truncate(label, maxWidth - prefix.length()), selected));
         result.add(Line.from(spans));
     }
 
-    private static Span styledLabel(String type, String text) {
+    private static Span styledLabel(String type, String text, boolean selected) {
+        Style style;
         if ("from".equals(type)) {
-            return Span.styled(text, Style.EMPTY.fg(Color.YELLOW));
+            style = Style.EMPTY.fg(Color.YELLOW);
         } else if (STRUCTURAL_TYPES.contains(type)) {
-            return Span.styled(text, Style.EMPTY.fg(Color.CYAN));
+            style = Style.EMPTY.fg(Color.CYAN);
+        } else {
+            style = Style.EMPTY;
         }
-        return Span.raw(text);
+        if (selected) {
+            style = Style.EMPTY.fg(Color.YELLOW).bold().bg(Color.DARK_GRAY);
+        }
+        return Span.styled(text, style);
     }
 
     private static String buildLabel(TreeNode node) {

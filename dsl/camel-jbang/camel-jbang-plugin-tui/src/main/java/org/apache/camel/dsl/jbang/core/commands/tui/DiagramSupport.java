@@ -653,7 +653,10 @@ class DiagramSupport {
     }
 
     private void renderTreePreview(Frame frame, Rect area) {
-        String routeId = getSelectedRouteId();
+        renderTreePreview(frame, area, getSelectedRouteId());
+    }
+
+    private void renderTreePreview(Frame frame, Rect area, String routeId) {
         if (routeId == null) {
             return;
         }
@@ -681,7 +684,13 @@ class DiagramSupport {
         frame.renderWidget(previewBlock, previewRect);
 
         Rect innerRect = previewBlock.inner(previewRect);
-        List<Line> treeLines = RouteTreePreview.buildTree(routeLayout, innerRect.height(), innerRect.width());
+        RouteDiagramLayoutEngine.TreeNode selectedTreeNode = null;
+        var selectedBox = getSelectedEipNodeBox();
+        if (selectedBox != null && selectedBox.layoutNode() != null) {
+            selectedTreeNode = selectedBox.layoutNode().treeNode;
+        }
+        List<Line> treeLines = RouteTreePreview.buildTree(
+                routeLayout, innerRect.height(), innerRect.width(), selectedTreeNode);
         frame.renderWidget(Paragraph.builder().text(Text.from(treeLines)).build(), innerRect);
     }
 
@@ -1069,6 +1078,7 @@ class DiagramSupport {
         }
 
         renderMinimap(frame, hChunks.get(0), currentRouteId);
+        renderTreePreview(frame, hChunks.get(0), currentRouteId);
     }
 
     private void renderMinimap(Frame frame, Rect area, String currentRouteId) {
@@ -1082,7 +1092,7 @@ class DiagramSupport {
         }
 
         int mapX = area.x() + area.width() - mapW - 1;
-        int mapY = area.y() + area.height() - mapH - 1;
+        int mapY = area.y();
         Rect mapRect = new Rect(mapX, mapY, mapW, mapH);
 
         frame.renderWidget(Clear.INSTANCE, mapRect);
