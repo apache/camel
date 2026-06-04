@@ -729,6 +729,7 @@ class RoutesTab implements MonitorTab {
         drillDownRouteId = selectedId;
         routeNavigationStack.clear();
         diagram.setTopologyMode(false);
+        diagram.selectFromNode(selectedId);
 
         if (diagram.hasCachedData(ctx.selectedPid)) {
             diagram.showCached();
