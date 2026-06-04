@@ -96,6 +96,30 @@ public class DefaultUndertowHost implements UndertowHost {
                     if (options.getHttp2Enabled() != null) {
                         builder.setServerOption(UndertowOptions.ENABLE_HTTP2, options.getHttp2Enabled());
                     }
+                    if (options.getMaxEntitySize() != null) {
+                        builder.setServerOption(UndertowOptions.MAX_ENTITY_SIZE, options.getMaxEntitySize());
+                    }
+                    if (options.getMultipartMaxEntitySize() != null) {
+                        builder.setServerOption(UndertowOptions.MULTIPART_MAX_ENTITY_SIZE, options.getMultipartMaxEntitySize());
+                    }
+                    if (options.getMaxHeaderSize() != null) {
+                        builder.setServerOption(UndertowOptions.MAX_HEADER_SIZE, options.getMaxHeaderSize());
+                    }
+                    if (options.getNoRequestTimeout() != null) {
+                        builder.setServerOption(UndertowOptions.NO_REQUEST_TIMEOUT, options.getNoRequestTimeout());
+                    }
+                    if (options.getIdleTimeout() != null) {
+                        builder.setServerOption(UndertowOptions.IDLE_TIMEOUT, options.getIdleTimeout());
+                    }
+                    if (options.getRequestParseTimeout() != null) {
+                        builder.setServerOption(UndertowOptions.REQUEST_PARSE_TIMEOUT, options.getRequestParseTimeout());
+                    }
+                    if (options.getMaxParameters() != null) {
+                        builder.setServerOption(UndertowOptions.MAX_PARAMETERS, options.getMaxParameters());
+                    }
+                    if (options.getMaxHeaders() != null) {
+                        builder.setServerOption(UndertowOptions.MAX_HEADERS, options.getMaxHeaders());
+                    }
                 }
 
                 if (consumer != null && consumer.isRest()) {
