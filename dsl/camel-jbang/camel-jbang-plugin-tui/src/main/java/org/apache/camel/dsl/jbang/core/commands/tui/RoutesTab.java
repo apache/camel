@@ -69,6 +69,7 @@ class RoutesTab implements MonitorTab {
     private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramAllRoutes;
     private boolean diagramMetrics = true;
+    private boolean showDescription;
     private String diagramRouteId;
 
     RoutesTab(MonitorContext ctx) {
@@ -148,6 +149,12 @@ class RoutesTab implements MonitorTab {
         // Toggle all routes diagram flag
         if (!sourceViewer.isVisible() && !diagram.isShowDiagram() && ke.isCharIgnoreCase('a')) {
             diagramAllRoutes = !diagramAllRoutes;
+            return true;
+        }
+
+        // Toggle description in route table
+        if (!sourceViewer.isVisible() && !diagram.isShowDiagram() && ke.isCharIgnoreCase('n')) {
+            showDescription = !showDescription;
             return true;
         }
 
@@ -272,7 +279,7 @@ class RoutesTab implements MonitorTab {
 
                 routeRows.add(Row.from(
                         Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                        Cell.from(route.from != null ? route.from : ""),
+                        Cell.from(routeFromLabel(route)),
                         rightCell(route.total > 0 ? String.valueOf(route.meanTime) : "", 6, topTimeStyle(route.meanTime)),
                         rightCell(route.total > 0 ? String.valueOf(route.maxTime) : "", 6, topTimeStyle(route.maxTime)),
                         rightCell(route.total > 0 ? String.valueOf(route.minTime) : "", 6),
@@ -334,7 +341,7 @@ class RoutesTab implements MonitorTab {
 
                 routeRows.add(Row.from(
                         Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                        Cell.from(route.from != null ? route.from : ""),
+                        Cell.from(routeFromLabel(route)),
                         Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                         Cell.from(route.uptime != null ? route.uptime : ""),
                         rightCell(route.coverage != null ? route.coverage : "", 6),
@@ -417,6 +424,7 @@ class RoutesTab implements MonitorTab {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
             hint(spans, "s", "sort");
+            hint(spans, "n", "description" + (showDescription ? " [on]" : " [off]"));
             hint(spans, "t", routeTopMode ? "top [on]" : "top [off]");
             if (!routeTopMode) {
                 hint(spans, "c", "source");
@@ -445,6 +453,13 @@ class RoutesTab implements MonitorTab {
         if (diagram.isShowDiagram() && diagramMetrics) {
             reloadDiagramQuietly();
         }
+    }
+
+    private String routeFromLabel(RouteInfo route) {
+        if (showDescription && route.description != null && !route.description.isBlank()) {
+            return route.description;
+        }
+        return route.from != null ? route.from : "";
     }
 
     // ---- Rendering helpers ----
@@ -612,7 +627,7 @@ class RoutesTab implements MonitorTab {
                     : Style.EMPTY;
             rows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(route.from != null ? route.from : ""),
+                    Cell.from(routeFromLabel(route)),
                     Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                     Cell.from(route.uptime != null ? route.uptime : ""),
                     rightCell(route.throughput != null ? route.throughput : "", 8),

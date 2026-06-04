@@ -165,6 +165,7 @@ final class StatusParser {
                 JsonObject rj = (JsonObject) r;
                 RouteInfo ri = new RouteInfo();
                 ri.routeId = rj.getString("routeId");
+                ri.description = rj.getString("description");
                 ri.group = rj.getString("group");
                 ri.from = rj.getString("from");
                 ri.state = rj.getString("state");
