@@ -97,6 +97,7 @@ class ActionsPopup {
     private final Runnable toggleKeystrokes;
     private final Supplier<Boolean> keystrokesEnabled;
     private final Runnable toggleTapeRecording;
+    private final Runnable burstCallback;
     private Runnable resetStatsAction;
     private Runnable resetScreenAction;
     private final Supplier<Boolean> tapeRecordingActive;
@@ -159,7 +160,8 @@ class ActionsPopup {
     ActionsPopup(Supplier<Set<String>> runningNames, Supplier<List<IntegrationInfo>> integrations,
                  Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
                  Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled,
-                 Runnable toggleTapeRecording, Supplier<Boolean> tapeRecordingActive) {
+                 Runnable toggleTapeRecording, Supplier<Boolean> tapeRecordingActive,
+                 Runnable burstCallback) {
         this.runningNames = runningNames;
         this.integrations = integrations;
         this.infraServices = infraServices;
@@ -169,7 +171,8 @@ class ActionsPopup {
         this.keystrokesEnabled = keystrokesEnabled;
         this.toggleTapeRecording = toggleTapeRecording;
         this.tapeRecordingActive = tapeRecordingActive;
-        this.stopAllPopup = new StopAllPopup(integrations, infraServices);
+        this.burstCallback = burstCallback;
+        this.stopAllPopup = new StopAllPopup(integrations, infraServices, burstCallback);
     }
 
     void setContext(MonitorContext ctx) {
@@ -1300,6 +1303,7 @@ class ActionsPopup {
             Process process = pb.start();
             pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
             pendingAutoSelect = displayName;
+            burstCallback.run();
             setNotification("Starting: " + displayName, false);
         } catch (Exception e) {
             setNotification("Failed to start: " + folder + " - " + e.getMessage(), true);
@@ -1801,6 +1805,7 @@ class ActionsPopup {
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
             pendingLaunches.add(new PendingLaunch(alias, process, outputFile, System.currentTimeMillis()));
+            burstCallback.run();
             setNotification("Starting infra: " + alias, false);
             // force reload next time browser opens
             infraCatalog = null;
@@ -1851,6 +1856,7 @@ class ActionsPopup {
             Process process = pb.start();
             pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis()));
             pendingAutoSelect = displayName;
+            burstCallback.run();
             setNotification("Starting: " + displayName, false);
         } catch (Exception e) {
             setNotification("Failed to start: " + exampleName + " - " + e.getMessage(), true);

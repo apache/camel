@@ -198,9 +198,10 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
     private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
 
-    // Cached PID list — full process scan throttled to every 2 seconds
+    // Cached PID list — full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
     private volatile long lastFullScanTime;
+    private volatile long burstModeUntil;
 
     // Trace/history data — shared between CamelMonitor and tabs
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
@@ -245,7 +246,8 @@ public class CamelMonitor extends CamelCommand {
             () -> recording = !recording,
             () -> recording,
             this::toggleTapeRecording,
-            () -> tapeRecorder != null && tapeRecorder.isActive());
+            () -> tapeRecorder != null && tapeRecorder.isActive(),
+            this::enableBurstMode);
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
@@ -1346,6 +1348,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void stopSelectedProcess(boolean forceKill) {
+        enableBurstMode();
         if (ctx.selectedPid == null) {
             return;
         }
@@ -1386,6 +1389,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void restartSelectedProcess() {
+        enableBurstMode();
         if (ctx.selectedPid == null || isInfraSelected()) {
             return;
         }
@@ -1466,6 +1470,14 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    private void enableBurstMode() {
+        burstModeUntil = System.currentTimeMillis() + 20_000;
+    }
+
+    private boolean isBurstMode() {
+        return System.currentTimeMillis() < burstModeUntil;
+    }
+
     private void setNotification(String message, boolean error) {
         monitorNotification = message;
         monitorNotificationError = error;
@@ -1544,6 +1556,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void sendRouteCommand(String pid, String routeId, String command) {
+        enableBurstMode();
         JsonObject root = new JsonObject();
         root.put("action", "route");
         root.put("id", routeId);
@@ -1814,7 +1827,8 @@ public class CamelMonitor extends CamelCommand {
             List<IntegrationInfo> infos = new ArrayList<>();
             long now = System.currentTimeMillis();
             boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
-            boolean fullScan = wantFullScan && (now - lastFullScanTime >= 2000);
+            long scanInterval = isBurstMode() ? 1000 : 2000;
+            boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
             List<Long> pids;
             if (fullScan) {
                 pids = findPids(name);

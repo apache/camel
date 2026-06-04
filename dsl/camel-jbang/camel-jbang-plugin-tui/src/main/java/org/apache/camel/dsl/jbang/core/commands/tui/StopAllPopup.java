@@ -42,6 +42,7 @@ class StopAllPopup {
 
     private final Supplier<List<IntegrationInfo>> integrations;
     private final Supplier<List<InfraInfo>> infraServices;
+    private final Runnable burstCallback;
 
     private boolean visible;
     private boolean checkIntegrations = true;
@@ -52,9 +53,11 @@ class StopAllPopup {
 
     private String notification;
 
-    StopAllPopup(Supplier<List<IntegrationInfo>> integrations, Supplier<List<InfraInfo>> infraServices) {
+    StopAllPopup(Supplier<List<IntegrationInfo>> integrations, Supplier<List<InfraInfo>> infraServices,
+                 Runnable burstCallback) {
         this.integrations = integrations;
         this.infraServices = infraServices;
+        this.burstCallback = burstCallback;
     }
 
     boolean isVisible() {
@@ -82,10 +85,12 @@ class StopAllPopup {
 
         if (integrationCount > 0 && infraCount == 0) {
             stopIntegrations();
+            burstCallback.run();
             return;
         }
         if (infraCount > 0 && integrationCount == 0) {
             stopInfraServices();
+            burstCallback.run();
             return;
         }
 
@@ -174,6 +179,9 @@ class StopAllPopup {
         }
         if (checkInfra) {
             stoppedInfra = stopInfraServices();
+        }
+        if (stoppedInt > 0 || stoppedInfra > 0) {
+            burstCallback.run();
         }
         if (stoppedInt == 0 && stoppedInfra == 0 && notification == null) {
             notification = "Nothing selected to stop";
