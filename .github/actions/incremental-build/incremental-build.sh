@@ -834,9 +834,9 @@ main() {
     # Show end of build log
     if [[ -f "$log" ]]; then
       echo ""
-      echo "Last 50 lines of build log:"
+      echo "Last 500 lines of build log:"
       echo "------------------------------------------------------------"
-      tail -50 "$log"
+      tail -500 "$log"
       echo "------------------------------------------------------------"
       echo ""
     else
