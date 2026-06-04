@@ -817,15 +817,7 @@ class DiagramTab implements MonitorTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
-        List<String> lines = diagram.getLines();
-        if (lines == null || lines.isEmpty()) {
-            return null;
-        }
-        JsonObject result = new JsonObject();
-        result.put("tab", "Diagram");
-        result.put("diagram", String.join("\n", lines));
-        result.put("lines", lines.size());
-        return result;
+        return null;
     }
 
     private Line buildBreadcrumbTitle() {

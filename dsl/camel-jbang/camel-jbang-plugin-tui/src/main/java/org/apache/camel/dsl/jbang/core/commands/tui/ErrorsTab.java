@@ -35,7 +35,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
-import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -79,6 +78,28 @@ class ErrorsTab implements MonitorTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
+            if (ke.isUp()) {
+                diagram.historyNavigateUp();
+                return true;
+            }
+            if (ke.isDown()) {
+                diagram.historyNavigateDown();
+                return true;
+            }
+            if (ke.isLeft()) {
+                diagram.scrollLeft();
+                return true;
+            }
+            if (ke.isRight()) {
+                diagram.scrollRight();
+                return true;
+            }
+            if (ke.isHome()) {
+                diagram.scrollHome();
+                return true;
+            }
+        }
         if (diagram.handleScrollKeys(ke)) {
             return true;
         }
@@ -175,9 +196,13 @@ class ErrorsTab implements MonitorTab {
             return;
         }
 
-        if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
-            diagram.renderDiagram(frame, area, " Error Diagram ");
-            return;
+        if (diagram.isShowDiagram()) {
+            if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
+                String diagramTitle = String.format(" Error Diagram — step %d/%d ",
+                        diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount());
+                diagram.renderNativeHistoryDiagram(frame, area, diagramTitle);
+                return;
+            }
         }
 
         List<ErrorInfo> sorted = applyFilter(info.errors);
@@ -253,25 +278,30 @@ class ErrorsTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
-            diagram.renderFooterHints(spans);
-        } else {
-            hint(spans, "Esc", "back");
-            hint(spans, "↑↓", "navigate");
-            hint(spans, "PgUp/Dn", "scroll detail");
-            if (!wordWrap) {
+            if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
+                hint(spans, "Esc", "close");
+                hint(spans, "↑↓", "step through path");
                 hint(spans, "←→", "h-scroll");
+                return;
             }
-            hint(spans, "Home/End", "top/end");
-            hint(spans, "s", "sort");
-            hint(spans, "d", "diagram");
-            hint(spans, "D", "text diagram");
-            hint(spans, "f", "handled [" + handledFilter + "]");
-            hint(spans, "p", "properties [" + (showProperties ? "on" : "off") + "]");
-            hint(spans, "v", "variables [" + (showVariables ? "on" : "off") + "]");
-            hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
-            hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
-            hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
+            diagram.renderFooterHints(spans);
+            return;
         }
+        hint(spans, "Esc", "back");
+        hint(spans, "↑↓", "navigate");
+        hint(spans, "PgUp/Dn", "scroll detail");
+        if (!wordWrap) {
+            hint(spans, "←→", "h-scroll");
+        }
+        hint(spans, "Home/End", "top/end");
+        hint(spans, "s", "sort");
+        hint(spans, "d", "diagram");
+        hint(spans, "f", "handled [" + handledFilter + "]");
+        hint(spans, "p", "properties [" + (showProperties ? "on" : "off") + "]");
+        hint(spans, "v", "variables [" + (showVariables ? "on" : "off") + "]");
+        hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
+        hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
+        hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
     }
 
     private void renderDetail(Frame frame, Rect area, ErrorInfo ei) {
@@ -438,8 +468,7 @@ class ErrorsTab implements MonitorTab {
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                diagram.loadHighlightedDiagramInBackground(
-                        ctx, pid, messageHistory, RouteDiagramHelper.HighlightStyle.FAIL);
+                diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, true);
             } finally {
                 diagram.endLoad();
             }
@@ -534,17 +563,32 @@ class ErrorsTab implements MonitorTab {
                 - **NullPointerException**: A processor received unexpected null data.
                   Check if the message body or headers are populated correctly.
 
+                ## Error Diagram
+
+                Press `d` in the detail view to open a visual route diagram showing
+                the path the failed exchange took through the route. Visited nodes are
+                highlighted in red to trace the error path.
+
+                Use `Up/Down` arrow keys to step through the visited nodes one by one —
+                the diagram progressively highlights each step in order, showing exactly
+                how the exchange flowed through the route before failing. The current
+                step is shown with a selection highlight. Use `Left/Right` to scroll
+                the diagram horizontally if it extends beyond the screen.
+
+                Press `Esc` to close the diagram and return to the detail view.
+
                 ## Keys
 
-                - `Up/Down` — select error
+                - `Up/Down` — select error (list) / navigate path steps (diagram)
                 - `Enter` — view error details
+                - `d` — show error diagram (in detail view)
                 - `h` — toggle headers
                 - `b` — toggle body
                 - `p` — toggle properties
                 - `v` — toggle variables
                 - `s` — cycle sort column
                 - `S` — reverse sort order
-                - `Esc` — back to list
+                - `Esc` — back to list / close diagram
                 """;
     }
 

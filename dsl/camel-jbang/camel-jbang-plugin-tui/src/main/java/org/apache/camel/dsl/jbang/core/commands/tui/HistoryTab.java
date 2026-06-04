@@ -398,17 +398,11 @@ class HistoryTab implements MonitorTab {
             return;
         }
 
-        if (diagram.isShowDiagram()) {
-            if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
-                String diagramTitle = String.format(" History Diagram — step %d/%d ",
-                        diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount());
-                diagram.renderNativeHistoryDiagram(frame, area, diagramTitle);
-                return;
-            }
-            if (diagram.hasDiagramData()) {
-                diagram.renderDiagram(frame, area, " History Diagram ");
-                return;
-            }
+        if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
+            String diagramTitle = String.format(" History Diagram — step %d/%d ",
+                    diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount());
+            diagram.renderNativeHistoryDiagram(frame, area, diagramTitle);
+            return;
         }
 
         boolean tracerActive = !traces.get().isEmpty();
