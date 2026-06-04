@@ -21,6 +21,7 @@ public final class PlatformHttpConstants {
     public static final String PLATFORM_HTTP_COMPONENT_NAME = "platform-http";
     public static final String PLATFORM_HTTP_ENGINE_NAME = "platform-http-engine";
     public static final String PLATFORM_HTTP_ENGINE_FACTORY = "platform-http-engine";
+    public static final String OAUTH_TOKEN_VALIDATION_RESULT = "CamelOAuthTokenValidationResult";
 
     private PlatformHttpConstants() {
     }

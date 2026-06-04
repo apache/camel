@@ -109,7 +109,8 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
                     }
                     createUoW(exchange);
                     getProcessor().process(exchange);
-                    response.setStatus(HttpServletResponse.SC_OK);
+                    Integer responseCode = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+                    response.setStatus(responseCode != null ? responseCode : HttpServletResponse.SC_OK);
                     if (getEndpoint().isHttpProxy()) {
                         // extract response
                         InputStream responseStream = exchange.getMessage().getBody(InputStream.class);

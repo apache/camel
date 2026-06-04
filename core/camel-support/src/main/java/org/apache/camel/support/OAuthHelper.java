@@ -18,11 +18,16 @@ package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.OAuthClientAuthenticationFactory;
+import org.apache.camel.spi.OAuthTokenValidationFactory;
+import org.apache.camel.spi.OAuthTokenValidationResult;
 
 /**
- * Helper for resolving OAuth tokens via the {@link OAuthClientAuthenticationFactory} SPI.
+ * Helper for resolving and validating OAuth tokens via the {@link OAuthClientAuthenticationFactory} and
+ * {@link OAuthTokenValidationFactory} SPIs.
  * <p/>
- * This requires camel-oauth on the classpath.
+ * Token acquisition requires camel-oauth on the classpath. Token validation requires an
+ * {@link OAuthTokenValidationFactory}; camel-oauth provides the default implementation, and runtimes can provide their
+ * own implementation backed by their native security stack.
  */
 public final class OAuthHelper {
 
@@ -46,5 +51,56 @@ public final class OAuthHelper {
                 OAuthClientAuthenticationFactory.class,
                 "camel-oauth");
         return factory.resolveToken(context, profileName);
+    }
+
+    /**
+     * Resolves the OAuth token validation factory.
+     *
+     * @param  context the CamelContext
+     * @return         the token validation factory
+     * @since          4.21
+     */
+    public static OAuthTokenValidationFactory resolveOAuthTokenValidationFactory(CamelContext context) {
+        return ResolverHelper.resolveMandatoryBootstrapService(
+                context,
+                OAuthTokenValidationFactory.FACTORY,
+                OAuthTokenValidationFactory.class,
+                "camel-oauth or another OAuthTokenValidationFactory provider");
+    }
+
+    /**
+     * Validates an incoming bearer token using a named profile.
+     * <p/>
+     * JWT tokens are validated locally via JWKS (signature, expiry, audience, issuer). Opaque tokens are validated via
+     * RFC 7662 introspection.
+     * <p/>
+     * The profile properties are resolved from {@code camel.oauth.<profileName>.*}.
+     *
+     * @param  context     the CamelContext
+     * @param  profileName the OAuth profile name
+     * @param  token       the bearer token string to validate
+     * @return             the validation result (never null)
+     * @since              4.21
+     */
+    public static OAuthTokenValidationResult validateOAuthToken(
+            CamelContext context, String profileName, String token) {
+        return resolveOAuthTokenValidationFactory(context).validateToken(context, profileName, token);
+    }
+
+    /**
+     * Validates an incoming bearer token using the default (unnamed) profile.
+     * <p/>
+     * JWT tokens are validated locally via JWKS (signature, expiry, audience, issuer). Opaque tokens are validated via
+     * RFC 7662 introspection.
+     * <p/>
+     * The profile properties are resolved from {@code camel.oauth.*}.
+     *
+     * @param  context the CamelContext
+     * @param  token   the bearer token string to validate
+     * @return         the validation result (never null)
+     * @since          4.21
+     */
+    public static OAuthTokenValidationResult validateOAuthToken(CamelContext context, String token) {
+        return resolveOAuthTokenValidationFactory(context).validateToken(context, token);
     }
 }
