@@ -134,7 +134,7 @@ public class TopologyDiagramWidget implements Widget {
                     if (!sb.isEmpty()) {
                         sb.append("/");
                     }
-                    sb.append(node.exchangesFailed).append("!");
+                    sb.append(node.exchangesFailed);
                 }
                 lines.add(sb.toString());
             } else if (!ext) {
@@ -212,7 +212,7 @@ public class TopologyDiagramWidget implements Widget {
         long ok = node.exchangesTotal - node.exchangesFailed;
         if (ok > 0 && node.exchangesFailed > 0) {
             String okStr = String.valueOf(ok);
-            String failStr = node.exchangesFailed + "!";
+            String failStr = String.valueOf(node.exchangesFailed);
             writeText(buffer, area, row, col, okStr, style(METRICS_OK_STYLE, selected));
             int slashCol = col + okStr.length();
             writeText(buffer, area, row, slashCol, "/", style(Style.EMPTY.fg(Color.GRAY), selected));

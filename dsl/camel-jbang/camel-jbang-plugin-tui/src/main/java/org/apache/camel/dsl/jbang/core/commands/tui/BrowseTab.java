@@ -327,8 +327,9 @@ class BrowseTab implements MonitorTab {
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
+                    Cell.from(""),
                     Cell.from(Span.styled("No messages", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from("")));
+                    Cell.from(""), Cell.from("")));
         }
 
         String uri = selectedEndpoint != null ? selectedEndpoint.uri : "";
