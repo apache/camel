@@ -48,7 +48,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
-import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.Jsoner;
 
@@ -110,6 +109,28 @@ class HistoryTab implements MonitorTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
+            if (ke.isUp()) {
+                diagram.historyNavigateUp();
+                return true;
+            }
+            if (ke.isDown()) {
+                diagram.historyNavigateDown();
+                return true;
+            }
+            if (ke.isLeft()) {
+                diagram.scrollLeft();
+                return true;
+            }
+            if (ke.isRight()) {
+                diagram.scrollRight();
+                return true;
+            }
+            if (ke.isHome()) {
+                diagram.scrollHome();
+                return true;
+            }
+        }
         if (diagram.handleScrollKeys(ke)) {
             return true;
         }
@@ -377,9 +398,17 @@ class HistoryTab implements MonitorTab {
             return;
         }
 
-        if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
-            diagram.renderDiagram(frame, area, " History Diagram ");
-            return;
+        if (diagram.isShowDiagram()) {
+            if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
+                String diagramTitle = String.format(" History Diagram — step %d/%d ",
+                        diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount());
+                diagram.renderNativeHistoryDiagram(frame, area, diagramTitle);
+                return;
+            }
+            if (diagram.hasDiagramData()) {
+                diagram.renderDiagram(frame, area, " History Diagram ");
+                return;
+            }
         }
 
         boolean tracerActive = !traces.get().isEmpty();
@@ -404,6 +433,13 @@ class HistoryTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
+            if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
+                hint(spans, "Esc", "close");
+                hint(spans, "↑↓", "step through path");
+                hint(spans, "←→", "h-scroll");
+                hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
+                return;
+            }
             diagram.renderFooterHints(spans);
             return;
         }
@@ -515,15 +551,13 @@ class HistoryTab implements MonitorTab {
         }
 
         String pid = ctx.selectedPid;
-        RouteDiagramHelper.HighlightStyle style = failed
-                ? RouteDiagramHelper.HighlightStyle.FAIL
-                : RouteDiagramHelper.HighlightStyle.SUCCESS;
 
         diagram.setLoadingPlaceholder();
 
+        boolean isFailed = failed;
         ctx.runner.scheduler().execute(() -> {
             try {
-                diagram.loadHighlightedDiagramInBackground(ctx, pid, messageHistory, style);
+                diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, isFailed);
             } finally {
                 diagram.endLoad();
             }

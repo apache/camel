@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -61,6 +62,8 @@ public class RouteDiagramWidget implements Widget {
     private final boolean showDescription;
     private final Map<String, String> routeDescriptions;
     private final String currentRouteLabel;
+    private final Set<String> highlightNodeIds;
+    private final boolean highlightFailed;
 
     private final List<EipNodeBox> nodeBoxes = new ArrayList<>();
 
@@ -89,6 +92,17 @@ public class RouteDiagramWidget implements Widget {
                               int selectedNodeIndex, int scrollX, int scrollY,
                               boolean showMetrics, Map<String, String> linkableEndpoints,
                               boolean showDescription, Map<String, String> routeDescriptions) {
+        this(layoutRoute, nodeWidth, selectedNodeIndex, scrollX, scrollY, showMetrics,
+             linkableEndpoints, showDescription, routeDescriptions,
+             Collections.emptySet(), false);
+    }
+
+    public RouteDiagramWidget(
+                              LayoutRoute layoutRoute, int nodeWidth,
+                              int selectedNodeIndex, int scrollX, int scrollY,
+                              boolean showMetrics, Map<String, String> linkableEndpoints,
+                              boolean showDescription, Map<String, String> routeDescriptions,
+                              Set<String> highlightNodeIds, boolean highlightFailed) {
         this.layoutRoute = layoutRoute;
         this.nodeWidth = nodeWidth;
         this.boxWidth = Math.max(MIN_BOX_WIDTH, nodeWidth / X_DIVISOR);
@@ -99,6 +113,8 @@ public class RouteDiagramWidget implements Widget {
         this.linkableEndpoints = linkableEndpoints;
         this.showDescription = showDescription;
         this.routeDescriptions = routeDescriptions;
+        this.highlightNodeIds = highlightNodeIds;
+        this.highlightFailed = highlightFailed;
         if (showDescription) {
             String desc = null;
             for (LayoutNode ln : layoutRoute.nodes) {
@@ -167,8 +183,14 @@ public class RouteDiagramWidget implements Widget {
         int nodeIdx = nodeBoxes.size();
         boolean selected = nodeIdx == selectedNodeIndex;
         boolean external = isExternalEndpoint(node);
+        boolean highlighted = node.id != null && highlightNodeIds.contains(node.id);
 
-        Color eipColor = getEipColor(node.type);
+        Color eipColor;
+        if (highlighted) {
+            eipColor = highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR;
+        } else {
+            eipColor = getEipColor(node.type);
+        }
         Style borderStyle = Style.EMPTY.fg(eipColor);
         if (selected) {
             borderStyle = borderStyle.patch(SELECTION_STYLE);
@@ -238,7 +260,11 @@ public class RouteDiagramWidget implements Widget {
         boolean external = isExternalEndpoint(to);
         boolean dashed = (showMetrics && total == 0) || external;
 
-        drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed, external);
+        boolean bothHighlighted = !highlightNodeIds.isEmpty()
+                && from.id != null && highlightNodeIds.contains(from.id)
+                && to.id != null && highlightNodeIds.contains(to.id);
+
+        drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed, external, bothHighlighted);
         drawCounters(buffer, area, toCx, toTop, stat);
     }
 
@@ -252,13 +278,16 @@ public class RouteDiagramWidget implements Widget {
         long total = stat != null ? stat.exchangesTotal : 0;
         boolean dashed = showMetrics && total == 0;
 
-        drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed, false);
+        boolean highlighted = !highlightNodeIds.isEmpty()
+                && to.id != null && highlightNodeIds.contains(to.id);
+
+        drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed, false, highlighted);
         drawCounters(buffer, area, toCx, toTop, stat);
     }
 
     private void drawArrowPath(
             Buffer buffer, Rect area, int fromCx, int fromRow, int toCx, int toRow,
-            boolean dashed, boolean external) {
+            boolean dashed, boolean external, boolean highlighted) {
         if (fromRow >= toRow) {
             return;
         }
@@ -266,7 +295,9 @@ public class RouteDiagramWidget implements Widget {
         char vChar = dashed ? DASH_V : V;
         char hChar = dashed ? DASH_H : H;
         Style edgeStyle;
-        if (external) {
+        if (highlighted) {
+            edgeStyle = Style.EMPTY.fg(highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR);
+        } else if (external) {
             edgeStyle = Style.EMPTY.fg(EXTERNAL_COLOR);
         } else if (dashed) {
             edgeStyle = Style.EMPTY.fg(Color.DARK_GRAY);
