@@ -225,6 +225,10 @@ class SourceViewer {
      * Load source for a route, scrolling to the given source line number.
      */
     void loadSource(MonitorContext ctx, String routeId, int targetLine) {
+        loadSource(ctx, routeId, targetLine, null);
+    }
+
+    void loadSource(MonitorContext ctx, String routeId, int targetLine, String sourceLocationHint) {
         if (ctx.selectedPid == null || ctx.runner == null) {
             return;
         }
@@ -232,6 +236,13 @@ class SourceViewer {
         String pid = ctx.selectedPid;
         String cacheKey = pid + ":" + routeId;
         CachedSource cached = sourceCache.get(cacheKey);
+        if (cached == null && sourceLocationHint != null) {
+            String locKey = pid + ":loc:" + sourceLocationHint;
+            cached = sourceCache.get(locKey);
+            if (cached != null) {
+                sourceCache.put(cacheKey, cached);
+            }
+        }
         if (cached != null) {
             applyCached(ctx, routeId, cached, targetLine);
             return;
@@ -364,8 +375,12 @@ class SourceViewer {
         }
 
         SyntaxHighlighter.Language lang = SyntaxHighlighter.detectLanguage(sourceLocation);
+        CachedSource cached = new CachedSource(result, codeLines, sourceLocation, lang);
         String cacheKey = pid + ":" + routeId;
-        sourceCache.put(cacheKey, new CachedSource(result, codeLines, sourceLocation, lang));
+        sourceCache.put(cacheKey, cached);
+        if (sourceLocation != null) {
+            sourceCache.put(pid + ":loc:" + sourceLocation, cached);
+        }
 
         applyResult(ctx, routeId, sourceLocation, result, codeLines, scrollTo, cursorLine);
     }

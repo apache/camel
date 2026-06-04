@@ -1384,7 +1384,8 @@ class RoutesTab implements MonitorTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
-        sourceViewer.loadSource(ctx, routeId, 0);
+        var rl = diagram.getRouteLayout(routeId);
+        sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
     }
 
     private void loadSourceForSelectedTopologyRoute() {
@@ -1415,7 +1416,8 @@ class RoutesTab implements MonitorTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
-        sourceViewer.loadSource(ctx, routeId, 0);
+        var rl2 = diagram.getRouteLayout(routeId);
+        sourceViewer.loadSource(ctx, routeId, 0, rl2 != null ? rl2.source : null);
     }
 
     private void loadSourceForSelectedNode() {
@@ -1436,7 +1438,8 @@ class RoutesTab implements MonitorTab {
                 sourceViewer.hide();
             }
         });
-        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine);
+        var rl3 = diagram.getRouteLayout(drillDownRouteId);
+        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl3 != null ? rl3.source : null);
     }
 
     private int findClosestEipNode(int sourceLine) {

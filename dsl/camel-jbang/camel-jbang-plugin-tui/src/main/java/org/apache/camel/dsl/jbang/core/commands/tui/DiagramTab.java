@@ -860,7 +860,8 @@ class DiagramTab implements MonitorTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
-        sourceViewer.loadSource(ctx, routeId, 0);
+        var rl = diagram.getRouteLayout(routeId);
+        sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
     }
 
     private void loadSourceForSelectedNode() {
@@ -881,7 +882,8 @@ class DiagramTab implements MonitorTab {
                 sourceViewer.hide();
             }
         });
-        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine);
+        var rl2 = diagram.getRouteLayout(drillDownRouteId);
+        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl2 != null ? rl2.source : null);
     }
 
     private int findClosestEipNode(int sourceLine) {
