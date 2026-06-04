@@ -109,6 +109,12 @@ class RoutesTab implements MonitorTab {
             return true;
         }
 
+        // Source viewer toggle (topology mode)
+        if (topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
+            loadSourceForSelectedTopologyRoute();
+            return true;
+        }
+
         // Topology node navigation
         if (diagram.isShowDiagram() && topologyMode && diagram.hasDiagramData()
                 && !diagram.getNodeBoxes().isEmpty()) {
@@ -654,6 +660,7 @@ class RoutesTab implements MonitorTab {
                 hint(spans, "↑↓←→", "navigate");
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "PgUp/PgDn", "page");
+                hint(spans, "c", "source");
             } else {
                 diagram.renderFooterHints(spans);
             }
@@ -1356,7 +1363,59 @@ class RoutesTab implements MonitorTab {
         Integer sel = routeTableState.selected();
         RouteInfo selectedRoute = (sel != null && sel >= 0 && sel < sortedRoutes.size())
                 ? sortedRoutes.get(sel) : sortedRoutes.get(0);
-        sourceViewer.loadSource(ctx, selectedRoute.routeId, 0);
+        String routeId = selectedRoute.routeId;
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            sourceViewer.hide();
+            // Open drill-down diagram for this route
+            topologyMode = false;
+            drillDownRouteId = routeId;
+            routeNavigationStack.clear();
+            diagram.setTopologyMode(false);
+            diagram.selectFromNode(routeId);
+            if (diagram.hasCachedData(ctx.selectedPid)) {
+                diagram.showCached();
+            } else {
+                loadDiagram(true);
+            }
+            // Select the closest EIP node after diagram is available
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+            }
+        });
+        sourceViewer.loadSource(ctx, routeId, 0);
+    }
+
+    private void loadSourceForSelectedTopologyRoute() {
+        String routeId = diagram.getSelectedRouteId();
+        if (routeId == null) {
+            return;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
+            return;
+        }
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            sourceViewer.hide();
+            // Switch to drill-down for this route
+            routeNavigationStack.clear();
+            drillDownRouteId = routeId;
+            topologyMode = false;
+            diagram.setTopologyMode(false);
+            diagram.selectFromNode(routeId);
+            diagram.resetScroll();
+            diagram.endLoad();
+            if (diagram.getRouteLayout(routeId) == null) {
+                reloadDiagram();
+            }
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+            }
+        });
+        sourceViewer.loadSource(ctx, routeId, 0);
     }
 
     private void loadSourceForSelectedNode() {
@@ -1369,7 +1428,40 @@ class RoutesTab implements MonitorTab {
                 && selected.layoutNode().treeNode != null) {
             targetLine = selected.layoutNode().treeNode.info.line;
         }
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+                sourceViewer.hide();
+            }
+        });
         sourceViewer.loadSource(ctx, drillDownRouteId, targetLine);
+    }
+
+    private int findClosestEipNode(int sourceLine) {
+        var boxes = diagram.getEipNodeBoxes();
+        if (boxes.isEmpty()) {
+            return -1;
+        }
+        int bestIdx = -1;
+        int bestDist = Integer.MAX_VALUE;
+        for (int i = 0; i < boxes.size(); i++) {
+            var box = boxes.get(i);
+            if (box.layoutNode() == null || box.layoutNode().treeNode == null) {
+                continue;
+            }
+            int nodeLine = box.layoutNode().treeNode.info.line;
+            if (nodeLine <= 0) {
+                continue;
+            }
+            int dist = Math.abs(nodeLine - sourceLine);
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestIdx = i;
+            }
+        }
+        return bestIdx;
     }
 
     @Override
@@ -1460,6 +1552,13 @@ class RoutesTab implements MonitorTab {
                 ## Source View
 
                 Press `c` to see the original route source code (YAML, XML, or Java).
+                A `>>` cursor highlights the current line. When opened from a diagram
+                node, the matching source line is positioned at 2/3 of the viewport.
+
+                Use `↑↓` to move the cursor, `Ctrl+↑↓` to scroll the viewport without
+                moving the cursor. Press `Enter` to select the closest diagram node at
+                the cursor line — this closes the source view and highlights that node
+                in the diagram.
 
                 ## Keys
 
@@ -1477,6 +1576,7 @@ class RoutesTab implements MonitorTab {
                 **Topology view:**
                 - `↑↓←→` — navigate between route boxes
                 - `Enter` — drill down into selected route
+                - `c` — show route source code
                 - `Esc` — close diagram (back to route table)
                 - `m` — toggle metrics on/off
                 - `e` — toggle external systems on/off
@@ -1485,11 +1585,20 @@ class RoutesTab implements MonitorTab {
                 **Route diagram (drill-down):**
                 - `↑↓←→` — navigate between EIP nodes
                 - `Enter` — jump to linked route (when `↵` indicator shown)
+                - `c` — show source code at selected node
                 - `Esc` — go back (previous route or topology)
                 - `t` — jump back to topology view
-                - `c` — show source code
                 - `m` — toggle metrics
                 - `n` — toggle description labels
+
+                **Source view:**
+                - `↑↓` — move cursor between lines
+                - `Ctrl+↑↓` — scroll viewport without moving cursor
+                - `←→` — horizontal scroll
+                - `PgUp/PgDn` — page jump
+                - `Home/End` — go to top/bottom
+                - `Enter` — select the closest diagram node at cursor line
+                - `Esc/c` — close source view
                 """;
     }
 

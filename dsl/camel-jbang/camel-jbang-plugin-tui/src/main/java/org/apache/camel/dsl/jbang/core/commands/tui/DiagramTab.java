@@ -65,9 +65,15 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
-        // Source viewer toggle
+        // Source viewer toggle (drill-down mode)
         if (!topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
             loadSourceForSelectedNode();
+            return true;
+        }
+
+        // Source viewer toggle (topology mode)
+        if (topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
+            loadSourceForSelectedTopologyRoute();
             return true;
         }
 
@@ -633,6 +639,7 @@ class DiagramTab implements MonitorTab {
                 hint(spans, "↑↓←→", "navigate");
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "PgUp/PgDn", "page");
+                hint(spans, "c", "source");
             } else {
                 diagram.renderFooterHints(spans);
             }
@@ -726,8 +733,8 @@ class DiagramTab implements MonitorTab {
 
                                 When metrics are enabled, each route box shows exchange counts:
                                 - **Green** number — successful exchanges
-                                - **Red** number with `!` — failed exchanges
-                                - Combined as `3748/12!` means 3748 ok and 12 failed
+                                - **Red** number — failed exchanges
+                                - Combined as `3748/12` means 3748 ok and 12 failed
 
                                 ## External Systems
 
@@ -768,13 +775,24 @@ class DiagramTab implements MonitorTab {
                                 **Topology view:**
                                 - `↑↓←→` — navigate between route boxes
                                 - `Enter` — drill down into selected route
+                                - `c` — show route source code
                                 - `Esc` — close diagram
 
                                 **Route diagram:**
                                 - `↑↓←→` — navigate between EIP nodes
                                 - `Enter` — jump to linked route (when `↵` indicator shown)
+                                - `c` — show source code at selected node
                                 - `Esc` — go back (previous route or topology)
                                 - `t` — jump back to topology view
+
+                                **Source view:**
+                                - `↑↓` — move cursor between lines
+                                - `Ctrl+↑↓` — scroll viewport without moving cursor
+                                - `←→` — horizontal scroll
+                                - `PgUp/PgDn` — page jump
+                                - `Home/End` — go to top/bottom
+                                - `Enter` — select the closest diagram node at cursor line
+                                - `Esc/c` — close source view
 
                                 **Common:**
                                 - `m` — toggle metrics on/off (default: on)
@@ -815,6 +833,36 @@ class DiagramTab implements MonitorTab {
         return Line.from(spans);
     }
 
+    private void loadSourceForSelectedTopologyRoute() {
+        String routeId = diagram.getSelectedRouteId();
+        if (routeId == null) {
+            return;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
+            return;
+        }
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            sourceViewer.hide();
+            routeNavigationStack.clear();
+            drillDownRouteId = routeId;
+            topologyMode = false;
+            diagram.setTopologyMode(false);
+            diagram.selectFromNode(routeId);
+            diagram.resetScroll();
+            diagram.endLoad();
+            if (diagram.getRouteLayout(routeId) == null) {
+                reloadDiagram();
+            }
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+            }
+        });
+        sourceViewer.loadSource(ctx, routeId, 0);
+    }
+
     private void loadSourceForSelectedNode() {
         if (drillDownRouteId == null) {
             return;
@@ -825,7 +873,40 @@ class DiagramTab implements MonitorTab {
                 && selected.layoutNode().treeNode != null) {
             targetLine = selected.layoutNode().treeNode.info.line;
         }
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+                sourceViewer.hide();
+            }
+        });
         sourceViewer.loadSource(ctx, drillDownRouteId, targetLine);
+    }
+
+    private int findClosestEipNode(int sourceLine) {
+        var boxes = diagram.getEipNodeBoxes();
+        if (boxes.isEmpty()) {
+            return -1;
+        }
+        int bestIdx = -1;
+        int bestDist = Integer.MAX_VALUE;
+        for (int i = 0; i < boxes.size(); i++) {
+            var box = boxes.get(i);
+            if (box.layoutNode() == null || box.layoutNode().treeNode == null) {
+                continue;
+            }
+            int nodeLine = box.layoutNode().treeNode.info.line;
+            if (nodeLine <= 0) {
+                continue;
+            }
+            int dist = Math.abs(nodeLine - sourceLine);
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestIdx = i;
+            }
+        }
+        return bestIdx;
     }
 
     private static int numWidth(long... values) {

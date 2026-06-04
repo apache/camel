@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.IntConsumer;
 
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -52,13 +54,18 @@ class SourceViewer {
 
     private boolean visible;
     private List<String> lines = Collections.emptyList();
+    private List<JsonObject> codeData = Collections.emptyList();
     private String title;
     private SyntaxHighlighter.Language language = SyntaxHighlighter.Language.PLAIN;
     private int scrollY;
     private int scrollX;
+    private int selectedLine = -1;
+    private int lastVisibleLines;
+    private boolean pendingScroll;
     private final ScrollbarState vScrollState = new ScrollbarState();
     private final ScrollbarState hScrollState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
+    private IntConsumer onLineSelected;
 
     boolean isVisible() {
         return visible;
@@ -66,14 +73,23 @@ class SourceViewer {
 
     void hide() {
         visible = false;
+        onLineSelected = null;
     }
 
     void reset() {
         visible = false;
         lines = Collections.emptyList();
+        codeData = Collections.emptyList();
         title = null;
         scrollY = 0;
         scrollX = 0;
+        selectedLine = -1;
+        pendingScroll = false;
+        onLineSelected = null;
+    }
+
+    void setOnLineSelected(IntConsumer callback) {
+        this.onLineSelected = callback;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -82,25 +98,46 @@ class SourceViewer {
         }
         if (ke.isChar('c') || ke.isCancel()) {
             visible = false;
+            onLineSelected = null;
             return true;
         }
-        if (ke.isUp()) {
+        if (ke.isKey(KeyCode.UP) && ke.hasCtrl()) {
             scrollY = Math.max(0, scrollY - 1);
-        } else if (ke.isDown()) {
+        } else if (ke.isKey(KeyCode.DOWN) && ke.hasCtrl()) {
             scrollY++;
+        } else if (ke.isUp()) {
+            selectedLine = Math.max(0, selectedLine - 1);
+        } else if (ke.isDown()) {
+            if (!lines.isEmpty()) {
+                selectedLine = Math.min(lines.size() - 1, selectedLine + 1);
+            }
         } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            scrollY = Math.max(0, scrollY - 20);
+            int page = Math.max(1, lastVisibleLines);
+            selectedLine = Math.max(0, selectedLine - page);
         } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            scrollY += 20;
+            int page = Math.max(1, lastVisibleLines);
+            if (!lines.isEmpty()) {
+                selectedLine = Math.min(lines.size() - 1, selectedLine + page);
+            }
         } else if (ke.isLeft()) {
             scrollX = Math.max(0, scrollX - 1);
         } else if (ke.isRight()) {
             scrollX++;
         } else if (ke.isHome()) {
-            scrollY = 0;
+            selectedLine = 0;
             scrollX = 0;
         } else if (ke.isEnd()) {
-            scrollY = Integer.MAX_VALUE;
+            if (!lines.isEmpty()) {
+                selectedLine = lines.size() - 1;
+            }
+        } else if (ke.isConfirm() && onLineSelected != null) {
+            if (selectedLine >= 0 && selectedLine < codeData.size()) {
+                Integer lineNum = codeData.get(selectedLine).getInteger("line");
+                if (lineNum != null) {
+                    onLineSelected.accept(lineNum);
+                }
+            }
+            return true;
         } else {
             return false;
         }
@@ -120,10 +157,28 @@ class SourceViewer {
         }
 
         int visibleLines = inner.height();
+        lastVisibleLines = visibleLines;
         int maxScroll = Math.max(0, lines.size() - visibleLines);
+
+        // On initial load, position selected line at 2/3 of viewport
+        if (pendingScroll && selectedLine >= 0) {
+            int twoThirds = visibleLines * 2 / 3;
+            scrollY = Math.max(0, selectedLine - twoThirds);
+            pendingScroll = false;
+        }
+
+        // Auto-scroll to keep selected line visible
+        if (selectedLine >= 0) {
+            if (selectedLine < scrollY) {
+                scrollY = selectedLine;
+            } else if (selectedLine >= scrollY + visibleLines) {
+                scrollY = selectedLine - visibleLines + 1;
+            }
+        }
         scrollY = Math.min(scrollY, maxScroll);
 
-        int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0);
+        int cursorWidth = 3;
+        int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0) + cursorWidth;
         int maxHScroll = Math.max(0, maxLineWidth - inner.width());
         scrollX = Math.min(scrollX, maxHScroll);
 
@@ -131,7 +186,8 @@ class SourceViewer {
         List<Line> visible = new ArrayList<>();
         for (int i = scrollY; i < end; i++) {
             String raw = lines.get(i);
-            visible.add(highlightSourceLine(raw, scrollX));
+            boolean isSelected = (i == selectedLine);
+            visible.add(highlightSourceLine(raw, scrollX, isSelected));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
 
@@ -147,9 +203,13 @@ class SourceViewer {
 
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "Esc/c", "close");
-        MonitorContext.hint(spans, "↑↓", "scroll");
+        MonitorContext.hint(spans, "↑↓", "navigate");
+        MonitorContext.hint(spans, "Ctrl+↑↓", "scroll");
         MonitorContext.hint(spans, "←→", "horizontal");
         MonitorContext.hint(spans, "PgUp/PgDn", "page");
+        if (onLineSelected != null) {
+            MonitorContext.hint(spans, "Enter", "select node");
+        }
     }
 
     /**
@@ -194,13 +254,14 @@ class SourceViewer {
         PathUtils.deleteFile(outputFile);
 
         if (jo == null) {
-            applyResult(ctx, routeId, null, List.of("(No response from integration)"), 0);
+            applyResult(ctx, routeId, null, List.of("(No response from integration)"), Collections.emptyList(), 0, -1);
             return;
         }
 
         JsonArray routes = (JsonArray) jo.get("routes");
         if (routes == null || routes.isEmpty()) {
-            applyResult(ctx, routeId, null, List.of("(No source available for route: " + routeId + ")"), 0);
+            applyResult(ctx, routeId, null, List.of("(No source available for route: " + routeId + ")"),
+                    Collections.emptyList(), 0, -1);
             return;
         }
 
@@ -208,7 +269,8 @@ class SourceViewer {
         String sourceLocation = objToString(routeObj.get("source"));
         List<JsonObject> codeLines = routeObj.getCollection("code");
         if (codeLines == null || codeLines.isEmpty()) {
-            applyResult(ctx, routeId, sourceLocation, List.of("(No source code available)"), 0);
+            applyResult(ctx, routeId, sourceLocation, List.of("(No source code available)"),
+                    Collections.emptyList(), 0, -1);
             return;
         }
 
@@ -241,15 +303,20 @@ class SourceViewer {
         }
 
         int scrollTo;
+        int cursorLine;
         if (matchIdx >= 0) {
-            scrollTo = Math.max(0, matchIdx - 2);
+            cursorLine = matchIdx;
+            scrollTo = matchIdx;
         } else {
-            scrollTo = findLicenseHeaderEnd(codeLines);
+            cursorLine = findLicenseHeaderEnd(codeLines);
+            scrollTo = cursorLine;
         }
-        applyResult(ctx, routeId, sourceLocation, result, scrollTo);
+        applyResult(ctx, routeId, sourceLocation, result, codeLines, scrollTo, cursorLine);
     }
 
-    private void applyResult(MonitorContext ctx, String routeId, String location, List<String> resultLines, int scrollTo) {
+    private void applyResult(
+            MonitorContext ctx, String routeId, String location,
+            List<String> resultLines, List<JsonObject> codeLines, int scrollTo, int cursorLine) {
         if (ctx.runner == null) {
             return;
         }
@@ -261,11 +328,14 @@ class SourceViewer {
             title = displayLoc != null ? routeId + "  " + displayLoc : routeId;
             language = SyntaxHighlighter.detectLanguage(location);
             lines = resultLines;
-            scrollY = scrollTo;
+            codeData = codeLines;
+            selectedLine = Math.max(0, cursorLine);
+            scrollY = 0;
+            pendingScroll = true;
         });
     }
 
-    private Line highlightSourceLine(String raw, int hSkip) {
+    private Line highlightSourceLine(String raw, int hSkip, boolean isSelected) {
         int prefixEnd = 0;
         while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
             prefixEnd++;
@@ -277,10 +347,22 @@ class SourceViewer {
         Line highlighted = SyntaxHighlighter.highlightLine(code, language);
 
         List<Span> spans = new ArrayList<>();
-        if (!prefix.isEmpty()) {
-            spans.add(Span.styled(prefix, Style.EMPTY.dim()));
+        Style selBg = Style.EMPTY.bg(Color.DARK_GRAY);
+        if (isSelected) {
+            spans.add(Span.styled(">> ", Style.EMPTY.fg(Color.YELLOW).bold()));
+            if (!prefix.isEmpty()) {
+                spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.YELLOW).bold().bg(Color.DARK_GRAY)));
+            }
+            for (Span s : highlighted.spans()) {
+                spans.add(Span.styled(s.content(), s.style().patch(selBg)));
+            }
+        } else {
+            spans.add(Span.raw("   "));
+            if (!prefix.isEmpty()) {
+                spans.add(Span.styled(prefix, Style.EMPTY.dim()));
+            }
+            spans.addAll(highlighted.spans());
         }
-        spans.addAll(highlighted.spans());
 
         Line full = Line.from(spans);
 
