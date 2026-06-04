@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -54,7 +54,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.isEmptyExpression(exp);
+            return MiscExpressionBuilder.isEmptyExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("isAlpha(", function);
@@ -64,7 +64,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.isAlphaExpression(exp);
+            return MiscExpressionBuilder.isAlphaExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("isAlphaNumeric(", function);
@@ -74,7 +74,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.isAlphaNumericExpression(exp);
+            return MiscExpressionBuilder.isAlphaNumericExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("isNumeric(", function);
@@ -84,7 +84,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.isNumericExpression(exp);
+            return MiscExpressionBuilder.isNumericExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("not(", function);
@@ -94,7 +94,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = value;
             }
-            return SimpleExpressionBuilder.isNotPredicate(exp);
+            return MiscExpressionBuilder.isNotPredicate(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("kindOfType(", function);
@@ -104,7 +104,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
-            return SimpleExpressionBuilder.kindOfTypeExpression(exp);
+            return MiscExpressionBuilder.kindOfTypeExpression(exp);
         }
 
         remainder = ifStartsWithReturnRemainder("throwException(", function);
@@ -127,7 +127,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             } else {
                 msg = StringHelper.removeQuotes(values.trim());
             }
-            return SimpleExpressionBuilder.throwExceptionExpression(msg, type);
+            return MiscExpressionBuilder.throwExceptionExpression(msg, type);
         }
 
         remainder = ifStartsWithReturnRemainder("assert(", function);
@@ -140,7 +140,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (tokens.length != 2) {
                 throw new SimpleParserException("Valid syntax: ${assert(exp,msg)} was: " + function, index);
             }
-            return SimpleExpressionBuilder.assertExpression(tokens[0], StringHelper.removeQuotes(tokens[1]));
+            return MiscExpressionBuilder.assertExpression(tokens[0], StringHelper.removeQuotes(tokens[1]));
         }
 
         remainder = ifStartsWithReturnRemainder("convertTo(", function);
@@ -170,9 +170,9 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                     throw new SimpleParserException(
                             "Valid syntax: ${convertTo(type).OGNL} or ${convertTo(exp,type).OGNL} was: " + function, index);
                 }
-                return SimpleExpressionBuilder.convertToOgnlExpression(exp, type, remainder);
+                return MiscExpressionBuilder.convertToOgnlExpression(exp, type, remainder);
             } else {
-                return SimpleExpressionBuilder.convertToExpression(exp, type);
+                return MiscExpressionBuilder.convertToExpression(exp, type);
             }
         }
 
@@ -185,17 +185,17 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             } else {
                 detailed = Boolean.parseBoolean(values);
             }
-            return SimpleExpressionBuilder.messageHistoryExpression(detailed);
+            return MiscExpressionBuilder.messageHistoryExpression(detailed);
         } else if (ObjectHelper.equal(function, "messageHistory")) {
-            return SimpleExpressionBuilder.messageHistoryExpression(true);
+            return MiscExpressionBuilder.messageHistoryExpression(true);
         }
 
         remainder = ifStartsWithReturnRemainder("uuid", function);
         if (remainder != null) {
             String values = StringHelper.between(remainder, "(", ")");
-            return SimpleExpressionBuilder.uuidExpression(values);
+            return MiscExpressionBuilder.uuidExpression(values);
         } else if (ObjectHelper.equal(function, "uuid")) {
-            return SimpleExpressionBuilder.uuidExpression(null);
+            return MiscExpressionBuilder.uuidExpression(null);
         }
 
         remainder = ifStartsWithReturnRemainder("hash(", function);
@@ -211,9 +211,9 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                     throw new SimpleParserException(
                             "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, index);
                 }
-                return SimpleExpressionBuilder.hashExpression(tokens[0].trim(), tokens[1].trim());
+                return MiscExpressionBuilder.hashExpression(tokens[0].trim(), tokens[1].trim());
             } else {
-                return SimpleExpressionBuilder.hashExpression(values.trim(), "SHA-256");
+                return MiscExpressionBuilder.hashExpression(values.trim(), "SHA-256");
             }
         }
 
@@ -223,7 +223,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isEmpty(value)) {
                 throw new SimpleParserException("Valid syntax: ${empty(<type>)} but was: " + function, index);
             }
-            return SimpleExpressionBuilder.newEmptyExpression(value);
+            return MiscExpressionBuilder.newEmptyExpression(value);
         }
 
         remainder = ifStartsWithReturnRemainder("newEmpty(", function);
@@ -232,7 +232,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isEmpty(value)) {
                 throw new SimpleParserException("Valid syntax: ${newEmpty(<type>)} but was: " + function, index);
             }
-            return SimpleExpressionBuilder.newEmptyExpression(value);
+            return MiscExpressionBuilder.newEmptyExpression(value);
         }
 
         remainder = ifStartsWithReturnRemainder("iif(", function);
@@ -247,7 +247,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, index);
             }
-            return SimpleExpressionBuilder.iifExpression(tokens[0].trim(), tokens[1].trim(), tokens[2].trim());
+            return MiscExpressionBuilder.iifExpression(tokens[0].trim(), tokens[1].trim(), tokens[2].trim());
         }
 
         remainder = ifStartsWithReturnRemainder("load(", function);
@@ -256,7 +256,7 @@ public final class MiscFunctionFactory implements SimpleLanguageFunctionFactory 
             if (ObjectHelper.isEmpty(value)) {
                 throw new SimpleParserException("Valid syntax: ${load(name)} but was: " + function, index);
             }
-            return SimpleExpressionBuilder.loadExpression(StringHelper.removeQuotes(value));
+            return MiscExpressionBuilder.loadExpression(StringHelper.removeQuotes(value));
         }
 
         return null;

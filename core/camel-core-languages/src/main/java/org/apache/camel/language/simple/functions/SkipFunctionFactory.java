@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -41,7 +41,7 @@ public final class SkipFunctionFactory implements SimpleLanguageFunctionFactory 
         if (values == null || ObjectHelper.isEmpty(values)) {
             throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, index);
         }
-        return SimpleExpressionBuilder.skipExpression("${body}", values.trim());
+        return MiscExpressionBuilder.skipExpression("${body}", values.trim());
     }
 
     @Override

@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MiscFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
@@ -151,6 +152,50 @@ public class MiscFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
         Object result = evaluate("newEmpty(Map)");
         assertInstanceOf(Map.class, result);
         assertTrue(((Map<?, ?>) result).isEmpty());
+    }
+
+    // --- throwException ---
+
+    @Test
+    public void testThrowExceptionDefaultTypeIsIllegalArgumentException() {
+        // pre-fix: catch(Exception e) around the entire body caught the RuntimeException that was
+        // just thrown and re-wrapped it in new RuntimeException(e), producing
+        // RuntimeException(IllegalArgumentException) instead of a bare IllegalArgumentException.
+        // onException(IllegalArgumentException.class) handlers would never match.
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> evaluate("throwException('boom')"));
+        assertEquals("boom", ex.getMessage());
+    }
+
+    @Test
+    public void testThrowExceptionCustomRuntimeTypeIsNotDoubleWrapped() {
+        // A custom RuntimeException subclass must arrive unwrapped so that typed onException
+        // handlers can catch it. Pre-fix: it arrived wrapped in RuntimeException(CustomEx).
+        exchange.setProperty("type", "java.lang.IllegalStateException");
+        IllegalStateException ex = assertThrows(
+                IllegalStateException.class,
+                () -> evaluate("throwException('state failure',java.lang.IllegalStateException)"));
+        assertEquals("state failure", ex.getMessage());
+    }
+
+    // --- pad ---
+
+    @Test
+    public void testPadNullBodyReturnsNull() {
+        // pre-fix: answer.length() threw NullPointerException when the body was null
+        exchange.getIn().setBody(null);
+        assertNull(evaluate("pad(${body},5)"));
+    }
+
+    @Test
+    public void testPadNullWidthThrowsIllegalArgument() {
+        // pre-fix: int width = null unboxed to NullPointerException with no useful message
+        exchange.getIn().setBody("hi");
+        // header absent -> width expression evaluates to null
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> evaluate("pad(${body},${header.missingWidth})"));
     }
 
     // --- iif ---

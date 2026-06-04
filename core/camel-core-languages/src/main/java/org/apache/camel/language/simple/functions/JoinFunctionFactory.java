@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.CollectionExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
@@ -61,7 +61,7 @@ public final class JoinFunctionFactory implements SimpleLanguageFunctionFactory 
                 separator = tokens[0];
             }
         }
-        return SimpleExpressionBuilder.joinExpression(exp, separator, prefix);
+        return CollectionExpressionBuilder.joinExpression(exp, separator, prefix);
     }
 
     @Override

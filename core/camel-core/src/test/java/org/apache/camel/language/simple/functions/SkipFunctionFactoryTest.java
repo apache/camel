@@ -71,6 +71,20 @@ public class SkipFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
     }
 
     @Test
+    public void testSkipDynamicNullNumberThrowsIllegalArgument() {
+        // pre-fix: int n = num.evaluate(…, Integer.class) unboxed null and threw NullPointerException
+        // with no useful message when the header was absent.
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        exchange.getIn().setBody(data);
+        // header intentionally absent so the expression resolves to null
+        org.junit.jupiter.api.Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> evaluate("skip(${header.missingNum})"));
+    }
+
+    @Test
     public void testCreateCode() {
         assertEquals("skip(exchange, 10)", createCode("skip(10)"));
         assertEquals("skip(exchange, ${header.max})", createCode("skip(${header.max})"));

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.CollectionExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -67,7 +67,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 exp = tokens[1];
             }
             type = StringHelper.removeQuotes(type);
-            return SimpleExpressionBuilder.setHeaderExpression(name, type, exp);
+            return CollectionExpressionBuilder.setHeaderExpression(name, type, exp);
         }
 
         remainder = ifStartsWithReturnRemainder("setVariable(", function);
@@ -92,7 +92,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 exp = tokens[1];
             }
             type = StringHelper.removeQuotes(type);
-            return SimpleExpressionBuilder.setVariableExpression(name, type, exp);
+            return CollectionExpressionBuilder.setVariableExpression(name, type, exp);
         }
 
         remainder = ifStartsWithReturnRemainder("range(", function);
@@ -108,9 +108,9 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                     throw new SimpleParserException(
                             "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, index);
                 }
-                return SimpleExpressionBuilder.rangeExpression(tokens[0].trim(), tokens[1].trim());
+                return CollectionExpressionBuilder.rangeExpression(tokens[0].trim(), tokens[1].trim());
             } else {
-                return SimpleExpressionBuilder.rangeExpression("1", values.trim());
+                return CollectionExpressionBuilder.rangeExpression("1", values.trim());
             }
         }
 
@@ -123,7 +123,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             } else {
                 tokens = new String[] { "${body}" };
             }
-            return SimpleExpressionBuilder.distinctExpression(tokens);
+            return CollectionExpressionBuilder.distinctExpression(tokens);
         }
 
         remainder = ifStartsWithReturnRemainder("reverse(", function);
@@ -135,7 +135,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             } else {
                 tokens = new String[] { "${body}" };
             }
-            return SimpleExpressionBuilder.reverseExpression(tokens);
+            return CollectionExpressionBuilder.reverseExpression(tokens);
         }
 
         remainder = ifStartsWithReturnRemainder("shuffle(", function);
@@ -147,7 +147,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             } else {
                 tokens = new String[] { "${body}" };
             }
-            return SimpleExpressionBuilder.shuffleExpression(tokens);
+            return CollectionExpressionBuilder.shuffleExpression(tokens);
         }
 
         remainder = ifStartsWithReturnRemainder("split(", function);
@@ -170,7 +170,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             } else if ("\n".equals(values)) {
                 separator = values;
             }
-            return SimpleExpressionBuilder.splitStringExpression(exp, separator);
+            return CollectionExpressionBuilder.splitStringExpression(exp, separator);
         }
 
         remainder = ifStartsWithReturnRemainder("sort(", function);
@@ -191,7 +191,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                     reverse = Boolean.parseBoolean(tokens[0]);
                 }
             }
-            return SimpleExpressionBuilder.sortExpression(exp, reverse);
+            return CollectionExpressionBuilder.sortExpression(exp, reverse);
         }
 
         remainder = ifStartsWithReturnRemainder("forEach(", function);
@@ -208,7 +208,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             }
             String exp1 = tokens[0];
             String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
-            return SimpleExpressionBuilder.forEachExpression(exp1, exp2);
+            return CollectionExpressionBuilder.forEachExpression(exp1, exp2);
         }
 
         remainder = ifStartsWithReturnRemainder("filter(", function);
@@ -225,7 +225,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             }
             String exp1 = tokens[0];
             String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
-            return SimpleExpressionBuilder.filterExpression(exp1, exp2);
+            return CollectionExpressionBuilder.filterExpression(exp1, exp2);
         }
 
         remainder = ifStartsWithReturnRemainder("listAdd(", function);
@@ -243,7 +243,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 exp1 = tokens[0];
             }
             String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
-            return SimpleExpressionBuilder.listAddExpression(exp1, exp2);
+            return CollectionExpressionBuilder.listAddExpression(exp1, exp2);
         }
 
         remainder = ifStartsWithReturnRemainder("listRemove(", function);
@@ -261,7 +261,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 exp1 = tokens[0];
             }
             String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
-            return SimpleExpressionBuilder.listRemoveExpression(exp1, exp2);
+            return CollectionExpressionBuilder.listRemoveExpression(exp1, exp2);
         }
 
         remainder = ifStartsWithReturnRemainder("mapAdd(", function);
@@ -287,7 +287,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                         "Valid syntax: ${mapAdd(key,exp)} or ${mapAdd(exp,key,exp)} was: " + function, index);
             }
             String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
-            return SimpleExpressionBuilder.mapAddExpression(exp1, key, exp2);
+            return CollectionExpressionBuilder.mapAddExpression(exp1, key, exp2);
         }
 
         remainder = ifStartsWithReturnRemainder("mapRemove(", function);
@@ -310,7 +310,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             } else {
                 key = tokens[0];
             }
-            return SimpleExpressionBuilder.mapRemoveExpression(exp, key);
+            return CollectionExpressionBuilder.mapRemoveExpression(exp, key);
         }
 
         remainder = ifStartsWithReturnRemainder("list(", function);
@@ -320,7 +320,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
             if (ObjectHelper.isNotEmpty(values)) {
                 tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
             }
-            return SimpleExpressionBuilder.listExpression(tokens);
+            return CollectionExpressionBuilder.listExpression(tokens);
         }
 
         remainder = ifStartsWithReturnRemainder("map(", function);
@@ -334,7 +334,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 throw new SimpleParserException(
                         "Map function must have an even number of values, was: " + tokens.length + " values.", index);
             }
-            return SimpleExpressionBuilder.mapExpression(tokens);
+            return CollectionExpressionBuilder.mapExpression(tokens);
         }
 
         return null;
@@ -485,7 +485,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 }
                 return "rangeList(exchange, " + before + ", " + after + ")";
             } else {
-                return "rangeList(exchange, 0, " + values.trim() + ")";
+                return "rangeList(exchange, 1, " + values.trim() + ")";
             }
         }
 

@@ -18,7 +18,7 @@ package org.apache.camel.language.simple.functions;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.OgnlExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -82,7 +82,7 @@ public final class VariableFunctionFactory implements SimpleLanguageFunctionFact
             }
 
             if (OgnlHelper.isValidOgnlExpression(key)) {
-                return SimpleExpressionBuilder.variablesOgnlExpression(key);
+                return OgnlExpressionBuilder.variablesOgnlExpression(key);
             } else {
                 return ExpressionBuilder.variableExpression(key);
             }
