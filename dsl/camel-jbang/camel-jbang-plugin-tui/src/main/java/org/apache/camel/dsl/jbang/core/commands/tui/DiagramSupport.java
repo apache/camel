@@ -858,6 +858,23 @@ class DiagramSupport {
         return endpoints;
     }
 
+    private Map<String, String> computeRouteDescriptions() {
+        Map<String, String> descriptions = new HashMap<>();
+        for (var entry : routeLayouts.entrySet()) {
+            var lr = entry.getValue();
+            for (var node : lr.nodes) {
+                if ("route".equals(node.type) && node.treeNode != null) {
+                    String desc = node.treeNode.info.description;
+                    if (desc != null && !desc.isBlank()) {
+                        descriptions.put(entry.getKey(), desc);
+                    }
+                    break;
+                }
+            }
+        }
+        return descriptions;
+    }
+
     private static String findFromUri(RouteDiagramLayoutEngine.LayoutRoute lr) {
         for (var node : lr.nodes) {
             if ("from".equals(node.type) && node.treeNode != null) {
@@ -879,9 +896,11 @@ class DiagramSupport {
         Rect inner = block.inner(area);
         int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
         Map<String, String> linkable = computeLinkableEndpoints(currentRouteId);
+        Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
 
         var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
-                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable);
+                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
+                showDescription, routeDescs);
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -896,7 +915,8 @@ class DiagramSupport {
         scrollX = Math.min(scrollX, maxHScroll);
 
         var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
-                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable);
+                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
+                showDescription, routeDescs);
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))

@@ -572,13 +572,13 @@ class DiagramTab implements MonitorTab {
                             long ago = now - stat.lastCompletedExchangeTimestamp;
                             lines.add(Line.from(
                                     Span.styled("   success: ", Style.EMPTY.dim()),
-                                    Span.raw(TimeUtils.printDuration(ago, true))));
+                                    Span.raw(TimeUtils.printDuration(ago, false))));
                         }
                         if (stat.lastFailedExchangeTimestamp > 0) {
                             long ago = now - stat.lastFailedExchangeTimestamp;
                             lines.add(Line.from(
                                     Span.styled("   fail:    ", Style.EMPTY.dim()),
-                                    Span.styled(TimeUtils.printDuration(ago, true),
+                                    Span.styled(TimeUtils.printDuration(ago, false),
                                             Style.EMPTY.fg(Color.LIGHT_RED))));
                         }
                     }

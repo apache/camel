@@ -58,6 +58,10 @@ public class RouteDiagramWidget implements Widget {
     private final boolean showMetrics;
     private final Map<String, String> linkableEndpoints;
 
+    private final boolean showDescription;
+    private final Map<String, String> routeDescriptions;
+    private final String currentRouteLabel;
+
     private final List<EipNodeBox> nodeBoxes = new ArrayList<>();
 
     public record EipNodeBox(String nodeId, String type, int startRow, int endRow, int startCol, int endCol,
@@ -69,13 +73,22 @@ public class RouteDiagramWidget implements Widget {
                               int selectedNodeIndex, int scrollX, int scrollY,
                               boolean showMetrics) {
         this(layoutRoute, nodeWidth, selectedNodeIndex, scrollX, scrollY, showMetrics,
-             Collections.emptyMap());
+             Collections.emptyMap(), false, Collections.emptyMap());
     }
 
     public RouteDiagramWidget(
                               LayoutRoute layoutRoute, int nodeWidth,
                               int selectedNodeIndex, int scrollX, int scrollY,
                               boolean showMetrics, Map<String, String> linkableEndpoints) {
+        this(layoutRoute, nodeWidth, selectedNodeIndex, scrollX, scrollY, showMetrics,
+             linkableEndpoints, false, Collections.emptyMap());
+    }
+
+    public RouteDiagramWidget(
+                              LayoutRoute layoutRoute, int nodeWidth,
+                              int selectedNodeIndex, int scrollX, int scrollY,
+                              boolean showMetrics, Map<String, String> linkableEndpoints,
+                              boolean showDescription, Map<String, String> routeDescriptions) {
         this.layoutRoute = layoutRoute;
         this.nodeWidth = nodeWidth;
         this.boxWidth = Math.max(MIN_BOX_WIDTH, nodeWidth / X_DIVISOR);
@@ -84,6 +97,20 @@ public class RouteDiagramWidget implements Widget {
         this.scrollY = scrollY;
         this.showMetrics = showMetrics;
         this.linkableEndpoints = linkableEndpoints;
+        this.showDescription = showDescription;
+        this.routeDescriptions = routeDescriptions;
+        if (showDescription) {
+            String desc = null;
+            for (LayoutNode ln : layoutRoute.nodes) {
+                if ("route".equals(ln.type) && ln.treeNode != null) {
+                    desc = ln.treeNode.info.description;
+                    break;
+                }
+            }
+            this.currentRouteLabel = (desc != null && !desc.isBlank()) ? desc : layoutRoute.routeId;
+        } else {
+            this.currentRouteLabel = null;
+        }
     }
 
     public List<EipNodeBox> getNodeBoxes() {
@@ -208,9 +235,10 @@ public class RouteDiagramWidget implements Widget {
 
         StatInfo stat = resolveStatInfo(to);
         long total = stat != null ? stat.exchangesTotal : 0;
-        boolean dashed = (showMetrics && total == 0) || isExternalEndpoint(to);
+        boolean external = isExternalEndpoint(to);
+        boolean dashed = (showMetrics && total == 0) || external;
 
-        drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed);
+        drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed, external);
         drawCounters(buffer, area, toCx, toTop, stat);
     }
 
@@ -224,18 +252,27 @@ public class RouteDiagramWidget implements Widget {
         long total = stat != null ? stat.exchangesTotal : 0;
         boolean dashed = showMetrics && total == 0;
 
-        drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed);
+        drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed, false);
         drawCounters(buffer, area, toCx, toTop, stat);
     }
 
-    private void drawArrowPath(Buffer buffer, Rect area, int fromCx, int fromRow, int toCx, int toRow, boolean dashed) {
+    private void drawArrowPath(
+            Buffer buffer, Rect area, int fromCx, int fromRow, int toCx, int toRow,
+            boolean dashed, boolean external) {
         if (fromRow >= toRow) {
             return;
         }
 
         char vChar = dashed ? DASH_V : V;
         char hChar = dashed ? DASH_H : H;
-        Style edgeStyle = dashed ? Style.EMPTY.fg(Color.DARK_GRAY) : Style.EMPTY.fg(Color.GRAY);
+        Style edgeStyle;
+        if (external) {
+            edgeStyle = Style.EMPTY.fg(EXTERNAL_COLOR);
+        } else if (dashed) {
+            edgeStyle = Style.EMPTY.fg(Color.DARK_GRAY);
+        } else {
+            edgeStyle = Style.EMPTY.fg(Color.GRAY);
+        }
 
         if (fromCx == toCx) {
             for (int r = fromRow; r < toRow - 1; r++) {
@@ -338,6 +375,19 @@ public class RouteDiagramWidget implements Widget {
 
     private List<String> rewrapText(LayoutNode node, int maxWidth) {
         String label = String.join("", node.wrappedLines);
+        if (showDescription) {
+            if ("from".equals(node.type) && currentRouteLabel != null) {
+                label = currentRouteLabel;
+            } else {
+                String linkedRouteId = findLinkedRouteId(node);
+                if (linkedRouteId != null) {
+                    String desc = routeDescriptions.get(linkedRouteId);
+                    if (desc != null && !desc.isBlank()) {
+                        label = desc;
+                    }
+                }
+            }
+        }
         return wrapText(label, maxWidth);
     }
 
