@@ -17,10 +17,13 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -86,10 +89,16 @@ class DiagramSupport {
 
     // History diagram state
     private boolean historyMode;
-    private List<RouteDiagramLayoutEngine.LayoutRoute> historyRouteLayouts = Collections.emptyList();
     private List<String> historyNodeOrder = Collections.emptyList();
     private int historyStepIndex;
     private boolean historyFailed;
+
+    // History drill-down state (topology → route navigation)
+    private boolean historyTopologyMode;
+    private String historyDrillDownRouteId;
+    private final Deque<String> historyNavigationStack = new ArrayDeque<>();
+    private Map<String, String> historyNodeRouteMap = Collections.emptyMap();
+    private Set<String> historyRouteIds = Collections.emptySet();
 
     boolean isShowDiagram() {
         return showDiagram;
@@ -300,10 +309,14 @@ class DiagramSupport {
         scrollY = 0;
         scrollX = 0;
         historyMode = false;
-        historyRouteLayouts = Collections.emptyList();
         historyNodeOrder = Collections.emptyList();
         historyStepIndex = 0;
         historyFailed = false;
+        historyTopologyMode = false;
+        historyDrillDownRouteId = null;
+        historyNavigationStack.clear();
+        historyNodeRouteMap = Collections.emptyMap();
+        historyRouteIds = Collections.emptySet();
     }
 
     boolean hasCachedData(String pid) {
@@ -1139,38 +1152,48 @@ class DiagramSupport {
     void loadHighlightedNativeDiagramInBackground(
             MonitorContext ctx, String pid,
             String[] messageHistory, boolean failed) {
-        JsonObject jo = requestRouteStructure(ctx, pid);
+        // Single IPC call: topology + route structures
+        JsonObject jo = requestRouteTopology(ctx, pid, false, true);
         if (jo == null) {
             close();
             return;
         }
 
-        RouteDiagramHelper.HighlightStyle hlStyle = failed
-                ? RouteDiagramHelper.HighlightStyle.FAIL
-                : RouteDiagramHelper.HighlightStyle.SUCCESS;
-        RouteDiagramHelper.HighlightInfo highlightInfo
-                = RouteDiagramHelper.parseMessageHistory(messageHistory, hlStyle);
-        Set<String> nodeIds = new LinkedHashSet<>(highlightInfo.getNodeIds());
+        // Parse topology layout
+        TopologyLayoutResult topoResult = null;
+        int nodeW = 0;
+        List<TopologyLayoutNode> topoNodes = Collections.emptyList();
+        List<TopologyLayoutEdge> topoEdges = Collections.emptyList();
+        List<TopologyNodeInfo> tNodes = TopologyHelper.parseNodes(jo);
+        List<TopologyEdgeInfo> tEdges = TopologyHelper.parseEdges(jo);
+        if (!tNodes.isEmpty()) {
+            TopologyLayoutEngine topoEngine = new TopologyLayoutEngine();
+            topoResult = topoEngine.layout(tNodes, tEdges);
+            normalizeTopologyLayoutY(topoResult);
+            nodeW = topoEngine.getNodeWidth();
+            topoNodes = topoResult.nodes;
+            topoEdges = topoResult.edges;
+        }
 
+        // Parse and layout all routes
         List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(jo);
         if (routes.isEmpty()) {
             close();
             return;
         }
 
-        for (RouteDiagramLayoutEngine.RouteInfo ri : routes) {
-            boolean routeHasHighlight = ri.nodes.stream().anyMatch(n -> n.id != null && nodeIds.contains(n.id));
-            if (routeHasHighlight) {
-                addParentNodes(ri.nodes, nodeIds);
+        Set<String> externalUris = parseExternalUris(jo);
+        if (!externalUris.isEmpty()) {
+            for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
+                for (RouteDiagramLayoutEngine.NodeInfo ni : r.nodes) {
+                    if (!ni.remote) {
+                        String baseUri = getBaseUri(ni);
+                        if (baseUri != null && externalUris.contains(baseUri)) {
+                            ni.remote = true;
+                        }
+                    }
+                }
             }
-        }
-
-        RouteDiagramHelper.HighlightInfo fullHighlight
-                = new RouteDiagramHelper.HighlightInfo(nodeIds, highlightInfo.getRouteOrder(), hlStyle);
-        routes = RouteDiagramHelper.filterAndOrderRoutes(routes, fullHighlight);
-        if (routes.isEmpty()) {
-            close();
-            return;
         }
 
         RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
@@ -1180,37 +1203,93 @@ class DiagramSupport {
                 RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                 labelMode);
 
-        List<RouteDiagramLayoutEngine.LayoutRoute> layouts = new ArrayList<>();
+        Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeMap = new LinkedHashMap<>();
         for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
             RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, 0);
             normalizeRouteLayoutY(lr);
-            layouts.add(lr);
+            routeMap.put(r.routeId, lr);
         }
 
-        // Build nodeId visit order from messageHistory (preserving sequence, deduped)
+        // Parse message history: build nodeId visit order and nodeId→routeId mapping
+        RouteDiagramHelper.HighlightStyle hlStyle = failed
+                ? RouteDiagramHelper.HighlightStyle.FAIL
+                : RouteDiagramHelper.HighlightStyle.SUCCESS;
+        RouteDiagramHelper.HighlightInfo highlightInfo
+                = RouteDiagramHelper.parseMessageHistory(messageHistory, hlStyle);
+
         List<String> nodeOrder = new ArrayList<>();
-        Set<String> seen = new LinkedHashSet<>();
+        Map<String, String> nodeRouteMap = new LinkedHashMap<>();
+        Set<String> visitedRouteIds = new LinkedHashSet<>();
+        Set<String> seenNodes = new LinkedHashSet<>();
         for (String h : messageHistory) {
             int bracket = h.indexOf('[');
             int end = h.indexOf(']');
             if (bracket >= 0 && end > bracket) {
+                String routeId = h.substring(0, bracket);
                 String nodeId = h.substring(bracket + 1, end);
-                if (!nodeId.isEmpty() && seen.add(nodeId)) {
+                if (!nodeId.isEmpty() && seenNodes.add(nodeId)) {
                     nodeOrder.add(nodeId);
+                    nodeRouteMap.put(nodeId, routeId);
+                }
+                if (!routeId.isEmpty()) {
+                    visitedRouteIds.add(routeId);
                 }
             }
         }
 
+        // Add parent scope nodes to highlight info for routes with highlighted children
+        Set<String> allNodeIds = new LinkedHashSet<>(highlightInfo.getNodeIds());
+        for (RouteDiagramLayoutEngine.RouteInfo ri : routes) {
+            boolean routeHasHighlight = ri.nodes.stream().anyMatch(n -> n.id != null && allNodeIds.contains(n.id));
+            if (routeHasHighlight) {
+                addParentNodes(ri.nodes, allNodeIds);
+            }
+        }
+
+        // Compute topology nodeBoxes for selection
         boolean isFailed = failed;
+        TopologyLayoutResult finalTopoResult = topoResult;
+        int finalNodeW = nodeW;
+        List<TopologyLayoutNode> finalTopoNodes = topoNodes;
+        List<TopologyLayoutEdge> finalTopoEdges = topoEdges;
+
         if (ctx.runner == null) {
             return;
         }
         ctx.runner.runOnRenderThread(() -> {
             historyMode = true;
-            historyRouteLayouts = layouts;
             historyNodeOrder = nodeOrder;
             historyStepIndex = nodeOrder.size() - 1;
             historyFailed = isFailed;
+            historyNodeRouteMap = nodeRouteMap;
+            historyRouteIds = visitedRouteIds;
+            historyTopologyMode = true;
+            historyDrillDownRouteId = null;
+            historyNavigationStack.clear();
+
+            // Store topology data
+            topologyLayout = finalTopoResult;
+            topologyNodeWidth = finalNodeW;
+            topologyNodes = finalTopoNodes;
+            topologyEdges = finalTopoEdges;
+            routeLayouts = routeMap;
+
+            // Initialize topology node selection
+            if (finalTopoResult != null) {
+                List<TopologyAsciiRenderer.NodeBox> boxes
+                        = computeNodeBoxes(finalTopoResult, finalNodeW, false);
+                nodeBoxes = boxes;
+                // Select the first highlighted route in topology
+                int selIdx = -1;
+                for (int i = 0; i < boxes.size(); i++) {
+                    if (visitedRouteIds.contains(boxes.get(i).routeId())) {
+                        selIdx = i;
+                        break;
+                    }
+                }
+                selectedNodeIndex = selIdx >= 0 ? selIdx : (boxes.isEmpty() ? -1 : 0);
+            }
+
             scrollY = 0;
             scrollX = 0;
             showDiagram = true;
@@ -1222,7 +1301,7 @@ class DiagramSupport {
     }
 
     boolean hasHistoryData() {
-        return !historyRouteLayouts.isEmpty();
+        return !historyNodeOrder.isEmpty();
     }
 
     int getHistoryStepIndex() {
@@ -1236,60 +1315,117 @@ class DiagramSupport {
     void historyNavigateDown() {
         if (historyStepIndex < historyNodeOrder.size() - 1) {
             historyStepIndex++;
+            handleHistoryRouteTransition();
         }
     }
 
     void historyNavigateUp() {
         if (historyStepIndex > 0) {
             historyStepIndex--;
+            handleHistoryRouteTransition();
         }
     }
 
-    void renderNativeHistoryDiagram(Frame frame, Rect area, String title) {
+    private void handleHistoryRouteTransition() {
+        if (historyTopologyMode || historyDrillDownRouteId == null) {
+            return;
+        }
+        String nodeId = historyNodeOrder.get(historyStepIndex);
+        String nodeRoute = historyNodeRouteMap.get(nodeId);
+        if (nodeRoute != null && !nodeRoute.equals(historyDrillDownRouteId)) {
+            historyNavigationStack.push(historyDrillDownRouteId);
+            historyDrillDownRouteId = nodeRoute;
+            scrollY = 0;
+            scrollX = 0;
+        }
+    }
+
+    boolean isHistoryTopologyMode() {
+        return historyTopologyMode;
+    }
+
+    String getHistoryDrillDownRouteId() {
+        return historyDrillDownRouteId;
+    }
+
+    Deque<String> getHistoryNavigationStack() {
+        return historyNavigationStack;
+    }
+
+    void historyEnterDrillDown() {
+        String selectedRoute = getSelectedRouteId();
+        if (selectedRoute == null && !historyRouteIds.isEmpty()) {
+            selectedRoute = historyRouteIds.iterator().next();
+        }
+        if (selectedRoute == null) {
+            return;
+        }
+        historyTopologyMode = false;
+        historyDrillDownRouteId = selectedRoute;
+        historyNavigationStack.clear();
+
+        // Set step index to the first node in this route
+        for (int i = 0; i < historyNodeOrder.size(); i++) {
+            String nRoute = historyNodeRouteMap.get(historyNodeOrder.get(i));
+            if (selectedRoute.equals(nRoute)) {
+                historyStepIndex = i;
+                break;
+            }
+        }
+        scrollY = 0;
+        scrollX = 0;
+    }
+
+    void historyReturnToTopology() {
+        historyTopologyMode = true;
+        historyDrillDownRouteId = null;
+        historyNavigationStack.clear();
+        scrollY = 0;
+        scrollX = 0;
+        // Restore topology selection to highlight the current route
+        if (historyStepIndex >= 0 && historyStepIndex < historyNodeOrder.size()) {
+            String nodeId = historyNodeOrder.get(historyStepIndex);
+            String nodeRoute = historyNodeRouteMap.get(nodeId);
+            if (nodeRoute != null) {
+                for (int i = 0; i < nodeBoxes.size(); i++) {
+                    if (nodeRoute.equals(nodeBoxes.get(i).routeId())) {
+                        selectedNodeIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    void historyGoBack() {
+        if (!historyNavigationStack.isEmpty()) {
+            historyDrillDownRouteId = historyNavigationStack.pop();
+            scrollY = 0;
+            scrollX = 0;
+        } else {
+            historyReturnToTopology();
+        }
+    }
+
+    void renderHistoryTopologyDiagram(Frame frame, Rect area, Line title) {
+        if (topologyLayout == null) {
+            return;
+        }
+
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(title)
+                .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
 
-        int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
+        var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
+                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY,
+                false, showDescription, historyRouteIds, historyFailed);
 
-        // Build the progressive highlight set: nodes up to current step
-        Set<String> activeHighlight = new LinkedHashSet<>();
-        for (int i = 0; i <= historyStepIndex && i < historyNodeOrder.size(); i++) {
-            activeHighlight.add(historyNodeOrder.get(i));
-        }
-        // Also add parent/scope nodes for highlighted children
-        for (RouteDiagramLayoutEngine.LayoutRoute lr : historyRouteLayouts) {
-            Set<String> parentIds = new LinkedHashSet<>();
-            for (RouteDiagramLayoutEngine.LayoutNode ln : lr.nodes) {
-                if (ln.id != null && activeHighlight.contains(ln.id) && ln.parentNode != null
-                        && ln.parentNode.id != null && !"route".equals(ln.parentNode.type)) {
-                    parentIds.add(ln.parentNode.id);
-                }
-            }
-            activeHighlight.addAll(parentIds);
-        }
-
-        // Find the currently selected nodeId and which route it belongs to
-        String currentNodeId = historyStepIndex >= 0 && historyStepIndex < historyNodeOrder.size()
-                ? historyNodeOrder.get(historyStepIndex) : null;
-
-        // Calculate total height across all route diagrams
-        int totalRows = 0;
-        int totalCols = 0;
-        List<Integer> routeHeights = new ArrayList<>();
-        for (RouteDiagramLayoutEngine.LayoutRoute lr : historyRouteLayouts) {
-            var probe = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
-                    lr, nw, -1, 0, 0, false);
-            int h = probe.getTotalRows();
-            routeHeights.add(h);
-            totalRows += h + 1; // +1 gap between routes
-            totalCols = Math.max(totalCols, probe.getTotalCols());
-        }
-
+        int totalRows = widget.getTotalRows();
+        int totalCols = widget.getTotalCols();
         int visibleLines = Math.max(1, inner.height() - 1);
         int visibleCols = Math.max(1, inner.width() - 1);
         lastVisibleHeight = visibleLines;
@@ -1300,38 +1436,121 @@ class DiagramSupport {
         scrollY = Math.min(scrollY, maxVScroll);
         scrollX = Math.min(scrollX, maxHScroll);
 
-        // Find the selected node's position for auto-scroll
-        int selectedRouteOffset = 0;
-        int selectedNodeIdx = -1;
-        RouteDiagramLayoutEngine.LayoutRoute selectedLayout = null;
-        for (int ri = 0; ri < historyRouteLayouts.size(); ri++) {
-            RouteDiagramLayoutEngine.LayoutRoute lr = historyRouteLayouts.get(ri);
-            int nodeIdx = 0;
-            for (RouteDiagramLayoutEngine.LayoutNode ln : lr.nodes) {
-                if (!"route".equals(ln.type)) {
-                    if (ln.id != null && ln.id.equals(currentNodeId)) {
-                        selectedNodeIdx = nodeIdx;
-                        selectedLayout = lr;
-                        break;
-                    }
-                    nodeIdx++;
-                }
-            }
-            if (selectedNodeIdx >= 0) {
-                break;
-            }
-            selectedRouteOffset += routeHeights.get(ri) + 1;
+        var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget(
+                topologyLayout, topologyNodeWidth, selectedNodeIndex, scrollX, scrollY,
+                false, showDescription, historyRouteIds, historyFailed);
+
+        List<Rect> vChunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(vChunks.get(0));
+
+        frame.renderWidget(finalWidget, hChunks.get(0));
+
+        List<TopologyAsciiRenderer.NodeBox> widgetBoxes = new ArrayList<>();
+        for (var nb : finalWidget.getNodeBoxes()) {
+            widgetBoxes.add(new TopologyAsciiRenderer.NodeBox(
+                    nb.routeId(), nb.startRow(), nb.endRow(), nb.startCol(), nb.endCol(), nb.layer()));
+        }
+        if (!widgetBoxes.isEmpty()) {
+            nodeBoxes = widgetBoxes;
         }
 
+        vScrollState.contentLength(totalRows);
+        vScrollState.viewportContentLength(visibleLines);
+        vScrollState.position(scrollY);
+        frame.renderStatefulWidget(
+                Scrollbar.builder().build(),
+                hChunks.get(1), vScrollState);
+
+        if (totalCols > visibleCols) {
+            hScrollState.contentLength(totalCols);
+            hScrollState.viewportContentLength(visibleCols);
+            hScrollState.position(scrollX);
+            frame.renderStatefulWidget(
+                    Scrollbar.horizontal(),
+                    vChunks.get(1), hScrollState);
+        }
+    }
+
+    void renderHistoryRouteDiagram(Frame frame, Rect area, Line title, String routeId) {
+        RouteDiagramLayoutEngine.LayoutRoute routeLayout = routeLayouts.get(routeId);
+        if (routeLayout == null) {
+            return;
+        }
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(Title.from(title))
+                .build();
+        frame.renderWidget(block, area);
+
+        Rect inner = block.inner(area);
+        int nw = RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE;
+
+        // Build progressive highlight set filtered to this route
+        Set<String> activeHighlight = new LinkedHashSet<>();
+        String currentNodeId = historyStepIndex >= 0 && historyStepIndex < historyNodeOrder.size()
+                ? historyNodeOrder.get(historyStepIndex) : null;
+        for (int i = 0; i <= historyStepIndex && i < historyNodeOrder.size(); i++) {
+            String nid = historyNodeOrder.get(i);
+            String nRoute = historyNodeRouteMap.get(nid);
+            if (routeId.equals(nRoute)) {
+                activeHighlight.add(nid);
+            }
+        }
+        // Add parent/scope nodes
+        Set<String> parentIds = new LinkedHashSet<>();
+        for (RouteDiagramLayoutEngine.LayoutNode ln : routeLayout.nodes) {
+            if (ln.id != null && activeHighlight.contains(ln.id) && ln.parentNode != null
+                    && ln.parentNode.id != null && !"route".equals(ln.parentNode.type)) {
+                parentIds.add(ln.parentNode.id);
+            }
+        }
+        activeHighlight.addAll(parentIds);
+
+        // Find selected EIP node index within this route
+        int selIdx = -1;
+        if (currentNodeId != null && routeId.equals(historyNodeRouteMap.get(currentNodeId))) {
+            int idx = 0;
+            for (RouteDiagramLayoutEngine.LayoutNode ln : routeLayout.nodes) {
+                if (!"route".equals(ln.type)) {
+                    if (ln.id != null && ln.id.equals(currentNodeId)) {
+                        selIdx = idx;
+                        break;
+                    }
+                    idx++;
+                }
+            }
+        }
+
+        Map<String, String> linkable = computeLinkableEndpoints(routeId);
+        Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
+
+        var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
+                routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
+                showDescription, routeDescs, activeHighlight, historyFailed);
+
+        int totalRows = widget.getTotalRows();
+        int totalCols = widget.getTotalCols();
+        int visibleLines = Math.max(1, inner.height() - 1);
+        int visibleCols = Math.max(1, inner.width() - 1);
+        lastVisibleHeight = visibleLines;
+        lastVisibleWidth = visibleCols;
+
+        int maxVScroll = Math.max(0, totalRows - visibleLines);
+        int maxHScroll = Math.max(0, totalCols - visibleCols);
+        scrollY = Math.min(scrollY, maxVScroll);
+        scrollX = Math.min(scrollX, maxHScroll);
+
         // Auto-scroll to keep selected node visible
-        if (selectedNodeIdx >= 0 && selectedLayout != null) {
-            var scrollProbe = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
-                    selectedLayout, nw, selectedNodeIdx, 0, 0, false);
-            // Get the selected node's row in the stacked layout
-            // The node boxes are populated during render, so we estimate from layout data
-            for (RouteDiagramLayoutEngine.LayoutNode ln : selectedLayout.nodes) {
+        if (selIdx >= 0 && currentNodeId != null) {
+            for (RouteDiagramLayoutEngine.LayoutNode ln : routeLayout.nodes) {
                 if (ln.id != null && ln.id.equals(currentNodeId)) {
-                    int nodeRow = selectedRouteOffset + ln.y / 20; // Y_SCALE = 20
+                    int nodeRow = ln.y / 20;
                     if (nodeRow < scrollY) {
                         scrollY = Math.max(0, nodeRow - 2);
                     } else if (nodeRow >= scrollY + visibleLines) {
@@ -1342,6 +1561,10 @@ class DiagramSupport {
             }
         }
 
+        var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
+                routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
+                showDescription, routeDescs, activeHighlight, historyFailed);
+
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(inner);
@@ -1350,37 +1573,10 @@ class DiagramSupport {
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(vChunks.get(0));
 
-        // Render each route diagram stacked vertically
-        int yOffset = 0;
-        for (int ri = 0; ri < historyRouteLayouts.size(); ri++) {
-            RouteDiagramLayoutEngine.LayoutRoute lr = historyRouteLayouts.get(ri);
+        frame.renderWidget(finalWidget, hChunks.get(0));
 
-            // Determine selected node index within this route
-            int nodeIdxInRoute = -1;
-            if (currentNodeId != null) {
-                int idx = 0;
-                for (RouteDiagramLayoutEngine.LayoutNode ln : lr.nodes) {
-                    if (!"route".equals(ln.type)) {
-                        if (ln.id != null && ln.id.equals(currentNodeId)) {
-                            nodeIdxInRoute = idx;
-                            break;
-                        }
-                        idx++;
-                    }
-                }
-            }
+        eipNodeBoxes = new ArrayList<>(finalWidget.getNodeBoxes());
 
-            var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
-                    lr, nw, nodeIdxInRoute, scrollX, scrollY - yOffset, false,
-                    Collections.emptyMap(), false, Collections.emptyMap(),
-                    activeHighlight, historyFailed);
-
-            frame.renderWidget(widget, hChunks.get(0));
-
-            yOffset += routeHeights.get(ri) + 1;
-        }
-
-        // Scrollbars
         vScrollState.contentLength(totalRows);
         vScrollState.viewportContentLength(visibleLines);
         vScrollState.position(scrollY);
@@ -1397,56 +1593,8 @@ class DiagramSupport {
                     vChunks.get(1), hScrollState);
         }
 
-        // Tree preview for the route containing the selected node
-        if (selectedLayout != null) {
-            renderTreePreview(frame, hChunks.get(0), selectedLayout, currentNodeId);
-        }
-    }
-
-    private void renderTreePreview(
-            Frame frame, Rect area,
-            RouteDiagramLayoutEngine.LayoutRoute routeLayout, String highlightNodeId) {
-        if (routeLayout == null || routeLayout.nodes.isEmpty()) {
-            return;
-        }
-        int previewW = Math.min(38, area.width() / 3);
-        int previewH = Math.min(10, area.height() / 2);
-        if (previewW < 12 || previewH < 4 || area.width() < 40 || area.height() < 12) {
-            return;
-        }
-
-        int px = area.x() + area.width() - previewW - 1;
-        int py = area.y() + area.height() - previewH - 1;
-        Rect previewRect = new Rect(px, py, previewW, previewH);
-
-        frame.renderWidget(Clear.INSTANCE, previewRect);
-
-        Block previewBlock = Block.builder()
-                .borderType(BorderType.ROUNDED)
-                .title(Title.from(Line.from(Span.styled(" Structure ", Style.EMPTY.dim()))))
-                .build();
-        frame.renderWidget(previewBlock, previewRect);
-
-        Rect innerRect = previewBlock.inner(previewRect);
-        if (innerRect.height() < 1 || innerRect.width() < 4) {
-            return;
-        }
-
-        // Find the TreeNode matching the highlighted nodeId
-        RouteDiagramLayoutEngine.TreeNode selectedTreeNode = null;
-        if (highlightNodeId != null) {
-            for (RouteDiagramLayoutEngine.LayoutNode ln : routeLayout.nodes) {
-                if (ln.treeNode != null && highlightNodeId.equals(ln.id)) {
-                    selectedTreeNode = ln.treeNode;
-                    break;
-                }
-            }
-        }
-
-        List<Line> treeLines = RouteTreePreview.buildTree(
-                routeLayout, innerRect.height(), innerRect.width(), selectedTreeNode);
-        frame.renderWidget(
-                Paragraph.builder().text(Text.from(treeLines)).build(), innerRect);
+        renderMinimap(frame, hChunks.get(0), routeId);
+        renderTreePreview(frame, hChunks.get(0), routeId);
     }
 
     void loadAllDiagramsInBackground(

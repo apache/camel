@@ -79,24 +79,61 @@ class ErrorsTab implements MonitorTab {
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
-            if (ke.isUp()) {
-                diagram.historyNavigateUp();
-                return true;
-            }
-            if (ke.isDown()) {
-                diagram.historyNavigateDown();
-                return true;
-            }
-            if (ke.isLeft()) {
-                diagram.scrollLeft();
-                return true;
-            }
-            if (ke.isRight()) {
-                diagram.scrollRight();
-                return true;
+            if (diagram.isHistoryTopologyMode()) {
+                if (ke.isUp()) {
+                    diagram.selectNodeUp();
+                    diagram.scrollToSelectedNode();
+                    return true;
+                }
+                if (ke.isDown()) {
+                    diagram.selectNodeDown();
+                    diagram.scrollToSelectedNode();
+                    return true;
+                }
+                if (ke.isLeft()) {
+                    diagram.selectNodeLeft();
+                    diagram.scrollToSelectedNode();
+                    return true;
+                }
+                if (ke.isRight()) {
+                    diagram.selectNodeRight();
+                    diagram.scrollToSelectedNode();
+                    return true;
+                }
+                if (ke.isConfirm()) {
+                    diagram.historyEnterDrillDown();
+                    return true;
+                }
+            } else {
+                if (ke.isUp()) {
+                    diagram.historyNavigateUp();
+                    return true;
+                }
+                if (ke.isDown()) {
+                    diagram.historyNavigateDown();
+                    return true;
+                }
+                if (ke.isLeft()) {
+                    diagram.scrollLeft();
+                    return true;
+                }
+                if (ke.isRight()) {
+                    diagram.scrollRight();
+                    return true;
+                }
+                if (ke.isChar('t')) {
+                    diagram.historyReturnToTopology();
+                    return true;
+                }
             }
             if (ke.isHome()) {
                 diagram.scrollHome();
+                return true;
+            }
+            if (ke.isCharIgnoreCase('n')) {
+                diagram.setShowDescription(!diagram.isShowDescription());
+                diagram.endLoad();
+                loadDiagramForSelectedError();
                 return true;
             }
         }
@@ -173,6 +210,10 @@ class ErrorsTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
+        if (diagram.isShowDiagram() && diagram.isHistoryMode() && !diagram.isHistoryTopologyMode()) {
+            diagram.historyGoBack();
+            return true;
+        }
         return diagram.handleEscape();
     }
 
@@ -196,13 +237,19 @@ class ErrorsTab implements MonitorTab {
             return;
         }
 
-        if (diagram.isShowDiagram()) {
-            if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
-                String diagramTitle = String.format(" Error Diagram — step %d/%d ",
-                        diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount());
-                diagram.renderNativeHistoryDiagram(frame, area, diagramTitle);
-                return;
+        if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
+            if (diagram.isHistoryTopologyMode()) {
+                Line title = Line.from(Span.styled(
+                        String.format(" Error Topology — step %d/%d ",
+                                diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
+                        Style.EMPTY.fg(Color.WHITE)));
+                diagram.renderHistoryTopologyDiagram(frame, area, title);
+            } else {
+                String routeId = diagram.getHistoryDrillDownRouteId();
+                Line title = buildErrorBreadcrumbTitle();
+                diagram.renderHistoryRouteDiagram(frame, area, title, routeId);
             }
+            return;
         }
 
         List<ErrorInfo> sorted = applyFilter(info.errors);
@@ -279,9 +326,18 @@ class ErrorsTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
             if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
-                hint(spans, "Esc", "close");
-                hint(spans, "↑↓", "step through path");
-                hint(spans, "←→", "h-scroll");
+                if (diagram.isHistoryTopologyMode()) {
+                    hint(spans, "Esc", "close");
+                    hint(spans, "↑↓←→", "navigate");
+                    hint(spans, "Enter", "drill-down");
+                    hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
+                } else {
+                    hint(spans, "Esc", "back");
+                    hint(spans, "↑↓", "step through path");
+                    hint(spans, "←→", "h-scroll");
+                    hint(spans, "t", "topology");
+                    hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
+                }
                 return;
             }
             diagram.renderFooterHints(spans);
@@ -432,6 +488,26 @@ class ErrorsTab implements MonitorTab {
         }
         boolean filterVal = "true".equals(handledFilter);
         return (int) info.errors.stream().filter(e -> e.handled == filterVal).count();
+    }
+
+    private Line buildErrorBreadcrumbTitle() {
+        Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.styled(" Error [", Style.EMPTY.fg(Color.WHITE)));
+        var stack = diagram.getHistoryNavigationStack();
+        if (stack.isEmpty()) {
+            spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
+        } else {
+            for (var it = stack.descendingIterator(); it.hasNext();) {
+                spans.add(Span.styled(it.next(), nameStyle));
+                spans.add(Span.styled(" → ", Style.EMPTY.fg(Color.GRAY)));
+            }
+            spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
+        }
+        spans.add(Span.styled(String.format("] — step %d/%d ",
+                diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
+                Style.EMPTY.fg(Color.WHITE)));
+        return Line.from(spans);
     }
 
     // ---- Diagram ----
