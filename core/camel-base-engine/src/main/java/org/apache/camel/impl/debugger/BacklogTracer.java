@@ -26,6 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
@@ -178,7 +179,14 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         if ((first || last) && fromRouteId != null) {
             Route route = camelContext.getRoute(fromRouteId);
             if (route != null && route.getConsumer() != null) {
-                event.setEndpointUri(route.getConsumer().getEndpoint().getEndpointUri());
+                Endpoint ep = route.getConsumer().getEndpoint();
+                String endpointUri = ep.getEndpointUri();
+                event.setEndpointUri(endpointUri);
+                event.setRemoteEndpoint(ep.isRemote());
+                if ((endpointUri != null && endpointUri.startsWith("stub:"))
+                        || "StubEndpoint".equals(ep.getClass().getSimpleName())) {
+                    event.setStubEndpoint(true);
+                }
             }
         }
         // synthetic events are snapshots, mark done immediately so elapsed doesn't keep growing

@@ -204,6 +204,13 @@ public interface BacklogTracerEventMessage extends BacklogEventMessage {
     boolean isRemoteEndpoint();
 
     /**
+     * Whether the endpoint is a stub endpoint.
+     *
+     * @since 4.21
+     */
+    boolean isStubEndpoint();
+
+    /**
      * Gets the endpoint remote address such as URL, hostname, connection-string, or cloud region, that are component
      * specific.
      *

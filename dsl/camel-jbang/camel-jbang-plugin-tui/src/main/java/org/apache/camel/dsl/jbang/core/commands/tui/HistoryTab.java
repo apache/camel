@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +80,8 @@ class HistoryTab implements MonitorTab {
     private boolean traceWordWrap = true;
     private int traceDetailScroll;
     private int traceDetailHScroll;
+
+    private boolean showDescription;
 
     private boolean showWaterfall;
     private int waterfallScroll;
@@ -166,6 +169,11 @@ class HistoryTab implements MonitorTab {
                 historyDetailHScroll += 4;
                 return true;
             }
+        }
+
+        if (ke.isCharIgnoreCase('n')) {
+            showDescription = !showDescription;
+            return true;
         }
 
         if (tracerActive && traceDetailView) {
@@ -398,6 +406,7 @@ class HistoryTab implements MonitorTab {
             if (!showWaterfall && !traceWordWrap) {
                 hint(spans, "←→", "h-scroll");
             }
+            hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
             if (!showWaterfall) {
                 hint(spans, "d", "diagram");
@@ -411,6 +420,7 @@ class HistoryTab implements MonitorTab {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
             hint(spans, "s", "sort");
+            hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "d", "diagram");
             hint(spans, "Enter", "details");
             hintLast(spans, "F5", "refresh");
@@ -421,6 +431,7 @@ class HistoryTab implements MonitorTab {
             if (!showWaterfall && !historyWordWrap) {
                 hint(spans, "←→", "h-scroll");
             }
+            hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
             if (!showWaterfall) {
                 hint(spans, "d", "diagram");
@@ -575,7 +586,7 @@ class HistoryTab implements MonitorTab {
             rows.add(Row.from(
                     Cell.from(s.timestamp != null ? truncate(s.timestamp, 12) : ""),
                     Cell.from(Span.styled(
-                            s.routeId != null ? truncate(s.routeId, 15) : "",
+                            s.routeId != null ? truncate(s.routeId, 20) : "",
                             Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(s.status, statusStyle)),
                     rightCell(s.elapsed + "ms", 10),
@@ -618,16 +629,18 @@ class HistoryTab implements MonitorTab {
                 .constraints(Constraint.length(10), Constraint.length(1), Constraint.fill())
                 .split(area);
 
+        Map<String, String> descMap = showDescription ? getRouteDescriptions() : Collections.emptyMap();
         List<Row> rows = new ArrayList<>();
         for (TraceEntry entry : steps) {
+            String desc = showDescription ? descMap.get(entry.routeId) : null;
             rows.add(buildStepRow(
                     entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, entry.elapsed));
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
         }
 
         String stepTitle = String.format(" Trace [%s] ", truncate(traceSelectedExchangeId, 30));
         frame.renderStatefulWidget(
-                buildStepTable(rows, stepTitle), chunks.get(0), traceStepTableState);
+                buildStepTable(rows, stepTitle, showDescription), chunks.get(0), traceStepTableState);
 
         if (showWaterfall) {
             renderWaterfall(frame, chunks.get(2), steps.stream().map(WaterfallStep::fromTrace).toList());
@@ -848,16 +861,18 @@ class HistoryTab implements MonitorTab {
                 .constraints(Constraint.length(10), Constraint.length(1), Constraint.fill())
                 .split(area);
 
+        Map<String, String> descMap = showDescription ? getRouteDescriptions() : Collections.emptyMap();
         List<Row> rows = new ArrayList<>();
         for (HistoryEntry entry : current) {
+            String desc = showDescription ? descMap.get(entry.routeId) : null;
             rows.add(buildStepRow(
                     entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, entry.elapsed));
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
         }
 
         Title historyTitle = buildHistoryTitle(current);
         frame.renderStatefulWidget(
-                buildStepTable(rows, historyTitle), chunks.get(0), historyTableState);
+                buildStepTable(rows, historyTitle, showDescription), chunks.get(0), historyTableState);
 
         if (showWaterfall) {
             renderWaterfall(frame, chunks.get(2), current.stream().map(WaterfallStep::fromHistory).toList());
@@ -908,6 +923,20 @@ class HistoryTab implements MonitorTab {
         historyDetailHScroll = hScroll[0];
     }
 
+    private Map<String, String> getRouteDescriptions() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> map = new HashMap<>();
+        for (RouteInfo ri : info.routes) {
+            if (ri.routeId != null && ri.description != null && !ri.description.isEmpty()) {
+                map.put(ri.routeId, ri.description);
+            }
+        }
+        return map;
+    }
+
     // ---- Shared helpers ----
 
     private List<String> getTraceExchangeIds() {
@@ -951,32 +980,32 @@ class HistoryTab implements MonitorTab {
 
     private static Row buildStepRow(
             String direction, boolean first, boolean last, boolean failed,
-            String timestamp, String routeId, String nodeId, String processor, long elapsed) {
+            String timestamp, String routeId, String nodeId, String processor,
+            String description, long elapsed) {
         Style dirStyle;
-        if (first) {
-            dirStyle = Style.EMPTY.fg(Color.GREEN);
-        } else if (last) {
+        if (first || last || !direction.isBlank()) {
             dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
         } else {
             dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY;
         }
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
+        String display = description != null ? description : (processor != null ? processor : "");
         return Row.from(
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? truncate(routeId, 15) : "", Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(Span.styled(routeId != null ? truncate(routeId, 20) : "", Style.EMPTY.fg(Color.CYAN))),
                 Cell.from(nodeId != null ? truncate(nodeId, 15) : ""),
-                Cell.from(processor != null ? processor : ""),
+                Cell.from(display),
                 rightCell(elapsedStr, 10));
     }
 
-    private static Table buildStepTable(List<Row> rows, Object title) {
+    private static Table buildStepTable(List<Row> rows, Object title, boolean descriptionMode) {
         Row header = Row.from(
                 Cell.from(Span.styled("", Style.EMPTY.bold())),
                 Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
                 Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
                 Cell.from(Span.styled("ID", Style.EMPTY.bold())),
-                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                Cell.from(Span.styled(descriptionMode ? "DESCRIPTION" : "PROCESSOR", Style.EMPTY.bold())),
                 rightCell("ELAPSED", 10, Style.EMPTY.bold()));
         Block block = title instanceof Title t
                 ? Block.builder().borderType(BorderType.ROUNDED).title(t).build()
@@ -1322,17 +1351,33 @@ class HistoryTab implements MonitorTab {
                 took:
 
                 ```
-                 RouteId        NodeId     Processor            Elapsed
-                 timer-to-log   timer1     from[timer:hello]    0ms
-                 timer-to-log   setBody1   setBody[simple]      0ms
-                 timer-to-log   choice1    choice               0ms
-                 timer-to-log   when1      when[simple]         0ms
-                 timer-to-log   log1       log[HIGH: ${body}]   0ms
+                      RouteId        NodeId     Processor            Elapsed
+                 *->  timer-to-log   timer1     from[timer:hello]    0ms
+                      timer-to-log   setBody1   setBody[simple]      0ms
+                      timer-to-log   choice1    choice               0ms
+                      timer-to-log   when1      when[simple]         0ms
+                 --->  timer-to-log   to1       to[kafka:orders]     2ms
+                      timer-to-log   log1       log[HIGH: ${body}]   0ms
+                 <-*  timer-to-log   timer1     from[timer:hello]    3ms
                 ```
 
                 This tells you the message entered via the timer, went through setBody,
                 reached a choice node, matched the `when` condition, and was logged.
                 The elapsed time for each step helps identify bottlenecks.
+
+                ## Direction Arrows
+
+                The first column shows direction arrows that indicate the type
+                of each step:
+
+                - `*-->` — First step of a route consuming from a **remote** endpoint (e.g., Kafka, HTTP)
+                - `*-> ` — First step of a route consuming from a **local** endpoint (e.g., timer, direct)
+                - `<--*` — Last step of a route with a **remote** consumer endpoint
+                - `<-* ` — Last step of a route with a **local** consumer endpoint
+                - `--->` — A step that sends to a **remote** endpoint (e.g., `to[kafka:orders]`)
+                - `~-->` — First step or send to a **stub** endpoint (running with `--stub` mode)
+                - `<--~` — Last step of a route with a **stub** consumer endpoint
+                - _(blank)_ — A regular processing step (log, setBody, choice, etc.)
 
                 **Exchange Content** — Toggle these sections to inspect the message:
 
