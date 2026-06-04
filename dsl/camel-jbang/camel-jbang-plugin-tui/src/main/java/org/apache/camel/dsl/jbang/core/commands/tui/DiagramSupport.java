@@ -38,6 +38,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
@@ -1031,6 +1032,36 @@ class DiagramSupport {
                     Scrollbar.horizontal(),
                     vChunks.get(1), hScrollState);
         }
+
+        renderMinimap(frame, hChunks.get(0), currentRouteId);
+    }
+
+    private void renderMinimap(Frame frame, Rect area, String currentRouteId) {
+        if (topologyLayout == null || topologyLayout.nodes.size() < 2) {
+            return;
+        }
+        int mapW = Math.min(22, area.width() / 3);
+        int mapH = Math.min(8, area.height() / 3);
+        if (mapW < 6 || mapH < 3 || area.width() < 40 || area.height() < 12) {
+            return;
+        }
+
+        int mapX = area.x() + area.width() - mapW - 1;
+        int mapY = area.y() + area.height() - mapH - 1;
+        Rect mapRect = new Rect(mapX, mapY, mapW, mapH);
+
+        frame.renderWidget(Clear.INSTANCE, mapRect);
+
+        Block mapBlock = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(Title.from(Line.from(Span.styled(" Map ", Style.EMPTY.dim()))))
+                .build();
+        frame.renderWidget(mapBlock, mapRect);
+
+        Rect innerRect = mapBlock.inner(mapRect);
+        var minimap = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyMinimapWidget(
+                topologyLayout, currentRouteId);
+        frame.renderWidget(minimap, innerRect);
     }
 
     // ---- Rendering (legacy text) ----
