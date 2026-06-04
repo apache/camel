@@ -378,7 +378,7 @@ class RunOptionsForm {
         int popupW = Math.min(56, area.width() - 4);
         int popupH = 11;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
@@ -448,7 +448,7 @@ class RunOptionsForm {
         int propCount = properties != null ? properties.size() : 0;
         int popupH = Math.min(propCount + 2, Math.min(20, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);

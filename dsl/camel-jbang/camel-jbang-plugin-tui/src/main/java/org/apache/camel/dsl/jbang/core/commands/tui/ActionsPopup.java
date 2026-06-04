@@ -502,11 +502,11 @@ class ActionsPopup {
             } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
                 navigateExampleBrowser(10);
             } else if (ke.isChar('r')) {
-                openNameInput();
+                launchSelectedExample();
             } else if (ke.isChar('d')) {
                 loadDocFromExample();
             } else if (ke.isConfirm()) {
-                launchSelectedExample();
+                openNameInput();
             }
             return true;
         }
@@ -687,8 +687,8 @@ class ActionsPopup {
         }
         if (showExampleBrowser) {
             hint(spans, "↑↓", "navigate");
-            hint(spans, "Enter", "run");
-            hint(spans, "r", "run...");
+            hint(spans, "r", "run");
+            hint(spans, "Enter", "run...");
             hint(spans, "d", "docs");
             hintLast(spans, "Esc", "back");
             return;
