@@ -1444,8 +1444,11 @@ class RoutesTab implements MonitorTab {
         if (boxes.isEmpty()) {
             return -1;
         }
-        int bestIdx = -1;
-        int bestDist = Integer.MAX_VALUE;
+        // Prefer the closest node at or before the cursor line
+        int bestBeforeIdx = -1;
+        int bestBeforeDist = Integer.MAX_VALUE;
+        int bestAfterIdx = -1;
+        int bestAfterDist = Integer.MAX_VALUE;
         for (int i = 0; i < boxes.size(); i++) {
             var box = boxes.get(i);
             if (box.layoutNode() == null || box.layoutNode().treeNode == null) {
@@ -1455,13 +1458,24 @@ class RoutesTab implements MonitorTab {
             if (nodeLine <= 0) {
                 continue;
             }
-            int dist = Math.abs(nodeLine - sourceLine);
-            if (dist < bestDist) {
-                bestDist = dist;
-                bestIdx = i;
+            if (nodeLine == sourceLine) {
+                return i;
+            }
+            if (nodeLine < sourceLine) {
+                int dist = sourceLine - nodeLine;
+                if (dist < bestBeforeDist) {
+                    bestBeforeDist = dist;
+                    bestBeforeIdx = i;
+                }
+            } else {
+                int dist = nodeLine - sourceLine;
+                if (dist < bestAfterDist) {
+                    bestAfterDist = dist;
+                    bestAfterIdx = i;
+                }
             }
         }
-        return bestIdx;
+        return bestBeforeIdx >= 0 ? bestBeforeIdx : bestAfterIdx;
     }
 
     @Override
