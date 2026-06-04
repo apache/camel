@@ -123,13 +123,17 @@ class HistoryTab implements MonitorTab {
         if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             if (tracerActive && traceDetailView) {
                 if (showWaterfall) {
-                    waterfallScroll = Math.max(0, waterfallScroll - 10);
+                    for (int i = 0; i < 10; i++) {
+                        traceStepTableState.selectPrevious();
+                    }
                 } else {
                     traceDetailScroll = Math.max(0, traceDetailScroll - 5);
                 }
             } else {
                 if (showWaterfall) {
-                    waterfallScroll = Math.max(0, waterfallScroll - 10);
+                    for (int i = 0; i < 10; i++) {
+                        historyTableState.selectPrevious();
+                    }
                 } else {
                     historyDetailScroll = Math.max(0, historyDetailScroll - 5);
                 }
@@ -139,13 +143,18 @@ class HistoryTab implements MonitorTab {
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
             if (tracerActive && traceDetailView) {
                 if (showWaterfall) {
-                    waterfallScroll += 10;
+                    List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
+                    for (int i = 0; i < 10; i++) {
+                        traceStepTableState.selectNext(steps.size());
+                    }
                 } else {
                     traceDetailScroll += 5;
                 }
             } else {
                 if (showWaterfall) {
-                    waterfallScroll += 10;
+                    for (int i = 0; i < 10; i++) {
+                        historyTableState.selectNext(historyEntries.size());
+                    }
                 } else {
                     historyDetailScroll += 5;
                 }
@@ -408,8 +417,8 @@ class HistoryTab implements MonitorTab {
             }
             hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
+            hint(spans, "d", "diagram");
             if (!showWaterfall) {
-                hint(spans, "d", "diagram");
                 hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
                 hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
                 hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
@@ -433,8 +442,8 @@ class HistoryTab implements MonitorTab {
             }
             hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
+            hint(spans, "d", "diagram");
             if (!showWaterfall) {
-                hint(spans, "d", "diagram");
                 hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
                 hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
                 hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
@@ -586,7 +595,7 @@ class HistoryTab implements MonitorTab {
             rows.add(Row.from(
                     Cell.from(s.timestamp != null ? truncate(s.timestamp, 12) : ""),
                     Cell.from(Span.styled(
-                            s.routeId != null ? truncate(s.routeId, 20) : "",
+                            s.routeId != null ? truncate(s.routeId, 25) : "",
                             Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(s.status, statusStyle)),
                     rightCell(s.elapsed + "ms", 10),
@@ -638,12 +647,14 @@ class HistoryTab implements MonitorTab {
                     entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
         }
 
-        String stepTitle = String.format(" Trace [%s] ", truncate(traceSelectedExchangeId, 30));
+        String stepTitle = String.format(" Trace [%s] — %d steps ", truncate(traceSelectedExchangeId, 30), steps.size());
         frame.renderStatefulWidget(
                 buildStepTable(rows, stepTitle, showDescription), chunks.get(0), traceStepTableState);
 
         if (showWaterfall) {
-            renderWaterfall(frame, chunks.get(2), steps.stream().map(WaterfallStep::fromTrace).toList());
+            Integer sel = traceStepTableState.selected();
+            renderWaterfall(frame, chunks.get(2), steps.stream().map(WaterfallStep::fromTrace).toList(),
+                    sel != null ? sel : -1);
         } else {
             renderTraceStepDetail(frame, chunks.get(2), steps);
         }
@@ -716,13 +727,19 @@ class HistoryTab implements MonitorTab {
         }
     }
 
-    private void renderWaterfall(Frame frame, Rect area, List<WaterfallStep> allSteps) {
+    private void renderWaterfall(Frame frame, Rect area, List<WaterfallStep> allSteps, int selectedIndex) {
         // Copy the elapsed from matching last entries onto first entries
         // (first entries have elapsed=0, the total is on the last entry)
         List<WaterfallStep> forward = new ArrayList<>();
-        for (WaterfallStep e : allSteps) {
+        // Map original allSteps index to forward index for selection highlight
+        int selectedForwardIndex = -1;
+        for (int idx = 0; idx < allSteps.size(); idx++) {
+            WaterfallStep e = allSteps.get(idx);
             if ("<--".equals(e.direction)) {
                 continue;
+            }
+            if (idx == selectedIndex) {
+                selectedForwardIndex = forward.size();
             }
             if (e.first) {
                 long totalElapsed = e.elapsed;
@@ -789,11 +806,20 @@ class HistoryTab implements MonitorTab {
 
         int barMaxWidth = Math.max(10, inner.width() - labelWidth - 12);
 
+        // Auto-scroll to keep selected step visible
+        if (selectedForwardIndex >= 0) {
+            if (selectedForwardIndex < waterfallScroll) {
+                waterfallScroll = selectedForwardIndex;
+            } else if (selectedForwardIndex >= waterfallScroll + visibleLines) {
+                waterfallScroll = selectedForwardIndex - visibleLines + 1;
+            }
+        }
+
         int end = Math.min(waterfallScroll + visibleLines, forward.size());
         List<Line> lines = new ArrayList<>();
         for (int i = waterfallScroll; i < end; i++) {
             lines.add(renderWaterfallStep(forward.get(i), labelWidth, barMaxWidth,
-                    maxElapsed, minDuration, maxDuration));
+                    maxElapsed, minDuration, maxDuration, i == selectedForwardIndex));
         }
 
         List<Rect> hChunks = Layout.horizontal()
@@ -813,7 +839,8 @@ class HistoryTab implements MonitorTab {
 
     private static Line renderWaterfallStep(
             WaterfallStep entry, int labelWidth, int maxBarWidth,
-            long maxElapsed, long minDuration, long maxDuration) {
+            long maxElapsed, long minDuration, long maxDuration, boolean selected) {
+        String indicator = selected ? ">> " : "   ";
         String indent = "  ".repeat(entry.nodeLevel);
         String label = indent + entry.label();
         if (label.length() > labelWidth) {
@@ -832,8 +859,11 @@ class HistoryTab implements MonitorTab {
         String durationStr = entry.elapsed + "ms";
         int pad = Math.max(1, 8 - durationStr.length());
 
+        Style labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
+
         return Line.from(
-                Span.styled(label, Style.EMPTY.fg(Color.CYAN)),
+                Span.styled(indicator, Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(label, labelStyle),
                 Span.styled(bar, bandStyle),
                 Span.raw(" ".repeat(pad)),
                 Span.styled(durationStr, isRoute ? Style.EMPTY.dim() : Style.EMPTY.fg(Color.WHITE).bold()));
@@ -875,7 +905,9 @@ class HistoryTab implements MonitorTab {
                 buildStepTable(rows, historyTitle, showDescription), chunks.get(0), historyTableState);
 
         if (showWaterfall) {
-            renderWaterfall(frame, chunks.get(2), current.stream().map(WaterfallStep::fromHistory).toList());
+            Integer sel = historyTableState.selected();
+            renderWaterfall(frame, chunks.get(2), current.stream().map(WaterfallStep::fromHistory).toList(),
+                    sel != null ? sel : -1);
         } else {
             renderHistoryDetail(frame, chunks.get(2), current);
         }
@@ -993,7 +1025,7 @@ class HistoryTab implements MonitorTab {
         return Row.from(
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? truncate(routeId, 20) : "", Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(Span.styled(routeId != null ? truncate(routeId, 25) : "", Style.EMPTY.fg(Color.CYAN))),
                 Cell.from(nodeId != null ? truncate(nodeId, 15) : ""),
                 Cell.from(display),
                 rightCell(elapsedStr, 10));
@@ -1043,7 +1075,7 @@ class HistoryTab implements MonitorTab {
         }
 
         List<Span> spans = new ArrayList<>();
-        spans.add(Span.raw(" History of last completed ("));
+        spans.add(Span.raw(" History of last completed — " + entries.size() + " steps ("));
         boolean failed = last.failed;
         spans.add(Span.styled("status:" + (failed ? "failed" : "success"),
                 failed ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN).bold()));
