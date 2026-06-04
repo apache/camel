@@ -97,6 +97,14 @@ class DiagramSupport {
         return showDiagram;
     }
 
+    void setShowDiagram(boolean show) {
+        this.showDiagram = show;
+    }
+
+    boolean isLoading() {
+        return loading.get();
+    }
+
     boolean isTopologyMode() {
         return topologyMode;
     }

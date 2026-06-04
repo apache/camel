@@ -279,7 +279,15 @@ class DiagramTab implements MonitorTab {
     @Override
     public void onTabSelected() {
         if (!diagram.isShowDiagram()) {
-            loadDiagram();
+            if (ctx.selectedPid != null && diagram.hasCachedData(ctx.selectedPid)) {
+                diagram.showCached();
+            } else {
+                // Show diagram immediately so preload results are rendered when they arrive
+                diagram.setShowDiagram(true);
+                if (!diagram.isLoading()) {
+                    loadDiagram();
+                }
+            }
         }
     }
 

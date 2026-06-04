@@ -351,6 +351,9 @@ public class CamelMonitor extends CamelCommand {
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
 
+        // Auto-select if there's exactly one integration running
+        overviewTab.selectCurrentIntegration();
+
         eventLog = new TuiEventLog(500);
         Path mcpJsonFile = null;
         if (mcp) {
@@ -372,6 +375,9 @@ public class CamelMonitor extends CamelCommand {
             ctx.runner = tui;
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
+            // Preload diagram data if an integration was auto-selected
+            routesTab.preloadDiagram();
+            diagramTab.preloadDiagram();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -867,6 +873,8 @@ public class CamelMonitor extends CamelCommand {
     private boolean handleTabKey(int tab) {
         if (tab != TAB_OVERVIEW) {
             overviewTab.selectCurrentIntegration();
+            routesTab.preloadDiagram();
+            diagramTab.preloadDiagram();
         }
         if (tab == TAB_LOG) {
             refreshLogData();
@@ -937,6 +945,7 @@ public class CamelMonitor extends CamelCommand {
 
         // Preload diagram data in background so it's ready when the user switches tabs
         routesTab.preloadDiagram();
+        diagramTab.preloadDiagram();
     }
 
     private void navigateUp() {
