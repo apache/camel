@@ -90,7 +90,16 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
             // by unsetting (setting to 0) we also flag that this exchange is done and needs to be reset to use again
             clock.unset();
 
-            this.properties.clear();
+            // Reuse properties map if it's not too large
+            if (this.properties != null) {
+                if (this.properties.size() > 50) {
+                    // Too big, discard and recreate smaller map next time
+                    this.properties = null;
+                } else {
+                    // Small enough, just clear and reuse
+                    this.properties.clear();
+                }
+            }
             internalProperties.clear();
             if (this.safeCopyProperties != null) {
                 this.safeCopyProperties.clear();
