@@ -28,7 +28,7 @@
 
     <artifactId>camel-headersmap</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Headers Map</name>
+    <name>Camel :: Headers Map (deprecated)</name>
     <description>Fast case-insensitive headers map implementation</description>
 
     <properties>
