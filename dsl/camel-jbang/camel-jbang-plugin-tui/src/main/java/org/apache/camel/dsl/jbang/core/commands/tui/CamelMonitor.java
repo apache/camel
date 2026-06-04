@@ -934,6 +934,9 @@ public class CamelMonitor extends CamelCommand {
         consumersTab.onIntegrationChanged();
         circuitBreakerTab.onIntegrationChanged();
         inflightTab.onIntegrationChanged();
+
+        // Preload diagram data in background so it's ready when the user switches tabs
+        routesTab.preloadDiagram();
     }
 
     private void navigateUp() {

@@ -87,6 +87,7 @@ class DiagramSupport {
     private int topologyNodeWidth;
     private java.util.Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeLayouts = Collections.emptyMap();
     private String cachedPid;
+    private volatile boolean preloading;
 
     List<String> getLines() {
         return lines;
@@ -309,6 +310,28 @@ class DiagramSupport {
             }
         }
         pendingSelectionRouteId = null;
+    }
+
+    void preload(MonitorContext ctx, String pid) {
+        if (hasCachedData(pid)) {
+            return;
+        }
+        if (!beginLoad()) {
+            return;
+        }
+        preloading = true;
+        if (ctx.runner != null) {
+            ctx.runner.scheduler().execute(() -> {
+                try {
+                    setTopologyMode(true);
+                    loadAllDiagramsInBackground(ctx, pid, false, false);
+                } finally {
+                    endLoad();
+                }
+            });
+        } else {
+            endLoad();
+        }
     }
 
     void renderFooterHints(List<Span> spans) {
@@ -1191,9 +1214,10 @@ class DiagramSupport {
             return;
         }
         ctx.runner.runOnRenderThread(() -> {
-            if (!showDiagram) {
+            if (!showDiagram && !preloading) {
                 return;
             }
+            preloading = false;
             cachedPid = pid;
             topologyLayout = finalTopoResult;
             topologyNodeWidth = finalNodeW;

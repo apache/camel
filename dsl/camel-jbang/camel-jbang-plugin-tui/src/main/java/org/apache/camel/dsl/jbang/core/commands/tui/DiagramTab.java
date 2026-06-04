@@ -292,6 +292,12 @@ class DiagramTab implements MonitorTab {
         diagram.setTopologyMode(true);
     }
 
+    void preloadDiagram() {
+        if (ctx.selectedPid != null) {
+            diagram.preload(ctx, ctx.selectedPid);
+        }
+    }
+
     @Override
     public void render(Frame frame, Rect area) {
         IntegrationInfo info = ctx.findSelectedIntegration();

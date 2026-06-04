@@ -403,6 +403,12 @@ class RoutesTab implements MonitorTab {
         routeTableState.select(0);
     }
 
+    void preloadDiagram() {
+        if (ctx.selectedPid != null) {
+            diagram.preload(ctx, ctx.selectedPid);
+        }
+    }
+
     @Override
     public void render(Frame frame, Rect area) {
         IntegrationInfo info = ctx.findSelectedIntegration();
