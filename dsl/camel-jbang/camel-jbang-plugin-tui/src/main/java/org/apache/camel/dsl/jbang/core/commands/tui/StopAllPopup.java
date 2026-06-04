@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
@@ -43,6 +44,7 @@ class StopAllPopup {
     private final Supplier<List<IntegrationInfo>> integrations;
     private final Supplier<List<InfraInfo>> infraServices;
     private final Runnable burstCallback;
+    private final Set<String> stoppingPids;
 
     private boolean visible;
     private boolean checkIntegrations = true;
@@ -54,10 +56,11 @@ class StopAllPopup {
     private String notification;
 
     StopAllPopup(Supplier<List<IntegrationInfo>> integrations, Supplier<List<InfraInfo>> infraServices,
-                 Runnable burstCallback) {
+                 Runnable burstCallback, Set<String> stoppingPids) {
         this.integrations = integrations;
         this.infraServices = infraServices;
         this.burstCallback = burstCallback;
+        this.stoppingPids = stoppingPids;
     }
 
     boolean isVisible() {
@@ -197,7 +200,10 @@ class StopAllPopup {
             }
             try {
                 long pid = Long.parseLong(info.pid);
-                ProcessHandle.of(pid).ifPresent(ProcessHandle::destroy);
+                ProcessHandle.of(pid).ifPresent(ph -> {
+                    stoppingPids.add(info.pid);
+                    ph.destroy();
+                });
                 count++;
             } catch (NumberFormatException e) {
                 // skip

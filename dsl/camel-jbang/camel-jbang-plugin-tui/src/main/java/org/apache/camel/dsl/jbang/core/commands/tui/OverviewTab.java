@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -63,6 +64,7 @@ class OverviewTab implements MonitorTab {
     private final Map<String, LinkedList<Long>> throughputHistory;
     private final Map<String, LinkedList<Long>> failedHistory;
     private final Map<String, LoadAvg> cpuLoadAvg;
+    private final Set<String> stoppingPids;
     private final Runnable onPidChanged;
 
     final TableState tableState = new TableState();
@@ -78,11 +80,13 @@ class OverviewTab implements MonitorTab {
                 Map<String, LinkedList<Long>> throughputHistory,
                 Map<String, LinkedList<Long>> failedHistory,
                 Map<String, LoadAvg> cpuLoadAvg,
+                Set<String> stoppingPids,
                 Runnable onPidChanged) {
         this.ctx = ctx;
         this.throughputHistory = throughputHistory;
         this.failedHistory = failedHistory;
         this.cpuLoadAvg = cpuLoadAvg;
+        this.stoppingPids = stoppingPids;
         this.onPidChanged = onPidChanged;
     }
 
@@ -193,11 +197,16 @@ class OverviewTab implements MonitorTab {
                         Cell.from(Span.styled("", dimStyle))));
             } else {
                 String stateText = extractState(info.state);
-                if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
+                if (stoppingPids.contains(info.pid) || "Terminating".equals(stateText)) {
+                    stateText = "Stopping";
+                } else if ("Terminated".equals(stateText)) {
+                    stateText = "Stopped";
+                } else if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
                     stateText = "Stopped";
                 }
                 Style statusStyle = switch (stateText) {
                     case "Started", "Running" -> Style.EMPTY.fg(Color.GREEN);
+                    case "Stopping" -> Style.EMPTY.fg(Color.YELLOW);
                     case "Stopped" -> Style.EMPTY.fg(Color.LIGHT_RED);
                     default -> Style.EMPTY.fg(Color.YELLOW);
                 };

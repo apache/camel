@@ -161,7 +161,7 @@ class ActionsPopup {
                  Supplier<List<InfraInfo>> infraServices, CaptionOverlay captionOverlay,
                  Runnable screenshotAction, Runnable toggleKeystrokes, Supplier<Boolean> keystrokesEnabled,
                  Runnable toggleTapeRecording, Supplier<Boolean> tapeRecordingActive,
-                 Runnable burstCallback) {
+                 Runnable burstCallback, Set<String> stoppingPids) {
         this.runningNames = runningNames;
         this.integrations = integrations;
         this.infraServices = infraServices;
@@ -172,7 +172,7 @@ class ActionsPopup {
         this.toggleTapeRecording = toggleTapeRecording;
         this.tapeRecordingActive = tapeRecordingActive;
         this.burstCallback = burstCallback;
-        this.stopAllPopup = new StopAllPopup(integrations, infraServices, burstCallback);
+        this.stopAllPopup = new StopAllPopup(integrations, infraServices, burstCallback, stoppingPids);
     }
 
     void setContext(MonitorContext ctx) {
