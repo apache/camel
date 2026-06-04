@@ -83,6 +83,7 @@
             message: "Fulfilling order: ${body}"
         - to:
             uri: kafka:warehouse-shipments
+            description: Ship to Warehouse
 
 # Kafka consumer: sends notifications via external email service
 - route:
@@ -95,3 +96,4 @@
             message: "Sending notification for: ${body}"
         - to:
             uri: kafka:email-outbox
+            description: Send Email

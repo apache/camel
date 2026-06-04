@@ -56,6 +56,7 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
@@ -875,6 +876,25 @@ class DiagramSupport {
         return descriptions;
     }
 
+    private static Set<String> parseExternalUris(JsonObject topoJson) {
+        Set<String> uris = new HashSet<>();
+        JsonArray arr = topoJson.getJsonArray("externalEndpoints");
+        if (arr == null) {
+            return uris;
+        }
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject eo = arr.getJsonObject(i);
+            String uri = eo.getString("uri");
+            if (uri != null) {
+                String base = stripQueryParams(uri);
+                if (base != null) {
+                    uris.add(base);
+                }
+            }
+        }
+        return uris;
+    }
+
     private static String findFromUri(RouteDiagramLayoutEngine.LayoutRoute lr) {
         for (var node : lr.nodes) {
             if ("from".equals(node.type) && node.treeNode != null) {
@@ -1101,6 +1121,20 @@ class DiagramSupport {
         if (topoJson != null) {
             List<RouteDiagramLayoutEngine.RouteInfo> routes = RouteDiagramHelper.parseRoutes(topoJson);
             if (!routes.isEmpty()) {
+                // Enrich route nodes with remote flag from topology external endpoints
+                Set<String> externalUris = parseExternalUris(topoJson);
+                if (!externalUris.isEmpty()) {
+                    for (RouteDiagramLayoutEngine.RouteInfo r : routes) {
+                        for (RouteDiagramLayoutEngine.NodeInfo ni : r.nodes) {
+                            if (!ni.remote) {
+                                String baseUri = getBaseUri(ni);
+                                if (baseUri != null && externalUris.contains(baseUri)) {
+                                    ni.remote = true;
+                                }
+                            }
+                        }
+                    }
+                }
                 RouteDiagramLayoutEngine.NodeLabelMode labelMode = showDescription
                         ? RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION
                         : RouteDiagramLayoutEngine.NodeLabelMode.CODE;
