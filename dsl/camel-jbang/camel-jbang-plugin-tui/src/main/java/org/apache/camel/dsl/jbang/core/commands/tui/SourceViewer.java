@@ -19,9 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntConsumer;
 
@@ -68,7 +68,7 @@ class SourceViewer {
     private final ScrollbarState hScrollState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
     private IntConsumer onLineSelected;
-    private final Map<String, CachedSource> sourceCache = new HashMap<>();
+    private final Map<String, CachedSource> sourceCache = new ConcurrentHashMap<>();
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
