@@ -225,7 +225,7 @@ class DiagramTab implements MonitorTab {
             reloadDiagram();
             return true;
         }
-        return diagram.handleEscape();
+        return false;
     }
 
     @Override
