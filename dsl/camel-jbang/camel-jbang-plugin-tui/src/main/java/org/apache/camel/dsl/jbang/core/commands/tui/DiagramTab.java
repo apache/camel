@@ -151,7 +151,18 @@ class DiagramTab implements MonitorTab {
         if (!topologyMode && ke.isConfirm() && !diagram.getEipNodeBoxes().isEmpty()) {
             String linkedRouteId = diagram.findLinkedRouteId(drillDownRouteId);
             if (linkedRouteId != null && diagram.getRouteLayout(linkedRouteId) != null) {
-                routeNavigationStack.push(drillDownRouteId);
+                if (linkedRouteId.equals(drillDownRouteId)) {
+                    return true;
+                }
+                // Collapse breadcrumb if navigating back to a route already in the stack
+                if (routeNavigationStack.contains(linkedRouteId)) {
+                    while (!routeNavigationStack.isEmpty() && !linkedRouteId.equals(routeNavigationStack.peek())) {
+                        routeNavigationStack.pop();
+                    }
+                    routeNavigationStack.pop();
+                } else {
+                    routeNavigationStack.push(drillDownRouteId);
+                }
                 drillDownRouteId = linkedRouteId;
                 diagram.selectFromNode(linkedRouteId);
                 diagram.resetScroll();
