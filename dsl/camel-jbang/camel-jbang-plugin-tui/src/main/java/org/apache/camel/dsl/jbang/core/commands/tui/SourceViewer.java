@@ -19,7 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntConsumer;
 
@@ -66,6 +68,12 @@ class SourceViewer {
     private final ScrollbarState hScrollState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
     private IntConsumer onLineSelected;
+    private final Map<String, CachedSource> sourceCache = new HashMap<>();
+
+    private record CachedSource(
+            List<String> lines, List<JsonObject> codeData,
+            String sourceLocation, SyntaxHighlighter.Language language) {
+    }
 
     boolean isVisible() {
         return visible;
@@ -86,6 +94,7 @@ class SourceViewer {
         selectedLine = -1;
         pendingScroll = false;
         onLineSelected = null;
+        sourceCache.clear();
     }
 
     void setOnLineSelected(IntConsumer callback) {
@@ -219,6 +228,15 @@ class SourceViewer {
         if (ctx.selectedPid == null || ctx.runner == null) {
             return;
         }
+
+        String pid = ctx.selectedPid;
+        String cacheKey = pid + ":" + routeId;
+        CachedSource cached = sourceCache.get(cacheKey);
+        if (cached != null) {
+            applyCached(ctx, routeId, cached, targetLine);
+            return;
+        }
+
         if (!loading.compareAndSet(false, true)) {
             return;
         }
@@ -229,7 +247,6 @@ class SourceViewer {
         scrollX = 0;
         visible = true;
 
-        String pid = ctx.selectedPid;
         ctx.runner.scheduler().execute(() -> {
             try {
                 loadInBackground(ctx, pid, routeId, targetLine);
@@ -237,6 +254,40 @@ class SourceViewer {
                 loading.set(false);
             }
         });
+    }
+
+    private void applyCached(MonitorContext ctx, String routeId, CachedSource cached, int targetLine) {
+        int matchIdx = -1;
+        for (int i = 0; i < cached.codeData.size(); i++) {
+            Integer lineNum = cached.codeData.get(i).getInteger("line");
+            if (targetLine > 0 && lineNum != null && lineNum == targetLine) {
+                matchIdx = i;
+                break;
+            }
+            Boolean match = cached.codeData.get(i).getBoolean("match");
+            if (targetLine <= 0 && Boolean.TRUE.equals(match) && matchIdx < 0) {
+                matchIdx = i;
+            }
+        }
+
+        int cursorLine;
+        if (matchIdx >= 0) {
+            cursorLine = matchIdx;
+        } else {
+            cursorLine = findLicenseHeaderEnd(cached.codeData);
+        }
+
+        String displayLoc = cached.sourceLocation != null
+                ? FileUtil.stripPath(LoggerHelper.sourceNameOnly(cached.sourceLocation)) : null;
+        title = displayLoc != null ? routeId + "  " + displayLoc : routeId;
+        language = cached.language;
+        lines = cached.lines;
+        codeData = cached.codeData;
+        selectedLine = Math.max(0, cursorLine);
+        scrollY = 0;
+        scrollX = 0;
+        pendingScroll = true;
+        visible = true;
     }
 
     private void loadInBackground(MonitorContext ctx, String pid, String routeId, int targetLine) {
@@ -311,6 +362,11 @@ class SourceViewer {
             cursorLine = findLicenseHeaderEnd(codeLines);
             scrollTo = cursorLine;
         }
+
+        SyntaxHighlighter.Language lang = SyntaxHighlighter.detectLanguage(sourceLocation);
+        String cacheKey = pid + ":" + routeId;
+        sourceCache.put(cacheKey, new CachedSource(result, codeLines, sourceLocation, lang));
+
         applyResult(ctx, routeId, sourceLocation, result, codeLines, scrollTo, cursorLine);
     }
 
