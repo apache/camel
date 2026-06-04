@@ -344,6 +344,23 @@ Or, on a single endpoint:
 jms:queue:foo?objectMessageEnabled=true
 ----
 
+=== camel-nats
+
+The NATS consumer no longer sends a reply to the `replyTo` subject by default. Previously, the consumer
+would unconditionally publish the exchange body back to the NATS `replyTo` subject after route processing,
+regardless of the exchange pattern. This could cause `TypeConversionException` or payload-size-exceeded
+errors when the route body was not suitable for reply.
+
+The reply is now only sent when the exchange pattern is `InOut`. To restore request/reply behavior, set
+`exchangePattern=InOut` on the consumer endpoint:
+
+[source,text]
+----
+nats:myTopic?exchangePattern=InOut
+----
+
+Routes that do not use NATS request/reply are unaffected.
+
 === camel-sjms / camel-sjms2
 
 The same default applies to `camel-sjms` (and `camel-sjms2`, which inherits from it): JMS `ObjectMessage`

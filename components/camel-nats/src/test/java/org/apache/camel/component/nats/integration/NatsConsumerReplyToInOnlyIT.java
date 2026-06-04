@@ -19,10 +19,9 @@ package org.apache.camel.component.nats.integration;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.nats.NatsConstants;
 import org.junit.jupiter.api.Test;
 
-public class NatsConsumerReplyToIT extends NatsITSupport {
+public class NatsConsumerReplyToInOnlyIT extends NatsITSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -31,17 +30,16 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
     protected MockEndpoint mockReplyEndpoint;
 
     @Test
-    public void testReplyTo() throws Exception {
+    public void testInOnlyNoReply() throws Exception {
         mockResultEndpoint.expectedBodiesReceived("World");
-        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
-        mockReplyEndpoint.expectedBodiesReceived("Bye World");
-        mockReplyEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "myReplyQueue");
+        // reply endpoint should NOT receive any message when exchange pattern is InOnly
+        mockReplyEndpoint.expectedMessageCount(0);
 
         template.sendBody("direct:send", "World");
 
         mockResultEndpoint.setAssertPeriod(5000);
         mockResultEndpoint.assertIsSatisfied();
-        mockReplyEndpoint.setAssertPeriod(5000);
+        mockReplyEndpoint.setAssertPeriod(2000);
         mockReplyEndpoint.assertIsSatisfied();
     }
 
@@ -51,14 +49,14 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
             @Override
             public void configure() {
                 from("direct:send")
-                        .to("nats:test?replySubject=myReplyQueue&flushConnection=true");
+                        .to("nats:testInOnly?replySubject=myReplyInOnly&flushConnection=true");
 
-                from("nats:test?flushConnection=true&exchangePattern=InOut")
+                from("nats:testInOnly?flushConnection=true&exchangePattern=InOnly")
                         .to(mockResultEndpoint)
                         .convertBodyTo(String.class)
                         .setBody().simple("Bye ${body}");
 
-                from("nats:myReplyQueue")
+                from("nats:myReplyInOnly")
                         .to("mock:reply");
             }
         };

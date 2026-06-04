@@ -384,9 +384,10 @@ public class NatsConsumer extends DefaultConsumer {
 
                     NatsConsumer.this.processor.process(exchange);
 
-                    // is there a reply?
+                    // is there a reply? only send reply if exchange pattern supports output (InOut)
                     if (!NatsConsumingTask.this.configuration.isReplyToDisabled()
-                            && msg.getReplyTo() != null && msg.getConnection() != null) {
+                            && msg.getReplyTo() != null && msg.getConnection() != null
+                            && exchange.getPattern().isOutCapable()) {
                         final Connection con = msg.getConnection();
                         final byte[] data = exchange.getMessage().getBody(byte[].class);
                         if (data != null) {
