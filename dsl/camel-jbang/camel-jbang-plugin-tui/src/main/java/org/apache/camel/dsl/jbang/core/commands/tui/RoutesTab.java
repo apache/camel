@@ -1566,6 +1566,18 @@ class RoutesTab implements MonitorTab {
                 Navigation history is maintained as a stack: pressing `Esc` goes
                 back to the previous route, and eventually back to the topology view.
 
+                ## Route Structure Preview
+
+                A compact tree structure preview appears in the bottom-right corner
+                of the diagram area — like a minimap of the route's EIP structure.
+
+                In **topology mode**, the preview shows the structure of the currently
+                selected route and updates as you navigate between route boxes.
+
+                In **drill-down mode**, the preview highlights the currently selected
+                EIP node (shown in yellow) as you navigate with arrow keys, giving
+                you an at-a-glance view of where you are in the route.
+
                 ## Source View
 
                 Press `c` to see the original route source code (YAML, XML, or Java).
