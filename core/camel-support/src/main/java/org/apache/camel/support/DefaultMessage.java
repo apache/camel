@@ -53,7 +53,9 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public void reset() {
         super.reset();
-        if (headers != null) {
+        if (headers instanceof CopyOnWriteHeadersMap) {
+            headers = null;
+        } else if (headers != null) {
             headers.clear();
         }
         removeTrait(MessageTrait.ATTACHMENTS);
@@ -62,7 +64,7 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public Object getHeader(String name) {
         if (headers == null) {
-            // force creating headers
+            // force creating headers (supports lazy population in subclasses like JmsMessage)
             headers = createHeaders();
         }
 
@@ -204,22 +206,16 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public void setHeader(String name, Object value) {
-        if (headers == null) {
-            headers = createHeaders();
-        }
-        headers.put(name, value);
+        getHeaders().put(name, value);
     }
 
     @Override
     public Object removeHeader(String name) {
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-        if (headers.isEmpty()) {
+        Map<String, Object> h = getHeaders();
+        if (h.isEmpty()) {
             return null;
         }
-        return headers.remove(name);
+        return h.remove(name);
     }
 
     @Override
@@ -229,29 +225,25 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public boolean removeHeaders(String pattern, String... excludePatterns) {
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-        if (headers.isEmpty()) {
+        Map<String, Object> h = getHeaders();
+        if (h.isEmpty()) {
             return false;
         }
 
         // special optimized
         if (excludePatterns == null && "*".equals(pattern)) {
-            headers.clear();
+            h.clear();
             return true;
         }
 
-        final Set<String> toBeRemoved = PatternHelper.matchingSet(headers, pattern, excludePatterns);
+        final Set<String> toBeRemoved = PatternHelper.matchingSet(h, pattern, excludePatterns);
 
         if (toBeRemoved != null) {
-            if (toBeRemoved.size() == headers.size()) {
-                // special optimization when all should be removed
-                headers.clear();
+            if (toBeRemoved.size() == h.size()) {
+                h.clear();
             } else {
                 for (String key : toBeRemoved) {
-                    headers.remove(key);
+                    h.remove(key);
                 }
             }
 
@@ -340,5 +332,34 @@ public class DefaultMessage extends MessageSupport {
      */
     protected boolean hasPopulatedHeaders() {
         return headers != null;
+    }
+
+    /**
+     * Shares headers with the source message using copy-on-write. Both messages will share the same underlying map
+     * until one of them mutates it.
+     */
+    void copyHeadersFrom(DefaultMessage source) {
+        if (source.headers == null && source.isPopulateHeadersSupported()) {
+            // force creating headers
+            source.headers = source.createHeaders();
+        }
+        if (source.headers != null) {
+            HeadersMapFactory factory = camelContext.getCamelContextExtension().getHeadersMapFactory();
+            if (factory != null) {
+                Map<String, Object> raw;
+                if (source.headers instanceof CopyOnWriteHeadersMap cow) {
+                    raw = cow.getUnderlying();
+                } else {
+                    raw = source.headers;
+                }
+                source.headers = new CopyOnWriteHeadersMap(raw, factory);
+                this.headers = new CopyOnWriteHeadersMap(raw, factory);
+            } else {
+                // no factory available, fall back to deep copy
+                this.headers = new HashMap<>(source.headers);
+            }
+        } else {
+            this.headers = null;
+        }
     }
 }

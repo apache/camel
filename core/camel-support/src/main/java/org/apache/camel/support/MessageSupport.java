@@ -221,12 +221,10 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         // the headers may be the same instance if the end user has made some mistake
         // and set the OUT message with the same header instance of the IN message etc
         if (!sameHeaders(that)) {
-            if (hasHeaders()) {
-                // okay its safe to clear the headers
-                getHeaders().clear();
-            }
-            if (that.hasHeaders()) {
-                getHeaders().putAll(that.getHeaders());
+            if (that instanceof DefaultMessage thatDefault && this instanceof DefaultMessage thisDefault) {
+                thisDefault.copyHeadersFrom(thatDefault);
+            } else {
+                setHeaders(that.getHeaders());
             }
         }
 
