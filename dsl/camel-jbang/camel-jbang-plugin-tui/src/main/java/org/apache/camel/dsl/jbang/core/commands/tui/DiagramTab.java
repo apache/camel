@@ -34,6 +34,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
@@ -308,7 +309,15 @@ class DiagramTab implements MonitorTab {
             String selectedRouteId = topologyMode ? diagram.getSelectedRouteId() : drillDownRouteId;
 
             if (topologyMode && diagram.hasNativeLayout()) {
-                String title = " Topology ";
+                Line title;
+                if (info.name != null) {
+                    title = Line.from(
+                            Span.raw(" Topology ["),
+                            Span.styled(info.name, Style.EMPTY.fg(Color.YELLOW).bold()),
+                            Span.raw("] "));
+                } else {
+                    title = Line.from(Span.raw(" Topology "));
+                }
                 if (selectedRouteId != null && area.width() > 60) {
                     int panelWidth = 30;
                     List<Rect> hChunks = Layout.horizontal()
@@ -381,6 +390,11 @@ class DiagramTab implements MonitorTab {
             lines.add(Line.from(
                     Span.styled(" Throughput: ", Style.EMPTY.dim()),
                     Span.raw(route.throughput != null ? route.throughput : "")));
+            if (route.coverage != null) {
+                lines.add(Line.from(
+                        Span.styled(" Coverage:   ", Style.EMPTY.dim()),
+                        Span.raw(route.coverage)));
+            }
 
             lines.add(Line.from(Span.raw("")));
             int w = numWidth(route.total, route.failed, route.inflight);
@@ -409,12 +423,23 @@ class DiagramTab implements MonitorTab {
                         Span.raw(String.format("%" + tw + "d ms", route.minTime))));
             }
 
-            if (route.coverage != null) {
+            if (route.sinceLastCompleted != null || route.sinceLastFailed != null) {
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
-                        Span.styled(" Coverage: ", Style.EMPTY.dim()),
-                        Span.raw(route.coverage)));
+                        Span.styled(" Since last:", Style.EMPTY.dim())));
+                if (route.sinceLastCompleted != null) {
+                    lines.add(Line.from(
+                            Span.styled("   success: ", Style.EMPTY.dim()),
+                            Span.raw(route.sinceLastCompleted)));
+                }
+                if (route.sinceLastFailed != null) {
+                    lines.add(Line.from(
+                            Span.styled("   fail:    ", Style.EMPTY.dim()),
+                            Span.styled(route.sinceLastFailed,
+                                    Style.EMPTY.fg(Color.LIGHT_RED))));
+                }
             }
+
         } else {
             // External endpoint — show topology node data
             var topoNode = diagram.getSelectedTopologyNode();
@@ -491,12 +516,18 @@ class DiagramTab implements MonitorTab {
                         Span.raw(ln.id)));
             }
 
+            lines.add(Line.from(Span.raw("")));
             String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
-            if (linkedRoute != null) {
-                lines.add(Line.from(Span.raw("")));
+            if (linkedRoute != null && diagram.getRouteLayout(linkedRoute) != null) {
                 lines.add(Line.from(
                         Span.styled(" ↵ ", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.styled(linkedRoute, Style.EMPTY.fg(Color.WHITE))));
+            } else if (ln.treeNode != null && ln.treeNode.info.remote) {
+                String arrow = "from".equals(ln.type) ? " external → " : " → external";
+                lines.add(Line.from(
+                        Span.styled(arrow, Style.EMPTY.fg(Color.DARK_GRAY))));
+            } else {
+                lines.add(Line.from(Span.raw("")));
             }
 
             if (ln.treeNode != null && ln.treeNode.info.stat != null) {
@@ -531,6 +562,26 @@ class DiagramTab implements MonitorTab {
                     lines.add(Line.from(
                             Span.styled(" Last: ", Style.EMPTY.dim()),
                             Span.raw(String.format("%" + tw + "d ms", stat.lastProcessingTime))));
+
+                    if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
+                        long now = System.currentTimeMillis();
+                        lines.add(Line.from(Span.raw("")));
+                        lines.add(Line.from(
+                                Span.styled(" Since last:", Style.EMPTY.dim())));
+                        if (stat.lastCompletedExchangeTimestamp > 0) {
+                            long ago = now - stat.lastCompletedExchangeTimestamp;
+                            lines.add(Line.from(
+                                    Span.styled("   success: ", Style.EMPTY.dim()),
+                                    Span.raw(TimeUtils.printDuration(ago, true))));
+                        }
+                        if (stat.lastFailedExchangeTimestamp > 0) {
+                            long ago = now - stat.lastFailedExchangeTimestamp;
+                            lines.add(Line.from(
+                                    Span.styled("   fail:    ", Style.EMPTY.dim()),
+                                    Span.styled(TimeUtils.printDuration(ago, true),
+                                            Style.EMPTY.fg(Color.LIGHT_RED))));
+                        }
+                    }
                 }
             }
         } else {
@@ -540,7 +591,7 @@ class DiagramTab implements MonitorTab {
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
                 .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" EIP Info ").build())
+                        .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
     }
@@ -556,9 +607,6 @@ class DiagramTab implements MonitorTab {
                 hint(spans, "Esc", "back");
                 hint(spans, "t", "topology");
                 hint(spans, "↑↓←→", "navigate");
-                if (diagram.findLinkedRouteId(drillDownRouteId) != null) {
-                    hint(spans, "Enter", "jump to route");
-                }
                 hint(spans, "PgUp/PgDn", "page");
                 hint(spans, "c", "source");
             } else if (!topologyMode) {

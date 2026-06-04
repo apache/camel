@@ -193,9 +193,7 @@ public class RouteDiagramWidget implements Widget {
         // Link indicator for nodes that connect to other routes
         String linkedRouteId = findLinkedRouteId(node);
         if (linkedRouteId != null) {
-            Style linkStyle = selected
-                    ? Style.EMPTY.fg(Color.YELLOW).bold().patch(SELECTION_STYLE)
-                    : Style.EMPTY.fg(Color.YELLOW).bold();
+            Style linkStyle = Style.EMPTY.fg(Color.YELLOW).bold();
             writeText(buffer, area, bottom, col + boxWidth, " ↵ " + linkedRouteId, linkStyle);
         }
 
@@ -210,7 +208,7 @@ public class RouteDiagramWidget implements Widget {
 
         StatInfo stat = resolveStatInfo(to);
         long total = stat != null ? stat.exchangesTotal : 0;
-        boolean dashed = showMetrics && total == 0;
+        boolean dashed = (showMetrics && total == 0) || isExternalEndpoint(to);
 
         drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed);
         drawCounters(buffer, area, toCx, toTop, stat);

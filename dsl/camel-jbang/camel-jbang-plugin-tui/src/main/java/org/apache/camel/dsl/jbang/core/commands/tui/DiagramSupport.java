@@ -520,10 +520,10 @@ class DiagramSupport {
         return boxes;
     }
 
-    void renderNativeDiagram(Frame frame, Rect area, String title, boolean metrics) {
+    void renderNativeDiagram(Frame frame, Rect area, Line title, boolean metrics) {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(title)
+                .title(Title.from(title))
                 .build();
         frame.renderWidget(block, area);
 
