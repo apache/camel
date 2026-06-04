@@ -290,11 +290,23 @@ public class TopologyDiagramWidget implements Widget {
             }
             return 2 + lines;
         }
-        int lines = 3;
+        String label = showDescription && node.description != null && !node.description.isBlank()
+                ? node.description : node.routeId;
+        int lines = wrapText(label, boxWidth - 4).size();
+        if (!showDescription) {
+            List<String> fromLines = wrapText("(" + node.from + ")", boxWidth - 4);
+            lines += fromLines.size();
+            if (fromLines.size() < 2) {
+                lines++;
+            }
+        }
         if (showMetrics) {
             lines++;
         }
-        return 2 + Math.min(lines, MAX_WRAP_LINES + 1);
+        while (lines > MAX_WRAP_LINES + 1) {
+            lines--;
+        }
+        return 2 + lines;
     }
 
     private void setChar(Buffer buffer, Rect area, int gridRow, int gridCol, char ch, Style style) {

@@ -45,7 +45,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class RoutesTab implements MonitorTab {
 
-    private static final String[] ROUTE_SORT_COLUMNS = { "name", "group", "from", "status", "total", "failed" };
+    private static final String[] ROUTE_SORT_COLUMNS = { "name", "from", "status", "total", "failed" };
     private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta" };
 
     private final MonitorContext ctx;
@@ -334,7 +334,6 @@ class RoutesTab implements MonitorTab {
 
                 routeRows.add(Row.from(
                         Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
-                        Cell.from(Span.styled(route.group != null ? route.group : "", Style.EMPTY.dim())),
                         Cell.from(route.from != null ? route.from : ""),
                         Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                         Cell.from(route.uptime != null ? route.uptime : ""),
@@ -353,7 +352,6 @@ class RoutesTab implements MonitorTab {
                     .rows(routeRows)
                     .header(Row.from(
                             Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
-                            Cell.from(Span.styled(routeSortLabel("GROUP", "group"), routeSortStyle("group"))),
                             Cell.from(Span.styled(routeSortLabel("FROM", "from"), routeSortStyle("from"))),
                             Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
                             Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
@@ -365,8 +363,7 @@ class RoutesTab implements MonitorTab {
                             rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
                             Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
                     .widths(
-                            Constraint.length(12),
-                            Constraint.length(14),
+                            Constraint.length(24),
                             Constraint.fill(),
                             Constraint.length(10),
                             Constraint.length(8),
@@ -667,11 +664,6 @@ class RoutesTab implements MonitorTab {
                 String sa = a.state != null ? a.state : "";
                 String sb2 = b.state != null ? b.state : "";
                 yield sa.compareToIgnoreCase(sb2);
-            }
-            case "group" -> {
-                String ga = a.group != null ? a.group : "";
-                String gb = b.group != null ? b.group : "";
-                yield ga.compareToIgnoreCase(gb);
             }
             case "from" -> {
                 String fa = a.from != null ? a.from : "";

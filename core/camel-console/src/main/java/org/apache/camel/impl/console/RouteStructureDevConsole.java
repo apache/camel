@@ -204,6 +204,9 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             c.put("code", Jsoner.escape(line.code()));
             if (line.uri() != null) {
                 c.put("uri", Jsoner.escape(line.uri()));
+                if (line.remote()) {
+                    c.put("remote", true);
+                }
             }
 
             if (metric && mcc != null) {

@@ -28,8 +28,9 @@ import org.jspecify.annotations.Nullable;
  * @param code        EIP code such as label or short name that is human-readable or pseudocode
  * @param description optional description of the EIP node
  * @param uri         the raw endpoint URI for endpoint-producing EIP nodes (from, to, toD, wireTap, enrich, etc.)
+ * @param remote      whether the endpoint connects to a remote system (true) or is local/in-JVM only (false)
  * @since             4.16
  */
 public record ModelDumpLine(@Nullable String location, String type, String id, int level, String code,
-        @Nullable String description, @Nullable String uri) {
+        @Nullable String description, @Nullable String uri, boolean remote) {
 }

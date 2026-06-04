@@ -1240,9 +1240,8 @@ class DiagramSupport {
         JsonObject root = new JsonObject();
         root.put("action", "route-topology");
         root.put("metric", "true");
-        if (external) {
-            root.put("external", "true");
-        }
+        // Always request external endpoints so route diagrams can show dashed borders
+        root.put("external", "true");
         if (routes) {
             root.put("routes", "true");
         }

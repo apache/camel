@@ -17,9 +17,12 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.Model;
@@ -39,6 +42,8 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
         // dump in text format padded by level
         List<ModelDumpLine> answer = new ArrayList<>();
 
+        Map<String, Boolean> schemeRemoteMap = buildSchemeRemoteMap(context);
+
         // lookup model and runtime route
         final Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
         final RouteDefinition def = model.getRouteDefinition(routeId);
@@ -48,20 +53,23 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
         answer.add(
                 new ModelDumpLine(
                         loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]", def.getDescription(),
-                        null));
+                        null, false));
         String uri = def.getInput().getLabel();
         if (brief) {
             uri = StringHelper.before(uri, "?", uri);
         }
         String fromUri = def.getInput().getEndpointUri();
-        answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]", def.getDescription(), fromUri));
+        boolean fromRemote = isRemoteUri(fromUri, schemeRemoteMap);
+        answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]", def.getDescription(), fromUri, fromRemote));
 
-        dumpChildren(def, scheme, brief, 2, answer);
+        dumpChildren(def, scheme, brief, 2, answer, schemeRemoteMap);
 
         return answer;
     }
 
-    private static void dumpChildren(NamedNode parent, String scheme, boolean brief, int level, List<ModelDumpLine> answer) {
+    private static void dumpChildren(
+            NamedNode parent, String scheme, boolean brief, int level,
+            List<ModelDumpLine> answer, Map<String, Boolean> schemeRemoteMap) {
         for (NamedNode child : parent.getChildren()) {
             if (child instanceof OptionalIdentifiedDefinition<?> output) {
                 String loc = scheme + ":" + output.getLocation();
@@ -73,17 +81,48 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
                 boolean choice = "choice".equals(kind);
                 String code = choice || brief ? output.getShortName() : output.getLabel();
                 String endpointUri = null;
+                boolean remote = false;
                 if (output instanceof EndpointRequiredDefinition erd) {
                     endpointUri = erd.getEndpointUri();
+                    remote = isRemoteUri(endpointUri, schemeRemoteMap);
                     if (brief) {
                         String uri = StringHelper.before(endpointUri, "?", endpointUri);
                         code = output.getShortName() + "[" + uri + "]";
                     }
                 }
-                answer.add(new ModelDumpLine(loc, kind, id, level, code, output.getDescription(), endpointUri));
+                answer.add(new ModelDumpLine(loc, kind, id, level, code, output.getDescription(), endpointUri, remote));
             }
-            dumpChildren(child, scheme, brief, level + 1, answer);
+            dumpChildren(child, scheme, brief, level + 1, answer, schemeRemoteMap);
         }
+    }
+
+    private static Map<String, Boolean> buildSchemeRemoteMap(CamelContext context) {
+        Map<String, Boolean> map = new HashMap<>();
+        for (Endpoint ep : context.getEndpoints()) {
+            if ("StubEndpoint".equals(ep.getClass().getSimpleName())) {
+                continue;
+            }
+            String uri = ep.getEndpointUri();
+            int colonIdx = uri.indexOf(':');
+            if (colonIdx > 0) {
+                String s = uri.substring(0, colonIdx);
+                map.putIfAbsent(s, ep.isRemote());
+            }
+        }
+        return map;
+    }
+
+    private static boolean isRemoteUri(String uri, Map<String, Boolean> schemeRemoteMap) {
+        if (uri == null) {
+            return false;
+        }
+        int colonIdx = uri.indexOf(':');
+        if (colonIdx <= 0) {
+            return false;
+        }
+        String scheme = uri.substring(0, colonIdx);
+        Boolean remote = schemeRemoteMap.get(scheme);
+        return remote != null && remote;
     }
 
 }

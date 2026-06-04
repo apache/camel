@@ -68,7 +68,8 @@ public class RouteDiagramWidget implements Widget {
                               LayoutRoute layoutRoute, int nodeWidth,
                               int selectedNodeIndex, int scrollX, int scrollY,
                               boolean showMetrics) {
-        this(layoutRoute, nodeWidth, selectedNodeIndex, scrollX, scrollY, showMetrics, Collections.emptyMap());
+        this(layoutRoute, nodeWidth, selectedNodeIndex, scrollX, scrollY, showMetrics,
+             Collections.emptyMap());
     }
 
     public RouteDiagramWidget(
@@ -138,6 +139,7 @@ public class RouteDiagramWidget implements Widget {
 
         int nodeIdx = nodeBoxes.size();
         boolean selected = nodeIdx == selectedNodeIndex;
+        boolean external = isExternalEndpoint(node);
 
         Color eipColor = getEipColor(node.type);
         Style borderStyle = Style.EMPTY.fg(eipColor);
@@ -145,10 +147,13 @@ public class RouteDiagramWidget implements Widget {
             borderStyle = borderStyle.patch(SELECTION_STYLE);
         }
 
+        char hChar = external ? DASH_H : H;
+        char vChar = external ? DASH_V : V;
+
         // Top border
         setChar(buffer, area, row, col, TL, borderStyle);
         for (int c = col + 1; c < col + boxWidth - 1; c++) {
-            setChar(buffer, area, row, c, H, borderStyle);
+            setChar(buffer, area, row, c, hChar, borderStyle);
         }
         setChar(buffer, area, row, col + boxWidth - 1, TR, borderStyle);
 
@@ -156,15 +161,15 @@ public class RouteDiagramWidget implements Widget {
         int bottom = row + height - 1;
         setChar(buffer, area, bottom, col, BL, borderStyle);
         for (int c = col + 1; c < col + boxWidth - 1; c++) {
-            setChar(buffer, area, bottom, c, H, borderStyle);
+            setChar(buffer, area, bottom, c, hChar, borderStyle);
         }
         setChar(buffer, area, bottom, col + boxWidth - 1, BR, borderStyle);
 
         // Content rows
         for (int i = 0; i < lines.size(); i++) {
             int r = row + 1 + i;
-            setChar(buffer, area, r, col, V, borderStyle);
-            setChar(buffer, area, r, col + boxWidth - 1, V, borderStyle);
+            setChar(buffer, area, r, col, vChar, borderStyle);
+            setChar(buffer, area, r, col + boxWidth - 1, vChar, borderStyle);
 
             Style bgStyle = selected ? SELECTION_STYLE : Style.EMPTY;
             for (int c = col + 1; c < col + boxWidth - 1; c++) {
@@ -412,6 +417,13 @@ public class RouteDiagramWidget implements Widget {
             return 0;
         }
         return pixelX * boxWidth / nodeWidth;
+    }
+
+    private boolean isExternalEndpoint(LayoutNode node) {
+        if (node.treeNode == null) {
+            return false;
+        }
+        return node.treeNode.info.remote;
     }
 
     private String findLinkedRouteId(LayoutNode node) {
