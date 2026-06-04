@@ -2,6 +2,7 @@
 package org.apache.camel;
 
 import javax.annotation.processing.Generated;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -172,6 +173,10 @@ public class ExchangeConstantProvider {
 
     public static @Nullable String lookup(String key) {
         return MAP.get(key);
+    }
+
+    public static Collection<String> values() {
+        return MAP.values();
     }
 }
 
