@@ -303,12 +303,18 @@ class RoutesTab implements MonitorTab {
             return true;
         }
 
-        // Diagram toggle
+        // Enter in table mode opens topology
+        if (!diagram.isShowDiagram() && !sourceViewer.isVisible() && ke.isConfirm()) {
+            openTopology();
+            return true;
+        }
+
+        // d in table mode opens route diagram, in diagram mode closes it
         if (ke.isCharIgnoreCase('d')) {
             if (diagram.isShowDiagram()) {
                 closeDiagram();
             } else {
-                openDiagram();
+                openRouteDiagram();
             }
             return true;
         }
@@ -653,12 +659,13 @@ class RoutesTab implements MonitorTab {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "↑↓", "navigate");
+            hint(spans, "Enter", "topology");
+            hint(spans, "d", "diagram");
             hint(spans, "s", "sort");
             hint(spans, "n", "description" + (showDescription ? " [on]" : " [off]"));
             hint(spans, "t", routeTopMode ? "top [on]" : "top [off]");
             if (!routeTopMode) {
                 hint(spans, "c", "source");
-                hint(spans, "d", "diagram");
                 String routeState = selectedRouteState();
                 boolean supSus = selectedRouteSupportsSuspension();
                 if ("Started".equals(routeState)) {
@@ -693,11 +700,10 @@ class RoutesTab implements MonitorTab {
 
     // ---- Diagram open/close ----
 
-    private void openDiagram() {
+    private void openTopology() {
         topologyMode = true;
         drillDownRouteId = null;
         routeNavigationStack.clear();
-        diagram.reset();
         diagram.setTopologyMode(true);
 
         // Pre-select the currently highlighted route from the table
@@ -706,7 +712,29 @@ class RoutesTab implements MonitorTab {
             diagram.setPendingSelectionRouteId(selectedId);
         }
 
-        loadDiagram(true);
+        if (diagram.hasCachedData(ctx.selectedPid)) {
+            diagram.showCached();
+            diagram.applyPendingSelection();
+        } else {
+            loadDiagram(true);
+        }
+    }
+
+    private void openRouteDiagram() {
+        String selectedId = selectedRouteId();
+        if (selectedId == null) {
+            return;
+        }
+        topologyMode = false;
+        drillDownRouteId = selectedId;
+        routeNavigationStack.clear();
+        diagram.setTopologyMode(false);
+
+        if (diagram.hasCachedData(ctx.selectedPid)) {
+            diagram.showCached();
+        } else {
+            loadDiagram(true);
+        }
     }
 
     void closeDiagram() {

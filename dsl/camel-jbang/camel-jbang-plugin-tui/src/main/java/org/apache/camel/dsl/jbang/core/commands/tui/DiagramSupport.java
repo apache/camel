@@ -86,6 +86,7 @@ class DiagramSupport {
     private TopologyLayoutResult topologyLayout;
     private int topologyNodeWidth;
     private java.util.Map<String, RouteDiagramLayoutEngine.LayoutRoute> routeLayouts = Collections.emptyMap();
+    private String cachedPid;
 
     List<String> getLines() {
         return lines;
@@ -265,6 +266,11 @@ class DiagramSupport {
 
     void reset() {
         close();
+        invalidateCache();
+    }
+
+    void invalidateCache() {
+        cachedPid = null;
         lines = Collections.emptyList();
         nodeBoxes = Collections.emptyList();
         topologyNodes = Collections.emptyList();
@@ -277,6 +283,32 @@ class DiagramSupport {
         selectedEipNodeIndex = -1;
         scrollY = 0;
         scrollX = 0;
+    }
+
+    boolean hasCachedData(String pid) {
+        return pid != null && pid.equals(cachedPid) && hasDiagramData();
+    }
+
+    void showCached() {
+        showDiagram = true;
+        scrollY = 0;
+        scrollX = 0;
+    }
+
+    void applyPendingSelection() {
+        if (pendingSelectionRouteId != null && !nodeBoxes.isEmpty()) {
+            int newIdx = -1;
+            for (int i = 0; i < nodeBoxes.size(); i++) {
+                if (pendingSelectionRouteId.equals(nodeBoxes.get(i).routeId())) {
+                    newIdx = i;
+                    break;
+                }
+            }
+            if (newIdx >= 0) {
+                selectedNodeIndex = newIdx;
+            }
+        }
+        pendingSelectionRouteId = null;
     }
 
     void renderFooterHints(List<Span> spans) {
@@ -1162,6 +1194,7 @@ class DiagramSupport {
             if (!showDiagram) {
                 return;
             }
+            cachedPid = pid;
             topologyLayout = finalTopoResult;
             topologyNodeWidth = finalNodeW;
             topologyNodes = finalTopoNodes;
