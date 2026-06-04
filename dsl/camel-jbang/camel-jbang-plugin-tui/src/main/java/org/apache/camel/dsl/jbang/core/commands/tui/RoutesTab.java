@@ -529,7 +529,7 @@ class RoutesTab implements MonitorTab {
                             rightCell("MSG/S", 8, Style.EMPTY.bold()),
                             rightCell("LOAD", 12, Style.EMPTY.bold())))
                     .widths(
-                            Constraint.length(12),
+                            Constraint.length(24),
                             Constraint.fill(),
                             Constraint.length(6),
                             Constraint.length(6),
