@@ -16,13 +16,13 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
@@ -57,9 +57,10 @@ public class DefaultUnitOfWork implements UnitOfWork {
     final boolean useBreadcrumb;
 
     private final CamelContext context;
-    private final Deque<Route> routes = new ConcurrentLinkedDeque<>();
-    private final Lock lock = new ReentrantLock();
     private final Logger log;
+    private Route route;
+    private Deque<Route> routeStack;
+    private final Lock lock = new ReentrantLock();
     private Exchange exchange;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
@@ -163,7 +164,10 @@ public class DefaultUnitOfWork implements UnitOfWork {
     @Override
     public void reset() {
         this.exchange = null;
-        routes.clear();
+        this.route = null;
+        if (routeStack != null) {
+            routeStack.clear();
+        }
         if (synchronizations != null) {
             synchronizations.clear();
         }
@@ -367,44 +371,62 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     @Override
     public Route getRoute() {
-        return routes.peek();
+        return route;
     }
 
     @Override
     public void pushRoute(Route route) {
-        routes.push(route);
+        if (this.route == null) {
+            this.route = route;
+        } else {
+            if (routeStack == null) {
+                routeStack = new ArrayDeque<>();
+            }
+            routeStack.push(this.route);
+            this.route = route;
+        }
     }
 
     @Override
     public Route popRoute() {
-        return routes.poll();
+        Route old = this.route;
+        if (routeStack != null && !routeStack.isEmpty()) {
+            this.route = routeStack.pop();
+        } else {
+            this.route = null;
+        }
+        return old;
     }
 
     @Override
     public int routeStackLevel() {
-        return routes.size();
+        return (route != null ? 1 : 0) + (routeStack != null ? routeStack.size() : 0);
     }
 
     public int routeStackLevel(boolean includeRouteTemplate, boolean includeKamelet) {
         if (includeKamelet && includeRouteTemplate) {
-            return routes.size();
+            return routeStackLevel();
         }
 
         int level = 0;
-        for (Route r : routes) {
-            if (r.isCreatedByKamelet()) {
-                if (includeKamelet) {
-                    level++;
-                }
-            } else if (r.isCreatedByRouteTemplate()) {
-                if (includeRouteTemplate) {
-                    level++;
-                }
-            } else {
-                level++;
+        if (route != null) {
+            level += countRoute(route, includeRouteTemplate, includeKamelet);
+        }
+        if (routeStack != null) {
+            for (Route r : routeStack) {
+                level += countRoute(r, includeRouteTemplate, includeKamelet);
             }
         }
         return level;
+    }
+
+    private static int countRoute(Route r, boolean includeRouteTemplate, boolean includeKamelet) {
+        if (r.isCreatedByKamelet()) {
+            return includeKamelet ? 1 : 0;
+        } else if (r.isCreatedByRouteTemplate()) {
+            return includeRouteTemplate ? 1 : 0;
+        }
+        return 1;
     }
 
     @Override
