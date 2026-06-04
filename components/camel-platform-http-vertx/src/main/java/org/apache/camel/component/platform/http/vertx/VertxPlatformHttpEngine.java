@@ -30,6 +30,7 @@ import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
+import org.apache.camel.component.platform.http.spi.PlatformHttpSecurityHandler;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -93,6 +94,19 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
                 processor,
                 handlers,
                 VertxPlatformHttpRouter.getRouterNameFromPort(getServerPort()));
+    }
+
+    @Override
+    public PlatformHttpConsumer createConsumer(
+            PlatformHttpEndpoint endpoint,
+            Processor processor,
+            PlatformHttpSecurityHandler securityHandler) {
+        return new VertxPlatformHttpConsumer(
+                endpoint,
+                processor,
+                handlers,
+                VertxPlatformHttpRouter.getRouterNameFromPort(getServerPort()),
+                securityHandler);
     }
 
     @Override

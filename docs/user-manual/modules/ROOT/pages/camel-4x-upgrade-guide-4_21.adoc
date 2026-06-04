@@ -800,6 +800,37 @@ aligning the component with the rest of the Camel component catalog (`camel-kafk
 names from NATS messages can supply a custom `headerFilterStrategy` to restore the previous
 behaviour.
 
+=== camel-platform-http
+
+The `platform-http` consumer endpoint now has an `oauthProfile` option for opt-in validation of incoming
+`Authorization: Bearer` tokens using the public OAuth token validation SPI.
+Existing routes are unchanged unless this option is set.
+Routes that enable `oauthProfile` need an `OAuthTokenValidationFactory`; `camel-oauth` provides the
+default implementation and runtimes can provide their own implementation backed by native security.
+The default `camel-oauth` provider requires `expected-issuer`/`base-uri`, `expected-audience`, and HTTPS
+identity-provider endpoints unless the new explicit opt-out properties are set.
+JWT validation profiles can also set `expected-token-type` to require a specific JWT `typ` header
+such as `at+jwt`.
+Requests without a Bearer token or with an invalid token are rejected with HTTP 401.
+Static profile configuration is validated at route startup. Token validation infrastructure failures
+are rejected with HTTP 503.
+For valid tokens, the token validation result is stored on the exchange as the
+`CamelOAuthTokenValidationResult` exchange property. Route code can use the result to read the
+principal name, token scopes, and immutable token attributes/claims. The raw `Authorization` header is
+removed before the route is invoked.
+
+The public incoming-token validation SPI consists of `OAuthTokenValidationFactory`,
+`OAuthTokenValidationConfig`, and `OAuthTokenValidationResult`.
+Components and route code can also use `OAuthHelper.validateOAuthToken(...)` from `camel-support`.
+Providers can implement `OAuthTokenValidationFactory#validateConfiguration(...)` to fail fast during
+route startup.
+
+Platform HTTP engine implementations can override the new
+`PlatformHttpEngine#createConsumer(PlatformHttpEndpoint, Processor, PlatformHttpSecurityHandler)` SPI
+to customize validation wrapping. `PlatformHttpSecurityHandler` is the wrapper contract. The default
+implementation wraps the Camel route processor, so validation is enforced before route processing but
+after the engine has created the request exchange.
+
 === camel-xmpp
 
 The default `headerFilterStrategy` is now a new `XmppHeaderFilterStrategy` that filters headers
