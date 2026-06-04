@@ -872,6 +872,9 @@ public class CamelMonitor extends CamelCommand {
             refreshLogData();
             logTab.onTabSelected();
         }
+        if (tab == TAB_ROUTES && routesTab != null && routesTab.isShowDiagram()) {
+            routesTab.closeDiagram();
+        }
         if (tab == TAB_DIAGRAM) {
             diagramTab.onTabSelected();
         }

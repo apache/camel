@@ -697,6 +697,7 @@ class RoutesTab implements MonitorTab {
         topologyMode = true;
         drillDownRouteId = null;
         routeNavigationStack.clear();
+        diagram.reset();
         diagram.setTopologyMode(true);
 
         // Pre-select the currently highlighted route from the table
@@ -708,7 +709,7 @@ class RoutesTab implements MonitorTab {
         loadDiagram(true);
     }
 
-    private void closeDiagram() {
+    void closeDiagram() {
         topologyMode = true;
         drillDownRouteId = null;
         routeNavigationStack.clear();

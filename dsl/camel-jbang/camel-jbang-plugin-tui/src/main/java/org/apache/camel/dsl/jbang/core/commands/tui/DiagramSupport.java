@@ -1159,6 +1159,9 @@ class DiagramSupport {
             return;
         }
         ctx.runner.runOnRenderThread(() -> {
+            if (!showDiagram) {
+                return;
+            }
             topologyLayout = finalTopoResult;
             topologyNodeWidth = finalNodeW;
             topologyNodes = finalTopoNodes;
@@ -1192,8 +1195,6 @@ class DiagramSupport {
                     selectedNodeIndex = -1;
                 }
             }
-
-            showDiagram = true;
         });
     }
 
@@ -1410,7 +1411,9 @@ class DiagramSupport {
             return;
         }
         ctx.runner.runOnRenderThread(() -> {
-            boolean wasShowing = showDiagram;
+            if (!showDiagram) {
+                return;
+            }
             lines = resultLines;
             counterPositions = positions;
             routeTitleRows = titleRows;
@@ -1438,12 +1441,6 @@ class DiagramSupport {
             } else if (resultNodeBoxes.isEmpty()) {
                 selectedNodeIndex = -1;
             }
-
-            if (!wasShowing) {
-                scrollY = 0;
-                scrollX = 0;
-            }
-            showDiagram = true;
         });
     }
 
