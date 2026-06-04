@@ -617,7 +617,8 @@ public abstract class BaseMainSupport extends BaseService {
         // configure the profile with pre-configured settings
         step = recorder.beginStep(BaseMainSupport.class, "configureMain", "Profile Configure");
         doInitFileConfigurations(camelContext, mainConfigurationProperties);
-        ProfileConfigurer.configureMain(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
+        ProfileConfigurer.configureMain(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties,
+                autoConfiguredProperties);
         recorder.endStep(step);
 
         // configure main listener

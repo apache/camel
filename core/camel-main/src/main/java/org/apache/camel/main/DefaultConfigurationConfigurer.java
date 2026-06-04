@@ -352,12 +352,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 
-        if (config.isMessageHistory()) {
-            camelContext.setMessageHistory(true);
-        }
-        if (config.isSourceLocationEnabled()) {
-            camelContext.setSourceLocationEnabled(true);
-        }
+        camelContext.setMessageHistory(config.isMessageHistory());
+        camelContext.setSourceLocationEnabled(config.isSourceLocationEnabled());
 
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());
