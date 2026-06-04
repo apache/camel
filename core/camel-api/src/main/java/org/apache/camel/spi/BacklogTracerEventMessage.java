@@ -130,6 +130,14 @@ public interface BacklogTracerEventMessage extends BacklogEventMessage {
     String getCorrelationExchangeId();
 
     /**
+     * The breadcrumb id that links exchanges across broker boundaries (Kafka, SEDA, JMS, etc.)
+     *
+     * @since 4.21
+     */
+    @Nullable
+    String getBreadcrumbId();
+
+    /**
      * The name of the thread that is processing the message, when this event was captured.
      */
     String getProcessingThreadName();

@@ -65,6 +65,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     // use tracer to capture additional information for capturing latest completed exchange message-history
     private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private final Queue<BacklogTracerEventMessage> completeHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE + 1);
+    private volatile String lastCompletedBreadcrumbId;
     private boolean removeOnDump = true;
     private int bodyMaxChars = 32 * 1024;
     private boolean bodyIncludeStreams;
@@ -164,6 +165,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         String toNodeLabel = StringHelper.limitLength(node.getLabel(), 50);
         String exchangeId = exchange.getExchangeId();
         String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+        String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
         int level = node.getLevel();
         String fromRouteId = exchange.getFromRouteId();
         String source = LoggerHelper.getLineNumberLoggerName(node);
@@ -172,7 +174,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
                 camelContext, first, last, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
                 toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
-                exchangeId, correlationExchangeId, false, false, data);
+                exchangeId, correlationExchangeId, breadcrumbId, false, false, data);
         if ((first || last) && fromRouteId != null) {
             Route route = camelContext.getRoute(fromRouteId);
             if (route != null && route.getConsumer() != null) {
@@ -195,21 +197,51 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
         // handle capturing events for last full completed exchange (aka replay)
         if (camelContext.isMessageHistory()) {
-            String tid = null;
             var head = provisionalHistoryQueue.peek();
+            String bid = null;
+            String tid = null;
             if (head != null) {
+                bid = head.getBreadcrumbId();
                 tid = head.getExchangeId();
             }
-            if (tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId())) {
+            // correlate by breadcrumb ID when available (links exchanges across broker boundaries)
+            // fallback to exchange ID / correlation ID matching when breadcrumb is not set
+            boolean match;
+            if (bid != null && event.getBreadcrumbId() != null) {
+                match = bid.equals(event.getBreadcrumbId());
+            } else {
+                match = tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId());
+            }
+            // check if this event continues a previously completed breadcrumb flow
+            // (e.g. a downstream route connected via Kafka/SEDA that starts after the originating route finished)
+            boolean appendMode = false;
+            if (head == null && event.getBreadcrumbId() != null
+                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                appendMode = true;
+            } else if (head != null && event.getBreadcrumbId() != null
+                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)
+                    && head.getBreadcrumbId() != null
+                    && head.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                appendMode = true;
+            }
+            if (match || appendMode) {
                 boolean added = provisionalHistoryQueue.offer(event);
                 boolean original = head != null && event.getRouteId() != null && event.getRouteId().equals(head.getRouteId());
                 if (event.isLast() && original) {
-                    // only trigger completion when it's the original last
-                    completeHistoryQueue.clear();
-                    completeHistoryQueue.addAll(provisionalHistoryQueue);
-                    // in case we hit the limit then ensure the last is always added to the complete history
-                    if (!added) {
-                        completeHistoryQueue.add(event);
+                    if (appendMode) {
+                        // downstream route finished: merge into existing complete history
+                        completeHistoryQueue.addAll(provisionalHistoryQueue);
+                        if (!added) {
+                            completeHistoryQueue.add(event);
+                        }
+                    } else {
+                        // originating route finished: replace complete history
+                        completeHistoryQueue.clear();
+                        completeHistoryQueue.addAll(provisionalHistoryQueue);
+                        if (!added) {
+                            completeHistoryQueue.add(event);
+                        }
+                        lastCompletedBreadcrumbId = event.getBreadcrumbId();
                     }
                     provisionalHistoryQueue.clear();
                 }

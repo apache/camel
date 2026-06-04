@@ -54,6 +54,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final int toNodeLevel;
     private final String exchangeId;
     private final String correlationExchangeId;
+    private final String breadcrumbId;
     private final String threadName;
     private String endpointUri;
     private boolean remoteEndpoint;
@@ -77,7 +78,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
                                             String toNodeParentId,
                                             String toNodeParentWhenId, String toNodeParentWhenLabel,
                                             String toNodeShortName, String toNodeLabel, int toNodeLevel, String exchangeId,
-                                            String correlationExchangeId,
+                                            String correlationExchangeId, String breadcrumbId,
                                             boolean rest, boolean template, JsonObject data) {
         this.camelContext = camelContext;
         this.watch = new StopWatch();
@@ -97,6 +98,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.toNodeLevel = toNodeLevel;
         this.exchangeId = exchangeId;
         this.correlationExchangeId = correlationExchangeId;
+        this.breadcrumbId = breadcrumbId;
         this.rest = rest;
         this.template = template;
         this.threadName = Thread.currentThread().getName();
@@ -197,6 +199,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     public String getCorrelationExchangeId() {
         return correlationExchangeId;
+    }
+
+    @Override
+    public String getBreadcrumbId() {
+        return breadcrumbId;
     }
 
     @Override
@@ -586,6 +593,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         if (correlationExchangeId != null) {
             jo.put("correlationExchangeId", correlationExchangeId);
+        }
+        if (breadcrumbId != null) {
+            jo.put("breadcrumbId", breadcrumbId);
         }
         if (timestamp > 0) {
             jo.put("timestamp", timestamp);
