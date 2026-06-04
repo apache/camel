@@ -1459,17 +1459,51 @@ class HistoryTab implements MonitorTab {
                 - **Finding bottlenecks**: Look for steps with high elapsed times
                 - **Understanding failures**: See exactly where in the route a failure occurred
 
+                ## Route Diagram
+
+                Press `d` to open the route diagram for the selected exchange.
+                The diagram shows the route structure as a visual flowchart with
+                box-drawing characters, highlighting the path the exchange took
+                through the route in green (or red for failed exchanges).
+
+                **Progressive Path Highlighting** — Use `Up/Down` to step through
+                the exchange's journey node by node. As you navigate forward, each
+                visited node lights up progressively in green, creating a visual
+                replay of the message's path. Stepping backward removes the
+                highlight from the last node. The currently selected node is
+                shown with a dark background.
+
+                **Multi-route exchanges** — When an exchange spans multiple routes
+                (e.g., via `direct` or `seda` endpoints), all involved routes are
+                shown stacked vertically. The diagram auto-scrolls to keep the
+                current step visible.
+
+                **Route Structure Preview** — A compact tree view appears in the
+                bottom-right corner showing the full route hierarchy. The currently
+                selected node is highlighted, helping you maintain orientation in
+                large routes. This is the same minimap available on the Routes and
+                Diagram tabs.
+
+                Press `Esc` to close the diagram and return to the exchange list.
+
                 ## Keys
 
-                - `Up/Down` — select exchange
+                - `Up/Down` — select exchange (or step through path in diagram)
                 - `Enter` — view exchange details
+                - `d` — toggle route diagram
+                - `n` — toggle description mode
+                - `g` — toggle waterfall view
                 - `h` — toggle headers
                 - `b` — toggle body
                 - `p` — toggle properties
                 - `v` — toggle variables
+                - `w` — toggle word wrap
                 - `s` — cycle sort column
                 - `S` — reverse sort order
-                - `Esc` — back to list
+                - `Left/Right` — horizontal scroll (diagram or detail)
+                - `PgUp/PgDn` — page scroll
+                - `F5` — refresh data
+                - `Esc` — back to list / close diagram
                 """;
     }
 }
