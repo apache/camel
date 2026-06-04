@@ -72,8 +72,8 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             }
         }
 
-        // reset exchange for reuse
-        ((ResetableClock) exchange.getClock()).reset();
+        // reset the copy's clock for reuse
+        ((ResetableClock) answer.getClock()).reset();
         ExchangeHelper.copyResults(answer, exchange);
         return answer;
     }
@@ -96,8 +96,8 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             }
         }
 
-        // reset exchange for reuse
-        ((ResetableClock) exchange.getClock()).reset();
+        // reset the copy's clock for reuse
+        ((ResetableClock) answer.getClock()).reset();
 
         ExchangeHelper.copyResults(answer, exchange);
         // do not reuse message id on copy
