@@ -61,6 +61,39 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
+== Host Options
+
+The `hostOptions` component option allows configuring the underlying Undertow server.
+These options apply to all endpoints sharing the same host and port.
+
+[width="100%",cols="2,1,5",options="header"]
+|===
+| Option | Type | Description
+
+| `workerThreads` | `Integer` | The number of worker threads to use in the Undertow host.
+| `ioThreads` | `Integer` | The number of I/O threads to use in the Undertow host.
+| `bufferSize` | `Integer` | The buffer size of the Undertow host.
+| `directBuffers` | `Boolean` | Whether the Undertow host should use direct buffers.
+| `http2Enabled` | `Boolean` | Whether the Undertow host should use the HTTP/2 protocol.
+| `maxEntitySize` | `Long` | The maximum size of the HTTP entity body, in bytes. Requests with a body larger than this will be rejected.
+| `multipartMaxEntitySize` | `Long` | The maximum size of a multipart HTTP entity body, in bytes. Multipart requests larger than this will be rejected.
+| `maxHeaderSize` | `Integer` | The maximum size of an HTTP request header, in bytes. Requests with headers larger than this will be rejected.
+| `noRequestTimeout` | `Integer` | The amount of time in milliseconds a connection can be idle with no current requests before it is closed.
+| `idleTimeout` | `Integer` | The idle timeout in milliseconds after which the channel will be closed.
+| `requestParseTimeout` | `Integer` | The maximum time in milliseconds to parse an HTTP request.
+| `maxParameters` | `Integer` | The maximum number of query and path parameters that will be parsed.
+| `maxHeaders` | `Integer` | The maximum number of HTTP headers that will be parsed.
+|===
+
+Configuration example:
+
+[source,properties]
+----
+camel.component.undertow.host-options.max-entity-size = 10485760
+camel.component.undertow.host-options.max-header-size = 65536
+camel.component.undertow.host-options.no-request-timeout = 30000
+----
+
 == Usage
 
 === Message Headers
