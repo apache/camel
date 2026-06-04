@@ -70,9 +70,17 @@ public final class RouteDiagramHelper {
                     node.type = line.getString("type");
                     node.id = line.getString("id");
                     node.code = Jsoner.unescape(line.getString("code"));
+                    String uri = line.getString("uri");
+                    if (uri != null) {
+                        node.uri = Jsoner.unescape(uri);
+                    }
                     node.description = line.getString("description");
+                    Boolean rem = line.getBoolean("remote");
+                    node.remote = rem != null && rem;
                     Integer level = line.getInteger("level");
                     node.level = level != null ? level : 0;
+                    Integer lineNum = line.getInteger("line");
+                    node.line = lineNum != null ? lineNum : 0;
 
                     if (line.containsKey("statistics")) {
                         JsonObject ls = line.getJsonObject("statistics");

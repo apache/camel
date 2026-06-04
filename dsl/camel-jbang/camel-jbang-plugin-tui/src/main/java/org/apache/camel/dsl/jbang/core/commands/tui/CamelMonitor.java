@@ -198,9 +198,11 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
     private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
 
-    // Cached PID list — full process scan throttled to every 2 seconds
+    // Cached PID list — full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
     private volatile long lastFullScanTime;
+    private volatile long burstModeUntil;
+    final Set<String> stoppingPids = ConcurrentHashMap.newKeySet();
 
     // Trace/history data — shared between CamelMonitor and tabs
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
@@ -245,7 +247,8 @@ public class CamelMonitor extends CamelCommand {
             () -> recording = !recording,
             () -> recording,
             this::toggleTapeRecording,
-            () -> tapeRecorder != null && tapeRecorder.isActive());
+            () -> tapeRecorder != null && tapeRecorder.isActive(),
+            this::enableBurstMode, stoppingPids);
 
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private TuiRunner runner;
@@ -342,11 +345,14 @@ public class CamelMonitor extends CamelCommand {
         memoryTab = new MemoryTab(ctx, heapMemHistory);
         threadsTab = new ThreadsTab(ctx);
         overviewTab = new OverviewTab(
-                ctx, throughputHistory, failedHistory, cpuLoadAvg,
+                ctx, throughputHistory, failedHistory, cpuLoadAvg, stoppingPids,
                 this::resetIntegrationTabState);
 
         // Initial data load (synchronous before TUI starts)
         refreshDataSync();
+
+        // Auto-select if there's exactly one integration running
+        overviewTab.selectCurrentIntegration();
 
         eventLog = new TuiEventLog(500);
         Path mcpJsonFile = null;
@@ -369,6 +375,9 @@ public class CamelMonitor extends CamelCommand {
             ctx.runner = tui;
             actionsPopup.setScheduler(tui.scheduler());
             actionsPopup.setResetScreenAction(() -> tui.terminal().clear());
+            // Preload diagram data if an integration was auto-selected
+            routesTab.preloadDiagram();
+            diagramTab.preloadDiagram();
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -864,10 +873,15 @@ public class CamelMonitor extends CamelCommand {
     private boolean handleTabKey(int tab) {
         if (tab != TAB_OVERVIEW) {
             overviewTab.selectCurrentIntegration();
+            routesTab.preloadDiagram();
+            diagramTab.preloadDiagram();
         }
         if (tab == TAB_LOG) {
             refreshLogData();
             logTab.onTabSelected();
+        }
+        if (tab == TAB_ROUTES && routesTab != null && routesTab.isShowDiagram()) {
+            routesTab.closeDiagram();
         }
         if (tab == TAB_DIAGRAM) {
             diagramTab.onTabSelected();
@@ -928,6 +942,10 @@ public class CamelMonitor extends CamelCommand {
         consumersTab.onIntegrationChanged();
         circuitBreakerTab.onIntegrationChanged();
         inflightTab.onIntegrationChanged();
+
+        // Preload diagram data in background so it's ready when the user switches tabs
+        routesTab.preloadDiagram();
+        diagramTab.preloadDiagram();
     }
 
     private void navigateUp() {
@@ -1346,6 +1364,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void stopSelectedProcess(boolean forceKill) {
+        enableBurstMode();
         if (ctx.selectedPid == null) {
             return;
         }
@@ -1366,19 +1385,21 @@ public class CamelMonitor extends CamelCommand {
                 ProcessHandle.of(pid).ifPresent(ProcessHandle::destroyForcibly);
             }
         } else {
+            String pidStr = ctx.selectedPid;
             ProcessHandle.of(pid).ifPresent(ph -> {
                 if (forceKill) {
                     ph.destroyForcibly();
                     Path camelDir = CommandLineHelper.getCamelDir();
-                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + ".log"));
-                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-status.json"));
-                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-action.json"));
-                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-output.json"));
-                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-trace.json"));
-                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-history.json"));
-                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-debug.json"));
-                    PathUtils.deleteFile(camelDir.resolve(ctx.selectedPid + "-receive.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + ".log"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-status.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-action.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-output.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-trace.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-history.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-debug.json"));
+                    PathUtils.deleteFile(camelDir.resolve(pidStr + "-receive.json"));
                 } else {
+                    stoppingPids.add(pidStr);
                     ph.destroy();
                 }
             });
@@ -1386,6 +1407,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void restartSelectedProcess() {
+        enableBurstMode();
         if (ctx.selectedPid == null || isInfraSelected()) {
             return;
         }
@@ -1466,6 +1488,14 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    private void enableBurstMode() {
+        burstModeUntil = System.currentTimeMillis() + 20_000;
+    }
+
+    private boolean isBurstMode() {
+        return System.currentTimeMillis() < burstModeUntil;
+    }
+
     private void setNotification(String message, boolean error) {
         monitorNotification = message;
         monitorNotificationError = error;
@@ -1544,6 +1574,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void sendRouteCommand(String pid, String routeId, String command) {
+        enableBurstMode();
         JsonObject root = new JsonObject();
         root.put("action", "route");
         root.put("id", routeId);
@@ -1814,7 +1845,8 @@ public class CamelMonitor extends CamelCommand {
             List<IntegrationInfo> infos = new ArrayList<>();
             long now = System.currentTimeMillis();
             boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
-            boolean fullScan = wantFullScan && (now - lastFullScanTime >= 2000);
+            long scanInterval = isBurstMode() ? 1000 : 2000;
+            boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
             List<Long> pids;
             if (fullScan) {
                 pids = findPids(name);
@@ -1868,6 +1900,7 @@ public class CamelMonitor extends CamelCommand {
             List<IntegrationInfo> previous = data.get();
             for (IntegrationInfo prev : previous) {
                 if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
+                    stoppingPids.remove(prev.pid);
                     vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
                 }
             }

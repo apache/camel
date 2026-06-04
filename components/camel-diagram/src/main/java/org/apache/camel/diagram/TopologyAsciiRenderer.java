@@ -54,6 +54,7 @@ public class TopologyAsciiRenderer {
     private final boolean metrics;
     private final boolean showDescription;
     private final List<CounterPos> counterPositions = new ArrayList<>();
+    private final List<NodeBox> nodeBoxes = new ArrayList<>();
 
     public enum CounterType {
         OK,
@@ -63,6 +64,9 @@ public class TopologyAsciiRenderer {
     }
 
     public record CounterPos(int row, int col, int length, CounterType type) {
+    }
+
+    public record NodeBox(String routeId, int startRow, int endRow, int startCol, int endCol, int layer) {
     }
 
     public TopologyAsciiRenderer(int nodeWidth, boolean unicode) {
@@ -85,6 +89,10 @@ public class TopologyAsciiRenderer {
         return counterPositions;
     }
 
+    public List<NodeBox> getNodeBoxes() {
+        return nodeBoxes;
+    }
+
     public String renderDiagram(TopologyLayoutResult result) {
         String plain = renderDiagramPlain(result);
         return applyAnsiColors(plain);
@@ -92,6 +100,7 @@ public class TopologyAsciiRenderer {
 
     public String renderDiagramPlain(TopologyLayoutResult result) {
         counterPositions.clear();
+        nodeBoxes.clear();
 
         int gridWidth = toCol(result.totalWidth) + boxWidth + 4;
         int gridHeight = toRow(result.totalHeight) + 10;
@@ -235,6 +244,8 @@ public class TopologyAsciiRenderer {
                 }
             }
         }
+
+        nodeBoxes.add(new NodeBox(node.routeId, row, row + height - 1, col, col + boxWidth - 1, node.layer));
     }
 
     private void drawEdge(char[][] grid, TopologyLayoutEdge edge) {

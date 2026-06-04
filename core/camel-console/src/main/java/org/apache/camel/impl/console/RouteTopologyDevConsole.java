@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyEdge;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyExternalEndpoint;
@@ -40,6 +41,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
 
     private static final String METRIC = "metric";
     private static final String EXTERNAL = "external";
+    private static final String ROUTES = "routes";
 
     public RouteTopologyDevConsole() {
         super("camel", "route-topology", "Route Topology", "Route topology showing inter-route connections");
@@ -164,6 +166,24 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                 extArr.add(jo);
             }
             root.put("externalEndpoints", extArr);
+        }
+
+        // Optionally include route structure data in the same response
+        if ("true".equals(options.get(ROUTES))) {
+            DevConsoleRegistry registry = getCamelContext().getCamelContextExtension()
+                    .getContextPlugin(DevConsoleRegistry.class);
+            if (registry != null) {
+                var structureConsole = registry.resolveById("route-structure");
+                if (structureConsole != null) {
+                    String metricStr = metric ? "true" : "false";
+                    JsonObject structureResult = (JsonObject) structureConsole.call(
+                            org.apache.camel.console.DevConsole.MediaType.JSON,
+                            Map.of("filter", "*", "brief", "false", "metric", metricStr));
+                    if (structureResult != null) {
+                        root.put("routes", structureResult.get("routes"));
+                    }
+                }
+            }
         }
 
         return root;

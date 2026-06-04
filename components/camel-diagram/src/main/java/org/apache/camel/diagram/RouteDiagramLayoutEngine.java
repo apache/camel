@@ -57,23 +57,23 @@ public class RouteDiagramLayoutEngine {
     static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
 
-    static final Set<String> BRANCH_CHILD_TYPES = Set.of(
+    public static final Set<String> BRANCH_CHILD_TYPES = Set.of(
             "when", "otherwise", "doCatch", "doFinally", "onFallback");
 
     static final Set<String> STRUCTURAL_TYPES = Set.of(
             "route", "from");
 
-    static class Bounds {
-        int minX, minY, maxX, maxY;
+    public static class Bounds {
+        public int minX, minY, maxX, maxY;
 
-        Bounds(int minX, int minY, int maxX, int maxY) {
+        public Bounds(int minX, int minY, int maxX, int maxY) {
             this.minX = minX;
             this.minY = minY;
             this.maxX = maxX;
             this.maxY = maxY;
         }
 
-        void expand(Bounds other) {
+        public void expand(Bounds other) {
             minX = Math.min(minX, other.minX);
             minY = Math.min(minY, other.minY);
             maxX = Math.max(maxX, other.maxX);
@@ -154,8 +154,11 @@ public class RouteDiagramLayoutEngine {
         public String type;
         public String id;
         public String code;
+        public String uri;
         public String description;
         public int level;
+        public int line;
+        public boolean remote;
         public StatInfo stat;
     }
 

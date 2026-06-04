@@ -1,0 +1,341 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
+
+import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.pollJsonResponse;
+
+/**
+ * Reusable source code viewer with syntax highlighting, scrolling, and line-number display. Can be used by any tab that
+ * needs to show route source code.
+ */
+class SourceViewer {
+
+    private boolean visible;
+    private List<String> lines = Collections.emptyList();
+    private String title;
+    private SyntaxHighlighter.Language language = SyntaxHighlighter.Language.PLAIN;
+    private int scrollY;
+    private int scrollX;
+    private final ScrollbarState vScrollState = new ScrollbarState();
+    private final ScrollbarState hScrollState = new ScrollbarState();
+    private final AtomicBoolean loading = new AtomicBoolean(false);
+
+    boolean isVisible() {
+        return visible;
+    }
+
+    void hide() {
+        visible = false;
+    }
+
+    void reset() {
+        visible = false;
+        lines = Collections.emptyList();
+        title = null;
+        scrollY = 0;
+        scrollX = 0;
+    }
+
+    boolean handleKeyEvent(KeyEvent ke) {
+        if (!visible) {
+            return false;
+        }
+        if (ke.isChar('c') || ke.isCancel()) {
+            visible = false;
+            return true;
+        }
+        if (ke.isUp()) {
+            scrollY = Math.max(0, scrollY - 1);
+        } else if (ke.isDown()) {
+            scrollY++;
+        } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            scrollY = Math.max(0, scrollY - 20);
+        } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            scrollY += 20;
+        } else if (ke.isLeft()) {
+            scrollX = Math.max(0, scrollX - 1);
+        } else if (ke.isRight()) {
+            scrollX++;
+        } else if (ke.isHome()) {
+            scrollY = 0;
+            scrollX = 0;
+        } else if (ke.isEnd()) {
+            scrollY = Integer.MAX_VALUE;
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    void render(Frame frame, Rect area) {
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Source [" + (title != null ? title : "") + "] ")
+                .build();
+        Rect inner = block.inner(area);
+        frame.renderWidget(block, area);
+
+        if (lines.isEmpty()) {
+            return;
+        }
+
+        int visibleLines = inner.height();
+        int maxScroll = Math.max(0, lines.size() - visibleLines);
+        scrollY = Math.min(scrollY, maxScroll);
+
+        int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0);
+        int maxHScroll = Math.max(0, maxLineWidth - inner.width());
+        scrollX = Math.min(scrollX, maxHScroll);
+
+        int end = Math.min(scrollY + visibleLines, lines.size());
+        List<Line> visible = new ArrayList<>();
+        for (int i = scrollY; i < end; i++) {
+            String raw = lines.get(i);
+            visible.add(highlightSourceLine(raw, scrollX));
+        }
+        frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
+
+        if (lines.size() > visibleLines) {
+            vScrollState.contentLength(lines.size()).viewportContentLength(visibleLines).position(scrollY);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), inner, vScrollState);
+        }
+        if (maxHScroll > 0) {
+            hScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(scrollX);
+            frame.renderStatefulWidget(Scrollbar.horizontal(), inner, hScrollState);
+        }
+    }
+
+    void renderFooter(List<Span> spans) {
+        MonitorContext.hint(spans, "Esc/c", "close");
+        MonitorContext.hint(spans, "↑↓", "scroll");
+        MonitorContext.hint(spans, "←→", "horizontal");
+        MonitorContext.hint(spans, "PgUp/PgDn", "page");
+    }
+
+    /**
+     * Load source for a route, scrolling to the given source line number.
+     */
+    void loadSource(MonitorContext ctx, String routeId, int targetLine) {
+        if (ctx.selectedPid == null || ctx.runner == null) {
+            return;
+        }
+        if (!loading.compareAndSet(false, true)) {
+            return;
+        }
+
+        lines = List.of("(Loading source...)");
+        title = routeId;
+        scrollY = 0;
+        scrollX = 0;
+        visible = true;
+
+        String pid = ctx.selectedPid;
+        ctx.runner.scheduler().execute(() -> {
+            try {
+                loadInBackground(ctx, pid, routeId, targetLine);
+            } finally {
+                loading.set(false);
+            }
+        });
+    }
+
+    private void loadInBackground(MonitorContext ctx, String pid, String routeId, int targetLine) {
+        Path outputFile = ctx.getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "source");
+        root.put("filter", routeId);
+
+        Path actionFile = ctx.getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 5000);
+        PathUtils.deleteFile(outputFile);
+
+        if (jo == null) {
+            applyResult(ctx, routeId, null, List.of("(No response from integration)"), 0);
+            return;
+        }
+
+        JsonArray routes = (JsonArray) jo.get("routes");
+        if (routes == null || routes.isEmpty()) {
+            applyResult(ctx, routeId, null, List.of("(No source available for route: " + routeId + ")"), 0);
+            return;
+        }
+
+        JsonObject routeObj = (JsonObject) routes.get(0);
+        String sourceLocation = objToString(routeObj.get("source"));
+        List<JsonObject> codeLines = routeObj.getCollection("code");
+        if (codeLines == null || codeLines.isEmpty()) {
+            applyResult(ctx, routeId, sourceLocation, List.of("(No source code available)"), 0);
+            return;
+        }
+
+        List<String> result = new ArrayList<>();
+        int maxLineNum = 0;
+        for (JsonObject codeLine : codeLines) {
+            Integer lineNum = codeLine.getInteger("line");
+            if (lineNum != null && lineNum > maxLineNum) {
+                maxLineNum = lineNum;
+            }
+        }
+        int lineNumWidth = String.valueOf(maxLineNum).length();
+        int matchIdx = -1;
+        int idx = 0;
+        for (JsonObject codeLine : codeLines) {
+            Integer lineNum = codeLine.getInteger("line");
+            String code = Jsoner.unescape(objToString(codeLine.get("code")));
+            String prefix = lineNum != null
+                    ? String.format("%" + lineNumWidth + "d  ", lineNum)
+                    : String.format("%" + lineNumWidth + "s  ", "");
+            result.add(prefix + code);
+            if (targetLine > 0 && lineNum != null && lineNum == targetLine && matchIdx < 0) {
+                matchIdx = idx;
+            }
+            Boolean match = codeLine.getBoolean("match");
+            if (targetLine <= 0 && Boolean.TRUE.equals(match) && matchIdx < 0) {
+                matchIdx = idx;
+            }
+            idx++;
+        }
+
+        int scrollTo;
+        if (matchIdx >= 0) {
+            scrollTo = Math.max(0, matchIdx - 2);
+        } else {
+            scrollTo = findLicenseHeaderEnd(codeLines);
+        }
+        applyResult(ctx, routeId, sourceLocation, result, scrollTo);
+    }
+
+    private void applyResult(MonitorContext ctx, String routeId, String location, List<String> resultLines, int scrollTo) {
+        if (ctx.runner == null) {
+            return;
+        }
+        ctx.runner.runOnRenderThread(() -> {
+            if (!visible) {
+                return;
+            }
+            String displayLoc = location != null ? FileUtil.stripPath(LoggerHelper.sourceNameOnly(location)) : null;
+            title = displayLoc != null ? routeId + "  " + displayLoc : routeId;
+            language = SyntaxHighlighter.detectLanguage(location);
+            lines = resultLines;
+            scrollY = scrollTo;
+        });
+    }
+
+    private Line highlightSourceLine(String raw, int hSkip) {
+        int prefixEnd = 0;
+        while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
+            prefixEnd++;
+        }
+
+        String prefix = raw.substring(0, prefixEnd);
+        String code = raw.substring(prefixEnd);
+
+        Line highlighted = SyntaxHighlighter.highlightLine(code, language);
+
+        List<Span> spans = new ArrayList<>();
+        if (!prefix.isEmpty()) {
+            spans.add(Span.styled(prefix, Style.EMPTY.dim()));
+        }
+        spans.addAll(highlighted.spans());
+
+        Line full = Line.from(spans);
+
+        if (hSkip <= 0) {
+            return full;
+        }
+        List<Span> scrolled = new ArrayList<>();
+        int skipped = 0;
+        for (Span span : full.spans()) {
+            String content = span.content();
+            if (skipped >= hSkip) {
+                scrolled.add(span);
+            } else if (skipped + content.length() > hSkip) {
+                int offset = hSkip - skipped;
+                scrolled.add(Span.styled(content.substring(offset), span.style()));
+                skipped = hSkip;
+            } else {
+                skipped += content.length();
+            }
+        }
+        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
+    }
+
+    static int findLicenseHeaderEnd(List<JsonObject> codeLines) {
+        boolean inBlock = false;
+        int lastCommentLine = -1;
+        for (int i = 0; i < codeLines.size(); i++) {
+            String code = objToString(codeLines.get(i).get("code")).trim();
+            if (i == 0 && code.isEmpty()) {
+                continue;
+            }
+            if (!inBlock && code.startsWith("/*")) {
+                inBlock = true;
+            }
+            if (inBlock) {
+                lastCommentLine = i;
+                if (code.contains("*/")) {
+                    inBlock = false;
+                }
+                continue;
+            }
+            if (code.startsWith("#") || code.startsWith("##") || code.startsWith("<!--")) {
+                lastCommentLine = i;
+                continue;
+            }
+            if (lastCommentLine >= 0 && code.isEmpty()) {
+                lastCommentLine = i;
+                continue;
+            }
+            break;
+        }
+        return lastCommentLine >= 0 ? lastCommentLine + 1 : 0;
+    }
+
+    private static String objToString(Object o) {
+        return o != null ? o.toString() : "";
+    }
+}

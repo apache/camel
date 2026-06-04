@@ -83,12 +83,8 @@ class ErrorsTab implements MonitorTab {
             return true;
         }
 
-        if (ke.isChar('d')) {
-            diagram.toggleImageDiagram(this::loadDiagramForSelectedError);
-            return true;
-        }
-        if (ke.isChar('D')) {
-            diagram.toggleTextDiagram(this::loadDiagramForSelectedError);
+        if (ke.isCharIgnoreCase('d')) {
+            diagram.toggleDiagram(this::loadDiagramForSelectedError);
             return true;
         }
 
@@ -436,7 +432,6 @@ class ErrorsTab implements MonitorTab {
         }
 
         String pid = ctx.selectedPid;
-        boolean textMode = diagram.isDiagramTextMode();
         String[] messageHistory = selectedError.messageHistory;
 
         diagram.setLoadingPlaceholder();
@@ -444,7 +439,7 @@ class ErrorsTab implements MonitorTab {
         ctx.runner.scheduler().execute(() -> {
             try {
                 diagram.loadHighlightedDiagramInBackground(
-                        ctx, pid, textMode, messageHistory, RouteDiagramHelper.HighlightStyle.FAIL);
+                        ctx, pid, messageHistory, RouteDiagramHelper.HighlightStyle.FAIL);
             } finally {
                 diagram.endLoad();
             }

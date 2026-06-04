@@ -21,6 +21,7 @@ import java.util.List;
 
 class RouteInfo {
     String routeId;
+    String description;
     String group;
     String from;
     String state;
