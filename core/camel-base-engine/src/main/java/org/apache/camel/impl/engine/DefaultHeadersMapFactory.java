@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.util.Map;
 
+import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.util.CaseInsensitiveMap;
 
@@ -28,6 +29,10 @@ import org.apache.camel.util.CaseInsensitiveMap;
  * about using exact keys. See more details at {@link org.apache.camel.util.CaseInsensitiveMap}.
  */
 public class DefaultHeadersMapFactory implements HeadersMapFactory {
+
+    static {
+        CaseInsensitiveMap.registerKnownKeys(ExchangeConstantProvider.values());
+    }
 
     @Override
     public Map<String, Object> newMap() {
