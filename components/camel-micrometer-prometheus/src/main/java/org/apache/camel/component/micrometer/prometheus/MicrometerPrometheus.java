@@ -515,10 +515,9 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         String[] scrapes = meterRegistry.scrape().split("\n");
         for (String s : scrapes) {
             if (matchesFilter(s, filters)) {
-                // We put on warn level to make sure it is printed even if the log is
-                // at higher levels. Important: we also include a start and end tag to make sure the
+                // we include a start and end tag to make sure the
                 // scraper can more easily identify the metric content.
-                LOG.warn("#METRIC-START#" + s + "#METRIC-END#");
+                LOG.info("#METRIC-START#" + s + "#METRIC-END#");
             }
         }
     }

@@ -249,11 +249,10 @@ public class AbstractMicrometerService extends ServiceSupport {
                 .map(AbstractMicrometerService::convertMeterToMap)
                 .forEach(logEntry -> {
                     try {
-                        // We put on warn level to make sure it is printed even if the log is
-                        // at higher levels. Important: we also include a start and end tag to make sure the
+                        // we include a start and end tag to make sure the
                         // scraper can more easily identify the metric content.
                         String metric = "#METRIC-START#" + mapper.writeValueAsString(logEntry) + "#METRIC-END#";
-                        LOG.warn(metric);
+                        LOG.info(metric);
                     } catch (Exception e) {
                         LOG.error("Error logging metric " + logEntry.get("name"), e);
                     }
