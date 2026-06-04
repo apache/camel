@@ -164,6 +164,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         String toNodeLabel = StringHelper.limitLength(node.getLabel(), 50);
         String exchangeId = exchange.getExchangeId();
         String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+        String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
         int level = node.getLevel();
         String fromRouteId = exchange.getFromRouteId();
         String source = LoggerHelper.getLineNumberLoggerName(node);
@@ -172,7 +173,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
                 camelContext, first, last, incrementTraceCounter(), timestamp, source, fromRouteId, fromRouteId, toNode,
                 toNodeParentId, null, null, toNodeShortName, toNodeLabel, level,
-                exchangeId, correlationExchangeId, false, false, data);
+                exchangeId, correlationExchangeId, breadcrumbId, false, false, data);
         if ((first || last) && fromRouteId != null) {
             Route route = camelContext.getRoute(fromRouteId);
             if (route != null && route.getConsumer() != null) {
@@ -195,12 +196,22 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
 
         // handle capturing events for last full completed exchange (aka replay)
         if (camelContext.isMessageHistory()) {
-            String tid = null;
             var head = provisionalHistoryQueue.peek();
+            String bid = null;
+            String tid = null;
             if (head != null) {
+                bid = head.getBreadcrumbId();
                 tid = head.getExchangeId();
             }
-            if (tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId())) {
+            // correlate by breadcrumb ID when available (links exchanges across broker boundaries)
+            // fallback to exchange ID / correlation ID matching when breadcrumb is not set
+            boolean match;
+            if (bid != null && event.getBreadcrumbId() != null) {
+                match = bid.equals(event.getBreadcrumbId());
+            } else {
+                match = tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId());
+            }
+            if (match) {
                 boolean added = provisionalHistoryQueue.offer(event);
                 boolean original = head != null && event.getRouteId() != null && event.getRouteId().equals(head.getRouteId());
                 if (event.isLast() && original) {
