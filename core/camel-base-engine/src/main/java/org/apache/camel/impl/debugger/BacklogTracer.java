@@ -65,6 +65,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     // use tracer to capture additional information for capturing latest completed exchange message-history
     private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private final Queue<BacklogTracerEventMessage> completeHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE + 1);
+    private volatile String lastCompletedBreadcrumbId;
     private boolean removeOnDump = true;
     private int bodyMaxChars = 32 * 1024;
     private boolean bodyIncludeStreams;
@@ -211,16 +212,36 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
             } else {
                 match = tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId());
             }
-            if (match) {
+            // check if this event continues a previously completed breadcrumb flow
+            // (e.g. a downstream route connected via Kafka/SEDA that starts after the originating route finished)
+            boolean appendMode = false;
+            if (head == null && event.getBreadcrumbId() != null
+                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                appendMode = true;
+            } else if (head != null && event.getBreadcrumbId() != null
+                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)
+                    && head.getBreadcrumbId() != null
+                    && head.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                appendMode = true;
+            }
+            if (match || appendMode) {
                 boolean added = provisionalHistoryQueue.offer(event);
                 boolean original = head != null && event.getRouteId() != null && event.getRouteId().equals(head.getRouteId());
                 if (event.isLast() && original) {
-                    // only trigger completion when it's the original last
-                    completeHistoryQueue.clear();
-                    completeHistoryQueue.addAll(provisionalHistoryQueue);
-                    // in case we hit the limit then ensure the last is always added to the complete history
-                    if (!added) {
-                        completeHistoryQueue.add(event);
+                    if (appendMode) {
+                        // downstream route finished: merge into existing complete history
+                        completeHistoryQueue.addAll(provisionalHistoryQueue);
+                        if (!added) {
+                            completeHistoryQueue.add(event);
+                        }
+                    } else {
+                        // originating route finished: replace complete history
+                        completeHistoryQueue.clear();
+                        completeHistoryQueue.addAll(provisionalHistoryQueue);
+                        if (!added) {
+                            completeHistoryQueue.add(event);
+                        }
+                        lastCompletedBreadcrumbId = event.getBreadcrumbId();
                     }
                     provisionalHistoryQueue.clear();
                 }
