@@ -64,70 +64,37 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public Object getHeader(String name) {
         if (headers == null) {
-            // force creating headers (supports lazy population in subclasses like JmsMessage)
+            if (!isPopulateHeadersSupported()) {
+                return null;
+            }
             headers = createHeaders();
         }
-
-        if (!headers.isEmpty()) {
-            return headers.get(name);
-        } else {
-            return null;
-        }
+        return headers.get(name);
     }
 
     @Override
     public Object getHeader(String name, Object defaultValue) {
-        Object answer = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            answer = headers.get(name);
-        }
+        Object answer = getHeader(name);
         return answer != null ? answer : defaultValue;
     }
 
     @Override
     public Object getHeader(String name, Supplier<Object> defaultValueSupplier) {
-        Object answer = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            answer = headers.get(name);
-        }
+        Object answer = getHeader(name);
         return answer != null ? answer : defaultValueSupplier.get();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
-        Object value = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            value = headers.get(name);
-        }
+        Object value = getHeader(name);
         if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
         }
 
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
         if (type.isInstance(value)) {
             return (T) value;
         }
@@ -143,29 +110,17 @@ public class DefaultMessage extends MessageSupport {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
-        Object value = null;
-
-        if (headers == null) {
-            // force creating headers
-            headers = createHeaders();
-        }
-
-        if (!headers.isEmpty()) {
-            value = headers.get(name);
-        }
+        Object value = getHeader(name);
         if (value == null) {
             value = defaultValue;
         }
         if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
         }
 
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
         if (type.isInstance(value)) {
             return (T) value;
         }
@@ -211,11 +166,13 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public Object removeHeader(String name) {
-        Map<String, Object> h = getHeaders();
-        if (h.isEmpty()) {
-            return null;
+        if (headers == null) {
+            if (!isPopulateHeadersSupported()) {
+                return null;
+            }
+            headers = createHeaders();
         }
-        return h.remove(name);
+        return headers.remove(name);
     }
 
     @Override
@@ -225,10 +182,16 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public boolean removeHeaders(String pattern, String... excludePatterns) {
-        Map<String, Object> h = getHeaders();
-        if (h.isEmpty()) {
+        if (headers == null) {
+            if (!isPopulateHeadersSupported()) {
+                return false;
+            }
+            headers = createHeaders();
+        }
+        if (headers.isEmpty()) {
             return false;
         }
+        Map<String, Object> h = headers;
 
         // special optimized
         if (excludePatterns == null && "*".equals(pattern)) {
