@@ -1151,7 +1151,7 @@ class DiagramSupport {
 
     void loadHighlightedNativeDiagramInBackground(
             MonitorContext ctx, String pid,
-            String[] messageHistory, boolean failed) {
+            String[] messageHistory, boolean failed, int initialStepIndex) {
         // Single IPC call: topology + route structures
         JsonObject jo = requestRouteTopology(ctx, pid, false, true);
         if (jo == null) {
@@ -1248,6 +1248,8 @@ class DiagramSupport {
 
         // Compute topology nodeBoxes for selection
         boolean isFailed = failed;
+        int clampedStep = initialStepIndex >= 0 && initialStepIndex < nodeOrder.size()
+                ? initialStepIndex : nodeOrder.size() - 1;
         TopologyLayoutResult finalTopoResult = topoResult;
         int finalNodeW = nodeW;
         List<TopologyLayoutNode> finalTopoNodes = topoNodes;
@@ -1259,7 +1261,7 @@ class DiagramSupport {
         ctx.runner.runOnRenderThread(() -> {
             historyMode = true;
             historyNodeOrder = nodeOrder;
-            historyStepIndex = nodeOrder.size() - 1;
+            historyStepIndex = clampedStep;
             historyFailed = isFailed;
             historyNodeRouteMap = nodeRouteMap;
             historyRouteIds = visitedRouteIds;

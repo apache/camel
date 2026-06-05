@@ -574,6 +574,7 @@ class HistoryTab implements MonitorTab {
 
         String[] messageHistory;
         boolean failed;
+        int initialStep = -1;
 
         boolean tracerActive = !traces.get().isEmpty();
         if (tracerActive) {
@@ -601,6 +602,12 @@ class HistoryTab implements MonitorTab {
             }
             TraceEntry lastStep = steps.get(steps.size() - 1);
             failed = lastStep.failed;
+            if (traceDetailView) {
+                Integer sel = traceStepTableState.selected();
+                if (sel != null && sel >= 0 && sel < steps.size()) {
+                    initialStep = sel;
+                }
+            }
         } else {
             List<HistoryEntry> entries = historyEntries;
             if (entries.isEmpty()) {
@@ -620,6 +627,10 @@ class HistoryTab implements MonitorTab {
                 }
             }
             failed = lastEntry.failed;
+            Integer sel = historyTableState.selected();
+            if (sel != null && sel >= 0 && sel < entries.size()) {
+                initialStep = sel;
+            }
         }
 
         String pid = ctx.selectedPid;
@@ -627,9 +638,10 @@ class HistoryTab implements MonitorTab {
         diagram.setLoadingPlaceholder();
 
         boolean isFailed = failed;
+        int step = initialStep;
         ctx.runner.scheduler().execute(() -> {
             try {
-                diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, isFailed);
+                diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, isFailed, step);
             } finally {
                 diagram.endLoad();
             }

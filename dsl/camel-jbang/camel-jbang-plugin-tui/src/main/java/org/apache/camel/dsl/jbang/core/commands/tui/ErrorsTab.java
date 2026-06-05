@@ -544,7 +544,7 @@ class ErrorsTab implements MonitorTab {
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, true);
+                diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, true, -1);
             } finally {
                 diagram.endLoad();
             }
