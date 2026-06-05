@@ -105,8 +105,13 @@ class HistoryTab implements MonitorTab {
 
     private final DiagramSupport diagram = new DiagramSupport();
 
+    private static final int INFO_NARROW = 0;
+    private static final int INFO_WIDE = 1;
+    private static final int INFO_FULL = 2;
+
     private List<TraceEntry> diagramTraceSteps = Collections.emptyList();
     private List<HistoryEntry> diagramHistorySteps = Collections.emptyList();
+    private int infoPanelSize = INFO_NARROW;
 
     volatile List<HistoryEntry> historyEntries = Collections.emptyList();
     private final TableState historyTableState = new TableState();
@@ -227,6 +232,10 @@ class HistoryTab implements MonitorTab {
                 } else {
                     historyWordWrap = !historyWordWrap;
                 }
+                return true;
+            }
+            if (ke.isChar('i')) {
+                infoPanelSize = (infoPanelSize + 1) % 3;
                 return true;
             }
         }
@@ -504,29 +513,34 @@ class HistoryTab implements MonitorTab {
         }
 
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
-            Rect diagramArea = area;
-            Rect infoArea = null;
-            if (area.width() > 70) {
-                int panelWidth = 35;
-                List<Rect> hParts = Layout.horizontal()
-                        .constraints(Constraint.length(panelWidth), Constraint.fill())
-                        .split(area);
-                infoArea = hParts.get(0);
-                diagramArea = hParts.get(1);
-            }
-            if (diagram.isHistoryTopologyMode()) {
-                Line title = Line.from(Span.styled(
-                        String.format(" History Topology — step %d/%d ",
-                                diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                        Style.EMPTY.fg(Color.WHITE)));
-                diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
+            if (infoPanelSize == INFO_FULL) {
+                renderDiagramInfoPanel(frame, area);
             } else {
-                String routeId = diagram.getHistoryDrillDownRouteId();
-                Line title = buildHistoryBreadcrumbTitle();
-                diagram.renderHistoryRouteDiagram(frame, diagramArea, title, routeId);
-            }
-            if (infoArea != null) {
-                renderDiagramInfoPanel(frame, infoArea);
+                Rect diagramArea = area;
+                Rect infoArea = null;
+                if (area.width() > 70) {
+                    int panelWidth = infoPanelSize == INFO_WIDE ? area.width() / 2 : 35;
+                    List<Rect> hParts = Layout.horizontal()
+                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .split(area);
+                    infoArea = hParts.get(0);
+                    diagramArea = hParts.get(1);
+                }
+                boolean hideOverlays = infoPanelSize == INFO_WIDE;
+                if (diagram.isHistoryTopologyMode()) {
+                    Line title = Line.from(Span.styled(
+                            String.format(" History Topology — step %d/%d ",
+                                    diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
+                            Style.EMPTY.fg(Color.WHITE)));
+                    diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
+                } else {
+                    String routeId = diagram.getHistoryDrillDownRouteId();
+                    Line title = buildHistoryBreadcrumbTitle();
+                    diagram.renderHistoryRouteDiagram(frame, diagramArea, title, routeId, hideOverlays);
+                }
+                if (infoArea != null) {
+                    renderDiagramInfoPanel(frame, infoArea);
+                }
             }
             return;
         }
@@ -560,10 +574,16 @@ class HistoryTab implements MonitorTab {
                 boolean sp = isTraceMode ? showTraceProperties : showHistoryProperties;
                 boolean sv = isTraceMode ? showTraceVariables : showHistoryVariables;
                 boolean sw = isTraceMode ? traceWordWrap : historyWordWrap;
+                String infoLabel = switch (infoPanelSize) {
+                    case INFO_WIDE -> "info [wide]";
+                    case INFO_FULL -> "info [full]";
+                    default -> "info [narrow]";
+                };
                 if (diagram.isHistoryTopologyMode()) {
                     hint(spans, "d", "close");
                     hint(spans, "↑↓←→", "navigate");
                     hint(spans, "Enter", "drill-down");
+                    hint(spans, "i", infoLabel);
                     hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
                     hintShowBhpv(spans, sb, sh, sp, sv);
                     hintLast(spans, "w", "wrap" + (sw ? " [on]" : " [off]"));
@@ -573,6 +593,7 @@ class HistoryTab implements MonitorTab {
                     hint(spans, "↑↓", "step through path");
                     hint(spans, "←→", "h-scroll");
                     hint(spans, "t", "topology");
+                    hint(spans, "i", infoLabel);
                     hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
                     hintShowBhpv(spans, sb, sh, sp, sv);
                     hintLast(spans, "w", "wrap" + (sw ? " [on]" : " [off]"));
