@@ -186,6 +186,14 @@ public class URISupportTest {
     }
 
     @Test
+    public void testCreateURIWithQueryEmptyQueryString() throws Exception {
+        URI uri = new URI("https://api.example.com/users/myuser/repos");
+        URI resultUri = URISupport.createURIWithQuery(uri, "");
+        assertNotNull(resultUri);
+        assertEquals("https://api.example.com/users/myuser/repos", resultUri.toString());
+    }
+
+    @Test
     public void testNormalizeEndpointWithEqualSignInParameter() throws Exception {
         String out = URISupport.normalizeUri("jms:queue:foo?selector=somekey='somevalue'&foo=bar");
         assertNotNull(out);
