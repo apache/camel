@@ -306,6 +306,7 @@ public final class TraitHelper {
         buildProperties.add("jkube.container-image.name=%s".formatted(imageToUse));
 
         Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
+        containerTrait.setImage(imageToUse);
 
         if (containerTrait.getImagePullPolicy() != null) {
             var imagePullPolicy = containerTrait.getImagePullPolicy().getValue();
