@@ -67,8 +67,8 @@ import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
+import org.jline.jansi.Ansi;
+import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
