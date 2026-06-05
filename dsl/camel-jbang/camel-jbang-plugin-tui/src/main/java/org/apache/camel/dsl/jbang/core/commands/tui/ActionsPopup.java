@@ -775,10 +775,10 @@ class ActionsPopup {
             return;
         }
         int popupW = Math.min(100, area.width() - 4);
-        int popupH = Math.min(exampleCatalog.size() + 10, Math.min(22, area.height() - 6));
+        int popupH = Math.min(exampleCatalog.size() + 10, Math.min(22, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -897,10 +897,10 @@ class ActionsPopup {
             return;
         }
         int popupW = Math.min(60, area.width() - 4);
-        int popupH = Math.min(docPickerIntegrations.size() + 2, Math.min(15, area.height() - 6));
+        int popupH = Math.min(docPickerIntegrations.size() + 2, Math.min(15, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
         List<ListItem> items = new ArrayList<>();
@@ -1644,10 +1644,10 @@ class ActionsPopup {
         }
         refreshInfraRunningState();
         int popupW = Math.min(100, area.width() - 4);
-        int popupH = Math.min(infraCatalog.size() + 2, Math.min(22, area.height() - 6));
+        int popupH = Math.min(infraCatalog.size() + 2, Math.min(22, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -1708,7 +1708,7 @@ class ActionsPopup {
         int popupW = 42;
         int popupH = hasMultiImpl ? 8 : 6;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
