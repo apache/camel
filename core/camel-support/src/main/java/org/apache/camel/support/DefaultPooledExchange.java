@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -40,14 +38,12 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
     public DefaultPooledExchange(CamelContext context) {
         super(context);
         this.originalPattern = getPattern();
-        this.properties = new ConcurrentHashMap<>(8);
         this.clock = new ResetableClock();
     }
 
     public DefaultPooledExchange(Exchange parent) {
         super(parent);
         this.originalPattern = parent.getPattern();
-        this.properties = new ConcurrentHashMap<>(8);
 
         Clock parentClock = parent.getClock();
 
@@ -61,8 +57,6 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
     public DefaultPooledExchange(CamelContext context, ExchangePattern pattern) {
         super(context, pattern);
         this.originalPattern = getPattern();
-        this.properties = new ConcurrentHashMap<>(8);
-
         this.clock = new ResetableClock();
     }
 

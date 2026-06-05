@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.AsyncCallback;
@@ -285,7 +284,7 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         } else if (value != null) {
             // avoid the NullPointException
             if (properties == null) {
-                this.properties = new ConcurrentHashMap<>(8);
+                this.properties = new FlatMap<>(4);
             }
             properties.put(name, value);
         } else if (properties != null) {
@@ -357,13 +356,13 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     @Override
     public Map<String, Object> getProperties() {
         if (properties == null) {
-            this.properties = new ConcurrentHashMap<>(8);
+            this.properties = new FlatMap<>(4);
         }
         return properties;
     }
 
     private Map<String, SafeCopyProperty> copySafeCopyProperties() {
-        Map<String, SafeCopyProperty> copy = new ConcurrentHashMap<>();
+        Map<String, SafeCopyProperty> copy = new FlatMap<>(this.safeCopyProperties.size());
         for (Map.Entry<String, SafeCopyProperty> entry : this.safeCopyProperties.entrySet()) {
             copy.put(entry.getKey(), entry.getValue().safeCopy());
         }
@@ -948,7 +947,7 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     public void setSafeCopyProperty(String key, SafeCopyProperty value) {
         if (value != null) {
             if (safeCopyProperties == null) {
-                this.safeCopyProperties = new ConcurrentHashMap<>(2);
+                this.safeCopyProperties = new FlatMap<>(2);
             }
             safeCopyProperties.put(key, value);
         } else if (safeCopyProperties != null) {
@@ -1001,7 +1000,7 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     @Override
     public void setProperties(Map<String, Object> properties) {
         if (this.properties == null) {
-            this.properties = new ConcurrentHashMap<>(8);
+            this.properties = new FlatMap<>(4);
         } else {
             this.properties.clear();
         }
@@ -1059,6 +1058,6 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         if (properties == null) {
             return null;
         }
-        return new ConcurrentHashMap<>(properties);
+        return new FlatMap<>(properties);
     }
 }
