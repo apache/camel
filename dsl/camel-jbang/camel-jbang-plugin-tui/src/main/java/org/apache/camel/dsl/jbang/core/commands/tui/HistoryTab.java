@@ -625,7 +625,7 @@ class HistoryTab implements MonitorTab {
                 }
             }
         } else {
-            List<HistoryEntry> entries = historyEntries;
+            List<HistoryEntry> entries = reorderHistoryDepthFirst(historyEntries);
             if (entries.isEmpty()) {
                 diagram.endLoad();
                 return;
@@ -1023,7 +1023,7 @@ class HistoryTab implements MonitorTab {
             return;
         }
 
-        List<HistoryEntry> current = historyEntries;
+        List<HistoryEntry> current = reorderHistoryDepthFirst(historyEntries);
 
         List<Rect> chunks = Layout.vertical()
                 .constraints(Constraint.length(10), Constraint.length(1), Constraint.fill())
@@ -1034,7 +1034,7 @@ class HistoryTab implements MonitorTab {
         for (int i = 0; i < current.size(); i++) {
             HistoryEntry entry = current.get(i);
             String desc = showDescription ? descMap.get(entry.routeId) : null;
-            rows.add(buildStepRow(i + 1, 0,
+            rows.add(buildStepRow(i + 1, entry.inlineDepth,
                     entry.direction, entry.first, entry.last, entry.failed,
                     entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
         }
@@ -1210,9 +1210,100 @@ class HistoryTab implements MonitorTab {
         }
     }
 
+    private List<HistoryEntry> reorderHistoryDepthFirst(List<HistoryEntry> entries) {
+        if (entries.isEmpty()) {
+            return entries;
+        }
+
+        Map<String, List<HistoryEntry>> byExchange = new LinkedHashMap<>();
+        for (HistoryEntry e : entries) {
+            if (e.exchangeId != null) {
+                byExchange.computeIfAbsent(e.exchangeId, k -> new ArrayList<>()).add(e);
+            }
+        }
+
+        Map<String, List<String>> fromIndex = new LinkedHashMap<>();
+        for (var entry : byExchange.entrySet()) {
+            List<HistoryEntry> steps = entry.getValue();
+            if (!steps.isEmpty() && steps.get(0).first) {
+                String ep = extractFromEndpoint(steps.get(0).nodeLabel);
+                if (ep != null) {
+                    fromIndex.computeIfAbsent(ep, k -> new ArrayList<>()).add(entry.getKey());
+                }
+            }
+        }
+
+        Map<String, List<String>> branchChildren = new LinkedHashMap<>();
+        for (var entry : byExchange.entrySet()) {
+            List<HistoryEntry> steps = entry.getValue();
+            if (!steps.isEmpty() && !steps.get(0).first) {
+                HistoryEntry firstStep = steps.get(0);
+                if (firstStep.routeId != null && extractToEndpoint(firstStep.nodeLabel) != null) {
+                    branchChildren.computeIfAbsent(firstStep.routeId, k -> new ArrayList<>()).add(entry.getKey());
+                }
+            }
+        }
+
+        String rootExchangeId = entries.get(0).exchangeId;
+        if (rootExchangeId == null) {
+            return entries;
+        }
+
+        List<HistoryEntry> result = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        inlineHistoryExchange(rootExchangeId, byExchange, fromIndex, branchChildren, visited, result, 0);
+        return result;
+    }
+
+    private void inlineHistoryExchange(
+            String exchangeId, Map<String, List<HistoryEntry>> byExchange,
+            Map<String, List<String>> fromIndex, Map<String, List<String>> branchChildren,
+            Set<String> visited, List<HistoryEntry> result, int depth) {
+        if (!visited.add(exchangeId)) {
+            return;
+        }
+        List<HistoryEntry> steps = byExchange.get(exchangeId);
+        if (steps == null) {
+            return;
+        }
+        for (HistoryEntry step : steps) {
+            step.inlineDepth = depth;
+            result.add(step);
+
+            if (isMulticastNode(step.nodeShortName)) {
+                List<String> children = branchChildren.get(step.routeId);
+                if (children != null) {
+                    for (String childId : children) {
+                        if (!visited.contains(childId)) {
+                            inlineHistoryExchange(childId, byExchange, fromIndex, branchChildren, visited, result,
+                                    depth + 1);
+                        }
+                    }
+                }
+            }
+
+            String targetEndpoint = extractToEndpoint(step.nodeLabel);
+            if (targetEndpoint != null) {
+                List<String> children = fromIndex.get(targetEndpoint);
+                if (children != null) {
+                    for (String childId : children) {
+                        if (!visited.contains(childId)) {
+                            inlineHistoryExchange(childId, byExchange, fromIndex, branchChildren, visited, result,
+                                    depth + 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static boolean isMulticastNode(TraceEntry entry) {
-        if (entry.nodeShortName != null) {
-            return switch (entry.nodeShortName) {
+        return isMulticastNode(entry.nodeShortName);
+    }
+
+    private static boolean isMulticastNode(String nodeShortName) {
+        if (nodeShortName != null) {
+            return switch (nodeShortName) {
                 case "multicast", "recipientList", "split", "routingSlip", "enrich", "pollEnrich",
                         "wireTap", "dynamicRouter" ->
                     true;
@@ -1223,17 +1314,25 @@ class HistoryTab implements MonitorTab {
     }
 
     private static String extractFromEndpoint(TraceEntry entry) {
-        if (entry.nodeLabel != null) {
-            return normalizeEndpoint(entry.nodeLabel);
+        return extractFromEndpoint(entry.nodeLabel);
+    }
+
+    private static String extractFromEndpoint(String nodeLabel) {
+        if (nodeLabel != null) {
+            return normalizeEndpoint(nodeLabel);
         }
         return null;
     }
 
     private static String extractToEndpoint(TraceEntry entry) {
-        if (entry.nodeLabel != null && entry.nodeLabel.startsWith("to[")) {
-            int end = entry.nodeLabel.indexOf(']');
+        return extractToEndpoint(entry.nodeLabel);
+    }
+
+    private static String extractToEndpoint(String nodeLabel) {
+        if (nodeLabel != null && nodeLabel.startsWith("to[")) {
+            int end = nodeLabel.indexOf(']');
             if (end > 3) {
-                return normalizeEndpoint(entry.nodeLabel.substring(3, end));
+                return normalizeEndpoint(nodeLabel.substring(3, end));
             }
         }
         return null;
@@ -1883,7 +1982,7 @@ class HistoryTab implements MonitorTab {
             }
         } else {
             result.put("tab", "History");
-            List<HistoryEntry> entries = historyEntries;
+            List<HistoryEntry> entries = reorderHistoryDepthFirst(historyEntries);
             JsonArray rows = new JsonArray();
             for (int i = 0; i < entries.size(); i++) {
                 HistoryEntry h = entries.get(i);

@@ -48,4 +48,5 @@ class HistoryEntry {
     Map<String, String> exchangePropertyTypes;
     Map<String, Object> exchangeVariables;
     Map<String, String> exchangeVariableTypes;
+    int inlineDepth;
 }
