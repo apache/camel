@@ -758,9 +758,10 @@ class HistoryTab implements MonitorTab {
 
         Map<String, String> descMap = showDescription ? getRouteDescriptions() : Collections.emptyMap();
         List<Row> rows = new ArrayList<>();
-        for (TraceEntry entry : steps) {
+        for (int i = 0; i < steps.size(); i++) {
+            TraceEntry entry = steps.get(i);
             String desc = showDescription ? descMap.get(entry.routeId) : null;
-            rows.add(buildStepRow(
+            rows.add(buildStepRow(i + 1,
                     entry.direction, entry.first, entry.last, entry.failed,
                     entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
         }
@@ -1011,9 +1012,10 @@ class HistoryTab implements MonitorTab {
 
         Map<String, String> descMap = showDescription ? getRouteDescriptions() : Collections.emptyMap();
         List<Row> rows = new ArrayList<>();
-        for (HistoryEntry entry : current) {
+        for (int i = 0; i < current.size(); i++) {
+            HistoryEntry entry = current.get(i);
             String desc = showDescription ? descMap.get(entry.routeId) : null;
-            rows.add(buildStepRow(
+            rows.add(buildStepRow(i + 1,
                     entry.direction, entry.first, entry.last, entry.failed,
                     entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
         }
@@ -1129,6 +1131,7 @@ class HistoryTab implements MonitorTab {
     }
 
     private static Row buildStepRow(
+            int stepNumber,
             String direction, boolean first, boolean last, boolean failed,
             String timestamp, String routeId, String nodeId, String processor,
             String description, long elapsed) {
@@ -1141,6 +1144,7 @@ class HistoryTab implements MonitorTab {
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
         String display = description != null ? description : (processor != null ? processor : "");
         return Row.from(
+                rightCell(String.valueOf(stepNumber), 3),
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
                 Cell.from(Span.styled(routeId != null ? truncate(routeId, 25) : "", Style.EMPTY.fg(Color.CYAN))),
@@ -1151,6 +1155,7 @@ class HistoryTab implements MonitorTab {
 
     private static Table buildStepTable(List<Row> rows, Object title, boolean descriptionMode) {
         Row header = Row.from(
+                rightCell("#", 3, Style.EMPTY.bold()),
                 Cell.from(Span.styled("", Style.EMPTY.bold())),
                 Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
                 Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
@@ -1164,6 +1169,7 @@ class HistoryTab implements MonitorTab {
                 .rows(rows)
                 .header(header)
                 .widths(
+                        Constraint.length(3),
                         Constraint.length(4),
                         Constraint.length(12),
                         Constraint.length(15),
