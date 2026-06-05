@@ -73,7 +73,7 @@ class ActionsPopup {
         RUN_EXAMPLE,
         RUN_FOLDER,
         RUN_INFRA,
-        SHOW_DOCS,
+        BROWSE_FILES,
         DOCTOR,
         RESET_STATS,
         RESET_SCREEN,
@@ -100,6 +100,7 @@ class ActionsPopup {
     private final Runnable burstCallback;
     private Runnable resetStatsAction;
     private Runnable resetScreenAction;
+    private Runnable browseFilesAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
     private boolean mcpEnabled;
@@ -193,6 +194,10 @@ class ActionsPopup {
 
     void setResetScreenAction(Runnable resetScreenAction) {
         this.resetScreenAction = resetScreenAction;
+    }
+
+    void setBrowseFilesAction(Runnable browseFilesAction) {
+        this.browseFilesAction = browseFilesAction;
     }
 
     void setMcpEnabled(
@@ -316,7 +321,7 @@ class ActionsPopup {
         labels.add("Run an example...");
         labels.add("Run from folder...");
         labels.add("Run Dev/Infra Service...");
-        labels.add("Show Integration Doc");
+        labels.add("Browse Files...");
         labels.add("───");
         // Group 2: Diagnostics
         labels.add("Run Doctor");
@@ -535,8 +540,6 @@ class ActionsPopup {
                         openExampleBrowser();
                     } else if (action == Action.RUN_FOLDER) {
                         openFolderInput();
-                    } else if (action == Action.SHOW_DOCS) {
-                        openDocPicker();
                     } else if (action == Action.SCREENSHOT) {
                         showActionsMenu = false;
                         screenshotAction.run();
@@ -549,6 +552,13 @@ class ActionsPopup {
                     } else if (action == Action.TAPE_INSTRUCTIONS) {
                         showActionsMenu = false;
                         openTapeInstructions();
+                    } else if (action == Action.BROWSE_FILES) {
+                        if (ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                            showActionsMenu = false;
+                            if (browseFilesAction != null) {
+                                browseFilesAction.run();
+                            }
+                        }
                     } else if (action == Action.DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
@@ -737,7 +747,10 @@ class ActionsPopup {
         items.add(ListItem.from("  🐪 Run an example..."));
         items.add(ListItem.from("  📂 Run from folder..."));
         items.add(ListItem.from("  🔧 Run Dev/Infra Service..."));
-        items.add(ListItem.from("  📖 Show Integration Doc"));
+        boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();
+        items.add(hasSelection
+                ? ListItem.from("  📁 Browse Files...")
+                : ListItem.from("  📁 Browse Files...").style(Style.EMPTY.dim()));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics
         items.add(ListItem.from("  🩺 Run Doctor"));
@@ -775,10 +788,10 @@ class ActionsPopup {
             return;
         }
         int popupW = Math.min(100, area.width() - 4);
-        int popupH = Math.min(exampleCatalog.size() + 10, Math.min(22, area.height() - 6));
+        int popupH = Math.min(exampleCatalog.size() + 10, Math.min(22, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -897,10 +910,10 @@ class ActionsPopup {
             return;
         }
         int popupW = Math.min(60, area.width() - 4);
-        int popupH = Math.min(docPickerIntegrations.size() + 2, Math.min(15, area.height() - 6));
+        int popupH = Math.min(docPickerIntegrations.size() + 2, Math.min(15, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
         List<ListItem> items = new ArrayList<>();
@@ -942,6 +955,11 @@ class ActionsPopup {
         docPickerIntegrations = withDocs;
         showDocPicker = true;
         docPickerState.select(0);
+    }
+
+    void openDoc(IntegrationInfo info) {
+        showActionsMenu = false;
+        loadDocFromIntegration(info);
     }
 
     private void loadDocFromSelectedIntegration() {
@@ -1177,6 +1195,15 @@ class ActionsPopup {
         if (folder.isEmpty()) {
             return;
         }
+        // resolve ~ to home directory
+        if (folder.startsWith("~")) {
+            folder = System.getProperty("user.home") + folder.substring(1);
+        }
+        Path dirPath = Path.of(folder);
+        if (!Files.isDirectory(dirPath)) {
+            setNotification("Directory does not exist: " + folder, true);
+            return;
+        }
         folderHistory.remove(folder);
         folderHistory.add(0, folder);
         if (folderHistory.size() > 20) {
@@ -1184,7 +1211,7 @@ class ActionsPopup {
         }
         selectedFolder = folder;
         showFolderInput = false;
-        String displayName = Path.of(folder).getFileName().toString();
+        String displayName = dirPath.getFileName().toString();
         runOptionsForm.open(displayName, displayName, false, true);
     }
 
@@ -1644,10 +1671,10 @@ class ActionsPopup {
         }
         refreshInfraRunningState();
         int popupW = Math.min(100, area.width() - 4);
-        int popupH = Math.min(infraCatalog.size() + 2, Math.min(22, area.height() - 6));
+        int popupH = Math.min(infraCatalog.size() + 2, Math.min(22, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -1708,7 +1735,7 @@ class ActionsPopup {
         int popupW = 42;
         int popupH = hasMultiImpl ? 8 : 6;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);

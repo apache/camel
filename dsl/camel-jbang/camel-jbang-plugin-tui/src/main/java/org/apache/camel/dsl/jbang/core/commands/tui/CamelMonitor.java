@@ -279,6 +279,16 @@ public class CamelMonitor extends CamelCommand {
     private boolean showSwitchPopup;
     private final ListState switchPopupState = new ListState();
 
+    // "Files" popup state
+    record FileEntry(String emoji, String name, long size, String path) {
+    }
+
+    private boolean showFilesPopup;
+    private String filesPopupTitle;
+    private final ListState filesPopupState = new ListState();
+    private List<FileEntry> fileEntries = Collections.emptyList();
+    private final SourceViewer overviewSourceViewer = new SourceViewer();
+
     // "More" dropdown state
     private boolean showMorePopup;
     private final ListState morePopupState = new ListState();
@@ -319,6 +329,7 @@ public class CamelMonitor extends CamelCommand {
         ctx = new MonitorContext(data, infraData);
         actionsPopup.setContext(ctx);
         actionsPopup.setResetStatsAction(this::resetStats);
+        actionsPopup.setBrowseFilesAction(this::openFilesPopup);
         logTab = new LogTab(ctx);
         diagramTab = new DiagramTab(ctx);
         routesTab = new RoutesTab(ctx);
@@ -438,6 +449,41 @@ public class CamelMonitor extends CamelCommand {
             }
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
+            }
+            // "Files" popup
+            if (showFilesPopup) {
+                if (overviewSourceViewer.isVisible()) {
+                    if (overviewSourceViewer.handleKeyEvent(ke)) {
+                        return true;
+                    }
+                }
+                if (ke.isCancel()) {
+                    if (overviewSourceViewer.isVisible()) {
+                        overviewSourceViewer.hide();
+                    } else {
+                        showFilesPopup = false;
+                    }
+                    return true;
+                }
+                if (!overviewSourceViewer.isVisible()) {
+                    if (ke.isUp()) {
+                        filesPopupState.selectPrevious();
+                        return true;
+                    }
+                    if (ke.isDown()) {
+                        filesPopupState.selectNext(fileEntries.size());
+                        return true;
+                    }
+                    if (ke.isConfirm()) {
+                        Integer sel = filesPopupState.selected();
+                        if (sel != null && sel < fileEntries.size()) {
+                            FileEntry entry = fileEntries.get(sel);
+                            overviewSourceViewer.loadFile(Path.of(entry.path()));
+                        }
+                        return true;
+                    }
+                }
+                return true;
             }
             // "More" tab popup
             if (showMorePopup) {
@@ -758,6 +804,17 @@ public class CamelMonitor extends CamelCommand {
                 restartSelectedProcess();
                 return true;
             }
+            if (tab == TAB_OVERVIEW && ke.isChar('d') && ctx.selectedPid != null && !isInfraSelected()) {
+                IntegrationInfo selInfo = findSelectedIntegration();
+                if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
+                    actionsPopup.openDoc(selInfo);
+                    return true;
+                }
+            }
+            if (tab == TAB_OVERVIEW && ke.isChar('f') && ctx.selectedPid != null && !isInfraSelected()) {
+                openFilesPopup();
+                return true;
+            }
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                 return true;
@@ -774,6 +831,10 @@ public class CamelMonitor extends CamelCommand {
             }
             if (logTab.isSearchInputActive()) {
                 logTab.handlePaste(pe.text());
+                return true;
+            }
+            if (overviewSourceViewer.isSearchInputActive()) {
+                overviewSourceViewer.handlePaste(pe.text());
                 return true;
             }
         }
@@ -943,6 +1004,10 @@ public class CamelMonitor extends CamelCommand {
         circuitBreakerTab.onIntegrationChanged();
         inflightTab.onIntegrationChanged();
 
+        showFilesPopup = false;
+        fileEntries = Collections.emptyList();
+        overviewSourceViewer.reset();
+
         // Preload diagram data in background so it's ready when the user switches tabs
         routesTab.preloadDiagram();
         diagramTab.preloadDiagram();
@@ -1092,7 +1157,17 @@ public class CamelMonitor extends CamelCommand {
         long healthDownCount = hasSelection
                 ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
         long historyCount = hasSelection
-                ? historyTab.historyEntries.stream().map(e -> e.exchangeId).distinct().count()
+                ? historyTab.historyEntries.stream()
+                        .map(e -> {
+                            if (e.headers != null) {
+                                Object bid = e.headers.get("breadcrumbId");
+                                if (bid != null) {
+                                    return bid.toString();
+                                }
+                            }
+                            return e.exchangeId;
+                        })
+                        .distinct().count()
                 : 0;
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
         int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
@@ -1204,6 +1279,10 @@ public class CamelMonitor extends CamelCommand {
         if (showSwitchPopup) {
             renderSwitchPopup(frame, area);
         }
+        // Render "Files" popup overlay when visible
+        if (showFilesPopup) {
+            renderFilesPopup(frame, area);
+        }
     }
 
     private void renderMorePopup(Frame frame, Rect area) {
@@ -1301,6 +1380,211 @@ public class CamelMonitor extends CamelCommand {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, switchPopupState);
+    }
+
+    private void openFilesPopup() {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        Path dir = resolveSourceDirectory(info);
+        if (dir == null || !Files.isDirectory(dir)) {
+            return;
+        }
+        List<FileEntry> entries = new ArrayList<>();
+        try (var stream = Files.list(dir)) {
+            stream.filter(Files::isRegularFile)
+                    .limit(99)
+                    .forEach(p -> {
+                        String name = p.getFileName().toString();
+                        String emoji = fileEmoji(p);
+                        long size = 0;
+                        try {
+                            size = Files.size(p);
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                        entries.add(new FileEntry(emoji, name, size, p.toString()));
+                    });
+        } catch (IOException e) {
+            return;
+        }
+        if (entries.isEmpty()) {
+            return;
+        }
+        entries.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
+        fileEntries = entries;
+        filesPopupTitle = info.name != null ? info.name : "?";
+        filesPopupState.select(0);
+        showFilesPopup = true;
+        overviewSourceViewer.reset();
+    }
+
+    private void renderFilesPopup(Frame frame, Rect area) {
+        if (overviewSourceViewer.isVisible()) {
+            frame.renderWidget(Clear.INSTANCE, area);
+            overviewSourceViewer.render(frame, area);
+            return;
+        }
+        if (fileEntries.isEmpty()) {
+            showFilesPopup = false;
+            return;
+        }
+
+        int nameWidth = fileEntries.stream().mapToInt(e -> e.name().length()).max().orElse(10);
+        int sizeWidth = fileEntries.stream().mapToInt(e -> formatFileSize(e.size()).length()).max().orElse(4);
+        int itemWidth = 4 + nameWidth + 2 + sizeWidth + 2;
+        int popupW = Math.min(area.width() - 4, Math.max(30, itemWidth + 4));
+        int popupH = Math.min(area.height() - 4, fileEntries.size() + 2);
+
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        ListItem[] items = new ListItem[fileEntries.size()];
+        for (int i = 0; i < fileEntries.size(); i++) {
+            FileEntry entry = fileEntries.get(i);
+            String sizeStr = formatFileSize(entry.size());
+            String label = String.format("  %s %-" + nameWidth + "s  %s", entry.emoji(), entry.name(), sizeStr);
+            items[i] = ListItem.from(label);
+        }
+
+        ListWidget list = ListWidget.builder()
+                .items(items)
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSymbol("")
+                .scrollMode(ScrollMode.NONE)
+                .block(Block.builder()
+                        .borderType(BorderType.ROUNDED)
+                        .title(Title.from(Line
+                                .from(Span.styled(" Files: " + filesPopupTitle + " ", Style.EMPTY.fg(Color.YELLOW).bold()))))
+                        .build())
+                .build();
+        frame.renderStatefulWidget(list, popup, filesPopupState);
+    }
+
+    private static final String[] CAMEL_YAML_MARKERS = {
+            "- from:", "- route:",
+            "- routeTemplate:", "- route-template:",
+            "- templatedRoute:", "- templated-route:",
+            "- routeConfiguration:", "- route-configuration:",
+            "- rest:", "- beans:"
+    };
+
+    private static final String[] CAMEL_XML_MARKERS = {
+            "<route", "<routes", "<routeTemplate", "<routeTemplates",
+            "<templatedRoute", "<templatedRoutes",
+            "<rest", "<rests", "<routeConfiguration",
+            "<beans", "<blueprint", "<camel"
+    };
+
+    private static String fileEmoji(Path path) {
+        String name = path.getFileName().toString();
+        String lower = name.toLowerCase(Locale.ROOT);
+        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+            return "🐪";
+        }
+        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
+            return isCamelYaml(path) ? "🐪" : "📋";
+        }
+        if (lower.endsWith(".xml")) {
+            return isCamelXml(path) ? "🐪" : "📋";
+        }
+        if (lower.endsWith(".java")) {
+            return isCamelJava(path) ? "🐪" : "☕";
+        }
+        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
+            return "📄";
+        }
+        if (lower.startsWith("readme")) {
+            return "📖";
+        }
+        return "📋";
+    }
+
+    private static boolean isCamelYaml(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            for (String marker : CAMEL_YAML_MARKERS) {
+                if (content.contains(marker)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
+    }
+
+    private static boolean isCamelXml(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            for (String marker : CAMEL_XML_MARKERS) {
+                if (content.contains(marker)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
+    }
+
+    private static boolean isCamelJava(Path path) {
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            return content.contains("RouteBuilder")
+                    || content.contains("EndpointRouteBuilder");
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
+    }
+
+    private static Path resolveSourceDirectory(IntegrationInfo info) {
+        for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
+            if ("camel.main.routesIncludePattern".equals(cp.key) && cp.value != null) {
+                for (String part : cp.value.split(",")) {
+                    part = part.trim();
+                    if (part.startsWith("file:")) {
+                        String filePath = part.substring("file:".length());
+                        // strip query params like ?optional=true
+                        int q = filePath.indexOf('?');
+                        if (q > 0) {
+                            filePath = filePath.substring(0, q);
+                        }
+                        // source-dir pattern: file:/path/to/folder/** → use /path/to/folder directly
+                        if (filePath.endsWith("/**")) {
+                            Path dir = Path.of(filePath.substring(0, filePath.length() - 3));
+                            if (Files.isDirectory(dir)) {
+                                return dir;
+                            }
+                        }
+                        // individual file: file:/tmp/example/foo.yaml → use parent dir
+                        Path parent = Path.of(filePath).getParent();
+                        if (parent != null && Files.isDirectory(parent)) {
+                            return parent;
+                        }
+                    }
+                }
+            }
+        }
+        if (info.directory != null && !info.directory.isEmpty()) {
+            return Path.of(info.directory);
+        }
+        return null;
+    }
+
+    private static String formatFileSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+        if (bytes < 1024 * 1024) {
+            return String.format("%.1f KB", bytes / 1024.0);
+        }
+        return String.format("%.1f MB", bytes / (1024.0 * 1024));
     }
 
     private List<IntegrationInfo> getNonVanishingIntegrations() {
@@ -1641,7 +1925,15 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        if (showSwitchPopup) {
+        if (showFilesPopup) {
+            if (overviewSourceViewer.isVisible()) {
+                overviewSourceViewer.renderFooter(spans);
+            } else {
+                hint(spans, "Up/Down", "navigate");
+                hint(spans, "Enter", "open");
+                hint(spans, "Esc", "close");
+            }
+        } else if (showSwitchPopup) {
             hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "switch");
             hint(spans, "Esc", "close");
@@ -1738,6 +2030,12 @@ public class CamelMonitor extends CamelCommand {
         if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
             if (selInfo != null) {
+                if (selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
+                    hint(spans, "d", "docs");
+                }
+                if (selInfo.directory != null && !selInfo.directory.isEmpty()) {
+                    hint(spans, "f", "files");
+                }
                 hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
             }
         }
@@ -2777,6 +3075,37 @@ public class CamelMonitor extends CamelCommand {
                 .filter(i -> !i.vanishing)
                 .map(i -> i.name != null ? i.name : i.pid)
                 .toList();
+    }
+
+    JsonObject getReadme(String name) {
+        List<IntegrationInfo> integrations = data.get();
+        IntegrationInfo target = null;
+        if (name != null && !name.isEmpty()) {
+            for (IntegrationInfo info : integrations) {
+                if (!info.vanishing && name.equals(info.name)) {
+                    target = info;
+                    break;
+                }
+            }
+        } else {
+            target = ctx != null ? ctx.findSelectedIntegration() : null;
+        }
+        if (target == null) {
+            return null;
+        }
+        if (target.readmeFiles == null || target.readmeFiles.isEmpty()) {
+            return null;
+        }
+        try {
+            Path outputFile = ctx.getOutputFile(target.pid);
+            Files.deleteIfExists(outputFile);
+            JsonObject action = new JsonObject();
+            action.put("action", "readme");
+            PathUtils.writeTextSafely(action.toJson(), ctx.getActionFile(target.pid));
+            return MonitorContext.pollJsonResponse(outputFile, 5000);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     int injectKeys(List<String> keys, int delayMs) {

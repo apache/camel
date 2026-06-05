@@ -24,9 +24,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import dev.tamboui.layout.Constraint;
+import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
+import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -36,6 +41,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -69,6 +75,24 @@ class SourceViewer {
     private final AtomicBoolean loading = new AtomicBoolean(false);
     private IntConsumer onLineSelected;
     private final Map<String, CachedSource> sourceCache = new ConcurrentHashMap<>();
+    private boolean wordWrap;
+
+    // Find mode
+    private boolean findInputActive;
+    private boolean highlightInputActive;
+    private TextInputState searchInputState = new TextInputState("");
+    private String findTerm;
+    private Pattern findPattern;
+    private int findMatchIndex = -1;
+    private List<Integer> findMatches = Collections.emptyList();
+
+    // Highlight mode
+    private String highlightTerm;
+    private Pattern highlightPattern;
+
+    private static final Style HIGHLIGHT_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.YELLOW);
+    private static final Style FIND_MATCH_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.YELLOW);
+    private static final Style FIND_CURRENT_STYLE = Style.EMPTY.fg(Color.BLACK).bg(Color.LIGHT_GREEN);
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -95,6 +119,15 @@ class SourceViewer {
         pendingScroll = false;
         onLineSelected = null;
         sourceCache.clear();
+        wordWrap = false;
+        findInputActive = false;
+        highlightInputActive = false;
+        findTerm = null;
+        findPattern = null;
+        findMatchIndex = -1;
+        findMatches = Collections.emptyList();
+        highlightTerm = null;
+        highlightPattern = null;
     }
 
     void setOnLineSelected(IntConsumer callback) {
@@ -105,9 +138,47 @@ class SourceViewer {
         if (!visible) {
             return false;
         }
-        if (ke.isChar('c') || ke.isCancel()) {
+        if (findInputActive || highlightInputActive) {
+            return handleSearchInput(ke);
+        }
+        if (ke.isCancel()) {
+            if (findTerm != null) {
+                findTerm = null;
+                findPattern = null;
+                findMatches = Collections.emptyList();
+                findMatchIndex = -1;
+                return true;
+            }
             visible = false;
             onLineSelected = null;
+            return true;
+        }
+        if (ke.isChar('c')) {
+            visible = false;
+            onLineSelected = null;
+            return true;
+        }
+        if (ke.isChar('/')) {
+            findInputActive = true;
+            searchInputState = new TextInputState("");
+            return true;
+        }
+        if (ke.isChar('h')) {
+            highlightInputActive = true;
+            searchInputState = new TextInputState("");
+            return true;
+        }
+        if (ke.isChar('n') && findTerm != null) {
+            navigateToNextMatch();
+            return true;
+        }
+        if (ke.isChar('N') && findTerm != null) {
+            navigateToPrevMatch();
+            return true;
+        }
+        if (ke.isChar('w')) {
+            wordWrap = !wordWrap;
+            scrollX = 0;
             return true;
         }
         if (ke.isKey(KeyCode.UP) && ke.hasCtrl()) {
@@ -128,9 +199,9 @@ class SourceViewer {
             if (!lines.isEmpty()) {
                 selectedLine = Math.min(lines.size() - 1, selectedLine + page);
             }
-        } else if (ke.isLeft()) {
+        } else if (!wordWrap && ke.isLeft()) {
             scrollX = Math.max(0, scrollX - 1);
-        } else if (ke.isRight()) {
+        } else if (!wordWrap && ke.isRight()) {
             scrollX++;
         } else if (ke.isHome()) {
             selectedLine = 0;
@@ -151,6 +222,53 @@ class SourceViewer {
             return false;
         }
         return true;
+    }
+
+    private boolean handleSearchInput(KeyEvent ke) {
+        if (ke.isKey(KeyCode.ESCAPE)) {
+            findInputActive = false;
+            highlightInputActive = false;
+            return true;
+        }
+        if (ke.isConfirm()) {
+            String text = searchInputState.text().trim();
+            if (findInputActive) {
+                if (text.isEmpty()) {
+                    findTerm = null;
+                    findPattern = null;
+                    findMatches = Collections.emptyList();
+                    findMatchIndex = -1;
+                } else {
+                    findTerm = text;
+                    findPattern = Pattern.compile(Pattern.quote(text), Pattern.CASE_INSENSITIVE);
+                    buildFindMatches();
+                    jumpToNearestMatch();
+                }
+                findInputActive = false;
+            } else if (highlightInputActive) {
+                if (text.isEmpty()) {
+                    highlightTerm = null;
+                    highlightPattern = null;
+                } else {
+                    highlightTerm = text;
+                    highlightPattern = Pattern.compile(Pattern.quote(text), Pattern.CASE_INSENSITIVE);
+                }
+                highlightInputActive = false;
+            }
+            return true;
+        }
+        FormHelper.handleTextInput(ke, searchInputState);
+        return true;
+    }
+
+    boolean isSearchInputActive() {
+        return findInputActive || highlightInputActive;
+    }
+
+    void handlePaste(String text) {
+        if (findInputActive || highlightInputActive) {
+            FormHelper.handlePaste(text, searchInputState);
+        }
     }
 
     void render(Frame frame, Rect area) {
@@ -186,38 +304,124 @@ class SourceViewer {
         }
         scrollY = Math.min(scrollY, maxScroll);
 
-        int cursorWidth = 3;
-        int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0) + cursorWidth;
-        int maxHScroll = Math.max(0, maxLineWidth - inner.width());
-        scrollX = Math.min(scrollX, maxHScroll);
+        int hSkip = wordWrap ? 0 : scrollX;
+        if (!wordWrap) {
+            int cursorWidth = 3;
+            int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0) + cursorWidth;
+            int maxHScroll = Math.max(0, maxLineWidth - inner.width());
+            scrollX = Math.min(scrollX, maxHScroll);
+        }
+
+        int currentMatchLine = findMatchIndex >= 0 && findMatchIndex < findMatches.size()
+                ? findMatches.get(findMatchIndex) : -1;
 
         int end = Math.min(scrollY + visibleLines, lines.size());
         List<Line> visible = new ArrayList<>();
         for (int i = scrollY; i < end; i++) {
             String raw = lines.get(i);
             boolean isSelected = (i == selectedLine);
-            visible.add(highlightSourceLine(raw, scrollX, isSelected));
+            Line line = highlightSourceLine(raw, hSkip, isSelected, inner.width());
+            if (highlightPattern != null || findPattern != null) {
+                line = applySearchHighlights(line, i, currentMatchLine);
+            }
+            visible.add(line);
         }
-        frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
+
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        Overflow overflow = wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
+        frame.renderWidget(Paragraph.builder().text(Text.from(visible)).overflow(overflow).build(), hChunks.get(0));
 
         if (lines.size() > visibleLines) {
             vScrollState.contentLength(lines.size()).viewportContentLength(visibleLines).position(scrollY);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), inner, vScrollState);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), vScrollState);
         }
-        if (maxHScroll > 0) {
-            hScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(scrollX);
-            frame.renderStatefulWidget(Scrollbar.horizontal(), inner, hScrollState);
+        if (!wordWrap) {
+            int cursorWidth = 3;
+            int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0) + cursorWidth;
+            int maxHScroll = Math.max(0, maxLineWidth - inner.width());
+            if (maxHScroll > 0) {
+                hScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(scrollX);
+                frame.renderStatefulWidget(Scrollbar.horizontal(), inner, hScrollState);
+            }
         }
     }
 
     void renderFooter(List<Span> spans) {
-        MonitorContext.hint(spans, "Esc/c", "close");
+        if (findInputActive) {
+            spans.add(Span.styled(" /", MonitorContext.HINT_KEY_STYLE));
+            spans.add(Span.raw(searchInputState.text() + "█  "));
+            MonitorContext.hint(spans, "Enter", "search");
+            MonitorContext.hintLast(spans, "Esc", "cancel");
+            return;
+        }
+        if (highlightInputActive) {
+            spans.add(Span.styled(" h:", MonitorContext.HINT_KEY_STYLE));
+            spans.add(Span.raw(searchInputState.text() + "█  "));
+            MonitorContext.hint(spans, "Enter", "set");
+            MonitorContext.hintLast(spans, "Esc", "cancel");
+            return;
+        }
+        if (findTerm != null) {
+            MonitorContext.hint(spans, "Esc", "clear find");
+            MonitorContext.hint(spans, "n", "next");
+            MonitorContext.hint(spans, "N", "prev");
+            String pos = findMatches.isEmpty()
+                    ? "0/0"
+                    : (findMatchIndex + 1) + "/" + findMatches.size();
+            spans.add(Span.styled("  /", MonitorContext.HINT_KEY_STYLE));
+            spans.add(Span.raw("\"" + findTerm + "\" [" + pos + "]  "));
+        } else {
+            MonitorContext.hint(spans, "Esc/c", "close");
+        }
         MonitorContext.hint(spans, "↑↓", "navigate");
-        MonitorContext.hint(spans, "Ctrl+↑↓", "scroll");
-        MonitorContext.hint(spans, "←→", "horizontal");
+        MonitorContext.hint(spans, "/", "find");
+        MonitorContext.hint(spans, "h", "highlight" + (highlightTerm != null ? " [" + highlightTerm + "]" : ""));
+        MonitorContext.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
+        if (!wordWrap) {
+            MonitorContext.hint(spans, "←→", "horizontal");
+        }
         MonitorContext.hint(spans, "PgUp/PgDn", "page");
         if (onLineSelected != null) {
             MonitorContext.hint(spans, "Enter", "select node");
+        }
+    }
+
+    /**
+     * Load source for a route, scrolling to the given source line number.
+     */
+    void loadFile(Path filePath) {
+        String fileName = filePath.getFileName().toString();
+        try {
+            List<String> rawLines = java.nio.file.Files.readAllLines(filePath, java.nio.charset.StandardCharsets.UTF_8);
+            int lineNumWidth = String.valueOf(rawLines.size()).length();
+            List<String> result = new ArrayList<>();
+            List<JsonObject> codeLines = new ArrayList<>();
+            for (int i = 0; i < rawLines.size(); i++) {
+                int lineNum = i + 1;
+                String code = rawLines.get(i);
+                result.add(String.format("%" + lineNumWidth + "d  %s", lineNum, code));
+                JsonObject jo = new JsonObject();
+                jo.put("line", lineNum);
+                jo.put("code", code);
+                codeLines.add(jo);
+            }
+            title = fileName;
+            language = SyntaxHighlighter.detectLanguage(fileName);
+            lines = result;
+            codeData = codeLines;
+            selectedLine = findLicenseHeaderEnd(codeLines);
+            scrollY = 0;
+            scrollX = 0;
+            pendingScroll = true;
+            visible = true;
+        } catch (java.io.IOException e) {
+            title = fileName;
+            lines = List.of("(Failed to read file: " + e.getMessage() + ")");
+            codeData = Collections.emptyList();
+            visible = true;
         }
     }
 
@@ -406,7 +610,7 @@ class SourceViewer {
         });
     }
 
-    private Line highlightSourceLine(String raw, int hSkip, boolean isSelected) {
+    private Line highlightSourceLine(String raw, int hSkip, boolean isSelected, int viewportWidth) {
         int prefixEnd = 0;
         while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
             prefixEnd++;
@@ -418,11 +622,11 @@ class SourceViewer {
         Line highlighted = SyntaxHighlighter.highlightLine(code, language);
 
         List<Span> spans = new ArrayList<>();
-        Style selBg = Style.EMPTY.bg(Color.DARK_GRAY);
+        Style selBg = Style.EMPTY.bg(Color.rgb(30, 45, 70));
         if (isSelected) {
             spans.add(Span.styled(">> ", Style.EMPTY.fg(Color.YELLOW).bold()));
             if (!prefix.isEmpty()) {
-                spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.YELLOW).bold().bg(Color.DARK_GRAY)));
+                spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.YELLOW).bold().patch(selBg)));
             }
             for (Span s : highlighted.spans()) {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));
@@ -437,24 +641,140 @@ class SourceViewer {
 
         Line full = Line.from(spans);
 
-        if (hSkip <= 0) {
-            return full;
+        if (hSkip > 0) {
+            List<Span> scrolled = new ArrayList<>();
+            int skipped = 0;
+            for (Span span : full.spans()) {
+                String content = span.content();
+                if (skipped >= hSkip) {
+                    scrolled.add(span);
+                } else if (skipped + content.length() > hSkip) {
+                    int offset = hSkip - skipped;
+                    scrolled.add(Span.styled(content.substring(offset), span.style()));
+                    skipped = hSkip;
+                } else {
+                    skipped += content.length();
+                }
+            }
+            full = scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
         }
-        List<Span> scrolled = new ArrayList<>();
-        int skipped = 0;
-        for (Span span : full.spans()) {
-            String content = span.content();
-            if (skipped >= hSkip) {
-                scrolled.add(span);
-            } else if (skipped + content.length() > hSkip) {
-                int offset = hSkip - skipped;
-                scrolled.add(Span.styled(content.substring(offset), span.style()));
-                skipped = hSkip;
-            } else {
-                skipped += content.length();
+
+        if (isSelected && viewportWidth > 0) {
+            int contentWidth = full.width();
+            if (contentWidth < viewportWidth) {
+                List<Span> padded = new ArrayList<>(full.spans());
+                padded.add(Span.styled(" ".repeat(viewportWidth - contentWidth), selBg));
+                full = Line.from(padded);
             }
         }
-        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
+
+        return full;
+    }
+
+    private void buildFindMatches() {
+        List<Integer> matches = new ArrayList<>();
+        for (int i = 0; i < lines.size(); i++) {
+            if (findPattern.matcher(lines.get(i)).find()) {
+                matches.add(i);
+            }
+        }
+        findMatches = matches;
+    }
+
+    private void jumpToNearestMatch() {
+        if (findMatches.isEmpty()) {
+            findMatchIndex = -1;
+            return;
+        }
+        for (int i = 0; i < findMatches.size(); i++) {
+            if (findMatches.get(i) >= selectedLine) {
+                findMatchIndex = i;
+                scrollToMatch();
+                return;
+            }
+        }
+        findMatchIndex = 0;
+        scrollToMatch();
+    }
+
+    private void navigateToNextMatch() {
+        if (findMatches.isEmpty()) {
+            return;
+        }
+        findMatchIndex = (findMatchIndex + 1) % findMatches.size();
+        scrollToMatch();
+    }
+
+    private void navigateToPrevMatch() {
+        if (findMatches.isEmpty()) {
+            return;
+        }
+        findMatchIndex = findMatchIndex <= 0 ? findMatches.size() - 1 : findMatchIndex - 1;
+        scrollToMatch();
+    }
+
+    private void scrollToMatch() {
+        if (findMatchIndex >= 0 && findMatchIndex < findMatches.size()) {
+            selectedLine = findMatches.get(findMatchIndex);
+        }
+    }
+
+    private Line applySearchHighlights(Line line, int lineIndex, int currentMatchLine) {
+        String fullText = line.rawContent();
+        if (fullText.isEmpty()) {
+            return line;
+        }
+
+        List<int[]> ranges = new ArrayList<>();
+        List<Style> rangeStyles = new ArrayList<>();
+        if (highlightPattern != null) {
+            Matcher m = highlightPattern.matcher(fullText);
+            while (m.find()) {
+                ranges.add(new int[] { m.start(), m.end() });
+                rangeStyles.add(HIGHLIGHT_STYLE);
+            }
+        }
+        if (findPattern != null) {
+            boolean isCurrentLine = lineIndex == currentMatchLine;
+            Matcher m = findPattern.matcher(fullText);
+            while (m.find()) {
+                ranges.add(new int[] { m.start(), m.end() });
+                rangeStyles.add(isCurrentLine ? FIND_CURRENT_STYLE : FIND_MATCH_STYLE);
+            }
+        }
+        if (ranges.isEmpty()) {
+            return line;
+        }
+
+        List<Span> original = line.spans();
+        List<Span> result = new ArrayList<>();
+        int charPos = 0;
+        for (Span span : original) {
+            String content = span.content();
+            Style baseStyle = span.style();
+            int spanStart = charPos;
+            int spanEnd = charPos + content.length();
+            int cursor = 0;
+            for (int r = 0; r < ranges.size(); r++) {
+                int matchStart = ranges.get(r)[0];
+                int matchEnd = ranges.get(r)[1];
+                if (matchEnd <= spanStart || matchStart >= spanEnd) {
+                    continue;
+                }
+                int localStart = Math.max(0, matchStart - spanStart);
+                int localEnd = Math.min(content.length(), matchEnd - spanStart);
+                if (localStart > cursor) {
+                    result.add(Span.styled(content.substring(cursor, localStart), baseStyle));
+                }
+                result.add(Span.styled(content.substring(localStart, localEnd), rangeStyles.get(r)));
+                cursor = localEnd;
+            }
+            if (cursor < content.length()) {
+                result.add(Span.styled(content.substring(cursor), baseStyle));
+            }
+            charPos = spanEnd;
+        }
+        return Line.from(result);
     }
 
     static int findLicenseHeaderEnd(List<JsonObject> codeLines) {
