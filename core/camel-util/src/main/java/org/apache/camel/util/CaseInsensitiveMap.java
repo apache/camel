@@ -84,12 +84,12 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
         knownTable = tbl;
     }
 
-    private static String deduplicateKey(String key) {
+    private static String deduplicateKey(String key, int hash) {
         int[] tbl = knownTable;
         if (tbl == null) {
             return key;
         }
-        int idx = tbl[caseInsensitiveHash(key) & knownMask];
+        int idx = tbl[hash & knownMask];
         while (idx != EMPTY) {
             if (knownEntries[idx].equalsIgnoreCase(key)) {
                 return knownEntries[idx];
@@ -142,18 +142,31 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
     static int caseInsensitiveHash(String key) {
         int h = 0;
         for (int i = 0, len = key.length(); i < len; i++) {
-            // two-step fold matches String.equalsIgnoreCase / CASE_INSENSITIVE_ORDER
-            h = 31 * h + Character.toLowerCase(Character.toUpperCase(key.charAt(i)));
+            char c = key.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                c += 32; // fast ASCII upper-to-lower
+            } else if (c >= 128) {
+                // full Unicode two-step fold for non-ASCII
+                c = Character.toLowerCase(Character.toUpperCase(c));
+            }
+            h = 31 * h + c;
         }
         return h ^ (h >>> 16);
     }
 
-    private int bucketIndex(String key) {
-        return caseInsensitiveHash(key) & (table.length - 1);
+    private int findIndex(String key) {
+        int idx = table[caseInsensitiveHash(key) & (table.length - 1)];
+        while (idx != EMPTY) {
+            if (keys[idx].equalsIgnoreCase(key)) {
+                return idx;
+            }
+            idx = chainNext[idx];
+        }
+        return EMPTY;
     }
 
-    private int findIndex(String key) {
-        int idx = table[bucketIndex(key)];
+    private int findIndex(String key, int hash) {
+        int idx = table[hash & (table.length - 1)];
         while (idx != EMPTY) {
             if (keys[idx].equalsIgnoreCase(key)) {
                 return idx;
@@ -186,8 +199,9 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
 
     @Override
     public Object put(String key, Object value) {
-        key = deduplicateKey(key);
-        int idx = findIndex(key);
+        int hash = caseInsensitiveHash(key);
+        key = deduplicateKey(key, hash);
+        int idx = findIndex(key, hash);
         if (idx != EMPTY) {
             Object old = values[idx];
             values[idx] = value;
@@ -195,6 +209,7 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
         }
         if (size >= threshold) {
             resize(table.length * 2);
+            // table length changed, but hash is still valid
         }
         if (usedSlots >= keys.length) {
             int newCap = keys.length + (keys.length >> 1);
@@ -205,7 +220,7 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
         int slot = usedSlots++;
         keys[slot] = key;
         values[slot] = value;
-        int b = bucketIndex(key);
+        int b = hash & (table.length - 1);
         chainNext[slot] = table[b];
         table[b] = slot;
         size++;
@@ -214,18 +229,32 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
 
     @Override
     public Object remove(Object key) {
-        int idx = findIndex((String) key);
-        if (idx != EMPTY) {
-            Object old = values[idx];
-            removeByIndex(idx);
-            return old;
+        int hash = caseInsensitiveHash((String) key);
+        int b = hash & (table.length - 1);
+        int prev = EMPTY;
+        int cur = table[b];
+        while (cur != EMPTY) {
+            if (keys[cur].equalsIgnoreCase((String) key)) {
+                Object old = values[cur];
+                if (prev == EMPTY) {
+                    table[b] = chainNext[cur];
+                } else {
+                    chainNext[prev] = chainNext[cur];
+                }
+                keys[cur] = null;
+                values[cur] = null;
+                size--;
+                return old;
+            }
+            prev = cur;
+            cur = chainNext[cur];
         }
         return null;
     }
 
     private void removeByIndex(int idx) {
         String key = keys[idx];
-        int b = bucketIndex(key);
+        int b = caseInsensitiveHash(key) & (table.length - 1);
         int prev = EMPTY;
         int cur = table[b];
         while (cur != EMPTY) {
