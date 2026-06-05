@@ -750,8 +750,8 @@ class HistoryTab implements MonitorTab {
                 Span.raw(nodeId != null ? nodeId : "")));
         if (processor != null) {
             lines.add(Line.from(
-                    Span.styled(" Processor:", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" " + processor.strip())));
+                    Span.styled(" Proc:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(processor.strip())));
         }
         if (elapsed >= 0) {
             lines.add(Line.from(
@@ -774,6 +774,25 @@ class HistoryTab implements MonitorTab {
                     Span.styled("Failed", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
         }
 
+        // Compute BHPV change indicators
+        String changes = "";
+        if (!diagramTraceSteps.isEmpty() && stepIdx > 0 && stepIdx < diagramTraceSteps.size()) {
+            changes = computeTraceChanges(diagramTraceSteps.get(stepIdx - 1), diagramTraceSteps.get(stepIdx));
+        } else if (!diagramHistorySteps.isEmpty() && stepIdx > 0 && stepIdx < diagramHistorySteps.size()) {
+            changes = computeHistoryChanges(diagramHistorySteps.get(stepIdx - 1), diagramHistorySteps.get(stepIdx));
+        }
+        boolean bodyChanged = changes.length() > 0 && changes.charAt(0) == 'B';
+        boolean headersChanged = changes.length() > 1 && changes.charAt(1) == 'H';
+        boolean propsChanged = changes.length() > 2 && changes.charAt(2) == 'P';
+        boolean varsChanged = changes.length() > 3 && changes.charAt(3) == 'V';
+
+        List<Span> changeSpans = new ArrayList<>();
+        changeSpans.add(Span.styled(" Changed:  ", Style.EMPTY.fg(Color.YELLOW).bold()));
+        if (!changes.isBlank()) {
+            changeSpans.addAll(buildChangeSpans(changes));
+        }
+        lines.add(Line.from(changeSpans));
+
         boolean isTraceMode = !diagramTraceSteps.isEmpty();
         boolean showBody = isTraceMode ? showTraceBody : showHistoryBody;
         boolean showHeaders = isTraceMode ? showTraceHeaders : showHistoryHeaders;
@@ -787,9 +806,10 @@ class HistoryTab implements MonitorTab {
         }
 
         if (showBody && body != null) {
+            Style headerStyle = bodyChanged ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
-                    Span.styled(" Body", Style.EMPTY.fg(Color.GREEN).bold()),
+                    Span.styled(" Body", headerStyle),
                     bodyType != null ? Span.styled(" (" + bodyType + ")", Style.EMPTY.dim()) : Span.raw("")));
             for (String line : body.split("\n")) {
                 lines.add(Line.from(Span.raw(" " + line)));
@@ -797,8 +817,9 @@ class HistoryTab implements MonitorTab {
         }
 
         if (showHeaders && headers != null && !headers.isEmpty()) {
+            Style headerStyle = headersChanged ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Headers", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Headers", headerStyle)));
             for (var entry : headers.entrySet()) {
                 String val = entry.getValue() != null ? entry.getValue().toString() : "null";
                 lines.add(Line.from(
@@ -808,8 +829,9 @@ class HistoryTab implements MonitorTab {
         }
 
         if (showProps && properties != null && !properties.isEmpty()) {
+            Style headerStyle = propsChanged ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Properties", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Properties", headerStyle)));
             for (var entry : properties.entrySet()) {
                 String val = entry.getValue() != null ? entry.getValue().toString() : "null";
                 lines.add(Line.from(
@@ -819,8 +841,9 @@ class HistoryTab implements MonitorTab {
         }
 
         if (showVars && variables != null && !variables.isEmpty()) {
+            Style headerStyle = varsChanged ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
             lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" Variables", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Variables", headerStyle)));
             for (var entry : variables.entrySet()) {
                 String val = entry.getValue() != null ? entry.getValue().toString() : "null";
                 lines.add(Line.from(
@@ -1081,21 +1104,27 @@ class HistoryTab implements MonitorTab {
         }
 
         TraceEntry entry = steps.get(sel);
+        TraceEntry prev = sel > 0 ? steps.get(sel - 1) : null;
+        String changes = computeTraceChanges(prev, entry);
+        boolean bodyChanged = changes.length() > 0 && changes.charAt(0) == 'B';
+        boolean headersChanged = changes.length() > 1 && changes.charAt(1) == 'H';
+        boolean propsChanged = changes.length() > 2 && changes.charAt(2) == 'P';
+        boolean varsChanged = changes.length() > 3 && changes.charAt(3) == 'V';
         List<Line> lines = new ArrayList<>();
 
         addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
                 entry.location, entry.elapsed, entry.threadName, entry.failed);
         if (showTraceProperties) {
-            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes);
+            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes, propsChanged);
         }
         if (showTraceVariables) {
-            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes);
+            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes, varsChanged);
         }
         if (showTraceHeaders) {
-            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes);
+            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes, headersChanged);
         }
         if (showTraceBody) {
-            addBodyLines(lines, entry.body, entry.bodyType);
+            addBodyLines(lines, entry.body, entry.bodyType, bodyChanged);
         }
         addExceptionLines(lines, entry.exception);
 
@@ -1343,21 +1372,27 @@ class HistoryTab implements MonitorTab {
         }
 
         HistoryEntry entry = current.get(sel);
+        HistoryEntry prev = sel > 0 ? current.get(sel - 1) : null;
+        String changes = computeHistoryChanges(prev, entry);
+        boolean bodyChanged = changes.length() > 0 && changes.charAt(0) == 'B';
+        boolean headersChanged = changes.length() > 1 && changes.charAt(1) == 'H';
+        boolean propsChanged = changes.length() > 2 && changes.charAt(2) == 'P';
+        boolean varsChanged = changes.length() > 3 && changes.charAt(3) == 'V';
         List<Line> lines = new ArrayList<>();
 
         addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
                 entry.location, entry.elapsed, entry.threadName, entry.failed);
         if (showHistoryProperties) {
-            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes);
+            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes, propsChanged);
         }
         if (showHistoryVariables) {
-            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes);
+            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes, varsChanged);
         }
         if (showHistoryHeaders) {
-            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes);
+            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes, headersChanged);
         }
         if (showHistoryBody) {
-            addBodyLines(lines, entry.body, entry.bodyType);
+            addBodyLines(lines, entry.body, entry.bodyType, bodyChanged);
         }
         addExceptionLines(lines, entry.exception);
 
@@ -1813,11 +1848,12 @@ class HistoryTab implements MonitorTab {
 
     static void addKvLines(
             List<Line> lines, String section,
-            Map<String, Object> map, Map<String, String> types) {
+            Map<String, Object> map, Map<String, String> types, boolean changed) {
         if (map == null || map.isEmpty()) {
             return;
         }
-        lines.add(Line.from(Span.styled(section, Style.EMPTY.fg(Color.GREEN).bold())));
+        Style headerStyle = changed ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
+        lines.add(Line.from(Span.styled(section, headerStyle)));
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String type = types != null ? types.get(entry.getKey()) : null;
             String typeLabel;
@@ -1844,14 +1880,15 @@ class HistoryTab implements MonitorTab {
         lines.add(Line.from(Span.raw("")));
     }
 
-    static void addBodyLines(List<Line> lines, String body, String bodyType) {
+    static void addBodyLines(List<Line> lines, String body, String bodyType, boolean changed) {
+        Style headerStyle = changed ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.fg(Color.GREEN).bold();
         if (body != null) {
             if (bodyType != null) {
                 lines.add(Line.from(
-                        Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
+                        Span.styled(" Body: ", headerStyle),
                         Span.styled("(" + bodyType + ")", Style.EMPTY.dim())));
             } else {
-                lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
+                lines.add(Line.from(Span.styled(" Body:", headerStyle)));
             }
             try {
                 body = Jsoner.unescape(body);
@@ -1863,7 +1900,7 @@ class HistoryTab implements MonitorTab {
                 lines.add(Line.from(Span.raw("   " + stripControlChars(bl))));
             }
         } else {
-            lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Body is null", headerStyle)));
         }
         lines.add(Line.from(Span.raw("")));
     }

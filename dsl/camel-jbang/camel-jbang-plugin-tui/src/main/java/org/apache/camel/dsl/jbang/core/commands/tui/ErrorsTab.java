@@ -468,16 +468,16 @@ class ErrorsTab implements MonitorTab {
 
         // exchange properties, variables, headers, body
         if (showProperties && !ei.properties.isEmpty()) {
-            HistoryTab.addKvLines(lines, " Exchange Properties:", ei.properties, ei.propertyTypes);
+            HistoryTab.addKvLines(lines, " Exchange Properties:", ei.properties, ei.propertyTypes, false);
         }
         if (showVariables && !ei.variables.isEmpty()) {
-            HistoryTab.addKvLines(lines, " Exchange Variables:", ei.variables, ei.variableTypes);
+            HistoryTab.addKvLines(lines, " Exchange Variables:", ei.variables, ei.variableTypes, false);
         }
         if (showHeaders && !ei.headers.isEmpty()) {
-            HistoryTab.addKvLines(lines, " Headers:", ei.headers, ei.headerTypes);
+            HistoryTab.addKvLines(lines, " Headers:", ei.headers, ei.headerTypes, false);
         }
         if (showBody) {
-            HistoryTab.addBodyLines(lines, ei.body, ei.bodyType);
+            HistoryTab.addBodyLines(lines, ei.body, ei.bodyType, false);
         }
 
         int[] scroll = { detailScroll };
