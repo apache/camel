@@ -443,7 +443,7 @@ public final class URISupport {
         if (before != null) {
             s = before;
         }
-        if (query != null) {
+        if (query != null && !query.isEmpty()) {
             s = s + "?" + query;
         }
         if (!s.contains("#") && uri.getFragment() != null) {
