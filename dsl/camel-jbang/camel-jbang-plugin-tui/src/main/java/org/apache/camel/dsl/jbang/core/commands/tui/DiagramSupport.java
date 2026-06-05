@@ -1333,7 +1333,14 @@ class DiagramSupport {
         String nodeId = historyNodeOrder.get(historyStepIndex);
         String nodeRoute = historyNodeRouteMap.get(nodeId);
         if (nodeRoute != null && !nodeRoute.equals(historyDrillDownRouteId)) {
-            historyNavigationStack.push(historyDrillDownRouteId);
+            if (historyNavigationStack.contains(nodeRoute)) {
+                while (!historyNavigationStack.isEmpty() && !nodeRoute.equals(historyNavigationStack.peek())) {
+                    historyNavigationStack.pop();
+                }
+                historyNavigationStack.pop();
+            } else {
+                historyNavigationStack.push(historyDrillDownRouteId);
+            }
             historyDrillDownRouteId = nodeRoute;
             scrollY = 0;
             scrollX = 0;
