@@ -1483,6 +1483,9 @@ public class CamelMonitor extends CamelCommand {
     private static String fileEmoji(Path path) {
         String name = path.getFileName().toString();
         String lower = name.toLowerCase(Locale.ROOT);
+        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+            return "🐪";
+        }
         if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
             return isCamelYaml(path) ? "🐪" : "📋";
         }
