@@ -120,7 +120,7 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
             this.pattern = originalPattern;
             // do not reset endpoint/fromRouteId as it would be the same consumer/endpoint again
 
-            getExchangeExtension().reset();
+            resetExtension();
 
             if (onDone != null) {
                 onDone.onDone(this);
