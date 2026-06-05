@@ -840,28 +840,33 @@ class HistoryTab implements MonitorTab {
     }
 
     record WaterfallStep(String nodeId, String processor, String direction, boolean first, boolean last,
-            int nodeLevel, long elapsed) {
+            int nodeLevel, long elapsed, int inlineDepth) {
 
         static WaterfallStep fromTrace(TraceEntry e) {
-            return new WaterfallStep(e.nodeId, e.processor, e.direction, e.first, e.last, e.nodeLevel, e.elapsed);
+            return new WaterfallStep(
+                    e.nodeId, e.processor, e.direction, e.first, e.last, e.nodeLevel, e.elapsed,
+                    e.inlineDepth);
         }
 
         static WaterfallStep fromHistory(HistoryEntry e) {
-            return new WaterfallStep(e.nodeId, e.processor, e.direction, e.first, e.last, e.nodeLevel, e.elapsed);
+            return new WaterfallStep(
+                    e.nodeId, e.processor, e.direction, e.first, e.last, e.nodeLevel, e.elapsed,
+                    e.inlineDepth);
         }
 
         WaterfallStep withElapsed(long newElapsed) {
-            return new WaterfallStep(nodeId, processor, direction, first, last, nodeLevel, newElapsed);
+            return new WaterfallStep(nodeId, processor, direction, first, last, nodeLevel, newElapsed, inlineDepth);
         }
 
         String label() {
+            String prefix = inlineDepth > 0 ? "  ".repeat(inlineDepth) : "";
             if (nodeId != null && !nodeId.isEmpty()) {
-                return nodeId;
+                return prefix + nodeId;
             }
             if (processor != null) {
-                return processor.stripLeading();
+                return prefix + processor.stripLeading();
             }
-            return "";
+            return prefix;
         }
     }
 

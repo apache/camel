@@ -1695,6 +1695,7 @@ class DiagramSupport {
         frame.renderWidget(finalWidget, hChunks.get(0));
 
         eipNodeBoxes = new ArrayList<>(finalWidget.getNodeBoxes());
+        selectedEipNodeIndex = selIdx;
 
         vScrollState.contentLength(totalRows);
         vScrollState.viewportContentLength(visibleLines);
