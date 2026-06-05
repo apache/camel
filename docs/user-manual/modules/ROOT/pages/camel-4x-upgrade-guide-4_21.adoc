@@ -1761,6 +1761,13 @@ from("langchain4j-tools:test1?tags=user&description=Query user by number&paramet
 Additionally, `camel-langchain4j-agent` now extracts primitive values (`int`, `long`, `double`, `boolean`,
 `String`) from tool arguments instead of setting raw `JsonNode` objects as headers.
 
+=== Deprecation of camel-headersmap
+
+The component camel-headersmap is deprecated. Since Camel 4.21, the default `CaseInsensitiveMap` in camel-core
+uses a custom O(1) hash table with zero-allocation lookups and header key deduplication, making the external
+cedarsoftware `java-util` dependency unnecessary. Simply remove the `camel-headersmap` dependency from your
+project — the core implementation now provides equivalent or better performance.
+
 === Deprecation of camel-paho
 
 The components camel-paho is deprecated. There were no new release since 2020 of the Java client, last non-regulatory commit was in 2022.

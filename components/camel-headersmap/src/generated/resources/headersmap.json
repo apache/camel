@@ -4,7 +4,7 @@
     "name": "headersmap",
     "title": "Headersmap",
     "description": "Fast case-insensitive headers map implementation",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "core",
     "supportLevel": "Stable",
