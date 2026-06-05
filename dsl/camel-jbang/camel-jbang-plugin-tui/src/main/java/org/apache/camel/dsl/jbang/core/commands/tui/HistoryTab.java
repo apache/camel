@@ -1608,6 +1608,62 @@ class HistoryTab implements MonitorTab {
         }
     }
 
+    String toggleDisplaySection(String section, Boolean enabled) {
+        boolean tracerActive = !traces.get().isEmpty();
+        boolean newValue;
+        switch (section) {
+            case "headers" -> {
+                if (tracerActive) {
+                    showTraceHeaders = enabled != null ? enabled : !showTraceHeaders;
+                    newValue = showTraceHeaders;
+                } else {
+                    showHistoryHeaders = enabled != null ? enabled : !showHistoryHeaders;
+                    newValue = showHistoryHeaders;
+                }
+            }
+            case "properties" -> {
+                if (tracerActive) {
+                    showTraceProperties = enabled != null ? enabled : !showTraceProperties;
+                    newValue = showTraceProperties;
+                } else {
+                    showHistoryProperties = enabled != null ? enabled : !showHistoryProperties;
+                    newValue = showHistoryProperties;
+                }
+            }
+            case "variables" -> {
+                if (tracerActive) {
+                    showTraceVariables = enabled != null ? enabled : !showTraceVariables;
+                    newValue = showTraceVariables;
+                } else {
+                    showHistoryVariables = enabled != null ? enabled : !showHistoryVariables;
+                    newValue = showHistoryVariables;
+                }
+            }
+            case "body" -> {
+                if (tracerActive) {
+                    showTraceBody = enabled != null ? enabled : !showTraceBody;
+                    newValue = showTraceBody;
+                } else {
+                    showHistoryBody = enabled != null ? enabled : !showHistoryBody;
+                    newValue = showHistoryBody;
+                }
+            }
+            case "wrap" -> {
+                if (tracerActive) {
+                    traceWordWrap = enabled != null ? enabled : !traceWordWrap;
+                    newValue = traceWordWrap;
+                } else {
+                    historyWordWrap = enabled != null ? enabled : !historyWordWrap;
+                    newValue = historyWordWrap;
+                }
+            }
+            default -> {
+                return null;
+            }
+        }
+        return section + "=" + (newValue ? "on" : "off");
+    }
+
     @Override
     public JsonObject getTableDataAsJson() {
         JsonObject result = new JsonObject();

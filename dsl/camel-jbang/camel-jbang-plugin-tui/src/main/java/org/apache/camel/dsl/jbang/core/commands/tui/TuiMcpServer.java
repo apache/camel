@@ -411,6 +411,34 @@ class TuiMcpServer {
                         "body", propDef("string", "Message body to send"),
                         "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
                 List.of("endpoint")));
+        toolList.add(toolDef(
+                "tui_set_log_level",
+                "Changes the runtime log level of the selected integration. "
+                                     + "This sends a command to the running Camel application to change "
+                                     + "the root logger level.",
+                Map.of("level", propDef("string",
+                        "Log level to set: ERROR, WARN, INFO, DEBUG, or TRACE")),
+                List.of("level")));
+        toolList.add(toolDef(
+                "tui_filter",
+                "Sets or clears the fuzzy text filter on a tab that supports typing-to-filter. "
+                              + "Currently supported on the Classpath tab. "
+                              + "Use an empty string to clear the filter.",
+                Map.of("filter", propDef("string",
+                        "Filter text to apply. Empty string clears the filter."),
+                        "tab", propDef("string",
+                                "Tab name to filter (e.g. 'Classpath'). If omitted, uses the active tab.")),
+                List.of("filter")));
+        toolList.add(toolDef(
+                "tui_toggle_trace_display",
+                "Toggles which sections are visible in the History tab's detail view. "
+                                            + "Controls what data is shown when inspecting trace steps or history entries.",
+                Map.of("section", propDef("string",
+                        "Section to toggle: headers, properties, variables, body, or wrap"),
+                        "enabled", propDef("boolean",
+                                "If provided, forces the section on (true) or off (false). "
+                                                      + "If omitted, toggles the current state.")),
+                List.of("section")));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -453,6 +481,9 @@ class TuiMcpServer {
                 case "tui_get_history" -> callGetHistory(args);
                 case "tui_get_topology" -> callGetTopology();
                 case "tui_send_message" -> callSendMessage(args);
+                case "tui_set_log_level" -> callSetLogLevel(args);
+                case "tui_filter" -> callFilter(args);
+                case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -1004,6 +1035,43 @@ class TuiMcpServer {
             return "Error: no integration selected or PID unavailable";
         }
         return Jsoner.serialize(response);
+    }
+
+    private String callSetLogLevel(Map<String, Object> args) {
+        String level = (String) args.get("level");
+        if (level == null || level.isBlank()) {
+            return "Error: level is required (ERROR, WARN, INFO, DEBUG, TRACE)";
+        }
+        level = level.toUpperCase();
+        if (!"ERROR".equals(level) && !"WARN".equals(level) && !"INFO".equals(level)
+                && !"DEBUG".equals(level) && !"TRACE".equals(level)) {
+            return "Error: invalid level '" + level + "'. Must be ERROR, WARN, INFO, DEBUG, or TRACE";
+        }
+        monitor.setLogLevel(level);
+        return "Log level set to " + level;
+    }
+
+    private String callFilter(Map<String, Object> args) {
+        String filter = args.get("filter") instanceof String s ? s : "";
+        String tab = args.get("tab") instanceof String s ? s : null;
+        boolean applied = monitor.setTabFilter(tab, filter);
+        if (!applied) {
+            return "This tab does not support text filtering";
+        }
+        return filter.isEmpty() ? "Filter cleared" : "Filter set to: " + filter;
+    }
+
+    private String callToggleTraceDisplay(Map<String, Object> args) {
+        String section = (String) args.get("section");
+        if (section == null || section.isBlank()) {
+            return "Error: section is required (headers, properties, variables, body, wrap)";
+        }
+        Boolean enabled = args.get("enabled") instanceof Boolean b ? b : null;
+        String result = monitor.toggleTraceDisplay(section, enabled);
+        if (result == null) {
+            return "Error: unknown section '" + section + "'. Must be headers, properties, variables, body, or wrap";
+        }
+        return result;
     }
 
     private static JsonArray toJsonArray(List<String> list) {

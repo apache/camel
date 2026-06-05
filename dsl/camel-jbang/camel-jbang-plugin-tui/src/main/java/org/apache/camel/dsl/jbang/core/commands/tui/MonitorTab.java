@@ -58,4 +58,8 @@ interface MonitorTab {
     default JsonObject getTableDataAsJson() {
         return null;
     }
+
+    default boolean setFilter(String filter) {
+        return false;
+    }
 }

@@ -507,6 +507,12 @@ class LogTab implements MonitorTab {
         frame.renderStatefulWidget(list, popup, logLevelListState);
     }
 
+    void setLogLevel(String level) {
+        if (ctx.selectedPid != null) {
+            sendLoggerLevelAction(ctx.selectedPid, level);
+        }
+    }
+
     private void sendLoggerLevelAction(String pid, String level) {
         JsonObject root = new JsonObject();
         root.put("action", "logger");

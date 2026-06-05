@@ -347,6 +347,18 @@ class ClasspathTab implements MonitorTab {
     }
 
     @Override
+    public boolean setFilter(String filter) {
+        fuzzyFilter.clearFilter();
+        if (filter != null && !filter.isEmpty()) {
+            for (char c : filter.toCharArray()) {
+                fuzzyFilter.appendChar(c);
+            }
+        }
+        refilter();
+        return true;
+    }
+
+    @Override
     public SelectionContext getSelectionContext() {
         return null;
     }
