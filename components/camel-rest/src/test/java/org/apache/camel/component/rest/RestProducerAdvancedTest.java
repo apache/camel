@@ -153,8 +153,9 @@ class RestProducerAdvancedTest {
         producer.prepareExchange(exchange);
 
         String query = exchange.getMessage().getHeader(RestConstants.REST_HTTP_QUERY, String.class);
-        // Empty query parameters result in empty string, not null
-        assertThat(query).isEmpty();
+        // When queryParameters resolves to an empty string, we treat it as "no query"
+        // and do not set the REST_HTTP_QUERY header at all.
+        assertThat(query).isNull();
     }
 
     @Test
