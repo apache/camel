@@ -29,7 +29,6 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -60,9 +59,8 @@ public class CatalogKamelet extends CamelCommand {
     String filterName;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = RuntimeType.KAMELETS_VERSION)
-    String kameletsVersion = RuntimeType.KAMELETS_VERSION;
+            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    String kameletsVersion;
 
     public CatalogKamelet(CamelJBangMain main) {
         super(main);

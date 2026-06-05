@@ -86,7 +86,7 @@ public class Init extends CamelCommand {
     private String fromKamelet;
 
     @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     private String kameletsVersion;
 
     @Option(names = { "--pipe" },

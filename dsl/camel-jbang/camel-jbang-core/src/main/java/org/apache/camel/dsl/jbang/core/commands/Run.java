@@ -197,7 +197,8 @@ public class Run extends CamelCommand {
             description = "To run using a different Camel Spring Boot version than the default version.")
     String camelSpringBootVersion;
 
-    @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
+    @Option(names = { "--kamelets-version" },
+            description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     String kameletsVersion;
 
     @CommandLine.Mixin
