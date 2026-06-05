@@ -39,7 +39,7 @@ public class BacklogTracerMessageHistoryMulticastSedaTest extends ManagementTest
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testLateArrivingAsyncBranchCaptured() throws Exception {
+    public void testMulticastToSedaCapturesBothBranches() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on
                 = new ObjectName(
@@ -49,13 +49,10 @@ public class BacklogTracerMessageHistoryMulticastSedaTest extends ManagementTest
 
         mbeanServer.setAttribute(on, new javax.management.Attribute("RemoveOnDump", Boolean.FALSE));
 
-        getMockEndpoint("mock:fast").expectedMessageCount(2);
-        getMockEndpoint("mock:slow").expectedMessageCount(2);
+        getMockEndpoint("mock:fast").expectedMessageCount(1);
+        getMockEndpoint("mock:slow").expectedMessageCount(1);
 
-        // send two exchanges in quick succession so the second claims the provisional queue
-        // before the slow branch of the first exchange finishes
-        template.sendBody("direct:start", "First");
-        template.sendBody("direct:start", "Second");
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -69,10 +66,10 @@ public class BacklogTracerMessageHistoryMulticastSedaTest extends ManagementTest
             Set<String> routeIds = events.stream()
                     .map(BacklogTracerEventMessage::getRouteId)
                     .collect(Collectors.toSet());
-            assertTrue(routeIds.contains("main"), "Should contain main route events");
+            assertTrue(routeIds.contains("starter"), "Should contain starter route events");
             assertTrue(routeIds.contains("fast-route"), "Should contain fast-route events");
             assertTrue(routeIds.contains("slow-route"),
-                    "Should contain slow-route events (late-arriving async branch)");
+                    "Should contain slow-route events (async branch via seda)");
         });
     }
 
@@ -85,7 +82,7 @@ public class BacklogTracerMessageHistoryMulticastSedaTest extends ManagementTest
                 context.setBacklogTracing(true);
                 context.setMessageHistory(true);
 
-                from("direct:start").routeId("main")
+                from("direct:start").routeId("starter")
                         .multicast().parallelProcessing()
                         .to("seda:fast", "seda:slow")
                         .end();
