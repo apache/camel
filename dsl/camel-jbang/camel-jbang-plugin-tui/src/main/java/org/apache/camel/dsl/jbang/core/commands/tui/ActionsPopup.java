@@ -73,6 +73,7 @@ class ActionsPopup {
         RUN_EXAMPLE,
         RUN_FOLDER,
         RUN_INFRA,
+        BROWSE_FILES,
         DOCTOR,
         RESET_STATS,
         RESET_SCREEN,
@@ -86,7 +87,7 @@ class ActionsPopup {
         MCP_LOG
     }
 
-    private static final int[] GROUP_SIZES = { 4, 4, 5 };
+    private static final int[] GROUP_SIZES = { 5, 4, 5 };
     private static final int MCP_GROUP_SIZE = 2;
 
     private final Supplier<Set<String>> runningNames;
@@ -99,6 +100,7 @@ class ActionsPopup {
     private final Runnable burstCallback;
     private Runnable resetStatsAction;
     private Runnable resetScreenAction;
+    private Runnable browseFilesAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
     private boolean mcpEnabled;
@@ -192,6 +194,10 @@ class ActionsPopup {
 
     void setResetScreenAction(Runnable resetScreenAction) {
         this.resetScreenAction = resetScreenAction;
+    }
+
+    void setBrowseFilesAction(Runnable browseFilesAction) {
+        this.browseFilesAction = browseFilesAction;
     }
 
     void setMcpEnabled(
@@ -315,6 +321,7 @@ class ActionsPopup {
         labels.add("Run an example...");
         labels.add("Run from folder...");
         labels.add("Run Dev/Infra Service...");
+        labels.add("Browse Files...");
         labels.add("───");
         // Group 2: Diagnostics
         labels.add("Run Doctor");
@@ -545,6 +552,13 @@ class ActionsPopup {
                     } else if (action == Action.TAPE_INSTRUCTIONS) {
                         showActionsMenu = false;
                         openTapeInstructions();
+                    } else if (action == Action.BROWSE_FILES) {
+                        if (ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                            showActionsMenu = false;
+                            if (browseFilesAction != null) {
+                                browseFilesAction.run();
+                            }
+                        }
                     } else if (action == Action.DOCTOR) {
                         showActionsMenu = false;
                         doctorPopup.open();
@@ -733,6 +747,10 @@ class ActionsPopup {
         items.add(ListItem.from("  🐪 Run an example..."));
         items.add(ListItem.from("  📂 Run from folder..."));
         items.add(ListItem.from("  🔧 Run Dev/Infra Service..."));
+        boolean hasSelection = ctx != null && ctx.selectedPid != null && !ctx.isInfraSelected();
+        items.add(hasSelection
+                ? ListItem.from("  📁 Browse Files...")
+                : ListItem.from("  📁 Browse Files...").style(Style.EMPTY.dim()));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics
         items.add(ListItem.from("  🩺 Run Doctor"));
@@ -1177,6 +1195,15 @@ class ActionsPopup {
         if (folder.isEmpty()) {
             return;
         }
+        // resolve ~ to home directory
+        if (folder.startsWith("~")) {
+            folder = System.getProperty("user.home") + folder.substring(1);
+        }
+        Path dirPath = Path.of(folder);
+        if (!Files.isDirectory(dirPath)) {
+            setNotification("Directory does not exist: " + folder, true);
+            return;
+        }
         folderHistory.remove(folder);
         folderHistory.add(0, folder);
         if (folderHistory.size() > 20) {
@@ -1184,7 +1211,7 @@ class ActionsPopup {
         }
         selectedFolder = folder;
         showFolderInput = false;
-        String displayName = Path.of(folder).getFileName().toString();
+        String displayName = dirPath.getFileName().toString();
         runOptionsForm.open(displayName, displayName, false, true);
     }
 
