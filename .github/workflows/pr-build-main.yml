@@ -67,15 +67,13 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: ['17', '21']
+        java: ['17', '25']
         experimental: [ false ]
         include:
           - java: '17'
             # JDK 17 is kept for runtime compatibility testing.
             # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
             maven_extra_args: '-Denforcer.phase=none'
-          - java: '25'
-            experimental: true
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
