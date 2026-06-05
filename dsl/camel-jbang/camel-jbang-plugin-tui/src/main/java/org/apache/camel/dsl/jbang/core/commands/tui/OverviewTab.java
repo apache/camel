@@ -215,12 +215,17 @@ class OverviewTab implements MonitorTab {
 
                 String sinceLastDisplay = formatSinceLast(info);
 
+                boolean hasDoc = info.readmeFiles != null && !info.readmeFiles.isEmpty();
                 String nameText = "🐪 " + (info.name != null ? info.name : "");
-                Line nameLine = info.devMode
-                        ? Line.from(
-                                Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)),
-                                Span.styled(" [dev]", Style.EMPTY.fg(Color.YELLOW).dim()))
-                        : Line.from(Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)));
+                List<Span> nameSpans = new ArrayList<>();
+                nameSpans.add(Span.styled(nameText, Style.EMPTY.fg(Color.CYAN)));
+                if (info.devMode) {
+                    nameSpans.add(Span.styled(" [dev]", Style.EMPTY.fg(Color.YELLOW).dim()));
+                }
+                if (hasDoc) {
+                    nameSpans.add(Span.styled(" 📖", Style.EMPTY));
+                }
+                Line nameLine = Line.from(nameSpans);
                 rows.add(Row.from(
                         Cell.from(info.pid),
                         Cell.from(nameLine),

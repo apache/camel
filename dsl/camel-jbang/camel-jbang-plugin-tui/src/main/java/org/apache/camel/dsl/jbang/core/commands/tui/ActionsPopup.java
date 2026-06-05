@@ -73,7 +73,6 @@ class ActionsPopup {
         RUN_EXAMPLE,
         RUN_FOLDER,
         RUN_INFRA,
-        SHOW_DOCS,
         DOCTOR,
         RESET_STATS,
         RESET_SCREEN,
@@ -87,7 +86,7 @@ class ActionsPopup {
         MCP_LOG
     }
 
-    private static final int[] GROUP_SIZES = { 5, 4, 5 };
+    private static final int[] GROUP_SIZES = { 4, 4, 5 };
     private static final int MCP_GROUP_SIZE = 2;
 
     private final Supplier<Set<String>> runningNames;
@@ -316,7 +315,6 @@ class ActionsPopup {
         labels.add("Run an example...");
         labels.add("Run from folder...");
         labels.add("Run Dev/Infra Service...");
-        labels.add("Show Integration Doc");
         labels.add("───");
         // Group 2: Diagnostics
         labels.add("Run Doctor");
@@ -535,8 +533,6 @@ class ActionsPopup {
                         openExampleBrowser();
                     } else if (action == Action.RUN_FOLDER) {
                         openFolderInput();
-                    } else if (action == Action.SHOW_DOCS) {
-                        openDocPicker();
                     } else if (action == Action.SCREENSHOT) {
                         showActionsMenu = false;
                         screenshotAction.run();
@@ -737,7 +733,6 @@ class ActionsPopup {
         items.add(ListItem.from("  🐪 Run an example..."));
         items.add(ListItem.from("  📂 Run from folder..."));
         items.add(ListItem.from("  🔧 Run Dev/Infra Service..."));
-        items.add(ListItem.from("  📖 Show Integration Doc"));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics
         items.add(ListItem.from("  🩺 Run Doctor"));
@@ -942,6 +937,11 @@ class ActionsPopup {
         docPickerIntegrations = withDocs;
         showDocPicker = true;
         docPickerState.select(0);
+    }
+
+    void openDoc(IntegrationInfo info) {
+        showActionsMenu = false;
+        loadDocFromIntegration(info);
     }
 
     private void loadDocFromSelectedIntegration() {

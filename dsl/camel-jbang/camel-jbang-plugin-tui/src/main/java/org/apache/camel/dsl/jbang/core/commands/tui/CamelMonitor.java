@@ -758,6 +758,13 @@ public class CamelMonitor extends CamelCommand {
                 restartSelectedProcess();
                 return true;
             }
+            if (tab == TAB_OVERVIEW && ke.isChar('d') && ctx.selectedPid != null && !isInfraSelected()) {
+                IntegrationInfo selInfo = findSelectedIntegration();
+                if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
+                    actionsPopup.openDoc(selInfo);
+                    return true;
+                }
+            }
             // Delegate remaining keys to active tab
             if (activeTab != null && activeTab.handleKeyEvent(ke)) {
                 return true;
@@ -1748,6 +1755,9 @@ public class CamelMonitor extends CamelCommand {
         if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
             if (selInfo != null) {
+                if (selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
+                    hint(spans, "d", "docs");
+                }
                 hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
             }
         }
