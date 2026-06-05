@@ -170,9 +170,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String camelVersion;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = RuntimeType.KAMELETS_VERSION)
-    protected String kameletsVersion = RuntimeType.KAMELETS_VERSION;
+            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
                         description = "Profile to export (dev, test, or prod).")
@@ -370,6 +369,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected abstract Integer export() throws Exception;
 
     protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean, boolean verbose) throws Exception {
+        if (kameletsVersion == null) {
+            kameletsVersion = VersionHelper.extractKameletsVersion();
+        }
         Run run = new Run(getMain());
         // need to declare the profile to use for run
         run.exportBaseDir = exportBaseDir;
