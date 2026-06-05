@@ -21,17 +21,17 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Main class for the Camel JBang Fat-Jar Launcher.
+ * Main class for the Camel CLI Fat-Jar Launcher.
  * <p>
- * This launcher provides a self-contained executable JAR that includes all dependencies required to run Camel JBang
+ * This launcher provides a self-contained executable JAR that includes all dependencies required to run Camel CLI
  * without the need for the JBang two-step process.
  */
 public class CamelLauncher {
 
     /**
-     * Main entry point for the Camel JBang Fat-Jar Launcher.
+     * Main entry point for the Camel CLI Fat-Jar Launcher.
      *
-     * @param args command line arguments to pass to Camel JBang
+     * @param args command line arguments to pass to Camel CLI
      */
     public static void main(String... args) {
         // Set system property to indicate we're running from the launcher

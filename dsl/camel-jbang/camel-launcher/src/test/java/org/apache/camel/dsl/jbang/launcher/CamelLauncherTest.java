@@ -84,7 +84,7 @@ public class CamelLauncherTest {
         main.execute("version");
 
         String output = baos.toString();
-        assertTrue(output.contains("Camel JBang version:"), "Output should contain version information");
+        assertTrue(output.contains("Camel CLI version:"), "Output should contain version information");
     }
 
     @Test

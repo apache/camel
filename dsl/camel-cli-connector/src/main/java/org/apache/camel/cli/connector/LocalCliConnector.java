@@ -1022,7 +1022,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 cr.setCamelContext(camelContext);
                 camelContext.addService(cr);
             }
-            cr.load("Camel JBang", files, restart);
+            cr.load("Camel CLI", files, restart);
             JsonObject jo = new JsonObject();
             Exception error = cr.getLastError();
             if (error != null) {
@@ -1041,11 +1041,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private void doActionReloadTask() {
         ContextReloadStrategy cr = camelContext.hasService(ContextReloadStrategy.class);
         if (cr != null) {
-            cr.onReload("Camel JBang");
+            cr.onReload("Camel CLI");
         } else {
             ResourceReloadStrategy rr = camelContext.hasService(ResourceReloadStrategy.class);
             if (rr != null) {
-                rr.onReload("Camel JBang");
+                rr.onReload("Camel CLI");
             }
         }
     }

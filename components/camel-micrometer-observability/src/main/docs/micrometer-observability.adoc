@@ -58,7 +58,7 @@ import org.apache.camel.micrometer.observability.MicrometerObservabilityTracer;
     }
 ```
 
-You can run this, for example, directly via Camel JBang using `camel run MyTest.java --dep camel-micrometer-observability`. This basic configuration will start an "in-memory" simple implementation with a "no-op" context propagation. You may want to use this exclusively for development purposes. In order to configure it for a production environment you will need to setup a `Tracer`, an `ObservationRegistry` and a `Propagator`.
+You can run this, for example, directly via Camel CLI using `camel run MyTest.java --dep camel-micrometer-observability`. This basic configuration will start an "in-memory" simple implementation with a "no-op" context propagation. You may want to use this exclusively for development purposes. In order to configure it for a production environment you will need to setup a `Tracer`, an `ObservationRegistry` and a `Propagator`.
 
 If you need to setup the specific component parameters, you may do it directly on the tracer object, for example:
 

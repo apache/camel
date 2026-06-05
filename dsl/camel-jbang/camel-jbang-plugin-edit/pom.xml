@@ -31,7 +31,7 @@
     <artifactId>camel-jbang-plugin-edit</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Edit</name>
-    <description>Camel JBang Edit Plugin</description>
+    <description>Camel CLI Edit Plugin</description>
 
     <properties>
         <firstVersion>4.12.0</firstVersion>

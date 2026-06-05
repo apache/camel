@@ -33,7 +33,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: JBang :: MCP</name>
-    <description>Camel JBang MCP (Model Context Protocol) Server</description>
+    <description>Camel CLI MCP (Model Context Protocol) Server</description>
 
     <properties>
         <firstVersion>4.18.0</firstVersion>
@@ -80,7 +80,7 @@
             <artifactId>quarkus-jackson</artifactId>
         </dependency>
 
-        <!-- Camel JBang Core for catalog and utilities -->
+        <!-- Camel CLI Core for catalog and utilities -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-core</artifactId>

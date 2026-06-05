@@ -87,7 +87,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                 execute(String.format("config set repos=%s", mavenRepos));
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Camel JBang version {}", version());
+                LOG.debug("Camel CLI version {}", version());
             }
         } else {
             LOG.debug("the container is already running");
@@ -241,7 +241,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                         version = StringHelper.between(versionSummary, "camel-version = ", "\n").trim();
                     }
                     if (version == null) {
-                        version = StringHelper.between(versionSummary, "Camel JBang version:", "\n").trim();
+                        version = StringHelper.between(versionSummary, "Camel CLI version:", "\n").trim();
                     }
                     return version;
                 });

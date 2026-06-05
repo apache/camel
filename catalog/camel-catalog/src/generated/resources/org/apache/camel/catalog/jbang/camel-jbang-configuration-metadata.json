@@ -1,6 +1,6 @@
 {
   "groups": [
-    { "name": "camel.jbang", "description": "Camel JBang configurations" }
+    { "name": "camel.jbang", "description": "Camel CLI configurations" }
   ],
   "properties": [
     { "name": "camel.jbang.camel-version", "required": false, "description": "The version of Apache Camel to use", "type": "string", "javaType": "String", "secret": false },
@@ -36,7 +36,7 @@
     { "name": "camel.jbang.mavenWrapper", "required": false, "description": "Include Maven Wrapper files in the exported project", "type": "boolean", "javaType": "boolean", "defaultValue": true, "secret": false },
     { "name": "camel.jbang.metrics", "required": false, "description": "Metrics (Micrometer and Prometheus) at \/observe\/metrics on local HTTP server (port 8080 by default) when running standalone Camel", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false, "deprecated": true },
     { "name": "camel.jbang.openApi", "required": false, "description": "File name of open-api spec file (JSON or YAML) to generate routes from the swagger\/openapi API spec file.", "type": "string", "javaType": "String", "secret": false },
-    { "name": "camel.jbang.packageScanJars", "required": false, "description": "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang", "label": "advanced", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false },
+    { "name": "camel.jbang.packageScanJars", "required": false, "description": "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI", "label": "advanced", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false },
     { "name": "camel.jbang.prompt", "required": false, "description": "Allow user to type in required parameters in prompt if not present in application", "label": "advanced", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false },
     { "name": "camel.jbang.quarkusArtifactId", "required": false, "description": "artifactId of Quarkus Platform BOM", "label": "quarkus", "type": "string", "javaType": "String", "secret": false, "deprecated": true },
     { "name": "camel.jbang.quarkusExtensionRegistryBaseUri", "required": false, "description": "The base URI of Quarkus Extension Registry", "label": "quarkus", "type": "string", "javaType": "String", "secret": false },

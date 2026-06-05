@@ -241,7 +241,7 @@ public class Run extends CamelCommand {
     public MavenResolverMixin mavenResolver = new MavenResolverMixin();
 
     @Option(names = { "--package-scan-jars" }, defaultValue = "false",
-            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
     boolean packageScanJars;
 
     @CommandLine.ArgGroup(validate = false, heading = "%nLogging Options:%n")

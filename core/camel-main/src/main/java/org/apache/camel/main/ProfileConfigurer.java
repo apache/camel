@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Configure Camel Main with the chosen profile.
  *
- * This is for Camel JBang and Standalone Camel, not Spring Boot or Quarkus; as they have their own profile concept.
+ * This is for Camel CLI and Standalone Camel, not Spring Boot or Quarkus; as they have their own profile concept.
  */
 public class ProfileConfigurer {
 

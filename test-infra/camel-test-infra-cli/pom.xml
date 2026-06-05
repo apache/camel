@@ -28,7 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>camel-test-infra-cli</artifactId>
-    <name>Camel :: Test Infra :: Cli (Camel JBang)</name>
+    <name>Camel :: Test Infra :: Cli (Camel CLI)</name>
 
     <properties>
         <skipTests>true</skipTests>

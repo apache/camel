@@ -147,7 +147,7 @@ public final class CommandLineHelper {
     }
 
     /**
-     * Gets the Camel JBang working directory.
+     * Gets the Camel CLI working directory.
      *
      * @return file pointing to the working directory.
      */

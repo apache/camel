@@ -145,7 +145,7 @@ public class KameletMain extends MainCommandLineSupport {
     private final BlueprintXmlBeansHandler blueprintXmlBeansHandler = new BlueprintXmlBeansHandler();
 
     /**
-     * Deprecated constructor - to tightly bound to Camel JBang. Do not use.
+     * Deprecated constructor - to tightly bound to Camel CLI. Do not use.
      */
     @Deprecated(since = "4.9.0")
     KameletMain() {
@@ -249,7 +249,7 @@ public class KameletMain extends MainCommandLineSupport {
     }
 
     /**
-     * Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang
+     * Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI
      */
     public void setPackageScanJars(boolean packageScanJars) {
         this.packageScanJars = packageScanJars;

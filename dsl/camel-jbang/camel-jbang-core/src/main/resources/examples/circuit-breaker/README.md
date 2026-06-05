@@ -1,6 +1,6 @@
 ## Circuit Breaker
 
-This example shows how Camel JBang can use circuit breaker EIP.
+This example shows how Camel CLI can use circuit breaker EIP.
 
 ### Install JBang
 
@@ -20,7 +20,7 @@ To run this example you can either install Camel on JBang via:
 $ jbang app install camel@apache/camel
 ```
 
-Which allows to run Camel JBang with `camel` as shown below.
+Which allows to run Camel CLI with `camel` as shown below.
 
 ### How to run
 

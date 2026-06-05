@@ -31,7 +31,7 @@
     <artifactId>camel-jbang-plugin-generate</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Generate</name>
-    <description>Camel JBang Generate Plugin</description>
+    <description>Camel CLI Generate Plugin</description>
 
     <properties>
         <firstVersion>4.8.0</firstVersion>

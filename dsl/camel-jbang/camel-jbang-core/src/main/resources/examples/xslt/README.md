@@ -20,7 +20,7 @@ To run this example you can either install Camel on JBang via:
 $ jbang app install camel@apache/camel
 ```
 
-Which allows to run Camel JBang with `camel` as shown below.
+Which allows to run Camel CLI with `camel` as shown below.
 
 ### How to run
 
@@ -34,7 +34,7 @@ This reads the XML input file from _./input/account.xml_ and applies XSL transfo
 
 ### Live updates of message transformation
 
-You can do live changes to the stylesheet and see the output in real-time with Camel JBang by running:
+You can do live changes to the stylesheet and see the output in real-time with Camel CLI by running:
 
 ```bash
 $ camel transform message --body=file:input/account.xml --component=xslt --template=file:stylesheet.xsl --pretty --watch

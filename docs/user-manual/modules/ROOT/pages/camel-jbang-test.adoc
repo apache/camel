@@ -1,12 +1,12 @@
 = Camel Testing plugin
 
-This plugin helps you to write automated tests with Camel JBang.
-Please make sure to meet these prerequisites for running tests with Camel JBang:
+This plugin helps you to write automated tests with Camel CLI.
+Please make sure to meet these prerequisites for running tests with Camel CLI:
 
-* Activate the Camel JBang test plugin
+* Activate the Camel CLI test plugin
 
-The Camel JBang Test functionality is provided as a command plugin.
-This means you need to enable the `test` plugin first to use the subcommands in Camel JBang.
+The Camel CLI Test functionality is provided as a command plugin.
+This means you need to enable the `test` plugin first to use the subcommands in Camel CLI.
 
 [source,bash]
 ----
@@ -26,7 +26,7 @@ camel plugin get
  test    test       org.apache.camel:camel-jbang-plugin-test  Manage tests for Camel applications
 ----
 
-Now Camel JBang is able to run the subcommands offered by the plugin.
+Now Camel CLI is able to run the subcommands offered by the plugin.
 You can inspect the help page to see the list of available plugin subcommands.
 
 [source,bash]
@@ -70,7 +70,7 @@ You can directly run the test and start implementing the test logic.
 
 The test plugin helps you to run the tests with JBang.
 As usual, there is no need to create a project or set-up dependencies for that.
-Camel JBang just runs the test locally.
+Camel CLI just runs the test locally.
 
 [source,bash]
 ----
@@ -82,7 +82,7 @@ At the end you should see a passed test in the test summary.
 By default, the tests are run with the JUnit Jupiter engine.
 Please refer to the help page of the `run` command for options and details.
 
-TIP: The Camel JBang plugin automatically creates a subfolder `test` and adds the test source files into this folder.
+TIP: The Camel CLI plugin automatically creates a subfolder `test` and adds the test source files into this folder.
 This is a way to separate test scoped resources from Camel integration sources.
 
 == Project export
@@ -92,7 +92,7 @@ Once you are happy with the Camel integration and the automated test you may wan
 The test plugin is able to participate in the project export in order to also add test scoped resources.
 When the plugin is active in your local JBang environment it will try to locate the automated tests and its resources (in the `test` subfolder) to add them to the exported project.
 
-Just keep using the normal project export command provided in Camel JBang.
+Just keep using the normal project export command provided in Camel CLI.
 The test plugin will automatically add the test resources for you.
 
 [source,bash]
@@ -112,7 +112,7 @@ Navigate to the project export folder and run the Maven verify lifecycle that in
 ----
 
 You should see some tests being executed during the Maven build and of course in case a test is failing you will see the Maven build failing, too.
-Now the automated tests from the prototyping phase with Camel JBang are part of the project for further usage in a CI/CD pipeline for instance.
+Now the automated tests from the prototyping phase with Camel CLI are part of the project for further usage in a CI/CD pipeline for instance.
 
 TIP: The project export has created a Java unit test (in `src/test/java`) that runs the test. You can also run the test from your Java IDE with this class. By default, the export uses JUnit Jupiter as a test engine.
 
@@ -137,7 +137,7 @@ org.citrusframework:citrus-testcontainers:4.7.0,\
 org.apache.camel:camel-endpointdsl:4.13.0,\
 org.apache.camel:camel-aws2-s3:4.13.0
 
-# Enable dump of Camel JBang integration output
+# Enable dump of Camel CLI integration output
 run.D=citrus.camel.jbang.dump.integration.output=true
 ----
 
@@ -152,7 +152,7 @@ TIP: During the project export the dependencies listed in `jbang.properties` wil
 == Explore test capabilities
 
 The test plugin uses https://citrusframework.org/[Citrus] as an underlying test framework.
-Citrus is an Open Source Java test framework that integrates very well with Apache Camel as it provides special test actions to use Camel JBang for instance.
+Citrus is an Open Source Java test framework that integrates very well with Apache Camel as it provides special test actions to use Camel CLI for instance.
 
 You can also install the https://citrusframework.org/[Citrus test framework] JBang application to explore the full capabilities.
 
@@ -174,7 +174,7 @@ For further details on test capabilities please also read the https://citrusfram
 
 === Using Camel Infrastructure Services
 
-The Camel JBang `infra` command enables you to start infrastructure services in your test environment.
+The Camel CLI `infra` command enables you to start infrastructure services in your test environment.
 See the list of available services with `camel infra`.
 
 The Citrus test is able to run these infrastructure services as part of the test.
@@ -237,9 +237,9 @@ Read more about the https://citrusframework.org/citrus/reference/html/#testconta
 
 === Run the Camel integration
 
-Citrus provides special test actions to run Camel integrations with Camel JBang.
-The test starts the integration as a separate Camel JBang process.
-You are able to apply specific configuration to the Camel JBang process such as `application.properties`, system properties and environment variables.
+Citrus provides special test actions to run Camel integrations with Camel CLI.
+The test starts the integration as a separate Camel CLI process.
+You are able to apply specific configuration to the Camel CLI process such as `application.properties`, system properties and environment variables.
 
 [source,yaml]
 ----
@@ -258,11 +258,11 @@ The test action above runs the Camel integration in the file `route.yaml` and ap
 TIP: Note that the file path to the `route.yaml` Camel integration uses a relative path that navigates to the parent folder.
 This is because usually the tests are located in a subdirectory (e.g. `test`) in order to separate test-scoped resources from runtime resources.
 
-This will start the Camel integration as a Camel JBang process.
+This will start the Camel integration as a Camel CLI process.
 The test waits for the integration to report a running status.
 Then the test proceeds with further actions (e.g. invoking the exposed service of the Camel integration).
 
-Read more about the https://citrusframework.org/citrus/reference/html/#apache-camel[Camel JBang support in Citrus].
+Read more about the https://citrusframework.org/citrus/reference/html/#apache-camel[Camel CLI support in Citrus].
 
 === Send/receive messages
 

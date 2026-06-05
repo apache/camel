@@ -47,7 +47,7 @@ public class VersionGet extends CamelCommand {
 
         CamelCatalog catalog = new DefaultCamelCatalog();
         String v = catalog.getCatalogVersion();
-        printer().println("Camel JBang version: " + v);
+        printer().println("Camel CLI version: " + v);
 
         CommandLineHelper.loadProperties(properties -> {
             String uv = properties.getProperty("camel-version");

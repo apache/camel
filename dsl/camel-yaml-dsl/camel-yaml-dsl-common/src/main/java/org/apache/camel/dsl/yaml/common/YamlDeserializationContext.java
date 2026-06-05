@@ -93,7 +93,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
             log.warn("YAML DSL compact notation detected in: {}."
                      + " It is recommended to use canonical/normalized YAML DSL notation"
                      + " which is more tooling and AI friendly."
-                     + " Use Camel JBang to normalize: camel yaml normalize <file>",
+                     + " Use Camel CLI to normalize: camel yaml normalize <file>",
                     loc);
         }
     }

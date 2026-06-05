@@ -184,7 +184,7 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
+     * Clear the captured metrics data when Camel is reloading routes such as when using Camel CLI.
      */
     public void setClearOnReload(boolean clearOnReload) {
         this.clearOnReload = clearOnReload;
@@ -343,7 +343,7 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
+     * Clear the captured metrics data when Camel is reloading routes such as when using Camel CLI.
      */
     public MetricsConfigurationProperties withClearOnReload(boolean clearOnReload) {
         this.clearOnReload = clearOnReload;

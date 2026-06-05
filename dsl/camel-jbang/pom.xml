@@ -31,7 +31,7 @@
     <packaging>pom</packaging>
 
     <name>Camel :: JBang :: Parent</name>
-    <description>Camel JBang Modules (parent)</description>
+    <description>Camel CLI Modules (parent)</description>
 
     <modules>
         <module>camel-jbang-console</module>

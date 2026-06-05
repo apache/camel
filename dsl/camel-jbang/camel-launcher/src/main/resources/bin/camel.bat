@@ -17,7 +17,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Camel JBang Launcher Start Up Batch script
+@REM Camel CLI Launcher Start Up Batch script
 @REM ----------------------------------------------------------------------------
 
 @REM Set local scope for the variables with windows NT shell
@@ -57,7 +57,7 @@ if not errorlevel 1 (
   for %%i in ("%BASEDIR%\camel-launcher-*.jar") do set LAUNCHER_JAR=%%i
 )
 
-@REM Execute Camel JBang
+@REM Execute Camel CLI
 "%JAVACMD%" %JAVA_OPTS% -jar "%LAUNCHER_JAR%" %*
 if ERRORLEVEL 1 goto error
 goto end

@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "jbang-console",
     "title": "Jbang Console",
-    "description": "Camel JBang Console",
+    "description": "Camel CLI Console",
     "deprecated": false,
     "firstVersion": "3.21.0",
     "label": "jbang",

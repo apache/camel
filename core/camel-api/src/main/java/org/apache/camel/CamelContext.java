@@ -1548,14 +1548,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setSourceLocationEnabled(Boolean sourceLocationEnabled);
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      *
      * @since 3.16
      */
     Boolean isModeline();
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      *
      * @since 3.16
      */

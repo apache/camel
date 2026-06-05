@@ -1,7 +1,7 @@
 {
   "name": "camel-mcp",
   "version": "0.1.0",
-  "description": "Apache Camel MCP server for AI coding assistants. Launches the Camel JBang MCP server (org.apache.camel:camel-jbang-mcp) over STDIO, exposing the Camel Catalog and tools for catalog exploration, route and YAML DSL validation, security hardening, error diagnosis, dependency check, OpenAPI contract-first scaffolding, and migration. Requires JBang on the PATH.",
+  "description": "Apache Camel MCP server for AI coding assistants. Launches the Camel CLI MCP server (org.apache.camel:camel-jbang-mcp) over STDIO, exposing the Camel Catalog and tools for catalog exploration, route and YAML DSL validation, security hardening, error diagnosis, dependency check, OpenAPI contract-first scaffolding, and migration. Requires JBang on the PATH.",
   "author": {
     "name": "Apache Camel",
     "email": "dev@camel.apache.org",

@@ -665,7 +665,7 @@ Or reference the schema locally from the `camel-yaml-dsl` JAR at `/schema/camelY
 === Normalizing YAML routes
 
 To convert existing YAML routes from the classic (shorthand) form to the canonical (explicit) form,
-use the Camel JBang `normalize` command:
+use the Camel CLI `normalize` command:
 
 [source,bash]
 ----
@@ -692,7 +692,7 @@ The warning is logged once per resource file and looks like:
 ----
 YAML DSL compact notation detected in: myroute.yaml.
 It is recommended to use canonical/normalized YAML DSL notation which is more tooling and AI friendly.
-Use Camel JBang to normalize: camel yaml normalize <file>
+Use Camel CLI to normalize: camel yaml normalize <file>
 ----
 
 To disable this warning, set the following property in `application.properties`:

@@ -1,7 +1,7 @@
 = Registry
 
 The `org.apache.camel.spi.Registry` API is a common API to lookup beans in any kind of runtime platform,
-whether you run Camel on Spring Boot, Quarkus, Standalone, Camel JBang or something else.
+whether you run Camel on Spring Boot, Quarkus, Standalone, Camel CLI or something else.
 
 Camel uses the `DefaultRegistry` that based on which runtime used will
 first look up beans from the runtime platform, and fallback to Camel's own `SimpleRegistry`.
