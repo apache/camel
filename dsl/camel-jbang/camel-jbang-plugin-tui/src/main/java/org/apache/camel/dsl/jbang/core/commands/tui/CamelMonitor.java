@@ -2884,6 +2884,14 @@ public class CamelMonitor extends CamelCommand {
         return diagramTab.getTableDataAsJson();
     }
 
+    void selectTraceExchange(String exchangeId) {
+        historyTab.selectTraceExchange(exchangeId);
+    }
+
+    JsonObject getTopologyData() {
+        return diagramTab.getTopologyDataAsJson();
+    }
+
     JsonObject sendMessage(String endpoint, String body, String headers) {
         if (ctx.selectedPid == null) {
             return null;

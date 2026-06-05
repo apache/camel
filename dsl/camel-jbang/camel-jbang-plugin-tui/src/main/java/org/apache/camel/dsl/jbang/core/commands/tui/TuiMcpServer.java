@@ -382,6 +382,28 @@ class TuiMcpServer {
                                    + "Shows the ASCII/Unicode art diagram of routes and their connections.",
                 Map.of()));
         toolList.add(toolDef(
+                "tui_get_history",
+                "Returns rich trace and history data from the History tab as structured JSON. "
+                                   + "Includes ALL exchange details: body with type, headers with types, "
+                                   + "exchange properties, exchange variables, thread name, source location, "
+                                   + "node level, and node labels. Much richer than tui_get_table on History. "
+                                   + "Returns different shapes depending on the History tab's current mode: "
+                                   + "Traces (exchange ID list), Trace Steps (per-step detail), "
+                                   + "or History (message history steps).",
+                Map.of("exchangeId", propDef("string",
+                        "If provided, returns trace steps for this specific exchange ID. "
+                                                       + "Otherwise returns data for the current History tab view."))));
+        toolList.add(toolDef(
+                "tui_get_topology",
+                "Returns the route topology as a structured JSON graph with nodes and edges arrays. "
+                                    + "Each node has: routeId, nodeType (route/external-in/external-out/trigger), "
+                                    + "layer, description, from (consumer URI), exchangesTotal, exchangesFailed. "
+                                    + "Each edge has: from (routeId), to (routeId), endpoint, connectionType, "
+                                    + "selfLoop, backEdge. "
+                                    + "Use this instead of tui_get_diagram when you need to reason about "
+                                    + "route connectivity programmatically.",
+                Map.of()));
+        toolList.add(toolDef(
                 "tui_send_message",
                 "Sends a message to a Camel endpoint in the selected integration. "
                                     + "Uses the file-based IPC protocol to deliver the message directly.",
@@ -428,6 +450,8 @@ class TuiMcpServer {
                 case "tui_get_log" -> callGetLog(args);
                 case "tui_get_errors" -> callGetErrors();
                 case "tui_get_diagram" -> callGetDiagram();
+                case "tui_get_history" -> callGetHistory(args);
+                case "tui_get_topology" -> callGetTopology();
                 case "tui_send_message" -> callSendMessage(args);
                 default -> {
                     isError = true;
@@ -943,6 +967,27 @@ class TuiMcpServer {
         JsonObject data = monitor.getDiagramData();
         if (data == null) {
             return "No diagram available. Navigate to the Diagram tab first.";
+        }
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetHistory(Map<String, Object> args) {
+        String exchangeId = args.get("exchangeId") instanceof String s ? s : null;
+        if (exchangeId != null && !exchangeId.isBlank()) {
+            monitor.navigateToTab("History");
+            monitor.selectTraceExchange(exchangeId);
+        }
+        JsonObject data = monitor.getTableData("History");
+        if (data == null) {
+            return "No history data available. Ensure the History tab has data.";
+        }
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetTopology() {
+        JsonObject data = monitor.getTopologyData();
+        if (data == null) {
+            return "No topology data available. The Diagram tab may not have loaded yet.";
         }
         return Jsoner.serialize(data);
     }

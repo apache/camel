@@ -192,6 +192,58 @@ class DiagramSupport {
         return topologyNodeWidth;
     }
 
+    JsonObject getTopologyDataAsJson() {
+        TopologyLayoutResult layout = topologyLayout;
+        if (layout == null || layout.nodes.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+
+        JsonArray nodesArr = new JsonArray();
+        for (TopologyLayoutNode node : layout.nodes) {
+            JsonObject n = new JsonObject();
+            n.put("routeId", node.routeId);
+            if (node.nodeType != null) {
+                n.put("nodeType", node.nodeType);
+            }
+            n.put("layer", node.layer);
+            if (node.description != null) {
+                n.put("description", node.description);
+            }
+            if (node.from != null) {
+                n.put("from", node.from);
+            }
+            if (node.connectionType != null) {
+                n.put("connectionType", node.connectionType);
+            }
+            n.put("exchangesTotal", node.exchangesTotal);
+            n.put("exchangesFailed", node.exchangesFailed);
+            nodesArr.add(n);
+        }
+        result.put("nodes", nodesArr);
+
+        JsonArray edgesArr = new JsonArray();
+        for (TopologyLayoutEdge edge : layout.edges) {
+            JsonObject e = new JsonObject();
+            e.put("from", edge.from.routeId);
+            e.put("to", edge.to.routeId);
+            if (edge.endpoint != null) {
+                e.put("endpoint", edge.endpoint);
+            }
+            if (edge.connectionType != null) {
+                e.put("connectionType", edge.connectionType);
+            }
+            e.put("selfLoop", edge.selfLoop);
+            e.put("backEdge", edge.backEdge);
+            edgesArr.add(e);
+        }
+        result.put("edges", edgesArr);
+
+        result.put("totalNodes", layout.nodes.size());
+        result.put("totalEdges", layout.edges.size());
+        return result;
+    }
+
     RouteDiagramLayoutEngine.LayoutRoute getRouteLayout(String routeId) {
         return routeLayouts.get(routeId);
     }

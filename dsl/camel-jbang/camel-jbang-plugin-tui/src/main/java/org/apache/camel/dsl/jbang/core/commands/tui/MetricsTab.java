@@ -47,6 +47,8 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
@@ -985,5 +987,67 @@ class MetricsTab implements MonitorTab {
                 - `s` — cycle sort column (in table mode)
                 - `S` — reverse sort order
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.meters.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Metrics");
+        JsonArray rows = new JsonArray();
+        for (MicrometerMeterInfo m : info.meters) {
+            JsonObject row = new JsonObject();
+            row.put("type", m.type);
+            row.put("name", m.name);
+            if (m.description != null) {
+                row.put("description", m.description);
+            }
+            if (m.count != null) {
+                row.put("count", m.count);
+            }
+            if (m.value != null) {
+                row.put("value", m.value);
+            }
+            if (m.mean != null) {
+                row.put("mean", m.mean);
+            }
+            if (m.max != null) {
+                row.put("max", m.max);
+            }
+            if (m.total != null) {
+                row.put("total", m.total);
+            }
+            if (m.activeTasks != null) {
+                row.put("activeTasks", m.activeTasks);
+            }
+            if (m.meanDouble != null) {
+                row.put("meanDouble", m.meanDouble);
+            }
+            if (m.maxDouble != null) {
+                row.put("maxDouble", m.maxDouble);
+            }
+            if (m.totalDouble != null) {
+                row.put("totalDouble", m.totalDouble);
+            }
+            if (!m.tags.isEmpty()) {
+                JsonArray tags = new JsonArray();
+                for (String[] tag : m.tags) {
+                    JsonObject t = new JsonObject();
+                    t.put("key", tag[0]);
+                    t.put("value", tag.length > 1 ? tag[1] : "");
+                    tags.add(t);
+                }
+                row.put("tags", tags);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", info.meters.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

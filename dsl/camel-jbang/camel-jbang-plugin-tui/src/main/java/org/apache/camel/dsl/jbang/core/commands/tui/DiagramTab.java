@@ -820,6 +820,10 @@ class DiagramTab implements MonitorTab {
         return null;
     }
 
+    JsonObject getTopologyDataAsJson() {
+        return diagram.getTopologyDataAsJson();
+    }
+
     private Line buildBreadcrumbTitle() {
         Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
         List<Span> spans = new ArrayList<>();
