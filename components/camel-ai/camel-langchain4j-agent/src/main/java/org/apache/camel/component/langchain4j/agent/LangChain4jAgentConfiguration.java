@@ -22,6 +22,7 @@ import java.util.Map;
 import dev.langchain4j.mcp.client.McpClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -39,6 +40,13 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     @UriParam(description = "The agent factory to use for creating agents if no Agent is provided")
     @Metadata(autowired = true)
     private AgentFactory agentFactory;
+
+    @UriParam(description = "AgentConfiguration used by Camel to create the agent internally."
+                            + " When set, Camel creates an AgentWithMemory if a ChatMemoryProvider is configured,"
+                            + " otherwise an AgentWithoutMemory."
+                            + " If an agentFactory is also configured, the factory takes precedence.")
+    @Metadata(autowired = true)
+    private AgentConfiguration agentConfiguration;
 
     @UriParam(description = "Tags for discovering and calling Camel route tools")
     private String tags;
@@ -105,6 +113,17 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setAgentFactory(AgentFactory agentFactory) {
         this.agentFactory = agentFactory;
+    }
+
+    /**
+     * AgentConfiguration used by Camel to create the agent internally.
+     */
+    public AgentConfiguration getAgentConfiguration() {
+        return agentConfiguration;
+    }
+
+    public void setAgentConfiguration(AgentConfiguration agentConfiguration) {
+        this.agentConfiguration = agentConfiguration;
     }
 
     /**

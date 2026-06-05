@@ -77,6 +77,42 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
+         * AgentConfiguration used by Camel to create the agent internally. When
+         * set, Camel creates an AgentWithMemory if a ChatMemoryProvider is
+         * configured, otherwise an AgentWithoutMemory. If an agentFactory is
+         * also configured, the factory takes precedence.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.langchain4j.agent.api.AgentConfiguration</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param agentConfiguration the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder agentConfiguration(org.apache.camel.component.langchain4j.agent.api.AgentConfiguration agentConfiguration) {
+            doSetProperty("agentConfiguration", agentConfiguration);
+            return this;
+        }
+        /**
+         * AgentConfiguration used by Camel to create the agent internally. When
+         * set, Camel creates an AgentWithMemory if a ChatMemoryProvider is
+         * configured, otherwise an AgentWithoutMemory. If an agentFactory is
+         * also configured, the factory takes precedence.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.langchain4j.agent.api.AgentConfiguration</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param agentConfiguration the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder agentConfiguration(String agentConfiguration) {
+            doSetProperty("agentConfiguration", agentConfiguration);
+            return this;
+        }
+        /**
          * The agent factory to use for creating agents if no Agent is provided.
          * 
          * The option is a:

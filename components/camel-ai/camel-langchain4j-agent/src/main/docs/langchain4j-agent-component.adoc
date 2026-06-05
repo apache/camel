@@ -215,6 +215,45 @@ Add the `camel-langchain4j-agent-api` dependency to access the Agent API classes
 ----
 ====
 
+=== Using AgentConfiguration Directly
+
+Instead of manually instantiating `AgentWithoutMemory` or `AgentWithMemory`, you can register an `AgentConfiguration` bean and let Camel create the right agent implementation automatically. Camel creates an `AgentWithMemory` when a `ChatMemoryProvider` is present, or an `AgentWithoutMemory` otherwise.
+
+==== Stateless agent
+
+[source,java]
+----
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel);
+
+context.getRegistry().bind("myConfig", config);
+
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agentConfiguration=#myConfig");
+----
+
+==== Stateful agent (with memory)
+
+[source,java]
+----
+ChatMemoryProvider memoryProvider = memoryId -> MessageWindowChatMemory.builder()
+    .id(memoryId)
+    .maxMessages(10)
+    .chatMemoryStore(persistentStore)
+    .build();
+
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withChatMemoryProvider(memoryProvider);
+
+context.getRegistry().bind("myConfig", config);
+
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agentConfiguration=#myConfig");
+----
+
+If an `agentFactory` is also configured on the endpoint, the factory takes precedence over `agentConfiguration`.
+
 === Basic Chat with only a userMessage
 
 For simple chat interactions, you can use an agent without memory.
