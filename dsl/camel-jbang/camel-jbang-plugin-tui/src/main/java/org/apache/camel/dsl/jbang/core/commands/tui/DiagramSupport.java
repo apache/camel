@@ -1246,10 +1246,24 @@ class DiagramSupport {
             }
         }
 
+        // Map initialStepIndex (index into messageHistory) to nodeOrder index
+        int resolvedStep = nodeOrder.size() - 1;
+        if (initialStepIndex >= 0 && initialStepIndex < messageHistory.length) {
+            String h = messageHistory[initialStepIndex];
+            int br = h.indexOf('[');
+            int en = h.indexOf(']');
+            if (br >= 0 && en > br) {
+                String nid = h.substring(br + 1, en);
+                int idx = nodeOrder.indexOf(nid);
+                if (idx >= 0) {
+                    resolvedStep = idx;
+                }
+            }
+        }
+        final int clampedStep = resolvedStep;
+
         // Compute topology nodeBoxes for selection
         boolean isFailed = failed;
-        int clampedStep = initialStepIndex >= 0 && initialStepIndex < nodeOrder.size()
-                ? initialStepIndex : nodeOrder.size() - 1;
         TopologyLayoutResult finalTopoResult = topoResult;
         int finalNodeW = nodeW;
         List<TopologyLayoutNode> finalTopoNodes = topoNodes;
