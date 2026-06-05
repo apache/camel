@@ -16,9 +16,11 @@
  */
 package org.apache.camel.main.download;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
+import org.apache.camel.tooling.model.TransformerModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,5 +45,21 @@ public class DependencyDownloaderTransformerResolverTest {
 
         TransformerKey resultKey = TransformerKey.createFrom(transformer);
         assertNotNull(resultKey);
+    }
+
+    @Test
+    void catalogLookupShouldNormalizeColonSeparatedNames() {
+        DefaultCamelCatalog catalog = new DefaultCamelCatalog();
+        DependencyDownloaderTransformerResolver resolver
+                = new DependencyDownloaderTransformerResolver(new SimpleCamelContext(), "*", true);
+
+        // transformer names use colon format (e.g., aws2-ddb:application-json)
+        // but the catalog stores them in dash format (aws2-ddb-application-json)
+        String colonName = "aws2-ddb:application-json";
+        String normalizedName = resolver.normalize(new TransformerKey(colonName));
+
+        TransformerModel model = catalog.transformerModel(normalizedName);
+        assertNotNull(model, "Catalog should find transformer using normalized name: " + normalizedName);
+        assertNotNull(model.getArtifactId(), "Transformer model should have artifactId");
     }
 }
