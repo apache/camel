@@ -420,7 +420,7 @@ class DiagramSupport {
     }
 
     void renderFooterHints(List<Span> spans) {
-        hint(spans, "Esc", "close");
+        hint(spans, "d/Esc", "close");
         hint(spans, "↑↓←→", "scroll");
         hint(spans, "PgUp/PgDn", "page");
         hint(spans, "Home/End", "top/end");

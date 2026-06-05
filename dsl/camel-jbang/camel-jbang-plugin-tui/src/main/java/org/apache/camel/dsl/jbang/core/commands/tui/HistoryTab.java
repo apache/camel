@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -104,6 +105,9 @@ class HistoryTab implements MonitorTab {
 
     private final DiagramSupport diagram = new DiagramSupport();
 
+    private List<TraceEntry> diagramTraceSteps = Collections.emptyList();
+    private List<HistoryEntry> diagramHistorySteps = Collections.emptyList();
+
     volatile List<HistoryEntry> historyEntries = Collections.emptyList();
     private final TableState historyTableState = new TableState();
     private boolean showHistoryProperties;
@@ -182,6 +186,47 @@ class HistoryTab implements MonitorTab {
                 diagram.setShowDescription(showDescription);
                 diagram.endLoad();
                 loadDiagramForCurrentView();
+                return true;
+            }
+            boolean isTraceMode = !diagramTraceSteps.isEmpty();
+            if (ke.isChar('b')) {
+                if (isTraceMode) {
+                    showTraceBody = !showTraceBody;
+                } else {
+                    showHistoryBody = !showHistoryBody;
+                }
+                return true;
+            }
+            if (ke.isChar('h')) {
+                if (isTraceMode) {
+                    showTraceHeaders = !showTraceHeaders;
+                } else {
+                    showHistoryHeaders = !showHistoryHeaders;
+                }
+                return true;
+            }
+            if (ke.isChar('p')) {
+                if (isTraceMode) {
+                    showTraceProperties = !showTraceProperties;
+                } else {
+                    showHistoryProperties = !showHistoryProperties;
+                }
+                return true;
+            }
+            if (ke.isChar('v')) {
+                if (isTraceMode) {
+                    showTraceVariables = !showTraceVariables;
+                } else {
+                    showHistoryVariables = !showHistoryVariables;
+                }
+                return true;
+            }
+            if (ke.isChar('w')) {
+                if (isTraceMode) {
+                    traceWordWrap = !traceWordWrap;
+                } else {
+                    historyWordWrap = !historyWordWrap;
+                }
                 return true;
             }
         }
@@ -374,8 +419,10 @@ class HistoryTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
-        if (diagram.isShowDiagram() && diagram.isHistoryMode() && !diagram.isHistoryTopologyMode()) {
-            diagram.historyGoBack();
+        if (diagram.isShowDiagram() && diagram.isHistoryMode()) {
+            if (!diagram.isHistoryTopologyMode()) {
+                diagram.historyGoBack();
+            }
             return true;
         }
         if (diagram.handleEscape()) {
@@ -457,16 +504,29 @@ class HistoryTab implements MonitorTab {
         }
 
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
+            Rect diagramArea = area;
+            Rect infoArea = null;
+            if (area.width() > 70) {
+                int panelWidth = 35;
+                List<Rect> hParts = Layout.horizontal()
+                        .constraints(Constraint.length(panelWidth), Constraint.fill())
+                        .split(area);
+                infoArea = hParts.get(0);
+                diagramArea = hParts.get(1);
+            }
             if (diagram.isHistoryTopologyMode()) {
                 Line title = Line.from(Span.styled(
                         String.format(" History Topology — step %d/%d ",
                                 diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
                         Style.EMPTY.fg(Color.WHITE)));
-                diagram.renderHistoryTopologyDiagram(frame, area, title);
+                diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
             } else {
                 String routeId = diagram.getHistoryDrillDownRouteId();
                 Line title = buildHistoryBreadcrumbTitle();
-                diagram.renderHistoryRouteDiagram(frame, area, title, routeId);
+                diagram.renderHistoryRouteDiagram(frame, diagramArea, title, routeId);
+            }
+            if (infoArea != null) {
+                renderDiagramInfoPanel(frame, infoArea);
             }
             return;
         }
@@ -494,17 +554,28 @@ class HistoryTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
             if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
+                boolean isTraceMode = !diagramTraceSteps.isEmpty();
+                boolean sb = isTraceMode ? showTraceBody : showHistoryBody;
+                boolean sh = isTraceMode ? showTraceHeaders : showHistoryHeaders;
+                boolean sp = isTraceMode ? showTraceProperties : showHistoryProperties;
+                boolean sv = isTraceMode ? showTraceVariables : showHistoryVariables;
+                boolean sw = isTraceMode ? traceWordWrap : historyWordWrap;
                 if (diagram.isHistoryTopologyMode()) {
-                    hint(spans, "Esc", "close");
+                    hint(spans, "d", "close");
                     hint(spans, "↑↓←→", "navigate");
                     hint(spans, "Enter", "drill-down");
                     hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
+                    hintShowBhpv(spans, sb, sh, sp, sv);
+                    hintLast(spans, "w", "wrap" + (sw ? " [on]" : " [off]"));
                 } else {
+                    hint(spans, "d", "close");
                     hint(spans, "Esc", "back");
                     hint(spans, "↑↓", "step through path");
                     hint(spans, "←→", "h-scroll");
                     hint(spans, "t", "topology");
                     hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
+                    hintShowBhpv(spans, sb, sh, sp, sv);
+                    hintLast(spans, "w", "wrap" + (sw ? " [on]" : " [off]"));
                 }
                 return;
             }
@@ -523,10 +594,7 @@ class HistoryTab implements MonitorTab {
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
             hint(spans, "d", "diagram");
             if (!showWaterfall) {
-                hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
-                hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
-                hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
-                hint(spans, "b", "body" + (showTraceBody ? " [on]" : " [off]"));
+                hintShowBhpv(spans, showTraceBody, showTraceHeaders, showTraceProperties, showTraceVariables);
             }
             hintLast(spans, "w", "wrap" + (traceWordWrap ? " [on]" : " [off]"));
         } else if (tracerActive) {
@@ -548,10 +616,7 @@ class HistoryTab implements MonitorTab {
             hint(spans, "g", "waterfall" + (showWaterfall ? " [on]" : ""));
             hint(spans, "d", "diagram");
             if (!showWaterfall) {
-                hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
-                hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
-                hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
-                hint(spans, "b", "body" + (showHistoryBody ? " [on]" : " [off]"));
+                hintShowBhpv(spans, showHistoryBody, showHistoryHeaders, showHistoryProperties, showHistoryVariables);
                 hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
             }
             hintLast(spans, "F5", "refresh");
@@ -576,6 +641,181 @@ class HistoryTab implements MonitorTab {
                 diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
                 Style.EMPTY.fg(Color.WHITE)));
         return Line.from(spans);
+    }
+
+    private void renderDiagramInfoPanel(Frame frame, Rect area) {
+        int stepIdx = diagram.getHistoryStepIndex();
+        List<Line> lines = new ArrayList<>();
+
+        String exchangeId = null;
+        String routeId = null;
+        String nodeId = null;
+        String processor = null;
+        String direction = null;
+        String timestamp = null;
+        String threadName = null;
+        long elapsed = -1;
+        boolean failed = false;
+        String body = null;
+        String bodyType = null;
+        String exception = null;
+        Map<String, Object> headers = null;
+        Map<String, Object> properties = null;
+        Map<String, Object> variables = null;
+
+        if (!diagramTraceSteps.isEmpty() && stepIdx >= 0 && stepIdx < diagramTraceSteps.size()) {
+            TraceEntry e = diagramTraceSteps.get(stepIdx);
+            exchangeId = e.exchangeId;
+            routeId = e.routeId;
+            nodeId = e.nodeId;
+            processor = e.processor;
+            direction = e.direction;
+            timestamp = e.timestamp;
+            threadName = e.threadName;
+            elapsed = e.elapsed;
+            failed = e.failed;
+            body = e.body;
+            bodyType = e.bodyType;
+            exception = e.exception;
+            headers = e.headers;
+            properties = e.exchangeProperties;
+            variables = e.exchangeVariables;
+        } else if (!diagramHistorySteps.isEmpty() && stepIdx >= 0 && stepIdx < diagramHistorySteps.size()) {
+            HistoryEntry e = diagramHistorySteps.get(stepIdx);
+            exchangeId = e.exchangeId;
+            routeId = e.routeId;
+            nodeId = e.nodeId;
+            processor = e.processor;
+            direction = e.direction;
+            timestamp = e.timestamp;
+            threadName = e.threadName;
+            elapsed = e.elapsed;
+            failed = e.failed;
+            body = e.body;
+            bodyType = e.bodyType;
+            exception = e.exception;
+            headers = e.headers;
+            properties = e.exchangeProperties;
+            variables = e.exchangeVariables;
+        }
+
+        if (exchangeId == null) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled("No step selected", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        List<Span> stepSpans = new ArrayList<>();
+        stepSpans.add(Span.styled(" Step:     ", Style.EMPTY.fg(Color.YELLOW).bold()));
+        stepSpans.add(Span.raw(String.format("%d/%d", stepIdx + 1, diagram.getHistoryStepCount())));
+        if (direction != null && !direction.isBlank()) {
+            Style dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
+            stepSpans.add(Span.raw(" "));
+            stepSpans.add(Span.styled(direction, dirStyle));
+        }
+        lines.add(Line.from(stepSpans));
+        lines.add(Line.from(
+                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(exchangeId)));
+        lines.add(Line.from(
+                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(routeId != null ? routeId : "", Style.EMPTY.fg(Color.CYAN))));
+        lines.add(Line.from(
+                Span.styled(" Node:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(nodeId != null ? nodeId : "")));
+        if (processor != null) {
+            lines.add(Line.from(
+                    Span.styled(" Processor:", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(" " + processor.strip())));
+        }
+        if (elapsed >= 0) {
+            lines.add(Line.from(
+                    Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(elapsed + "ms")));
+        }
+        if (timestamp != null) {
+            lines.add(Line.from(
+                    Span.styled(" Time:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(timestamp)));
+        }
+        if (threadName != null) {
+            lines.add(Line.from(
+                    Span.styled(" Thread:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(threadName)));
+        }
+        if (failed) {
+            lines.add(Line.from(
+                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("Failed", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+        }
+
+        boolean isTraceMode = !diagramTraceSteps.isEmpty();
+        boolean showBody = isTraceMode ? showTraceBody : showHistoryBody;
+        boolean showHeaders = isTraceMode ? showTraceHeaders : showHistoryHeaders;
+        boolean showProps = isTraceMode ? showTraceProperties : showHistoryProperties;
+        boolean showVars = isTraceMode ? showTraceVariables : showHistoryVariables;
+
+        if (exception != null && !exception.isBlank()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Exception", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+            lines.add(Line.from(Span.raw(" " + exception)));
+        }
+
+        if (showBody && body != null) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled(" Body", Style.EMPTY.fg(Color.GREEN).bold()),
+                    bodyType != null ? Span.styled(" (" + bodyType + ")", Style.EMPTY.dim()) : Span.raw("")));
+            for (String line : body.split("\n")) {
+                lines.add(Line.from(Span.raw(" " + line)));
+            }
+        }
+
+        if (showHeaders && headers != null && !headers.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Headers", Style.EMPTY.fg(Color.GREEN).bold())));
+            for (var entry : headers.entrySet()) {
+                String val = entry.getValue() != null ? entry.getValue().toString() : "null";
+                lines.add(Line.from(
+                        Span.styled(" " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                        Span.raw(" = " + val)));
+            }
+        }
+
+        if (showProps && properties != null && !properties.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Properties", Style.EMPTY.fg(Color.GREEN).bold())));
+            for (var entry : properties.entrySet()) {
+                String val = entry.getValue() != null ? entry.getValue().toString() : "null";
+                lines.add(Line.from(
+                        Span.styled(" " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                        Span.raw(" = " + val)));
+            }
+        }
+
+        if (showVars && variables != null && !variables.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Variables", Style.EMPTY.fg(Color.GREEN).bold())));
+            for (var entry : variables.entrySet()) {
+                String val = entry.getValue() != null ? entry.getValue().toString() : "null";
+                lines.add(Line.from(
+                        Span.styled(" " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                        Span.raw(" = " + val)));
+            }
+        }
+
+        boolean wordWrap = !diagramTraceSteps.isEmpty() ? traceWordWrap : historyWordWrap;
+        Paragraph.Builder pb = Paragraph.builder()
+                .text(Text.from(lines))
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build());
+        if (wordWrap) {
+            pb.overflow(Overflow.WRAP_WORD);
+        }
+        frame.renderWidget(pb.build(), area);
     }
 
     // ---- Diagram loading ----
@@ -611,6 +851,8 @@ class HistoryTab implements MonitorTab {
                 diagram.endLoad();
                 return;
             }
+            diagramTraceSteps = steps;
+            diagramHistorySteps = Collections.emptyList();
             messageHistory = new String[steps.size()];
             for (int i = 0; i < steps.size(); i++) {
                 TraceEntry e = steps.get(i);
@@ -630,6 +872,8 @@ class HistoryTab implements MonitorTab {
                 diagram.endLoad();
                 return;
             }
+            diagramHistorySteps = entries;
+            diagramTraceSteps = Collections.emptyList();
             messageHistory = new String[entries.size()];
             for (int i = 0; i < entries.size(); i++) {
                 HistoryEntry e = entries.get(i);
@@ -779,10 +1023,12 @@ class HistoryTab implements MonitorTab {
         List<Row> rows = new ArrayList<>();
         for (int i = 0; i < steps.size(); i++) {
             TraceEntry entry = steps.get(i);
+            TraceEntry prev = i > 0 ? steps.get(i - 1) : null;
             String desc = showDescription ? descMap.get(entry.routeId) : null;
+            String changes = computeTraceChanges(prev, entry);
             rows.add(buildStepRow(i + 1, entry.inlineDepth,
                     entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes));
         }
 
         String stepTitle = String.format(" Trace [%s] — %d steps ", truncate(traceSelectedExchangeId, 30), steps.size());
@@ -1038,10 +1284,12 @@ class HistoryTab implements MonitorTab {
         List<Row> rows = new ArrayList<>();
         for (int i = 0; i < current.size(); i++) {
             HistoryEntry entry = current.get(i);
+            HistoryEntry prev = i > 0 ? current.get(i - 1) : null;
             String desc = showDescription ? descMap.get(entry.routeId) : null;
+            String changes = computeHistoryChanges(prev, entry);
             rows.add(buildStepRow(i + 1, entry.inlineDepth,
                     entry.direction, entry.first, entry.last, entry.failed,
-                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed, changes));
         }
 
         Title historyTitle = buildHistoryTitle(current);
@@ -1367,6 +1615,16 @@ class HistoryTab implements MonitorTab {
         return allChildren;
     }
 
+    private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
+        spans.add(Span.styled(" show", HINT_KEY_STYLE));
+        spans.add(Span.raw(" "));
+        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.raw("  "));
+    }
+
     private String traceSortLabel(String label, String column) {
         return MonitorContext.sortLabel(label, column, traceSort, traceSortReversed);
     }
@@ -1379,7 +1637,7 @@ class HistoryTab implements MonitorTab {
             int stepNumber, int inlineDepth,
             String direction, boolean first, boolean last, boolean failed,
             String timestamp, String routeId, String nodeId, String processor,
-            String description, long elapsed) {
+            String description, long elapsed, String changes) {
         Style dirStyle;
         if (first || last || !direction.isBlank()) {
             dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
@@ -1389,14 +1647,56 @@ class HistoryTab implements MonitorTab {
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
         String display = description != null ? description : (processor != null ? processor : "");
         String indent = inlineDepth > 0 ? "  ".repeat(inlineDepth) : "";
+        List<Span> changeSpans = buildChangeSpans(changes);
         return Row.from(
                 rightCell(String.valueOf(stepNumber), 3),
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(indent + (routeId != null ? truncate(routeId, 25) : ""), Style.EMPTY.fg(Color.CYAN))),
-                Cell.from(indent + (nodeId != null ? truncate(nodeId, 15) : "")),
+                Cell.from(Span.styled(routeId != null ? truncate(routeId, 25) : "", Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(indent + (nodeId != null ? truncate(nodeId, 25) : "")),
                 Cell.from(indent + display),
+                Cell.from(Line.from(changeSpans)),
                 rightCell(elapsedStr, 10));
+    }
+
+    private static List<Span> buildChangeSpans(String changes) {
+        if (changes == null || changes.isEmpty()) {
+            return List.of(Span.raw(""));
+        }
+        List<Span> spans = new ArrayList<>();
+        for (int i = 0; i < changes.length(); i++) {
+            char c = changes.charAt(i);
+            if (c == ' ') {
+                spans.add(Span.styled(String.valueOf(c), Style.EMPTY.dim()));
+            } else {
+                spans.add(Span.styled(String.valueOf(c), Style.EMPTY.fg(Color.YELLOW)));
+            }
+        }
+        return spans;
+    }
+
+    static String computeTraceChanges(TraceEntry prev, TraceEntry curr) {
+        if (prev == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(!Objects.equals(prev.body, curr.body) ? 'B' : ' ');
+        sb.append(!Objects.equals(prev.headers, curr.headers) ? 'H' : ' ');
+        sb.append(!Objects.equals(prev.exchangeProperties, curr.exchangeProperties) ? 'P' : ' ');
+        sb.append(!Objects.equals(prev.exchangeVariables, curr.exchangeVariables) ? 'V' : ' ');
+        return sb.toString().isBlank() ? "" : sb.toString();
+    }
+
+    static String computeHistoryChanges(HistoryEntry prev, HistoryEntry curr) {
+        if (prev == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(!Objects.equals(prev.body, curr.body) ? 'B' : ' ');
+        sb.append(!Objects.equals(prev.headers, curr.headers) ? 'H' : ' ');
+        sb.append(!Objects.equals(prev.exchangeProperties, curr.exchangeProperties) ? 'P' : ' ');
+        sb.append(!Objects.equals(prev.exchangeVariables, curr.exchangeVariables) ? 'V' : ' ');
+        return sb.toString().isBlank() ? "" : sb.toString();
     }
 
     private static Table buildStepTable(List<Row> rows, Object title, boolean descriptionMode) {
@@ -1407,6 +1707,7 @@ class HistoryTab implements MonitorTab {
                 Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
                 Cell.from(Span.styled("ID", Style.EMPTY.bold())),
                 Cell.from(Span.styled(descriptionMode ? "DESCRIPTION" : "PROCESSOR", Style.EMPTY.bold())),
+                Cell.from(Span.styled("BHPV", Style.EMPTY.bold())),
                 rightCell("ELAPSED", 10, Style.EMPTY.bold()));
         Block block = title instanceof Title t
                 ? Block.builder().borderType(BorderType.ROUNDED).title(t).build()
@@ -1418,9 +1719,10 @@ class HistoryTab implements MonitorTab {
                         Constraint.length(3),
                         Constraint.length(4),
                         Constraint.length(12),
-                        Constraint.length(15),
-                        Constraint.length(15),
+                        Constraint.length(25),
+                        Constraint.length(25),
                         Constraint.fill(),
+                        Constraint.length(4),
                         Constraint.length(10))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
@@ -1468,7 +1770,7 @@ class HistoryTab implements MonitorTab {
                 Span.raw(exchangeId != null ? exchangeId : "")));
         lines.add(Line.from(
                 Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(routeId != null ? routeId : ""),
+                Span.raw(String.format("%-25s", routeId != null ? routeId : "")),
                 Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(nodeId != null ? nodeId : ""),
                 Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
@@ -1753,19 +2055,37 @@ class HistoryTab implements MonitorTab {
                 took:
 
                 ```
-                      RouteId        NodeId     Processor            Elapsed
-                 *->  timer-to-log   timer1     from[timer:hello]    0ms
-                      timer-to-log   setBody1   setBody[simple]      0ms
-                      timer-to-log   choice1    choice               0ms
-                      timer-to-log   when1      when[simple]         0ms
-                 --->  timer-to-log   to1       to[kafka:orders]     2ms
-                      timer-to-log   log1       log[HIGH: ${body}]   0ms
-                 <-*  timer-to-log   timer1     from[timer:hello]    3ms
+                      RouteId        NodeId     Processor            BHPV  Elapsed
+                 *->  timer-to-log   timer1     from[timer:hello]          0ms
+                      timer-to-log   setBody1   setBody[simple]      B     0ms
+                      timer-to-log   choice1    choice                     0ms
+                      timer-to-log   when1      when[simple]               0ms
+                 --->  timer-to-log   to1       to[kafka:orders]      H    2ms
+                      timer-to-log   log1       log[HIGH: ${body}]         0ms
+                 <-*  timer-to-log   timer1     from[timer:hello]          3ms
                 ```
 
                 This tells you the message entered via the timer, went through setBody,
                 reached a choice node, matched the `when` condition, and was logged.
                 The elapsed time for each step helps identify bottlenecks.
+
+                **Change Indicators (BHPV)** — The BHPV column shows at a glance
+                which parts of the exchange were modified at each step compared to
+                the previous step:
+
+                - `B` — Body changed
+                - `H` — Headers changed
+                - `P` — Exchange properties changed
+                - `V` — Exchange variables changed
+
+                Steps with no changes leave the column blank, so mutations stand
+                out visually.
+
+                **Depth-first ordering** — When an exchange spans multiple routes
+                via async EIPs (multicast, splitter, recipientList), child exchange
+                steps are inlined under the parent step that triggered them, indented
+                with 2 spaces per depth level. This keeps the logical flow readable
+                instead of interleaving concurrent branches.
 
                 ## Direction Arrows
 
@@ -1820,13 +2140,15 @@ class HistoryTab implements MonitorTab {
                 large routes. This is the same minimap available on the Routes and
                 Diagram tabs.
 
-                Press `Esc` to close the diagram and return to the exchange list.
+                Press `d` to close the diagram and return to the table.
+                Press `Esc` to navigate back one route in drill-down mode.
 
                 ## Keys
 
                 - `Up/Down` — select exchange (or step through path in diagram)
                 - `Enter` — view exchange details
-                - `d` — toggle route diagram
+                - `d` — toggle route diagram (open and close)
+                - `Esc` — back to list / back one route in diagram drill-down
                 - `n` — toggle description mode
                 - `g` — toggle waterfall view
                 - `h` — toggle headers
@@ -1839,7 +2161,6 @@ class HistoryTab implements MonitorTab {
                 - `Left/Right` — horizontal scroll (diagram or detail)
                 - `PgUp/PgDn` — page scroll
                 - `F5` — refresh data
-                - `Esc` — back to list / close diagram
                 """;
     }
 
