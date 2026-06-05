@@ -1595,7 +1595,7 @@ class DiagramSupport {
         }
     }
 
-    void renderHistoryRouteDiagram(Frame frame, Rect area, Line title, String routeId) {
+    void renderHistoryRouteDiagram(Frame frame, Rect area, Line title, String routeId, boolean hideOverlays) {
         RouteDiagramLayoutEngine.LayoutRoute routeLayout = routeLayouts.get(routeId);
         if (routeLayout == null) {
             return;
@@ -1713,8 +1713,10 @@ class DiagramSupport {
                     vChunks.get(1), hScrollState);
         }
 
-        renderMinimap(frame, hChunks.get(0), routeId);
-        renderTreePreview(frame, hChunks.get(0), routeId);
+        if (!hideOverlays) {
+            renderMinimap(frame, hChunks.get(0), routeId);
+            renderTreePreview(frame, hChunks.get(0), routeId);
+        }
     }
 
     void loadAllDiagramsInBackground(

@@ -18,18 +18,22 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
+import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -62,7 +66,12 @@ class ErrorsTab implements MonitorTab {
     private boolean showHeaders = true;
     private boolean showBody = true;
 
+    private static final int INFO_NARROW = 0;
+    private static final int INFO_WIDE = 1;
+    private static final int INFO_FULL = 2;
+
     private final DiagramSupport diagram = new DiagramSupport();
+    private int infoPanelSize = INFO_NARROW;
 
     ErrorsTab(MonitorContext ctx) {
         this.ctx = ctx;
@@ -134,6 +143,30 @@ class ErrorsTab implements MonitorTab {
                 diagram.setShowDescription(!diagram.isShowDescription());
                 diagram.endLoad();
                 loadDiagramForSelectedError();
+                return true;
+            }
+            if (ke.isChar('i')) {
+                infoPanelSize = (infoPanelSize + 1) % 3;
+                return true;
+            }
+            if (ke.isChar('b')) {
+                showBody = !showBody;
+                return true;
+            }
+            if (ke.isChar('h')) {
+                showHeaders = !showHeaders;
+                return true;
+            }
+            if (ke.isChar('p')) {
+                showProperties = !showProperties;
+                return true;
+            }
+            if (ke.isChar('v')) {
+                showVariables = !showVariables;
+                return true;
+            }
+            if (ke.isChar('w')) {
+                wordWrap = !wordWrap;
                 return true;
             }
         }
@@ -238,16 +271,34 @@ class ErrorsTab implements MonitorTab {
         }
 
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
-            if (diagram.isHistoryTopologyMode()) {
-                Line title = Line.from(Span.styled(
-                        String.format(" Error Topology — step %d/%d ",
-                                diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
-                        Style.EMPTY.fg(Color.WHITE)));
-                diagram.renderHistoryTopologyDiagram(frame, area, title);
+            if (infoPanelSize == INFO_FULL) {
+                renderDiagramInfoPanel(frame, area, info);
             } else {
-                String routeId = diagram.getHistoryDrillDownRouteId();
-                Line title = buildErrorBreadcrumbTitle();
-                diagram.renderHistoryRouteDiagram(frame, area, title, routeId);
+                Rect diagramArea = area;
+                Rect infoArea = null;
+                if (area.width() > 70) {
+                    int panelWidth = infoPanelSize == INFO_WIDE ? area.width() / 2 : 35;
+                    List<Rect> hParts = Layout.horizontal()
+                            .constraints(Constraint.length(panelWidth), Constraint.fill())
+                            .split(area);
+                    infoArea = hParts.get(0);
+                    diagramArea = hParts.get(1);
+                }
+                boolean hideOverlays = infoPanelSize == INFO_WIDE;
+                if (diagram.isHistoryTopologyMode()) {
+                    Line title = Line.from(Span.styled(
+                            String.format(" Error Topology — step %d/%d ",
+                                    diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
+                            Style.EMPTY.fg(Color.WHITE)));
+                    diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
+                } else {
+                    String routeId = diagram.getHistoryDrillDownRouteId();
+                    Line title = buildErrorBreadcrumbTitle();
+                    diagram.renderHistoryRouteDiagram(frame, diagramArea, title, routeId, hideOverlays);
+                }
+                if (infoArea != null) {
+                    renderDiagramInfoPanel(frame, infoArea, info);
+                }
             }
             return;
         }
@@ -326,17 +377,29 @@ class ErrorsTab implements MonitorTab {
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
             if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
+                String infoLabel = switch (infoPanelSize) {
+                    case INFO_WIDE -> "info [wide]";
+                    case INFO_FULL -> "info [full]";
+                    default -> "info [narrow]";
+                };
                 if (diagram.isHistoryTopologyMode()) {
-                    hint(spans, "Esc", "close");
+                    hint(spans, "d", "close");
                     hint(spans, "↑↓←→", "navigate");
                     hint(spans, "Enter", "drill-down");
+                    hint(spans, "i", infoLabel);
                     hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
+                    hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
+                    hintLast(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
                 } else {
+                    hint(spans, "d", "close");
                     hint(spans, "Esc", "back");
                     hint(spans, "↑↓", "step through path");
                     hint(spans, "←→", "h-scroll");
                     hint(spans, "t", "topology");
+                    hint(spans, "i", infoLabel);
                     hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
+                    hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
+                    hintLast(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
                 }
                 return;
             }
@@ -508,6 +571,114 @@ class ErrorsTab implements MonitorTab {
                 diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
                 Style.EMPTY.fg(Color.WHITE)));
         return Line.from(spans);
+    }
+
+    private void renderDiagramInfoPanel(Frame frame, Rect area, IntegrationInfo info) {
+        List<ErrorInfo> sorted = applyFilter(info.errors);
+        Integer sel = tableState.selected();
+        ErrorInfo ei = null;
+        if (sel != null && sel >= 0 && sel < sorted.size()) {
+            ei = sorted.get(sel);
+        }
+
+        List<Line> lines = new ArrayList<>();
+        if (ei == null) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(Span.styled("No error selected", Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        lines.add(Line.from(
+                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(ei.exchangeId != null ? ei.exchangeId : "")));
+        lines.add(Line.from(
+                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Color.CYAN))));
+        lines.add(Line.from(
+                Span.styled(" Node:     ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(ei.nodeId != null ? ei.nodeId : "")));
+        if (ei.elapsed >= 0) {
+            lines.add(Line.from(
+                    Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(ei.elapsed + "ms")));
+        }
+        if (ei.threadName != null) {
+            lines.add(Line.from(
+                    Span.styled(" Thread:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(ei.threadName)));
+        }
+        Style handledStyle = ei.handled ? Style.EMPTY.fg(Color.GREEN) : Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        lines.add(Line.from(
+                Span.styled(" Handled:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.styled(ei.handled ? "true" : "false", handledStyle)));
+
+        if (ei.exceptionType != null) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Exception", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
+            lines.add(Line.from(Span.raw(" " + ei.exceptionType)));
+            if (ei.exceptionMessage != null) {
+                lines.add(Line.from(Span.raw(" " + ei.exceptionMessage)));
+            }
+        }
+
+        if (showBody && ei.body != null) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled(" Body", Style.EMPTY.fg(Color.GREEN).bold()),
+                    ei.bodyType != null ? Span.styled(" (" + ei.bodyType + ")", Style.EMPTY.dim()) : Span.raw("")));
+            for (String line : ei.body.split("\n")) {
+                lines.add(Line.from(Span.raw(" " + line)));
+            }
+        }
+
+        if (showHeaders && !ei.headers.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Headers", Style.EMPTY.fg(Color.GREEN).bold())));
+            addKvLines(lines, ei.headers);
+        }
+
+        if (showProperties && !ei.properties.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Properties", Style.EMPTY.fg(Color.GREEN).bold())));
+            addKvLines(lines, ei.properties);
+        }
+
+        if (showVariables && !ei.variables.isEmpty()) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(Span.styled(" Variables", Style.EMPTY.fg(Color.GREEN).bold())));
+            addKvLines(lines, ei.variables);
+        }
+
+        Paragraph.Builder pb = Paragraph.builder()
+                .text(Text.from(lines))
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build());
+        if (wordWrap) {
+            pb.overflow(Overflow.WRAP_WORD);
+        }
+        frame.renderWidget(pb.build(), area);
+    }
+
+    private static void addKvLines(List<Line> lines, Map<String, Object> map) {
+        for (var entry : map.entrySet()) {
+            String val = entry.getValue() != null ? entry.getValue().toString() : "null";
+            lines.add(Line.from(
+                    Span.styled(" " + entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                    Span.raw(" = " + val)));
+        }
+    }
+
+    private static void hintShowBhpv(List<Span> spans, boolean body, boolean headers, boolean props, boolean vars) {
+        spans.add(Span.styled(" show", HINT_KEY_STYLE));
+        spans.add(Span.raw(" "));
+        spans.add(Span.styled(body ? "B" : "b", body ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(headers ? "H" : "h", headers ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(props ? "P" : "p", props ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.styled(vars ? "V" : "v", vars ? Style.EMPTY.fg(Color.WHITE).bold() : Style.EMPTY.dim()));
+        spans.add(Span.raw("  "));
     }
 
     // ---- Diagram ----
