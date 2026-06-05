@@ -2161,6 +2161,15 @@ class HistoryTab implements MonitorTab {
                 large routes. This is the same minimap available on the Routes and
                 Diagram tabs.
 
+                **Info Panel** — An info panel on the left side of the diagram shows
+                trace metadata for the current step: exchange ID, route, node,
+                processor, elapsed time, thread, and direction. It also shows body,
+                headers, properties, and variables respecting the same `b/h/p/v`
+                toggles as the table view. Press `i` to cycle the panel size:
+                narrow (35 chars), wide (half screen), or full (entire area).
+                In wide mode, the minimap and tree preview are hidden to give more
+                space. Word wrap (`w`) is also supported.
+
                 Press `d` to close the diagram and return to the table.
                 Press `Esc` to navigate back one route in drill-down mode.
 
@@ -2170,6 +2179,7 @@ class HistoryTab implements MonitorTab {
                 - `Enter` — view exchange details
                 - `d` — toggle route diagram (open and close)
                 - `Esc` — back to list / back one route in diagram drill-down
+                - `i` — cycle info panel size (narrow / wide / full) in diagram
                 - `n` — toggle description mode
                 - `g` — toggle waterfall view
                 - `h` — toggle headers

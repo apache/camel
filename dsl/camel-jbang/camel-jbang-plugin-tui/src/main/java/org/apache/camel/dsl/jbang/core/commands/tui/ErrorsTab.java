@@ -822,20 +822,31 @@ class ErrorsTab implements MonitorTab {
                 step is shown with a selection highlight. Use `Left/Right` to scroll
                 the diagram horizontally if it extends beyond the screen.
 
-                Press `Esc` to close the diagram and return to the detail view.
+                **Info Panel** — An info panel on the left side of the diagram shows
+                metadata for the selected error: exchange ID, route, node, elapsed
+                time, thread, handled status, and the full exception. It also shows
+                body, headers, properties, and variables respecting the `b/h/p/v`
+                toggles. Press `i` to cycle the panel size: narrow (35 chars),
+                wide (half screen), or full (entire area). In wide mode, the minimap
+                and tree preview are hidden. Word wrap (`w`) is also supported.
+
+                Press `d` to close the diagram and return to the detail view.
+                Press `Esc` to navigate back one route in drill-down mode.
 
                 ## Keys
 
                 - `Up/Down` — select error (list) / navigate path steps (diagram)
                 - `Enter` — view error details
-                - `d` — show error diagram (in detail view)
+                - `d` — toggle error diagram (open and close)
+                - `Esc` — back to list / back one route in diagram drill-down
+                - `i` — cycle info panel size (narrow / wide / full) in diagram
                 - `h` — toggle headers
                 - `b` — toggle body
                 - `p` — toggle properties
                 - `v` — toggle variables
+                - `w` — toggle word wrap
                 - `s` — cycle sort column
                 - `S` — reverse sort order
-                - `Esc` — back to list / close diagram
                 """;
     }
 
