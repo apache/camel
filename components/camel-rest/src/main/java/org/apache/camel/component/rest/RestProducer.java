@@ -173,7 +173,7 @@ public class RestProducer extends DefaultAsyncProducer {
         // resolve uri parameters
         String query = createQueryParameters(getEndpoint().getQueryParameters(), exchange);
 
-        if (query != null) {
+        if (query != null && !query.isEmpty()) {
             // the query parameters for the rest call to be used
             exchange.getMessage().setHeader(RestConstants.REST_HTTP_QUERY, query);
         }
