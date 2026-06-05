@@ -196,7 +196,7 @@ class SourceViewer {
         for (int i = scrollY; i < end; i++) {
             String raw = lines.get(i);
             boolean isSelected = (i == selectedLine);
-            visible.add(highlightSourceLine(raw, scrollX, isSelected));
+            visible.add(highlightSourceLine(raw, scrollX, isSelected, inner.width()));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
 
@@ -406,7 +406,7 @@ class SourceViewer {
         });
     }
 
-    private Line highlightSourceLine(String raw, int hSkip, boolean isSelected) {
+    private Line highlightSourceLine(String raw, int hSkip, boolean isSelected, int viewportWidth) {
         int prefixEnd = 0;
         while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
             prefixEnd++;
@@ -418,11 +418,11 @@ class SourceViewer {
         Line highlighted = SyntaxHighlighter.highlightLine(code, language);
 
         List<Span> spans = new ArrayList<>();
-        Style selBg = Style.EMPTY.bg(Color.DARK_GRAY);
+        Style selBg = Style.EMPTY.bg(Color.rgb(30, 45, 70));
         if (isSelected) {
             spans.add(Span.styled(">> ", Style.EMPTY.fg(Color.YELLOW).bold()));
             if (!prefix.isEmpty()) {
-                spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.YELLOW).bold().bg(Color.DARK_GRAY)));
+                spans.add(Span.styled(prefix, Style.EMPTY.fg(Color.YELLOW).bold().patch(selBg)));
             }
             for (Span s : highlighted.spans()) {
                 spans.add(Span.styled(s.content(), s.style().patch(selBg)));
@@ -437,24 +437,34 @@ class SourceViewer {
 
         Line full = Line.from(spans);
 
-        if (hSkip <= 0) {
-            return full;
+        if (hSkip > 0) {
+            List<Span> scrolled = new ArrayList<>();
+            int skipped = 0;
+            for (Span span : full.spans()) {
+                String content = span.content();
+                if (skipped >= hSkip) {
+                    scrolled.add(span);
+                } else if (skipped + content.length() > hSkip) {
+                    int offset = hSkip - skipped;
+                    scrolled.add(Span.styled(content.substring(offset), span.style()));
+                    skipped = hSkip;
+                } else {
+                    skipped += content.length();
+                }
+            }
+            full = scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
         }
-        List<Span> scrolled = new ArrayList<>();
-        int skipped = 0;
-        for (Span span : full.spans()) {
-            String content = span.content();
-            if (skipped >= hSkip) {
-                scrolled.add(span);
-            } else if (skipped + content.length() > hSkip) {
-                int offset = hSkip - skipped;
-                scrolled.add(Span.styled(content.substring(offset), span.style()));
-                skipped = hSkip;
-            } else {
-                skipped += content.length();
+
+        if (isSelected && viewportWidth > 0) {
+            int contentWidth = full.width();
+            if (contentWidth < viewportWidth) {
+                List<Span> padded = new ArrayList<>(full.spans());
+                padded.add(Span.styled(" ".repeat(viewportWidth - contentWidth), selBg));
+                full = Line.from(padded);
             }
         }
-        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
+
+        return full;
     }
 
     static int findLicenseHeaderEnd(List<JsonObject> codeLines) {
