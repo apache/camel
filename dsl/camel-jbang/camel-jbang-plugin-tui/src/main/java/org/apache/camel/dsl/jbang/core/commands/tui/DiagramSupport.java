@@ -1281,12 +1281,26 @@ class DiagramSupport {
                 List<TopologyAsciiRenderer.NodeBox> boxes
                         = computeNodeBoxes(finalTopoResult, finalNodeW, false);
                 nodeBoxes = boxes;
-                // Select the first highlighted route in topology
+                // Select the route box matching the current step
+                String stepRouteId = null;
+                if (clampedStep >= 0 && clampedStep < nodeOrder.size()) {
+                    stepRouteId = nodeRouteMap.get(nodeOrder.get(clampedStep));
+                }
                 int selIdx = -1;
-                for (int i = 0; i < boxes.size(); i++) {
-                    if (visitedRouteIds.contains(boxes.get(i).routeId())) {
-                        selIdx = i;
-                        break;
+                if (stepRouteId != null) {
+                    for (int i = 0; i < boxes.size(); i++) {
+                        if (stepRouteId.equals(boxes.get(i).routeId())) {
+                            selIdx = i;
+                            break;
+                        }
+                    }
+                }
+                if (selIdx < 0) {
+                    for (int i = 0; i < boxes.size(); i++) {
+                        if (visitedRouteIds.contains(boxes.get(i).routeId())) {
+                            selIdx = i;
+                            break;
+                        }
                     }
                 }
                 selectedNodeIndex = selIdx >= 0 ? selIdx : (boxes.isEmpty() ? -1 : 0);
