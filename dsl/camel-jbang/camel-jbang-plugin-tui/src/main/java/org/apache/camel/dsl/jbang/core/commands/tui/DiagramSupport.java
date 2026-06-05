@@ -1237,6 +1237,36 @@ class DiagramSupport {
             }
         }
 
+        // Expand visited routes by following topology edges where the trace contains
+        // a to-node matching the edge's endpoint (e.g. to6 sends to kafka:notifications
+        // → follow edge to notification route)
+        Set<String> tracedNodeIds = new HashSet<>(nodeOrder);
+        Map<String, List<RouteDiagramLayoutEngine.NodeInfo>> routeNodeMap = new HashMap<>();
+        for (RouteDiagramLayoutEngine.RouteInfo ri : routes) {
+            routeNodeMap.put(ri.routeId, ri.nodes);
+        }
+        boolean expanded = true;
+        while (expanded) {
+            expanded = false;
+            for (TopologyEdgeInfo te : tEdges) {
+                if (te.fromRouteId != null && te.toRouteId != null && te.endpoint != null
+                        && visitedRouteIds.contains(te.fromRouteId)
+                        && !visitedRouteIds.contains(te.toRouteId)) {
+                    List<RouteDiagramLayoutEngine.NodeInfo> fromNodes = routeNodeMap.get(te.fromRouteId);
+                    if (fromNodes != null) {
+                        for (RouteDiagramLayoutEngine.NodeInfo ni : fromNodes) {
+                            if (ni.id != null && tracedNodeIds.contains(ni.id)
+                                    && ni.uri != null && ni.uri.contains(te.endpoint)) {
+                                visitedRouteIds.add(te.toRouteId);
+                                expanded = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Add parent scope nodes to highlight info for routes with highlighted children
         Set<String> allNodeIds = new LinkedHashSet<>(highlightInfo.getNodeIds());
         for (RouteDiagramLayoutEngine.RouteInfo ri : routes) {
