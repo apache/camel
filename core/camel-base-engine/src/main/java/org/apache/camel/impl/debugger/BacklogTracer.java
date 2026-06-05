@@ -245,6 +245,11 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                     }
                     provisionalHistoryQueue.clear();
                 }
+            } else if (lastCompletedBreadcrumbId != null && event.getBreadcrumbId() != null
+                    && event.getBreadcrumbId().equals(lastCompletedBreadcrumbId)) {
+                // late-arriving event from a downstream route (e.g. second branch of a multicast via Kafka/SEDA)
+                // that arrived after the provisional queue was claimed by a new exchange
+                completeHistoryQueue.add(event);
             }
         }
         if (!enabled) {
