@@ -327,8 +327,9 @@ class BrowseTab implements MonitorTab {
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
+                    Cell.from(""),
                     Cell.from(Span.styled("No messages", Style.EMPTY.dim())),
-                    Cell.from(""), Cell.from(""), Cell.from("")));
+                    Cell.from(""), Cell.from("")));
         }
 
         String uri = selectedEndpoint != null ? selectedEndpoint.uri : "";
@@ -728,5 +729,54 @@ class BrowseTab implements MonitorTab {
                 - `Enter` — browse selected endpoint
                 - `Esc` — back to endpoint list
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        if (selectedEndpoint != null && !messages.isEmpty()) {
+            JsonObject result = new JsonObject();
+            result.put("tab", "Browse Messages");
+            result.put("endpoint", selectedEndpoint.uri);
+            JsonArray rows = new JsonArray();
+            for (MessageData m : messages) {
+                JsonObject row = new JsonObject();
+                row.put("position", m.position);
+                row.put("exchangeId", m.exchangeId);
+                row.put("exchangePattern", m.exchangePattern);
+                row.put("timestamp", m.timestamp);
+                if (m.body != null) {
+                    row.put("body", m.body);
+                }
+                if (m.headers != null && !m.headers.isEmpty()) {
+                    row.put("headers", new JsonObject(m.headers));
+                }
+                rows.add(row);
+            }
+            result.put("rows", rows);
+            result.put("totalRows", messages.size());
+            Integer sel = messageTableState.selected();
+            result.put("selectedIndex", sel != null ? sel : -1);
+            return result;
+        }
+        List<EndpointData> endpoints = sortedEndpoints();
+        if (endpoints.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Browse");
+        JsonArray rows = new JsonArray();
+        for (EndpointData e : endpoints) {
+            JsonObject row = new JsonObject();
+            row.put("uri", e.uri);
+            row.put("queueSize", e.queueSize);
+            row.put("firstTimestamp", e.firstTimestamp);
+            row.put("lastTimestamp", e.lastTimestamp);
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", endpoints.size());
+        Integer sel = endpointTableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

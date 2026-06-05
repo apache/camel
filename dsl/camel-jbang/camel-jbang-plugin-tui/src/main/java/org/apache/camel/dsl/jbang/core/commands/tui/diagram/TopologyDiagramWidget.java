@@ -17,7 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -45,6 +47,8 @@ public class TopologyDiagramWidget implements Widget {
     private final int scrollY;
     private final boolean showMetrics;
     private final boolean showDescription;
+    private final Set<String> highlightRouteIds;
+    private final boolean highlightFailed;
 
     private final List<NodeBox> nodeBoxes = new ArrayList<>();
 
@@ -55,6 +59,15 @@ public class TopologyDiagramWidget implements Widget {
                                  TopologyLayoutResult layout, int nodeWidth,
                                  int selectedNodeIndex, int scrollX, int scrollY,
                                  boolean showMetrics, boolean showDescription) {
+        this(layout, nodeWidth, selectedNodeIndex, scrollX, scrollY, showMetrics, showDescription,
+             Collections.emptySet(), false);
+    }
+
+    public TopologyDiagramWidget(
+                                 TopologyLayoutResult layout, int nodeWidth,
+                                 int selectedNodeIndex, int scrollX, int scrollY,
+                                 boolean showMetrics, boolean showDescription,
+                                 Set<String> highlightRouteIds, boolean highlightFailed) {
         this.layout = layout;
         this.nodeWidth = nodeWidth;
         this.boxWidth = Math.max(MIN_BOX_WIDTH, nodeWidth / X_DIVISOR);
@@ -63,6 +76,8 @@ public class TopologyDiagramWidget implements Widget {
         this.scrollY = scrollY;
         this.showMetrics = showMetrics;
         this.showDescription = showDescription;
+        this.highlightRouteIds = highlightRouteIds;
+        this.highlightFailed = highlightFailed;
     }
 
     public List<NodeBox> getNodeBoxes() {
@@ -134,7 +149,7 @@ public class TopologyDiagramWidget implements Widget {
                     if (!sb.isEmpty()) {
                         sb.append("/");
                     }
-                    sb.append(node.exchangesFailed).append("!");
+                    sb.append(node.exchangesFailed);
                 }
                 lines.add(sb.toString());
             } else if (!ext) {
@@ -150,9 +165,17 @@ public class TopologyDiagramWidget implements Widget {
         int nodeIdx = nodeBoxes.size();
         boolean selected = nodeIdx == selectedNodeIndex;
 
+        boolean highlighted = !ext && node.routeId != null && highlightRouteIds.contains(node.routeId);
+
         char hChar = ext ? DASH_H : H;
         char vChar = ext ? DASH_V : V;
-        Style borderStyle = ext ? DASHED_BORDER_STYLE : BORDER_STYLE;
+        Style borderStyle;
+        if (highlighted) {
+            Color hlColor = highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR;
+            borderStyle = Style.EMPTY.fg(hlColor).bold();
+        } else {
+            borderStyle = ext ? DASHED_BORDER_STYLE : BORDER_STYLE;
+        }
         if (selected) {
             borderStyle = borderStyle.patch(SELECTION_STYLE);
         }
@@ -197,7 +220,10 @@ public class TopologyDiagramWidget implements Widget {
             } else if (showMetrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
                 drawMetricsLine(buffer, area, r, textCol, text, node, selected);
             } else if (i == 0 && !ext) {
-                writeText(buffer, area, r, textCol, text, style(ROUTE_ID_STYLE, selected));
+                Style idStyle = highlighted
+                        ? Style.EMPTY.fg(highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR).bold()
+                        : ROUTE_ID_STYLE;
+                writeText(buffer, area, r, textCol, text, style(idStyle, selected));
             } else {
                 writeText(buffer, area, r, textCol, text, style(FROM_LABEL_STYLE, selected));
             }
@@ -212,7 +238,7 @@ public class TopologyDiagramWidget implements Widget {
         long ok = node.exchangesTotal - node.exchangesFailed;
         if (ok > 0 && node.exchangesFailed > 0) {
             String okStr = String.valueOf(ok);
-            String failStr = node.exchangesFailed + "!";
+            String failStr = String.valueOf(node.exchangesFailed);
             writeText(buffer, area, row, col, okStr, style(METRICS_OK_STYLE, selected));
             int slashCol = col + okStr.length();
             writeText(buffer, area, row, slashCol, "/", style(Style.EMPTY.fg(Color.GRAY), selected));
@@ -237,7 +263,15 @@ public class TopologyDiagramWidget implements Widget {
         boolean dashed = isExternal(edge.from) || isExternal(edge.to);
         char vChar = dashed ? DASH_V : V;
         char hChar = dashed ? DASH_H : H;
-        Style edgeStyle = dashed ? DASHED_BORDER_STYLE : Style.EMPTY.fg(Color.GRAY);
+        boolean edgeHighlighted = !dashed
+                && edge.from.routeId != null && highlightRouteIds.contains(edge.from.routeId)
+                && edge.to.routeId != null && highlightRouteIds.contains(edge.to.routeId);
+        Style edgeStyle;
+        if (edgeHighlighted) {
+            edgeStyle = Style.EMPTY.fg(highlightFailed ? HIGHLIGHT_FAIL_COLOR : HIGHLIGHT_OK_COLOR);
+        } else {
+            edgeStyle = dashed ? DASHED_BORDER_STYLE : Style.EMPTY.fg(Color.GRAY);
+        }
 
         if (fromCx == toCx) {
             for (int r = fromBottom; r < toTop - 1; r++) {

@@ -418,4 +418,31 @@ class StartupTab implements MonitorTab {
                 - `Esc` — back
                 """;
     }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        if (steps.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Startup");
+        JsonArray rows = new JsonArray();
+        for (StartupStep s : steps) {
+            JsonObject row = new JsonObject();
+            row.put("id", s.id);
+            row.put("parentId", s.parentId);
+            row.put("level", s.level);
+            row.put("name", s.name);
+            row.put("type", s.type);
+            if (s.description != null) {
+                row.put("description", s.description);
+            }
+            row.put("beginTime", s.beginTime);
+            row.put("duration", s.duration);
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", steps.size());
+        return result;
+    }
 }

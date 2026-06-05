@@ -65,9 +65,15 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
-        // Source viewer toggle
+        // Source viewer toggle (drill-down mode)
         if (!topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
             loadSourceForSelectedNode();
+            return true;
+        }
+
+        // Source viewer toggle (topology mode)
+        if (topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
+            loadSourceForSelectedTopologyRoute();
             return true;
         }
 
@@ -633,6 +639,7 @@ class DiagramTab implements MonitorTab {
                 hint(spans, "↑↓←→", "navigate");
                 hint(spans, "Enter", "drill-down");
                 hint(spans, "PgUp/PgDn", "page");
+                hint(spans, "c", "source");
             } else {
                 diagram.renderFooterHints(spans);
             }
@@ -726,8 +733,8 @@ class DiagramTab implements MonitorTab {
 
                                 When metrics are enabled, each route box shows exchange counts:
                                 - **Green** number — successful exchanges
-                                - **Red** number with `!` — failed exchanges
-                                - Combined as `3748/12!` means 3748 ok and 12 failed
+                                - **Red** number — failed exchanges
+                                - Combined as `3748/12` means 3748 ok and 12 failed
 
                                 ## External Systems
 
@@ -763,18 +770,41 @@ class DiagramTab implements MonitorTab {
                                 Navigation history is maintained as a stack: pressing `Esc` goes
                                 back to the previous route, and eventually back to the topology view.
 
+                                ## Route Structure Preview
+
+                                A compact tree structure preview appears in the bottom-right corner
+                                of the diagram area — like a minimap of the route's EIP structure.
+
+                                In **topology mode**, the preview shows the structure of the currently
+                                selected route and updates as you navigate between route boxes.
+
+                                In **drill-down mode**, the preview highlights the currently selected
+                                EIP node (shown in yellow) as you navigate with arrow keys, giving
+                                you an at-a-glance view of where you are in the route.
+
                                 ## Keys
 
                                 **Topology view:**
                                 - `↑↓←→` — navigate between route boxes
                                 - `Enter` — drill down into selected route
+                                - `c` — show route source code
                                 - `Esc` — close diagram
 
                                 **Route diagram:**
                                 - `↑↓←→` — navigate between EIP nodes
                                 - `Enter` — jump to linked route (when `↵` indicator shown)
+                                - `c` — show source code at selected node
                                 - `Esc` — go back (previous route or topology)
                                 - `t` — jump back to topology view
+
+                                **Source view:**
+                                - `↑↓` — move cursor between lines
+                                - `Ctrl+↑↓` — scroll viewport without moving cursor
+                                - `←→` — horizontal scroll
+                                - `PgUp/PgDn` — page jump
+                                - `Home/End` — go to top/bottom
+                                - `Enter` — select the closest diagram node at cursor line
+                                - `Esc/c` — close source view
 
                                 **Common:**
                                 - `m` — toggle metrics on/off (default: on)
@@ -787,15 +817,11 @@ class DiagramTab implements MonitorTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
-        List<String> lines = diagram.getLines();
-        if (lines == null || lines.isEmpty()) {
-            return null;
-        }
-        JsonObject result = new JsonObject();
-        result.put("tab", "Diagram");
-        result.put("diagram", String.join("\n", lines));
-        result.put("lines", lines.size());
-        return result;
+        return null;
+    }
+
+    JsonObject getTopologyDataAsJson() {
+        return diagram.getTopologyDataAsJson();
     }
 
     private Line buildBreadcrumbTitle() {
@@ -815,6 +841,37 @@ class DiagramTab implements MonitorTab {
         return Line.from(spans);
     }
 
+    private void loadSourceForSelectedTopologyRoute() {
+        String routeId = diagram.getSelectedRouteId();
+        if (routeId == null) {
+            return;
+        }
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
+            return;
+        }
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            sourceViewer.hide();
+            routeNavigationStack.clear();
+            drillDownRouteId = routeId;
+            topologyMode = false;
+            diagram.setTopologyMode(false);
+            diagram.selectFromNode(routeId);
+            diagram.resetScroll();
+            diagram.endLoad();
+            if (diagram.getRouteLayout(routeId) == null) {
+                reloadDiagram();
+            }
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+            }
+        });
+        var rl = diagram.getRouteLayout(routeId);
+        sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
+    }
+
     private void loadSourceForSelectedNode() {
         if (drillDownRouteId == null) {
             return;
@@ -825,7 +882,54 @@ class DiagramTab implements MonitorTab {
                 && selected.layoutNode().treeNode != null) {
             targetLine = selected.layoutNode().treeNode.info.line;
         }
-        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine);
+        sourceViewer.setOnLineSelected(sourceLine -> {
+            int bestIdx = findClosestEipNode(sourceLine);
+            if (bestIdx >= 0) {
+                diagram.setSelectedEipNodeIndex(bestIdx);
+                diagram.scrollToSelectedEipNode();
+                sourceViewer.hide();
+            }
+        });
+        var rl2 = diagram.getRouteLayout(drillDownRouteId);
+        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl2 != null ? rl2.source : null);
+    }
+
+    private int findClosestEipNode(int sourceLine) {
+        var boxes = diagram.getEipNodeBoxes();
+        if (boxes.isEmpty()) {
+            return -1;
+        }
+        int bestBeforeIdx = -1;
+        int bestBeforeDist = Integer.MAX_VALUE;
+        int bestAfterIdx = -1;
+        int bestAfterDist = Integer.MAX_VALUE;
+        for (int i = 0; i < boxes.size(); i++) {
+            var box = boxes.get(i);
+            if (box.layoutNode() == null || box.layoutNode().treeNode == null) {
+                continue;
+            }
+            int nodeLine = box.layoutNode().treeNode.info.line;
+            if (nodeLine <= 0) {
+                continue;
+            }
+            if (nodeLine == sourceLine) {
+                return i;
+            }
+            if (nodeLine < sourceLine) {
+                int dist = sourceLine - nodeLine;
+                if (dist < bestBeforeDist) {
+                    bestBeforeDist = dist;
+                    bestBeforeIdx = i;
+                }
+            } else {
+                int dist = nodeLine - sourceLine;
+                if (dist < bestAfterDist) {
+                    bestAfterDist = dist;
+                    bestAfterIdx = i;
+                }
+            }
+        }
+        return bestBeforeIdx >= 0 ? bestBeforeIdx : bestAfterIdx;
     }
 
     private static int numWidth(long... values) {

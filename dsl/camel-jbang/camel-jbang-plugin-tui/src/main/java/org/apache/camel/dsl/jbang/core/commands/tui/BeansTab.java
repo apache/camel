@@ -515,4 +515,40 @@ class BeansTab implements MonitorTab {
                 - `Esc` — back
                 """;
     }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        List<BeanData> beans = sortedBeans();
+        if (beans.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Beans");
+        JsonArray rows = new JsonArray();
+        for (BeanData b : beans) {
+            JsonObject row = new JsonObject();
+            row.put("name", b.name);
+            row.put("type", b.type);
+            row.put("internal", b.internal);
+            if (b.properties != null && !b.properties.isEmpty()) {
+                JsonArray props = new JsonArray();
+                for (BeanData.Property p : b.properties) {
+                    JsonObject prop = new JsonObject();
+                    prop.put("name", p.name);
+                    prop.put("type", p.type);
+                    if (p.value != null) {
+                        prop.put("value", p.value);
+                    }
+                    props.add(prop);
+                }
+                row.put("properties", props);
+            }
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", beans.size());
+        Integer sel = tableState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
+    }
 }

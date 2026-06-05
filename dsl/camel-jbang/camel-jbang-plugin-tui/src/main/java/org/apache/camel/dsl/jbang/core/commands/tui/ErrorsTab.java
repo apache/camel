@@ -35,7 +35,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
-import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -79,6 +78,65 @@ class ErrorsTab implements MonitorTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
+            if (diagram.isHistoryTopologyMode()) {
+                if (ke.isUp()) {
+                    diagram.selectNodeUp();
+                    diagram.scrollToSelectedNode();
+                    return true;
+                }
+                if (ke.isDown()) {
+                    diagram.selectNodeDown();
+                    diagram.scrollToSelectedNode();
+                    return true;
+                }
+                if (ke.isLeft()) {
+                    diagram.selectNodeLeft();
+                    diagram.scrollToSelectedNode();
+                    return true;
+                }
+                if (ke.isRight()) {
+                    diagram.selectNodeRight();
+                    diagram.scrollToSelectedNode();
+                    return true;
+                }
+                if (ke.isConfirm()) {
+                    diagram.historyEnterDrillDown();
+                    return true;
+                }
+            } else {
+                if (ke.isUp()) {
+                    diagram.historyNavigateUp();
+                    return true;
+                }
+                if (ke.isDown()) {
+                    diagram.historyNavigateDown();
+                    return true;
+                }
+                if (ke.isLeft()) {
+                    diagram.scrollLeft();
+                    return true;
+                }
+                if (ke.isRight()) {
+                    diagram.scrollRight();
+                    return true;
+                }
+                if (ke.isChar('t')) {
+                    diagram.historyReturnToTopology();
+                    return true;
+                }
+            }
+            if (ke.isHome()) {
+                diagram.scrollHome();
+                return true;
+            }
+            if (ke.isCharIgnoreCase('n')) {
+                diagram.setShowDescription(!diagram.isShowDescription());
+                diagram.endLoad();
+                loadDiagramForSelectedError();
+                return true;
+            }
+        }
         if (diagram.handleScrollKeys(ke)) {
             return true;
         }
@@ -152,6 +210,10 @@ class ErrorsTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
+        if (diagram.isShowDiagram() && diagram.isHistoryMode() && !diagram.isHistoryTopologyMode()) {
+            diagram.historyGoBack();
+            return true;
+        }
         return diagram.handleEscape();
     }
 
@@ -175,8 +237,18 @@ class ErrorsTab implements MonitorTab {
             return;
         }
 
-        if (diagram.isShowDiagram() && diagram.hasDiagramData()) {
-            diagram.renderDiagram(frame, area, " Error Diagram ");
+        if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
+            if (diagram.isHistoryTopologyMode()) {
+                Line title = Line.from(Span.styled(
+                        String.format(" Error Topology — step %d/%d ",
+                                diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
+                        Style.EMPTY.fg(Color.WHITE)));
+                diagram.renderHistoryTopologyDiagram(frame, area, title);
+            } else {
+                String routeId = diagram.getHistoryDrillDownRouteId();
+                Line title = buildErrorBreadcrumbTitle();
+                diagram.renderHistoryRouteDiagram(frame, area, title, routeId);
+            }
             return;
         }
 
@@ -253,25 +325,39 @@ class ErrorsTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (diagram.isShowDiagram()) {
-            diagram.renderFooterHints(spans);
-        } else {
-            hint(spans, "Esc", "back");
-            hint(spans, "↑↓", "navigate");
-            hint(spans, "PgUp/Dn", "scroll detail");
-            if (!wordWrap) {
-                hint(spans, "←→", "h-scroll");
+            if (diagram.isHistoryMode() && diagram.hasHistoryData()) {
+                if (diagram.isHistoryTopologyMode()) {
+                    hint(spans, "Esc", "close");
+                    hint(spans, "↑↓←→", "navigate");
+                    hint(spans, "Enter", "drill-down");
+                    hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
+                } else {
+                    hint(spans, "Esc", "back");
+                    hint(spans, "↑↓", "step through path");
+                    hint(spans, "←→", "h-scroll");
+                    hint(spans, "t", "topology");
+                    hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : ""));
+                }
+                return;
             }
-            hint(spans, "Home/End", "top/end");
-            hint(spans, "s", "sort");
-            hint(spans, "d", "diagram");
-            hint(spans, "D", "text diagram");
-            hint(spans, "f", "handled [" + handledFilter + "]");
-            hint(spans, "p", "properties [" + (showProperties ? "on" : "off") + "]");
-            hint(spans, "v", "variables [" + (showVariables ? "on" : "off") + "]");
-            hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
-            hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
-            hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
+            diagram.renderFooterHints(spans);
+            return;
         }
+        hint(spans, "Esc", "back");
+        hint(spans, "↑↓", "navigate");
+        hint(spans, "PgUp/Dn", "scroll detail");
+        if (!wordWrap) {
+            hint(spans, "←→", "h-scroll");
+        }
+        hint(spans, "Home/End", "top/end");
+        hint(spans, "s", "sort");
+        hint(spans, "d", "diagram");
+        hint(spans, "f", "handled [" + handledFilter + "]");
+        hint(spans, "p", "properties [" + (showProperties ? "on" : "off") + "]");
+        hint(spans, "v", "variables [" + (showVariables ? "on" : "off") + "]");
+        hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
+        hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
+        hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
     }
 
     private void renderDetail(Frame frame, Rect area, ErrorInfo ei) {
@@ -404,6 +490,26 @@ class ErrorsTab implements MonitorTab {
         return (int) info.errors.stream().filter(e -> e.handled == filterVal).count();
     }
 
+    private Line buildErrorBreadcrumbTitle() {
+        Style nameStyle = Style.EMPTY.fg(Color.YELLOW).bold();
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.styled(" Error [", Style.EMPTY.fg(Color.WHITE)));
+        var stack = diagram.getHistoryNavigationStack();
+        if (stack.isEmpty()) {
+            spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
+        } else {
+            for (var it = stack.descendingIterator(); it.hasNext();) {
+                spans.add(Span.styled(it.next(), nameStyle));
+                spans.add(Span.styled(" → ", Style.EMPTY.fg(Color.GRAY)));
+            }
+            spans.add(Span.styled(diagram.getHistoryDrillDownRouteId(), nameStyle));
+        }
+        spans.add(Span.styled(String.format("] — step %d/%d ",
+                diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
+                Style.EMPTY.fg(Color.WHITE)));
+        return Line.from(spans);
+    }
+
     // ---- Diagram ----
 
     private void loadDiagramForSelectedError() {
@@ -438,8 +544,7 @@ class ErrorsTab implements MonitorTab {
 
         ctx.runner.scheduler().execute(() -> {
             try {
-                diagram.loadHighlightedDiagramInBackground(
-                        ctx, pid, messageHistory, RouteDiagramHelper.HighlightStyle.FAIL);
+                diagram.loadHighlightedNativeDiagramInBackground(ctx, pid, messageHistory, true, -1);
             } finally {
                 diagram.endLoad();
             }
@@ -534,17 +639,32 @@ class ErrorsTab implements MonitorTab {
                 - **NullPointerException**: A processor received unexpected null data.
                   Check if the message body or headers are populated correctly.
 
+                ## Error Diagram
+
+                Press `d` in the detail view to open a visual route diagram showing
+                the path the failed exchange took through the route. Visited nodes are
+                highlighted in red to trace the error path.
+
+                Use `Up/Down` arrow keys to step through the visited nodes one by one —
+                the diagram progressively highlights each step in order, showing exactly
+                how the exchange flowed through the route before failing. The current
+                step is shown with a selection highlight. Use `Left/Right` to scroll
+                the diagram horizontally if it extends beyond the screen.
+
+                Press `Esc` to close the diagram and return to the detail view.
+
                 ## Keys
 
-                - `Up/Down` — select error
+                - `Up/Down` — select error (list) / navigate path steps (diagram)
                 - `Enter` — view error details
+                - `d` — show error diagram (in detail view)
                 - `h` — toggle headers
                 - `b` — toggle body
                 - `p` — toggle properties
                 - `v` — toggle variables
                 - `s` — cycle sort column
                 - `S` — reverse sort order
-                - `Esc` — back to list
+                - `Esc` — back to list / close diagram
                 """;
     }
 

@@ -382,6 +382,28 @@ class TuiMcpServer {
                                    + "Shows the ASCII/Unicode art diagram of routes and their connections.",
                 Map.of()));
         toolList.add(toolDef(
+                "tui_get_history",
+                "Returns rich trace and history data from the History tab as structured JSON. "
+                                   + "Includes ALL exchange details: body with type, headers with types, "
+                                   + "exchange properties, exchange variables, thread name, source location, "
+                                   + "node level, and node labels. Much richer than tui_get_table on History. "
+                                   + "Returns different shapes depending on the History tab's current mode: "
+                                   + "Traces (exchange ID list), Trace Steps (per-step detail), "
+                                   + "or History (message history steps).",
+                Map.of("exchangeId", propDef("string",
+                        "If provided, returns trace steps for this specific exchange ID. "
+                                                       + "Otherwise returns data for the current History tab view."))));
+        toolList.add(toolDef(
+                "tui_get_topology",
+                "Returns the route topology as a structured JSON graph with nodes and edges arrays. "
+                                    + "Each node has: routeId, nodeType (route/external-in/external-out/trigger), "
+                                    + "layer, description, from (consumer URI), exchangesTotal, exchangesFailed. "
+                                    + "Each edge has: from (routeId), to (routeId), endpoint, connectionType, "
+                                    + "selfLoop, backEdge. "
+                                    + "Use this instead of tui_get_diagram when you need to reason about "
+                                    + "route connectivity programmatically.",
+                Map.of()));
+        toolList.add(toolDef(
                 "tui_send_message",
                 "Sends a message to a Camel endpoint in the selected integration. "
                                     + "Uses the file-based IPC protocol to deliver the message directly.",
@@ -389,6 +411,34 @@ class TuiMcpServer {
                         "body", propDef("string", "Message body to send"),
                         "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
                 List.of("endpoint")));
+        toolList.add(toolDef(
+                "tui_set_log_level",
+                "Changes the runtime log level of the selected integration. "
+                                     + "This sends a command to the running Camel application to change "
+                                     + "the root logger level.",
+                Map.of("level", propDef("string",
+                        "Log level to set: ERROR, WARN, INFO, DEBUG, or TRACE")),
+                List.of("level")));
+        toolList.add(toolDef(
+                "tui_filter",
+                "Sets or clears the fuzzy text filter on a tab that supports typing-to-filter. "
+                              + "Currently supported on the Classpath tab. "
+                              + "Use an empty string to clear the filter.",
+                Map.of("filter", propDef("string",
+                        "Filter text to apply. Empty string clears the filter."),
+                        "tab", propDef("string",
+                                "Tab name to filter (e.g. 'Classpath'). If omitted, uses the active tab.")),
+                List.of("filter")));
+        toolList.add(toolDef(
+                "tui_toggle_trace_display",
+                "Toggles which sections are visible in the History tab's detail view. "
+                                            + "Controls what data is shown when inspecting trace steps or history entries.",
+                Map.of("section", propDef("string",
+                        "Section to toggle: headers, properties, variables, body, or wrap"),
+                        "enabled", propDef("boolean",
+                                "If provided, forces the section on (true) or off (false). "
+                                                      + "If omitted, toggles the current state.")),
+                List.of("section")));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -428,7 +478,12 @@ class TuiMcpServer {
                 case "tui_get_log" -> callGetLog(args);
                 case "tui_get_errors" -> callGetErrors();
                 case "tui_get_diagram" -> callGetDiagram();
+                case "tui_get_history" -> callGetHistory(args);
+                case "tui_get_topology" -> callGetTopology();
                 case "tui_send_message" -> callSendMessage(args);
+                case "tui_set_log_level" -> callSetLogLevel(args);
+                case "tui_filter" -> callFilter(args);
+                case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -947,6 +1002,27 @@ class TuiMcpServer {
         return Jsoner.serialize(data);
     }
 
+    private String callGetHistory(Map<String, Object> args) {
+        String exchangeId = args.get("exchangeId") instanceof String s ? s : null;
+        if (exchangeId != null && !exchangeId.isBlank()) {
+            monitor.navigateToTab("History");
+            monitor.selectTraceExchange(exchangeId);
+        }
+        JsonObject data = monitor.getTableData("History");
+        if (data == null) {
+            return "No history data available. Ensure the History tab has data.";
+        }
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetTopology() {
+        JsonObject data = monitor.getTopologyData();
+        if (data == null) {
+            return "No topology data available. The Diagram tab may not have loaded yet.";
+        }
+        return Jsoner.serialize(data);
+    }
+
     private String callSendMessage(Map<String, Object> args) {
         String endpoint = (String) args.get("endpoint");
         if (endpoint == null || endpoint.isBlank()) {
@@ -959,6 +1035,43 @@ class TuiMcpServer {
             return "Error: no integration selected or PID unavailable";
         }
         return Jsoner.serialize(response);
+    }
+
+    private String callSetLogLevel(Map<String, Object> args) {
+        String level = (String) args.get("level");
+        if (level == null || level.isBlank()) {
+            return "Error: level is required (ERROR, WARN, INFO, DEBUG, TRACE)";
+        }
+        level = level.toUpperCase();
+        if (!"ERROR".equals(level) && !"WARN".equals(level) && !"INFO".equals(level)
+                && !"DEBUG".equals(level) && !"TRACE".equals(level)) {
+            return "Error: invalid level '" + level + "'. Must be ERROR, WARN, INFO, DEBUG, or TRACE";
+        }
+        monitor.setLogLevel(level);
+        return "Log level set to " + level;
+    }
+
+    private String callFilter(Map<String, Object> args) {
+        String filter = args.get("filter") instanceof String s ? s : "";
+        String tab = args.get("tab") instanceof String s ? s : null;
+        boolean applied = monitor.setTabFilter(tab, filter);
+        if (!applied) {
+            return "This tab does not support text filtering";
+        }
+        return filter.isEmpty() ? "Filter cleared" : "Filter set to: " + filter;
+    }
+
+    private String callToggleTraceDisplay(Map<String, Object> args) {
+        String section = (String) args.get("section");
+        if (section == null || section.isBlank()) {
+            return "Error: section is required (headers, properties, variables, body, wrap)";
+        }
+        Boolean enabled = args.get("enabled") instanceof Boolean b ? b : null;
+        String result = monitor.toggleTraceDisplay(section, enabled);
+        if (result == null) {
+            return "Error: unknown section '" + section + "'. Must be headers, properties, variables, body, or wrap";
+        }
+        return result;
     }
 
     private static JsonArray toJsonArray(List<String> list) {

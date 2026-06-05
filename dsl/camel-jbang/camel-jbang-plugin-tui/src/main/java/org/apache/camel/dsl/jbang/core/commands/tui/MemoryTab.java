@@ -434,4 +434,37 @@ class MemoryTab implements MonitorTab {
         int empty = width - filled;
         return GAUGE_FILLED.repeat(Math.max(0, filled)) + GAUGE_EMPTY.repeat(Math.max(0, empty));
     }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Memory");
+        JsonObject data = new JsonObject();
+        data.put("heapMemUsed", info.heapMemUsed);
+        data.put("heapMemCommitted", info.heapMemCommitted);
+        data.put("heapMemMax", info.heapMemMax);
+        data.put("nonHeapMemUsed", info.nonHeapMemUsed);
+        data.put("nonHeapMemCommitted", info.nonHeapMemCommitted);
+        if (info.oldGenUsed > 0) {
+            data.put("oldGenUsed", info.oldGenUsed);
+            data.put("oldGenCommitted", info.oldGenCommitted);
+            data.put("oldGenMax", info.oldGenMax);
+        }
+        if (info.metaspaceUsed > 0) {
+            data.put("metaspaceUsed", info.metaspaceUsed);
+            data.put("metaspaceCommitted", info.metaspaceCommitted);
+            data.put("metaspaceMax", info.metaspaceMax);
+        }
+        data.put("gcCollectionCount", info.gcCollectionCount);
+        data.put("gcCollectionTime", info.gcCollectionTime);
+        data.put("loadedClassCount", info.loadedClassCount);
+        data.put("threadCount", info.threadCount);
+        data.put("peakThreadCount", info.peakThreadCount);
+        result.put("snapshot", data);
+        return result;
+    }
 }

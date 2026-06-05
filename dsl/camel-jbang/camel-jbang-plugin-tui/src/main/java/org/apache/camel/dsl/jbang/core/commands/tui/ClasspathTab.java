@@ -347,6 +347,18 @@ class ClasspathTab implements MonitorTab {
     }
 
     @Override
+    public boolean setFilter(String filter) {
+        fuzzyFilter.clearFilter();
+        if (filter != null && !filter.isEmpty()) {
+            for (char c : filter.toCharArray()) {
+                fuzzyFilter.appendChar(c);
+            }
+        }
+        refilter();
+        return true;
+    }
+
+    @Override
     public SelectionContext getSelectionContext() {
         return null;
     }
@@ -423,5 +435,36 @@ class ClasspathTab implements MonitorTab {
                 - `Backspace` — delete filter character
                 - `Esc` — clear filter or back
                 """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        List<FilteredEntry> entries = filteredEntries;
+        if (entries.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("tab", "Classpath");
+        JsonArray rows = new JsonArray();
+        for (FilteredEntry fe : entries) {
+            JarEntry j = fe.entry();
+            JsonObject row = new JsonObject();
+            if (j.groupId() != null) {
+                row.put("groupId", j.groupId());
+            }
+            if (j.artifactId() != null) {
+                row.put("artifactId", j.artifactId());
+            }
+            if (j.version() != null) {
+                row.put("version", j.version());
+            }
+            row.put("path", j.fullPath());
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", entries.size());
+        Integer sel = listState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
     }
 }

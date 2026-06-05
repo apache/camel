@@ -553,12 +553,19 @@ final class StatusParser {
             entry.timestamp = tsObj.toString();
         }
 
+        entry.remoteEndpoint = json.getBooleanOrDefault("remoteEndpoint", false);
+        entry.stubEndpoint = json.getBooleanOrDefault("stubEndpoint", false);
+
         if (entry.first || entry.last) {
             entry.nodeLevel = Math.max(0, entry.nodeLevel - 1);
         }
         String indent = "  ".repeat(entry.nodeLevel);
         if (entry.first) {
-            entry.direction = "-->";
+            if (entry.stubEndpoint) {
+                entry.direction = "~-->";
+            } else {
+                entry.direction = entry.remoteEndpoint ? "*-->" : "*-> ";
+            }
             String uri = json.getString("endpointUri");
             if (uri != null) {
                 entry.processor = indent + "from[" + uri + "]";
@@ -566,10 +573,20 @@ final class StatusParser {
                 entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
             }
         } else if (entry.last) {
-            entry.direction = "<--";
+            if (entry.stubEndpoint) {
+                entry.direction = "<--~";
+            } else {
+                entry.direction = entry.remoteEndpoint ? "<--*" : "<-* ";
+            }
             entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
         } else {
-            entry.direction = "  >";
+            if (entry.stubEndpoint) {
+                entry.direction = "~-->";
+            } else if (entry.remoteEndpoint) {
+                entry.direction = "--->";
+            } else {
+                entry.direction = "    ";
+            }
             entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
         }
 
@@ -618,6 +635,9 @@ final class StatusParser {
         entry.failed = json.getBooleanOrDefault("failed", false);
         entry.nodeLevel = json.getIntegerOrDefault("nodeLevel", 0);
 
+        entry.remoteEndpoint = json.getBooleanOrDefault("remoteEndpoint", false);
+        entry.stubEndpoint = json.getBooleanOrDefault("stubEndpoint", false);
+
         Object elapsedObj = json.get("elapsed");
         if (elapsedObj instanceof Number n) {
             entry.elapsed = n.longValue();
@@ -626,11 +646,25 @@ final class StatusParser {
         }
 
         if (entry.first) {
-            entry.direction = "-->";
+            if (entry.stubEndpoint) {
+                entry.direction = "~-->";
+            } else {
+                entry.direction = entry.remoteEndpoint ? "*-->" : "*-> ";
+            }
         } else if (entry.last) {
-            entry.direction = "<--";
+            if (entry.stubEndpoint) {
+                entry.direction = "<--~";
+            } else {
+                entry.direction = entry.remoteEndpoint ? "<--*" : "<-* ";
+            }
         } else {
-            entry.direction = "  >";
+            if (entry.stubEndpoint) {
+                entry.direction = "~-->";
+            } else if (entry.remoteEndpoint) {
+                entry.direction = "--->";
+            } else {
+                entry.direction = "    ";
+            }
         }
 
         if (entry.first || entry.last) {

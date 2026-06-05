@@ -32,6 +32,8 @@ public final class DiagramColors {
     static final Style FROM_LABEL_STYLE = Style.EMPTY.fg(Color.GRAY);
     static final Style METRICS_OK_STYLE = Style.EMPTY.fg(Color.GREEN);
     static final Style METRICS_FAIL_STYLE = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+    static final Color HIGHLIGHT_OK_COLOR = Color.GREEN;
+    static final Color HIGHLIGHT_FAIL_COLOR = Color.LIGHT_RED;
 
     // Unicode box-drawing characters
     static final char H = '─';
