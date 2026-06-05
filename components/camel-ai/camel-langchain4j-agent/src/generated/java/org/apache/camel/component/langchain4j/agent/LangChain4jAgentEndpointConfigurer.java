@@ -28,6 +28,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "agentConfiguration": target.getConfiguration().setAgentConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class, value)); return true;
         case "agentfactory":
         case "agentFactory": target.getConfiguration().setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
+        case "jsonschema":
+        case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mcpclients":
@@ -52,6 +54,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "agentConfiguration": return org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class;
         case "agentfactory":
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
+        case "jsonschema":
+        case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "mcpclients":
@@ -72,6 +76,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "agentConfiguration": return target.getConfiguration().getAgentConfiguration();
         case "agentfactory":
         case "agentFactory": return target.getConfiguration().getAgentFactory();
+        case "jsonschema":
+        case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mcpclients":

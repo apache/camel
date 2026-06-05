@@ -28,6 +28,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": target.setAgentConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class, value)); return true;
         case "agentfactory":
         case "agentFactory": target.setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
+        case "jsonschema":
+        case "jsonSchema": target.setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpclients":
         case "mcpClients": target.setMcpClients(property(camelContext, java.util.List.class, value)); return true;
         case "mcpserver":
@@ -45,6 +47,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": return org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class;
         case "agentfactory":
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
+        case "jsonschema":
+        case "jsonSchema": return java.lang.String.class;
         case "mcpclients":
         case "mcpClients": return java.util.List.class;
         case "mcpserver":
@@ -63,6 +67,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": return target.getAgentConfiguration();
         case "agentfactory":
         case "agentFactory": return target.getAgentFactory();
+        case "jsonschema":
+        case "jsonSchema": return target.getJsonSchema();
         case "mcpclients":
         case "mcpClients": return target.getMcpClients();
         case "mcpserver":
