@@ -30,6 +30,7 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         // This strategy filters HTTP protocol headers only; Camel-prefixed headers must not be blocked
         // so that they survive the request-to-response copy in HttpProducer.copyHeaders.
         setInFilterStartsWith((String[]) null);
+        setOutFilterStartsWith((String[]) null);
 
         getInFilter().add("content-encoding");
         getInFilter().add("content-language");

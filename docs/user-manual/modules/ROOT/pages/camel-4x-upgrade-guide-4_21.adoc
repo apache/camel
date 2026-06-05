@@ -95,7 +95,7 @@ The following component-specific header filter strategy classes have been remove
 * `VertxWebsocketHeaderFilterStrategy`
 * `XmppHeaderFilterStrategy`
 
-If your code references any of these classes directly, replace them with `DefaultHeaderFilterStrategy`.
+If your code references any of these classes directly, replace them with `new DefaultHeaderFilterStrategy()`, which now provides the same behavior by default.
 
 The class `org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy` has been deprecated.
 Use `org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy` directly instead.

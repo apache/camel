@@ -42,13 +42,12 @@ import org.apache.camel.spi.Metadata;
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
-     * A filter pattern that only accepts keys starting with <tt>Camel</tt> or <tt>org.apache.camel</tt>.
+     * A filter pattern that only accepts keys starting with <tt>Camel</tt>.
      *
      * @deprecated use {@link #CAMEL_FILTER_STARTS_WITH}
      */
     @Deprecated(since = "3.9.0")
-    public static final Pattern CAMEL_FILTER_PATTERN
-            = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[.a-zA-Z0-9]*");
+    public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)Camel[.a-zA-z0-9]*");
 
     /**
      * A filter pattern for keys starting with <tt>Camel</tt> or <tt>camel</tt>.
@@ -378,10 +377,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     private boolean tryPattern(String headerName, String lower, Pattern pattern) {
-        // optimize if it's the default pattern as we know the pattern is to check for keys starting with Camel
+        // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
         if (pattern == CAMEL_FILTER_PATTERN) {
-            boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel")
-                    || headerName.startsWith("org.apache.camel");
+            boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel");
             if (match) {
                 return true;
             }
@@ -389,13 +387,13 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                 if (lower == null) {
                     lower = headerName.toLowerCase();
                 }
-                match = lower.startsWith("camel") || lower.startsWith("org.apache.camel");
+                match = lower.startsWith("camel");
                 if (match) {
                     return true;
                 }
             }
-        } else {
-            return pattern.matcher(headerName).matches();
+        } else if (pattern.matcher(headerName).matches()) {
+            return true;
         }
         return false;
     }
