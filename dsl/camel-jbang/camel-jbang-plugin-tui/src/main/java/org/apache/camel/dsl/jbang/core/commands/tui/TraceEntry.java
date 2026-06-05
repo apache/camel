@@ -50,4 +50,5 @@ class TraceEntry {
     Map<String, Object> exchangeVariables;
     Map<String, String> exchangeVariableTypes;
     String exception;
+    int inlineDepth;
 }

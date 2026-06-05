@@ -98,7 +98,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CLI Connector for local management of Camel integrations from Camel JBang.
+ * CLI Connector for local management of Camel integrations from Camel CLI.
  */
 public class LocalCliConnector extends ServiceSupport implements CliConnector, CamelContextAware {
 
@@ -203,9 +203,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
             scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
-            LOG.info("Camel JBang CLI enabled");
+            LOG.info("Camel CLI connector enabled");
         } else {
-            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel JBang CLI.", getPid());
+            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI connector.", getPid());
         }
     }
 
@@ -241,7 +241,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         terminateExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                LOG.info("Camel JBang terminating JVM");
+                LOG.info("Camel CLI connector terminating JVM");
                 try {
                     // if we are debugging then detach before stopping camel
                     BacklogDebugger debugger = camelContext.hasService(BacklogDebugger.class);

@@ -18,10 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.layout.Alignment;
@@ -58,6 +62,16 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 class HistoryTab implements MonitorTab {
 
     private static final String[] TRACE_SORT_COLUMNS = { "time", "route", "elapsed", "exchange" };
+
+    private static final Comparator<TraceEntry> UID_COMPARATOR = (a, b) -> {
+        String ua = a.uid != null ? a.uid : "";
+        String ub = b.uid != null ? b.uid : "";
+        try {
+            return Long.compare(Long.parseLong(ua), Long.parseLong(ub));
+        } catch (NumberFormatException e) {
+            return ua.compareTo(ub);
+        }
+    };
 
     private final MonitorContext ctx;
     private final AtomicReference<List<TraceEntry>> traces;
@@ -204,7 +218,7 @@ class HistoryTab implements MonitorTab {
         if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
             if (tracerActive && traceDetailView) {
                 if (showWaterfall) {
-                    List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
+                    List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
                     for (int i = 0; i < 10; i++) {
                         traceStepTableState.selectNext(steps.size());
                     }
@@ -397,7 +411,7 @@ class HistoryTab implements MonitorTab {
     public void navigateDown() {
         if (!traces.get().isEmpty()) {
             if (traceDetailView) {
-                List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
+                List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
                 traceStepTableState.selectNext(steps.size());
                 traceDetailScroll = 0;
             } else {
@@ -592,7 +606,7 @@ class HistoryTab implements MonitorTab {
                     return;
                 }
             }
-            List<TraceEntry> steps = getTraceSteps(exchangeId);
+            List<TraceEntry> steps = getTraceStepsDepthFirst(exchangeId);
             if (steps.isEmpty()) {
                 diagram.endLoad();
                 return;
@@ -655,26 +669,29 @@ class HistoryTab implements MonitorTab {
     private void renderTraceExchangeList(Frame frame, Rect area) {
         List<String> exchangeIds = getTraceExchangeIds();
 
-        List<TraceEntry> current = traces.get();
+        // Compute child exchange IDs that will be inlined into a parent's depth-first view
+        Set<String> childExchangeIds = computeAllChildExchangeIds(exchangeIds);
+
         record ExchangeSummary(String exchangeId, String timestamp, long epochMs, String routeId,
                 String status, long elapsed, int steps) {
         }
         List<ExchangeSummary> summaries = new ArrayList<>();
         for (String exchangeId : exchangeIds) {
+            if (childExchangeIds.contains(exchangeId)) {
+                continue;
+            }
+            List<TraceEntry> depthFirstSteps = getTraceStepsDepthFirst(exchangeId);
             TraceEntry first = null;
             TraceEntry lastEntry = null;
             TraceEntry latestEntry = null;
-            int stepCount = 0;
-            for (TraceEntry e : current) {
-                if (exchangeId.equals(e.exchangeId)) {
-                    if (first == null) {
-                        first = e;
-                    }
-                    latestEntry = e;
-                    if (e.last) {
-                        lastEntry = e;
-                    }
-                    stepCount++;
+            int stepCount = depthFirstSteps.size();
+            for (TraceEntry e : depthFirstSteps) {
+                if (first == null) {
+                    first = e;
+                }
+                latestEntry = e;
+                if (e.last && exchangeId.equals(e.exchangeId)) {
+                    lastEntry = e;
                 }
             }
             if (first != null) {
@@ -752,7 +769,7 @@ class HistoryTab implements MonitorTab {
     }
 
     private void renderTraceExchangeDetail(Frame frame, Rect area) {
-        List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
+        List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
 
         List<Rect> chunks = Layout.vertical()
                 .constraints(Constraint.length(10), Constraint.length(1), Constraint.fill())
@@ -763,7 +780,7 @@ class HistoryTab implements MonitorTab {
         for (int i = 0; i < steps.size(); i++) {
             TraceEntry entry = steps.get(i);
             String desc = showDescription ? descMap.get(entry.routeId) : null;
-            rows.add(buildStepRow(i + 1,
+            rows.add(buildStepRow(i + 1, entry.inlineDepth,
                     entry.direction, entry.first, entry.last, entry.failed,
                     entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
         }
@@ -1017,7 +1034,7 @@ class HistoryTab implements MonitorTab {
         for (int i = 0; i < current.size(); i++) {
             HistoryEntry entry = current.get(i);
             String desc = showDescription ? descMap.get(entry.routeId) : null;
-            rows.add(buildStepRow(i + 1,
+            rows.add(buildStepRow(i + 1, 0,
                     entry.direction, entry.first, entry.last, entry.failed,
                     entry.timestamp, entry.routeId, entry.nodeId, entry.processor, desc, entry.elapsed));
         }
@@ -1104,24 +1121,146 @@ class HistoryTab implements MonitorTab {
         return new ArrayList<>(seen);
     }
 
-    private List<TraceEntry> getTraceSteps(String exchangeId) {
-        List<TraceEntry> current = traces.get();
-        List<TraceEntry> steps = new ArrayList<>();
-        for (TraceEntry e : current) {
-            if (exchangeId != null && exchangeId.equals(e.exchangeId)) {
-                steps.add(e);
+    private List<TraceEntry> getTraceStepsDepthFirst(String exchangeId) {
+        List<TraceEntry> allTraces = traces.get();
+        if (allTraces.isEmpty() || exchangeId == null) {
+            return Collections.emptyList();
+        }
+
+        // Group by exchangeId, each sorted by uid
+        Map<String, List<TraceEntry>> byExchange = new LinkedHashMap<>();
+        for (TraceEntry e : allTraces) {
+            if (e.exchangeId != null) {
+                byExchange.computeIfAbsent(e.exchangeId, k -> new ArrayList<>()).add(e);
             }
         }
-        steps.sort((a, b) -> {
-            String ua = a.uid != null ? a.uid : "";
-            String ub = b.uid != null ? b.uid : "";
-            try {
-                return Long.compare(Long.parseLong(ua), Long.parseLong(ub));
-            } catch (NumberFormatException e) {
-                return ua.compareTo(ub);
+        byExchange.values().forEach(list -> list.sort(UID_COMPARATOR));
+
+        // Build from-endpoint → exchangeIds index (consumer endpoint of each exchange)
+        Map<String, List<String>> fromIndex = new LinkedHashMap<>();
+        for (var entry : byExchange.entrySet()) {
+            List<TraceEntry> steps = entry.getValue();
+            if (!steps.isEmpty() && steps.get(0).first) {
+                String ep = extractFromEndpoint(steps.get(0));
+                if (ep != null) {
+                    fromIndex.computeIfAbsent(ep, k -> new ArrayList<>()).add(entry.getKey());
+                }
             }
-        });
-        return steps;
+        }
+
+        // Build multicast/splitter child index: routeId → [child exchangeIds]
+        // A child exchange has no first=true entry and its first step is a to[...] node
+        Map<String, List<String>> branchChildren = new LinkedHashMap<>();
+        for (var entry : byExchange.entrySet()) {
+            List<TraceEntry> steps = entry.getValue();
+            if (!steps.isEmpty() && !steps.get(0).first) {
+                TraceEntry firstStep = steps.get(0);
+                if (firstStep.routeId != null && extractToEndpoint(firstStep) != null) {
+                    branchChildren.computeIfAbsent(firstStep.routeId, k -> new ArrayList<>()).add(entry.getKey());
+                }
+            }
+        }
+
+        // Walk depth-first
+        List<TraceEntry> result = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        inlineExchange(exchangeId, byExchange, fromIndex, branchChildren, visited, result, 0);
+        return result;
+    }
+
+    private void inlineExchange(
+            String exchangeId, Map<String, List<TraceEntry>> byExchange,
+            Map<String, List<String>> fromIndex, Map<String, List<String>> branchChildren,
+            Set<String> visited, List<TraceEntry> result, int depth) {
+        if (!visited.add(exchangeId)) {
+            return;
+        }
+        List<TraceEntry> steps = byExchange.get(exchangeId);
+        if (steps == null) {
+            return;
+        }
+        for (TraceEntry step : steps) {
+            step.inlineDepth = depth;
+            result.add(step);
+
+            // After a multicast/splitter step, inline branch child exchanges
+            if (isMulticastNode(step)) {
+                List<String> children = branchChildren.get(step.routeId);
+                if (children != null) {
+                    for (String childId : children) {
+                        if (!visited.contains(childId)) {
+                            inlineExchange(childId, byExchange, fromIndex, branchChildren, visited, result, depth + 1);
+                        }
+                    }
+                }
+            }
+
+            // After a to[X] step, inline consumer exchanges matching endpoint X
+            String targetEndpoint = extractToEndpoint(step);
+            if (targetEndpoint != null) {
+                List<String> children = fromIndex.get(targetEndpoint);
+                if (children != null) {
+                    for (String childId : children) {
+                        if (!visited.contains(childId)) {
+                            inlineExchange(childId, byExchange, fromIndex, branchChildren, visited, result, depth + 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isMulticastNode(TraceEntry entry) {
+        if (entry.nodeShortName != null) {
+            return switch (entry.nodeShortName) {
+                case "multicast", "recipientList", "split", "routingSlip", "enrich", "pollEnrich",
+                        "wireTap", "dynamicRouter" ->
+                    true;
+                default -> false;
+            };
+        }
+        return false;
+    }
+
+    private static String extractFromEndpoint(TraceEntry entry) {
+        if (entry.nodeLabel != null) {
+            return normalizeEndpoint(entry.nodeLabel);
+        }
+        return null;
+    }
+
+    private static String extractToEndpoint(TraceEntry entry) {
+        if (entry.nodeLabel != null && entry.nodeLabel.startsWith("to[")) {
+            int end = entry.nodeLabel.indexOf(']');
+            if (end > 3) {
+                return normalizeEndpoint(entry.nodeLabel.substring(3, end));
+            }
+        }
+        return null;
+    }
+
+    private static String normalizeEndpoint(String endpoint) {
+        int q = endpoint.indexOf('?');
+        if (q > 0) {
+            endpoint = endpoint.substring(0, q);
+        }
+        return endpoint.replace("://", ":");
+    }
+
+    private Set<String> computeAllChildExchangeIds(List<String> exchangeIds) {
+        Set<String> allChildren = new LinkedHashSet<>();
+        for (String exchangeId : exchangeIds) {
+            if (allChildren.contains(exchangeId)) {
+                continue;
+            }
+            List<TraceEntry> depthFirst = getTraceStepsDepthFirst(exchangeId);
+            for (TraceEntry e : depthFirst) {
+                if (!exchangeId.equals(e.exchangeId)) {
+                    allChildren.add(e.exchangeId);
+                }
+            }
+        }
+        return allChildren;
     }
 
     private String traceSortLabel(String label, String column) {
@@ -1133,7 +1272,7 @@ class HistoryTab implements MonitorTab {
     }
 
     private static Row buildStepRow(
-            int stepNumber,
+            int stepNumber, int inlineDepth,
             String direction, boolean first, boolean last, boolean failed,
             String timestamp, String routeId, String nodeId, String processor,
             String description, long elapsed) {
@@ -1145,13 +1284,14 @@ class HistoryTab implements MonitorTab {
         }
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
         String display = description != null ? description : (processor != null ? processor : "");
+        String indent = inlineDepth > 0 ? "  ".repeat(inlineDepth) : "";
         return Row.from(
                 rightCell(String.valueOf(stepNumber), 3),
                 Cell.from(Span.styled(direction, dirStyle)),
                 Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
-                Cell.from(Span.styled(routeId != null ? truncate(routeId, 25) : "", Style.EMPTY.fg(Color.CYAN))),
-                Cell.from(nodeId != null ? truncate(nodeId, 15) : ""),
-                Cell.from(display),
+                Cell.from(Span.styled(indent + (routeId != null ? truncate(routeId, 25) : ""), Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(indent + (nodeId != null ? truncate(nodeId, 15) : "")),
+                Cell.from(indent + display),
                 rightCell(elapsedStr, 10));
     }
 
@@ -1438,7 +1578,7 @@ class HistoryTab implements MonitorTab {
         boolean tracerActive = !traces.get().isEmpty();
         if (tracerActive) {
             if (traceDetailView) {
-                List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
+                List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
                 if (steps.isEmpty()) {
                     return null;
                 }
@@ -1671,7 +1811,7 @@ class HistoryTab implements MonitorTab {
         if (tracerActive) {
             if (traceDetailView && traceSelectedExchangeId != null) {
                 result.put("tab", "Trace Steps");
-                List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
+                List<TraceEntry> steps = getTraceStepsDepthFirst(traceSelectedExchangeId);
                 JsonArray rows = new JsonArray();
                 for (TraceEntry t : steps) {
                     JsonObject row = new JsonObject();
