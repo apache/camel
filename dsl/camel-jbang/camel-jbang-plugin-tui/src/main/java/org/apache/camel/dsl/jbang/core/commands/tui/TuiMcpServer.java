@@ -439,6 +439,13 @@ class TuiMcpServer {
                                 "If provided, forces the section on (true) or off (false). "
                                                       + "If omitted, toggles the current state.")),
                 List.of("section")));
+        toolList.add(toolDef(
+                "tui_get_readme",
+                "Returns the README/documentation content from a running integration. "
+                                  + "Useful for understanding what the integration does, its configuration, and usage. "
+                                  + "If no name is provided, returns the README for the currently selected integration.",
+                Map.of("name", propDef("string",
+                        "Integration name. If omitted, uses the currently selected integration."))));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -484,6 +491,7 @@ class TuiMcpServer {
                 case "tui_set_log_level" -> callSetLogLevel(args);
                 case "tui_filter" -> callFilter(args);
                 case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
+                case "tui_get_readme" -> callGetReadme(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -1072,6 +1080,22 @@ class TuiMcpServer {
             return "Error: unknown section '" + section + "'. Must be headers, properties, variables, body, or wrap";
         }
         return result;
+    }
+
+    private String callGetReadme(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        JsonObject response = monitor.getReadme(name);
+        if (response == null) {
+            return name != null
+                    ? "No README found for integration '" + name + "'"
+                    : "No README found for the selected integration";
+        }
+        JsonObject result = new JsonObject();
+        String content = response.getString("content");
+        String file = response.getStringOrDefault("file", "README");
+        result.put("file", file);
+        result.put("content", content != null ? content : "");
+        return Jsoner.serialize(result);
     }
 
     private static JsonArray toJsonArray(List<String> list) {

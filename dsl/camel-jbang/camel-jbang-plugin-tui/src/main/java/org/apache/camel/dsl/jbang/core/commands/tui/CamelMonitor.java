@@ -2799,6 +2799,37 @@ public class CamelMonitor extends CamelCommand {
                 .toList();
     }
 
+    JsonObject getReadme(String name) {
+        List<IntegrationInfo> integrations = data.get();
+        IntegrationInfo target = null;
+        if (name != null && !name.isEmpty()) {
+            for (IntegrationInfo info : integrations) {
+                if (!info.vanishing && name.equals(info.name)) {
+                    target = info;
+                    break;
+                }
+            }
+        } else {
+            target = ctx != null ? ctx.findSelectedIntegration() : null;
+        }
+        if (target == null) {
+            return null;
+        }
+        if (target.readmeFiles == null || target.readmeFiles.isEmpty()) {
+            return null;
+        }
+        try {
+            Path outputFile = ctx.getOutputFile(target.pid);
+            Files.deleteIfExists(outputFile);
+            JsonObject action = new JsonObject();
+            action.put("action", "readme");
+            PathUtils.writeTextSafely(action.toJson(), ctx.getActionFile(target.pid));
+            return MonitorContext.pollJsonResponse(outputFile, 5000);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     int injectKeys(List<String> keys, int delayMs) {
         long fireAt = System.currentTimeMillis();
         int count = 0;
