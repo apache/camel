@@ -78,6 +78,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
@@ -1653,6 +1654,9 @@ public class CamelMonitor extends CamelCommand {
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));
+            if (client == null) {
+                rightSpans.add(Span.styled("  F2 → Setup AI", Style.EMPTY.dim()));
+            }
         }
 
         if (!rightSpans.isEmpty()) {
@@ -2426,6 +2430,73 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    JsonObject getFiles(String name, String file) {
+        List<IntegrationInfo> integrations = data.get();
+        IntegrationInfo target = null;
+        if (name != null && !name.isEmpty()) {
+            for (IntegrationInfo info : integrations) {
+                if (!info.vanishing && name.equals(info.name)) {
+                    target = info;
+                    break;
+                }
+            }
+        } else {
+            target = ctx != null ? ctx.findSelectedIntegration() : null;
+        }
+        if (target == null) {
+            return null;
+        }
+        Path dir = FilesBrowser.resolveSourceDirectory(target);
+        if (dir == null || !Files.isDirectory(dir)) {
+            return null;
+        }
+        if (file != null && !file.isEmpty()) {
+            Path filePath = dir.resolve(file);
+            if (!Files.isRegularFile(filePath)) {
+                return null;
+            }
+            try {
+                String content = Files.readString(filePath, StandardCharsets.UTF_8);
+                JsonObject result = new JsonObject();
+                result.put("file", file);
+                result.put("directory", dir.toString());
+                result.put("size", FilesBrowser.formatFileSize(Files.size(filePath)));
+                result.put("type", FilesBrowser.fileType(filePath));
+                result.put("content", content);
+                return result;
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        JsonArray files = new JsonArray();
+        try (var stream = Files.list(dir)) {
+            stream.filter(Files::isRegularFile)
+                    .sorted((a, b) -> a.getFileName().toString().compareToIgnoreCase(b.getFileName().toString()))
+                    .limit(99)
+                    .forEach(p -> {
+                        JsonObject entry = new JsonObject();
+                        entry.put("name", p.getFileName().toString());
+                        try {
+                            entry.put("size", FilesBrowser.formatFileSize(Files.size(p)));
+                        } catch (IOException e) {
+                            entry.put("size", "0 B");
+                        }
+                        entry.put("type", FilesBrowser.fileType(p));
+                        files.add(entry);
+                    });
+        } catch (IOException e) {
+            return null;
+        }
+        if (files.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("directory", dir.toString());
+        result.put("files", files);
+        result.put("totalFiles", files.size());
+        return result;
+    }
+
     int injectKeys(List<String> keys, int delayMs) {
         long fireAt = System.currentTimeMillis();
         int count = 0;
@@ -2566,6 +2637,49 @@ public class CamelMonitor extends CamelCommand {
             return null;
         }
         return RuntimeHelper.sendMessage(pid, endpoint, body, headers);
+    }
+
+    String controlIntegration(String action) {
+        if (action == null || action.isBlank()) {
+            return "Error: action is required";
+        }
+        if (ctx.selectedPid == null) {
+            return "Error: no integration selected";
+        }
+        String name = selectedName();
+        return switch (action) {
+            case "stop-routes", "pause" -> {
+                if (isInfraSelected()) {
+                    yield "Error: cannot stop routes on infra service";
+                }
+                sendRouteCommand(ctx.selectedPid, "*", "stop");
+                yield "Routes stopped for " + name;
+            }
+            case "start-routes", "resume" -> {
+                if (isInfraSelected()) {
+                    yield "Error: cannot start routes on infra service";
+                }
+                sendRouteCommand(ctx.selectedPid, "*", "start");
+                yield "Routes started for " + name;
+            }
+            case "restart" -> {
+                if (isInfraSelected()) {
+                    yield "Error: cannot restart infra service";
+                }
+                restartSelectedProcess();
+                yield "Restarting " + name;
+            }
+            case "stop" -> {
+                stopSelectedProcess(false);
+                yield "Stopping " + name;
+            }
+            case "kill" -> {
+                stopSelectedProcess(true);
+                yield "Killed " + name;
+            }
+            default -> "Unknown action: " + action
+                       + ". Available: stop-routes, start-routes, restart, stop, kill";
+        };
     }
 
     private record PendingKey(KeyEvent event, long fireAt) {

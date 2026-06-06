@@ -446,6 +446,27 @@ class TuiMcpServer {
                                   + "If no name is provided, returns the README for the currently selected integration.",
                 Map.of("name", propDef("string",
                         "Integration name. If omitted, uses the currently selected integration."))));
+        toolList.add(toolDef(
+                "tui_control",
+                "Controls the selected integration: stop/start routes, restart, stop, or kill the process. "
+                               + "Actions: stop-routes (or pause) — suspend all routes; "
+                               + "start-routes (or resume) — resume all routes; "
+                               + "restart — gracefully restart the integration; "
+                               + "stop — gracefully stop the process; "
+                               + "kill — forcefully terminate the process.",
+                Map.of("action", propDef("string",
+                        "Control action: stop-routes, start-routes, pause, resume, restart, stop, or kill")),
+                List.of("action")));
+        toolList.add(toolDef(
+                "tui_get_files",
+                "Returns source files from the selected integration's directory. "
+                                 + "Without a file parameter, returns the list of files (name, size, type). "
+                                 + "With a file parameter, returns the file's content. "
+                                 + "Useful for reading route source code, configuration, and other integration files.",
+                Map.of("name", propDef("string",
+                        "Integration name. If omitted, uses the currently selected integration."),
+                        "file", propDef("string",
+                                "Filename to read. If omitted, returns the file list instead."))));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -492,6 +513,8 @@ class TuiMcpServer {
                 case "tui_filter" -> callFilter(args);
                 case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
                 case "tui_get_readme" -> callGetReadme(args);
+                case "tui_control" -> callControl(args);
+                case "tui_get_files" -> callGetFiles(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -1096,6 +1119,26 @@ class TuiMcpServer {
         result.put("file", file);
         result.put("content", content != null ? content : "");
         return Jsoner.serialize(result);
+    }
+
+    private String callControl(Map<String, Object> args) {
+        String action = (String) args.get("action");
+        if (action == null || action.isBlank()) {
+            return "Error: action is required";
+        }
+        return monitor.controlIntegration(action);
+    }
+
+    private String callGetFiles(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        String file = args.get("file") instanceof String s ? s : null;
+        JsonObject response = monitor.getFiles(name, file);
+        if (response == null) {
+            return name != null
+                    ? "No source files found for integration '" + name + "'"
+                    : "No source files found for the selected integration";
+        }
+        return Jsoner.serialize(response);
     }
 
     private static JsonArray toJsonArray(List<String> list) {

@@ -346,7 +346,7 @@ class LogTab implements MonitorTab {
         List<Line> visibleLines = allLines.subList(start, Math.min(allLines.size(), start + visibleHeight));
 
         int currentMatchLine = search.currentMatchLine();
-        if (currentMatchLine >= 0 || search.hasFindTerm()) {
+        if (currentMatchLine >= 0 || search.hasFindTerm() || search.hasHighlightTerm()) {
             List<Line> highlighted = new ArrayList<>(visibleLines.size());
             for (int i = 0; i < visibleLines.size(); i++) {
                 highlighted.add(search.applyHighlights(visibleLines.get(i), start + i, currentMatchLine));
