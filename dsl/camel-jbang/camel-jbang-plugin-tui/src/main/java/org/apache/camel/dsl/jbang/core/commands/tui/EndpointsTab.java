@@ -73,28 +73,18 @@ class EndpointsTab implements MonitorTab {
     private int filter;
     private int chartMode = CHART_ALL;
 
-    EndpointsTab(MonitorContext ctx,
-                 Map<String, LinkedList<Long>> endpointInHistory,
-                 Map<String, LinkedList<Long>> endpointOutHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteInHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteOutHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteStubInHistory,
-                 Map<String, LinkedList<Long>> endpointRemoteStubOutHistory,
-                 Map<String, LinkedList<Long>> endpointInSizeHistory,
-                 Map<String, LinkedList<Long>> endpointOutSizeHistory,
-                 Map<String, LinkedList<Long>> perEndpointInHistory,
-                 Map<String, LinkedList<Long>> perEndpointOutHistory) {
+    EndpointsTab(MonitorContext ctx, MetricsCollector metrics) {
         this.ctx = ctx;
-        this.endpointInHistory = endpointInHistory;
-        this.endpointOutHistory = endpointOutHistory;
-        this.endpointRemoteInHistory = endpointRemoteInHistory;
-        this.endpointRemoteOutHistory = endpointRemoteOutHistory;
-        this.endpointRemoteStubInHistory = endpointRemoteStubInHistory;
-        this.endpointRemoteStubOutHistory = endpointRemoteStubOutHistory;
-        this.endpointInSizeHistory = endpointInSizeHistory;
-        this.endpointOutSizeHistory = endpointOutSizeHistory;
-        this.perEndpointInHistory = perEndpointInHistory;
-        this.perEndpointOutHistory = perEndpointOutHistory;
+        this.endpointInHistory = metrics.getEndpointInHistory();
+        this.endpointOutHistory = metrics.getEndpointOutHistory();
+        this.endpointRemoteInHistory = metrics.getEndpointRemoteInHistory();
+        this.endpointRemoteOutHistory = metrics.getEndpointRemoteOutHistory();
+        this.endpointRemoteStubInHistory = metrics.getEndpointRemoteStubInHistory();
+        this.endpointRemoteStubOutHistory = metrics.getEndpointRemoteStubOutHistory();
+        this.endpointInSizeHistory = metrics.getEndpointInSizeHistory();
+        this.endpointOutSizeHistory = metrics.getEndpointOutSizeHistory();
+        this.perEndpointInHistory = metrics.getPerEndpointInHistory();
+        this.perEndpointOutHistory = metrics.getPerEndpointOutHistory();
     }
 
     @Override

@@ -22,15 +22,12 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -97,10 +94,7 @@ public class CamelMonitor extends CamelCommand {
 
     private static final long VANISH_DURATION_MS = 6000;
     private static final long DEFAULT_REFRESH_MS = 100;
-    private static final int MAX_SPARKLINE_POINTS = 60;
-    private static final int MAX_ENDPOINT_CHART_POINTS = 60;
-    private static final int MAX_HEAP_HISTORY_POINTS = 120;
-    private static final long HEAP_SAMPLE_INTERVAL_MS = 5000;
+
     private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 10;
@@ -146,57 +140,8 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, VanishingInfraInfo> vanishingInfra = new ConcurrentHashMap<>();
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
 
-    // Sparkline: throughput history per PID (one point per second)
-    private final Map<String, LinkedList<Long>> throughputHistory = new ConcurrentHashMap<>();
-    // Sparkline: failed throughput history per PID (one point per second)
-    private final Map<String, LinkedList<Long>> failedHistory = new ConcurrentHashMap<>();
-    // Sliding window of [timestamp, exchangesTotal, exchangesFailed] samples for smoothing
-    private final Map<String, LinkedList<long[]>> throughputSamples = new ConcurrentHashMap<>();
-    // Track last time a sparkline point was recorded
-    private final Map<String, Long> previousExchangesTime = new ConcurrentHashMap<>();
-
-    // Endpoint in/out sliding window history per PID — all endpoints
-    private final Map<String, LinkedList<Long>> endpointInHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> endpointOutHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> endpointSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousEndpointTime = new ConcurrentHashMap<>();
-
-    // Endpoint in/out sliding window history per PID — remote endpoints only
-    private final Map<String, LinkedList<Long>> endpointRemoteInHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> endpointRemoteOutHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> endpointRemoteSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousEndpointRemoteTime = new ConcurrentHashMap<>();
-
-    // Endpoint in/out sliding window history per PID — remote+stub endpoints
-    private final Map<String, LinkedList<Long>> endpointRemoteStubInHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> endpointRemoteStubOutHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> endpointRemoteStubSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousEndpointRemoteStubTime = new ConcurrentHashMap<>();
-
-    // Endpoint payload size (mean body size) history per PID — for sparkline
-    private final Map<String, LinkedList<Long>> endpointInSizeHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> endpointOutSizeHistory = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousEndpointSizeTime = new ConcurrentHashMap<>();
-
-    // Per-endpoint in/out rate history — keyed by pid + "|" + uri
-    private final Map<String, LinkedList<Long>> perEndpointInHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> perEndpointOutHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> perEndpointSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousPerEndpointTime = new ConcurrentHashMap<>();
-
-    // Circuit breaker throughput history per PID/cbId (success + fail, one point per second)
-    private final Map<String, LinkedList<Long>> cbSuccessHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> cbFailHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> cbThroughputSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousCbTime = new ConcurrentHashMap<>();
-
-    // Heap memory usage history per PID (one point per 5 seconds, in bytes)
-    private final Map<String, LinkedList<Long>> heapMemHistory = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousHeapTime = new ConcurrentHashMap<>();
-
-    // Load averages (EWMA) — CPU%, per PID (inflight EWMA is read from the management JSON)
-    private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
-    private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
+    // Sparkline/chart history for all metric families
+    private final MetricsCollector metrics = new MetricsCollector();
 
     // Cached PID list — full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
@@ -334,17 +279,11 @@ public class CamelMonitor extends CamelCommand {
         diagramTab = new DiagramTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
-        endpointsTab = new EndpointsTab(
-                ctx,
-                endpointInHistory, endpointOutHistory,
-                endpointRemoteInHistory, endpointRemoteOutHistory,
-                endpointRemoteStubInHistory, endpointRemoteStubOutHistory,
-                endpointInSizeHistory, endpointOutSizeHistory,
-                perEndpointInHistory, perEndpointOutHistory);
+        endpointsTab = new EndpointsTab(ctx, metrics);
         httpTab = new HttpTab(ctx);
         healthTab = new HealthTab(ctx);
         historyTab = new HistoryTab(ctx, traces, traceFilePositions);
-        circuitBreakerTab = new CircuitBreakerTab(ctx, cbSuccessHistory, cbFailHistory);
+        circuitBreakerTab = new CircuitBreakerTab(ctx, metrics);
         errorsTab = new ErrorsTab(ctx);
         metricsTab = new MetricsTab(ctx);
         startupTab = new StartupTab(ctx);
@@ -353,10 +292,10 @@ public class CamelMonitor extends CamelCommand {
         browseTab = new BrowseTab(ctx);
         classpathTab = new ClasspathTab(ctx);
         inflightTab = new InflightTab(ctx);
-        memoryTab = new MemoryTab(ctx, heapMemHistory);
+        memoryTab = new MemoryTab(ctx, metrics);
         threadsTab = new ThreadsTab(ctx);
         overviewTab = new OverviewTab(
-                ctx, throughputHistory, failedHistory, cpuLoadAvg, stoppingPids,
+                ctx, metrics, stoppingPids,
                 this::resetIntegrationTabState);
 
         // Initial data load (synchronous before TUI starts)
@@ -1826,35 +1765,7 @@ public class CamelMonitor extends CamelCommand {
         root.put("action", "reset-stats");
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
-        // Clear local sparkline history — overview
-        throughputHistory.remove(pid);
-        failedHistory.remove(pid);
-        throughputSamples.remove(pid);
-        previousExchangesTime.remove(pid);
-        // Clear local sparkline history — endpoints
-        endpointInHistory.remove(pid);
-        endpointOutHistory.remove(pid);
-        endpointSamples.remove(pid);
-        previousEndpointTime.remove(pid);
-        endpointRemoteInHistory.remove(pid);
-        endpointRemoteOutHistory.remove(pid);
-        endpointRemoteSamples.remove(pid);
-        previousEndpointRemoteTime.remove(pid);
-        endpointRemoteStubInHistory.remove(pid);
-        endpointRemoteStubOutHistory.remove(pid);
-        endpointRemoteStubSamples.remove(pid);
-        previousEndpointRemoteStubTime.remove(pid);
-        endpointInSizeHistory.remove(pid);
-        endpointOutSizeHistory.remove(pid);
-        previousEndpointSizeTime.remove(pid);
-        String perEpPrefix = pid + "|";
-        perEndpointInHistory.keySet().removeIf(k -> k.startsWith(perEpPrefix));
-        perEndpointOutHistory.keySet().removeIf(k -> k.startsWith(perEpPrefix));
-        perEndpointSamples.keySet().removeIf(k -> k.startsWith(perEpPrefix));
-        previousPerEndpointTime.keySet().removeIf(k -> k.startsWith(perEpPrefix));
-        // Clear local sparkline history — heap memory
-        heapMemHistory.remove(pid);
-        previousHeapTime.remove(pid);
+        metrics.resetStats(pid);
     }
 
     private void sendRouteCommand(String pid, String routeId, String command) {
@@ -2175,11 +2086,11 @@ public class CamelMonitor extends CamelCommand {
                     IntegrationInfo info = StatusParser.parseIntegration(ph, root);
                     if (info != null) {
                         infos.add(info);
-                        updateThroughputHistory(info);
-                        updateEndpointHistory(info);
-                        updateCbHistory(info);
-                        updateHeapHistory(info);
-                        updateLoadMetrics(ph, info);
+                        metrics.updateThroughputHistory(info);
+                        metrics.updateEndpointHistory(info);
+                        metrics.updateCbHistory(info);
+                        metrics.updateHeapHistory(info);
+                        metrics.updateLoadMetrics(ph, info);
                     }
                 }
             }
@@ -2209,38 +2120,7 @@ public class CamelMonitor extends CamelCommand {
                 Map.Entry<String, VanishingInfo> entry = it.next();
                 if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
                     it.remove();
-                    throughputHistory.remove(entry.getKey());
-                    failedHistory.remove(entry.getKey());
-                    endpointInHistory.remove(entry.getKey());
-                    endpointOutHistory.remove(entry.getKey());
-                    endpointSamples.remove(entry.getKey());
-                    previousEndpointTime.remove(entry.getKey());
-                    endpointRemoteInHistory.remove(entry.getKey());
-                    endpointRemoteOutHistory.remove(entry.getKey());
-                    endpointRemoteSamples.remove(entry.getKey());
-                    previousEndpointRemoteTime.remove(entry.getKey());
-                    endpointRemoteStubInHistory.remove(entry.getKey());
-                    endpointRemoteStubOutHistory.remove(entry.getKey());
-                    endpointRemoteStubSamples.remove(entry.getKey());
-
-                    endpointInSizeHistory.remove(entry.getKey());
-                    endpointOutSizeHistory.remove(entry.getKey());
-                    previousEndpointSizeTime.remove(entry.getKey());
-                    previousEndpointRemoteStubTime.remove(entry.getKey());
-                    heapMemHistory.remove(entry.getKey());
-                    previousHeapTime.remove(entry.getKey());
-                    cpuLoadAvg.remove(entry.getKey());
-                    prevCpuSample.remove(entry.getKey());
-                    String vanishCbPrefix = entry.getKey() + "/";
-                    cbSuccessHistory.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
-                    cbFailHistory.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
-                    cbThroughputSamples.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
-                    previousCbTime.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
-                    String vanishEpPrefix = entry.getKey() + "|";
-                    perEndpointInHistory.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
-                    perEndpointOutHistory.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
-                    perEndpointSamples.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
-                    previousPerEndpointTime.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
+                    metrics.removeVanished(entry.getKey());
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
                     ghost.vanishing = true;
@@ -2415,170 +2295,6 @@ public class CamelMonitor extends CamelCommand {
         infraData.set(infraInfos);
     }
 
-    private void updateThroughputHistory(IntegrationInfo info) {
-        // Track exchangesTotal and exchangesFailed over a 1-second sliding window
-        long currentTotal = info.exchangesTotal;
-        long currentFailed = info.failed;
-        long now = System.currentTimeMillis();
-
-        String pid = info.pid;
-        LinkedList<long[]> samples = throughputSamples.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, currentTotal, currentFailed });
-
-        // Remove samples older than 1 second
-        while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
-            samples.remove(0);
-        }
-
-        // Compute throughput over the window
-        if (samples.size() >= 2) {
-            long[] oldest = samples.get(0);
-            long[] newest = samples.get(samples.size() - 1);
-            long deltaTotal = newest[1] - oldest[1];
-            long deltaFailed = newest[2] - oldest[2];
-            long deltaTimeMs = newest[0] - oldest[0];
-            long tp = deltaTimeMs > 0 ? (deltaTotal * 1000) / deltaTimeMs : 0;
-            long fp = deltaTimeMs > 0 ? (deltaFailed * 1000) / deltaTimeMs : 0;
-
-            // Only add one point per second to keep the sparkline meaningful
-            Long lastTime = previousExchangesTime.get(pid);
-            if (lastTime == null || now - lastTime >= 1000) {
-                previousExchangesTime.put(pid, now);
-                LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-                hist.add(tp);
-                while (hist.size() > MAX_SPARKLINE_POINTS) {
-                    hist.remove(0);
-                }
-                LinkedList<Long> fhist = failedHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-                fhist.add(fp);
-                while (fhist.size() > MAX_SPARKLINE_POINTS) {
-                    fhist.remove(0);
-                }
-            }
-        }
-    }
-
-    private void updateEndpointHistory(IntegrationInfo info) {
-        long inTotal = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction))
-                .mapToLong(ep -> ep.hits).sum();
-        long outTotal = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction))
-                .mapToLong(ep -> ep.hits).sum();
-        long inRemote = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction) && ep.remote)
-                .mapToLong(ep -> ep.hits).sum();
-        long outRemote = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction) && ep.remote)
-                .mapToLong(ep -> ep.hits).sum();
-        long inRemoteStub = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction) && (ep.remote || ep.stub))
-                .mapToLong(ep -> ep.hits).sum();
-        long outRemoteStub = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction) && (ep.remote || ep.stub))
-                .mapToLong(ep -> ep.hits).sum();
-
-        long now = System.currentTimeMillis();
-        String pid = info.pid;
-
-        recordEndpointSample(pid, now, inTotal, outTotal,
-                endpointSamples, previousEndpointTime, endpointInHistory, endpointOutHistory);
-        recordEndpointSample(pid, now, inRemote, outRemote,
-                endpointRemoteSamples, previousEndpointRemoteTime, endpointRemoteInHistory, endpointRemoteOutHistory);
-        recordEndpointSample(pid, now, inRemoteStub, outRemoteStub,
-                endpointRemoteStubSamples, previousEndpointRemoteStubTime,
-                endpointRemoteStubInHistory, endpointRemoteStubOutHistory);
-
-        // Record payload size snapshots (mean body size per direction)
-        long inMeanSize = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction) && ep.meanBodySize >= 0)
-                .mapToLong(ep -> ep.meanBodySize).max().orElse(0);
-        long outMeanSize = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction) && ep.meanBodySize >= 0)
-                .mapToLong(ep -> ep.meanBodySize).max().orElse(0);
-        Long lastSizeTime = previousEndpointSizeTime.get(pid);
-        if (lastSizeTime == null || now - lastSizeTime >= 1000) {
-            previousEndpointSizeTime.put(pid, now);
-            LinkedList<Long> inSizeHist = endpointInSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            inSizeHist.add(inMeanSize);
-            while (inSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                inSizeHist.remove(0);
-            }
-            LinkedList<Long> outSizeHist = endpointOutSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            outSizeHist.add(outMeanSize);
-            while (outSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                outSizeHist.remove(0);
-            }
-        }
-
-        // Per-endpoint rate history (keyed by pid|uri)
-        Map<String, long[]> perUri = new LinkedHashMap<>();
-        for (EndpointInfo ep : info.endpoints) {
-            if (ep.uri == null) {
-                continue;
-            }
-            long[] inOut = perUri.computeIfAbsent(ep.uri, k -> new long[2]);
-            if ("in".equals(ep.direction)) {
-                inOut[0] += ep.hits;
-            } else if ("out".equals(ep.direction)) {
-                inOut[1] += ep.hits;
-            }
-        }
-        for (Map.Entry<String, long[]> entry : perUri.entrySet()) {
-            String key = pid + "|" + entry.getKey();
-            long[] inOut = entry.getValue();
-            recordEndpointSample(key, now, inOut[0], inOut[1],
-                    perEndpointSamples, previousPerEndpointTime,
-                    perEndpointInHistory, perEndpointOutHistory);
-        }
-    }
-
-    private void recordEndpointSample(
-            String pid, long now, long inTotal, long outTotal,
-            Map<String, LinkedList<long[]>> samplesMap, Map<String, Long> prevTimeMap,
-            Map<String, LinkedList<Long>> inHistMap, Map<String, LinkedList<Long>> outHistMap) {
-        LinkedList<long[]> samples = samplesMap.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, inTotal, outTotal });
-        while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
-            samples.remove(0);
-        }
-        if (samples.size() >= 2) {
-            long[] oldest = samples.get(0);
-            long[] newest = samples.get(samples.size() - 1);
-            long deltaMs = newest[0] - oldest[0];
-            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 / deltaMs : 0;
-            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 / deltaMs : 0;
-            Long lastTime = prevTimeMap.get(pid);
-            if (lastTime == null || now - lastTime >= 1000) {
-                prevTimeMap.put(pid, now);
-                LinkedList<Long> inHist = inHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
-                inHist.add(Math.max(0, inRate));
-                while (inHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                    inHist.remove(0);
-                }
-                LinkedList<Long> outHist = outHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
-                outHist.add(Math.max(0, outRate));
-                while (outHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                    outHist.remove(0);
-                }
-            }
-        }
-    }
-
-    private void updateCbHistory(IntegrationInfo info) {
-        long now = System.currentTimeMillis();
-        for (CircuitBreakerInfo cb : info.circuitBreakers) {
-            if (cb.id == null) {
-                continue;
-            }
-            String key = info.pid + "/" + cb.id;
-            long success = cb.successfulCalls;
-            long failed = cb.failedCalls;
-            recordEndpointSample(key, now, success, failed,
-                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory);
-        }
-    }
-
     // ---- Trace Data Loading ----
 
     private void refreshTraceData(List<Long> pids) {
@@ -2608,42 +2324,6 @@ public class CamelMonitor extends CamelCommand {
         }
 
         traces.set(allTraces);
-    }
-
-    private void updateHeapHistory(IntegrationInfo info) {
-        if (info.heapMemUsed > 0) {
-            long now = System.currentTimeMillis();
-            Long lastTime = previousHeapTime.get(info.pid);
-            if (lastTime == null || now - lastTime >= HEAP_SAMPLE_INTERVAL_MS) {
-                previousHeapTime.put(info.pid, now);
-                LinkedList<Long> hist = heapMemHistory.computeIfAbsent(info.pid, k -> new LinkedList<>());
-                hist.add(info.heapMemUsed);
-                while (hist.size() > MAX_HEAP_HISTORY_POINTS) {
-                    hist.remove(0);
-                }
-            }
-        }
-    }
-
-    private void updateLoadMetrics(ProcessHandle ph, IntegrationInfo info) {
-        String pid = info.pid;
-
-        // CPU EWMA — compute % from ProcessHandle CPU duration delta
-        Optional<Duration> durOpt = ph.info().totalCpuDuration();
-        if (durOpt.isPresent()) {
-            long cpuNanos = durOpt.get().toNanos();
-            long wallMs = System.currentTimeMillis();
-            long[] prev = prevCpuSample.get(pid);
-            if (prev != null) {
-                long deltaCpuNanos = cpuNanos - prev[0];
-                long deltaWallNanos = (wallMs - prev[1]) * 1_000_000L;
-                if (deltaWallNanos > 0) {
-                    double cpuPct = (double) deltaCpuNanos / deltaWallNanos * 100.0;
-                    cpuLoadAvg.computeIfAbsent(pid, k -> new LoadAvg()).update(Math.max(0, cpuPct));
-                }
-            }
-            prevCpuSample.put(pid, new long[] { cpuNanos, wallMs });
-        }
     }
 
     @SuppressWarnings("unchecked")
