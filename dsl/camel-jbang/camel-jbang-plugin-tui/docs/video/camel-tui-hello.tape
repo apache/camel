@@ -16,39 +16,37 @@
 #
 
 # Overview tab shows running integrations
-Sleep 4s
+Sleep 3s
 Screenshot screenshots/camel-tui-hello-overview.png
-
-# Routes tab - see the timer route
-Type "3"
-Sleep 4s
-Screenshot screenshots/camel-tui-hello-routes.png
-
-# Route diagram
-Type "D"
-Sleep 4s
-Screenshot screenshots/camel-tui-hello-diagram.png
-Type "D"
-Sleep 1s
-
-# Endpoints tab
-Type "5"
-Sleep 4s
-Screenshot screenshots/camel-tui-hello-endpoints.png
 
 # Log tab - see Hello World messages flowing
 Type "2"
-Sleep 4s
+Sleep 3s
 Screenshot screenshots/camel-tui-hello-log.png
+
+# Routes tab - see the timer route
+Type "4"
+Sleep 3s
+Screenshot screenshots/camel-tui-hello-routes.png
+
+# Diagram tab - route visualization
+Type "3"
+Sleep 3s
+Screenshot screenshots/camel-tui-hello-diagram.png
+
+# Endpoints tab
+Type "5"
+Sleep 3s
+Screenshot screenshots/camel-tui-hello-endpoints.png
 
 # Health tab
 Type "7"
-Sleep 4s
+Sleep 3s
 Screenshot screenshots/camel-tui-hello-health.png
 
 # Back to overview
 Type "1"
-Sleep 4s
+Sleep 1s
 
 # Quit
 Type "q"
