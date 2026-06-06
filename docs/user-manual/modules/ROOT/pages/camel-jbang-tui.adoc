@@ -1,0 +1,163 @@
+= Camel TUI
+
+*Available as of Camel 4.21*
+
+Camel TUI is a live terminal dashboard for monitoring and interacting with running Camel integrations.
+It gives you real-time logs, route topology diagrams, message tracing, health checks, error tracking,
+and more -- all without leaving the terminal.
+
+The TUI discovers running Camel integrations automatically and lets you switch between them.
+Keyboard shortcuts are shown in the footer, and pressing *F1* opens context-sensitive help on any tab.
+
+NOTE: This module is in *Preview* status.
+
+== Getting Started
+
+=== Prerequisites
+
+* xref:camel-jbang.adoc[Camel JBang] installed
+
+=== Launching the TUI
+
+Start a Camel integration in one terminal:
+
+[source,bash]
+----
+camel run my-route.yaml
+----
+
+Then open the TUI in another terminal:
+
+[source,bash]
+----
+camel tui
+----
+
+The TUI auto-discovers running integrations. You can also target a specific integration by name or PID:
+
+[source,bash]
+----
+camel tui my-route
+----
+
+== Key Tabs
+
+The TUI organizes information into tabs, accessible with the number keys *1* through *9* (and *0* for more).
+
+=== Overview
+
+The Overview tab (key *1*) is the landing page. It lists all running Camel integrations with their
+uptime, throughput, and failure counts. Select an integration and press *Enter* to focus on it.
+From here you can restart, pause, stop, or view the source files of an integration.
+
+// TODO: update screenshots before release
+image::jbang/camel-tui-hello-overview.png[Overview tab showing running integrations]
+
+=== Diagram
+
+The Diagram tab (key *3*) renders the route topology as an interactive ASCII diagram.
+You can navigate between routes, drill into individual processors, and toggle the display of
+external endpoint connections. This gives you a visual map of how messages flow through your
+integration.
+
+image::jbang/camel-tui-hello-diagram.png[Diagram tab showing route topology]
+
+=== Inspect
+
+The Inspect tab (key *8*) provides message tracing and exchange inspection. It shows the path
+each message takes through your routes, including the message body, headers, exchange properties,
+and variables at each processing step. Use it to understand exactly what happens to a message
+as it flows through your integration.
+
+=== Errors
+
+The Errors tab (key *9*) tracks failures across your routes. It shows the exception type,
+stack trace, message body, and headers for each failed exchange, making it easy to diagnose
+problems without digging through log files.
+
+== More Tabs
+
+Beyond the primary tabs above, the TUI provides:
+
+* *Log* (key *2*) -- Real-time log viewer with search and level filtering
+* *Routes* (key *4*) -- Route statistics: state, message counts, throughput, last error
+* *Endpoints* (key *5*) -- Endpoint usage and throughput metrics
+* *HTTP* (key *6*) -- HTTP endpoint details
+* *Health* (key *7*) -- Health check status and results
+
+Press *0* to access extended tabs: Beans, Browse, Circuit Breaker, Classpath, Configuration,
+Consumers, Inflight, Memory, Metrics, Startup, and Threads.
+
+== AI Integration
+
+The TUI includes an embedded MCP (Model Context Protocol) server that lets AI coding assistants
+interact with the dashboard programmatically. Enable it with:
+
+[source,bash]
+----
+camel tui --mcp
+----
+
+This exposes tools for navigating tabs, reading screen content, inspecting traces, sending messages,
+controlling routes, and more -- allowing AI agents to monitor and debug your integrations
+through the TUI.
+
+See xref:camel-jbang-mcp.adoc[Camel MCP Server] for more about MCP and AI integration with Camel.
+
+== Recording Demos
+
+The TUI can record terminal sessions for demos and documentation.
+
+=== Live Recording
+
+Press *Ctrl+R* (or use the *F2* actions menu) to start recording your session as a `.tape` file.
+Press *Ctrl+R* again to stop. The tape captures your keystrokes with timing, producing a script
+that can be replayed or converted to an animated GIF.
+
+=== Scripted Recording
+
+Use the `--record` flag to replay a `.tape` file inside the TUI and produce an
+https://asciinema.org/[Asciinema] `.cast` recording:
+
+[source,bash]
+----
+camel tui --record=demo.tape
+----
+
+=== Converting to GIF
+
+Convert recordings using https://github.com/charmbracelet/vhs[VHS] (for `.tape` files) or
+https://github.com/asciinema/agg[agg] (for `.cast` files):
+
+[source,bash]
+----
+vhs demo.tape              # .tape -> .gif
+agg recording.cast out.gif # .cast -> .gif
+----
+
+== Command Line Options
+
+[cols="2,5,1",options="header"]
+|===
+| Option | Description | Default
+
+| `[name\|pid]`
+| Name or PID of the Camel integration to monitor. When omitted, the TUI auto-discovers running integrations.
+|
+
+| `--mcp`
+| Enable the embedded MCP server for AI agent access to the TUI.
+| `false`
+
+| `--mcp-port`
+| Port for the embedded MCP server.
+| `8123`
+
+| `--refresh`
+| Screen refresh interval in milliseconds.
+| `100`
+
+| `--record`
+| Replay a `.tape` file and record the session to an Asciinema `.cast` file.
+|
+|===
