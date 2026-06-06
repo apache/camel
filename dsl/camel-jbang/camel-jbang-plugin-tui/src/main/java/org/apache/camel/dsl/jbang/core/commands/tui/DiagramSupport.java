@@ -409,7 +409,7 @@ class DiagramSupport {
             ctx.runner.scheduler().execute(() -> {
                 try {
                     setTopologyMode(true);
-                    loadAllDiagramsInBackground(ctx, pid, false, false);
+                    loadAllDiagramsInBackground(ctx, pid, false, 0);
                 } finally {
                     endLoad();
                 }
@@ -640,7 +640,8 @@ class DiagramSupport {
         for (TopologyLayoutNode node : result.nodes) {
             int col = nodeW == 0 ? 0 : node.x * bw / nodeW;
             int row = node.y / 20;
-            boolean ext = "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType);
+            boolean ext = "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType)
+                    || "external".equals(node.nodeType);
             int contentLines;
             if (ext) {
                 contentLines = 1;
@@ -828,6 +829,10 @@ class DiagramSupport {
             if ("from".equals(type)) {
                 // "from" node: find route that sends TO this endpoint
                 if (currentRouteId.equals(edge.to.routeId) && !currentRouteId.equals(edge.from.routeId)) {
+                    String resolved = resolveThrough(edge.from.routeId, currentRouteId);
+                    if (resolved != null) {
+                        return resolved;
+                    }
                     return edge.from.routeId;
                 }
             } else {
@@ -835,6 +840,10 @@ class DiagramSupport {
                 if (currentRouteId.equals(edge.from.routeId) && !currentRouteId.equals(edge.to.routeId)) {
                     String targetFrom = stripQueryParams(edge.to.from);
                     if (baseUri.equals(targetFrom)) {
+                        String resolved = resolveThrough(edge.to.routeId, currentRouteId);
+                        if (resolved != null) {
+                            return resolved;
+                        }
                         return edge.to.routeId;
                     }
                 }
@@ -851,6 +860,30 @@ class DiagramSupport {
                 if (baseUri.equals(fromBaseUri)) {
                     return entry.getKey();
                 }
+            }
+        }
+        return null;
+    }
+
+    private String resolveThrough(String nodeId, String excludeRouteId) {
+        if (!"external".equals(findNodeType(nodeId))) {
+            return null;
+        }
+        for (TopologyLayoutEdge e : topologyEdges) {
+            if (nodeId.equals(e.from.routeId) && !excludeRouteId.equals(e.to.routeId)) {
+                return e.to.routeId;
+            }
+            if (nodeId.equals(e.to.routeId) && !excludeRouteId.equals(e.from.routeId)) {
+                return e.from.routeId;
+            }
+        }
+        return null;
+    }
+
+    private String findNodeType(String nodeId) {
+        for (TopologyLayoutNode n : topologyNodes) {
+            if (nodeId.equals(n.routeId)) {
+                return n.nodeType;
             }
         }
         return null;
@@ -1720,8 +1753,9 @@ class DiagramSupport {
     }
 
     void loadAllDiagramsInBackground(
-            MonitorContext ctx, String pid, boolean metrics, boolean external) {
+            MonitorContext ctx, String pid, boolean metrics, int externalMode) {
         // Single IPC call: topology + route structures
+        boolean external = externalMode > 0;
         JsonObject topoJson = requestRouteTopology(ctx, pid, external, true);
 
         TopologyLayoutResult topoResult = null;
@@ -1734,6 +1768,9 @@ class DiagramSupport {
             List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(topoJson);
             if (external) {
                 TopologyHelper.addExternalEndpoints(nodes, edges, topoJson);
+            }
+            if (externalMode == 2) {
+                TopologyHelper.expandExternalEdges(nodes, edges);
             }
             if (!nodes.isEmpty()) {
                 TopologyLayoutEngine engine = new TopologyLayoutEngine();

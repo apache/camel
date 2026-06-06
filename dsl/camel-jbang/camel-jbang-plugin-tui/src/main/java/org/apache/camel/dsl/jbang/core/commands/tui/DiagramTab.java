@@ -45,7 +45,8 @@ class DiagramTab implements MonitorTab {
     private final DiagramSupport diagram = new DiagramSupport();
     private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramMetrics = true;
-    private boolean showExternal;
+    private static final String[] EXTERNAL_LABELS = { " [off]", " [edges]", " [all]" };
+    private int externalMode;
     private boolean topologyMode = true;
     private String drillDownRouteId;
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
@@ -175,9 +176,9 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
-        // Toggle external systems
+        // Cycle external systems: off → edges → all → off
         if (diagram.isShowDiagram() && topologyMode && ke.isCharIgnoreCase('e')) {
-            showExternal = !showExternal;
+            externalMode = (externalMode + 1) % 3;
             diagram.endLoad();
             reloadDiagram();
             return true;
@@ -465,9 +466,10 @@ class DiagramTab implements MonitorTab {
             var topoNode = diagram.getSelectedTopologyNode();
             if (topoNode != null) {
                 boolean isInbound = "external-in".equals(topoNode.nodeType);
+                boolean isBridge = "external".equals(topoNode.nodeType);
+                String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
                 lines.add(Line.from(
-                        Span.styled(isInbound ? " Inbound" : " Outbound",
-                                Style.EMPTY.fg(Color.CYAN).bold())));
+                        Span.styled(label, Style.EMPTY.fg(Color.CYAN).bold())));
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
                         Span.styled(" URI: ", Style.EMPTY.dim()),
@@ -477,12 +479,14 @@ class DiagramTab implements MonitorTab {
                             Span.styled(" Path: ", Style.EMPTY.dim()),
                             Span.raw(topoNode.description)));
                 }
-                String connectedRoute = diagram.getConnectedRouteId(routeId);
-                if (connectedRoute != null) {
-                    lines.add(Line.from(Span.raw("")));
-                    lines.add(Line.from(
-                            Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
-                            Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                if (!isBridge) {
+                    String connectedRoute = diagram.getConnectedRouteId(routeId);
+                    if (connectedRoute != null) {
+                        lines.add(Line.from(Span.raw("")));
+                        lines.add(Line.from(
+                                Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
+                                Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                    }
                 }
                 if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
                     lines.add(Line.from(Span.raw("")));
@@ -645,7 +649,7 @@ class DiagramTab implements MonitorTab {
             }
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
             if (topologyMode) {
-                hint(spans, "e", "external" + (showExternal ? " [on]" : " [off]"));
+                hint(spans, "e", "external" + EXTERNAL_LABELS[externalMode]);
             }
             hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         }
@@ -675,7 +679,7 @@ class DiagramTab implements MonitorTab {
 
         String pid = ctx.selectedPid;
         boolean showMetrics = diagramMetrics;
-        boolean external = showExternal;
+        int external = externalMode;
 
         if (showPlaceholder) {
             diagram.setLoadingPlaceholder();
@@ -738,10 +742,15 @@ class DiagramTab implements MonitorTab {
 
                                 ## External Systems
 
-                                When external systems are enabled, the diagram shows a three-band layout:
-                                - **Top band** — external consumers sending messages INTO Camel
-                                - **Middle band** — the Camel routes and their internal connections
-                                - **Bottom band** — external producers where Camel sends messages OUT
+                                Press `e` to cycle through three external modes:
+
+                                - **off** — no external endpoints shown
+                                - **edges** — external endpoints that are truly outside Camel are shown
+                                  as dashed boxes in top/bottom bands. Routes sharing an external
+                                  endpoint (e.g. kafka) are connected with a direct arrow.
+                                - **all** — same as edges, but routes sharing an external endpoint
+                                  are connected through an intermediary dashed box showing the
+                                  endpoint name, instead of a direct arrow.
 
                                 External system boxes are drawn with dashed borders to distinguish
                                 them from route boxes. Dashed edges connect routes to external systems.

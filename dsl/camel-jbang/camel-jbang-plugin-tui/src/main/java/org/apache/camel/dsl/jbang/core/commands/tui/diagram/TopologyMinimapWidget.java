@@ -54,8 +54,10 @@ public class TopologyMinimapWidget implements Widget {
         }
 
         for (TopologyLayoutNode node : layout.nodes) {
+            if (node.nodeType != null && node.nodeType.startsWith("external")) {
+                continue;
+            }
             boolean isCurrent = node.routeId != null && node.routeId.equals(currentRouteId);
-            boolean isExternal = "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType);
 
             int col = node.x * mapW / totalW;
             int row = node.y * mapH / totalH;
@@ -67,14 +69,7 @@ public class TopologyMinimapWidget implements Widget {
             col = Math.max(0, col);
             row = Math.max(0, row);
 
-            Style style;
-            if (isCurrent) {
-                style = CURRENT_STYLE;
-            } else if (isExternal) {
-                style = EXTERNAL_STYLE;
-            } else {
-                style = OTHER_STYLE;
-            }
+            Style style = isCurrent ? CURRENT_STYLE : OTHER_STYLE;
 
             drawMiniBox(buffer, area, col, row, nodeW, nodeH, style, isCurrent);
         }
