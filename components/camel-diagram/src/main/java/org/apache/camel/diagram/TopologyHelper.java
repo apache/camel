@@ -17,7 +17,11 @@
 package org.apache.camel.diagram;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
@@ -118,6 +122,71 @@ public final class TopologyHelper {
                 edge.toRouteId = id;
             }
             edges.add(edge);
+        }
+    }
+
+    /**
+     * Expands external-type route-to-route edges into intermediary external nodes. For each shared external endpoint
+     * (e.g., kafka:foo used by both a producer and consumer route), the direct edge is replaced with a dashed external
+     * box and two edges passing through it.
+     */
+    public static void expandExternalEdges(List<TopologyNodeInfo> nodes, List<TopologyEdgeInfo> edges) {
+        // Only consider route nodes — exclude external-in/external-out nodes already added
+        Set<String> routeIds = nodes.stream()
+                .filter(n -> n.nodeType == null || !n.nodeType.startsWith("external"))
+                .map(n -> n.routeId)
+                .collect(Collectors.toSet());
+
+        // Group external edges by endpoint URI (only edges between two route nodes)
+        Map<String, List<TopologyEdgeInfo>> byEndpoint = new LinkedHashMap<>();
+        for (TopologyEdgeInfo edge : edges) {
+            if ("external".equals(edge.connectionType)
+                    && routeIds.contains(edge.fromRouteId) && routeIds.contains(edge.toRouteId)) {
+                byEndpoint.computeIfAbsent(edge.endpoint, k -> new ArrayList<>()).add(edge);
+            }
+        }
+        if (byEndpoint.isEmpty()) {
+            return;
+        }
+
+        int idx = 0;
+        for (Map.Entry<String, List<TopologyEdgeInfo>> entry : byEndpoint.entrySet()) {
+            String uri = entry.getKey();
+            List<TopologyEdgeInfo> group = entry.getValue();
+
+            // Create intermediary external node
+            TopologyNodeInfo extNode = new TopologyNodeInfo();
+            extNode.routeId = "ext-" + idx++;
+            extNode.from = uri;
+            extNode.nodeType = "external";
+            int colonIdx = uri.indexOf(':');
+            extNode.description = colonIdx > 0 ? uri.substring(colonIdx + 1) : uri;
+
+            // Determine scheme from URI
+            if (colonIdx > 0) {
+                extNode.fromScheme = uri.substring(0, colonIdx);
+            }
+
+            nodes.add(extNode);
+
+            // Replace each original edge with two edges through the intermediary node
+            for (TopologyEdgeInfo orig : group) {
+                edges.remove(orig);
+
+                TopologyEdgeInfo toExt = new TopologyEdgeInfo();
+                toExt.fromRouteId = orig.fromRouteId;
+                toExt.toRouteId = extNode.routeId;
+                toExt.endpoint = uri;
+                toExt.connectionType = "external";
+                edges.add(toExt);
+
+                TopologyEdgeInfo fromExt = new TopologyEdgeInfo();
+                fromExt.fromRouteId = extNode.routeId;
+                fromExt.toRouteId = orig.toRouteId;
+                fromExt.endpoint = uri;
+                fromExt.connectionType = "external";
+                edges.add(fromExt);
+            }
         }
     }
 

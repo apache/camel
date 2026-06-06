@@ -83,12 +83,13 @@ class ActionsPopup {
         TAPE_INSTRUCTIONS,
         CAPTION,
         SHOW_KEYSTROKES,
+        SETUP_AI,
         MCP_INFO,
         MCP_LOG
     }
 
     private static final int[] GROUP_SIZES = { 5, 4, 5 };
-    private static final int MCP_GROUP_SIZE = 2;
+    private static final int MCP_GROUP_SIZE = 3;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -338,6 +339,7 @@ class ActionsPopup {
         // Group 4: MCP
         if (mcpEnabled) {
             labels.add("───");
+            labels.add("Setup AI...");
             labels.add("MCP Info");
             labels.add("MCP Log");
         }
@@ -564,6 +566,9 @@ class ActionsPopup {
                         doctorPopup.open();
                     } else if (action == Action.RUN_INFRA) {
                         openInfraBrowser();
+                    } else if (action == Action.SETUP_AI) {
+                        showActionsMenu = false;
+                        openSetupAI();
                     } else if (action == Action.MCP_INFO) {
                         showActionsMenu = false;
                         openMcpInfo();
@@ -767,6 +772,7 @@ class ActionsPopup {
         // Group 4: MCP
         if (mcpEnabled) {
             items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+            items.add(ListItem.from("  🧠 Setup AI..."));
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));
         }
@@ -1122,6 +1128,38 @@ class ActionsPopup {
         docViewerFromExampleBrowser = false;
     }
 
+    private void openSetupAI() {
+        docLines = null;
+        String url = "http://localhost:" + mcpPort + "/mcp";
+        String client = mcpConnectedClient != null ? mcpConnectedClient.get() : null;
+        String status = client != null
+                ? "**Connected:** " + client + "\n\nYour AI agent is already connected and ready to use."
+                : "**Status:** Waiting for connection";
+        docContent = "# Setup AI Agent\n\n"
+                     + status + "\n\n"
+                     + "## Connect Claude Code\n\n"
+                     + "Run this command in your terminal:\n\n"
+                     + "    claude mcp add --transport http camel-tui " + url + "\n\n"
+                     + "Then start a new Claude Code session. The TUI footer will turn green\n"
+                     + "when the AI agent connects.\n\n"
+                     + "## Alternative: .mcp.json\n\n"
+                     + "A `.mcp.json` file is auto-generated in the current directory while the\n"
+                     + "TUI runs with `--mcp`. AI agents that scan for `.mcp.json` will discover\n"
+                     + "the MCP server automatically.\n\n"
+                     + "## What the AI Can Do\n\n"
+                     + "Once connected, your AI agent can:\n\n"
+                     + "- See the TUI screen and follow your key presses\n"
+                     + "- Navigate tabs and select integrations\n"
+                     + "- Read route diagrams and health status\n"
+                     + "- Send test messages to endpoints\n"
+                     + "- Record VHS tapes for documentation\n\n"
+                     + "Try asking: *\"What's on my Camel TUI screen right now?\"*\n";
+        docTitle = "Setup AI";
+        docScroll = 0;
+        showDocViewer = true;
+        docViewerFromExampleBrowser = false;
+    }
+
     private void openMcpInfo() {
         docLines = null;
         String url = "http://localhost:" + mcpPort + "/mcp";
@@ -1146,6 +1184,7 @@ class ActionsPopup {
                      + "| `tui_navigate` | Switch tabs and select integrations |\n"
                      + "| `tui_send_keys` | Send key presses to control the TUI |\n"
                      + "| `tui_wait_for_idle` | Waits for the screen to settle after an action |\n"
+                     + "| `tui_control` | Stop/start routes, restart, stop, or kill integration |\n"
                      + "| `tui_tape_start` | Start recording interactions as a VHS .tape file |\n"
                      + "| `tui_tape_stop` | Stop recording and return the tape content |\n\n"
                      + "## Setup for Claude Code\n\n"
@@ -2094,6 +2133,7 @@ class ActionsPopup {
             case TAPE_RECORDING -> toggleTapeRecording.run();
             case DOCTOR -> doctorPopup.open();
             case CAPTION -> captionOverlay.openInline();
+            case SETUP_AI -> openSetupAI();
             case MCP_INFO -> openMcpInfo();
             case MCP_LOG -> openMcpLog();
             default -> {

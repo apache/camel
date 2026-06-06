@@ -74,9 +74,104 @@ class DrawOverlay {
         for (DrawCell cell : cells) {
             if (cell.x >= 0 && cell.y >= 0
                     && cell.x < screenArea.width() && cell.y < screenArea.height()) {
-                buffer.setString(cell.x, cell.y, cell.symbol, cell.style);
+                if (cell.symbol == null) {
+                    // highlight mode: keep existing symbol, apply style as background
+                    var existing = buffer.get(cell.x, cell.y);
+                    if (existing != null && existing != dev.tamboui.buffer.Cell.CONTINUATION) {
+                        Style merged = existing.style().bg(cell.style.bg().orElse(Color.YELLOW));
+                        buffer.setString(cell.x, cell.y, existing.symbol(), merged);
+                    }
+                } else {
+                    buffer.setString(cell.x, cell.y, cell.symbol, cell.style);
+                }
             }
         }
+    }
+
+    static List<DrawCell> generateShape(String shape, int x, int y, int width, int height, int length, Color color) {
+        return switch (shape) {
+            case "box" -> generateBox(x, y, width, height, color);
+            case "highlight" -> generateHighlight(x, y, width, height, color);
+            case "underline" -> generateUnderline(x, y, width, color);
+            case "arrow-down" -> generateArrow(x, y, length, 0, 1, color);
+            case "arrow-up" -> generateArrow(x, y, length, 0, -1, color);
+            case "arrow-right" -> generateArrow(x, y, length, 1, 0, color);
+            case "arrow-left" -> generateArrow(x, y, length, -1, 0, color);
+            default -> List.of();
+        };
+    }
+
+    private static List<DrawCell> generateBox(int x, int y, int w, int h, Color color) {
+        List<DrawCell> cells = new ArrayList<>();
+        Style s = Style.EMPTY.fg(color).bold();
+        cells.add(new DrawCell(x, y, "┌", s));
+        cells.add(new DrawCell(x + w - 1, y, "┐", s));
+        cells.add(new DrawCell(x, y + h - 1, "└", s));
+        cells.add(new DrawCell(x + w - 1, y + h - 1, "┘", s));
+        for (int i = 1; i < w - 1; i++) {
+            cells.add(new DrawCell(x + i, y, "─", s));
+            cells.add(new DrawCell(x + i, y + h - 1, "─", s));
+        }
+        for (int j = 1; j < h - 1; j++) {
+            cells.add(new DrawCell(x, y + j, "│", s));
+            cells.add(new DrawCell(x + w - 1, y + j, "│", s));
+        }
+        return cells;
+    }
+
+    private static List<DrawCell> generateHighlight(int x, int y, int w, int h, Color color) {
+        List<DrawCell> cells = new ArrayList<>();
+        Style s = Style.EMPTY.bg(color);
+        for (int row = 0; row < h; row++) {
+            for (int col = 0; col < w; col++) {
+                cells.add(new DrawCell(x + col, y + row, null, s));
+            }
+        }
+        return cells;
+    }
+
+    private static List<DrawCell> generateUnderline(int x, int y, int w, Color color) {
+        List<DrawCell> cells = new ArrayList<>();
+        Style s = Style.EMPTY.fg(color).bold();
+        for (int i = 0; i < w; i++) {
+            cells.add(new DrawCell(x + i, y, "─", s));
+        }
+        return cells;
+    }
+
+    private static List<DrawCell> generateArrow(int x, int y, int length, int dx, int dy, Color color) {
+        List<DrawCell> cells = new ArrayList<>();
+        Style s = Style.EMPTY.fg(color).bold();
+        String shaft = dy != 0 ? "│" : "─";
+        String head;
+        if (dx > 0) {
+            head = "▶";
+        } else if (dx < 0) {
+            head = "◀";
+        } else if (dy > 0) {
+            head = "▼";
+        } else {
+            head = "▲";
+        }
+        for (int i = 0; i < length - 1; i++) {
+            cells.add(new DrawCell(x + i * dx, y + i * dy, shaft, s));
+        }
+        cells.add(new DrawCell(x + (length - 1) * dx, y + (length - 1) * dy, head, s));
+        return cells;
+    }
+
+    static List<DrawCell> generateText(int x, int y, String text, Color color) {
+        List<DrawCell> cells = new ArrayList<>();
+        Style s = Style.EMPTY.fg(color).bold();
+        int col = x;
+        for (int i = 0; i < text.length();) {
+            int cp = text.codePointAt(i);
+            String ch = new String(Character.toChars(cp));
+            cells.add(new DrawCell(col, y, ch, s));
+            col += Math.max(1, dev.tamboui.text.CharWidth.of(cp));
+            i += Character.charCount(cp);
+        }
+        return cells;
     }
 
     static Color parseColor(String name) {

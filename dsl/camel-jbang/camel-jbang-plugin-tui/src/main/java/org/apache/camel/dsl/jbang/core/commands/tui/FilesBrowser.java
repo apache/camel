@@ -251,6 +251,30 @@ class FilesBrowser {
         return String.format("%.1f MB", bytes / (1024.0 * 1024));
     }
 
+    static String fileType(Path path) {
+        String name = path.getFileName().toString();
+        String lower = name.toLowerCase(Locale.ROOT);
+        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+            return "camel";
+        }
+        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
+            return isCamelYaml(path) ? "camel" : "other";
+        }
+        if (lower.endsWith(".xml")) {
+            return isCamelXml(path) ? "camel" : "other";
+        }
+        if (lower.endsWith(".java")) {
+            return isCamelJava(path) ? "camel" : "java";
+        }
+        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
+            return "config";
+        }
+        if (lower.startsWith("readme")) {
+            return "readme";
+        }
+        return "other";
+    }
+
     private static String fileEmoji(Path path) {
         String name = path.getFileName().toString();
         String lower = name.toLowerCase(Locale.ROOT);

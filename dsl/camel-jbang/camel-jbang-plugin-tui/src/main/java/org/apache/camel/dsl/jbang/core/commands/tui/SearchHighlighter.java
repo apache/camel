@@ -285,6 +285,10 @@ class SearchHighlighter {
         return findTerm != null;
     }
 
+    boolean hasHighlightTerm() {
+        return highlightTerm != null;
+    }
+
     void reset() {
         findInputActive = false;
         highlightInputActive = false;

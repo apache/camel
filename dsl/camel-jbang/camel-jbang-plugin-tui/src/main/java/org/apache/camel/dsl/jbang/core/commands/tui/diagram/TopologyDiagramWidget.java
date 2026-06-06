@@ -388,7 +388,8 @@ public class TopologyDiagramWidget implements Widget {
     }
 
     private static boolean isExternal(TopologyLayoutNode node) {
-        return "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType);
+        return "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType)
+                || "external".equals(node.nodeType);
     }
 
     static List<String> wrapText(String text, int maxWidth) {
