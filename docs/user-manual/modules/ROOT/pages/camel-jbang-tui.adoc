@@ -2,36 +2,45 @@
 
 *Available as of Camel 4.21*
 
-Camel TUI is a live terminal dashboard for monitoring and interacting with running Camel integrations.
-Instead of switching between log files, JMX consoles, and web dashboards, you get everything
-in one place -- right in the terminal where you already work.
+Camel TUI is a terminal dashboard for developing, prototyping, and understanding Camel integrations.
+It opens up the world of Camel with visual feedback -- you can see your route topology, watch messages
+flow through processors, inspect exchange state at every step, and understand what Camel actually does
+with your routes. No more black box.
 
 image::jbang/camel-tui-topology-overview.png[TUI Overview showing multiple routes]
 
-NOTE: This module is in *Preview* status.
+NOTE: This module is in *Preview* status. The TUI is designed for development and prototyping,
+not production monitoring.
 
 == Why Use the TUI?
 
-*See your integration architecture at a glance.*
+Most integration frameworks give you "run and log" -- you write routes, start the app, and stare at
+log output hoping to understand what happens. Camel TUI takes a different approach: it makes your
+integration visible and interactive.
+
+*Camel is not a black box.*
 The interactive route topology diagram shows how your routes connect -- which endpoints feed into which routes,
-where messages fan out, and where failures happen. You can drill into individual routes
-to see every processor and EIP in the chain.
+where messages fan out, and where failures happen. Drill into individual routes to see every processor
+and EIP in the chain. Watch message counts update in real time. This is the architecture you designed,
+rendered live in your terminal.
 
 image::jbang/camel-tui-topology-diagram.png[Diagram topology view]
 
-*Debug without log-grep.*
+*Understand what happens to your messages.*
 Message tracing shows the exact path each exchange takes through your routes, with the message body,
-headers, properties, and variables at every step. The errors tab collects failures with full
-stack traces so you don't have to search through logs.
+headers, properties, and variables at every processing step. The errors tab collects failures with full
+stack traces. No more grepping through log files -- the TUI organizes this information for you.
 
-*Zero setup.*
-Run `camel tui` and it auto-discovers every running Camel integration. No agents to install,
-no ports to configure, no config files to write.
+*Prototype fast.*
+Run built-in examples directly from the TUI, send test messages to any endpoint, restart routes
+on the fly, and see the effect immediately. The TUI auto-discovers every running Camel integration
+with zero configuration.
 
-*AI-ready.*
-The built-in MCP server lets AI coding assistants (like Claude Code) observe and interact with
-your running integration -- navigating tabs, reading traces, sending test messages, and
-annotating the diagram.
+*AI and humans working together.*
+The built-in MCP server lets AI coding assistants (like Claude Code) see everything you see in the TUI --
+and more. The AI can read structured route data, inspect message traces, send test messages,
+and annotate the diagram with highlights and labels. You get an AI pair-programmer that truly
+understands your running integration, not just your source code.
 
 == Getting Started
 
@@ -69,11 +78,21 @@ image::jbang/camel-tui-topology-diagram-external.png[Diagram with external endpo
 
 image::jbang/camel-tui-topology-diagram-drilldown.png[Drill-down showing internal processors]
 
-== AI Integration (MCP)
+== AI Integration (MCP) -- Optional
 
 The TUI includes an embedded https://modelcontextprotocol.io/[MCP] (Model Context Protocol) server
 that lets AI coding assistants interact with the dashboard programmatically. This turns the TUI
 into a bridge between your running Camel integration and an AI agent.
+
+The TUI is fully functional on its own -- AI integration is entirely optional. You get the complete
+dashboard experience with just `camel tui`. The MCP server adds a layer on top for AI-assisted
+workflows when you want it.
+
+An AI agent connected to the TUI has access to a remarkable amount of information: the complete
+route topology as a structured graph, every route's statistics and throughput, message traces with
+body/headers/properties at each step, error details with stack traces, endpoint usage, health checks,
+log entries, JVM metrics, and even the integration's source files. This is far more context than
+an AI gets from reading source code alone -- it sees your integration *running*.
 
 === Enabling MCP
 
