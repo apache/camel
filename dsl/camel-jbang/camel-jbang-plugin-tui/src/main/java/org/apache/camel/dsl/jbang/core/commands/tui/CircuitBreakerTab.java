@@ -58,12 +58,10 @@ class CircuitBreakerTab implements MonitorTab {
     private int sortIndex;
     private boolean sortReversed;
 
-    CircuitBreakerTab(MonitorContext ctx,
-                      Map<String, LinkedList<Long>> cbSuccessHistory,
-                      Map<String, LinkedList<Long>> cbFailHistory) {
+    CircuitBreakerTab(MonitorContext ctx, MetricsCollector metrics) {
         this.ctx = ctx;
-        this.cbSuccessHistory = cbSuccessHistory;
-        this.cbFailHistory = cbFailHistory;
+        this.cbSuccessHistory = metrics.getCbSuccessHistory();
+        this.cbFailHistory = metrics.getCbFailHistory();
     }
 
     @Override

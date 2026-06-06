@@ -51,9 +51,9 @@ class MemoryTab implements MonitorTab {
     private final MonitorContext ctx;
     private final Map<String, LinkedList<Long>> heapMemHistory;
 
-    MemoryTab(MonitorContext ctx, Map<String, LinkedList<Long>> heapMemHistory) {
+    MemoryTab(MonitorContext ctx, MetricsCollector metrics) {
         this.ctx = ctx;
-        this.heapMemHistory = heapMemHistory;
+        this.heapMemHistory = metrics.getHeapMemHistory();
     }
 
     @Override

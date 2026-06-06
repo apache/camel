@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.net.URI;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -980,6 +981,72 @@ final class StatusParser {
 
     static long extractSince(ProcessHandle ph) {
         return ph.info().startInstant().map(Instant::toEpochMilli).orElse(0L);
+    }
+
+    @SuppressWarnings("unchecked")
+    static List<ErrorInfo> parseErrors(JsonObject root) {
+        JsonArray errorList = (JsonArray) root.get("errors");
+        if (errorList == null) {
+            return List.of();
+        }
+        List<ErrorInfo> parsed = new ArrayList<>();
+        for (Object e : errorList) {
+            JsonObject ej = (JsonObject) e;
+            ErrorInfo ei = new ErrorInfo();
+            ei.routeId = ej.getString("routeId");
+            ei.nodeId = ej.getString("nodeId");
+            ei.exchangeId = ej.getString("exchangeId");
+            ei.handled = Boolean.TRUE.equals(ej.get("handled"));
+            Long ts = ej.getLong("timestamp");
+            if (ts != null) {
+                ei.timestamp = ts;
+            }
+            ei.location = ej.getString("location");
+            ei.threadName = ej.getString("threadName");
+            Long elapsed = ej.getLong("elapsed");
+            if (elapsed != null) {
+                ei.elapsed = elapsed;
+            }
+            ei.endpointUri = ej.getString("endpointUri");
+            ei.fromEndpointUri = ej.getString("fromEndpointUri");
+            JsonObject ex = (JsonObject) ej.get("exception");
+            if (ex != null) {
+                ei.exceptionType = ex.getString("type");
+                ei.exceptionMessage = ex.getString("message");
+                ei.stackTrace = ex.getString("stackTrace");
+            }
+            Object mhObj = ej.get("messageHistory");
+            if (mhObj instanceof JsonArray mhArr) {
+                ei.messageHistory = new String[mhArr.size()];
+                for (int i = 0; i < mhArr.size(); i++) {
+                    ei.messageHistory[i] = mhArr.get(i).toString();
+                }
+            }
+            JsonObject msg = (JsonObject) ej.get("message");
+            if (msg != null) {
+                Object bodyObj = msg.get("body");
+                if (bodyObj instanceof JsonObject bodyJson) {
+                    ei.body = bodyJson.getString("value");
+                    ei.bodyType = bodyJson.getString("type");
+                } else if (bodyObj != null) {
+                    ei.body = bodyObj.toString();
+                }
+                JsonArray hdrs = msg.getCollection("headers");
+                if (hdrs != null) {
+                    parseKvArray(hdrs, ei.headers, ei.headerTypes);
+                }
+            }
+            JsonArray props = ej.getCollection("exchangeProperties");
+            if (props != null) {
+                parseKvArray(props, ei.properties, ei.propertyTypes);
+            }
+            JsonArray vars = ej.getCollection("exchangeVariables");
+            if (vars != null) {
+                parseKvArray(vars, ei.variables, ei.variableTypes);
+            }
+            parsed.add(ei);
+        }
+        return parsed;
     }
 
     static String stringValue(Object obj) {
