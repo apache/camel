@@ -2661,6 +2661,28 @@ public class CamelMonitor extends CamelCommand {
         for (int i = 0; i + 1 < spans.size(); i += 2) {
             String key = spans.get(i).content().trim();
             String rawLabel = spans.get(i + 1).content().trim();
+            // compact "show BHPV" pattern: key="show", then space, then 4 single-letter spans, then trailing space
+            if ("show".equals(key) && i + 6 < spans.size()) {
+                for (int j = 0; j < 4; j++) {
+                    Span letter = spans.get(i + 2 + j);
+                    String ch = letter.content();
+                    boolean on = ch.equals(ch.toUpperCase());
+                    JsonObject toggle = new JsonObject();
+                    toggle.put("key", ch.toLowerCase());
+                    String label = switch (ch.toLowerCase()) {
+                        case "b" -> "body";
+                        case "h" -> "headers";
+                        case "p" -> "properties";
+                        case "v" -> "variables";
+                        default -> ch;
+                    };
+                    toggle.put("label", label);
+                    toggle.put("state", on ? "on" : "off");
+                    actions.add(toggle);
+                }
+                i += 5; // skip the 7-span group (loop adds 2, we consumed 5 more)
+                continue;
+            }
             JsonObject action = new JsonObject();
             action.put("key", key);
             int bracket = rawLabel.indexOf('[');
