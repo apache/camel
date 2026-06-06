@@ -35,6 +35,7 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
@@ -947,5 +948,196 @@ class DiagramTab implements MonitorTab {
             max = Math.max(max, Math.abs(v));
         }
         return Math.max(1, String.valueOf(max).length());
+    }
+
+    // ---- MCP programmatic navigation ----
+
+    boolean selectRoute(String routeId) {
+        int idx = diagram.findNodeIndexByRouteId(routeId);
+        if (idx < 0) {
+            return false;
+        }
+        diagram.setSelectedNodeIndex(idx);
+        diagram.scrollToSelectedNode();
+        return true;
+    }
+
+    boolean selectNode(String routeId, String nodeId) {
+        // Ensure we're on the Diagram tab in topology mode first
+        if (routeId != null) {
+            int routeIdx = diagram.findNodeIndexByRouteId(routeId);
+            if (routeIdx < 0) {
+                return false;
+            }
+            // Drill down into the route (mirrors Enter-key logic)
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
+                return false;
+            }
+            routeNavigationStack.clear();
+            drillDownRouteId = routeId;
+            topologyMode = false;
+            diagram.setTopologyMode(false);
+            diagram.selectFromNode(routeId);
+            diagram.resetScroll();
+            diagram.endLoad();
+            if (diagram.getRouteLayout(routeId) == null) {
+                reloadDiagram();
+            }
+        }
+        if (nodeId != null) {
+            int nodeIdx = diagram.findEipNodeIndexByNodeId(nodeId);
+            if (nodeIdx < 0) {
+                return false;
+            }
+            diagram.setSelectedEipNodeIndex(nodeIdx);
+            diagram.scrollToSelectedEipNode();
+        }
+        return true;
+    }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        if (!diagram.isShowDiagram()) {
+            return null;
+        }
+        if (topologyMode) {
+            var boxes = diagram.getNodeBoxes();
+            if (boxes.isEmpty()) {
+                return null;
+            }
+            List<String> items = new ArrayList<>();
+            for (var box : boxes) {
+                items.add(box.routeId());
+            }
+            return new SelectionContext(
+                    "topology-routes", items,
+                    diagram.getSelectedNodeIndex(), items.size(), "Topology routes");
+        } else {
+            var boxes = diagram.getEipNodeBoxes();
+            if (boxes.isEmpty()) {
+                return null;
+            }
+            List<String> items = new ArrayList<>();
+            for (var box : boxes) {
+                items.add(box.nodeId());
+            }
+            return new SelectionContext(
+                    "eip-nodes", items,
+                    diagram.getSelectedEipNodeIndex(), items.size(),
+                    "EIP nodes [" + drillDownRouteId + "]");
+        }
+    }
+
+    JsonObject getDiagramStateAsJson() {
+        if (!diagram.isShowDiagram()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("diagramMode", topologyMode ? "topology" : "route");
+
+        if (!topologyMode && drillDownRouteId != null) {
+            result.put("routeId", drillDownRouteId);
+            JsonArray stack = new JsonArray();
+            for (String s : routeNavigationStack) {
+                stack.add(s);
+            }
+            if (!stack.isEmpty()) {
+                result.put("navigationStack", stack);
+            }
+        }
+
+        // Selected node info
+        if (topologyMode) {
+            String routeId = diagram.getSelectedRouteId();
+            if (routeId != null) {
+                JsonObject node = new JsonObject();
+                node.put("routeId", routeId);
+                result.put("selectedRoute", node);
+            }
+        } else {
+            var eipBox = diagram.getSelectedEipNodeBox();
+            if (eipBox != null && eipBox.layoutNode() != null) {
+                JsonObject node = new JsonObject();
+                node.put("id", eipBox.nodeId());
+                node.put("type", eipBox.type());
+                String label = String.join("", eipBox.layoutNode().wrappedLines);
+                if (!label.isBlank()) {
+                    node.put("label", label);
+                }
+                if (eipBox.layoutNode().id != null) {
+                    node.put("processorId", eipBox.layoutNode().id);
+                }
+                String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
+                if (linkedRoute != null) {
+                    node.put("linkedRoute", linkedRoute);
+                }
+                result.put("selectedNode", node);
+            }
+        }
+
+        // Info panel stats
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            String routeId = topologyMode ? diagram.getSelectedRouteId() : drillDownRouteId;
+            if (routeId != null) {
+                RouteInfo route = null;
+                for (RouteInfo r : info.routes) {
+                    if (routeId.equals(r.routeId)) {
+                        route = r;
+                        break;
+                    }
+                }
+                if (route != null) {
+                    JsonObject ri = new JsonObject();
+                    ri.put("routeId", route.routeId);
+                    ri.put("from", route.from);
+                    ri.put("state", route.state);
+                    ri.put("uptime", route.uptime);
+                    ri.put("throughput", route.throughput);
+                    if (route.coverage != null) {
+                        ri.put("coverage", route.coverage);
+                    }
+                    ri.put("total", route.total);
+                    ri.put("failed", route.failed);
+                    ri.put("inflight", route.inflight);
+                    if (route.total > 0) {
+                        ri.put("meanTime", route.meanTime);
+                        ri.put("maxTime", route.maxTime);
+                        ri.put("minTime", route.minTime);
+                    }
+                    if (route.sinceLastCompleted != null) {
+                        ri.put("sinceLastSuccess", route.sinceLastCompleted);
+                    }
+                    if (route.sinceLastFailed != null) {
+                        ri.put("sinceLastFail", route.sinceLastFailed);
+                    }
+                    result.put("info", ri);
+                }
+            }
+
+            // EIP node stats (when drilled down)
+            if (!topologyMode) {
+                var eipBox = diagram.getSelectedEipNodeBox();
+                if (eipBox != null && eipBox.layoutNode() != null
+                        && eipBox.layoutNode().treeNode != null
+                        && eipBox.layoutNode().treeNode.info.stat != null) {
+                    var stat = eipBox.layoutNode().treeNode.info.stat;
+                    JsonObject ni = new JsonObject();
+                    ni.put("total", stat.exchangesTotal);
+                    ni.put("failed", stat.exchangesFailed);
+                    ni.put("inflight", stat.exchangesInflight);
+                    if (stat.exchangesTotal > 0) {
+                        ni.put("meanTime", stat.meanProcessingTime);
+                        ni.put("maxTime", stat.maxProcessingTime);
+                        ni.put("minTime", stat.minProcessingTime);
+                        ni.put("lastTime", stat.lastProcessingTime);
+                    }
+                    result.put("nodeInfo", ni);
+                }
+            }
+        }
+
+        return result;
     }
 }

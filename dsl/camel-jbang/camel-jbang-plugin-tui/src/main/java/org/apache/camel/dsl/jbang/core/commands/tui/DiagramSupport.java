@@ -151,6 +151,15 @@ class DiagramSupport {
         return null;
     }
 
+    int findNodeIndexByRouteId(String routeId) {
+        for (int i = 0; i < nodeBoxes.size(); i++) {
+            if (routeId.equals(nodeBoxes.get(i).routeId())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     TopologyLayoutNode getSelectedTopologyNode() {
         String routeId = getSelectedRouteId();
         if (routeId == null) {
@@ -798,6 +807,15 @@ class DiagramSupport {
             return eipNodeBoxes.get(selectedEipNodeIndex);
         }
         return null;
+    }
+
+    int findEipNodeIndexByNodeId(String nodeId) {
+        for (int i = 0; i < eipNodeBoxes.size(); i++) {
+            if (nodeId.equals(eipNodeBoxes.get(i).nodeId())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**

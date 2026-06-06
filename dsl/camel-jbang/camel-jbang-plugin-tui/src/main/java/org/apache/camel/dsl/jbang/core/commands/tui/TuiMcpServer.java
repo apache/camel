@@ -260,11 +260,18 @@ class TuiMcpServer {
         toolList.add(toolDef(
                 "tui_navigate",
                 "Navigates the TUI: switch tabs and/or select an integration. "
-                                + "Both parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Routes, Consumers, Endpoints, HTTP, Health, Inspect, Circuit Breaker. "
+                                + "All parameters are optional — set whichever you want to change. "
+                                + "Tab names: Overview, Log, Diagram, Routes, Consumers, Endpoints, HTTP, Health, Inspect, Circuit Breaker. "
+                                + "Use 'route' to select a route in the Diagram topology, "
+                                + "and 'node' to drill down into a route and select a specific processor/EIP node. "
                                 + "Returns screen content and selection metadata after navigating.",
-                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health')"),
-                        "integration", propDef("string", "Integration name or PID to select"))));
+                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health', 'Diagram')"),
+                        "integration", propDef("string", "Integration name or PID to select"),
+                        "route", propDef("string",
+                                "Route ID to select in the Diagram tab topology (e.g. 'order-dispatcher')"),
+                        "node", propDef("string",
+                                "Processor/EIP node ID to select within a drilled-down route (e.g. 'multicast1'). "
+                                                  + "If 'route' is also provided, drills into that route first"))));
 
         toolList.add(toolDef(
                 "tui_send_keys",
@@ -556,6 +563,13 @@ class TuiMcpServer {
         }
     }
 
+    private void addFooterActions(JsonObject result) {
+        JsonArray actions = monitor.getFooterActionsAsJson();
+        if (actions != null && !actions.isEmpty()) {
+            result.put("actions", actions);
+        }
+    }
+
     private String callGetScreen(Map<String, Object> args) {
         Buffer buf = monitor.getLastBuffer();
         if (buf == null) {
@@ -616,6 +630,11 @@ class TuiMcpServer {
         result.put("keystrokesVisible", monitor.isKeystrokesVisible());
         result.put("captionVisible", monitor.isCaptionVisible());
         addSelectionContext(result);
+        addFooterActions(result);
+        JsonObject diagramState = monitor.getDiagramState();
+        if (diagramState != null) {
+            result.put("diagram", diagramState);
+        }
         return Jsoner.serialize(result);
     }
 
@@ -648,9 +667,11 @@ class TuiMcpServer {
         JsonObject result = new JsonObject();
         String tab = (String) args.get("tab");
         String integration = (String) args.get("integration");
+        String route = args.get("route") instanceof String s ? s : null;
+        String node = args.get("node") instanceof String s ? s : null;
 
-        if (tab == null && integration == null) {
-            result.put("error", "Provide at least one of: tab, integration");
+        if (tab == null && integration == null && route == null && node == null) {
+            result.put("error", "Provide at least one of: tab, integration, route, node");
             result.put("availableTabs", toJsonArray(monitor.getTabNames()));
             result.put("availableIntegrations", toJsonArray(monitor.getIntegrationNames()));
             return Jsoner.serialize(result);
@@ -684,6 +705,25 @@ class TuiMcpServer {
             }
         }
 
+        // Diagram route/node navigation (route selection in topology doesn't need render wait)
+        if (node == null && route != null) {
+            String selected = monitor.navigateDiagramToRoute(route);
+            if (selected != null) {
+                result.put("selectedRoute", route);
+            } else {
+                result.put("routeError", "Route not found in diagram: " + route);
+            }
+        }
+
+        // When drilling down with a node, we first drill into the route, then wait
+        // for render to populate the EIP node boxes, then select the node
+        if (node != null) {
+            // Drill into the route first (sets topologyMode=false)
+            if (route != null) {
+                monitor.navigateDiagramToNode(route, null);
+            }
+        }
+
         long beforeGen = monitor.getRenderGeneration();
         long deadline = System.currentTimeMillis() + 2000;
         while (System.currentTimeMillis() < deadline) {
@@ -697,11 +737,26 @@ class TuiMcpServer {
                 break;
             }
         }
+
+        // Now that the render has populated EIP node boxes, select the node
+        if (node != null) {
+            String selected = monitor.navigateDiagramToNode(null, node);
+            if (selected != null) {
+                result.put("selectedNode", node);
+                if (route != null) {
+                    result.put("drillDownRoute", route);
+                }
+            } else {
+                result.put("nodeError", "Node not found: " + node
+                                        + (route != null ? " in route " + route : ""));
+            }
+        }
         Buffer buf = monitor.getLastBuffer();
         if (buf != null) {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
         addSelectionContext(result);
+        addFooterActions(result);
         return Jsoner.serialize(result);
     }
 
@@ -765,6 +820,7 @@ class TuiMcpServer {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
         addSelectionContext(result);
+        addFooterActions(result);
         return Jsoner.serialize(result);
     }
 

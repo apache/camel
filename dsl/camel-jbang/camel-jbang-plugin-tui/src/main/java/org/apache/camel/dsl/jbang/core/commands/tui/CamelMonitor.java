@@ -2610,6 +2610,71 @@ public class CamelMonitor extends CamelCommand {
         return diagramTab.getTopologyDataAsJson();
     }
 
+    String navigateDiagramToRoute(String routeId) {
+        navigateToTab("Diagram");
+        if (diagramTab.selectRoute(routeId)) {
+            return routeId;
+        }
+        return null;
+    }
+
+    String navigateDiagramToNode(String routeId, String nodeId) {
+        navigateToTab("Diagram");
+        if (diagramTab.selectNode(routeId, nodeId)) {
+            return nodeId;
+        }
+        return null;
+    }
+
+    JsonObject getDiagramState() {
+        return diagramTab.getDiagramStateAsJson();
+    }
+
+    JsonArray getFooterActionsAsJson() {
+        List<Span> spans = new ArrayList<>();
+        if (helpOverlay.isVisible()) {
+            helpOverlay.renderFooter(spans);
+        } else if (captionOverlay.isCaptionVisible()) {
+            captionOverlay.renderFooter(spans);
+        } else if (filesBrowser.isVisible()) {
+            filesBrowser.renderFooter(spans);
+        } else if (showSwitchPopup || showMorePopup) {
+            if (showSwitchPopup) {
+                hint(spans, "Up/Down", "select");
+                hint(spans, "Enter", "switch");
+                hint(spans, "Esc", "close");
+            } else {
+                hint(spans, "Up/Down", "select");
+                hint(spans, "Enter", "open");
+                hint(spans, "Esc", "close");
+            }
+        } else {
+            MonitorTab tab = activeTab();
+            if (tabsState.selected() == TAB_OVERVIEW) {
+                renderOverviewFooter(spans);
+            } else if (tab != null) {
+                tab.renderFooter(spans);
+                insertFKeyHints(spans);
+            }
+        }
+        JsonArray actions = new JsonArray();
+        for (int i = 0; i + 1 < spans.size(); i += 2) {
+            String key = spans.get(i).content().trim();
+            String rawLabel = spans.get(i + 1).content().trim();
+            JsonObject action = new JsonObject();
+            action.put("key", key);
+            int bracket = rawLabel.indexOf('[');
+            if (bracket > 0 && rawLabel.endsWith("]")) {
+                action.put("label", rawLabel.substring(0, bracket).trim());
+                action.put("state", rawLabel.substring(bracket + 1, rawLabel.length() - 1));
+            } else {
+                action.put("label", rawLabel);
+            }
+            actions.add(action);
+        }
+        return actions;
+    }
+
     void setLogLevel(String level) {
         logTab.setLogLevel(level);
     }
