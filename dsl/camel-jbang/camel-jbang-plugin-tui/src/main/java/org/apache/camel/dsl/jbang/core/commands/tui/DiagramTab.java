@@ -1140,4 +1140,8 @@ class DiagramTab implements MonitorTab {
 
         return result;
     }
+
+    JsonObject locateNodes(List<String> nodeIds) {
+        return diagram.locateNodes(nodeIds);
+    }
 }

@@ -474,6 +474,18 @@ class TuiMcpServer {
                         "Integration name. If omitted, uses the currently selected integration."),
                         "file", propDef("string",
                                 "Filename to read. If omitted, returns the file list instead."))));
+        toolList.add(toolDef(
+                "tui_locate",
+                "Locates elements on the TUI screen and returns their exact screen coordinates (x, y, width, height). "
+                              + "Use 'text' to find text on screen with proper wide-character handling (emoji, CJK). "
+                              + "Use 'node' or 'nodes' to find diagram nodes by ID. "
+                              + "Returns coordinates suitable for tui_draw.",
+                Map.of("text", propDef("string",
+                        "Text to search for on screen. Returns all matches with screen coordinates."),
+                        "node", propDef("string",
+                                "Single diagram node ID to locate (routeId or nodeId)."),
+                        "nodes", propDef("array",
+                                "Array of diagram node IDs to locate. Returns individual rects plus combined bounds."))));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -522,6 +534,7 @@ class TuiMcpServer {
                 case "tui_get_readme" -> callGetReadme(args);
                 case "tui_control" -> callControl(args);
                 case "tui_get_files" -> callGetFiles(args);
+                case "tui_locate" -> callLocate(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -1195,6 +1208,37 @@ class TuiMcpServer {
                     : "No source files found for the selected integration";
         }
         return Jsoner.serialize(response);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String callLocate(Map<String, Object> args) {
+        String text = args.get("text") instanceof String s ? s : null;
+        String node = args.get("node") instanceof String s ? s : null;
+        List<String> nodes = args.get("nodes") instanceof List<?> list
+                ? ((List<Object>) list).stream().map(Object::toString).toList()
+                : null;
+
+        JsonObject result = new JsonObject();
+
+        if (text != null) {
+            JsonArray matches = monitor.locateText(text);
+            result.put("matches", matches);
+        } else if (node != null || nodes != null) {
+            List<String> ids = nodes != null ? nodes : List.of(node);
+            JsonObject located = monitor.locateNodes(ids);
+            if (located != null) {
+                result.put("matches", located.get("matches"));
+                if (located.containsKey("bounds")) {
+                    result.put("bounds", located.get("bounds"));
+                }
+            } else {
+                result.put("matches", new JsonArray());
+            }
+        } else {
+            result.put("error", "Provide 'text', 'node', or 'nodes' parameter");
+        }
+
+        return Jsoner.serialize(result);
     }
 
     private static JsonArray toJsonArray(List<String> list) {

@@ -2630,6 +2630,50 @@ public class CamelMonitor extends CamelCommand {
         return diagramTab.getDiagramStateAsJson();
     }
 
+    JsonArray locateText(String search) {
+        Buffer buf = lastBuffer;
+        if (buf == null || search == null || search.isEmpty()) {
+            return new JsonArray();
+        }
+        String screen = ExportRequest.export(buf).text().toString();
+        String[] lines = screen.split("\n", -1);
+        int searchWidth = 0;
+        for (int i = 0; i < search.length();) {
+            int cp = search.codePointAt(i);
+            searchWidth += Math.max(1, CharWidth.of(cp));
+            i += Character.charCount(cp);
+        }
+        JsonArray matches = new JsonArray();
+        for (int y = 0; y < lines.length; y++) {
+            String line = lines[y];
+            int idx = line.indexOf(search);
+            while (idx >= 0) {
+                int visualCol = 0;
+                for (int i = 0; i < idx;) {
+                    int cp = line.codePointAt(i);
+                    visualCol += Math.max(1, CharWidth.of(cp));
+                    i += Character.charCount(cp);
+                }
+                JsonObject match = new JsonObject();
+                match.put("x", visualCol);
+                match.put("y", y);
+                match.put("width", searchWidth);
+                match.put("height", 1);
+                match.put("text", search);
+                matches.add(match);
+                idx = line.indexOf(search, idx + 1);
+            }
+            if (matches.size() >= 20) {
+                break;
+            }
+        }
+        return matches;
+    }
+
+    JsonObject locateNodes(List<String> nodeIds) {
+        return diagramTab.locateNodes(nodeIds);
+    }
+
     JsonArray getFooterActionsAsJson() {
         List<Span> spans = new ArrayList<>();
         if (helpOverlay.isVisible()) {
