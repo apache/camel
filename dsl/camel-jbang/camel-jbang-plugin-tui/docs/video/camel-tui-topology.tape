@@ -17,12 +17,12 @@
 
 # Overview - 7 interconnected routes
 Sleep 8s
-Screenshot screenshots/camel-tui-topology-overview.png
+Screenshot screenshots/camel-tui-topology-overview.svg
 
 # Diagram tab - topology view
 Type "3"
 Sleep 4s
-Screenshot screenshots/camel-tui-topology-diagram.png
+Screenshot screenshots/camel-tui-topology-diagram.svg
 
 # Navigate to different routes
 Down
@@ -31,17 +31,17 @@ Down
 Sleep 1s
 Down
 Sleep 1s
-Screenshot screenshots/camel-tui-topology-diagram-navigate.png
+Screenshot screenshots/camel-tui-topology-diagram-navigate.svg
 
 # Toggle external endpoints
 Type "e"
 Sleep 3s
-Screenshot screenshots/camel-tui-topology-diagram-external.png
+Screenshot screenshots/camel-tui-topology-diagram-external.svg
 
 # Drill into a route
 Enter
 Sleep 3s
-Screenshot screenshots/camel-tui-topology-diagram-drilldown.png
+Screenshot screenshots/camel-tui-topology-diagram-drilldown.svg
 
 # Back to topology
 Escape
@@ -54,27 +54,27 @@ Sleep 1s
 # Routes tab - all 7 routes with statistics
 Type "4"
 Sleep 3s
-Screenshot screenshots/camel-tui-topology-routes.png
+Screenshot screenshots/camel-tui-topology-routes.svg
 
 # Errors tab - see failures
 Type "9"
 Sleep 3s
-Screenshot screenshots/camel-tui-topology-errors.png
+Screenshot screenshots/camel-tui-topology-errors.svg
 
 # Log tab
 Type "2"
 Sleep 3s
-Screenshot screenshots/camel-tui-topology-log.png
+Screenshot screenshots/camel-tui-topology-log.svg
 
 # Health tab
 Type "7"
 Sleep 3s
-Screenshot screenshots/camel-tui-topology-health.png
+Screenshot screenshots/camel-tui-topology-health.svg
 
 # Endpoints tab
 Type "5"
 Sleep 3s
-Screenshot screenshots/camel-tui-topology-endpoints.png
+Screenshot screenshots/camel-tui-topology-endpoints.svg
 
 # Back to overview
 Type "1"
@@ -86,7 +86,7 @@ Sleep 500ms
 Type "Thanks for watching! Happy integrating with Apache Camel!"
 Enter
 Sleep 4s
-Screenshot screenshots/camel-tui-topology-final.png
+Screenshot screenshots/camel-tui-topology-final.svg
 
 # Quit
 Type "q"

@@ -7,7 +7,7 @@ It opens up the world of Camel with visual feedback -- you can see your route to
 flow through processors, inspect exchange state at every step, and understand what Camel actually does
 with your routes. No more black box.
 
-image::jbang/camel-tui-topology-overview.png[TUI Overview showing multiple routes]
+image::jbang/camel-tui-topology-overview.svg[TUI Overview showing multiple routes]
 
 NOTE: This module is in *Preview* status. The TUI is designed for development and prototyping,
 not production monitoring.
@@ -24,7 +24,7 @@ where messages fan out, and where failures happen. Drill into individual routes 
 and EIP in the chain. Watch message counts update in real time. This is the architecture you designed,
 rendered live in your terminal.
 
-image::jbang/camel-tui-topology-diagram.png[Diagram topology view]
+image::jbang/camel-tui-topology-diagram.svg[Diagram topology view]
 
 *Understand what happens to your messages.*
 Message tracing shows the exact path each exchange takes through your routes, with the message body,
@@ -74,9 +74,9 @@ connect to each other through shared endpoints (direct, seda, kafka, etc.).
 * Toggle metrics overlay (message counts) with *m*
 * View route source code with *c*
 
-image::jbang/camel-tui-topology-diagram-external.png[Diagram with external endpoints visible]
+image::jbang/camel-tui-topology-diagram-external.svg[Diagram with external endpoints visible]
 
-image::jbang/camel-tui-topology-diagram-drilldown.png[Drill-down showing internal processors]
+image::jbang/camel-tui-topology-diagram-drilldown.svg[Drill-down showing internal processors]
 
 == AI Integration (MCP) -- Optional
 
