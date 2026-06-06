@@ -219,15 +219,23 @@ from("kafka:security-events")
             unmarshalType: "org.apache.camel.dataformat.ocsf.model.DetectionFinding"
       - setHeader:
           name: "findingTitle"
-          simple: "${body.findingInfo?.title}"
+          expression:
+            simple:
+              expression: "${body.findingInfo?.title}"
       - setHeader:
           name: "findingSeverity"
-          simple: "${body.severityId}"
+          expression:
+            simple:
+              expression: "${body.severityId}"
       - setHeader:
           name: "findingMessage"
-          simple: "${body.message}"
+          expression:
+            simple:
+              expression: "${body.message}"
       - setBody:
-          simple: |
+          expression:
+            simple:
+              expression: |
             Analyze this security detection finding and provide a brief summary:
 
             Title: ${header.findingTitle}
