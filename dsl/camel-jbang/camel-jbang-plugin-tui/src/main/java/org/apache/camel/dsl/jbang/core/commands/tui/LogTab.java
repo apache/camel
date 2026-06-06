@@ -58,6 +58,7 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
 
 class LogTab implements MonitorTab {
 
+    private static final int MAX_LOG_LINES = 3000;
     private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
 
     private static final Pattern LOG_PATTERN = Pattern.compile(
@@ -71,23 +72,23 @@ class LogTab implements MonitorTab {
     private final ScrollbarState scrollState = new ScrollbarState();
     private final ListState logLevelListState = new ListState();
 
-    volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
-    volatile boolean logLoading;
-    volatile boolean loadAllRequested;
-    long logFilePos = -1;
-    long logFileStartPos = -1;
-    long logTotalLinesRead;
-    String logFilePid;
-    final StringBuilder logLineBuffer = new StringBuilder();
-    final List<LogEntry> mutableFilteredEntries = new ArrayList<>();
+    private volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
+    private volatile boolean logLoading;
+    private volatile boolean loadAllRequested;
+    private long logFilePos = -1;
+    private long logFileStartPos = -1;
+    private long logTotalLinesRead;
+    private String logFilePid;
+    private final StringBuilder logLineBuffer = new StringBuilder();
+    private final List<LogEntry> mutableFilteredEntries = new ArrayList<>();
 
     private List<LogEntry> cachedLogEntries;
     private int cachedLogHSkip = -1;
     private int cachedLogMaxWidth;
     private List<Line> cachedLogLines = Collections.emptyList();
-    int scroll;
+    private int scroll;
     private long evictedSeen;
-    boolean followMode = true;
+    private boolean followMode = true;
     private boolean wordWrap = true;
     private int hScroll;
     private boolean showLogLevelPopup;
@@ -453,6 +454,51 @@ class LogTab implements MonitorTab {
 
     void handlePaste(String text) {
         search.handlePaste(text);
+    }
+
+    void refreshFromFile(String pid, String fileName) {
+        if (!pid.equals(logFilePid)) {
+            mutableFilteredEntries.clear();
+            logFilePos = -1;
+            logTotalLinesRead = 0;
+            logLineBuffer.setLength(0);
+            logLoading = true;
+        }
+        boolean changed = false;
+        boolean loadAll = loadAllRequested;
+        if (logFileStartPos > 0
+                && (loadAll || (!followMode && scroll == 0))) {
+            loadAllRequested = false;
+            List<String> olderLines = new ArrayList<>();
+            readOlderLogLines(fileName, loadAll, olderLines);
+            if (!olderLines.isEmpty()) {
+                changed = true;
+                List<LogEntry> olderEntries = new ArrayList<>();
+                for (String line : olderLines) {
+                    olderEntries.add(parseLogLine(line));
+                }
+                mutableFilteredEntries.addAll(0, olderEntries);
+                logTotalLinesRead += olderLines.size();
+                scroll = olderEntries.size();
+            }
+        }
+        List<String> newRawLines = new ArrayList<>();
+        readNewLogLinesFromFile(pid, fileName, newRawLines);
+        changed |= !newRawLines.isEmpty();
+        if (changed) {
+            logTotalLinesRead += newRawLines.size();
+            for (String line : newRawLines) {
+                mutableFilteredEntries.add(parseLogLine(line));
+            }
+            if (mutableFilteredEntries.size() > MAX_LOG_LINES) {
+                mutableFilteredEntries.subList(0, mutableFilteredEntries.size() - MAX_LOG_LINES)
+                        .clear();
+            }
+        }
+        if (changed || logLoading) {
+            filteredLogEntries = new ArrayList<>(mutableFilteredEntries);
+        }
+        logLoading = false;
     }
 
     void readNewLogLines(String pid, List<String> newLines) {

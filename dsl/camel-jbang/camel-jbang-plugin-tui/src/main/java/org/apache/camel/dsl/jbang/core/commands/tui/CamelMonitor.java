@@ -95,7 +95,6 @@ public class CamelMonitor extends CamelCommand {
     private static final long VANISH_DURATION_MS = 6000;
     private static final long DEFAULT_REFRESH_MS = 100;
 
-    private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 10;
 
@@ -224,15 +223,7 @@ public class CamelMonitor extends CamelCommand {
     private boolean showSwitchPopup;
     private final ListState switchPopupState = new ListState();
 
-    // "Files" popup state
-    record FileEntry(String emoji, String name, long size, String path) {
-    }
-
-    private boolean showFilesPopup;
-    private String filesPopupTitle;
-    private final ListState filesPopupState = new ListState();
-    private List<FileEntry> fileEntries = Collections.emptyList();
-    private final SourceViewer overviewSourceViewer = new SourceViewer();
+    private final FilesBrowser filesBrowser = new FilesBrowser();
 
     // "More" dropdown state
     private boolean showMorePopup;
@@ -389,426 +380,392 @@ public class CamelMonitor extends CamelCommand {
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
             }
-            // "Files" popup
-            if (showFilesPopup) {
-                if (overviewSourceViewer.isVisible()) {
-                    if (overviewSourceViewer.handleKeyEvent(ke)) {
-                        return true;
-                    }
-                }
-                if (ke.isCancel()) {
-                    if (overviewSourceViewer.isVisible()) {
-                        overviewSourceViewer.hide();
-                    } else {
-                        showFilesPopup = false;
-                    }
-                    return true;
-                }
-                if (!overviewSourceViewer.isVisible()) {
-                    if (ke.isUp()) {
-                        filesPopupState.selectPrevious();
-                        return true;
-                    }
-                    if (ke.isDown()) {
-                        filesPopupState.selectNext(fileEntries.size());
-                        return true;
-                    }
-                    if (ke.isConfirm()) {
-                        Integer sel = filesPopupState.selected();
-                        if (sel != null && sel < fileEntries.size()) {
-                            FileEntry entry = fileEntries.get(sel);
-                            overviewSourceViewer.loadFile(Path.of(entry.path()));
-                        }
-                        return true;
-                    }
-                }
+            if (handlePopupKeys(ke)) {
                 return true;
             }
-            // "More" tab popup
-            if (showMorePopup) {
-                if (ke.isCancel()) {
-                    showMorePopup = false;
-                    return true;
-                }
-                if (ke.isUp()) {
-                    morePopupState.selectPrevious();
-                    return true;
-                }
-                if (ke.isDown()) {
-                    morePopupState.selectNext(11);
-                    return true;
-                }
-                // Shortcut keys for quick selection
-                int shortcutSel = morePopupShortcut(ke);
-                if (shortcutSel >= 0) {
-                    morePopupState.select(shortcutSel);
-                }
-                if (ke.isConfirm() || shortcutSel >= 0) {
-                    showMorePopup = false;
-                    Integer sel = shortcutSel >= 0 ? shortcutSel : morePopupState.selected();
-                    if (sel != null) {
-                        lastMoreSelection = sel;
-                        activeMoreTab = switch (sel) {
-                            case 0 -> beansTab;
-                            case 1 -> browseTab;
-                            case 2 -> circuitBreakerTab;
-                            case 3 -> classpathTab;
-                            case 4 -> configurationTab;
-                            case 5 -> consumersTab;
-                            case 6 -> inflightTab;
-                            case 7 -> memoryTab;
-                            case 8 -> metricsTab;
-                            case 9 -> startupTab;
-                            case 10 -> threadsTab;
-                            default -> null;
-                        };
-                        if (activeMoreTab != null) {
-                            overviewTab.selectCurrentIntegration();
-                            tabsState.select(TAB_MORE);
-                            activeMoreTab.onTabSelected();
-                        }
-                    }
-                    return true;
-                }
+            if (handleGlobalKeys(ke, runner)) {
                 return true;
             }
-            // "Switch integration" popup
-            if (showSwitchPopup) {
-                if (ke.isCancel()) {
-                    showSwitchPopup = false;
-                    return true;
-                }
-                List<IntegrationInfo> switchList = getNonVanishingIntegrations();
-                if (ke.isUp()) {
-                    switchPopupState.selectPrevious();
-                    return true;
-                }
-                if (ke.isDown()) {
-                    switchPopupState.selectNext(switchList.size());
-                    return true;
-                }
-                if (ke.isConfirm()) {
-                    showSwitchPopup = false;
-                    Integer sel = switchPopupState.selected();
-                    if (sel != null && sel >= 0 && sel < switchList.size()) {
-                        IntegrationInfo chosen = switchList.get(sel);
-                        ctx.selectedPid = chosen.pid;
-                        ctx.lastSelectedName = chosen.name;
-                        resetIntegrationTabState();
-                        if (tabsState.selected() == TAB_LOG) {
-                            refreshLogData();
-                        }
-                    }
-                    return true;
-                }
-                return true;
-            }
-            // Kill confirm dialog: Enter to confirm, Esc/any other key to cancel
-            if (showKillConfirm) {
-                if (ke.isConfirm()) {
-                    showKillConfirm = false;
-                    stopSelectedProcess(true);
-                } else {
-                    showKillConfirm = false;
-                }
-                return true;
-            }
-
-            // Escape: navigate back — delegate to active tab first
-            if (ke.isCancel()) {
-                MonitorTab tab = activeTab();
-                if (tab != null && tab.handleEscape()) {
-                    return true;
-                }
-                if (tabsState.selected() != TAB_OVERVIEW) {
-                    tabsState.select(TAB_OVERVIEW);
-                    return true;
-                }
-                if (ctx.selectedPid != null) {
-                    ctx.selectedPid = null;
-                    ctx.lastSelectedName = null;
-                    return true;
-                }
-                return true;
-            }
-            // Quit: q or Ctrl+c (skip when text input is active)
-            boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
-            boolean logSearchActive = tabsState.selected() == TAB_LOG && logTab.isSearchInputActive();
-            boolean textEditing = probeEditing || logSearchActive;
-            if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
-                runner.quit();
-                return true;
-            }
-            if (ke.isCtrlC()) {
-                runner.quit();
-                return true;
-            }
-            // Tab switching with number keys (skip when text input is active)
-            // When infra is selected, only Overview (1) and Log (2) are available
-            if (!textEditing) {
-                if (ke.isChar('1')) {
-                    return handleTabKey(TAB_OVERVIEW);
-                }
-                if (ke.isChar('2')) {
-                    return handleTabKey(TAB_LOG);
-                }
-                if (!isInfraSelected()) {
-                    if (ke.isChar('3')) {
-                        return handleTabKey(TAB_DIAGRAM);
-                    }
-                    if (ke.isChar('4')) {
-                        return handleTabKey(TAB_ROUTES);
-                    }
-                    if (ke.isChar('5')) {
-                        return handleTabKey(TAB_ENDPOINTS);
-                    }
-                    if (ke.isChar('6')) {
-                        return handleTabKey(TAB_HTTP);
-                    }
-                    if (ke.isChar('7')) {
-                        return handleTabKey(TAB_HEALTH);
-                    }
-                    if (ke.isChar('8')) {
-                        return handleTabKey(TAB_HISTORY);
-                    }
-                    if (ke.isChar('9')) {
-                        return handleTabKey(TAB_ERRORS);
-                    }
-                    if (ke.isChar('0')) {
-                        return handleTabKey(TAB_MORE);
-                    }
-                }
-            }
-
-            // Tab cycling (check Shift+Tab before Tab since Tab binding also matches Shift+Tab)
-            // Skip tab cycling when text input is active (Tab navigates fields)
-            if (ke.isFocusPrevious() && !textEditing) {
-                if (isInfraSelected()) {
-                    // Cycle between Overview and Log only
-                    int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
-                    tabsState.select(prev);
-                } else {
-                    int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
-                    if (prev != TAB_OVERVIEW) {
-                        overviewTab.selectCurrentIntegration();
-                    }
-                    tabsState.select(prev);
-                }
-                return true;
-            }
-            if (ke.isFocusNext() && !textEditing) {
-                if (isInfraSelected()) {
-                    int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
-                    tabsState.select(next);
-                } else {
-                    int next = (tabsState.selected() + 1) % NUM_TABS;
-                    if (next != TAB_OVERVIEW) {
-                        overviewTab.selectCurrentIntegration();
-                    }
-                    tabsState.select(next);
-                }
-                return true;
-            }
-
-            // Screenshot: Shift+F5
-            if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
-                takeScreenshot();
-                return true;
-            }
-
-            // F1 opens context-sensitive help
-            if (ke.isKey(KeyCode.F1)) {
-                if (helpOverlay.isVisible()) {
-                    helpOverlay.close();
-                } else {
-                    MonitorTab tab = activeTab();
-                    if (tab != null) {
-                        String help = tab.getHelpText();
-                        if (help != null) {
-                            helpOverlay.open(help);
-                        }
-                    }
-                }
-                return true;
-            }
-
-            // F2 opens actions menu (global)
-            if (ke.isKey(KeyCode.F2)) {
-                if (tabsState.selected() == TAB_ROUTES && routesTab != null) {
-                    actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
-                }
-                actionsPopup.open();
-                return true;
-            }
-
-            // F3 opens switch integration popup
-            if (ke.isKey(KeyCode.F3)) {
-                List<IntegrationInfo> switchList = getNonVanishingIntegrations();
-                if (switchList.size() > 1) {
-                    showSwitchPopup = true;
-                    // Pre-select the currently active integration
-                    for (int i = 0; i < switchList.size(); i++) {
-                        if (switchList.get(i).pid.equals(ctx.selectedPid)) {
-                            switchPopupState.select(i);
-                            break;
-                        }
-                    }
-                }
-                return true;
-            }
-
-            // Tab-specific keys — delegate to active tab first
-            int tab = tabsState.selected();
-            MonitorTab activeTab = activeTab();
-
-            // Navigation (all tabs)
-            if (ke.isUp()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-                navigateUp();
-                return true;
-            }
-            if (ke.isDown()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-                navigateDown();
-                return true;
-            }
-            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-                return true;
-            }
-            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-                return true;
-            }
-            if (ke.isLeft()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-            }
-            if (ke.isRight()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-            }
-            if (ke.isHome()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-            }
-            if (ke.isEnd()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-            }
-
-            // Enter to drill into selected integration
-            if (ke.isConfirm() && tab == TAB_OVERVIEW) {
-                overviewTab.selectCurrentIntegration();
-                if (ctx.selectedPid != null) {
-                    tabsState.select(TAB_LOG);
-                    refreshLogData();
-                }
-                return true;
-            }
-
-            // Overview tab: start/stop all routes for selected integration (not infra)
-            if (tab == TAB_OVERVIEW && ke.isChar('p') && ctx.selectedPid != null && !isInfraSelected()) {
-                IntegrationInfo selInfo = findSelectedIntegration();
-                if (selInfo != null) {
-                    String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
-                    sendRouteCommand(ctx.selectedPid, "*", cmd);
-                }
-                return true;
-            }
-            // Overview tab: stop process (SIGTERM) for selected integration or infra
-            if (tab == TAB_OVERVIEW && ke.isChar('x') && ctx.selectedPid != null) {
-                stopSelectedProcess(false);
-                return true;
-            }
-            // Overview tab: kill process (SIGKILL) — show confirm dialog first
-            if (tab == TAB_OVERVIEW && ke.isChar('X') && ctx.selectedPid != null) {
-                showKillConfirm = true;
-                return true;
-            }
-            // Overview tab: cold restart (stop + re-launch) for selected integration
-            if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !isInfraSelected()) {
-                restartSelectedProcess();
-                return true;
-            }
-            if (tab == TAB_OVERVIEW && ke.isChar('d') && ctx.selectedPid != null && !isInfraSelected()) {
-                IntegrationInfo selInfo = findSelectedIntegration();
-                if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
-                    actionsPopup.openDoc(selInfo);
-                    return true;
-                }
-            }
-            if (tab == TAB_OVERVIEW && ke.isChar('f') && ctx.selectedPid != null && !isInfraSelected()) {
-                openFilesPopup();
-                return true;
-            }
-            // Delegate remaining keys to active tab
-            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+            if (handleTabKeys(ke)) {
                 return true;
             }
         }
         if (event instanceof PasteEvent pe) {
-            if (actionsPopup.isVisible()) {
-                actionsPopup.handlePaste(pe.text());
-                return true;
-            }
-            if (httpTab.isProbeMode()) {
-                httpTab.handlePaste(pe.text());
-                return true;
-            }
-            if (logTab.isSearchInputActive()) {
-                logTab.handlePaste(pe.text());
-                return true;
-            }
-            if (overviewSourceViewer.isSearchInputActive()) {
-                overviewSourceViewer.handlePaste(pe.text());
-                return true;
-            }
+            return handlePasteEvent(pe);
         }
         if (event instanceof TickEvent) {
-            long now = System.currentTimeMillis();
-            boolean keyProcessed = false;
-            PendingKey pk;
-            while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
-                pendingKeys.poll();
-                mcpInjectedKey = true;
-                handleEvent(pk.event(), runner);
-                mcpInjectedKey = false;
-                keyProcessed = true;
-            }
-            if (keyProcessed) {
+            return handleTickEvent(runner);
+        }
+        return false;
+    }
+
+    private boolean handlePopupKeys(KeyEvent ke) {
+        if (filesBrowser.isVisible()) {
+            return filesBrowser.handleKeyEvent(ke);
+        }
+        if (showMorePopup) {
+            if (ke.isCancel()) {
+                showMorePopup = false;
                 return true;
             }
-            actionsPopup.tick(now);
-            drawOverlay.tick(now);
-            captionOverlay.tick(now);
-            if (recording && !recentKeys.isEmpty()) {
-                long cutoff = now - 2000;
-                recentKeys.removeIf(k -> k.timestamp() < cutoff);
+            if (ke.isUp()) {
+                morePopupState.selectPrevious();
+                return true;
             }
-            boolean anyDiagramShowing = routesTab.isShowDiagram() || diagramTab.isShowDiagram();
-            long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
-            if (now - lastRefresh >= interval) {
-                refreshData();
-                routesTab.refreshDiagramIfNeeded();
-                diagramTab.refreshDiagramIfNeeded();
+            if (ke.isDown()) {
+                morePopupState.selectNext(11);
+                return true;
+            }
+            int shortcutSel = morePopupShortcut(ke);
+            if (shortcutSel >= 0) {
+                morePopupState.select(shortcutSel);
+            }
+            if (ke.isConfirm() || shortcutSel >= 0) {
+                showMorePopup = false;
+                Integer sel = shortcutSel >= 0 ? shortcutSel : morePopupState.selected();
+                if (sel != null) {
+                    lastMoreSelection = sel;
+                    activeMoreTab = switch (sel) {
+                        case 0 -> beansTab;
+                        case 1 -> browseTab;
+                        case 2 -> circuitBreakerTab;
+                        case 3 -> classpathTab;
+                        case 4 -> configurationTab;
+                        case 5 -> consumersTab;
+                        case 6 -> inflightTab;
+                        case 7 -> memoryTab;
+                        case 8 -> metricsTab;
+                        case 9 -> startupTab;
+                        case 10 -> threadsTab;
+                        default -> null;
+                    };
+                    if (activeMoreTab != null) {
+                        overviewTab.selectCurrentIntegration();
+                        tabsState.select(TAB_MORE);
+                        activeMoreTab.onTabSelected();
+                    }
+                }
                 return true;
             }
             return true;
         }
+        if (showSwitchPopup) {
+            if (ke.isCancel()) {
+                showSwitchPopup = false;
+                return true;
+            }
+            List<IntegrationInfo> switchList = getNonVanishingIntegrations();
+            if (ke.isUp()) {
+                switchPopupState.selectPrevious();
+                return true;
+            }
+            if (ke.isDown()) {
+                switchPopupState.selectNext(switchList.size());
+                return true;
+            }
+            if (ke.isConfirm()) {
+                showSwitchPopup = false;
+                Integer sel = switchPopupState.selected();
+                if (sel != null && sel >= 0 && sel < switchList.size()) {
+                    IntegrationInfo chosen = switchList.get(sel);
+                    ctx.selectedPid = chosen.pid;
+                    ctx.lastSelectedName = chosen.name;
+                    resetIntegrationTabState();
+                    if (tabsState.selected() == TAB_LOG) {
+                        refreshLogData();
+                    }
+                }
+                return true;
+            }
+            return true;
+        }
+        if (showKillConfirm) {
+            if (ke.isConfirm()) {
+                showKillConfirm = false;
+                stopSelectedProcess(true);
+            } else {
+                showKillConfirm = false;
+            }
+            return true;
+        }
         return false;
+    }
+
+    private boolean handleGlobalKeys(KeyEvent ke, TuiRunner runner) {
+        if (ke.isCancel()) {
+            MonitorTab tab = activeTab();
+            if (tab != null && tab.handleEscape()) {
+                return true;
+            }
+            if (tabsState.selected() != TAB_OVERVIEW) {
+                tabsState.select(TAB_OVERVIEW);
+                return true;
+            }
+            if (ctx.selectedPid != null) {
+                ctx.selectedPid = null;
+                ctx.lastSelectedName = null;
+                return true;
+            }
+            return true;
+        }
+        boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
+        boolean logSearchActive = tabsState.selected() == TAB_LOG && logTab.isSearchInputActive();
+        boolean textEditing = probeEditing || logSearchActive;
+        if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
+            runner.quit();
+            return true;
+        }
+        if (ke.isCtrlC()) {
+            runner.quit();
+            return true;
+        }
+        if (!textEditing) {
+            if (ke.isChar('1')) {
+                return handleTabKey(TAB_OVERVIEW);
+            }
+            if (ke.isChar('2')) {
+                return handleTabKey(TAB_LOG);
+            }
+            if (!isInfraSelected()) {
+                if (ke.isChar('3')) {
+                    return handleTabKey(TAB_DIAGRAM);
+                }
+                if (ke.isChar('4')) {
+                    return handleTabKey(TAB_ROUTES);
+                }
+                if (ke.isChar('5')) {
+                    return handleTabKey(TAB_ENDPOINTS);
+                }
+                if (ke.isChar('6')) {
+                    return handleTabKey(TAB_HTTP);
+                }
+                if (ke.isChar('7')) {
+                    return handleTabKey(TAB_HEALTH);
+                }
+                if (ke.isChar('8')) {
+                    return handleTabKey(TAB_HISTORY);
+                }
+                if (ke.isChar('9')) {
+                    return handleTabKey(TAB_ERRORS);
+                }
+                if (ke.isChar('0')) {
+                    return handleTabKey(TAB_MORE);
+                }
+            }
+        }
+        if (ke.isFocusPrevious() && !textEditing) {
+            if (isInfraSelected()) {
+                int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                tabsState.select(prev);
+            } else {
+                int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
+                if (prev != TAB_OVERVIEW) {
+                    overviewTab.selectCurrentIntegration();
+                }
+                tabsState.select(prev);
+            }
+            return true;
+        }
+        if (ke.isFocusNext() && !textEditing) {
+            if (isInfraSelected()) {
+                int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                tabsState.select(next);
+            } else {
+                int next = (tabsState.selected() + 1) % NUM_TABS;
+                if (next != TAB_OVERVIEW) {
+                    overviewTab.selectCurrentIntegration();
+                }
+                tabsState.select(next);
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
+            takeScreenshot();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F1)) {
+            if (helpOverlay.isVisible()) {
+                helpOverlay.close();
+            } else {
+                MonitorTab tab = activeTab();
+                if (tab != null) {
+                    String help = tab.getHelpText();
+                    if (help != null) {
+                        helpOverlay.open(help);
+                    }
+                }
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F2)) {
+            if (tabsState.selected() == TAB_ROUTES && routesTab != null) {
+                actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
+            }
+            actionsPopup.open();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F3)) {
+            List<IntegrationInfo> switchList = getNonVanishingIntegrations();
+            if (switchList.size() > 1) {
+                showSwitchPopup = true;
+                for (int i = 0; i < switchList.size(); i++) {
+                    if (switchList.get(i).pid.equals(ctx.selectedPid)) {
+                        switchPopupState.select(i);
+                        break;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleTabKeys(KeyEvent ke) {
+        MonitorTab activeTab = activeTab();
+
+        if (ke.isUp()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            navigateUp();
+            return true;
+        }
+        if (ke.isDown()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            navigateDown();
+            return true;
+        }
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            return true;
+        }
+        if (ke.isLeft()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isRight()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isHome()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isEnd()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+
+        int tab = tabsState.selected();
+        if (ke.isConfirm() && tab == TAB_OVERVIEW) {
+            overviewTab.selectCurrentIntegration();
+            if (ctx.selectedPid != null) {
+                tabsState.select(TAB_LOG);
+                refreshLogData();
+            }
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('p') && ctx.selectedPid != null && !isInfraSelected()) {
+            IntegrationInfo selInfo = findSelectedIntegration();
+            if (selInfo != null) {
+                String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
+                sendRouteCommand(ctx.selectedPid, "*", cmd);
+            }
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('x') && ctx.selectedPid != null) {
+            stopSelectedProcess(false);
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('X') && ctx.selectedPid != null) {
+            showKillConfirm = true;
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !isInfraSelected()) {
+            restartSelectedProcess();
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('d') && ctx.selectedPid != null && !isInfraSelected()) {
+            IntegrationInfo selInfo = findSelectedIntegration();
+            if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
+                actionsPopup.openDoc(selInfo);
+                return true;
+            }
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('f') && ctx.selectedPid != null && !isInfraSelected()) {
+            openFilesPopup();
+            return true;
+        }
+        if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handlePasteEvent(PasteEvent pe) {
+        if (actionsPopup.isVisible()) {
+            actionsPopup.handlePaste(pe.text());
+            return true;
+        }
+        if (httpTab.isProbeMode()) {
+            httpTab.handlePaste(pe.text());
+            return true;
+        }
+        if (logTab.isSearchInputActive()) {
+            logTab.handlePaste(pe.text());
+            return true;
+        }
+        if (filesBrowser.isSourceViewerPasteActive()) {
+            filesBrowser.handlePaste(pe.text());
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleTickEvent(TuiRunner runner) {
+        long now = System.currentTimeMillis();
+        boolean keyProcessed = false;
+        PendingKey pk;
+        while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
+            pendingKeys.poll();
+            mcpInjectedKey = true;
+            handleEvent(pk.event(), runner);
+            mcpInjectedKey = false;
+            keyProcessed = true;
+        }
+        if (keyProcessed) {
+            return true;
+        }
+        actionsPopup.tick(now);
+        drawOverlay.tick(now);
+        captionOverlay.tick(now);
+        if (recording && !recentKeys.isEmpty()) {
+            long cutoff = now - 2000;
+            recentKeys.removeIf(k -> k.timestamp() < cutoff);
+        }
+        boolean anyDiagramShowing = routesTab.isShowDiagram() || diagramTab.isShowDiagram();
+        long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
+        if (now - lastRefresh >= interval) {
+            refreshData();
+            routesTab.refreshDiagramIfNeeded();
+            diagramTab.refreshDiagramIfNeeded();
+            return true;
+        }
+        return true;
     }
 
     private String keyLabel(KeyEvent ke) {
@@ -943,9 +900,7 @@ public class CamelMonitor extends CamelCommand {
         circuitBreakerTab.onIntegrationChanged();
         inflightTab.onIntegrationChanged();
 
-        showFilesPopup = false;
-        fileEntries = Collections.emptyList();
-        overviewSourceViewer.reset();
+        filesBrowser.reset();
 
         // Preload diagram data in background so it's ready when the user switches tabs
         routesTab.preloadDiagram();
@@ -1219,8 +1174,8 @@ public class CamelMonitor extends CamelCommand {
             renderSwitchPopup(frame, area);
         }
         // Render "Files" popup overlay when visible
-        if (showFilesPopup) {
-            renderFilesPopup(frame, area);
+        if (filesBrowser.isVisible()) {
+            filesBrowser.render(frame, area);
         }
     }
 
@@ -1323,207 +1278,9 @@ public class CamelMonitor extends CamelCommand {
 
     private void openFilesPopup() {
         IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            return;
+        if (info != null) {
+            filesBrowser.open(info);
         }
-        Path dir = resolveSourceDirectory(info);
-        if (dir == null || !Files.isDirectory(dir)) {
-            return;
-        }
-        List<FileEntry> entries = new ArrayList<>();
-        try (var stream = Files.list(dir)) {
-            stream.filter(Files::isRegularFile)
-                    .limit(99)
-                    .forEach(p -> {
-                        String name = p.getFileName().toString();
-                        String emoji = fileEmoji(p);
-                        long size = 0;
-                        try {
-                            size = Files.size(p);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                        entries.add(new FileEntry(emoji, name, size, p.toString()));
-                    });
-        } catch (IOException e) {
-            return;
-        }
-        if (entries.isEmpty()) {
-            return;
-        }
-        entries.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
-        fileEntries = entries;
-        filesPopupTitle = info.name != null ? info.name : "?";
-        filesPopupState.select(0);
-        showFilesPopup = true;
-        overviewSourceViewer.reset();
-    }
-
-    private void renderFilesPopup(Frame frame, Rect area) {
-        if (overviewSourceViewer.isVisible()) {
-            frame.renderWidget(Clear.INSTANCE, area);
-            overviewSourceViewer.render(frame, area);
-            return;
-        }
-        if (fileEntries.isEmpty()) {
-            showFilesPopup = false;
-            return;
-        }
-
-        int nameWidth = fileEntries.stream().mapToInt(e -> e.name().length()).max().orElse(10);
-        int sizeWidth = fileEntries.stream().mapToInt(e -> formatFileSize(e.size()).length()).max().orElse(4);
-        int itemWidth = 4 + nameWidth + 2 + sizeWidth + 2;
-        int popupW = Math.min(area.width() - 4, Math.max(30, itemWidth + 4));
-        int popupH = Math.min(area.height() - 4, fileEntries.size() + 2);
-
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + 2;
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        ListItem[] items = new ListItem[fileEntries.size()];
-        for (int i = 0; i < fileEntries.size(); i++) {
-            FileEntry entry = fileEntries.get(i);
-            String sizeStr = formatFileSize(entry.size());
-            String label = String.format("  %s %-" + nameWidth + "s  %s", entry.emoji(), entry.name(), sizeStr);
-            items[i] = ListItem.from(label);
-        }
-
-        ListWidget list = ListWidget.builder()
-                .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
-                        .title(Title.from(Line
-                                .from(Span.styled(" Files: " + filesPopupTitle + " ", Style.EMPTY.fg(Color.YELLOW).bold()))))
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, popup, filesPopupState);
-    }
-
-    private static final String[] CAMEL_YAML_MARKERS = {
-            "- from:", "- route:",
-            "- routeTemplate:", "- route-template:",
-            "- templatedRoute:", "- templated-route:",
-            "- routeConfiguration:", "- route-configuration:",
-            "- rest:", "- beans:"
-    };
-
-    private static final String[] CAMEL_XML_MARKERS = {
-            "<route", "<routes", "<routeTemplate", "<routeTemplates",
-            "<templatedRoute", "<templatedRoutes",
-            "<rest", "<rests", "<routeConfiguration",
-            "<beans", "<blueprint", "<camel"
-    };
-
-    private static String fileEmoji(Path path) {
-        String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.ROOT);
-        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
-            return "🐪";
-        }
-        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
-            return isCamelYaml(path) ? "🐪" : "📋";
-        }
-        if (lower.endsWith(".xml")) {
-            return isCamelXml(path) ? "🐪" : "📋";
-        }
-        if (lower.endsWith(".java")) {
-            return isCamelJava(path) ? "🐪" : "☕";
-        }
-        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
-            return "📄";
-        }
-        if (lower.startsWith("readme")) {
-            return "📖";
-        }
-        return "📋";
-    }
-
-    private static boolean isCamelYaml(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            for (String marker : CAMEL_YAML_MARKERS) {
-                if (content.contains(marker)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static boolean isCamelXml(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            for (String marker : CAMEL_XML_MARKERS) {
-                if (content.contains(marker)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static boolean isCamelJava(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            return content.contains("RouteBuilder")
-                    || content.contains("EndpointRouteBuilder");
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static Path resolveSourceDirectory(IntegrationInfo info) {
-        for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
-            if ("camel.main.routesIncludePattern".equals(cp.key) && cp.value != null) {
-                for (String part : cp.value.split(",")) {
-                    part = part.trim();
-                    if (part.startsWith("file:")) {
-                        String filePath = part.substring("file:".length());
-                        // strip query params like ?optional=true
-                        int q = filePath.indexOf('?');
-                        if (q > 0) {
-                            filePath = filePath.substring(0, q);
-                        }
-                        // source-dir pattern: file:/path/to/folder/** → use /path/to/folder directly
-                        if (filePath.endsWith("/**")) {
-                            Path dir = Path.of(filePath.substring(0, filePath.length() - 3));
-                            if (Files.isDirectory(dir)) {
-                                return dir;
-                            }
-                        }
-                        // individual file: file:/tmp/example/foo.yaml → use parent dir
-                        Path parent = Path.of(filePath).getParent();
-                        if (parent != null && Files.isDirectory(parent)) {
-                            return parent;
-                        }
-                    }
-                }
-            }
-        }
-        if (info.directory != null && !info.directory.isEmpty()) {
-            return Path.of(info.directory);
-        }
-        return null;
-    }
-
-    private static String formatFileSize(long bytes) {
-        if (bytes < 1024) {
-            return bytes + " B";
-        }
-        if (bytes < 1024 * 1024) {
-            return String.format("%.1f KB", bytes / 1024.0);
-        }
-        return String.format("%.1f MB", bytes / (1024.0 * 1024));
     }
 
     private List<IntegrationInfo> getNonVanishingIntegrations() {
@@ -1836,14 +1593,8 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        if (showFilesPopup) {
-            if (overviewSourceViewer.isVisible()) {
-                overviewSourceViewer.renderFooter(spans);
-            } else {
-                hint(spans, "Up/Down", "navigate");
-                hint(spans, "Enter", "open");
-                hint(spans, "Esc", "close");
-            }
+        if (filesBrowser.isVisible()) {
+            filesBrowser.renderFooter(spans);
         } else if (showSwitchPopup) {
             hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "switch");
@@ -1859,16 +1610,7 @@ public class CamelMonitor extends CamelCommand {
                 renderOverviewFooter(spans);
             } else {
                 tab.renderFooter(spans);
-                int insertPos = Math.min(2, spans.size());
-                List<Span> fKeySpans = new ArrayList<>();
-                if (activeTab() != null && activeTab().getHelpText() != null) {
-                    hint(fKeySpans, "F1", "help");
-                }
-                hint(fKeySpans, "F2", "actions");
-                if (getNonVanishingIntegrations().size() > 1) {
-                    hint(fKeySpans, "F3", "switch");
-                }
-                spans.addAll(insertPos, fKeySpans);
+                insertFKeyHints(spans);
             }
         }
 
@@ -1922,21 +1664,27 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
+    private void insertFKeyHints(List<Span> spans) {
+        int insertPos = Math.min(2, spans.size());
+        List<Span> fKeySpans = new ArrayList<>();
+        MonitorTab tab = activeTab();
+        if (tab != null && tab.getHelpText() != null) {
+            hint(fKeySpans, "F1", "help");
+        }
+        hint(fKeySpans, "F2", "actions");
+        if (getNonVanishingIntegrations().size() > 1) {
+            hint(fKeySpans, "F3", "switch");
+        }
+        spans.addAll(insertPos, fKeySpans);
+    }
+
     private void renderOverviewFooter(List<Span> spans) {
         if (actionsPopup.isVisible()) {
             actionsPopup.renderFooter(spans);
             return;
         }
         overviewTab.renderFooter(spans);
-        // Insert F2/F3 after first hint (q) — each hint is 2 spans (key + label)
-        int insertPos = Math.min(2, spans.size());
-        List<Span> fKeySpans = new ArrayList<>();
-        hint(fKeySpans, "F1", "help");
-        hint(fKeySpans, "F2", "actions");
-        if (getNonVanishingIntegrations().size() > 1) {
-            hint(fKeySpans, "F3", "switch");
-        }
-        spans.addAll(insertPos, fKeySpans);
+        insertFKeyHints(spans);
         // Process action hints
         if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
@@ -1978,52 +1726,9 @@ public class CamelMonitor extends CamelCommand {
                 logFileName = selected.pid + ".log";
             }
         }
-        if (logPid == null) {
-            return;
+        if (logPid != null) {
+            logTab.refreshFromFile(logPid, logFileName);
         }
-        if (!logPid.equals(logTab.logFilePid)) {
-            logTab.mutableFilteredEntries.clear();
-            logTab.logFilePos = -1;
-            logTab.logTotalLinesRead = 0;
-            logTab.logLineBuffer.setLength(0);
-            logTab.logLoading = true;
-        }
-        // Load older lines when scrolled to the top or Home pressed
-        boolean changed = false;
-        boolean loadAll = logTab.loadAllRequested;
-        if (logTab.logFileStartPos > 0
-                && (loadAll || (!logTab.followMode && logTab.scroll == 0))) {
-            logTab.loadAllRequested = false;
-            List<String> olderLines = new ArrayList<>();
-            logTab.readOlderLogLines(logFileName, loadAll, olderLines);
-            if (!olderLines.isEmpty()) {
-                changed = true;
-                List<LogEntry> olderEntries = new ArrayList<>();
-                for (String line : olderLines) {
-                    olderEntries.add(LogTab.parseLogLine(line));
-                }
-                logTab.mutableFilteredEntries.addAll(0, olderEntries);
-                logTab.logTotalLinesRead += olderLines.size();
-                logTab.scroll = olderEntries.size();
-            }
-        }
-        List<String> newRawLines = new ArrayList<>();
-        logTab.readNewLogLinesFromFile(logPid, logFileName, newRawLines);
-        changed |= !newRawLines.isEmpty();
-        if (changed) {
-            logTab.logTotalLinesRead += newRawLines.size();
-            for (String line : newRawLines) {
-                logTab.mutableFilteredEntries.add(LogTab.parseLogLine(line));
-            }
-            if (logTab.mutableFilteredEntries.size() > MAX_LOG_LINES) {
-                logTab.mutableFilteredEntries.subList(0, logTab.mutableFilteredEntries.size() - MAX_LOG_LINES)
-                        .clear();
-            }
-        }
-        if (changed || logTab.logLoading) {
-            logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
-        }
-        logTab.logLoading = false;
     }
 
     private void refreshData() {
