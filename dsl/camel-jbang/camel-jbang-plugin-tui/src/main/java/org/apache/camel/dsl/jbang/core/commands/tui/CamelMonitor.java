@@ -2185,11 +2185,13 @@ public class CamelMonitor extends CamelCommand {
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
             String baseName = "camel-tui-screenshot-" + timestamp;
+            Path svgPath = Path.of(baseName + ".svg");
             Path txtPath = Path.of(baseName + ".txt");
             Path ansPath = Path.of(baseName + ".ans");
+            ExportRequest.export(buf).svg().toFile(svgPath);
             ExportRequest.export(buf).text().toFile(txtPath);
             ExportRequest.export(buf).text().options(o -> o.styles(true)).toFile(ansPath);
-            screenshotMessage = "Screenshot saved to " + txtPath.toAbsolutePath() + " (and .ans with colors)";
+            screenshotMessage = "Screenshot saved to " + svgPath.toAbsolutePath() + " (and .txt, .ans)";
             screenshotMessageTime = System.currentTimeMillis();
         } catch (IOException e) {
             screenshotMessage = "Screenshot failed: " + e.getMessage();
