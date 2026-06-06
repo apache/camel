@@ -892,6 +892,22 @@ from("direct:rehydrate")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+=== Blob modification during download (ConditionNotMet)
+
+When downloading a blob via streaming (the `getBlob` operation or the consumer without `fileDir`), the Azure SDK reads the blob in chunks.
+On the first chunk it captures the blob's ETag and uses it as an `if-match` condition on subsequent chunk requests.
+If the blob is modified by another process between chunks (which changes its ETag), Azure returns HTTP 412 `ConditionNotMet`.
+
+This is by design in the Azure SDK — it ensures read consistency so that you do not receive half of one version concatenated with half of another.
+The error is more likely with larger blobs and slower network connections (e.g., in real Azure environments versus local emulators).
+
+Workarounds:
+
+* Use the `fileDir` option so the consumer downloads the blob atomically to a file via `downloadBlobToFile` instead of streaming.
+* Use blob snapshots — read from an immutable snapshot ID via the `snapshotId` option or the `CamelAzureStorageBlobSnapshotId` header, which cannot be modified.
+* Use blob versioning — read from a specific version via the `versionId` option or the `CamelAzureStorageBlobVersionId` header.
+* Avoid modifying blobs while they are being consumed.
+
 === SAS Token generation example
 
 SAS Blob Container tokens can be generated programmatically or via Azure UI. To generate the token with java code, the following can be done:
