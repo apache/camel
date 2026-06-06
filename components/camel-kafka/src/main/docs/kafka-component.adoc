@@ -295,6 +295,10 @@ In this example, consuming messages can pause (by calling the Kafka's Consumer p
 IMPORTANT: The pausable EIP is meant to be used as a support mechanism when *there is an exception* somewhere in the route that prevents the exchange from being processed. More specifically,
 the check called by the `pausable` EIP should be used to test for transient conditions preventing the exchange from being processed.
 
+NOTE: When using pausable consumers, it is recommended to set `autoCommitEnable=false` and `allowManualCommit=true`
+so that offsets are only committed after successful processing. With `autoCommitEnable=true`, Kafka may auto-commit
+offsets for records that were polled but not yet processed, which can lead to message loss during pause/resume cycles.
+
 NOTE: most users should prefer using the xref:manual::route-policy.adoc[RoutePolicy], which offers better control of the route.
 
 === Kafka Headers propagation
