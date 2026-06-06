@@ -3,104 +3,184 @@
 *Available as of Camel 4.21*
 
 Camel TUI is a live terminal dashboard for monitoring and interacting with running Camel integrations.
-It gives you real-time logs, route topology diagrams, message tracing, health checks, error tracking,
-and more -- all without leaving the terminal.
+Instead of switching between log files, JMX consoles, and web dashboards, you get everything
+in one place -- right in the terminal where you already work.
 
-The TUI discovers running Camel integrations automatically and lets you switch between them.
-Keyboard shortcuts are shown in the footer, and pressing *F1* opens context-sensitive help on any tab.
+image::jbang/camel-tui-topology-overview.png[TUI Overview showing multiple routes]
 
 NOTE: This module is in *Preview* status.
 
+== Why Use the TUI?
+
+*See your integration architecture at a glance.*
+The interactive route topology diagram shows how your routes connect -- which endpoints feed into which routes,
+where messages fan out, and where failures happen. You can drill into individual routes
+to see every processor and EIP in the chain.
+
+image::jbang/camel-tui-topology-diagram.png[Diagram topology view]
+
+*Debug without log-grep.*
+Message tracing shows the exact path each exchange takes through your routes, with the message body,
+headers, properties, and variables at every step. The errors tab collects failures with full
+stack traces so you don't have to search through logs.
+
+*Zero setup.*
+Run `camel tui` and it auto-discovers every running Camel integration. No agents to install,
+no ports to configure, no config files to write.
+
+*AI-ready.*
+The built-in MCP server lets AI coding assistants (like Claude Code) observe and interact with
+your running integration -- navigating tabs, reading traces, sending test messages, and
+annotating the diagram.
+
 == Getting Started
 
-=== Prerequisites
-
-* xref:camel-jbang.adoc[Camel JBang] installed
-
-=== Launching the TUI
-
-Start a Camel integration in one terminal:
+Start a Camel integration:
 
 [source,bash]
 ----
 camel run my-route.yaml
 ----
 
-Then open the TUI in another terminal:
+Open the TUI in another terminal:
 
 [source,bash]
 ----
 camel tui
 ----
 
-The TUI auto-discovers running integrations. You can also target a specific integration by name or PID:
+Or try the built-in examples directly from the TUI: press *F2* and select _Run an example_.
 
-[source,bash]
-----
-camel tui my-route
-----
+TIP: Press *F1* on any screen for context-sensitive help.
+The TUI is designed to be self-discoverable -- keyboard shortcuts are shown in the footer,
+and help pages explain every tab and feature.
 
-== Key Tabs
+== Route Topology Diagram
 
-The TUI organizes information into tabs, accessible with the number keys *1* through *9* (and *0* for more).
+The Diagram tab renders the route topology as interactive ASCII art. It shows how routes
+connect to each other through shared endpoints (direct, seda, kafka, etc.).
 
-=== Overview
+* Navigate between routes with arrow keys, drill into a route with *Enter*
+* Toggle external endpoints (kafka brokers, HTTP endpoints) with *e*
+* Toggle metrics overlay (message counts) with *m*
+* View route source code with *c*
 
-The Overview tab (key *1*) is the landing page. It lists all running Camel integrations with their
-uptime, throughput, and failure counts. Select an integration and press *Enter* to focus on it.
-From here you can restart, pause, stop, or view the source files of an integration.
+image::jbang/camel-tui-topology-diagram-external.png[Diagram with external endpoints visible]
 
-// TODO: update screenshots before release
-image::jbang/camel-tui-hello-overview.png[Overview tab showing running integrations]
+image::jbang/camel-tui-topology-diagram-drilldown.png[Drill-down showing internal processors]
 
-=== Diagram
+== AI Integration (MCP)
 
-The Diagram tab (key *3*) renders the route topology as an interactive ASCII diagram.
-You can navigate between routes, drill into individual processors, and toggle the display of
-external endpoint connections. This gives you a visual map of how messages flow through your
-integration.
+The TUI includes an embedded https://modelcontextprotocol.io/[MCP] (Model Context Protocol) server
+that lets AI coding assistants interact with the dashboard programmatically. This turns the TUI
+into a bridge between your running Camel integration and an AI agent.
 
-image::jbang/camel-tui-hello-diagram.png[Diagram tab showing route topology]
-
-=== Inspect
-
-The Inspect tab (key *8*) provides message tracing and exchange inspection. It shows the path
-each message takes through your routes, including the message body, headers, exchange properties,
-and variables at each processing step. Use it to understand exactly what happens to a message
-as it flows through your integration.
-
-=== Errors
-
-The Errors tab (key *9*) tracks failures across your routes. It shows the exception type,
-stack trace, message body, and headers for each failed exchange, making it easy to diagnose
-problems without digging through log files.
-
-== More Tabs
-
-Beyond the primary tabs above, the TUI provides:
-
-* *Log* (key *2*) -- Real-time log viewer with search and level filtering
-* *Routes* (key *4*) -- Route statistics: state, message counts, throughput, last error
-* *Endpoints* (key *5*) -- Endpoint usage and throughput metrics
-* *HTTP* (key *6*) -- HTTP endpoint details
-* *Health* (key *7*) -- Health check status and results
-
-Press *0* to access extended tabs: Beans, Browse, Circuit Breaker, Classpath, Configuration,
-Consumers, Inflight, Memory, Metrics, Startup, and Threads.
-
-== AI Integration
-
-The TUI includes an embedded MCP (Model Context Protocol) server that lets AI coding assistants
-interact with the dashboard programmatically. Enable it with:
+=== Enabling MCP
 
 [source,bash]
 ----
 camel tui --mcp
 ----
 
-This exposes tools for navigating tabs, reading screen content, inspecting traces, sending messages,
-controlling routes, and more -- allowing AI agents to monitor and debug your integrations
-through the TUI.
+This starts an MCP server on `localhost:8123` (configurable with `--mcp-port`).
+The server is bound to `127.0.0.1` only -- it never listens on external interfaces.
+
+When MCP is active, the TUI footer shows the connection status (e.g., `MCP :8123 (claude-code)`).
+Use *F2* → _MCP Info_ to see server details and _MCP Log_ to view the tool call history.
+
+=== Connecting an AI Agent
+
+To connect Claude Code to the TUI, add the MCP server to your project configuration
+(`.mcp.json` in your project root):
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "camel-tui": {
+      "type": "url",
+      "url": "http://localhost:8123/mcp"
+    }
+  }
+}
+----
+
+Once connected, the AI agent can see and interact with the TUI just as you do.
+
+=== What AI Agents Can Do
+
+The MCP server exposes a comprehensive set of tools organized by purpose:
+
+==== Observe
+
+* *tui_get_screen* -- Read the current screen content (exactly what you see)
+* *tui_get_state* -- Get structured state: active tab, selected integration, footer actions
+* *tui_get_table* -- Read table data as structured JSON (routes, endpoints, health, etc.)
+* *tui_get_log* -- Query recent log entries with level and text filtering
+* *tui_get_errors* -- Get structured error data with stack traces and exchange details
+* *tui_get_history* -- Read trace data: message body, headers, properties at each processing step
+* *tui_get_topology* -- Get the route graph as JSON (nodes and edges)
+* *tui_get_diagram* -- Get the topology diagram as text art
+* *tui_get_readme* -- Read the integration's README documentation
+* *tui_get_files* -- List and read the integration's source files
+
+==== Navigate
+
+* *tui_navigate* -- Switch tabs, select integrations, select routes in the topology
+* *tui_send_keys* -- Send keystrokes to navigate like a human would
+* *tui_filter* -- Apply text filters on tabs that support it
+
+==== Act
+
+* *tui_send_message* -- Send a test message to any Camel endpoint
+* *tui_control* -- Start/stop/restart routes or the integration itself
+* *tui_set_log_level* -- Change the runtime log level (DEBUG, INFO, WARN, etc.)
+
+==== Annotate
+
+* *tui_locate* -- Find exact screen coordinates of text or diagram nodes
+* *tui_draw_shape* -- Draw shapes on the screen: boxes, highlights, arrows, underlines, text labels
+* *tui_draw* -- Draw individual characters at specific coordinates
+* *tui_draw_clear* -- Clear all annotations
+* *tui_show_caption* -- Display a text message with typewriter animation
+
+==== Present
+
+* *tui_action* -- Invoke actions (screenshot, tape recording, reset stats, etc.)
+* *tui_tape_start* / *tui_tape_stop* -- Record interactions as a `.tape` file
+* *tui_sleep* -- Pace demo sequences
+* *tui_toggle_trace_display* -- Control which sections show in trace views
+
+=== Example: AI-Assisted Debugging
+
+With MCP connected, you can ask the AI agent natural-language questions like:
+
+* _"What routes are failing and why?"_ -- The agent reads the errors tab, correlates with route statistics, and explains the failures.
+* _"Show me the message flow for the last exchange"_ -- The agent reads the trace history and walks you through each processing step.
+* _"Highlight the failing routes on the diagram"_ -- The agent locates the routes on the topology, draws red boxes around them, and annotates with failure counts.
+* _"Send a test order to the API endpoint"_ -- The agent sends a message to `platform-http:/api/orders` and watches the result flow through the routes.
+
+=== Drawing and Annotations
+
+The AI agent can annotate the TUI screen with visual overlays. This is useful for
+highlighting areas of interest, pointing out problems, or creating annotated screenshots
+for documentation.
+
+The typical workflow is:
+
+1. *tui_locate* to find exact coordinates (by text search or diagram node ID)
+2. *tui_draw_shape* to draw the annotation (box, highlight, arrow, text)
+
+Available shapes:
+
+* *box* -- Rectangle border around an area (e.g., highlight a route node)
+* *highlight* -- Background color on existing text, like a marker pen
+* *underline* -- Horizontal line under text
+* *arrow-down/up/left/right* -- Directional arrows for pointing at elements
+* *text* -- Text labels for explanations
+
+Multiple shapes can be composed using the `append` flag. Annotations can auto-dismiss
+after a duration or stay until explicitly cleared.
 
 See xref:camel-jbang-mcp.adoc[Camel MCP Server] for more about MCP and AI integration with Camel.
 
@@ -116,7 +196,7 @@ that can be replayed or converted to an animated GIF.
 
 === Scripted Recording
 
-Use the `--record` flag to replay a `.tape` file inside the TUI and produce an
+Use the `--record` flag to replay a `.tape` file in headless mode and produce an
 https://asciinema.org/[Asciinema] `.cast` recording:
 
 [source,bash]
@@ -126,13 +206,13 @@ camel tui --record=demo.tape
 
 === Converting to GIF
 
-Convert recordings using https://github.com/charmbracelet/vhs[VHS] (for `.tape` files) or
-https://github.com/asciinema/agg[agg] (for `.cast` files):
+Convert recordings using https://github.com/asciinema/agg[agg] (for `.cast` files) or
+https://github.com/charmbracelet/vhs[VHS] (for `.tape` files):
 
 [source,bash]
 ----
-vhs demo.tape              # .tape -> .gif
-agg recording.cast out.gif # .cast -> .gif
+agg recording.cast out.gif  # .cast -> .gif
+vhs demo.tape               # .tape -> .gif
 ----
 
 == Command Line Options
