@@ -78,7 +78,6 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
@@ -1033,40 +1032,6 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Compute notification counts (0 if no integration selected)
-        List<IntegrationInfo> infos = data.get();
-        long activeCount = infos.stream().filter(i -> !i.vanishing).count();
-        IntegrationInfo sel = findSelectedIntegration();
-        boolean hasSelection = ctx.selectedPid != null && sel != null;
-        int routeCount = hasSelection ? sel.routes.size() : 0;
-        int endpointCount = hasSelection ? sel.endpoints.size() : 0;
-        int cbCount = hasSelection ? sel.circuitBreakers.size() : 0;
-        long cbOpenCount = hasSelection
-                ? sel.circuitBreakers.stream()
-                        .filter(cb -> cb.state != null && (cb.state.equalsIgnoreCase("open")
-                                || cb.state.equalsIgnoreCase("forced_open")))
-                        .count()
-                : 0;
-        int healthCount = hasSelection ? sel.healthChecks.size() : 0;
-        long healthDownCount = hasSelection
-                ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
-        long historyCount = hasSelection
-                ? historyTab.historyEntries.stream()
-                        .map(e -> {
-                            if (e.headers != null) {
-                                Object bid = e.headers.get("breadcrumbId");
-                                if (bid != null) {
-                                    return bid.toString();
-                                }
-                            }
-                            return e.exchangeId;
-                        })
-                        .distinct().count()
-                : 0;
-        boolean hasTraces = hasSelection && !traces.get().isEmpty();
-        int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
-
-        // Row 0: label-only titles — fixed width so the tab bar never shifts when badges appear
         Line[] labels = {
                 Line.from(" 1 Overview "),
                 Line.from(" 2 Log "),
@@ -1087,61 +1052,18 @@ public class CamelMonitor extends CamelCommand {
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
 
-        // Row 1: labels (Tabs widget renders at the top of whatever rect it receives)
         Rect labelsArea = area.height() >= 2
                 ? new Rect(area.x(), area.y() + 1, area.width(), 1)
                 : area;
         frame.renderStatefulWidget(tabs, labelsArea, tabsState);
 
-        // Row 0: badge counters centered above each tab label
         if (area.height() >= 2) {
+            String[] badgeTexts = new String[labels.length];
+            Style[] badgeStyles = new Style[labels.length];
+            computeTabBadges(badgeTexts, badgeStyles);
+
             int badgeY = area.y();
             int dividerW = CharWidth.of(" | ");
-
-            String[] badgeTexts = { "", "", "", "", "", "", "", "", "", "" };
-            Style[] badgeStyles = new Style[labels.length];
-            Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
-            Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
-            Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
-            for (int j = 0; j < badgeStyles.length; j++) {
-                badgeStyles[j] = yellow;
-            }
-
-            if (activeCount > 0) {
-                badgeTexts[TAB_OVERVIEW] = "(" + activeCount + ")";
-            }
-            if (routeCount > 0) {
-                badgeTexts[TAB_DIAGRAM] = "(1)";
-                badgeTexts[TAB_ROUTES] = "(" + routeCount + ")";
-            }
-            if (endpointCount > 0) {
-                badgeTexts[TAB_ENDPOINTS] = "(" + endpointCount + ")";
-            }
-            if (httpCount > 0) {
-                badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
-            }
-            if (healthDownCount > 0) {
-                badgeTexts[TAB_HEALTH] = "(" + healthDownCount + " DOWN)";
-                badgeStyles[TAB_HEALTH] = red;
-            } else if (healthCount > 0) {
-                badgeTexts[TAB_HEALTH] = "(" + healthCount + ")";
-            }
-            if (hasTraces) {
-                badgeTexts[TAB_HISTORY] = "(*)";
-                badgeStyles[TAB_HISTORY] = cyan;
-            } else if (historyCount > 0) {
-                badgeTexts[TAB_HISTORY] = "(" + historyCount + ")";
-            }
-            if (cbOpenCount > 0) {
-                badgeTexts[TAB_MORE] = "(" + cbOpenCount + " OPEN)";
-                badgeStyles[TAB_MORE] = red;
-            }
-            int errorCount = hasSelection ? sel.errorCount : 0;
-            if (errorCount > 0) {
-                badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
-                badgeStyles[TAB_ERRORS] = red;
-            }
-
             int tabX = 0;
             for (int i = 0; i < labels.length; i++) {
                 if (i > 0) {
@@ -1176,6 +1098,86 @@ public class CamelMonitor extends CamelCommand {
         // Render "Files" popup overlay when visible
         if (filesBrowser.isVisible()) {
             filesBrowser.render(frame, area);
+        }
+    }
+
+    private void computeTabBadges(String[] badgeTexts, Style[] badgeStyles) {
+        Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
+        Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        for (int j = 0; j < badgeStyles.length; j++) {
+            badgeTexts[j] = "";
+            badgeStyles[j] = yellow;
+        }
+
+        List<IntegrationInfo> infos = data.get();
+        long activeCount = infos.stream().filter(i -> !i.vanishing).count();
+        IntegrationInfo sel = findSelectedIntegration();
+        boolean hasSelection = ctx.selectedPid != null && sel != null;
+
+        if (activeCount > 0) {
+            badgeTexts[TAB_OVERVIEW] = "(" + activeCount + ")";
+        }
+        int routeCount = hasSelection ? sel.routes.size() : 0;
+        if (routeCount > 0) {
+            badgeTexts[TAB_DIAGRAM] = "(1)";
+            badgeTexts[TAB_ROUTES] = "(" + routeCount + ")";
+        }
+        int endpointCount = hasSelection ? sel.endpoints.size() : 0;
+        if (endpointCount > 0) {
+            badgeTexts[TAB_ENDPOINTS] = "(" + endpointCount + ")";
+        }
+        int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
+        if (httpCount > 0) {
+            badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
+        }
+        long healthDownCount = hasSelection
+                ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
+        if (healthDownCount > 0) {
+            badgeTexts[TAB_HEALTH] = "(" + healthDownCount + " DOWN)";
+            badgeStyles[TAB_HEALTH] = red;
+        } else {
+            int healthCount = hasSelection ? sel.healthChecks.size() : 0;
+            if (healthCount > 0) {
+                badgeTexts[TAB_HEALTH] = "(" + healthCount + ")";
+            }
+        }
+        boolean hasTraces = hasSelection && !traces.get().isEmpty();
+        if (hasTraces) {
+            badgeTexts[TAB_HISTORY] = "(*)";
+            badgeStyles[TAB_HISTORY] = cyan;
+        } else {
+            long historyCount = hasSelection
+                    ? historyTab.historyEntries.stream()
+                            .map(e -> {
+                                if (e.headers != null) {
+                                    Object bid = e.headers.get("breadcrumbId");
+                                    if (bid != null) {
+                                        return bid.toString();
+                                    }
+                                }
+                                return e.exchangeId;
+                            })
+                            .distinct().count()
+                    : 0;
+            if (historyCount > 0) {
+                badgeTexts[TAB_HISTORY] = "(" + historyCount + ")";
+            }
+        }
+        long cbOpenCount = hasSelection
+                ? sel.circuitBreakers.stream()
+                        .filter(cb -> cb.state != null && (cb.state.equalsIgnoreCase("open")
+                                || cb.state.equalsIgnoreCase("forced_open")))
+                        .count()
+                : 0;
+        if (cbOpenCount > 0) {
+            badgeTexts[TAB_MORE] = "(" + cbOpenCount + " OPEN)";
+            badgeStyles[TAB_MORE] = red;
+        }
+        int errorCount = hasSelection ? sel.errorCount : 0;
+        if (errorCount > 0) {
+            badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
+            badgeStyles[TAB_ERRORS] = red;
         }
     }
 
@@ -1753,167 +1755,163 @@ public class CamelMonitor extends CamelCommand {
     private void refreshDataSync() {
         lastRefresh = System.currentTimeMillis();
         try {
-            // Read log data early — before the heavy PID/status scan
             refreshLogData();
-
-            List<IntegrationInfo> infos = new ArrayList<>();
-            long now = System.currentTimeMillis();
-            boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
-            long scanInterval = isBurstMode() ? 1000 : 2000;
-            boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
-            List<Long> pids;
-            if (fullScan) {
-                pids = findPids(name);
-                cachedPids = pids;
-                lastFullScanTime = now;
-            } else {
-                pids = cachedPids;
-            }
-
-            // On non-Overview tabs, only refresh the selected integration for speed
-            List<Long> refreshPids;
-            if (!fullScan && ctx.selectedPid != null) {
-                try {
-                    refreshPids = List.of(Long.parseLong(ctx.selectedPid));
-                } catch (NumberFormatException e) {
-                    refreshPids = pids;
-                }
-            } else {
-                refreshPids = pids;
-            }
-            for (Long pid : refreshPids) {
-                JsonObject root = loadStatus(pid);
-                if (root != null) {
-                    ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
-                    if (ph == null) {
-                        continue;
-                    }
-                    IntegrationInfo info = StatusParser.parseIntegration(ph, root);
-                    if (info != null) {
-                        infos.add(info);
-                        metrics.updateThroughputHistory(info);
-                        metrics.updateEndpointHistory(info);
-                        metrics.updateCbHistory(info);
-                        metrics.updateHeapHistory(info);
-                        metrics.updateLoadMetrics(ph, info);
-                    }
-                }
-            }
-            // Carry forward non-selected integrations from previous data so they don't vanish
-            if (!fullScan && ctx.selectedPid != null) {
-                List<IntegrationInfo> previous = data.get();
-                for (IntegrationInfo prev : previous) {
-                    if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
-                        infos.add(prev);
-                    }
-                }
-            }
-
-            // Detect disappeared integrations and start vanishing
-            Set<String> livePids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
-            List<IntegrationInfo> previous = data.get();
-            for (IntegrationInfo prev : previous) {
-                if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
-                    stoppingPids.remove(prev.pid);
-                    vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
-                }
-            }
-
-            // Expire old vanishing entries
-            Iterator<Map.Entry<String, VanishingInfo>> it = vanishing.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, VanishingInfo> entry = it.next();
-                if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
-                    it.remove();
-                    metrics.removeVanished(entry.getKey());
-                } else if (!livePids.contains(entry.getKey())) {
-                    IntegrationInfo ghost = entry.getValue().info;
-                    ghost.vanishing = true;
-                    ghost.vanishStart = entry.getValue().startTime;
-                    infos.add(ghost);
-                } else {
-                    it.remove();
-                }
-            }
-
-            data.set(infos);
-
-            // Clear stale selection when the selected integration is gone
-            if (ctx.selectedPid != null && !isInfraSelected()) {
-                boolean stillAlive = infos.stream()
-                        .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
-                if (!stillAlive) {
-                    // Remember the name for auto-reselect when the integration restarts
-                    IntegrationInfo gone = infos.stream()
-                            .filter(i -> ctx.selectedPid.equals(i.pid))
-                            .findFirst().orElse(null);
-                    if (gone != null) {
-                        ctx.lastSelectedName = gone.name;
-                    }
-                    ctx.selectedPid = null;
-                }
-            }
-
-            // Auto-select a newly launched integration
-            String autoSelect = actionsPopup.getPendingAutoSelect();
-            if (autoSelect != null) {
-                for (IntegrationInfo info : infos) {
-                    if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
-                        ctx.selectedPid = info.pid;
-                        ctx.lastSelectedName = null;
-                        actionsPopup.clearPendingAutoSelect();
-                        break;
-                    }
-                }
-            }
-
-            // Auto-reselect by remembered name when the integration restarts
-            if (ctx.selectedPid == null && ctx.lastSelectedName != null && !isInfraSelected()) {
-                for (IntegrationInfo info : infos) {
-                    if (!info.vanishing && ctx.lastSelectedName.equalsIgnoreCase(info.name)) {
-                        ctx.selectedPid = info.pid;
-                        ctx.lastSelectedName = null;
-                        break;
-                    }
-                }
-            }
-
-            // Discover running infra services (only on Overview or switch popup)
-            if (fullScan) {
-                refreshInfraData();
-            }
-
-            // Auto-select first infra service when no active integrations exist
-            if (ctx.selectedPid == null && !infraData.get().isEmpty()
-                    && infos.stream().noneMatch(i -> !i.vanishing)) {
-                List<InfraInfo> infras = infraData.get();
-                if (!infras.isEmpty()) {
-                    int firstInfraIndex = infos.size() + (infras.size() > 0 ? 1 : 0);
-                    overviewTab.tableState.select(firstInfraIndex);
-                    ctx.selectedPid = infras.get(0).pid;
-                }
-            }
-
-            // Log data is now refreshed at the top of refreshDataSync() via refreshLogData()
-
-            // Scope history/error/trace refresh to the selected integration only
-            List<Long> selectedPids = selectedPidAsList();
-
-            // Refresh error data only when the Errors tab is visible
-            if (tabsState.selected() == TAB_ERRORS && !selectedPids.isEmpty()) {
-                refreshErrorData(selectedPids);
-            }
-
-            // Refresh trace data only when the History tab is visible
-            if (tabsState.selected() == TAB_HISTORY && !selectedPids.isEmpty()) {
-                if (historyTab.historyRefreshRequested) {
-                    historyTab.historyRefreshRequested = false;
-                    refreshHistoryData(selectedPids);
-                }
-                refreshTraceData(selectedPids);
-            }
+            boolean fullScan = scanIntegrations();
+            List<IntegrationInfo> infos = data.get();
+            handleAutoSelect(infos, fullScan);
+            refreshConditionalData();
         } catch (Exception e) {
             // ignore refresh errors
+        }
+    }
+
+    private boolean scanIntegrations() {
+        List<IntegrationInfo> infos = new ArrayList<>();
+        long now = System.currentTimeMillis();
+        boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
+        long scanInterval = isBurstMode() ? 1000 : 2000;
+        boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
+        List<Long> pids;
+        if (fullScan) {
+            pids = findPids(name);
+            cachedPids = pids;
+            lastFullScanTime = now;
+        } else {
+            pids = cachedPids;
+        }
+
+        List<Long> refreshPids;
+        if (!fullScan && ctx.selectedPid != null) {
+            try {
+                refreshPids = List.of(Long.parseLong(ctx.selectedPid));
+            } catch (NumberFormatException e) {
+                refreshPids = pids;
+            }
+        } else {
+            refreshPids = pids;
+        }
+        for (Long pid : refreshPids) {
+            JsonObject root = loadStatus(pid);
+            if (root != null) {
+                ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+                if (ph == null) {
+                    continue;
+                }
+                IntegrationInfo info = StatusParser.parseIntegration(ph, root);
+                if (info != null) {
+                    infos.add(info);
+                    metrics.updateThroughputHistory(info);
+                    metrics.updateEndpointHistory(info);
+                    metrics.updateCbHistory(info);
+                    metrics.updateHeapHistory(info);
+                    metrics.updateLoadMetrics(ph, info);
+                }
+            }
+        }
+        if (!fullScan && ctx.selectedPid != null) {
+            List<IntegrationInfo> previous = data.get();
+            for (IntegrationInfo prev : previous) {
+                if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
+                    infos.add(prev);
+                }
+            }
+        }
+
+        handleVanishing(infos, now);
+        data.set(infos);
+        return fullScan;
+    }
+
+    private void handleVanishing(List<IntegrationInfo> infos, long now) {
+        Set<String> livePids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
+        List<IntegrationInfo> previous = data.get();
+        for (IntegrationInfo prev : previous) {
+            if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
+                stoppingPids.remove(prev.pid);
+                vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
+            }
+        }
+
+        Iterator<Map.Entry<String, VanishingInfo>> it = vanishing.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, VanishingInfo> entry = it.next();
+            if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
+                it.remove();
+                metrics.removeVanished(entry.getKey());
+            } else if (!livePids.contains(entry.getKey())) {
+                IntegrationInfo ghost = entry.getValue().info;
+                ghost.vanishing = true;
+                ghost.vanishStart = entry.getValue().startTime;
+                infos.add(ghost);
+            } else {
+                it.remove();
+            }
+        }
+    }
+
+    private void handleAutoSelect(List<IntegrationInfo> infos, boolean fullScan) {
+        if (ctx.selectedPid != null && !isInfraSelected()) {
+            boolean stillAlive = infos.stream()
+                    .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
+            if (!stillAlive) {
+                IntegrationInfo gone = infos.stream()
+                        .filter(i -> ctx.selectedPid.equals(i.pid))
+                        .findFirst().orElse(null);
+                if (gone != null) {
+                    ctx.lastSelectedName = gone.name;
+                }
+                ctx.selectedPid = null;
+            }
+        }
+
+        String autoSelect = actionsPopup.getPendingAutoSelect();
+        if (autoSelect != null) {
+            for (IntegrationInfo info : infos) {
+                if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
+                    ctx.selectedPid = info.pid;
+                    ctx.lastSelectedName = null;
+                    actionsPopup.clearPendingAutoSelect();
+                    break;
+                }
+            }
+        }
+
+        if (ctx.selectedPid == null && ctx.lastSelectedName != null && !isInfraSelected()) {
+            for (IntegrationInfo info : infos) {
+                if (!info.vanishing && ctx.lastSelectedName.equalsIgnoreCase(info.name)) {
+                    ctx.selectedPid = info.pid;
+                    ctx.lastSelectedName = null;
+                    break;
+                }
+            }
+        }
+
+        if (fullScan) {
+            refreshInfraData();
+        }
+
+        if (ctx.selectedPid == null && !infraData.get().isEmpty()
+                && infos.stream().noneMatch(i -> !i.vanishing)) {
+            List<InfraInfo> infras = infraData.get();
+            if (!infras.isEmpty()) {
+                int firstInfraIndex = infos.size() + (infras.size() > 0 ? 1 : 0);
+                overviewTab.tableState.select(firstInfraIndex);
+                ctx.selectedPid = infras.get(0).pid;
+            }
+        }
+    }
+
+    private void refreshConditionalData() {
+        List<Long> selectedPids = selectedPidAsList();
+        if (tabsState.selected() == TAB_ERRORS && !selectedPids.isEmpty()) {
+            refreshErrorData(selectedPids);
+        }
+        if (tabsState.selected() == TAB_HISTORY && !selectedPids.isEmpty()) {
+            if (historyTab.historyRefreshRequested) {
+                historyTab.historyRefreshRequested = false;
+                refreshHistoryData(selectedPids);
+            }
+            refreshTraceData(selectedPids);
         }
     }
 
@@ -2139,76 +2137,11 @@ public class CamelMonitor extends CamelCommand {
         try {
             long pid = Long.parseLong(sel.pid);
             JsonObject root = loadErrorFile(pid);
-            if (root == null) {
-                return;
+            if (root != null) {
+                List<ErrorInfo> parsed = StatusParser.parseErrors(root);
+                sel.errors.clear();
+                sel.errors.addAll(parsed);
             }
-            JsonArray errorList = (JsonArray) root.get("errors");
-            if (errorList == null) {
-                return;
-            }
-            List<ErrorInfo> parsed = new ArrayList<>();
-            for (Object e : errorList) {
-                JsonObject ej = (JsonObject) e;
-                ErrorInfo ei = new ErrorInfo();
-                ei.routeId = ej.getString("routeId");
-                ei.nodeId = ej.getString("nodeId");
-                ei.exchangeId = ej.getString("exchangeId");
-                ei.handled = Boolean.TRUE.equals(ej.get("handled"));
-                Long ts = ej.getLong("timestamp");
-                if (ts != null) {
-                    ei.timestamp = ts;
-                }
-                ei.location = ej.getString("location");
-                ei.threadName = ej.getString("threadName");
-                Long elapsed = ej.getLong("elapsed");
-                if (elapsed != null) {
-                    ei.elapsed = elapsed;
-                }
-                ei.endpointUri = ej.getString("endpointUri");
-                ei.fromEndpointUri = ej.getString("fromEndpointUri");
-                // exception
-                JsonObject ex = (JsonObject) ej.get("exception");
-                if (ex != null) {
-                    ei.exceptionType = ex.getString("type");
-                    ei.exceptionMessage = ex.getString("message");
-                    ei.stackTrace = ex.getString("stackTrace");
-                }
-                // message history
-                Object mhObj = ej.get("messageHistory");
-                if (mhObj instanceof JsonArray mhArr) {
-                    ei.messageHistory = new String[mhArr.size()];
-                    for (int i = 0; i < mhArr.size(); i++) {
-                        ei.messageHistory[i] = mhArr.get(i).toString();
-                    }
-                }
-                // message (body, headers)
-                JsonObject msg = (JsonObject) ej.get("message");
-                if (msg != null) {
-                    Object bodyObj = msg.get("body");
-                    if (bodyObj instanceof JsonObject bodyJson) {
-                        ei.body = bodyJson.getString("value");
-                        ei.bodyType = bodyJson.getString("type");
-                    } else if (bodyObj != null) {
-                        ei.body = bodyObj.toString();
-                    }
-                    JsonArray hdrs = msg.getCollection("headers");
-                    if (hdrs != null) {
-                        StatusParser.parseKvArray(hdrs, ei.headers, ei.headerTypes);
-                    }
-                }
-                // exchange properties and variables
-                JsonArray props = ej.getCollection("exchangeProperties");
-                if (props != null) {
-                    StatusParser.parseKvArray(props, ei.properties, ei.propertyTypes);
-                }
-                JsonArray vars = ej.getCollection("exchangeVariables");
-                if (vars != null) {
-                    StatusParser.parseKvArray(vars, ei.variables, ei.variableTypes);
-                }
-                parsed.add(ei);
-            }
-            sel.errors.clear();
-            sel.errors.addAll(parsed);
         } catch (Exception e) {
             // ignore
         }
