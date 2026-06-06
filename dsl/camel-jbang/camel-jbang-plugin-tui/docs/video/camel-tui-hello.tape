@@ -16,7 +16,7 @@
 #
 
 # Overview tab shows running integrations
-Sleep 3s
+Sleep 6s
 Screenshot screenshots/camel-tui-hello-overview.png
 
 # Log tab - see Hello World messages flowing

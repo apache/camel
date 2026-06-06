@@ -16,7 +16,7 @@
 #
 
 # Overview - 7 interconnected routes
-Sleep 5s
+Sleep 8s
 Screenshot screenshots/camel-tui-topology-overview.png
 
 # Diagram tab - topology view
