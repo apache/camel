@@ -32,6 +32,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
+import dev.tamboui.style.Color;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -354,6 +355,29 @@ class TuiMcpServer {
                                   + "The underlying content is unchanged since drawing is an overlay.",
                 Map.of()));
 
+        toolList.add(toolDef(
+                "tui_draw_shape",
+                "Draws a predefined shape on the TUI screen overlay. "
+                                  + "Much easier than constructing individual cells with tui_draw. "
+                                  + "Combine with tui_locate for precise positioning.",
+                Map.of("shape", propDef("string",
+                        "Shape to draw: box (rectangle border), highlight (background color on existing text like a marker pen), "
+                                                  + "underline (horizontal line), arrow-down, arrow-up, arrow-left, arrow-right, "
+                                                  + "text (draw text string at position)"),
+                        "x", propDef("integer", "X coordinate (column) of the shape origin"),
+                        "y", propDef("integer", "Y coordinate (row) of the shape origin"),
+                        "width", propDef("integer", "Width of the shape (for box, highlight, underline)"),
+                        "height", propDef("integer", "Height of the shape (for box, highlight). Defaults to 1."),
+                        "length", propDef("integer", "Length of arrows"),
+                        "text", propDef("string", "Text content to draw (for text shape)"),
+                        "color", propDef("string",
+                                "Color: red, green, blue, yellow, cyan, magenta, white, gray, black. Default: red for box/underline/arrow, yellow for highlight."),
+                        "duration",
+                        propDef("integer", "Auto-dismiss after this many seconds. If omitted, stays until cleared."),
+                        "append", propDef("boolean",
+                                "If true, add to existing drawing instead of replacing it. Default false.")),
+                List.of("shape", "x", "y")));
+
         // --- Structured data tools ---
 
         toolList.add(toolDef(
@@ -535,6 +559,7 @@ class TuiMcpServer {
                 case "tui_control" -> callControl(args);
                 case "tui_get_files" -> callGetFiles(args);
                 case "tui_locate" -> callLocate(args);
+                case "tui_draw_shape" -> callDrawShape(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -1239,6 +1264,50 @@ class TuiMcpServer {
         }
 
         return Jsoner.serialize(result);
+    }
+
+    private String callDrawShape(Map<String, Object> args) {
+        String shape = args.get("shape") instanceof String s ? s : null;
+        if (shape == null) {
+            return "Error: 'shape' is required";
+        }
+        int x = args.get("x") instanceof Number n ? n.intValue() : 0;
+        int y = args.get("y") instanceof Number n ? n.intValue() : 0;
+        int width = args.get("width") instanceof Number n ? n.intValue() : 0;
+        int height = args.get("height") instanceof Number n ? n.intValue() : Math.max(1, 0);
+        int length = args.get("length") instanceof Number n ? n.intValue() : 5;
+        String text = args.get("text") instanceof String s ? s : null;
+        String colorName = args.get("color") instanceof String s ? s : null;
+        int duration = args.get("duration") instanceof Number n ? n.intValue() : 0;
+
+        Color color = DrawOverlay.parseColor(colorName);
+        if (color == null) {
+            color = "highlight".equals(shape) ? Color.YELLOW : Color.RED;
+        }
+
+        if (height < 1) {
+            height = 1;
+        }
+
+        List<DrawOverlay.DrawCell> cells;
+        if ("text".equals(shape)) {
+            cells = DrawOverlay.generateText(x, y, text != null ? text : "", color);
+        } else {
+            cells = DrawOverlay.generateShape(shape, x, y, width, height, length, color);
+        }
+
+        if (cells.isEmpty() && !"text".equals(shape)) {
+            return "Unknown shape: " + shape
+                   + ". Use: box, highlight, underline, arrow-down, arrow-up, arrow-left, arrow-right, text";
+        }
+
+        boolean append = args.get("append") instanceof Boolean b && b;
+        if (append) {
+            monitor.appendDrawing(cells);
+        } else {
+            monitor.setDrawing(cells, duration);
+        }
+        return "Drew " + shape + " at (" + x + "," + y + ")";
     }
 
     private static JsonArray toJsonArray(List<String> list) {
