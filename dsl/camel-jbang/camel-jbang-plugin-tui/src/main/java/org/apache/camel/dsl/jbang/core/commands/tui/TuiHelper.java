@@ -388,7 +388,7 @@ final class TuiHelper {
             Style.EMPTY.fg(Color.LIGHT_GREEN),
             Style.EMPTY.fg(Color.YELLOW),
             Style.EMPTY.fg(Color.rgb(0xFF, 0xA5, 0x00)),
-            Style.EMPTY.fg(Color.RED),
+            Style.EMPTY.fg(Color.MAGENTA),
     };
 
     static Style colorForDuration(long duration, long minDuration, long maxDuration) {
@@ -397,7 +397,7 @@ final class TuiHelper {
         }
         double ratio = (Math.log1p(duration) - Math.log1p(minDuration))
                        / (Math.log1p(maxDuration) - Math.log1p(minDuration));
-        int bandIndex = Math.min((int) (ratio * 5), 4);
+        int bandIndex = Math.max(0, Math.min((int) (ratio * 5), 4));
         return DURATION_BAND_STYLES[bandIndex];
     }
 

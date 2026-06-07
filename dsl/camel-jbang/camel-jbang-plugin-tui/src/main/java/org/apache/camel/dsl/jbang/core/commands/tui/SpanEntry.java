@@ -30,6 +30,8 @@ record SpanEntry(
         long startEpochNanos,
         long endEpochNanos,
         long durationMs,
+        String routeId,
+        String processorId,
         Map<String, Object> attributes) {
 
     @SuppressWarnings("unchecked")
@@ -49,6 +51,8 @@ record SpanEntry(
                 jo.getLongOrDefault("startEpochNanos", 0),
                 jo.getLongOrDefault("endEpochNanos", 0),
                 jo.getLongOrDefault("durationMs", 0),
+                jo.getString("routeId"),
+                jo.getString("processorId"),
                 attrs);
     }
 

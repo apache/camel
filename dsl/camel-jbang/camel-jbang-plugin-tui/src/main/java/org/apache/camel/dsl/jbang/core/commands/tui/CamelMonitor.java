@@ -2666,6 +2666,60 @@ public class CamelMonitor extends CamelCommand {
         return diagramTab.getTopologyDataAsJson();
     }
 
+    @SuppressWarnings("unchecked")
+    JsonObject getSpanData(String traceId, int limit) {
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            JsonObject err = new JsonObject();
+            err.put("error", "No integration selected");
+            return err;
+        }
+        try {
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject action = new JsonObject();
+            action.put("action", "span");
+            action.put("dump", "true");
+            action.put("limit", String.valueOf(limit));
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
+            if (response != null) {
+                PathUtils.deleteFile(outputFile);
+                Boolean enabled = response.getBoolean("enabled");
+                if (enabled == null || !enabled) {
+                    JsonObject err = new JsonObject();
+                    err.put("error", "OpenTelemetry not enabled (requires --observe flag)");
+                    return err;
+                }
+                if (traceId != null && !traceId.isBlank()) {
+                    JsonArray all = response.getCollection("spans");
+                    if (all != null) {
+                        JsonArray filtered = new JsonArray();
+                        for (int i = 0; i < all.size(); i++) {
+                            JsonObject span = (JsonObject) all.get(i);
+                            String tid = span.getString("traceId");
+                            if (tid != null && tid.contains(traceId)) {
+                                filtered.add(span);
+                            }
+                        }
+                        response.put("spans", filtered);
+                    }
+                }
+                return response;
+            }
+            JsonObject err = new JsonObject();
+            err.put("error", "Timeout waiting for span data");
+            return err;
+        } catch (Exception e) {
+            JsonObject err = new JsonObject();
+            err.put("error", e.getMessage());
+            return err;
+        }
+    }
+
     String navigateDiagramToRoute(String routeId) {
         navigateToTab("Diagram");
         if (diagramTab.selectRoute(routeId)) {

@@ -18,9 +18,11 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.layout.Constraint;
@@ -32,6 +34,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -55,6 +58,7 @@ class SpansTab implements MonitorTab {
     private String selectedTraceId;
     private int waterfallScroll;
     private int waterfallSelected;
+    private boolean showProcessors = true;
 
     boolean spanRefreshRequested;
 
@@ -91,7 +95,7 @@ class SpansTab implements MonitorTab {
             }
             return true;
         }
-        if (ke.isChar('r') || ke.isChar('R')) {
+        if (ke.isKey(KeyCode.F5)) {
             spanRefreshRequested = true;
             return true;
         }
@@ -112,7 +116,22 @@ class SpansTab implements MonitorTab {
             }
             return true;
         }
-        if (ke.isChar('r') || ke.isChar('R')) {
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            waterfallSelected = Math.max(0, waterfallSelected - 20);
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            List<WaterfallNode> nodes = buildWaterfallNodes(selectedTraceId);
+            waterfallSelected = Math.min(nodes.size() - 1, waterfallSelected + 20);
+            return true;
+        }
+        if (ke.isChar('p')) {
+            showProcessors = !showProcessors;
+            waterfallSelected = 0;
+            waterfallScroll = 0;
+            return true;
+        }
+        if (ke.isKey(KeyCode.F5)) {
             spanRefreshRequested = true;
             return true;
         }
@@ -186,11 +205,11 @@ class SpansTab implements MonitorTab {
 
             rows.add(Row.from(
                     Cell.from(shortId(ts.traceId)),
-                    Cell.from(String.valueOf(ts.spanCount)),
+                    MonitorContext.rightCell(String.valueOf(ts.spanCount), 5),
                     Cell.from(ts.rootName != null ? ts.rootName : "?"),
                     Cell.from(Span.styled(ts.hasError ? "ERROR" : "OK", statusStyle)),
                     Cell.from(ts.totalDurationMs + "ms"),
-                    Cell.from(String.valueOf(ts.spanCount))));
+                    MonitorContext.rightCell(String.valueOf(ts.maxDepth), 5)));
         }
 
         String title = String.format(" OTel Traces — %d traces, %d spans ", summaries.size(), spans.get().size());
@@ -242,7 +261,7 @@ class SpansTab implements MonitorTab {
 
         // Split: waterfall top, detail bottom
         List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(6))
+                .constraints(Constraint.fill(), Constraint.length(10))
                 .split(area);
 
         renderWaterfall(frame, chunks.get(0), nodes, traceStart, traceDuration, minDuration, maxDuration);
@@ -280,7 +299,7 @@ class SpansTab implements MonitorTab {
         int labelWidth = 0;
         for (WaterfallNode n : nodes) {
             int indent = n.depth * 2;
-            labelWidth = Math.max(labelWidth, indent + n.span.name().length());
+            labelWidth = Math.max(labelWidth, indent + spanLabel(n.span).length());
         }
         labelWidth = Math.min(labelWidth + 2, inner.width() / 3);
 
@@ -316,7 +335,7 @@ class SpansTab implements MonitorTab {
             boolean selected) {
         String indicator = selected ? "▸ " : "  ";
         String indent = "  ".repeat(node.depth);
-        String label = indent + node.span.name();
+        String label = indent + spanLabel(node.span);
         if (label.length() > labelWidth) {
             label = label.substring(0, labelWidth - 1) + "…";
         } else {
@@ -341,18 +360,27 @@ class SpansTab implements MonitorTab {
         String durationStr = node.span.durationMs() + "ms";
         int pad = Math.max(1, 8 - durationStr.length());
 
-        Style labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
-        Style bandStyle = node.span.isError()
-                ? Style.EMPTY.fg(Color.LIGHT_RED)
-                : TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
+        boolean error = node.span.isError();
+        Style labelStyle;
+        Style bandStyle;
+        if (error) {
+            labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.LIGHT_RED);
+            bandStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+        } else {
+            labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
+            bandStyle = TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
+        }
+
+        String errorTag = error ? " ERR" : "";
 
         return Line.from(
                 Span.styled(indicator, Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.styled(label, labelStyle),
                 Span.raw(gap),
                 Span.styled(bar, bandStyle),
+                Span.styled(errorTag, Style.EMPTY.fg(Color.LIGHT_RED).bold()),
                 Span.raw(" ".repeat(pad)),
-                Span.styled(durationStr, node.span.isError()
+                Span.styled(durationStr, error
                         ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
                         : Style.EMPTY.fg(Color.WHITE).bold()));
     }
@@ -363,22 +391,56 @@ class SpansTab implements MonitorTab {
         }
         SpanEntry span = nodes.get(waterfallSelected).span;
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("  Span: %s  Parent: %s  Kind: %s  Status: %s  Duration: %dms",
-                span.spanId(), span.parentSpanId() != null ? span.parentSpanId() : "-",
-                span.kind(), span.status(), span.durationMs()));
+        List<Line> lines = new ArrayList<>();
+
+        // Row 1: span identity
+        Style statusStyle = span.isError() ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN);
+        lines.add(Line.from(
+                Span.styled(" Span:   ", Style.EMPTY.dim()),
+                Span.styled(span.spanId(), Style.EMPTY.fg(Color.WHITE).bold()),
+                Span.styled("  Parent: ", Style.EMPTY.dim()),
+                Span.raw(span.parentSpanId() != null ? span.parentSpanId() : "-"),
+                Span.styled("  Kind: ", Style.EMPTY.dim()),
+                Span.raw(span.kind() != null ? span.kind() : "")));
+
+        // Row 2: status and duration
+        lines.add(Line.from(
+                Span.styled(" Status: ", Style.EMPTY.dim()),
+                Span.styled(span.isError() ? "ERROR" : "OK", statusStyle),
+                Span.styled("  Duration: ", Style.EMPTY.dim()),
+                Span.raw(span.durationMs() + "ms")));
+
+        // Row 3: route and processor context
+        if (span.routeId() != null || span.processorId() != null) {
+            List<Span> ctx = new ArrayList<>();
+            if (span.routeId() != null) {
+                ctx.add(Span.styled(" Route:  ", Style.EMPTY.dim()));
+                ctx.add(Span.styled(span.routeId(), Style.EMPTY.fg(Color.YELLOW)));
+            }
+            if (span.processorId() != null) {
+                ctx.add(Span.styled("  Processor: ", Style.EMPTY.dim()));
+                ctx.add(Span.styled(span.processorId(), Style.EMPTY.fg(Color.YELLOW)));
+            }
+            lines.add(Line.from(ctx));
+        }
+
+        // Attributes as individual key: value lines
         if (span.attributes() != null && !span.attributes().isEmpty()) {
-            sb.append("  Attrs: ");
-            span.attributes().forEach((k, v) -> sb.append(k).append("=").append(v).append(" "));
+            lines.add(Line.from(Span.raw("")));
+            for (Map.Entry<String, Object> entry : span.attributes().entrySet()) {
+                lines.add(Line.from(
+                        Span.styled(" " + entry.getKey() + ": ", Style.EMPTY.dim()),
+                        Span.raw(String.valueOf(entry.getValue()))));
+            }
         }
 
         Style titleStyle = span.isError() ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
         frame.renderWidget(
                 Paragraph.builder()
-                        .text(Text.from(Line.from(Span.styled(sb.toString(), Style.EMPTY.dim()))))
+                        .text(Text.from(lines))
                         .block(Block.builder().borderType(BorderType.ROUNDED)
                                 .title(dev.tamboui.widgets.block.Title.from(
-                                        Line.from(Span.styled(" " + span.name() + " ", titleStyle))))
+                                        Line.from(Span.styled(" " + spanLabel(span) + " ", titleStyle))))
                                 .build())
                         .build(),
                 area);
@@ -387,19 +449,16 @@ class SpansTab implements MonitorTab {
     @Override
     public void renderFooter(List<Span> spans) {
         if (waterfallView) {
-            spans.add(Span.styled(" ↑↓ ", Style.EMPTY.fg(Color.BLACK).onWhite()));
-            spans.add(Span.styled(" navigate ", Style.EMPTY));
-            spans.add(Span.styled(" Esc ", Style.EMPTY.fg(Color.BLACK).onWhite()));
-            spans.add(Span.styled(" back ", Style.EMPTY));
-            spans.add(Span.styled(" r ", Style.EMPTY.fg(Color.BLACK).onWhite()));
-            spans.add(Span.styled(" refresh ", Style.EMPTY));
+            MonitorContext.hint(spans, "Esc", "back");
+            MonitorContext.hint(spans, "F5", "refresh");
+            MonitorContext.hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
+            MonitorContext.hint(spans, "↑↓", "navigate");
+            MonitorContext.hintLast(spans, "PgUp/Dn", "page");
         } else {
-            spans.add(Span.styled(" ↑↓ ", Style.EMPTY.fg(Color.BLACK).onWhite()));
-            spans.add(Span.styled(" navigate ", Style.EMPTY));
-            spans.add(Span.styled(" Enter ", Style.EMPTY.fg(Color.BLACK).onWhite()));
-            spans.add(Span.styled(" waterfall ", Style.EMPTY));
-            spans.add(Span.styled(" r ", Style.EMPTY.fg(Color.BLACK).onWhite()));
-            spans.add(Span.styled(" refresh ", Style.EMPTY));
+            MonitorContext.hint(spans, "Esc", "back");
+            MonitorContext.hint(spans, "F5", "refresh");
+            MonitorContext.hint(spans, "Enter", "waterfall");
+            MonitorContext.hintLast(spans, "↑↓", "navigate");
         }
     }
 
@@ -417,18 +476,27 @@ class SpansTab implements MonitorTab {
             if (span.isError()) {
                 ts.hasError = true;
             }
-            ts.maxDepth = Math.max(ts.maxDepth, 0);
         }
 
         List<TraceSummary> result = new ArrayList<>(byTrace.values());
-        // Fill duration from root span; if no root found, sum up
         for (TraceSummary ts : result) {
+            List<SpanEntry> traceSpans = currentSpans.stream()
+                    .filter(s -> s.traceId().equals(ts.traceId))
+                    .toList();
+            // Fallback root name: use the earliest span
+            if (ts.rootName == null && !traceSpans.isEmpty()) {
+                ts.rootName = traceSpans.stream()
+                        .min(Comparator.comparingLong(SpanEntry::startEpochNanos))
+                        .map(SpanEntry::name).orElse(null);
+            }
+            // Fallback duration: use the longest span
             if (ts.totalDurationMs == 0) {
-                ts.totalDurationMs = currentSpans.stream()
-                        .filter(s -> s.traceId().equals(ts.traceId))
+                ts.totalDurationMs = traceSpans.stream()
                         .mapToLong(SpanEntry::durationMs)
                         .max().orElse(0);
             }
+            // Compute max depth from parent-child tree
+            ts.maxDepth = computeMaxDepth(traceSpans);
         }
         // Newest first (highest startEpochNanos)
         result.sort(Comparator.comparingLong(ts -> {
@@ -468,21 +536,138 @@ class SpansTab implements MonitorTab {
             root = traceSpans.get(0);
         }
 
+        Set<String> included = new HashSet<>();
+        Map<String, Integer> spanIdToDepth = new LinkedHashMap<>();
         List<WaterfallNode> result = new ArrayList<>();
-        addToWaterfall(result, root, childrenMap, 0);
+        addToWaterfall(result, root, childrenMap, 0, included, spanIdToDepth);
+
+        // Add orphan spans whose parent isn't reachable from the root.
+        // Try to nest them under their parent if the parent is in the result
+        // or was collapsed (spanIdToDepth tracks both shown and collapsed spans).
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (SpanEntry span : traceSpans) {
+                if (included.contains(span.spanId())) {
+                    continue;
+                }
+                int depth = 0;
+                if (span.parentSpanId() != null && spanIdToDepth.containsKey(span.parentSpanId())) {
+                    depth = spanIdToDepth.get(span.parentSpanId()) + 1;
+                }
+                result.add(new WaterfallNode(span, depth));
+                included.add(span.spanId());
+                spanIdToDepth.put(span.spanId(), depth);
+                changed = true;
+            }
+        }
         return result;
     }
 
     private void addToWaterfall(
             List<WaterfallNode> result, SpanEntry span,
-            Map<String, List<SpanEntry>> childrenMap, int depth) {
-        result.add(new WaterfallNode(span, depth));
+            Map<String, List<SpanEntry>> childrenMap, int depth,
+            Set<String> included, Map<String, Integer> spanIdToDepth) {
+        if (!included.add(span.spanId())) {
+            return;
+        }
+        // Record depth for every visited span (even collapsed ones)
+        // so orphans can find their parent's depth
+        spanIdToDepth.put(span.spanId(), depth);
+
         List<SpanEntry> children = childrenMap.get(span.spanId());
+        // Collapse internal producer+consumer pairs:
+        // When an EVENT_SENT span has a single EVENT_RECEIVED child with the same name,
+        // skip the producer and show only the consumer (the route execution).
+        // Never collapse if the skipped span has an error — the error would be hidden.
+        if (isEventSent(span) && !span.isError() && children != null && children.size() == 1
+                && isEventReceived(children.get(0))
+                && span.name().equals(children.get(0).name())) {
+            addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
+            return;
+        }
+        // Collapse processor+send pairs:
+        // When an EVENT_PROCESS span (e.g. to4-to) has a single EVENT_SENT child,
+        // skip the processor wrapper and show only the send span.
+        if (isEventProcess(span) && !span.isError() && children != null && children.size() == 1
+                && isEventSent(children.get(0))) {
+            addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
+            return;
+        }
+        // Hide processor spans when toggle is off — promote children to same depth
+        // Keep error processors visible so errors aren't hidden
+        if (!showProcessors && !span.isError() && isEventProcess(span)) {
+            if (children != null) {
+                for (SpanEntry child : children) {
+                    addToWaterfall(result, child, childrenMap, depth, included, spanIdToDepth);
+                }
+            }
+            return;
+        }
+        result.add(new WaterfallNode(span, depth));
         if (children != null) {
             for (SpanEntry child : children) {
-                addToWaterfall(result, child, childrenMap, depth + 1);
+                addToWaterfall(result, child, childrenMap, depth + 1, included, spanIdToDepth);
             }
         }
+    }
+
+    private static boolean isEventSent(SpanEntry span) {
+        return span.attributes() != null && "EVENT_SENT".equals(span.attributes().get("op"));
+    }
+
+    private static boolean isEventReceived(SpanEntry span) {
+        return span.attributes() != null && "EVENT_RECEIVED".equals(span.attributes().get("op"));
+    }
+
+    private static boolean isEventProcess(SpanEntry span) {
+        return span.attributes() != null && "EVENT_PROCESS".equals(span.attributes().get("op"));
+    }
+
+    private static int computeMaxDepth(List<SpanEntry> traceSpans) {
+        Map<String, Integer> depthMap = new LinkedHashMap<>();
+        for (SpanEntry s : traceSpans) {
+            if (s.isRoot()) {
+                depthMap.put(s.spanId(), 1);
+            }
+        }
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (SpanEntry s : traceSpans) {
+                if (!depthMap.containsKey(s.spanId()) && s.parentSpanId() != null
+                        && depthMap.containsKey(s.parentSpanId())) {
+                    depthMap.put(s.spanId(), depthMap.get(s.parentSpanId()) + 1);
+                    changed = true;
+                }
+            }
+        }
+        return depthMap.values().stream().mapToInt(Integer::intValue).max().orElse(1);
+    }
+
+    private static String spanLabel(SpanEntry span) {
+        String name = span.name();
+        Map<String, Object> attrs = span.attributes();
+        if (attrs != null) {
+            // Use camel.uri for endpoint spans (direct, stub, timer, etc.)
+            Object uri = attrs.get("camel.uri");
+            if (uri != null) {
+                String label = uri.toString();
+                if (span.routeId() != null) {
+                    label += " (" + span.routeId() + ")";
+                }
+                return label;
+            }
+        }
+        // Processor spans: use processorId with routeId context
+        if (span.processorId() != null) {
+            String label = span.processorId();
+            if (span.routeId() != null) {
+                label += " (" + span.routeId() + ")";
+            }
+            return label;
+        }
+        return name;
     }
 
     private static String shortId(String id) {

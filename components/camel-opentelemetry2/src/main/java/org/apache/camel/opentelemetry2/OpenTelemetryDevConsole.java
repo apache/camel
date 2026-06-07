@@ -16,10 +16,13 @@
  */
 package org.apache.camel.opentelemetry2;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.trace.data.SpanData;
+import org.apache.camel.Route;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -86,9 +89,38 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
             List<SpanData> spans = exporter.getFinishedSpans();
             int start = Math.max(0, spans.size() - limit);
 
+            // Build lookup map for enriching spans with route context
+            Map<String, String> endpointToRouteId = new HashMap<>();
+            buildEnrichmentMaps(endpointToRouteId);
+
+            // First pass: convert spans to JSON and resolve routeIds for endpoint spans
             JsonArray arr = new JsonArray();
+            Map<String, String> spanIdToRouteId = new HashMap<>();
+            Map<String, String> spanIdToParent = new HashMap<>();
             for (int i = start; i < spans.size(); i++) {
-                arr.add(spanToJson(spans.get(i)));
+                SpanData sd = spans.get(i);
+                JsonObject jo = spanToJson(sd, endpointToRouteId);
+                arr.add(jo);
+                // Track routeId and parent relationships for propagation
+                if (jo.containsKey("routeId")) {
+                    spanIdToRouteId.put(sd.getSpanId(), jo.getString("routeId"));
+                }
+                String pid = sd.getParentSpanId();
+                if (pid != null && !pid.isEmpty() && !"0000000000000000".equals(pid)) {
+                    spanIdToParent.put(sd.getSpanId(), pid);
+                }
+            }
+
+            // Second pass: propagate routeId to processor spans by walking parent chain
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jo = (JsonObject) arr.get(i);
+                if (!jo.containsKey("routeId")) {
+                    String spanId = jo.getString("spanId");
+                    String inheritedRouteId = findAncestorRouteId(spanId, spanIdToRouteId, spanIdToParent);
+                    if (inheritedRouteId != null) {
+                        jo.put("routeId", inheritedRouteId);
+                    }
+                }
             }
             root.put("spans", arr);
         } else {
@@ -103,8 +135,21 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
         return CamelContextHelper.findSingleByType(getCamelContext(), DevSpanExporter.class);
     }
 
+    private void buildEnrichmentMaps(Map<String, String> endpointToRouteId) {
+        try {
+            // Map route endpoint URIs (sanitized) to route IDs
+            for (Route route : getCamelContext().getRoutes()) {
+                if (route.getEndpoint() != null && route.getId() != null) {
+                    endpointToRouteId.put(route.getEndpoint().getEndpointUri(), route.getId());
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    private static JsonObject spanToJson(SpanData span) {
+    private static JsonObject spanToJson(SpanData span, Map<String, String> endpointToRouteId) {
         JsonObject jo = new JsonObject();
         jo.put("traceId", span.getTraceId());
         jo.put("spanId", span.getSpanId());
@@ -126,6 +171,43 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
             jo.put("attributes", attrs);
         }
 
+        // Enrich with route context from endpoint URI
+        String uri = span.getAttributes().get(AttributeKey.stringKey("camel.uri"));
+        if (uri != null) {
+            String routeId = endpointToRouteId.get(uri);
+            if (routeId != null) {
+                jo.put("routeId", routeId);
+            }
+        }
+
+        // Enrich processor spans with processorId extracted from span name (format: id-shortName)
+        String op = span.getAttributes().get(AttributeKey.stringKey("op"));
+        if ("EVENT_PROCESS".equals(op)) {
+            String name = span.getName();
+            int dash = name.lastIndexOf('-');
+            if (dash > 0) {
+                jo.put("processorId", name.substring(0, dash));
+            }
+        }
+
         return jo;
+    }
+
+    private static String findAncestorRouteId(
+            String spanId, Map<String, String> spanIdToRouteId, Map<String, String> spanIdToParent) {
+        String current = spanId;
+        int maxDepth = 50;
+        while (current != null && maxDepth-- > 0) {
+            String parent = spanIdToParent.get(current);
+            if (parent == null) {
+                return null;
+            }
+            String routeId = spanIdToRouteId.get(parent);
+            if (routeId != null) {
+                return routeId;
+            }
+            current = parent;
+        }
+        return null;
     }
 }
