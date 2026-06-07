@@ -17,7 +17,16 @@
 package org.apache.camel.spi;
 
 /**
- * Represents a resolver for {@link FactoryFinder}
+ * Factory for creating and caching {@link FactoryFinder} instances, each scoped to a specific resource-path prefix on
+ * the classpath.
+ * <p/>
+ * The {@link org.apache.camel.CamelContext} holds one {@code FactoryFinderResolver} and uses it to obtain finders for
+ * the standard {@link FactoryFinder#DEFAULT_PATH} as well as for bootstrap-phase lookups that must complete before the
+ * context is fully started. Separating bootstrap and runtime finders allows implementations to apply different caching
+ * or isolation strategies during the two lifecycle phases.
+ *
+ * @see FactoryFinder
+ * @see ClassResolver
  */
 public interface FactoryFinderResolver {
 

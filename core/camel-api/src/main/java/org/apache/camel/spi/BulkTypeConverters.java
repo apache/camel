@@ -24,11 +24,18 @@ import org.apache.camel.TypeConverter;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Bulk type converters that often comes out of the box with Apache Camel. Camel does a build phase where the Camel
- * artifacts are scanned for {@link org.apache.camel.Converter}s and then bulked together into a single source code
- * generated class. This class is then used at runtime as an optimized and really fast way of using all those type
- * converters by the {@link TypeConverterRegistry}.
+ * A source-code-generated, compile-time-optimized bundle of {@link TypeConverter} instances for use with the
+ * <a href="https://camel.apache.org/manual/type-converter.html">type conversion</a> infrastructure.
+ * <p/>
+ * During the Camel build phase, all classes annotated with {@link org.apache.camel.Converter} in a module are collected
+ * and merged into a single generated class implementing this interface. At runtime the {@link TypeConverterRegistry}
+ * registers each such bulk class once via {@link TypeConverterRegistry#addBulkTypeConverters(BulkTypeConverters)},
+ * replacing the overhead of per-pair hash map lookups with a single polymorphic dispatch through the generated
+ * {@link #convertTo(Class, Class, org.apache.camel.Exchange, Object)} method, significantly reducing overhead for
+ * high-throughput routes.
  *
+ * @see   TypeConverterRegistry
+ * @see   org.apache.camel.Converter
  * @since 3.7
  */
 public interface BulkTypeConverters extends Ordered, TypeConverter {
