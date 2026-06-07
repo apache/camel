@@ -114,7 +114,7 @@ class ListMetricTest extends ProcessCommandTestSupport {
         return ctx;
     }
 
-    private JsonObject micrometerObj(JsonObject... counters) {
+    private static JsonObject micrometerObj(JsonObject... counters) {
         JsonArray arr = new JsonArray();
         Collections.addAll(arr, counters);
         JsonObject mo = new JsonObject();
