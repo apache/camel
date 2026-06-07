@@ -40,16 +40,22 @@ public class JpaTransactedTest extends AbstractJpaTest {
     @Test
     public void testTransactedMulticast() throws Exception {
         template.sendBody("direct:multicast", new SendEmail("test@example.org"));
+
+        assertEntityInDB(2);
     }
 
     @Test
     public void testTransactedRecipientList() throws Exception {
         template.sendBody("direct:recipient", new SendEmail("test@example.org"));
+
+        assertEntityInDB(2);
     }
 
     @Test
     public void testTransactedEnrich() throws Exception {
         template.sendBody("direct:enrich", new SendEmail("test@example.org"));
+
+        assertEntityInDB(2);
     }
 
     @Override
