@@ -151,6 +151,8 @@ public class CamelMonitor extends CamelCommand {
     // Trace/history data — shared between CamelMonitor and tabs
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
     private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
+    // OTel span data — shared between CamelMonitor and SpansTab
+    private final AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
 
     // selectedPid is stored on ctx (MonitorContext) so tabs can access it
 
@@ -217,6 +219,7 @@ public class CamelMonitor extends CamelCommand {
     private InflightTab inflightTab;
     private MemoryTab memoryTab;
     private ThreadsTab threadsTab;
+    private SpansTab spansTab;
     private OverviewTab overviewTab;
 
     // "Switch integration" popup state
@@ -285,6 +288,7 @@ public class CamelMonitor extends CamelCommand {
         inflightTab = new InflightTab(ctx);
         memoryTab = new MemoryTab(ctx, metrics);
         threadsTab = new ThreadsTab(ctx);
+        spansTab = new SpansTab(ctx, otelSpans);
         overviewTab = new OverviewTab(
                 ctx, metrics, stoppingPids,
                 this::resetIntegrationTabState);
@@ -413,7 +417,7 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                morePopupState.selectNext(11);
+                morePopupState.selectNext(12);
                 return true;
             }
             int shortcutSel = morePopupShortcut(ke);
@@ -435,8 +439,9 @@ public class CamelMonitor extends CamelCommand {
                         case 6 -> inflightTab;
                         case 7 -> memoryTab;
                         case 8 -> metricsTab;
-                        case 9 -> startupTab;
-                        case 10 -> threadsTab;
+                        case 9 -> spansTab;
+                        case 10 -> startupTab;
+                        case 11 -> threadsTab;
                         default -> null;
                     };
                     if (activeMoreTab != null) {
@@ -1215,6 +1220,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
                 ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
         };
@@ -1321,11 +1327,14 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isChar('e')) {
             return 8;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('o')) {
             return 9;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 10;
+        }
+        if (ke.isChar('t')) {
+            return 11;
         }
         return -1;
     }
@@ -1916,6 +1925,51 @@ public class CamelMonitor extends CamelCommand {
                 refreshHistoryData(selectedPids);
             }
             refreshTraceData(selectedPids);
+        }
+        if (tabsState.selected() == TAB_MORE && activeMoreTab == spansTab
+                && ctx.selectedPid != null && spansTab.spanRefreshRequested) {
+            spansTab.spanRefreshRequested = false;
+            refreshSpanData();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void refreshSpanData() {
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            return;
+        }
+        try {
+            // Send action to request span data
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject action = new JsonObject();
+            action.put("action", "span");
+            action.put("dump", "true");
+            action.put("limit", "500");
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+            // Poll for response
+            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
+            if (response != null) {
+                Boolean enabled = response.getBoolean("enabled");
+                if (enabled != null && enabled) {
+                    JsonArray arr = response.getCollection("spans");
+                    if (arr != null) {
+                        List<SpanEntry> entries = new ArrayList<>();
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject spanObj = (JsonObject) arr.get(i);
+                            entries.add(SpanEntry.fromJson(spanObj));
+                        }
+                        otelSpans.set(entries);
+                    }
+                }
+                PathUtils.deleteFile(outputFile);
+            }
+        } catch (Exception e) {
+            // ignore
         }
     }
 
