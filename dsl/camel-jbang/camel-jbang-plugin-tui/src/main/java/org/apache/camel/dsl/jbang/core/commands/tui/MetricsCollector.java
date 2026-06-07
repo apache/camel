@@ -160,7 +160,7 @@ class MetricsCollector {
         LinkedList<long[]> samples = throughputSamples.computeIfAbsent(pid, k -> new LinkedList<>());
         samples.add(new long[] { now, currentTotal, currentFailed });
 
-        while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
+        while (!samples.isEmpty() && now - samples.get(0)[0] > 2000) {
             samples.remove(0);
         }
 
@@ -271,7 +271,7 @@ class MetricsCollector {
             Map<String, LinkedList<Long>> inHistMap, Map<String, LinkedList<Long>> outHistMap) {
         LinkedList<long[]> samples = samplesMap.computeIfAbsent(pid, k -> new LinkedList<>());
         samples.add(new long[] { now, inTotal, outTotal });
-        while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
+        while (!samples.isEmpty() && now - samples.get(0)[0] > 2000) {
             samples.remove(0);
         }
         if (samples.size() >= 2) {
