@@ -53,7 +53,7 @@ import org.apache.camel.util.json.JsonObject;
 
 class SpansTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "newest", "spans", "routes", "status", "duration" };
+    private static final String[] SORT_COLUMNS = { "trace-id", "route", "from", "spans", "routes", "status", "duration" };
 
     private final MonitorContext ctx;
     private final AtomicReference<List<SpanEntry>> spans;
@@ -66,7 +66,7 @@ class SpansTab implements MonitorTab {
     private int waterfallScroll;
     private int waterfallSelected;
     private boolean showProcessors = true;
-    private String sortColumn = "newest";
+    private String sortColumn = "trace-id";
     private int sortIndex;
     private boolean sortReversed;
     private boolean filterInputActive;
@@ -309,9 +309,9 @@ class SpansTab implements MonitorTab {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled(sortLabel("TRACE-ID", "newest"), sortStyle("newest"))),
-                        Cell.from(Span.styled("ROUTE", Style.EMPTY.fg(Color.YELLOW).bold())),
-                        Cell.from(Span.styled("FROM", Style.EMPTY.fg(Color.YELLOW).bold())),
+                        Cell.from(Span.styled(sortLabel("TRACE-ID", "trace-id"), sortStyle("trace-id"))),
+                        Cell.from(Span.styled(sortLabel("ROUTE", "route"), sortStyle("route"))),
+                        Cell.from(Span.styled(sortLabel("FROM", "from"), sortStyle("from"))),
                         Cell.from(Span.styled(sortLabel("SPANS", "spans"), sortStyle("spans"))),
                         Cell.from(Span.styled(sortLabel("ROUTES", "routes"), sortStyle("routes"))),
                         Cell.from(Span.styled("REMOTE", Style.EMPTY.fg(Color.YELLOW).bold())),
@@ -797,6 +797,8 @@ class SpansTab implements MonitorTab {
 
     private int sortTrace(TraceSummary a, TraceSummary b, List<SpanEntry> currentSpans) {
         return switch (sortColumn) {
+            case "route" -> compareNullable(a.rootRouteId, b.rootRouteId);
+            case "from" -> compareNullable(a.rootName, b.rootName);
             case "duration" -> Long.compare(b.totalDurationMs, a.totalDurationMs);
             case "spans" -> Integer.compare(b.spanCount, a.spanCount);
             case "routes" -> Integer.compare(b.routeCount, a.routeCount);
@@ -841,6 +843,19 @@ class SpansTab implements MonitorTab {
                 && !"direct".equals(scheme) && !"seda".equals(scheme)
                 && !"mock".equals(scheme) && !"log".equals(scheme)
                 && !"bean".equals(scheme) && !"class".equals(scheme);
+    }
+
+    private static int compareNullable(String a, String b) {
+        if (a == null && b == null) {
+            return 0;
+        }
+        if (a == null) {
+            return 1;
+        }
+        if (b == null) {
+            return -1;
+        }
+        return a.compareToIgnoreCase(b);
     }
 
     private String sortLabel(String label, String column) {
@@ -963,7 +978,7 @@ class SpansTab implements MonitorTab {
                 | Enter | Drill into trace waterfall |
                 | Esc | Back to list / clear filter |
                 | / | Open filter input (matches trace ID, exchange ID, route, component) |
-                | s | Cycle sort column (newest, spans, routes, status, duration) |
+                | s | Cycle sort column (trace-id, route, from, spans, routes, status, duration) |
                 | S | Reverse sort direction |
                 | p | Toggle processor spans in waterfall |
                 | F5 | Refresh span data |
