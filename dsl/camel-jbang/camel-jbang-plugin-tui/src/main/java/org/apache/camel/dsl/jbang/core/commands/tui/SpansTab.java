@@ -63,6 +63,7 @@ class SpansTab implements MonitorTab {
 
     private boolean waterfallView;
     private String selectedTraceId;
+    private String selectedListTraceId;
     private int waterfallScroll;
     private int waterfallSelected;
     private boolean showProcessors = true;
@@ -142,6 +143,7 @@ class SpansTab implements MonitorTab {
             String text = filterInputState.text().trim();
             filterTerm = text.isEmpty() ? null : text;
             filterInputActive = false;
+            selectedListTraceId = null;
             traceListState.select(0);
             return true;
         }
@@ -202,6 +204,7 @@ class SpansTab implements MonitorTab {
         }
         if (filterTerm != null) {
             filterTerm = null;
+            selectedListTraceId = null;
             traceListState.select(0);
             return true;
         }
@@ -212,6 +215,7 @@ class SpansTab implements MonitorTab {
     public boolean setFilter(String filter) {
         filterTerm = (filter != null && !filter.isEmpty()) ? filter : null;
         filterInputActive = false;
+        selectedListTraceId = null;
         traceListState.select(0);
         return true;
     }
@@ -220,13 +224,25 @@ class SpansTab implements MonitorTab {
     public void navigateUp() {
         if (!waterfallView) {
             traceListState.selectPrevious();
+            syncSelectedListTraceId();
         }
     }
 
     @Override
     public void navigateDown() {
         if (!waterfallView) {
-            traceListState.selectNext(buildTraceSummaries().size());
+            traceListState.selectNext(buildFilteredTraceSummaries().size());
+            syncSelectedListTraceId();
+        }
+    }
+
+    private void syncSelectedListTraceId() {
+        Integer sel = traceListState.selected();
+        if (sel != null) {
+            List<TraceSummary> summaries = buildFilteredTraceSummaries();
+            if (sel >= 0 && sel < summaries.size()) {
+                selectedListTraceId = summaries.get(sel).traceId;
+            }
         }
     }
 
@@ -278,8 +294,26 @@ class SpansTab implements MonitorTab {
         List<TraceSummary> allSummaries = buildTraceSummaries();
         List<TraceSummary> summaries = filterTerm != null ? buildFilteredTraceSummaries() : allSummaries;
 
-        if (!summaries.isEmpty() && traceListState.selected() == null) {
-            traceListState.select(0);
+        // Restore selection by traceId (survives data refresh/eviction)
+        if (!summaries.isEmpty()) {
+            if (selectedListTraceId != null) {
+                int idx = -1;
+                for (int i = 0; i < summaries.size(); i++) {
+                    if (summaries.get(i).traceId.equals(selectedListTraceId)) {
+                        idx = i;
+                        break;
+                    }
+                }
+                if (idx >= 0) {
+                    traceListState.select(idx);
+                } else {
+                    traceListState.select(0);
+                    selectedListTraceId = summaries.get(0).traceId;
+                }
+            } else {
+                traceListState.select(0);
+                selectedListTraceId = summaries.get(0).traceId;
+            }
         }
 
         List<Row> rows = new ArrayList<>();
