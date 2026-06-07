@@ -3,8 +3,8 @@
 *Available as of Camel 4.21*
 
 Camel TUI is a terminal dashboard for developing, prototyping, and understanding Camel integrations.
-It opens up the world of Camel with visual feedback -- you can see your route topology, watch messages
-flow through processors, inspect exchange state at every step, and understand what Camel actually does
+It makes your integration visible -- you can see your route topology, watch messages flow through
+processors, step through exchanges like scrubbing through a video timeline, and understand what Camel actually does
 with your routes. No more black box.
 
 image::jbang/camel-tui-topology-overview.svg[TUI Overview showing multiple routes]
@@ -12,39 +12,13 @@ image::jbang/camel-tui-topology-overview.svg[TUI Overview showing multiple route
 NOTE: This module is in *Preview* status. The TUI is designed for development and prototyping,
 not production monitoring.
 
-== Why Use the TUI?
-
-Most integration frameworks give you "run and log" -- you write routes, start the app, and stare at
-log output hoping to understand what happens. Camel TUI takes a different approach: it makes your
-integration visible and interactive.
-
-*Camel is not a black box.*
-The interactive route topology diagram shows how your routes connect -- which endpoints feed into which routes,
-where messages fan out, and where failures happen. Drill into individual routes to see every processor
-and EIP in the chain. Watch message counts update in real time. This is the architecture you designed,
-rendered live in your terminal.
-
-image::jbang/camel-tui-topology-diagram.svg[Diagram topology view]
-
-*Understand what happens to your messages.*
-Message tracing shows the exact path each exchange takes through your routes, with the message body,
-headers, properties, and variables at every processing step. The errors tab collects failures with full
-stack traces. No more grepping through log files -- the TUI organizes this information for you.
-
-*Prototype fast.*
-Run built-in examples directly from the TUI, send test messages to any endpoint, restart routes
-on the fly, and see the effect immediately. The TUI auto-discovers every running Camel integration
-with zero configuration.
-
-*AI and humans working together.*
-The built-in MCP server lets AI coding assistants (like Claude Code) see everything you see in the TUI --
-and more. The AI can read structured route data, inspect message traces, send test messages,
-and annotate the diagram with highlights and labels. You get an AI pair-programmer that truly
-understands your running integration, not just your source code.
-
 == Getting Started
 
-Start a Camel integration:
+You can start using the TUI in two ways: with your own route, or by running one of the built-in examples.
+
+=== Option 1: Your Own Route
+
+Start a Camel integration in one terminal:
 
 [source,bash]
 ----
@@ -58,41 +32,317 @@ Open the TUI in another terminal:
 camel tui
 ----
 
-Or try the built-in examples directly from the TUI: press *F2* and select _Run an example_.
+The TUI auto-discovers every running Camel integration on your machine -- no configuration needed.
+
+image::jbang/camel-tui-hello-overview.svg[TUI showing a simple hello route]
+
+=== Option 2: Built-in Examples
+
+Don't have a route yet? The TUI ships with a catalog of ready-to-run examples.
+Open the TUI and press *F2*, then select _Run an example_:
+
+[source,bash]
+----
+camel tui
+----
+
+. Press *F2* to open the actions menu
+. Select *Run an example...*
+. Browse the example catalog -- type to filter by name
+. Press *Enter* to launch the selected example
+
+The example starts running in the background. The TUI auto-selects it as soon as it appears.
+From there you can explore tabs, watch messages flow, inspect the route diagram, and experiment.
+
+If an example requires infrastructure (like Kafka or a database), the TUI automatically starts the
+required Docker containers before launching the example. A notification in the footer shows the
+progress.
 
 TIP: Press *F1* on any screen for context-sensitive help.
-The TUI is designed to be self-discoverable -- keyboard shortcuts are shown in the footer,
-and help pages explain every tab and feature.
+Keyboard shortcuts are always shown in the footer bar.
+
+== Tabs Overview
+
+The TUI organizes information into tabs. Press number keys *1* through *0* to jump directly
+to any tab, or use *Tab* / *Shift+Tab* to cycle.
+
+[cols="1,2,5",options="header"]
+|===
+| Key | Tab | What It Shows
+
+| 1 | Overview | All running integrations and infrastructure services. Start here.
+| 2 | Log | Real-time application logs with search and filtering.
+| 3 | Diagram | Visual route topology with drill-down into individual routes.
+| 4 | Routes | Route list with message counts, throughput, and processing times.
+| 5 | Endpoints | All registered endpoints with usage statistics.
+| 6 | HTTP | HTTP endpoints with details.
+| 7 | Health | Health check status.
+| 8 | Inspect | Message history and tracing -- step through exchanges processor by processor.
+| 9 | Errors | Failures with stack traces and exchange context.
+| 0 | More | Additional tabs: Beans, Browse, Circuit Breaker, Classpath, Configuration, Consumers, Inflight, Memory, Metrics, Startup, Threads.
+|===
+
+Tab badges show live counts -- the Errors tab shows a red badge when errors exist,
+Health shows a badge when checks are DOWN, and Routes shows the route count.
 
 == Route Topology Diagram
 
-The Diagram tab renders the route topology as interactive ASCII art. It shows how routes
+The Diagram tab (Tab 3) renders the route topology as interactive ASCII art. It shows how routes
 connect to each other through shared endpoints (direct, seda, kafka, etc.).
 
-* Navigate between routes with arrow keys, drill into a route with *Enter*
-* Toggle external endpoints (kafka brokers, HTTP endpoints) with *e*
-* Toggle metrics overlay (message counts) with *m*
-* View route source code with *c*
+image::jbang/camel-tui-topology-diagram.svg[Diagram topology view]
 
-image::jbang/camel-tui-topology-diagram-external.svg[Diagram with external endpoints visible]
+=== Topology View
+
+The topology shows all routes as boxes, connected by arrows:
+
+* *Trigger routes* (timer, cron, etc.) appear at the top
+* *Downstream routes* appear below, connected by directed arrows
+* Route boxes show the route ID, the `from` endpoint, and metrics when enabled
+
+Navigate between route boxes with arrow keys. When a route is selected, an *Info panel* appears
+on the left showing state, uptime, throughput, exchange counts, and processing times.
+
+=== Drill-Down into Routes
+
+Press *Enter* on a selected route to drill down into its internal EIP structure. Each processor
+and EIP node is displayed with its type (colored by category), endpoint URI, and per-node statistics.
 
 image::jbang/camel-tui-topology-diagram-drilldown.svg[Drill-down showing internal processors]
 
-== AI Integration (MCP) -- Optional
+Nodes that connect to other routes show a *Enter* indicator -- press *Enter* to jump directly
+to the linked route. Navigation history is maintained as a breadcrumb stack: press *Esc* to go
+back to the previous route, and eventually back to the topology view.
 
-The TUI includes an embedded https://modelcontextprotocol.io/[MCP] (Model Context Protocol) server
-that lets AI coding assistants interact with the dashboard programmatically. This turns the TUI
-into a bridge between your running Camel integration and an AI agent.
+Press *t* to jump straight back to the topology from any depth.
 
-The TUI is fully functional on its own -- AI integration is entirely optional. You get the complete
-dashboard experience with just `camel tui`. The MCP server adds a layer on top for AI-assisted
-workflows when you want it.
+=== External Endpoints
 
-An AI agent connected to the TUI has access to a remarkable amount of information: the complete
-route topology as a structured graph, every route's statistics and throughput, message traces with
-body/headers/properties at each step, error details with stack traces, endpoint usage, health checks,
-log entries, JVM metrics, and even the integration's source files. This is far more context than
-an AI gets from reading source code alone -- it sees your integration *running*.
+Press *e* to cycle through three modes for external endpoints:
+
+* *off* -- only route-to-route connections shown
+* *edges* -- external systems (kafka brokers, HTTP endpoints, databases) shown as dashed boxes
+* *all* -- routes sharing an external endpoint are connected through an intermediary box
+
+image::jbang/camel-tui-topology-diagram-external.svg[Diagram with external endpoints visible]
+
+=== Metrics and Source Code
+
+* Press *m* to toggle metrics overlay (message counts on each node)
+* Press *c* to view the source code of the selected route, with syntax highlighting
+* Press *n* to toggle description labels on/off
+
+== Message Insight
+
+The Inspect tab (Tab 8) lets you step through an exchange processor by processor -- like
+scrubbing through a video timeline of your message's journey. This is the key to understanding
+what Camel does with your data at every step.
+
+=== History of Last Exchange
+
+When you open the Inspect tab, it shows the last completed exchange. The top panel lists
+every processing step with:
+
+* *Step number* and direction (-->  or <--)
+* *Route* and *Node ID* of the processor
+* *BHPV* change indicators -- letters light up in yellow when Body, Headers, Properties,
+  or Variables changed at that step
+* *Elapsed* time per step
+
+Select a step with arrow keys, and the detail panel below shows the full exchange state:
+body content, headers, properties, and variables at that exact point in the processing chain.
+
+=== Controlling What You See
+
+Toggle sections of the detail view:
+
+* *b* -- show/hide message body
+* *h* -- show/hide headers
+* *p* -- show/hide exchange properties
+* *v* -- show/hide exchange variables
+* *w* -- toggle word wrap
+* *n* -- toggle description/processor labels
+
+=== Waterfall View
+
+Press *g* to switch to the waterfall view -- a horizontal bar chart showing how long each
+processor took. This makes it easy to spot bottlenecks: long bars stand out immediately.
+The selected step is highlighted with `>>` and processing times are color-coded from green
+(fast) to red (slow).
+
+=== Replay on the Diagram
+
+Press *d* to overlay the message path on the route topology diagram. This is where the
+timeline replay comes alive:
+
+* The diagram highlights which route and processor handled the message at each step
+* Use *Up/Down* arrows to step forward and backward through the path
+* An *Info panel* on the left shows the exchange state (body, headers, properties, variables)
+  at the current step -- values that changed from the previous step are highlighted in yellow
+* Step through the entire exchange to watch how the message payload transforms as it flows
+  through processors, filters, and content-based routers
+* Press *Enter* on a route node to drill down into its internal EIP structure while replaying
+* Press *Esc* to go back, *t* to return to the topology view
+* Press *i* to cycle the info panel size (narrow / wide / full)
+
+This is especially powerful for understanding complex multi-route flows where messages are
+routed through direct, seda, or kafka endpoints between routes.
+
+=== Live Tracing
+
+When you run your integration with tracing enabled:
+
+[source,bash]
+----
+camel run my-route.yaml --trace
+----
+
+The Inspect tab gains a live trace panel showing every exchange as it flows through the system.
+Each exchange is listed with its timestamp, starting route, status (Processing/Done/Failed),
+elapsed time, and step count. Press *Enter* to drill into an exchange and see every processor
+step -- the same step-by-step view and diagram replay work here too.
+
+Use *s* to cycle sort order (time, route, elapsed, exchange) and *S* to reverse.
+Press *F5* to clear captured traces.
+
+== Troubleshooting Errors
+
+The Errors tab (Tab 9) collects failures with full stack traces and exchange context.
+When errors occur, a red badge appears on the tab.
+
+image::jbang/camel-tui-topology-errors.svg[Errors tab with failure details]
+
+For deeper troubleshooting, switch to the Inspect tab (Tab 8) and use the diagram replay
+(press *d*) to visualize exactly where the failure occurred:
+
+* Failed steps are highlighted in red on the diagram
+* Step through the failing exchange to see the message state at each processor
+  leading up to the failure
+* The Info panel shows the exception message and which node threw it
+* Compare the message body and headers before and after the failing step
+  to understand what triggered the error
+
+This combination of error details + visual diagram replay gives you a complete picture of
+what went wrong and why -- without leaving the terminal.
+
+== Actions Menu (F2)
+
+Press *F2* to open the actions menu with quick access to common operations:
+
+[cols="2,5",options="header"]
+|===
+| Action | Description
+
+| Send Message | Send a test message to any route with custom body, headers, and exchange pattern.
+| Run an example... | Browse and launch built-in Camel examples from the catalog.
+| Run from folder... | Run routes from a local directory.
+| Run Dev/Infra Service... | Start infrastructure services (Kafka, databases, etc.) in Docker.
+| Browse Files... | Browse the integration's source files with syntax highlighting.
+| Run Doctor | Check your environment: Java version, JBang, Maven, Docker, port conflicts, disk space.
+| Reset Stats | Reset all statistics and metrics for the selected integration.
+| Stop All | Stop running integrations and/or infrastructure services.
+| Take Screenshot | Export the current screen as SVG, text, or ANSI art.
+| Start/Stop Tape Recording | Record your session as a `.tape` file for demos.
+|===
+
+=== Sending Test Messages
+
+Select *Send Message* from the F2 menu (or press *F2* then choose it):
+
+* *Choose the route* -- use left/right arrows to pick the target route
+* *Enter the body* -- type the message body, or use `file:path/to/file` to load from a file
+* *Add headers* -- press *+* to add headers as key=value pairs
+* *Set exchange pattern* -- toggle between InOnly (fire-and-forget) and InOut (request/reply)
+* Press *Enter* to send
+
+For InOut exchanges, the response is displayed below with status, elapsed time, response headers,
+and body. Press *P* to toggle pretty-printing for JSON/XML responses.
+
+=== Doctor
+
+The Doctor checks your development environment and reports issues:
+
+* Java version (17+ required, 21+ recommended)
+* Camel catalog availability
+* JBang installation
+* Maven repository connectivity
+* Docker/Podman availability
+* Common port conflicts (8080, 8443, 9090)
+* Disk space in temp directory
+
+== Keyboard Shortcuts
+
+=== Global (All Tabs)
+
+[cols="2,5",options="header"]
+|===
+| Key | Action
+
+| *1* - *0* | Jump to tab by number
+| *Tab* / *Shift+Tab* | Next / previous tab
+| *F1* | Context-sensitive help (toggle)
+| *F2* | Actions menu
+| *F3* | Switch between integrations (when multiple running)
+| *Shift+F5* | Take screenshot
+| *Ctrl+R* | Start/stop tape recording
+| *Ctrl+C* / *Q* | Quit
+| *Esc* | Close popup / go back / return to Overview
+|===
+
+=== Diagram Tab
+
+[cols="2,5",options="header"]
+|===
+| Key | Action
+
+| *Arrow keys* | Navigate between route boxes (topology) or EIP nodes (drill-down)
+| *Enter* | Drill down into selected route / jump to linked route
+| *Esc* | Go back (previous route or topology)
+| *t* | Jump to topology view
+| *m* | Toggle metrics overlay
+| *e* | Cycle external endpoints (off / edges / all)
+| *n* | Toggle description labels
+| *c* | View route source code
+|===
+
+=== Inspect Tab
+
+[cols="2,5",options="header"]
+|===
+| Key | Action
+
+| *Up/Down* | Navigate between steps
+| *b* / *h* / *p* / *v* | Toggle body / headers / properties / variables
+| *w* | Toggle word wrap
+| *g* | Toggle waterfall view
+| *d* | Toggle diagram replay mode
+| *n* | Toggle description labels
+| *F5* | Refresh / clear traces
+|===
+
+== AI Integration (MCP)
+
+The TUI includes an embedded https://modelcontextprotocol.io/[MCP] (Model Context Protocol)
+server that lets AI coding assistants interact with the dashboard.
+
+The TUI is fully functional on its own -- AI integration is entirely optional.
+
+=== Why This Matters
+
+When an AI agent connects to the TUI via MCP, it gains the same level of visibility that you
+have -- and can act on it. The agent can:
+
+* *Read everything* -- route topology, statistics, message traces, errors, logs, source files,
+  health checks, and JVM metrics
+* *Navigate and control* -- switch tabs, select routes, start/stop routes, send test messages,
+  change log levels
+* *Teach and present* -- the AI can control the TUI screen to walk you through concepts,
+  highlight areas of interest, draw annotations, and take screenshots. It can circle a failing
+  route, draw arrows between connected endpoints, and add explanatory text labels -- turning the
+  TUI into a live whiteboard for pair-programming
+* *Self-troubleshoot* -- when something fails, the AI can autonomously inspect the error,
+  read the message trace, correlate with route statistics, and produce a diagnostic report
+  with annotated screenshots showing exactly where and why the failure occurred
 
 === Enabling MCP
 
@@ -104,8 +354,8 @@ camel tui --mcp
 This starts an MCP server on `localhost:8123` (configurable with `--mcp-port`).
 The server is bound to `127.0.0.1` only -- it never listens on external interfaces.
 
-When MCP is active, the TUI footer shows the connection status (e.g., `MCP :8123 (claude-code)`).
-Use *F2* → _MCP Info_ to see server details and _MCP Log_ to view the tool call history.
+When MCP is active, the TUI footer shows the connection status.
+Use *F2* -> _MCP Info_ to see server details and _MCP Log_ to view the tool call history.
 
 === Connecting an AI Agent
 
@@ -124,82 +374,28 @@ To connect Claude Code to the TUI, add the MCP server to your project configurat
 }
 ----
 
-Once connected, the AI agent can see and interact with the TUI just as you do.
-
 === What AI Agents Can Do
 
-The MCP server exposes a comprehensive set of tools organized by purpose:
+The MCP server exposes tools organized by purpose:
 
-==== Observe
+* *Observe* -- read the screen, get structured state, query tables/logs/errors/traces/topology/diagram/files
+* *Navigate* -- switch tabs, select integrations, select routes, send keystrokes, apply filters
+* *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels
+* *Annotate* -- locate text and diagram nodes by coordinates, draw shapes (boxes, highlights,
+  arrows, underlines, text labels), show captions with typewriter animation
+* *Present* -- take screenshots, record tape sessions, control demo pacing
 
-* *tui_get_screen* -- Read the current screen content (exactly what you see)
-* *tui_get_state* -- Get structured state: active tab, selected integration, footer actions
-* *tui_get_table* -- Read table data as structured JSON (routes, endpoints, health, etc.)
-* *tui_get_log* -- Query recent log entries with level and text filtering
-* *tui_get_errors* -- Get structured error data with stack traces and exchange details
-* *tui_get_history* -- Read trace data: message body, headers, properties at each processing step
-* *tui_get_topology* -- Get the route graph as JSON (nodes and edges)
-* *tui_get_diagram* -- Get the topology diagram as text art
-* *tui_get_readme* -- Read the integration's README documentation
-* *tui_get_files* -- List and read the integration's source files
+=== Example Workflows
 
-==== Navigate
-
-* *tui_navigate* -- Switch tabs, select integrations, select routes in the topology
-* *tui_send_keys* -- Send keystrokes to navigate like a human would
-* *tui_filter* -- Apply text filters on tabs that support it
-
-==== Act
-
-* *tui_send_message* -- Send a test message to any Camel endpoint
-* *tui_control* -- Start/stop/restart routes or the integration itself
-* *tui_set_log_level* -- Change the runtime log level (DEBUG, INFO, WARN, etc.)
-
-==== Annotate
-
-* *tui_locate* -- Find exact screen coordinates of text or diagram nodes
-* *tui_draw_shape* -- Draw shapes on the screen: boxes, highlights, arrows, underlines, text labels
-* *tui_draw* -- Draw individual characters at specific coordinates
-* *tui_draw_clear* -- Clear all annotations
-* *tui_show_caption* -- Display a text message with typewriter animation
-
-==== Present
-
-* *tui_action* -- Invoke actions (screenshot, tape recording, reset stats, etc.)
-* *tui_tape_start* / *tui_tape_stop* -- Record interactions as a `.tape` file
-* *tui_sleep* -- Pace demo sequences
-* *tui_toggle_trace_display* -- Control which sections show in trace views
-
-=== Example: AI-Assisted Debugging
-
-With MCP connected, you can ask the AI agent natural-language questions like:
-
-* _"What routes are failing and why?"_ -- The agent reads the errors tab, correlates with route statistics, and explains the failures.
-* _"Show me the message flow for the last exchange"_ -- The agent reads the trace history and walks you through each processing step.
-* _"Highlight the failing routes on the diagram"_ -- The agent locates the routes on the topology, draws red boxes around them, and annotates with failure counts.
-* _"Send a test order to the API endpoint"_ -- The agent sends a message to `platform-http:/api/orders` and watches the result flow through the routes.
-
-=== Drawing and Annotations
-
-The AI agent can annotate the TUI screen with visual overlays. This is useful for
-highlighting areas of interest, pointing out problems, or creating annotated screenshots
-for documentation.
-
-The typical workflow is:
-
-1. *tui_locate* to find exact coordinates (by text search or diagram node ID)
-2. *tui_draw_shape* to draw the annotation (box, highlight, arrow, text)
-
-Available shapes:
-
-* *box* -- Rectangle border around an area (e.g., highlight a route node)
-* *highlight* -- Background color on existing text, like a marker pen
-* *underline* -- Horizontal line under text
-* *arrow-down/up/left/right* -- Directional arrows for pointing at elements
-* *text* -- Text labels for explanations
-
-Multiple shapes can be composed using the `append` flag. Annotations can auto-dismiss
-after a duration or stay until explicitly cleared.
+* _"What routes are failing and why?"_ -- The agent reads the errors tab, correlates with
+  route statistics, steps through the failing exchange in the Inspect tab, and explains
+  the root cause with annotated screenshots.
+* _"Show me how this message flows through the system"_ -- The agent navigates to the Inspect tab,
+  opens the diagram replay, steps through each processor, and highlights the path on the
+  topology while explaining what happens at each step.
+* _"Highlight the bottleneck routes"_ -- The agent reads the route statistics, locates the
+  slowest routes on the diagram, draws red boxes around them, and adds labels with the
+  processing times.
 
 See xref:camel-jbang-mcp.adoc[Camel MCP Server] for more about MCP and AI integration with Camel.
 
