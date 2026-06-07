@@ -922,7 +922,39 @@ class SpansTab implements MonitorTab {
 
                 Press **Enter** on a trace to see the Jaeger-style waterfall showing
                 the span tree with proportional duration bars. Each span shows its
-                route context and duration. Press **Esc** to return to the trace list.
+                endpoint URI, processor ID, route context in parentheses, and duration.
+
+                Indentation shows the parent-child relationship between spans. Duration
+                bars are proportional to the trace envelope so you can visually spot
+                where time is spent. Colors indicate relative duration: green (fast),
+                yellow (medium), red (slow).
+
+                Processor spans (setBody, log, etc.) are shown by default. Press **p**
+                to toggle them off for a cleaner view focused on endpoint-to-endpoint
+                flow. Error spans are always shown regardless of the toggle.
+
+                Press **Esc** to return to the trace list.
+
+                Example waterfall for an order-processing integration:
+
+                ```
+                 Trace 4bb73039 — 15 spans, 4ms
+                ▸ timer://orders (order-generator)       █████████████████████████████████  2ms
+                    setBody1 (order-generator)            █  0ms
+                    direct://process-order (process)      ████████████████  1ms
+                      direct://validate-order (validate)  █  0ms
+                        log2 (validate-order)             █  0ms
+                      log1 (process-order)                           █  0ms
+                      kafka://orders (order-dispatcher)                 ████████████████  1ms
+                        log3 (order-dispatcher)                        █  0ms
+                        multicast1 (order-dispatcher)                  █  0ms
+                          kafka://fulfillment (fulfill)                           █  0ms
+                            log4 (fulfillment)                                   █  0ms
+                            kafka://warehouse (fulfill)                          █  0ms
+                          kafka://notifications (notif)                          █  0ms
+                            log5 (notification)                                  █  0ms
+                            kafka://email-outbox (notif)                         █  0ms
+                ```
 
                 ## Keyboard Shortcuts
 

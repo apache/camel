@@ -2408,11 +2408,44 @@ public class CamelMonitor extends CamelCommand {
         drawOverlay.clear();
     }
 
+    private static final String[] MORE_TAB_NAMES = {
+            "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
+            "Consumers", "Inflight", "Memory", "Metrics", "Spans", "Startup", "Threads"
+    };
+
     String navigateToTab(String tabName) {
         for (int i = 0; i < TAB_NAMES.length; i++) {
             if (TAB_NAMES[i].equalsIgnoreCase(tabName)) {
                 handleTabKey(i);
                 return TAB_NAMES[i];
+            }
+        }
+        // Check More submenu tabs
+        for (int i = 0; i < MORE_TAB_NAMES.length; i++) {
+            if (MORE_TAB_NAMES[i].equalsIgnoreCase(tabName)) {
+                morePopupState.select(i);
+                lastMoreSelection = i;
+                activeMoreTab = switch (i) {
+                    case 0 -> beansTab;
+                    case 1 -> browseTab;
+                    case 2 -> circuitBreakerTab;
+                    case 3 -> classpathTab;
+                    case 4 -> configurationTab;
+                    case 5 -> consumersTab;
+                    case 6 -> inflightTab;
+                    case 7 -> memoryTab;
+                    case 8 -> metricsTab;
+                    case 9 -> spansTab;
+                    case 10 -> startupTab;
+                    case 11 -> threadsTab;
+                    default -> null;
+                };
+                if (activeMoreTab != null) {
+                    overviewTab.selectCurrentIntegration();
+                    tabsState.select(TAB_MORE);
+                    activeMoreTab.onTabSelected();
+                }
+                return MORE_TAB_NAMES[i];
             }
         }
         return null;
@@ -2434,7 +2467,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     List<String> getTabNames() {
-        return List.of(TAB_NAMES);
+        List<String> names = new ArrayList<>();
+        names.addAll(List.of(TAB_NAMES));
+        names.addAll(List.of(MORE_TAB_NAMES));
+        return names;
     }
 
     List<String> getActionLabels() {
