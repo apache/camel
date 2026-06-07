@@ -848,7 +848,7 @@ class SpansTab implements MonitorTab {
     }
 
     private Style sortStyle(String column) {
-        return MonitorContext.sortStyle(column, sortColumn);
+        return Style.EMPTY.fg(Color.YELLOW).bold();
     }
 
     private static int computeEffectiveDepth(List<SpanEntry> traceSpans) {
