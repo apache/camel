@@ -24,9 +24,13 @@ import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.context.propagation.TextMapGetter;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
@@ -49,11 +53,18 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
 
     private Tracer tracer;
     private ContextPropagators contextPropagators;
+    private OpenTelemetrySdk devSdk;
 
     @Override
     protected void initTracer() {
         if (tracer == null) {
             this.tracer = CamelContextHelper.findSingleByType(getCamelContext(), Tracer.class);
+        }
+        if (tracer == null) {
+            String profile = getCamelContext().getCamelContextExtension().getProfile();
+            if ("dev".equals(profile)) {
+                initDevSpanExporter();
+            }
         }
         if (tracer == null) {
             this.tracer = GlobalOpenTelemetry.get().getTracer("camel");
@@ -79,6 +90,21 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
         getCamelContext().getCamelContextExtension().addInterceptStrategy(interceptStrategy);
     }
 
+    private void initDevSpanExporter() {
+        DevSpanExporter exporter = new DevSpanExporter();
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(exporter))
+                .build();
+        devSdk = OpenTelemetrySdk.builder()
+                .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
+                .setTracerProvider(tracerProvider)
+                .build();
+        this.tracer = devSdk.getTracer("camel");
+        this.contextPropagators = devSdk.getPropagators();
+        getCamelContext().getRegistry().bind("DevSpanExporter", exporter);
+        LOG.info("OpenTelemetry in-memory span exporter enabled (dev profile)");
+    }
+
     void setTracer(Tracer tracer) {
         this.tracer = tracer;
     }
@@ -91,6 +117,15 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
     protected void doStart() throws Exception {
         super.doStart();
         LOG.info("Opentelemetry2 enabled");
+    }
+
+    @Override
+    protected void doShutdown() {
+        super.doShutdown();
+        if (devSdk != null) {
+            devSdk.close();
+            devSdk = null;
+        }
     }
 
     private class OpentelemetrySpanLifecycleManager implements SpanLifecycleManager {
