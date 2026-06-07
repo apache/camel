@@ -278,6 +278,10 @@ class SpansTab implements MonitorTab {
         List<TraceSummary> allSummaries = buildTraceSummaries();
         List<TraceSummary> summaries = filterTerm != null ? buildFilteredTraceSummaries() : allSummaries;
 
+        if (!summaries.isEmpty() && traceListState.selected() == null) {
+            traceListState.select(0);
+        }
+
         List<Row> rows = new ArrayList<>();
         for (TraceSummary ts : summaries) {
             Style statusStyle;
