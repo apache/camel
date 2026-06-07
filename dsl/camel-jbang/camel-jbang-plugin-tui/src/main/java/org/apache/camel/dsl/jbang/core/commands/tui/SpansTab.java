@@ -53,7 +53,7 @@ import org.apache.camel.util.json.JsonObject;
 
 class SpansTab implements MonitorTab {
 
-    private static final String[] SORT_COLUMNS = { "newest", "duration", "spans", "routes", "status" };
+    private static final String[] SORT_COLUMNS = { "newest", "spans", "routes", "status", "duration" };
 
     private final MonitorContext ctx;
     private final AtomicReference<List<SpanEntry>> spans;
@@ -963,7 +963,7 @@ class SpansTab implements MonitorTab {
                 | Enter | Drill into trace waterfall |
                 | Esc | Back to list / clear filter |
                 | / | Open filter input (matches trace ID, exchange ID, route, component) |
-                | s | Cycle sort column (newest, duration, spans, routes, status) |
+                | s | Cycle sort column (newest, spans, routes, status, duration) |
                 | S | Reverse sort direction |
                 | p | Toggle processor spans in waterfall |
                 | F5 | Refresh span data |
