@@ -19,7 +19,17 @@ package org.apache.camel;
 import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
- * What to do if attempting to add a duplicate type converter
+ * Policy controlling what happens when a {@link org.apache.camel.spi.TypeConverterRegistry} receives a request to
+ * register a <a href="https://camel.apache.org/manual/type-converter.html">type converter</a> whose from-to type pair
+ * is already registered.
+ * <p/>
+ * This policy is set on the registry via
+ * {@link org.apache.camel.spi.TypeConverterRegistry#setTypeConverterExists(TypeConverterExists)} and determines whether
+ * a duplicate registration replaces the existing converter ({@link #Override}), is silently discarded
+ * ({@link #Ignore}), or raises a hard failure ({@link #Fail}). The default behavior is {@link #Ignore}.
+ *
+ * @see org.apache.camel.spi.TypeConverterRegistry
+ * @see TypeConverter
  */
 @XmlEnum
 public enum TypeConverterExists {

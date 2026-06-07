@@ -19,9 +19,24 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A pluggable strategy to be able to convert objects <a href="https://camel.apache.org/type-converter.html">to
- * different types</a> such as to and from String, InputStream/OutputStream, Reader/Writer, Document, byte[], ByteBuffer
- * etc
+ * Pluggable strategy for converting objects to <a href="https://camel.apache.org/manual/type-converter.html">different
+ * types</a> such as String, InputStream/OutputStream, Reader/Writer, Document, byte[], and ByteBuffer.
+ * <p/>
+ * Type converters are a central part of Camel's integration infrastructure. Whenever Camel reads an {@link Exchange}
+ * body or header and needs it in a different Java type, it delegates to the
+ * {@link org.apache.camel.spi.TypeConverterRegistry} to find an appropriate {@code TypeConverter}. Converters are
+ * discovered automatically at startup by scanning classpath resources for the {@link Converter} annotation, or they can
+ * be registered programmatically via
+ * {@link org.apache.camel.spi.TypeConverterRegistry#addTypeConverter(Class, Class, TypeConverter)}.
+ * <p/>
+ * There are three conversion variants: {@link #convertTo} (returns {@code null} when the conversion is unavailable),
+ * {@link #mandatoryConvertTo} (throws {@link NoTypeConversionAvailableException} when no converter is found), and
+ * {@link #tryConvertTo} (silently returns {@code null} without propagating exceptions).
+ *
+ * @see org.apache.camel.spi.TypeConverterRegistry
+ * @see Converter
+ * @see TypeConversionException
+ * @see NoTypeConversionAvailableException
  */
 public interface TypeConverter {
 
