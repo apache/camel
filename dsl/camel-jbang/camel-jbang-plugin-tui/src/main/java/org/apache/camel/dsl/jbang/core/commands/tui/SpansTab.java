@@ -18,8 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +40,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -45,8 +48,12 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 class SpansTab implements MonitorTab {
+
+    private static final String[] SORT_COLUMNS = { "newest", "duration", "spans", "routes", "status" };
 
     private final MonitorContext ctx;
     private final AtomicReference<List<SpanEntry>> spans;
@@ -59,6 +66,12 @@ class SpansTab implements MonitorTab {
     private int waterfallScroll;
     private int waterfallSelected;
     private boolean showProcessors = true;
+    private String sortColumn = "newest";
+    private int sortIndex;
+    private boolean sortReversed;
+    private boolean filterInputActive;
+    private TextInputState filterInputState = new TextInputState("");
+    private String filterTerm;
 
     boolean spanRefreshRequested;
 
@@ -84,9 +97,12 @@ class SpansTab implements MonitorTab {
         if (waterfallView) {
             return handleWaterfallKeys(ke);
         }
+        if (filterInputActive) {
+            return handleFilterInput(ke);
+        }
         if (ke.isConfirm()) {
             Integer sel = traceListState.selected();
-            List<TraceSummary> summaries = buildTraceSummaries();
+            List<TraceSummary> summaries = buildFilteredTraceSummaries();
             if (sel != null && sel >= 0 && sel < summaries.size()) {
                 selectedTraceId = summaries.get(sel).traceId;
                 waterfallView = true;
@@ -99,7 +115,42 @@ class SpansTab implements MonitorTab {
             spanRefreshRequested = true;
             return true;
         }
+        if (ke.isChar('/')) {
+            filterInputActive = true;
+            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+            return true;
+        }
+        if (ke.isChar('s')) {
+            sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
+            sortColumn = SORT_COLUMNS[sortIndex];
+            sortReversed = false;
+            return true;
+        }
+        if (ke.isChar('S')) {
+            sortReversed = !sortReversed;
+            return true;
+        }
         return false;
+    }
+
+    private boolean handleFilterInput(KeyEvent ke) {
+        if (ke.isKey(KeyCode.ESCAPE)) {
+            filterInputActive = false;
+            return true;
+        }
+        if (ke.isConfirm()) {
+            String text = filterInputState.text().trim();
+            filterTerm = text.isEmpty() ? null : text;
+            filterInputActive = false;
+            traceListState.select(0);
+            return true;
+        }
+        FormHelper.handleTextInput(ke, filterInputState);
+        return true;
+    }
+
+    boolean isFilterInputActive() {
+        return filterInputActive;
     }
 
     private boolean handleWaterfallKeys(KeyEvent ke) {
@@ -140,12 +191,29 @@ class SpansTab implements MonitorTab {
 
     @Override
     public boolean handleEscape() {
+        if (filterInputActive) {
+            filterInputActive = false;
+            return true;
+        }
         if (waterfallView) {
             waterfallView = false;
             selectedTraceId = null;
             return true;
         }
+        if (filterTerm != null) {
+            filterTerm = null;
+            traceListState.select(0);
+            return true;
+        }
         return false;
+    }
+
+    @Override
+    public boolean setFilter(String filter) {
+        filterTerm = (filter != null && !filter.isEmpty()) ? filter : null;
+        filterInputActive = false;
+        traceListState.select(0);
+        return true;
     }
 
     @Override
@@ -191,8 +259,24 @@ class SpansTab implements MonitorTab {
         }
     }
 
+    private List<TraceSummary> buildFilteredTraceSummaries() {
+        List<TraceSummary> all = buildTraceSummaries();
+        if (filterTerm == null) {
+            return all;
+        }
+        String filter = filterTerm.toLowerCase();
+        List<TraceSummary> filtered = new ArrayList<>();
+        for (TraceSummary ts : all) {
+            if (ts.searchText.contains(filter)) {
+                filtered.add(ts);
+            }
+        }
+        return filtered;
+    }
+
     private void renderTraceList(Frame frame, Rect area) {
-        List<TraceSummary> summaries = buildTraceSummaries();
+        List<TraceSummary> allSummaries = buildTraceSummaries();
+        List<TraceSummary> summaries = filterTerm != null ? buildFilteredTraceSummaries() : allSummaries;
 
         List<Row> rows = new ArrayList<>();
         for (TraceSummary ts : summaries) {
@@ -205,26 +289,41 @@ class SpansTab implements MonitorTab {
 
             rows.add(Row.from(
                     Cell.from(shortId(ts.traceId)),
-                    MonitorContext.rightCell(String.valueOf(ts.spanCount), 5),
+                    Cell.from(ts.rootRouteId != null ? ts.rootRouteId : ""),
                     Cell.from(ts.rootName != null ? ts.rootName : "?"),
+                    MonitorContext.rightCell(String.valueOf(ts.spanCount), 5),
+                    MonitorContext.rightCell(String.valueOf(ts.routeCount), 5),
+                    Cell.from(ts.remoteComponents.isEmpty() ? "-" : ts.remoteComponents),
                     Cell.from(Span.styled(ts.hasError ? "ERROR" : "OK", statusStyle)),
                     Cell.from(ts.totalDurationMs + "ms"),
                     MonitorContext.rightCell(String.valueOf(ts.maxDepth), 5)));
         }
 
-        String title = String.format(" OTel Traces — %d traces, %d spans ", summaries.size(), spans.get().size());
+        String title;
+        if (filterTerm != null) {
+            title = String.format(" OTel Traces — %d/%d traces [%s] ",
+                    summaries.size(), allSummaries.size(), filterTerm);
+        } else {
+            title = String.format(" OTel Traces — %d traces, %d spans ", allSummaries.size(), spans.get().size());
+        }
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("TRACE-ID", Style.EMPTY.fg(Color.YELLOW).bold())),
-                        Cell.from(Span.styled("SPANS", Style.EMPTY.fg(Color.YELLOW).bold())),
-                        Cell.from(Span.styled("ROOT", Style.EMPTY.fg(Color.YELLOW).bold())),
-                        Cell.from(Span.styled("STATUS", Style.EMPTY.fg(Color.YELLOW).bold())),
-                        Cell.from(Span.styled("DURATION", Style.EMPTY.fg(Color.YELLOW).bold())),
+                        Cell.from(Span.styled(sortLabel("TRACE-ID", "newest"), sortStyle("newest"))),
+                        Cell.from(Span.styled("ROUTE", Style.EMPTY.fg(Color.YELLOW).bold())),
+                        Cell.from(Span.styled("FROM", Style.EMPTY.fg(Color.YELLOW).bold())),
+                        Cell.from(Span.styled(sortLabel("SPANS", "spans"), sortStyle("spans"))),
+                        Cell.from(Span.styled(sortLabel("ROUTES", "routes"), sortStyle("routes"))),
+                        Cell.from(Span.styled("REMOTE", Style.EMPTY.fg(Color.YELLOW).bold())),
+                        Cell.from(Span.styled(sortLabel("STATUS", "status"), sortStyle("status"))),
+                        Cell.from(Span.styled(sortLabel("DURATION", "duration"), sortStyle("duration"))),
                         Cell.from(Span.styled("DEPTH", Style.EMPTY.fg(Color.YELLOW).bold()))))
                 .widths(
                         Constraint.length(10),
+                        Constraint.length(20),
+                        Constraint.length(20),
                         Constraint.length(7),
+                        Constraint.length(8),
                         Constraint.fill(),
                         Constraint.length(8),
                         Constraint.length(12),
@@ -454,10 +553,21 @@ class SpansTab implements MonitorTab {
             MonitorContext.hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
             MonitorContext.hint(spans, "↑↓", "navigate");
             MonitorContext.hintLast(spans, "PgUp/Dn", "page");
+        } else if (filterInputActive) {
+            spans.add(Span.styled(" /", Style.EMPTY.fg(Color.YELLOW).bold()));
+            spans.add(Span.raw(filterInputState.text() + "█  "));
+            MonitorContext.hint(spans, "Enter", "filter");
+            MonitorContext.hintLast(spans, "Esc", "cancel");
         } else {
-            MonitorContext.hint(spans, "Esc", "back");
+            MonitorContext.hint(spans, "Esc", filterTerm != null ? "clear" : "back");
             MonitorContext.hint(spans, "F5", "refresh");
             MonitorContext.hint(spans, "Enter", "waterfall");
+            if (filterTerm != null) {
+                spans.add(Span.styled("  /", Style.EMPTY.fg(Color.YELLOW).bold()));
+                spans.add(Span.raw("\"" + filterTerm + "\"  "));
+            } else {
+                MonitorContext.hint(spans, "/", "filter");
+            }
             MonitorContext.hintLast(spans, "↑↓", "navigate");
         }
     }
@@ -468,10 +578,9 @@ class SpansTab implements MonitorTab {
 
         for (SpanEntry span : currentSpans) {
             TraceSummary ts = byTrace.computeIfAbsent(span.traceId(), k -> new TraceSummary(k));
-            ts.spanCount++;
             if (span.isRoot()) {
-                ts.rootName = span.name();
-                ts.totalDurationMs = span.durationMs();
+                ts.rootRouteId = span.routeId();
+                ts.rootName = compactUri(span);
             }
             if (span.isError()) {
                 ts.hasError = true;
@@ -483,28 +592,65 @@ class SpansTab implements MonitorTab {
             List<SpanEntry> traceSpans = currentSpans.stream()
                     .filter(s -> s.traceId().equals(ts.traceId))
                     .toList();
-            // Fallback root name: use the earliest span
+            // Fallback root: use the earliest span
             if (ts.rootName == null && !traceSpans.isEmpty()) {
-                ts.rootName = traceSpans.stream()
+                SpanEntry earliest = traceSpans.stream()
                         .min(Comparator.comparingLong(SpanEntry::startEpochNanos))
-                        .map(SpanEntry::name).orElse(null);
+                        .orElse(null);
+                if (earliest != null) {
+                    ts.rootName = compactUri(earliest);
+                    if (ts.rootRouteId == null) {
+                        ts.rootRouteId = earliest.routeId();
+                    }
+                }
             }
-            // Fallback duration: use the longest span
-            if (ts.totalDurationMs == 0) {
-                ts.totalDurationMs = traceSpans.stream()
-                        .mapToLong(SpanEntry::durationMs)
-                        .max().orElse(0);
+            // Compute trace envelope duration (same as waterfall view)
+            long traceStart = Long.MAX_VALUE;
+            long traceEnd = 0;
+            Set<String> routes = new HashSet<>();
+            Set<String> exchangeIds = new HashSet<>();
+            Set<String> remoteSchemes = new LinkedHashSet<>();
+            for (SpanEntry s : traceSpans) {
+                traceStart = Math.min(traceStart, s.startEpochNanos());
+                traceEnd = Math.max(traceEnd, s.endEpochNanos());
+                if (s.routeId() != null) {
+                    routes.add(s.routeId());
+                }
+                if (s.attributes() != null) {
+                    Object eid = s.attributes().get("exchangeId");
+                    if (eid != null) {
+                        exchangeIds.add(eid.toString());
+                    }
+                    Object scheme = s.attributes().get("url.scheme");
+                    if (scheme != null && isRemoteScheme(scheme.toString())) {
+                        remoteSchemes.add(scheme.toString());
+                    }
+                }
             }
-            // Compute max depth from parent-child tree
-            ts.maxDepth = computeMaxDepth(traceSpans);
+            ts.totalDurationMs = traceStart < Long.MAX_VALUE ? (traceEnd - traceStart) / 1_000_000 : 0;
+            ts.routeCount = routes.size();
+            ts.remoteComponents = remoteSchemes.isEmpty() ? "" : String.join(",", remoteSchemes);
+            // Build search text for filtering (traceId, exchangeIds, routes, remote components)
+            StringBuilder sb = new StringBuilder();
+            sb.append(ts.traceId).append(' ');
+            exchangeIds.forEach(e -> sb.append(e).append(' '));
+            routes.forEach(r -> sb.append(r).append(' '));
+            if (!ts.remoteComponents.isEmpty()) {
+                sb.append(ts.remoteComponents);
+            }
+            ts.searchText = sb.toString().toLowerCase();
+            // Count effective spans (exclude EVENT_PROCESS which are collapsed in waterfall)
+            for (SpanEntry s : traceSpans) {
+                if (!isEventProcess(s)) {
+                    ts.spanCount++;
+                }
+            }
+            ts.maxDepth = computeEffectiveDepth(traceSpans);
         }
-        // Newest first (highest startEpochNanos)
-        result.sort(Comparator.comparingLong(ts -> {
-            return -currentSpans.stream()
-                    .filter(s -> s.traceId().equals(ts.traceId))
-                    .mapToLong(SpanEntry::startEpochNanos)
-                    .max().orElse(0);
-        }));
+        result.sort((a, b) -> {
+            int cmp = sortTrace(a, b, currentSpans);
+            return sortReversed ? -cmp : cmp;
+        });
 
         return result;
     }
@@ -624,27 +770,6 @@ class SpansTab implements MonitorTab {
         return span.attributes() != null && "EVENT_PROCESS".equals(span.attributes().get("op"));
     }
 
-    private static int computeMaxDepth(List<SpanEntry> traceSpans) {
-        Map<String, Integer> depthMap = new LinkedHashMap<>();
-        for (SpanEntry s : traceSpans) {
-            if (s.isRoot()) {
-                depthMap.put(s.spanId(), 1);
-            }
-        }
-        boolean changed = true;
-        while (changed) {
-            changed = false;
-            for (SpanEntry s : traceSpans) {
-                if (!depthMap.containsKey(s.spanId()) && s.parentSpanId() != null
-                        && depthMap.containsKey(s.parentSpanId())) {
-                    depthMap.put(s.spanId(), depthMap.get(s.parentSpanId()) + 1);
-                    changed = true;
-                }
-            }
-        }
-        return depthMap.values().stream().mapToInt(Integer::intValue).max().orElse(1);
-    }
-
     private static String spanLabel(SpanEntry span) {
         String name = span.name();
         Map<String, Object> attrs = span.attributes();
@@ -670,6 +795,100 @@ class SpansTab implements MonitorTab {
         return name;
     }
 
+    private int sortTrace(TraceSummary a, TraceSummary b, List<SpanEntry> currentSpans) {
+        return switch (sortColumn) {
+            case "duration" -> Long.compare(b.totalDurationMs, a.totalDurationMs);
+            case "spans" -> Integer.compare(b.spanCount, a.spanCount);
+            case "routes" -> Integer.compare(b.routeCount, a.routeCount);
+            case "status" -> {
+                int as = a.hasError ? 1 : 0;
+                int bs = b.hasError ? 1 : 0;
+                yield Integer.compare(bs, as);
+            }
+            default -> {
+                // newest first
+                long at = currentSpans.stream()
+                        .filter(s -> s.traceId().equals(a.traceId))
+                        .mapToLong(SpanEntry::startEpochNanos).max().orElse(0);
+                long bt = currentSpans.stream()
+                        .filter(s -> s.traceId().equals(b.traceId))
+                        .mapToLong(SpanEntry::startEpochNanos).max().orElse(0);
+                yield Long.compare(bt, at);
+            }
+        };
+    }
+
+    private String compactUri(SpanEntry span) {
+        if (span.attributes() != null) {
+            Object uri = span.attributes().get("camel.uri");
+            if (uri != null) {
+                String s = uri.toString();
+                // strip scheme:// prefix to just scheme:path
+                s = s.replace("://", ":");
+                // strip query parameters
+                int q = s.indexOf('?');
+                if (q > 0) {
+                    s = s.substring(0, q);
+                }
+                return s;
+            }
+        }
+        return span.name();
+    }
+
+    private static boolean isRemoteScheme(String scheme) {
+        return scheme != null
+                && !"direct".equals(scheme) && !"seda".equals(scheme)
+                && !"mock".equals(scheme) && !"log".equals(scheme)
+                && !"bean".equals(scheme) && !"class".equals(scheme);
+    }
+
+    private String sortLabel(String label, String column) {
+        return MonitorContext.sortLabel(label, column, sortColumn, sortReversed);
+    }
+
+    private Style sortStyle(String column) {
+        return MonitorContext.sortStyle(column, sortColumn);
+    }
+
+    private static int computeEffectiveDepth(List<SpanEntry> traceSpans) {
+        // Build parent-child tree excluding EVENT_PROCESS spans
+        Map<String, String> parentMap = new HashMap<>();
+        Set<String> nonProcessIds = new HashSet<>();
+        for (SpanEntry s : traceSpans) {
+            if (!isEventProcess(s)) {
+                nonProcessIds.add(s.spanId());
+                // Walk up to find nearest non-process parent
+                String parentId = s.parentSpanId();
+                while (parentId != null && !nonProcessIds.contains(parentId)) {
+                    String nextParent = null;
+                    for (SpanEntry p : traceSpans) {
+                        if (p.spanId().equals(parentId)) {
+                            nextParent = p.parentSpanId();
+                            break;
+                        }
+                    }
+                    parentId = nextParent;
+                }
+                if (parentId != null) {
+                    parentMap.put(s.spanId(), parentId);
+                }
+            }
+        }
+        // Compute max depth from the effective tree
+        int maxDepth = 0;
+        for (String id : nonProcessIds) {
+            int depth = 0;
+            String cur = id;
+            while (parentMap.containsKey(cur)) {
+                depth++;
+                cur = parentMap.get(cur);
+            }
+            maxDepth = Math.max(maxDepth, depth);
+        }
+        return maxDepth + 1;
+    }
+
     private static String shortId(String id) {
         if (id == null || id.isEmpty()) {
             return "";
@@ -677,13 +896,92 @@ class SpansTab implements MonitorTab {
         return id.length() > 8 ? id.substring(0, 8) : id;
     }
 
+    @Override
+    public String getHelpText() {
+        return """
+                # OTel Spans
+
+                The Spans tab shows OpenTelemetry traces captured from the running
+                integration. Requires the `--observe` flag when starting the integration.
+
+                ## Trace List
+
+                The main view shows a table of traces with:
+
+                - **TRACE-ID** — Short 8-character trace identifier
+                - **ROUTE** — The root route that started the trace
+                - **FROM** — The entry endpoint URI (e.g., timer:orders)
+                - **SPANS** — Total number of spans in the trace
+                - **ROUTES** — Number of distinct routes touched
+                - **REMOTE** — External components used (kafka, http, sql, etc.)
+                - **STATUS** — OK or ERROR
+                - **DURATION** — Total trace duration (wall-clock envelope)
+                - **DEPTH** — Maximum nesting depth of the span tree
+
+                ## Waterfall View
+
+                Press **Enter** on a trace to see the Jaeger-style waterfall showing
+                the span tree with proportional duration bars. Each span shows its
+                route context and duration. Press **Esc** to return to the trace list.
+
+                ## Keyboard Shortcuts
+
+                | Key | Action |
+                |-----|--------|
+                | Enter | Drill into trace waterfall |
+                | Esc | Back to list / clear filter |
+                | / | Open filter input (matches trace ID, exchange ID, route, component) |
+                | s | Cycle sort column (newest, duration, spans, routes, status) |
+                | S | Reverse sort direction |
+                | p | Toggle processor spans in waterfall |
+                | F5 | Refresh span data |
+
+                ## Filtering
+
+                Press `/` to open the filter input. Type a search term and press Enter.
+                Matches against trace ID, exchange ID, route names, and remote component
+                names. For example, type `kafka` to find traces that use Kafka, or paste
+                an exchange ID from a log line to find its trace.
+                """;
+    }
+
+    @Override
+    public JsonObject getTableDataAsJson() {
+        List<TraceSummary> summaries = buildTraceSummaries();
+        JsonObject result = new JsonObject();
+        result.put("tab", "Spans");
+        JsonArray rows = new JsonArray();
+        for (TraceSummary ts : summaries) {
+            JsonObject row = new JsonObject();
+            row.put("traceId", ts.traceId);
+            row.put("route", ts.rootRouteId);
+            row.put("from", ts.rootName);
+            row.put("spans", ts.spanCount);
+            row.put("routes", ts.routeCount);
+            row.put("remote", ts.remoteComponents);
+            row.put("status", ts.hasError ? "ERROR" : "OK");
+            row.put("duration", ts.totalDurationMs);
+            row.put("depth", ts.maxDepth);
+            rows.add(row);
+        }
+        result.put("rows", rows);
+        result.put("totalRows", summaries.size());
+        Integer sel = traceListState.selected();
+        result.put("selectedIndex", sel != null ? sel : -1);
+        return result;
+    }
+
     static class TraceSummary {
         final String traceId;
+        String rootRouteId;
         String rootName;
         int spanCount;
         long totalDurationMs;
         boolean hasError;
         int maxDepth;
+        int routeCount;
+        String remoteComponents;
+        String searchText;
 
         TraceSummary(String traceId) {
             this.traceId = traceId;

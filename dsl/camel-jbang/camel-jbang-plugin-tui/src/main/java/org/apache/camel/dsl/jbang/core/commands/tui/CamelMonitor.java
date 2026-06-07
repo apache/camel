@@ -515,7 +515,9 @@ public class CamelMonitor extends CamelCommand {
         }
         boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
         boolean logSearchActive = tabsState.selected() == TAB_LOG && logTab.isSearchInputActive();
-        boolean textEditing = probeEditing || logSearchActive;
+        boolean spanFilterActive = tabsState.selected() == TAB_MORE && activeMoreTab == spansTab
+                && spansTab.isFilterInputActive();
+        boolean textEditing = probeEditing || logSearchActive || spanFilterActive;
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
             runner.quit();
             return true;
