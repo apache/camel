@@ -485,6 +485,25 @@ extend from:
 - `AbstractHttpSpanDecorator` (returns `CLIENT` for `EVENT_SENT`, `SERVER` for `EVENT_RECEIVED`)
 - `AbstractMessagingSpanDecorator` (returns `PRODUCER` for `EVENT_SENT`, `CONSUMER` for `EVENT_RECEIVED`)
 
+==== Reduced span verbosity for endpoint-sending processors
+
+Processors that send to an endpoint (`to`, `toD`, `wireTap`, `enrich`) no longer emit a redundant
+processor span (`EVENT_PROCESS`) wrapping the endpoint event span (`EVENT_SENT`). Previously these
+EIPs produced two spans in a parent-child relationship — the processor span added no value because
+the event span already captures the destination, timing, and status.
+
+A new `org.apache.camel.EndpointSending` marker interface in `camel-api` identifies processors that
+will produce their own endpoint span via `ExchangeSendingEvent`. The telemetry intercept strategy
+skips creating a processor span for these processors.
+
+This reduces span tree depth and total span count for routes that use `to`, `toD`, `wireTap`, or
+`enrich`. Non-send EIPs (`log`, `bean`, `split`, `aggregate`, etc.) continue to produce processor
+spans as before.
+
+If you have custom telemetry code that relies on the processor span existing as a parent of the
+endpoint span for `to`, `toD`, `wireTap`, or `enrich`, you will need to adjust your span hierarchy
+expectations.
+
 === camel-opentelemetry2
 
 In order to prevent a potential leak when running asynchronous components we need to rethink the implementation details of `camel-opentelemetry2` and remove the  `Scope` wrapping that, when asynchronous, was opening the `Scope` in a thread and closing in another (what we had called "dirty" context). We are now removing this wrapping and moving this part exclusively in the custom Camel `Processors`. Here Camel will take care to open the Opentelemetry scope and close it within the same thread.
