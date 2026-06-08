@@ -59,6 +59,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     private String includePatterns;
     private boolean traceProcessors;
     private boolean disableCoreProcessors;
+    private boolean traceCustomIdOnly;
     private boolean traceHeadersInclusion;
 
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
@@ -125,6 +126,15 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
 
     public void setDisableCoreProcessors(boolean disableCoreProcessors) {
         this.disableCoreProcessors = disableCoreProcessors;
+    }
+
+    @ManagedAttribute
+    public boolean isTraceCustomIdOnly() {
+        return traceCustomIdOnly;
+    }
+
+    public void setTraceCustomIdOnly(boolean traceCustomIdOnly) {
+        this.traceCustomIdOnly = traceCustomIdOnly;
     }
 
     public SpanLifecycleManager getSpanLifecycleManager() {
