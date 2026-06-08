@@ -1842,8 +1842,12 @@ public class CamelMonitor extends CamelCommand {
         List<IntegrationInfo> previous = data.get();
         for (IntegrationInfo prev : previous) {
             if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
-                stoppingPids.remove(prev.pid);
-                vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
+                boolean wasExplicitStop = stoppingPids.remove(prev.pid);
+                if (wasExplicitStop) {
+                    metrics.removeVanished(prev.pid);
+                } else {
+                    vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
+                }
             }
         }
 
