@@ -587,6 +587,32 @@ public class CatalogTools {
                     opt.getGroup())));
         }
 
+        List<FunctionInfo> functions = new ArrayList<>();
+        if (model.getFunctions() != null) {
+            model.getFunctions().stream()
+                    .filter(f -> !f.isDeprecated())
+                    .forEach(fun -> {
+                        List<FunctionParamInfo> params = new ArrayList<>();
+                        if (fun.getParams() != null) {
+                            fun.getParams().forEach(p -> params.add(new FunctionParamInfo(
+                                    p.getName(),
+                                    p.getJavaType(),
+                                    p.isRequired(),
+                                    p.getDefaultValue(),
+                                    p.getDescription())));
+                        }
+                        functions.add(new FunctionInfo(
+                                fun.getName(),
+                                fun.getDisplayName(),
+                                fun.getGroup(),
+                                fun.getJavaType(),
+                                fun.getDescription(),
+                                fun.isOgnl(),
+                                params,
+                                fun.getExamples()));
+                    });
+        }
+
         return new LanguageDetailResult(
                 model.getName(),
                 model.getTitle(),
@@ -598,7 +624,8 @@ public class CatalogTools {
                 model.getArtifactId(),
                 model.getVersion(),
                 model.getModelName(),
-                options);
+                options,
+                functions);
     }
 
     // Result record classes for Jackson serialization
@@ -652,6 +679,14 @@ public class CatalogTools {
 
     public record LanguageDetailResult(String name, String title, String description, String label,
             boolean deprecated, String supportLevel, String groupId, String artifactId,
-            String version, String modelName, List<OptionInfo> options) {
+            String version, String modelName, List<OptionInfo> options, List<FunctionInfo> functions) {
+    }
+
+    public record FunctionInfo(String name, String displayName, String group, String javaType,
+            String description, boolean ognl, List<FunctionParamInfo> params, List<String> examples) {
+    }
+
+    public record FunctionParamInfo(String name, String javaType, boolean required,
+            String defaultValue, String description) {
     }
 }

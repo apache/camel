@@ -83,6 +83,16 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
          */
         private String suffix;
 
+        /**
+         * Structured parameter metadata for the function arguments.
+         */
+        private final List<FunctionParamModel> params = new ArrayList<>();
+
+        /**
+         * Usage examples for documentation and AI tooling.
+         */
+        private final List<String> examples = new ArrayList<>();
+
         public String getConstantName() {
             return constantName;
         }
@@ -115,6 +125,70 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
 
         public void setSuffix(String suffix) {
             this.suffix = suffix;
+        }
+
+        public List<FunctionParamModel> getParams() {
+            return params;
+        }
+
+        public void addParam(FunctionParamModel param) {
+            params.add(param);
+        }
+
+        public List<String> getExamples() {
+            return examples;
+        }
+
+        public void addExample(String example) {
+            examples.add(example);
+        }
+    }
+
+    public static class FunctionParamModel {
+        private String name;
+        private String javaType;
+        private boolean required;
+        private String defaultValue;
+        private String description;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getJavaType() {
+            return javaType;
+        }
+
+        public void setJavaType(String javaType) {
+            this.javaType = javaType;
+        }
+
+        public boolean isRequired() {
+            return required;
+        }
+
+        public void setRequired(boolean required) {
+            this.required = required;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
     }
 
