@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.api.core.AbstractApiService;
 import com.google.api.core.ApiFuture;
@@ -43,11 +44,13 @@ import com.google.pubsub.v1.ReceivedMessage;
 import com.google.pubsub.v1.Subscription;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.component.google.pubsub.consumer.AcknowledgeCompletion;
 import org.apache.camel.component.google.pubsub.consumer.AcknowledgeSync;
 import org.apache.camel.component.google.pubsub.consumer.CamelMessageReceiver;
 import org.apache.camel.component.google.pubsub.consumer.GooglePubsubAcknowledge;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.UnitOfWorkHelper;
@@ -56,12 +59,13 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GooglePubsubConsumer extends DefaultConsumer {
+public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAware {
 
     private final Logger localLog;
 
     private final GooglePubsubEndpoint endpoint;
     private final Processor processor;
+    private final AtomicInteger pendingExchanges = new AtomicInteger();
     private ExecutorService executor;
     private final List<Subscriber> subscribers;
     private final Set<ApiFuture<PullResponse>> pendingSynchronousPullResponses;
@@ -113,6 +117,11 @@ public class GooglePubsubConsumer extends DefaultConsumer {
 
         safeCancelSynchronousPullResponses();
 
+        super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
@@ -122,7 +131,26 @@ public class GooglePubsubConsumer extends DefaultConsumer {
         }
         executor = null;
 
-        super.doStop();
+        super.doShutdown();
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        if (!subscribers.isEmpty()) {
+            subscribers.forEach(AbstractApiService::stopAsync);
+        }
+        safeCancelSynchronousPullResponses();
+        return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return pendingExchanges.get();
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // noop
     }
 
     private void safeCancelSynchronousPullResponses() {
@@ -168,6 +196,14 @@ public class GooglePubsubConsumer extends DefaultConsumer {
 
     public int getResolvedMaxDeliveryAttempts() {
         return resolvedMaxDeliveryAttempts;
+    }
+
+    public void incrementPendingExchanges() {
+        pendingExchanges.incrementAndGet();
+    }
+
+    public void decrementPendingExchanges() {
+        pendingExchanges.decrementAndGet();
     }
 
     private class SubscriberWrapper implements Runnable {
@@ -333,24 +369,30 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                             exchange.getIn().setHeader(pubSubHeader, value);
                         }
 
+                        pendingExchanges.incrementAndGet();
                         try {
-                            processor.process(exchange);
-                        } catch (Exception e) {
-                            exchange.setException(e);
-                        }
+                            try {
+                                processor.process(exchange);
+                            } catch (Exception e) {
+                                exchange.setException(e);
+                            }
 
-                        // Handle exception if one occurred
-                        if (exchange.getException() != null) {
-                            getExceptionHandler().handleException("Error processing exchange", exchange,
-                                    exchange.getException());
-                        }
+                            // Handle exception if one occurred
+                            if (exchange.getException() != null) {
+                                getExceptionHandler().handleException("Error processing exchange", exchange,
+                                        exchange.getException());
+                            }
 
-                        // Execute synchronization callbacks (ACK/NACK) based on exchange status
-                        // This is required because we are directly calling processor.process() outside of the normal
-                        // Camel routing engine, so we must manually trigger the OnCompletion callbacks
-                        if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
-                            List<Synchronization> synchronizations = exchange.getExchangeExtension().handoverCompletions();
-                            UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
+                            // Execute synchronization callbacks (ACK/NACK) based on exchange status
+                            // This is required because we are directly calling processor.process() outside of the normal
+                            // Camel routing engine, so we must manually trigger the OnCompletion callbacks
+                            if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
+                                List<Synchronization> synchronizations
+                                        = exchange.getExchangeExtension().handoverCompletions();
+                                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
+                            }
+                        } finally {
+                            pendingExchanges.decrementAndGet();
                         }
                     }
                 } catch (CancellationException e) {

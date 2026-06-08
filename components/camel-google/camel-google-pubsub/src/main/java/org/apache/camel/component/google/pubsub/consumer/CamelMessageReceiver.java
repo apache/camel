@@ -101,23 +101,29 @@ public class CamelMessageReceiver implements MessageReceiver {
             exchange.getIn().setHeader(pubSubHeader, value);
         }
 
+        consumer.incrementPendingExchanges();
         try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
 
-        // Handle exception if one occurred
-        if (exchange.getException() != null) {
-            consumer.getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-        }
+            // Handle exception if one occurred
+            if (exchange.getException() != null) {
+                consumer.getExceptionHandler().handleException("Error processing exchange", exchange,
+                        exchange.getException());
+            }
 
-        // Execute synchronization callbacks (ACK/NACK) based on exchange status
-        // This is required because we are directly calling processor.process() outside of the normal
-        // Camel routing engine, so we must manually trigger the OnCompletion callbacks
-        if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
-            List<Synchronization> synchronizations = exchange.getExchangeExtension().handoverCompletions();
-            UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
+            // Execute synchronization callbacks (ACK/NACK) based on exchange status
+            // This is required because we are directly calling processor.process() outside of the normal
+            // Camel routing engine, so we must manually trigger the OnCompletion callbacks
+            if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
+                List<Synchronization> synchronizations = exchange.getExchangeExtension().handoverCompletions();
+                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
+            }
+        } finally {
+            consumer.decrementPendingExchanges();
         }
     }
 

@@ -28,7 +28,9 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
@@ -37,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_SIZE;
 import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_TIMEOUT;
 
-public class EventHubsConsumer extends DefaultConsumer {
+public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHubsConsumer.class);
 
@@ -45,6 +47,7 @@ public class EventHubsConsumer extends DefaultConsumer {
     private EventProcessorClient processorClient;
 
     private final AtomicInteger processedEvents;
+    private final AtomicInteger pendingExchanges = new AtomicInteger();
     private ScheduledExecutorService scheduledExecutorService;
     private ScheduledFuture<?> lastScheduledTask;
     private EventHubsCheckpointUpdaterTask lastTask;
@@ -74,19 +77,44 @@ public class EventHubsConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         if (processorClient != null) {
-            // shutdown the client
+            // stop accepting new messages but keep the connection open
+            // so that in-flight exchanges can still complete
             processorClient.stop();
-            processorClient = null;
         }
 
-        // shutdown scheduled executor
+        // shutdown camel consumer
+        super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        processorClient = null;
+
+        // shutdown scheduled executor after all in-flight exchanges have completed
         if (scheduledExecutorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(scheduledExecutorService);
             scheduledExecutorService = null;
         }
 
-        // shutdown camel consumer
-        super.doStop();
+        super.doShutdown();
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        if (processorClient != null) {
+            processorClient.stop();
+        }
+        return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return pendingExchanges.get();
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // noop
     }
 
     public EventHubsConfiguration getConfiguration() {
@@ -133,20 +161,30 @@ public class EventHubsConsumer extends DefaultConsumer {
     }
 
     private void onEventListener(final EventContext eventContext) {
+        pendingExchanges.incrementAndGet();
+
         final Exchange exchange = createAzureEventHubExchange(eventContext);
 
         // add exchange callback
         exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
             @Override
             public void onComplete(Exchange exchange) {
-                // we update the consumer offsets
-                processCommit(exchange, eventContext);
+                try {
+                    // we update the consumer offsets
+                    processCommit(exchange, eventContext);
+                } finally {
+                    pendingExchanges.decrementAndGet();
+                }
             }
 
             @Override
             public void onFailure(Exchange exchange) {
-                // we do nothing here
-                processRollback(exchange);
+                try {
+                    // we do nothing here
+                    processRollback(exchange);
+                } finally {
+                    pendingExchanges.decrementAndGet();
+                }
             }
         });
         // use default consumer callback
