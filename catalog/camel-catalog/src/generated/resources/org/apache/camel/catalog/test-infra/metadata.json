@@ -407,7 +407,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-neo4j",
   "version" : "4.21.0-SNAPSHOT",
-  "serviceVersion" : "2026.04-community-ubi10"
+  "serviceVersion" : "2026.05-community-ubi10"
 }, {
   "service" : "org.apache.camel.test.infra.rocketmq.services.RocketMQInfraService",
   "description" : "Apache RocketMQ is a distributed messaging and streaming platform",
