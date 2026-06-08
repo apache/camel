@@ -101,6 +101,10 @@ public final class MainSupportModelConfigurer {
                 id = "route";
                 key = key.substring(6);
                 key = StringHelper.replaceFirst(key, ".", ":");
+            } else if (key.startsWith("group.")) {
+                id = "group";
+                key = key.substring(6);
+                key = StringHelper.replaceFirst(key, ".", ":");
             } else if (key.startsWith("global.")) {
                 id = "global";
                 key = key.substring(7);
