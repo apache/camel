@@ -21,8 +21,14 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 
 /**
- * Discovers which components are available on the classpath.
+ * Discovers the names of all {@link org.apache.camel.Component} implementations available on the classpath at runtime.
+ * <p/>
+ * The default implementation reads {@code META-INF/services/org/apache/camel/component/} resource entries to enumerate
+ * registered component names without instantiating them. This list is used by Camel tooling features such as
+ * auto-completion in the <a href="https://camel.apache.org/manual/camel-jbang.html">Camel JBang</a> CLI and the catalog
+ * to answer questions like "which components are installed?" without triggering lazy component loading.
  *
+ * @see   ComponentResolver
  * @since 3.2
  */
 public interface ComponentNameResolver {

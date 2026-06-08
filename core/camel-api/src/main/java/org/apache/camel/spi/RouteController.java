@@ -26,7 +26,22 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.StaticService;
 
 /**
- * Controller for managing the lifecycle of all the {@link Route}'s.
+ * Central SPI for managing the start, stop, suspend, resume, and reload lifecycle of all {@link Route}s in a
+ * {@link org.apache.camel.CamelContext}, as described in the
+ * <a href="https://camel.apache.org/manual/route-controller.html">Route Controller</a> documentation.
+ * <p/>
+ * The default implementation starts and stops routes synchronously in the order determined by each route's
+ * {@code startupOrder} attribute and delegates graceful stopping to the {@link ShutdownStrategy}. A more capable
+ * variant, {@link SupervisingRouteController}, can be enabled via {@link #supervising()} to add asynchronous startup
+ * and exponential-backoff retry for routes that fail to start.
+ * <p/>
+ * End users interact with routes via {@link org.apache.camel.CamelContext#getRouteController()} rather than this
+ * interface directly. Implementors providing a custom controller should also implement
+ * {@link org.apache.camel.CamelContextAware} and register it before the context starts.
+ *
+ * @see SupervisingRouteController
+ * @see ShutdownStrategy
+ * @see RouteStartupOrder
  */
 public interface RouteController extends CamelContextAware, StaticService {
 

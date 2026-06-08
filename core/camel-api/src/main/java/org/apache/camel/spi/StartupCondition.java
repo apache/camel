@@ -20,10 +20,15 @@ import org.apache.camel.CamelContext;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Pluggable condition that must be accepted before Camel can continue starting up.
- *
- * This can be used to let Camel wait for a specific file to be present, an environment-variable, or some other custom
- * conditions.
+ * Pluggable gate evaluated repeatedly before {@link org.apache.camel.CamelContext} finishes starting, allowing startup
+ * to be paused until an external prerequisite is satisfied.
+ * <p/>
+ * Camel polls each registered {@code StartupCondition} during the startup sequence. If {@link #canContinue} returns
+ * {@code false}, startup waits and retries. If the condition is never satisfied within the configured timeout the
+ * context aborts startup. Multiple conditions can be registered; all must be satisfied for startup to proceed.
+ * <p/>
+ * Typical use cases include waiting for a readiness probe to pass, a required file or directory to appear, an
+ * environment variable to be set, or a remote service to become reachable.
  *
  * @since 4.9
  */
