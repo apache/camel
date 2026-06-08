@@ -677,13 +677,8 @@ class SpansTab implements MonitorTab {
                 sb.append(ts.remoteComponents);
             }
             ts.searchText = sb.toString().toLowerCase();
-            // Count effective spans (exclude EVENT_PROCESS which are collapsed in waterfall)
-            for (SpanEntry s : traceSpans) {
-                if (!isEventProcess(s)) {
-                    ts.spanCount++;
-                }
-            }
-            ts.maxDepth = computeEffectiveDepth(traceSpans);
+            ts.spanCount = traceSpans.size();
+            ts.maxDepth = computeMaxDepth(traceSpans);
         }
         result.sort((a, b) -> {
             int cmp = sortTrace(a, b, currentSpans);
@@ -767,14 +762,6 @@ class SpansTab implements MonitorTab {
         if (isEventSent(span) && !span.isError() && children != null && children.size() == 1
                 && isEventReceived(children.get(0))
                 && span.name().equals(children.get(0).name())) {
-            addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
-            return;
-        }
-        // Collapse processor+send pairs:
-        // When an EVENT_PROCESS span (e.g. to4-to) has a single EVENT_SENT child,
-        // skip the processor wrapper and show only the send span.
-        if (isEventProcess(span) && !span.isError() && children != null && children.size() == 1
-                && isEventSent(children.get(0))) {
             addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
             return;
         }
@@ -904,35 +891,17 @@ class SpansTab implements MonitorTab {
         return Style.EMPTY.fg(Color.YELLOW).bold();
     }
 
-    private static int computeEffectiveDepth(List<SpanEntry> traceSpans) {
-        // Build parent-child tree excluding EVENT_PROCESS spans
+    private static int computeMaxDepth(List<SpanEntry> traceSpans) {
         Map<String, String> parentMap = new HashMap<>();
-        Set<String> nonProcessIds = new HashSet<>();
         for (SpanEntry s : traceSpans) {
-            if (!isEventProcess(s)) {
-                nonProcessIds.add(s.spanId());
-                // Walk up to find nearest non-process parent
-                String parentId = s.parentSpanId();
-                while (parentId != null && !nonProcessIds.contains(parentId)) {
-                    String nextParent = null;
-                    for (SpanEntry p : traceSpans) {
-                        if (p.spanId().equals(parentId)) {
-                            nextParent = p.parentSpanId();
-                            break;
-                        }
-                    }
-                    parentId = nextParent;
-                }
-                if (parentId != null) {
-                    parentMap.put(s.spanId(), parentId);
-                }
+            if (s.parentSpanId() != null && !s.parentSpanId().isEmpty()) {
+                parentMap.put(s.spanId(), s.parentSpanId());
             }
         }
-        // Compute max depth from the effective tree
         int maxDepth = 0;
-        for (String id : nonProcessIds) {
+        for (SpanEntry s : traceSpans) {
             int depth = 0;
-            String cur = id;
+            String cur = s.spanId();
             while (parentMap.containsKey(cur)) {
                 depth++;
                 cur = parentMap.get(cur);
