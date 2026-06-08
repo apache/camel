@@ -389,6 +389,17 @@ sjms:queue:foo?objectMessageEnabled=true
 sjms2:queue:foo?objectMessageEnabled=true
 ----
 
+=== camel-redis
+
+The `RedisAggregationRepository` now uses per-key distributed locks instead of a single global lock.
+Previously, all pessimistic aggregation operations serialized on a single Redis lock named `"aggregationLock"`.
+The lock key is now `<mapName>-lock-<correlationKey>`, so operations on unrelated correlation keys no longer
+block each other. Existing deployments that inspect Redis lock keys will see different key names after upgrading.
+
+The `remove()` method now throws `RuntimeCamelException` instead of `RuntimeException` when a transaction
+rollback occurs. Routes that catch `RuntimeException` explicitly are unaffected, but routes that catch
+`RuntimeCamelException` specifically will now also catch this failure path.
+
 === camel-hazelcast
 
 Hazelcast instances created and managed by Camel (when no user-supplied
