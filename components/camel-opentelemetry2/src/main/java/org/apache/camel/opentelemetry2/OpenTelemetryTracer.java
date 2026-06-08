@@ -16,6 +16,7 @@
  */
 package org.apache.camel.opentelemetry2;
 
+import java.lang.management.ManagementFactory;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.annotations.JdkService;
@@ -91,6 +93,11 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
     }
 
     private void initDevSpanExporter() {
+        if (isOpenTelemetryAgentPresent()) {
+            LOG.info("OpenTelemetry Java Agent detected, using agent's tracer for proper trace context propagation");
+            initOtlpReceiver();
+            return;
+        }
         DevSpanExporter exporter = new DevSpanExporter();
         SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
                 .addSpanProcessor(SimpleSpanProcessor.create(exporter))
@@ -99,10 +106,35 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
                 .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
                 .setTracerProvider(tracerProvider)
                 .build();
+        GlobalOpenTelemetry.set(devSdk);
         this.tracer = devSdk.getTracer("camel");
         this.contextPropagators = devSdk.getPropagators();
         getCamelContext().getRegistry().bind("DevSpanExporter", exporter);
         LOG.info("OpenTelemetry in-memory span exporter enabled (dev profile)");
+    }
+
+    private void initOtlpReceiver() {
+        DevSpanExporter exporter = new DevSpanExporter();
+        getCamelContext().getRegistry().bind("DevSpanExporter", exporter);
+
+        try {
+            getCamelContext().addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/v1/traces?httpMethodRestrict=POST")
+                            .routeId("otlp-receiver")
+                            .process(new OtlpReceiverProcessor(exporter));
+                }
+            });
+            LOG.info("Embedded OTLP receiver enabled on /v1/traces for Java Agent span collection");
+        } catch (Exception e) {
+            LOG.warn("Failed to start embedded OTLP receiver: {}", e.getMessage());
+        }
+    }
+
+    private boolean isOpenTelemetryAgentPresent() {
+        return ManagementFactory.getRuntimeMXBean().getInputArguments().stream()
+                .anyMatch(arg -> arg.startsWith("-javaagent") && arg.contains("opentelemetry"));
     }
 
     void setTracer(Tracer tracer) {

@@ -89,6 +89,47 @@ NOTE: The in-memory exporter is only activated when the Camel profile is `dev` a
 OTel `Tracer` bean is registered. For production deployments, configure a proper span exporter
 (OTLP, Jaeger, Zipkin, etc.).
 
+=== Camel JBang with OpenTelemetry Java Agent
+
+When running with Camel JBang, you can use the `--open-telemetry-agent` flag to automatically attach the
+https://opentelemetry.io/docs/zero-code/java/agent/[OpenTelemetry Java Agent] to your application.
+This provides deep instrumentation beyond Camel routes, including JVM metrics, HTTP clients, database
+drivers, and other libraries — all with zero configuration and no external collector required.
+
+[source,bash]
+----
+camel run my-route.yaml --open-telemetry-agent
+----
+
+This single flag handles the entire setup:
+
+- Downloads and attaches the OpenTelemetry Java Agent to the JVM
+- Adds `camel-opentelemetry2` and `camel-platform-http-main` as dependencies
+- Starts an embedded OTLP receiver on the Vert.x HTTP server (at `/v1/traces`)
+- Configures the agent to export traces to the embedded receiver
+- Starts an HTTP server on port 8080 (if not already specified)
+
+The agent sends protobuf-encoded spans to the embedded OTLP receiver, which parses them and feeds
+them into the in-memory `DevSpanExporter`. The captured spans are then visible in the Camel TUI
+under the OTel Spans tab, or through the dev console.
+
+==== When to use `--open-telemetry-agent` vs `--observe`
+
+Both flags enable tracing during development, but they cover different scopes:
+
+[width="100%",cols="30%,35%,35%",options="header"]
+|=======================================================================
+| | `--observe` | `--open-telemetry-agent`
+| *Instrumentation* | Camel routes only | Camel routes + JVM, HTTP clients, databases, messaging, and other libraries
+| *Setup* | Built-in SDK | Downloads OTel Java Agent
+| *Collector* | Not needed | Not needed (embedded OTLP receiver)
+| *Use case* | Quick Camel route debugging | Full-stack observability during development
+|=======================================================================
+
+NOTE: The embedded OTLP receiver is only activated in `dev` profile mode and is intended for local
+development. For production deployments, configure the OpenTelemetry Java Agent to export to an
+external collector such as Jaeger or an OpenTelemetry Collector.
+
 [[OpenTelemetry-JavaAgent]]
 === Using the OpenTelemetry Java Agent
 
