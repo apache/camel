@@ -67,6 +67,7 @@ class SpansTab implements MonitorTab {
     private int waterfallScroll;
     private int waterfallSelected;
     private boolean showProcessors = true;
+    private boolean camelOnly;
     private String sortColumn = "trace-id";
     private int sortIndex;
     private boolean sortReversed;
@@ -180,6 +181,12 @@ class SpansTab implements MonitorTab {
         }
         if (ke.isChar('p')) {
             showProcessors = !showProcessors;
+            waterfallSelected = 0;
+            waterfallScroll = 0;
+            return true;
+        }
+        if (ke.isChar('c')) {
+            camelOnly = !camelOnly;
             waterfallSelected = 0;
             waterfallScroll = 0;
             return true;
@@ -596,6 +603,7 @@ class SpansTab implements MonitorTab {
         if (waterfallView) {
             MonitorContext.hint(spans, "Esc", "back");
             MonitorContext.hint(spans, "F5", "refresh");
+            MonitorContext.hint(spans, "c", camelOnly ? "camel-only [on]" : "camel-only [off]");
             MonitorContext.hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
             MonitorContext.hint(spans, "↑↓", "navigate");
             MonitorContext.hintLast(spans, "PgUp/Dn", "page");
@@ -771,6 +779,15 @@ class SpansTab implements MonitorTab {
                 && isEventReceived(children.get(0))
                 && span.name().equals(children.get(0).name())) {
             addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
+            return;
+        }
+        // Hide 3rd-party agent spans when camelOnly is on — promote children to same depth
+        if (camelOnly && !span.isError() && !span.isCamelSpan()) {
+            if (children != null) {
+                for (SpanEntry child : children) {
+                    addToWaterfall(result, child, childrenMap, depth, included, spanIdToDepth);
+                }
+            }
             return;
         }
         // Hide processor spans when toggle is off — promote children to same depth
@@ -1009,6 +1026,7 @@ class SpansTab implements MonitorTab {
                 | s | Cycle sort column (trace-id, route, from, spans, routes, status, duration) |
                 | S | Reverse sort direction |
                 | p | Toggle processor spans in waterfall |
+                | c | Toggle camel-only (hide 3rd-party agent spans) |
                 | F5 | Refresh span data |
 
                 ## Filtering
