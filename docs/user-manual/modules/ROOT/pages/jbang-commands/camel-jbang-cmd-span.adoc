@@ -19,10 +19,12 @@ camel cmd span [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
-| `--filter` | Filter spans by name (substring match) |  | String
-| `--limit` | Maximum number of spans to display | 100 | int
+| `--filter` | Filter by trace ID, route, component, or exchange ID (substring match) |  | String
+| `--flat` | Show flat list of individual spans instead of grouped traces |  | boolean
+| `--limit` | Maximum number of spans to display | 500 | int
 | `--logging-color` | Use colored logging | true | boolean
-| `--sort` | Sort by name, duration, or status |  | String
+| `--sort` | Sort by trace, route, from, spans, routes, status, or duration |  | String
+| `--trace` | Show waterfall view for a specific trace ID (substring match) |  | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 
