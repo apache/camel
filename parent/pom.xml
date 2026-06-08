@@ -461,7 +461,7 @@
         <rome-version>2.1.0</rome-version>
         <rssreader-version>3.12.0</rssreader-version>
         <rxjava2-version>2.2.21</rxjava2-version>
-        <saaj-impl-version>3.0.5</saaj-impl-version>
+        <saaj-impl-version>3.0.6</saaj-impl-version>
         <saxon-version>13.0</saxon-version>
         <scala-datasonnet-version>2.13.18</scala-datasonnet-version>
         <shiro-version>2.1.0</shiro-version>
