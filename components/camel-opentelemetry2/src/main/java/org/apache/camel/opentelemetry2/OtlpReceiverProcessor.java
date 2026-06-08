@@ -48,6 +48,10 @@ final class OtlpReceiverProcessor implements Processor {
 
         try {
             List<SpanData> spans = OtlpProtobufSpanData.fromProtobuf(body);
+            // filter out spans for the OTLP receiver itself to avoid self-tracing noise
+            spans = spans.stream()
+                    .filter(s -> !s.getName().contains("/v1/traces"))
+                    .toList();
             if (!spans.isEmpty()) {
                 exporter.export(spans);
                 if (LOG.isTraceEnabled()) {
