@@ -3127,6 +3127,30 @@ public interface KeycloakEndpointBuilderFactory {
             return "CamelKeycloakAccessToken";
         }
         /**
+         * The token for revocation or introspection.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakToken}.
+         */
+        public String keycloakToken() {
+            return "CamelKeycloakToken";
+        }
+        /**
+         * The token type hint for revocation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakTokenTypeHint}.
+         */
+        public String keycloakTokenTypeHint() {
+            return "CamelKeycloakTokenTypeHint";
+        }
+        /**
          * Comma-separated list of resource names or IDs to evaluate permissions
          * for.
          * 
