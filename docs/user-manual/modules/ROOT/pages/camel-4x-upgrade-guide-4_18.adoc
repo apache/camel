@@ -751,6 +751,9 @@ The Exchange header constants in `Web3jConstants` have been renamed to follow th
 Camel naming convention used across the rest of the component catalog. The Java
 field names are unchanged; only the header string values have changed:
 
+[options="header"]
+|===
+| Constant | Previous value | New value
 | `Web3jConstants.ID` | `ID` | `CamelWeb3jId`
 | `Web3jConstants.OPERATION` | `OPERATION` | `CamelWeb3jOperation`
 | `Web3jConstants.AT_BLOCK` | `AT_BLOCK` | `CamelWeb3jAtBlock`
