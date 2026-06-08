@@ -117,6 +117,25 @@ public interface Langchain4jAgentComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * JSON schema for structured output validation. This option works only
+         * when using agentConfiguration (inline agent creation mode).
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param jsonSchema the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder jsonSchema(java.lang.String jsonSchema) {
+            doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+    
         
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -243,6 +262,7 @@ public interface Langchain4jAgentComponentBuilderFactory {
             case "agentConfiguration": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentConfiguration((org.apache.camel.component.langchain4j.agent.api.AgentConfiguration) value); return true;
             case "agentFactory": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentFactory((org.apache.camel.component.langchain4j.agent.api.AgentFactory) value); return true;
             case "configuration": ((LangChain4jAgentComponent) component).setConfiguration((org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) value); return true;
+            case "jsonSchema": getOrCreateConfiguration((LangChain4jAgentComponent) component).setJsonSchema((java.lang.String) value); return true;
             case "lazyStartProducer": ((LangChain4jAgentComponent) component).setLazyStartProducer((boolean) value); return true;
             case "tags": getOrCreateConfiguration((LangChain4jAgentComponent) component).setTags((java.lang.String) value); return true;
             case "autowiredEnabled": ((LangChain4jAgentComponent) component).setAutowiredEnabled((boolean) value); return true;

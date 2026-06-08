@@ -56,6 +56,12 @@ public class LangChain4jAgentConfiguration implements Cloneable {
               label = "advanced")
     private List<McpClient> mcpClients;
 
+    @UriParam
+    @Metadata(description = "JSON schema for structured output validation. "
+                            + "This option works only when using agentConfiguration (inline agent creation mode).",
+              supportFileReference = true, largeInput = true, inputLanguage = "json")
+    private String jsonSchema;
+
     @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
                             + " Supported properties: transportType (stdio, http, streamableHttp, or sse, default: stdio),"
                             + " command (comma-separated, for stdio), url (for http/sse),"
@@ -160,5 +166,18 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setMcpServer(Map<String, Object> mcpServer) {
         this.mcpServer = mcpServer;
+    }
+
+    /**
+     * JSON schema for structured output validation
+     *
+     * @return the JSON schema string or resource reference
+     */
+    public String getJsonSchema() {
+        return jsonSchema;
+    }
+
+    public void setJsonSchema(String jsonSchema) {
+        this.jsonSchema = jsonSchema;
     }
 }

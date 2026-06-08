@@ -143,6 +143,24 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
+         * JSON schema for structured output validation. This option works only
+         * when using agentConfiguration (inline agent creation mode).
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param jsonSchema the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder jsonSchema(String jsonSchema) {
+            doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
          * Tags for discovering and calling Camel route tools.
          * 
          * The option is a: <code>java.lang.String</code> type.

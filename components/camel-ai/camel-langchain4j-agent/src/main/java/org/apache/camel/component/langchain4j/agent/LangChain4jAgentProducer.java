@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.langchain4j.agent;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,12 +27,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.mcp.client.McpClient;
+import dev.langchain4j.model.chat.request.ResponseFormat;
+import dev.langchain4j.model.chat.request.ResponseFormatType;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
+import dev.langchain4j.model.chat.request.json.JsonRawSchema;
+import dev.langchain4j.model.chat.request.json.JsonSchema;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.langchain4j.agent.api.AbstractAgent;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
@@ -42,6 +49,7 @@ import org.apache.camel.component.langchain4j.agent.api.Headers;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +79,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             agent = agentConfiguration.getChatMemoryProvider() != null
                     ? new AgentWithMemory(agentConfiguration)
                     : new AgentWithoutMemory(agentConfiguration);
+            // Apply jsonSchema only when Camel creates the agent internally — we cannot modify user-provided agents
+            resolveAndApplyJsonSchema();
         } else {
             agent = endpoint.getCamelContext().getRegistry().lookupByNameAndType(endpoint.getAgentId(), Agent.class);
         }
@@ -292,6 +302,71 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         LOG.info("Discovered {} unique tools for tags: {}", toolsByName.size(), tags);
         return toolsByName;
+    }
+
+    /**
+     * Resolves the jsonSchema endpoint property: loads from classpath/filesystem if it is a resource URI, otherwise
+     * treats it as inline JSON. Converts the raw JSON string into a langchain4j ResponseFormat and sets it on the
+     * agent. Only called when the agent is created internally from agentConfiguration.
+     */
+    private void resolveAndApplyJsonSchema() throws Exception {
+        String jsonSchema = endpoint.getConfiguration().getJsonSchema();
+        if (ObjectHelper.isEmpty(jsonSchema)) {
+            return;
+        }
+
+        String resolved = endpoint.getCamelContext().resolvePropertyPlaceholders(jsonSchema);
+
+        String content = resolveResourceContent(resolved);
+        if (content != null) {
+            resolved = content;
+        }
+
+        // Validates that resolved is valid JSON (whether loaded from a resource or used as inline content)
+        try {
+            objectMapper.readTree(resolved);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "jsonSchema endpoint property does not contain valid JSON. Provided value: " + jsonSchema, e);
+        }
+        JsonRawSchema jsonRawSchema = JsonRawSchema.from(resolved);
+        // Use a fixed name consistent with camel-openai for cross-component portability
+        ResponseFormat responseFormat = ResponseFormat.builder()
+                .type(ResponseFormatType.JSON)
+                .jsonSchema(JsonSchema.builder()
+                        .name("camel_schema")
+                        .rootElement(jsonRawSchema)
+                        .build())
+                .build();
+
+        ((AbstractAgent<?>) agent).setResponseFormat(responseFormat);
+    }
+
+    /**
+     * Tries to load {@code property} as a Camel resource and return its content as a String.
+     * <p>
+     * If {@code property} has an explicit scheme (e.g. {@code classpath:}, {@code file:}), the resource must exist — a
+     * missing resource throws {@link java.io.FileNotFoundException}.
+     * <p>
+     * If there is no scheme, classpath resolution is attempted. Returns {@code null} on failure, signalling the caller
+     * to use {@code property} as-is (inline JSON).
+     */
+    private String resolveResourceContent(String property) throws IOException {
+        if (ResourceHelper.hasScheme(property)) {
+            // Explicit scheme: mandatory load — throws FileNotFoundException if the resource does not exist
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), property)) {
+                return endpoint.getCamelContext().getTypeConverter().convertTo(String.class, is);
+            }
+        }
+        // No scheme: try implicit classpath resolution — fall through and treat as inline JSON content if not found
+        try (InputStream is = ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(), property)) {
+            if (is != null) {
+                return endpoint.getCamelContext().getTypeConverter().convertTo(String.class, is);
+            }
+        } catch (Exception e) {
+            // not a resolvable resource URI — fall through and treat as inline JSON content
+        }
+        return null;
     }
 
     @Override

@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.langchain4j.mcp.McpToolProvider;
+import dev.langchain4j.model.chat.request.ChatRequestParameters;
+import dev.langchain4j.model.chat.request.DefaultChatRequestParameters;
+import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
 import org.apache.camel.util.ObjectHelper;
@@ -45,6 +48,7 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class AbstractAgent<S> implements Agent {
 
     protected final AgentConfiguration configuration;
+    private ResponseFormat responseFormat;
 
     protected AbstractAgent(AgentConfiguration configuration) {
         this.configuration = configuration;
@@ -57,6 +61,24 @@ public abstract class AbstractAgent<S> implements Agent {
      */
     protected AgentConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Gets the response format for structured output.
+     *
+     * @return the response format, or {@code null} if not configured
+     */
+    public ResponseFormat getResponseFormat() {
+        return responseFormat;
+    }
+
+    /**
+     * Sets the response format for structured output (JSON schema).
+     *
+     * @param responseFormat the langchain4j response format to apply to AI service requests
+     */
+    public void setResponseFormat(ResponseFormat responseFormat) {
+        this.responseFormat = responseFormat;
     }
 
     /**
@@ -124,6 +146,20 @@ public abstract class AbstractAgent<S> implements Agent {
         // Output Guardrails
         if (configuration.getOutputGuardrailClasses() != null && !configuration.getOutputGuardrailClasses().isEmpty()) {
             builder.outputGuardrailClasses((List) configuration.getOutputGuardrailClasses());
+        }
+
+        // Response Format (structured output / JSON schema)
+        // Temporary fix: see https://issues.apache.org/jira/browse/CAMEL-23695
+        if (responseFormat != null) {
+            ResponseFormat format = responseFormat;
+            builder.chatRequestTransformer(req -> {
+                ChatRequestParameters existing = req.parameters();
+                ChatRequestParameters withFormat = existing != null
+                        ? existing.overrideWith(
+                                DefaultChatRequestParameters.builder().responseFormat(format).build())
+                        : DefaultChatRequestParameters.builder().responseFormat(format).build();
+                return req.toBuilder().parameters(withFormat).build();
+            });
         }
     }
 }

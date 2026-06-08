@@ -38,6 +38,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class, value)); return true;
+        case "jsonschema":
+        case "jsonSchema": getOrCreateConfiguration(target).setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mcpclients":
@@ -65,6 +67,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class;
+        case "jsonschema":
+        case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "mcpclients":
@@ -88,6 +92,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "jsonschema":
+        case "jsonSchema": return getOrCreateConfiguration(target).getJsonSchema();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mcpclients":

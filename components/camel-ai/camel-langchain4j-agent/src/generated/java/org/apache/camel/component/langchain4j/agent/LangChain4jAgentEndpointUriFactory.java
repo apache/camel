@@ -24,11 +24,12 @@ public class LangChain4jAgentEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(9);
         props.add("agent");
         props.add("agentConfiguration");
         props.add("agentFactory");
         props.add("agentId");
+        props.add("jsonSchema");
         props.add("lazyStartProducer");
         props.add("mcpClients");
         props.add("mcpServer");
