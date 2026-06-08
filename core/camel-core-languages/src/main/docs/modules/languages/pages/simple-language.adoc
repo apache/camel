@@ -305,6 +305,33 @@ For example `${length('Hello World')}` returns `11`. For larger payloads, then w
 the length is pre-computed and usually does not require to load the content into memory.
 
 The `throwException` function is used for throwing an exception.
+For example `${throwException('Invalid order')}` throws an `IllegalArgumentException` with the given message.
+You can also specify the exception type: `${throwException('Not found',java.io.FileNotFoundException)}`.
+
+The `exchangeId` function returns the unique identifier of the current exchange.
+This is commonly used for correlation in log messages: `${exchangeId}` returns a value like `ID-myhost-1234-1234567890-0-1`.
+
+The `routeId` function returns the id of the route currently processing the exchange.
+For example `${routeId}` returns `myRoute` when the exchange is inside a route with `routeId("myRoute")`.
+The `fromRouteId` function returns the route id where the exchange was _originally created_, which can differ from `routeId`
+when the exchange has been forwarded to another route via `direct` or `seda`.
+
+The `exception.message` function is commonly used in error handling to get the exception message.
+For example in an `onException` block you can log: `"Failed: ${exception.message}"`.
+If an `IllegalStateException("boom")` was thrown, then `${exception.message}` returns `boom`.
+Use `${exception.stacktrace}` if you need the full stack trace.
+
+The `properties:key:default` function looks up a property placeholder value from the Camel configuration.
+For example `${properties:myApp.greeting}` returns the value of the `myApp.greeting` property.
+You can also specify a default value: `${properties:myApp.greeting:Hello}` returns `Hello` if the property is not set.
+And `${propertiesExist:myApp.greeting}` returns `true` or `false` depending on whether the property exists.
+
+The `headers` function returns all message headers as a `java.util.Map`. This is useful when you need
+to pass all headers to a bean or processor. The `${headers.size}` returns the number of headers.
+
+The `messageTimestamp` function returns the timestamp from the source system (e.g., Kafka, JMS) if available.
+This is different from the exchange created timestamp, as it reflects when the original event occurred.
+Returns `0` if no timestamp is available.
 
 
 === Array & List Functions
@@ -330,6 +357,7 @@ in arrays or lists.
 |`mapRemove(key)` | `List` | Removes the key from the message body as a map object.
 |`mapRemove(source,key)` | `List` | Removes the key from the source expression as a map object.
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
+|`filter(exp,fun)` | `List` | Returns a List containing only the values from the input expression for which the function evaluates to true. This function is not supported when using csimple.
 |`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
 |`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
 |`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
