@@ -38,8 +38,8 @@ public class NatsConsumerWithRedeliveryIT extends NatsITSupport {
         mockResultEndpoint.setExpectedMessageCount(1);
         mockResultEndpoint.setAssertPeriod(1000);
 
-        template.requestBody("direct:send", "test");
-        template.requestBody("direct:send", "golang");
+        template.sendBody("direct:send", "test");
+        template.sendBody("direct:send", "golang");
 
         exception.setExpectedMessageCount(1);
 

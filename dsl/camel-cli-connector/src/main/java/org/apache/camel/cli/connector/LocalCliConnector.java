@@ -365,6 +365,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionTraceTask(root);
             } else if ("browse".equals(action)) {
                 doActionBrowseTask(root);
+            } else if ("span".equals(action)) {
+                doActionSpanTask(root);
             } else if ("receive".equals(action)) {
                 doActionReceiveTask(root);
             } else if ("readme".equals(action)) {
@@ -884,6 +886,26 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
             IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionSpanTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("opentelemetry");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("dump", "true");
+            String limit = root.getString("limit");
+            if (limit != null) {
+                params.put("limit", limit);
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            JsonObject json = new JsonObject();
+            json.put("enabled", false);
+            IOHelper.writeText(json.toJson(), outputFile);
         }
     }
 

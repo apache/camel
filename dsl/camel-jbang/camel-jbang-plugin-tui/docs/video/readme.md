@@ -139,7 +139,8 @@ terminal interactions (`Type`, `Sleep`, `Screenshot`, etc.).
 
 | File | Description |
 |------|-------------|
-| `camel-tui-hello.tape` | First impression — basic Hello World tour across all main tabs |
+| `camel-tui-hello.tape` | Quick tour (~25s) — Hello World timer-log across main tabs |
+| `camel-tui-topology.tape` | Full demo (~2 min) — Route topology with 7 routes, diagram drill-down, errors, and more |
 
 ## Output
 

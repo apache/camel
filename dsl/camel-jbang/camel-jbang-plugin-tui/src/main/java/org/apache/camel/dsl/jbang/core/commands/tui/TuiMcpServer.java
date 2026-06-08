@@ -32,6 +32,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
+import dev.tamboui.style.Color;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -260,11 +261,19 @@ class TuiMcpServer {
         toolList.add(toolDef(
                 "tui_navigate",
                 "Navigates the TUI: switch tabs and/or select an integration. "
-                                + "Both parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Routes, Consumers, Endpoints, HTTP, Health, Inspect, Circuit Breaker. "
+                                + "All parameters are optional — set whichever you want to change. "
+                                + "Tab names: Overview, Log, Diagram, Routes, Endpoints, HTTP, Health, Inspect, "
+                                + "Circuit Breaker. "
+                                + "Use 'route' to select a route in the Diagram topology, "
+                                + "and 'node' to drill down into a route and select a specific processor/EIP node. "
                                 + "Returns screen content and selection metadata after navigating.",
-                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health')"),
-                        "integration", propDef("string", "Integration name or PID to select"))));
+                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Health', 'Diagram')"),
+                        "integration", propDef("string", "Integration name or PID to select"),
+                        "route", propDef("string",
+                                "Route ID to select in the Diagram tab topology (e.g. 'order-dispatcher')"),
+                        "node", propDef("string",
+                                "Processor/EIP node ID to select within a drilled-down route (e.g. 'multicast1'). "
+                                                  + "If 'route' is also provided, drills into that route first"))));
 
         toolList.add(toolDef(
                 "tui_send_keys",
@@ -346,6 +355,29 @@ class TuiMcpServer {
                 "Clears the drawing overlay and restores the screen to its normal state. "
                                   + "The underlying content is unchanged since drawing is an overlay.",
                 Map.of()));
+
+        toolList.add(toolDef(
+                "tui_draw_shape",
+                "Draws a predefined shape on the TUI screen overlay. "
+                                  + "Much easier than constructing individual cells with tui_draw. "
+                                  + "Combine with tui_locate for precise positioning.",
+                Map.of("shape", propDef("string",
+                        "Shape to draw: box (rectangle border), highlight (background color on existing text like a marker pen), "
+                                                  + "underline (horizontal line), arrow-down, arrow-up, arrow-left, arrow-right, "
+                                                  + "text (draw text string at position)"),
+                        "x", propDef("integer", "X coordinate (column) of the shape origin"),
+                        "y", propDef("integer", "Y coordinate (row) of the shape origin"),
+                        "width", propDef("integer", "Width of the shape (for box, highlight, underline)"),
+                        "height", propDef("integer", "Height of the shape (for box, highlight). Defaults to 1."),
+                        "length", propDef("integer", "Length of arrows"),
+                        "text", propDef("string", "Text content to draw (for text shape)"),
+                        "color", propDef("string",
+                                "Color: red, green, blue, yellow, cyan, magenta, white, gray, black. Default: red for box/underline/arrow, yellow for highlight."),
+                        "duration",
+                        propDef("integer", "Auto-dismiss after this many seconds. If omitted, stays until cleared."),
+                        "append", propDef("boolean",
+                                "If true, add to existing drawing instead of replacing it. Default false.")),
+                List.of("shape", "x", "y")));
 
         // --- Structured data tools ---
 
@@ -446,6 +478,51 @@ class TuiMcpServer {
                                   + "If no name is provided, returns the README for the currently selected integration.",
                 Map.of("name", propDef("string",
                         "Integration name. If omitted, uses the currently selected integration."))));
+        toolList.add(toolDef(
+                "tui_control",
+                "Controls the selected integration: stop/start routes, restart, stop, or kill the process. "
+                               + "Actions: stop-routes (or pause) — suspend all routes; "
+                               + "start-routes (or resume) — resume all routes; "
+                               + "restart — gracefully restart the integration; "
+                               + "stop — gracefully stop the process; "
+                               + "kill — forcefully terminate the process.",
+                Map.of("action", propDef("string",
+                        "Control action: stop-routes, start-routes, pause, resume, restart, stop, or kill")),
+                List.of("action")));
+        toolList.add(toolDef(
+                "tui_get_files",
+                "Returns source files from the selected integration's directory. "
+                                 + "Without a file parameter, returns the list of files (name, size, type). "
+                                 + "With a file parameter, returns the file's content. "
+                                 + "Useful for reading route source code, configuration, and other integration files.",
+                Map.of("name", propDef("string",
+                        "Integration name. If omitted, uses the currently selected integration."),
+                        "file", propDef("string",
+                                "Filename to read. If omitted, returns the file list instead."))));
+        toolList.add(toolDef(
+                "tui_get_spans",
+                "Returns raw OpenTelemetry span data as structured JSON from the selected integration. "
+                                 + "Each span includes: traceId, spanId, parentSpanId, name, kind, status, "
+                                 + "startEpochNanos, endEpochNanos, durationMs, routeId, processorId, and attributes. "
+                                 + "Use traceId to filter spans for a specific trace. "
+                                 + "The parentSpanId chain shows the span hierarchy for building waterfall views.",
+                Map.of("traceId", propDef("string",
+                        "Filter to spans matching this trace ID (substring match). "
+                                                    + "If omitted, returns all recent spans."),
+                        "limit", propDef("integer",
+                                "Maximum number of spans to return (default 500)"))));
+        toolList.add(toolDef(
+                "tui_locate",
+                "Locates elements on the TUI screen and returns their exact screen coordinates (x, y, width, height). "
+                              + "Use 'text' to find text on screen with proper wide-character handling (emoji, CJK). "
+                              + "Use 'node' or 'nodes' to find diagram nodes by ID. "
+                              + "Returns coordinates suitable for tui_draw.",
+                Map.of("text", propDef("string",
+                        "Text to search for on screen. Returns all matches with screen coordinates."),
+                        "node", propDef("string",
+                                "Single diagram node ID to locate (routeId or nodeId)."),
+                        "nodes", propDef("array",
+                                "Array of diagram node IDs to locate. Returns individual rects plus combined bounds."))));
 
         JsonObject result = new JsonObject();
         result.put("tools", toolList);
@@ -492,6 +569,11 @@ class TuiMcpServer {
                 case "tui_filter" -> callFilter(args);
                 case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
                 case "tui_get_readme" -> callGetReadme(args);
+                case "tui_control" -> callControl(args);
+                case "tui_get_files" -> callGetFiles(args);
+                case "tui_get_spans" -> callGetSpans(args);
+                case "tui_locate" -> callLocate(args);
+                case "tui_draw_shape" -> callDrawShape(args);
                 default -> {
                     isError = true;
                     yield "Unknown tool: " + toolName;
@@ -530,6 +612,13 @@ class TuiMcpServer {
             items.addAll(ctx.items());
             sel.put("items", items);
             result.put("selection", sel);
+        }
+    }
+
+    private void addFooterActions(JsonObject result) {
+        JsonArray actions = monitor.getFooterActionsAsJson();
+        if (actions != null && !actions.isEmpty()) {
+            result.put("actions", actions);
         }
     }
 
@@ -593,6 +682,11 @@ class TuiMcpServer {
         result.put("keystrokesVisible", monitor.isKeystrokesVisible());
         result.put("captionVisible", monitor.isCaptionVisible());
         addSelectionContext(result);
+        addFooterActions(result);
+        JsonObject diagramState = monitor.getDiagramState();
+        if (diagramState != null) {
+            result.put("diagram", diagramState);
+        }
         return Jsoner.serialize(result);
     }
 
@@ -625,9 +719,11 @@ class TuiMcpServer {
         JsonObject result = new JsonObject();
         String tab = (String) args.get("tab");
         String integration = (String) args.get("integration");
+        String route = args.get("route") instanceof String s ? s : null;
+        String node = args.get("node") instanceof String s ? s : null;
 
-        if (tab == null && integration == null) {
-            result.put("error", "Provide at least one of: tab, integration");
+        if (tab == null && integration == null && route == null && node == null) {
+            result.put("error", "Provide at least one of: tab, integration, route, node");
             result.put("availableTabs", toJsonArray(monitor.getTabNames()));
             result.put("availableIntegrations", toJsonArray(monitor.getIntegrationNames()));
             return Jsoner.serialize(result);
@@ -661,6 +757,25 @@ class TuiMcpServer {
             }
         }
 
+        // Diagram route/node navigation (route selection in topology doesn't need render wait)
+        if (node == null && route != null) {
+            String selected = monitor.navigateDiagramToRoute(route);
+            if (selected != null) {
+                result.put("selectedRoute", route);
+            } else {
+                result.put("routeError", "Route not found in diagram: " + route);
+            }
+        }
+
+        // When drilling down with a node, we first drill into the route, then wait
+        // for render to populate the EIP node boxes, then select the node
+        if (node != null) {
+            // Drill into the route first (sets topologyMode=false)
+            if (route != null) {
+                monitor.navigateDiagramToNode(route, null);
+            }
+        }
+
         long beforeGen = monitor.getRenderGeneration();
         long deadline = System.currentTimeMillis() + 2000;
         while (System.currentTimeMillis() < deadline) {
@@ -674,11 +789,26 @@ class TuiMcpServer {
                 break;
             }
         }
+
+        // Now that the render has populated EIP node boxes, select the node
+        if (node != null) {
+            String selected = monitor.navigateDiagramToNode(null, node);
+            if (selected != null) {
+                result.put("selectedNode", node);
+                if (route != null) {
+                    result.put("drillDownRoute", route);
+                }
+            } else {
+                result.put("nodeError", "Node not found: " + node
+                                        + (route != null ? " in route " + route : ""));
+            }
+        }
         Buffer buf = monitor.getLastBuffer();
         if (buf != null) {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
         addSelectionContext(result);
+        addFooterActions(result);
         return Jsoner.serialize(result);
     }
 
@@ -742,6 +872,7 @@ class TuiMcpServer {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
         addSelectionContext(result);
+        addFooterActions(result);
         return Jsoner.serialize(result);
     }
 
@@ -1031,6 +1162,16 @@ class TuiMcpServer {
         return Jsoner.serialize(data);
     }
 
+    private String callGetSpans(Map<String, Object> args) {
+        String traceId = args.get("traceId") instanceof String s ? s : null;
+        int limit = 500;
+        if (args.get("limit") instanceof Number n) {
+            limit = n.intValue();
+        }
+        JsonObject data = monitor.getSpanData(traceId, limit);
+        return Jsoner.serialize(data);
+    }
+
     private String callSendMessage(Map<String, Object> args) {
         String endpoint = (String) args.get("endpoint");
         if (endpoint == null || endpoint.isBlank()) {
@@ -1096,6 +1237,101 @@ class TuiMcpServer {
         result.put("file", file);
         result.put("content", content != null ? content : "");
         return Jsoner.serialize(result);
+    }
+
+    private String callControl(Map<String, Object> args) {
+        String action = (String) args.get("action");
+        if (action == null || action.isBlank()) {
+            return "Error: action is required";
+        }
+        return monitor.controlIntegration(action);
+    }
+
+    private String callGetFiles(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        String file = args.get("file") instanceof String s ? s : null;
+        JsonObject response = monitor.getFiles(name, file);
+        if (response == null) {
+            return name != null
+                    ? "No source files found for integration '" + name + "'"
+                    : "No source files found for the selected integration";
+        }
+        return Jsoner.serialize(response);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String callLocate(Map<String, Object> args) {
+        String text = args.get("text") instanceof String s ? s : null;
+        String node = args.get("node") instanceof String s ? s : null;
+        List<String> nodes = args.get("nodes") instanceof List<?> list
+                ? ((List<Object>) list).stream().map(Object::toString).toList()
+                : null;
+
+        JsonObject result = new JsonObject();
+
+        if (text != null) {
+            JsonArray matches = monitor.locateText(text);
+            result.put("matches", matches);
+        } else if (node != null || nodes != null) {
+            List<String> ids = nodes != null ? nodes : List.of(node);
+            JsonObject located = monitor.locateNodes(ids);
+            if (located != null) {
+                result.put("matches", located.get("matches"));
+                if (located.containsKey("bounds")) {
+                    result.put("bounds", located.get("bounds"));
+                }
+            } else {
+                result.put("matches", new JsonArray());
+            }
+        } else {
+            result.put("error", "Provide 'text', 'node', or 'nodes' parameter");
+        }
+
+        return Jsoner.serialize(result);
+    }
+
+    private String callDrawShape(Map<String, Object> args) {
+        String shape = args.get("shape") instanceof String s ? s : null;
+        if (shape == null) {
+            return "Error: 'shape' is required";
+        }
+        int x = args.get("x") instanceof Number n ? n.intValue() : 0;
+        int y = args.get("y") instanceof Number n ? n.intValue() : 0;
+        int width = args.get("width") instanceof Number n ? n.intValue() : 0;
+        int height = args.get("height") instanceof Number n ? n.intValue() : Math.max(1, 0);
+        int length = args.get("length") instanceof Number n ? n.intValue() : 5;
+        String text = args.get("text") instanceof String s ? s : null;
+        String colorName = args.get("color") instanceof String s ? s : null;
+        int duration = args.get("duration") instanceof Number n ? n.intValue() : 0;
+
+        Color color = DrawOverlay.parseColor(colorName);
+        if (color == null) {
+            color = "highlight".equals(shape) ? Color.YELLOW : Color.RED;
+        }
+
+        if (height < 1) {
+            height = 1;
+        }
+
+        List<DrawOverlay.DrawCell> cells;
+        if ("text".equals(shape)) {
+            cells = DrawOverlay.generateText(x, y, text != null ? text : "", color);
+        } else {
+            cells = DrawOverlay.generateShape(shape, x, y, width, height, length, color);
+        }
+
+        if (cells.isEmpty() && !"text".equals(shape)) {
+            return "Unknown shape: " + shape
+                   + ". Use: box, highlight, underline, arrow-down, arrow-up, arrow-left, arrow-right, text";
+        }
+
+        boolean append = args.get("append") instanceof Boolean b && b;
+        if (append) {
+            monitor.appendDrawing(cells);
+        } else {
+            monitor.setDrawing(cells, duration);
+        }
+        return "Drew " + shape + " at (" + x + "," + y + ")";
     }
 
     private static JsonArray toJsonArray(List<String> list) {

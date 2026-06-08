@@ -24,8 +24,19 @@ import java.util.Set;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A class resolver for loading classes in a loosly coupled manner to cater for different platforms such as standalone,
- * Spring Boot, Quarkus, JBang etc.
+ * Platform-neutral strategy for loading classes and classpath resources across the different runtimes that Camel
+ * supports (standalone JVM, Spring Boot, Quarkus, OSGi, JBang, and others).
+ * <p/>
+ * A single {@link org.apache.camel.CamelContext} maintains one {@code ClassResolver} instance. Instead of calling
+ * {@code Class.forName()} or {@code ClassLoader.getResourceAsStream()} directly, all Camel internals delegate to this
+ * interface so that custom or container-aware class loaders can participate in class resolution without changes to the
+ * framework. Additional class loaders can be plugged in at any time via {@link #addClassLoader(ClassLoader)}.
+ * <p/>
+ * The interface exposes both optional-return ({@link #resolveClass(String)}) and throwing
+ * ({@link #resolveMandatoryClass(String)}) variants so that callers can choose the appropriate error-handling strategy.
+ *
+ * @see PackageScanClassResolver
+ * @see org.apache.camel.CamelContext#getClassResolver()
  */
 public interface ClassResolver {
 

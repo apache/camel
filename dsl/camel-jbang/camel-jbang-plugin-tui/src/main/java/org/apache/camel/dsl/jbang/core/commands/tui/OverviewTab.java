@@ -77,15 +77,13 @@ class OverviewTab implements MonitorTab {
 
     OverviewTab(
                 MonitorContext ctx,
-                Map<String, LinkedList<Long>> throughputHistory,
-                Map<String, LinkedList<Long>> failedHistory,
-                Map<String, LoadAvg> cpuLoadAvg,
+                MetricsCollector metrics,
                 Set<String> stoppingPids,
                 Runnable onPidChanged) {
         this.ctx = ctx;
-        this.throughputHistory = throughputHistory;
-        this.failedHistory = failedHistory;
-        this.cpuLoadAvg = cpuLoadAvg;
+        this.throughputHistory = metrics.getThroughputHistory();
+        this.failedHistory = metrics.getFailedHistory();
+        this.cpuLoadAvg = metrics.getCpuLoadAvg();
         this.stoppingPids = stoppingPids;
         this.onPidChanged = onPidChanged;
     }
@@ -385,7 +383,8 @@ class OverviewTab implements MonitorTab {
             Line titleLine;
             if (chartMode == CHART_SINGLE && ctx.selectedPid != null) {
                 IntegrationInfo chartSel = ctx.findSelectedIntegration();
-                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12) : ctx.selectedPid;
+                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12)
+                        : ctx.selectedPid != null ? ctx.selectedPid : "?";
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),

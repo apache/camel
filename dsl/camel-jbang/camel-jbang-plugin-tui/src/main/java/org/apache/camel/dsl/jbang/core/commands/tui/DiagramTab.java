@@ -35,6 +35,7 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.MonitorContext.*;
@@ -45,7 +46,8 @@ class DiagramTab implements MonitorTab {
     private final DiagramSupport diagram = new DiagramSupport();
     private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramMetrics = true;
-    private boolean showExternal;
+    private static final String[] EXTERNAL_LABELS = { " [off]", " [edges]", " [all]" };
+    private int externalMode;
     private boolean topologyMode = true;
     private String drillDownRouteId;
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
@@ -175,9 +177,9 @@ class DiagramTab implements MonitorTab {
             return true;
         }
 
-        // Toggle external systems
+        // Cycle external systems: off → edges → all → off
         if (diagram.isShowDiagram() && topologyMode && ke.isCharIgnoreCase('e')) {
-            showExternal = !showExternal;
+            externalMode = (externalMode + 1) % 3;
             diagram.endLoad();
             reloadDiagram();
             return true;
@@ -465,9 +467,10 @@ class DiagramTab implements MonitorTab {
             var topoNode = diagram.getSelectedTopologyNode();
             if (topoNode != null) {
                 boolean isInbound = "external-in".equals(topoNode.nodeType);
+                boolean isBridge = "external".equals(topoNode.nodeType);
+                String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
                 lines.add(Line.from(
-                        Span.styled(isInbound ? " Inbound" : " Outbound",
-                                Style.EMPTY.fg(Color.CYAN).bold())));
+                        Span.styled(label, Style.EMPTY.fg(Color.CYAN).bold())));
                 lines.add(Line.from(Span.raw("")));
                 lines.add(Line.from(
                         Span.styled(" URI: ", Style.EMPTY.dim()),
@@ -477,12 +480,14 @@ class DiagramTab implements MonitorTab {
                             Span.styled(" Path: ", Style.EMPTY.dim()),
                             Span.raw(topoNode.description)));
                 }
-                String connectedRoute = diagram.getConnectedRouteId(routeId);
-                if (connectedRoute != null) {
-                    lines.add(Line.from(Span.raw("")));
-                    lines.add(Line.from(
-                            Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
-                            Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                if (!isBridge) {
+                    String connectedRoute = diagram.getConnectedRouteId(routeId);
+                    if (connectedRoute != null) {
+                        lines.add(Line.from(Span.raw("")));
+                        lines.add(Line.from(
+                                Span.styled(isInbound ? " To route: " : " From route: ", Style.EMPTY.dim()),
+                                Span.styled(connectedRoute, Style.EMPTY.fg(Color.WHITE))));
+                    }
                 }
                 if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
                     lines.add(Line.from(Span.raw("")));
@@ -645,7 +650,7 @@ class DiagramTab implements MonitorTab {
             }
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
             if (topologyMode) {
-                hint(spans, "e", "external" + (showExternal ? " [on]" : " [off]"));
+                hint(spans, "e", "external" + EXTERNAL_LABELS[externalMode]);
             }
             hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         }
@@ -675,7 +680,7 @@ class DiagramTab implements MonitorTab {
 
         String pid = ctx.selectedPid;
         boolean showMetrics = diagramMetrics;
-        boolean external = showExternal;
+        int external = externalMode;
 
         if (showPlaceholder) {
             diagram.setLoadingPlaceholder();
@@ -738,10 +743,15 @@ class DiagramTab implements MonitorTab {
 
                                 ## External Systems
 
-                                When external systems are enabled, the diagram shows a three-band layout:
-                                - **Top band** — external consumers sending messages INTO Camel
-                                - **Middle band** — the Camel routes and their internal connections
-                                - **Bottom band** — external producers where Camel sends messages OUT
+                                Press `e` to cycle through three external modes:
+
+                                - **off** — no external endpoints shown
+                                - **edges** — external endpoints that are truly outside Camel are shown
+                                  as dashed boxes in top/bottom bands. Routes sharing an external
+                                  endpoint (e.g. kafka) are connected with a direct arrow.
+                                - **all** — same as edges, but routes sharing an external endpoint
+                                  are connected through an intermediary dashed box showing the
+                                  endpoint name, instead of a direct arrow.
 
                                 External system boxes are drawn with dashed borders to distinguish
                                 them from route boxes. Dashed edges connect routes to external systems.
@@ -938,5 +948,200 @@ class DiagramTab implements MonitorTab {
             max = Math.max(max, Math.abs(v));
         }
         return Math.max(1, String.valueOf(max).length());
+    }
+
+    // ---- MCP programmatic navigation ----
+
+    boolean selectRoute(String routeId) {
+        int idx = diagram.findNodeIndexByRouteId(routeId);
+        if (idx < 0) {
+            return false;
+        }
+        diagram.setSelectedNodeIndex(idx);
+        diagram.scrollToSelectedNode();
+        return true;
+    }
+
+    boolean selectNode(String routeId, String nodeId) {
+        // Ensure we're on the Diagram tab in topology mode first
+        if (routeId != null) {
+            int routeIdx = diagram.findNodeIndexByRouteId(routeId);
+            if (routeIdx < 0) {
+                return false;
+            }
+            // Drill down into the route (mirrors Enter-key logic)
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
+                return false;
+            }
+            routeNavigationStack.clear();
+            drillDownRouteId = routeId;
+            topologyMode = false;
+            diagram.setTopologyMode(false);
+            diagram.selectFromNode(routeId);
+            diagram.resetScroll();
+            diagram.endLoad();
+            if (diagram.getRouteLayout(routeId) == null) {
+                reloadDiagram();
+            }
+        }
+        if (nodeId != null) {
+            int nodeIdx = diagram.findEipNodeIndexByNodeId(nodeId);
+            if (nodeIdx < 0) {
+                return false;
+            }
+            diagram.setSelectedEipNodeIndex(nodeIdx);
+            diagram.scrollToSelectedEipNode();
+        }
+        return true;
+    }
+
+    @Override
+    public SelectionContext getSelectionContext() {
+        if (!diagram.isShowDiagram()) {
+            return null;
+        }
+        if (topologyMode) {
+            var boxes = diagram.getNodeBoxes();
+            if (boxes.isEmpty()) {
+                return null;
+            }
+            List<String> items = new ArrayList<>();
+            for (var box : boxes) {
+                items.add(box.routeId());
+            }
+            return new SelectionContext(
+                    "topology-routes", items,
+                    diagram.getSelectedNodeIndex(), items.size(), "Topology routes");
+        } else {
+            var boxes = diagram.getEipNodeBoxes();
+            if (boxes.isEmpty()) {
+                return null;
+            }
+            List<String> items = new ArrayList<>();
+            for (var box : boxes) {
+                items.add(box.nodeId());
+            }
+            return new SelectionContext(
+                    "eip-nodes", items,
+                    diagram.getSelectedEipNodeIndex(), items.size(),
+                    "EIP nodes [" + drillDownRouteId + "]");
+        }
+    }
+
+    JsonObject getDiagramStateAsJson() {
+        if (!diagram.isShowDiagram()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("diagramMode", topologyMode ? "topology" : "route");
+
+        if (!topologyMode && drillDownRouteId != null) {
+            result.put("routeId", drillDownRouteId);
+            JsonArray stack = new JsonArray();
+            for (String s : routeNavigationStack) {
+                stack.add(s);
+            }
+            if (!stack.isEmpty()) {
+                result.put("navigationStack", stack);
+            }
+        }
+
+        // Selected node info
+        if (topologyMode) {
+            String routeId = diagram.getSelectedRouteId();
+            if (routeId != null) {
+                JsonObject node = new JsonObject();
+                node.put("routeId", routeId);
+                result.put("selectedRoute", node);
+            }
+        } else {
+            var eipBox = diagram.getSelectedEipNodeBox();
+            if (eipBox != null && eipBox.layoutNode() != null) {
+                JsonObject node = new JsonObject();
+                node.put("id", eipBox.nodeId());
+                node.put("type", eipBox.type());
+                String label = String.join("", eipBox.layoutNode().wrappedLines);
+                if (!label.isBlank()) {
+                    node.put("label", label);
+                }
+                if (eipBox.layoutNode().id != null) {
+                    node.put("processorId", eipBox.layoutNode().id);
+                }
+                String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
+                if (linkedRoute != null) {
+                    node.put("linkedRoute", linkedRoute);
+                }
+                result.put("selectedNode", node);
+            }
+        }
+
+        // Info panel stats
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info != null) {
+            String routeId = topologyMode ? diagram.getSelectedRouteId() : drillDownRouteId;
+            if (routeId != null) {
+                RouteInfo route = null;
+                for (RouteInfo r : info.routes) {
+                    if (routeId.equals(r.routeId)) {
+                        route = r;
+                        break;
+                    }
+                }
+                if (route != null) {
+                    JsonObject ri = new JsonObject();
+                    ri.put("routeId", route.routeId);
+                    ri.put("from", route.from);
+                    ri.put("state", route.state);
+                    ri.put("uptime", route.uptime);
+                    ri.put("throughput", route.throughput);
+                    if (route.coverage != null) {
+                        ri.put("coverage", route.coverage);
+                    }
+                    ri.put("total", route.total);
+                    ri.put("failed", route.failed);
+                    ri.put("inflight", route.inflight);
+                    if (route.total > 0) {
+                        ri.put("meanTime", route.meanTime);
+                        ri.put("maxTime", route.maxTime);
+                        ri.put("minTime", route.minTime);
+                    }
+                    if (route.sinceLastCompleted != null) {
+                        ri.put("sinceLastSuccess", route.sinceLastCompleted);
+                    }
+                    if (route.sinceLastFailed != null) {
+                        ri.put("sinceLastFail", route.sinceLastFailed);
+                    }
+                    result.put("info", ri);
+                }
+            }
+
+            // EIP node stats (when drilled down)
+            if (!topologyMode) {
+                var eipBox = diagram.getSelectedEipNodeBox();
+                if (eipBox != null && eipBox.layoutNode() != null
+                        && eipBox.layoutNode().treeNode != null
+                        && eipBox.layoutNode().treeNode.info.stat != null) {
+                    var stat = eipBox.layoutNode().treeNode.info.stat;
+                    JsonObject ni = new JsonObject();
+                    ni.put("total", stat.exchangesTotal);
+                    ni.put("failed", stat.exchangesFailed);
+                    ni.put("inflight", stat.exchangesInflight);
+                    if (stat.exchangesTotal > 0) {
+                        ni.put("meanTime", stat.meanProcessingTime);
+                        ni.put("maxTime", stat.maxProcessingTime);
+                        ni.put("minTime", stat.minProcessingTime);
+                        ni.put("lastTime", stat.lastProcessingTime);
+                    }
+                    result.put("nodeInfo", ni);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    JsonObject locateNodes(List<String> nodeIds) {
+        return diagram.locateNodes(nodeIds);
     }
 }

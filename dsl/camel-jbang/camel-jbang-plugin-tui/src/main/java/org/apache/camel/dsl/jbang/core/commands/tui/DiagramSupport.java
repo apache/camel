@@ -79,6 +79,8 @@ class DiagramSupport {
     private String pendingSelectionRouteId;
     private int lastVisibleHeight;
     private int lastVisibleWidth;
+    private int lastAreaX;
+    private int lastAreaY;
 
     // Native widget rendering data
     private TopologyLayoutResult topologyLayout;
@@ -149,6 +151,15 @@ class DiagramSupport {
             return nodeBoxes.get(selectedNodeIndex).routeId();
         }
         return null;
+    }
+
+    int findNodeIndexByRouteId(String routeId) {
+        for (int i = 0; i < nodeBoxes.size(); i++) {
+            if (routeId.equals(nodeBoxes.get(i).routeId())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     TopologyLayoutNode getSelectedTopologyNode() {
@@ -242,6 +253,67 @@ class DiagramSupport {
         result.put("totalNodes", layout.nodes.size());
         result.put("totalEdges", layout.edges.size());
         return result;
+    }
+
+    JsonObject locateNodes(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return null;
+        }
+        JsonArray matches = new JsonArray();
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+
+        for (String id : ids) {
+            // search topology nodeBoxes by routeId
+            for (var nb : nodeBoxes) {
+                if (id.equals(nb.routeId())) {
+                    JsonObject m = nodeBoxToScreen(nb.startRow(), nb.endRow(), nb.startCol(), nb.endCol());
+                    m.put("node", id);
+                    matches.add(m);
+                    minX = Math.min(minX, m.getInteger("x"));
+                    minY = Math.min(minY, m.getInteger("y"));
+                    maxX = Math.max(maxX, m.getInteger("x") + m.getInteger("width"));
+                    maxY = Math.max(maxY, m.getInteger("y") + m.getInteger("height"));
+                    break;
+                }
+            }
+            // search eip nodeBoxes by nodeId
+            for (var nb : eipNodeBoxes) {
+                if (id.equals(nb.nodeId())) {
+                    JsonObject m = nodeBoxToScreen(nb.startRow(), nb.endRow(), nb.startCol(), nb.endCol());
+                    m.put("node", id);
+                    matches.add(m);
+                    minX = Math.min(minX, m.getInteger("x"));
+                    minY = Math.min(minY, m.getInteger("y"));
+                    maxX = Math.max(maxX, m.getInteger("x") + m.getInteger("width"));
+                    maxY = Math.max(maxY, m.getInteger("y") + m.getInteger("height"));
+                    break;
+                }
+            }
+        }
+        if (matches.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("matches", matches);
+        if (matches.size() > 1) {
+            JsonObject bounds = new JsonObject();
+            bounds.put("x", minX);
+            bounds.put("y", minY);
+            bounds.put("width", maxX - minX);
+            bounds.put("height", maxY - minY);
+            result.put("bounds", bounds);
+        }
+        return result;
+    }
+
+    private JsonObject nodeBoxToScreen(int startRow, int endRow, int startCol, int endCol) {
+        JsonObject m = new JsonObject();
+        m.put("x", lastAreaX + startCol - scrollX);
+        m.put("y", lastAreaY + startRow - scrollY);
+        m.put("width", endCol - startCol + 1);
+        m.put("height", endRow - startRow + 1);
+        return m;
     }
 
     RouteDiagramLayoutEngine.LayoutRoute getRouteLayout(String routeId) {
@@ -409,7 +481,7 @@ class DiagramSupport {
             ctx.runner.scheduler().execute(() -> {
                 try {
                     setTopologyMode(true);
-                    loadAllDiagramsInBackground(ctx, pid, false, false);
+                    loadAllDiagramsInBackground(ctx, pid, false, 0);
                 } finally {
                     endLoad();
                 }
@@ -640,7 +712,8 @@ class DiagramSupport {
         for (TopologyLayoutNode node : result.nodes) {
             int col = nodeW == 0 ? 0 : node.x * bw / nodeW;
             int row = node.y / 20;
-            boolean ext = "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType);
+            boolean ext = "external-in".equals(node.nodeType) || "external-out".equals(node.nodeType)
+                    || "external".equals(node.nodeType);
             int contentLines;
             if (ext) {
                 contentLines = 1;
@@ -697,7 +770,10 @@ class DiagramSupport {
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(vChunks.get(0));
 
-        frame.renderWidget(finalWidget, hChunks.get(0));
+        Rect widgetArea = hChunks.get(0);
+        frame.renderWidget(finalWidget, widgetArea);
+        lastAreaX = widgetArea.x();
+        lastAreaY = widgetArea.y();
 
         // Update nodeBoxes from widget
         List<TopologyAsciiRenderer.NodeBox> widgetBoxes = new ArrayList<>();
@@ -799,6 +875,15 @@ class DiagramSupport {
         return null;
     }
 
+    int findEipNodeIndexByNodeId(String nodeId) {
+        for (int i = 0; i < eipNodeBoxes.size(); i++) {
+            if (nodeId.equals(eipNodeBoxes.get(i).nodeId())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /**
      * Finds the route ID that the selected EIP node links to, by matching the node's endpoint URI against topology
      * edges and route "from" endpoints.
@@ -828,6 +913,10 @@ class DiagramSupport {
             if ("from".equals(type)) {
                 // "from" node: find route that sends TO this endpoint
                 if (currentRouteId.equals(edge.to.routeId) && !currentRouteId.equals(edge.from.routeId)) {
+                    String resolved = resolveThrough(edge.from.routeId, currentRouteId);
+                    if (resolved != null) {
+                        return resolved;
+                    }
                     return edge.from.routeId;
                 }
             } else {
@@ -835,6 +924,10 @@ class DiagramSupport {
                 if (currentRouteId.equals(edge.from.routeId) && !currentRouteId.equals(edge.to.routeId)) {
                     String targetFrom = stripQueryParams(edge.to.from);
                     if (baseUri.equals(targetFrom)) {
+                        String resolved = resolveThrough(edge.to.routeId, currentRouteId);
+                        if (resolved != null) {
+                            return resolved;
+                        }
                         return edge.to.routeId;
                     }
                 }
@@ -851,6 +944,30 @@ class DiagramSupport {
                 if (baseUri.equals(fromBaseUri)) {
                     return entry.getKey();
                 }
+            }
+        }
+        return null;
+    }
+
+    private String resolveThrough(String nodeId, String excludeRouteId) {
+        if (!"external".equals(findNodeType(nodeId))) {
+            return null;
+        }
+        for (TopologyLayoutEdge e : topologyEdges) {
+            if (nodeId.equals(e.from.routeId) && !excludeRouteId.equals(e.to.routeId)) {
+                return e.to.routeId;
+            }
+            if (nodeId.equals(e.to.routeId) && !excludeRouteId.equals(e.from.routeId)) {
+                return e.from.routeId;
+            }
+        }
+        return null;
+    }
+
+    private String findNodeType(String nodeId) {
+        for (TopologyLayoutNode n : topologyNodes) {
+            if (nodeId.equals(n.routeId)) {
+                return n.nodeType;
             }
         }
         return null;
@@ -1130,7 +1247,10 @@ class DiagramSupport {
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(vChunks.get(0));
 
-        frame.renderWidget(finalWidget, hChunks.get(0));
+        Rect widgetArea = hChunks.get(0);
+        frame.renderWidget(finalWidget, widgetArea);
+        lastAreaX = widgetArea.x();
+        lastAreaY = widgetArea.y();
 
         eipNodeBoxes = new ArrayList<>(finalWidget.getNodeBoxes());
         if (selectedEipNodeIndex < 0 && !eipNodeBoxes.isEmpty()) {
@@ -1567,7 +1687,10 @@ class DiagramSupport {
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(vChunks.get(0));
 
-        frame.renderWidget(finalWidget, hChunks.get(0));
+        Rect widgetArea = hChunks.get(0);
+        frame.renderWidget(finalWidget, widgetArea);
+        lastAreaX = widgetArea.x();
+        lastAreaY = widgetArea.y();
 
         List<TopologyAsciiRenderer.NodeBox> widgetBoxes = new ArrayList<>();
         for (var nb : finalWidget.getNodeBoxes()) {
@@ -1692,7 +1815,10 @@ class DiagramSupport {
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(vChunks.get(0));
 
-        frame.renderWidget(finalWidget, hChunks.get(0));
+        Rect widgetArea = hChunks.get(0);
+        frame.renderWidget(finalWidget, widgetArea);
+        lastAreaX = widgetArea.x();
+        lastAreaY = widgetArea.y();
 
         eipNodeBoxes = new ArrayList<>(finalWidget.getNodeBoxes());
         selectedEipNodeIndex = selIdx;
@@ -1720,8 +1846,9 @@ class DiagramSupport {
     }
 
     void loadAllDiagramsInBackground(
-            MonitorContext ctx, String pid, boolean metrics, boolean external) {
+            MonitorContext ctx, String pid, boolean metrics, int externalMode) {
         // Single IPC call: topology + route structures
+        boolean external = externalMode > 0;
         JsonObject topoJson = requestRouteTopology(ctx, pid, external, true);
 
         TopologyLayoutResult topoResult = null;
@@ -1734,6 +1861,9 @@ class DiagramSupport {
             List<TopologyEdgeInfo> edges = TopologyHelper.parseEdges(topoJson);
             if (external) {
                 TopologyHelper.addExternalEndpoints(nodes, edges, topoJson);
+            }
+            if (externalMode == 2) {
+                TopologyHelper.expandExternalEdges(nodes, edges);
             }
             if (!nodes.isEmpty()) {
                 TopologyLayoutEngine engine = new TopologyLayoutEngine();

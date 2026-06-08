@@ -71,7 +71,8 @@ class RoutesTab implements MonitorTab {
     private final SourceViewer sourceViewer = new SourceViewer();
     private boolean diagramMetrics = true;
     private boolean showDescription;
-    private boolean showExternal;
+    private static final String[] EXTERNAL_LABELS = { " [off]", " [edges]", " [all]" };
+    private int externalMode;
     private boolean topologyMode = true;
     private String drillDownRouteId;
     private final Deque<String> routeNavigationStack = new ArrayDeque<>();
@@ -214,9 +215,9 @@ class RoutesTab implements MonitorTab {
             return true;
         }
 
-        // Toggle external systems (topology mode only)
+        // Cycle external systems: off → edges → all → off (topology mode only)
         if (diagram.isShowDiagram() && topologyMode && ke.isCharIgnoreCase('e')) {
-            showExternal = !showExternal;
+            externalMode = (externalMode + 1) % 3;
             diagram.endLoad();
             reloadDiagram();
             return true;
@@ -666,7 +667,7 @@ class RoutesTab implements MonitorTab {
             }
             hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
             if (topologyMode) {
-                hint(spans, "e", "external" + (showExternal ? " [on]" : " [off]"));
+                hint(spans, "e", "external" + EXTERNAL_LABELS[externalMode]);
             }
             hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         } else {
@@ -1333,7 +1334,7 @@ class RoutesTab implements MonitorTab {
 
         String pid = ctx.selectedPid;
         boolean showMetrics = diagramMetrics;
-        boolean external = showExternal;
+        int external = externalMode;
 
         if (showPlaceholder) {
             diagram.setLoadingPlaceholder();

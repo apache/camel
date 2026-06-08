@@ -23,9 +23,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation used to mark classes to indicate code capable of configuring its options via a getter/setters that can
- * be called via Camels {@link org.apache.camel.spi.PropertyConfigurer}.
+ * Marks a class as a candidate for build-time code generation of a {@link PropertyConfigurer} implementation by the
+ * {@code camel-package-maven-plugin}.
+ * <p/>
+ * At build time, the Camel Maven plugin scans for types annotated with {@code @Configurer} and generates a companion
+ * {@code *Configurer} class that sets properties directly via setters, avoiding reflection at runtime. The generated
+ * class implements {@link PropertyConfigurer} and is registered in
+ * {@code META-INF/services/org/apache/camel/configurer/} so that {@link ConfigurerResolver} can locate it by name. This
+ * pattern is used pervasively for {@link org.apache.camel.Component}, {@link org.apache.camel.Endpoint}, and EIP model
+ * classes to keep configuration-path performance constant regardless of the number of properties.
+ * <p/>
+ * Set {@link #bootstrap()} to {@code true} for types that are configured only during startup; the generated configurer
+ * is then eligible for memory reclamation via {@link ConfigurerStrategy#clearBootstrapConfigurers()} after the context
+ * has started.
  *
+ * @see   PropertyConfigurer
+ * @see   ConfigurerResolver
+ * @see   ConfigurerStrategy
  * @since 3.3
  */
 @Retention(RetentionPolicy.RUNTIME)

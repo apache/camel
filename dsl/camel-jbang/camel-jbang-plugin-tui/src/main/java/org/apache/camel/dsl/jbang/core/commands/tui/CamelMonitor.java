@@ -22,15 +22,12 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -97,11 +94,7 @@ public class CamelMonitor extends CamelCommand {
 
     private static final long VANISH_DURATION_MS = 6000;
     private static final long DEFAULT_REFRESH_MS = 100;
-    private static final int MAX_SPARKLINE_POINTS = 60;
-    private static final int MAX_ENDPOINT_CHART_POINTS = 60;
-    private static final int MAX_HEAP_HISTORY_POINTS = 120;
-    private static final long HEAP_SAMPLE_INTERVAL_MS = 5000;
-    private static final int MAX_LOG_LINES = 3000;
+
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 10;
 
@@ -146,57 +139,8 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, VanishingInfraInfo> vanishingInfra = new ConcurrentHashMap<>();
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
 
-    // Sparkline: throughput history per PID (one point per second)
-    private final Map<String, LinkedList<Long>> throughputHistory = new ConcurrentHashMap<>();
-    // Sparkline: failed throughput history per PID (one point per second)
-    private final Map<String, LinkedList<Long>> failedHistory = new ConcurrentHashMap<>();
-    // Sliding window of [timestamp, exchangesTotal, exchangesFailed] samples for smoothing
-    private final Map<String, LinkedList<long[]>> throughputSamples = new ConcurrentHashMap<>();
-    // Track last time a sparkline point was recorded
-    private final Map<String, Long> previousExchangesTime = new ConcurrentHashMap<>();
-
-    // Endpoint in/out sliding window history per PID — all endpoints
-    private final Map<String, LinkedList<Long>> endpointInHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> endpointOutHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> endpointSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousEndpointTime = new ConcurrentHashMap<>();
-
-    // Endpoint in/out sliding window history per PID — remote endpoints only
-    private final Map<String, LinkedList<Long>> endpointRemoteInHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> endpointRemoteOutHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> endpointRemoteSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousEndpointRemoteTime = new ConcurrentHashMap<>();
-
-    // Endpoint in/out sliding window history per PID — remote+stub endpoints
-    private final Map<String, LinkedList<Long>> endpointRemoteStubInHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> endpointRemoteStubOutHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> endpointRemoteStubSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousEndpointRemoteStubTime = new ConcurrentHashMap<>();
-
-    // Endpoint payload size (mean body size) history per PID — for sparkline
-    private final Map<String, LinkedList<Long>> endpointInSizeHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> endpointOutSizeHistory = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousEndpointSizeTime = new ConcurrentHashMap<>();
-
-    // Per-endpoint in/out rate history — keyed by pid + "|" + uri
-    private final Map<String, LinkedList<Long>> perEndpointInHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> perEndpointOutHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> perEndpointSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousPerEndpointTime = new ConcurrentHashMap<>();
-
-    // Circuit breaker throughput history per PID/cbId (success + fail, one point per second)
-    private final Map<String, LinkedList<Long>> cbSuccessHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<Long>> cbFailHistory = new ConcurrentHashMap<>();
-    private final Map<String, LinkedList<long[]>> cbThroughputSamples = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousCbTime = new ConcurrentHashMap<>();
-
-    // Heap memory usage history per PID (one point per 5 seconds, in bytes)
-    private final Map<String, LinkedList<Long>> heapMemHistory = new ConcurrentHashMap<>();
-    private final Map<String, Long> previousHeapTime = new ConcurrentHashMap<>();
-
-    // Load averages (EWMA) — CPU%, per PID (inflight EWMA is read from the management JSON)
-    private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
-    private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
+    // Sparkline/chart history for all metric families
+    private final MetricsCollector metrics = new MetricsCollector();
 
     // Cached PID list — full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
@@ -207,6 +151,8 @@ public class CamelMonitor extends CamelCommand {
     // Trace/history data — shared between CamelMonitor and tabs
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
     private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
+    // OTel span data — shared between CamelMonitor and SpansTab
+    private final AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
 
     // selectedPid is stored on ctx (MonitorContext) so tabs can access it
 
@@ -273,21 +219,14 @@ public class CamelMonitor extends CamelCommand {
     private InflightTab inflightTab;
     private MemoryTab memoryTab;
     private ThreadsTab threadsTab;
+    private SpansTab spansTab;
     private OverviewTab overviewTab;
 
     // "Switch integration" popup state
     private boolean showSwitchPopup;
     private final ListState switchPopupState = new ListState();
 
-    // "Files" popup state
-    record FileEntry(String emoji, String name, long size, String path) {
-    }
-
-    private boolean showFilesPopup;
-    private String filesPopupTitle;
-    private final ListState filesPopupState = new ListState();
-    private List<FileEntry> fileEntries = Collections.emptyList();
-    private final SourceViewer overviewSourceViewer = new SourceViewer();
+    private final FilesBrowser filesBrowser = new FilesBrowser();
 
     // "More" dropdown state
     private boolean showMorePopup;
@@ -334,17 +273,11 @@ public class CamelMonitor extends CamelCommand {
         diagramTab = new DiagramTab(ctx);
         routesTab = new RoutesTab(ctx);
         consumersTab = new ConsumersTab(ctx);
-        endpointsTab = new EndpointsTab(
-                ctx,
-                endpointInHistory, endpointOutHistory,
-                endpointRemoteInHistory, endpointRemoteOutHistory,
-                endpointRemoteStubInHistory, endpointRemoteStubOutHistory,
-                endpointInSizeHistory, endpointOutSizeHistory,
-                perEndpointInHistory, perEndpointOutHistory);
+        endpointsTab = new EndpointsTab(ctx, metrics);
         httpTab = new HttpTab(ctx);
         healthTab = new HealthTab(ctx);
         historyTab = new HistoryTab(ctx, traces, traceFilePositions);
-        circuitBreakerTab = new CircuitBreakerTab(ctx, cbSuccessHistory, cbFailHistory);
+        circuitBreakerTab = new CircuitBreakerTab(ctx, metrics);
         errorsTab = new ErrorsTab(ctx);
         metricsTab = new MetricsTab(ctx);
         startupTab = new StartupTab(ctx);
@@ -353,10 +286,11 @@ public class CamelMonitor extends CamelCommand {
         browseTab = new BrowseTab(ctx);
         classpathTab = new ClasspathTab(ctx);
         inflightTab = new InflightTab(ctx);
-        memoryTab = new MemoryTab(ctx, heapMemHistory);
+        memoryTab = new MemoryTab(ctx, metrics);
         threadsTab = new ThreadsTab(ctx);
+        spansTab = new SpansTab(ctx, otelSpans);
         overviewTab = new OverviewTab(
-                ctx, throughputHistory, failedHistory, cpuLoadAvg, stoppingPids,
+                ctx, metrics, stoppingPids,
                 this::resetIntegrationTabState);
 
         // Initial data load (synchronous before TUI starts)
@@ -450,426 +384,395 @@ public class CamelMonitor extends CamelCommand {
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
             }
-            // "Files" popup
-            if (showFilesPopup) {
-                if (overviewSourceViewer.isVisible()) {
-                    if (overviewSourceViewer.handleKeyEvent(ke)) {
-                        return true;
-                    }
-                }
-                if (ke.isCancel()) {
-                    if (overviewSourceViewer.isVisible()) {
-                        overviewSourceViewer.hide();
-                    } else {
-                        showFilesPopup = false;
-                    }
-                    return true;
-                }
-                if (!overviewSourceViewer.isVisible()) {
-                    if (ke.isUp()) {
-                        filesPopupState.selectPrevious();
-                        return true;
-                    }
-                    if (ke.isDown()) {
-                        filesPopupState.selectNext(fileEntries.size());
-                        return true;
-                    }
-                    if (ke.isConfirm()) {
-                        Integer sel = filesPopupState.selected();
-                        if (sel != null && sel < fileEntries.size()) {
-                            FileEntry entry = fileEntries.get(sel);
-                            overviewSourceViewer.loadFile(Path.of(entry.path()));
-                        }
-                        return true;
-                    }
-                }
+            if (handlePopupKeys(ke)) {
                 return true;
             }
-            // "More" tab popup
-            if (showMorePopup) {
-                if (ke.isCancel()) {
-                    showMorePopup = false;
-                    return true;
-                }
-                if (ke.isUp()) {
-                    morePopupState.selectPrevious();
-                    return true;
-                }
-                if (ke.isDown()) {
-                    morePopupState.selectNext(11);
-                    return true;
-                }
-                // Shortcut keys for quick selection
-                int shortcutSel = morePopupShortcut(ke);
-                if (shortcutSel >= 0) {
-                    morePopupState.select(shortcutSel);
-                }
-                if (ke.isConfirm() || shortcutSel >= 0) {
-                    showMorePopup = false;
-                    Integer sel = shortcutSel >= 0 ? shortcutSel : morePopupState.selected();
-                    if (sel != null) {
-                        lastMoreSelection = sel;
-                        activeMoreTab = switch (sel) {
-                            case 0 -> beansTab;
-                            case 1 -> browseTab;
-                            case 2 -> circuitBreakerTab;
-                            case 3 -> classpathTab;
-                            case 4 -> configurationTab;
-                            case 5 -> consumersTab;
-                            case 6 -> inflightTab;
-                            case 7 -> memoryTab;
-                            case 8 -> metricsTab;
-                            case 9 -> startupTab;
-                            case 10 -> threadsTab;
-                            default -> null;
-                        };
-                        if (activeMoreTab != null) {
-                            overviewTab.selectCurrentIntegration();
-                            tabsState.select(TAB_MORE);
-                            activeMoreTab.onTabSelected();
-                        }
-                    }
-                    return true;
-                }
+            if (handleGlobalKeys(ke, runner)) {
                 return true;
             }
-            // "Switch integration" popup
-            if (showSwitchPopup) {
-                if (ke.isCancel()) {
-                    showSwitchPopup = false;
-                    return true;
-                }
-                List<IntegrationInfo> switchList = getNonVanishingIntegrations();
-                if (ke.isUp()) {
-                    switchPopupState.selectPrevious();
-                    return true;
-                }
-                if (ke.isDown()) {
-                    switchPopupState.selectNext(switchList.size());
-                    return true;
-                }
-                if (ke.isConfirm()) {
-                    showSwitchPopup = false;
-                    Integer sel = switchPopupState.selected();
-                    if (sel != null && sel >= 0 && sel < switchList.size()) {
-                        IntegrationInfo chosen = switchList.get(sel);
-                        ctx.selectedPid = chosen.pid;
-                        ctx.lastSelectedName = chosen.name;
-                        resetIntegrationTabState();
-                        if (tabsState.selected() == TAB_LOG) {
-                            refreshLogData();
-                        }
-                    }
-                    return true;
-                }
-                return true;
-            }
-            // Kill confirm dialog: Enter to confirm, Esc/any other key to cancel
-            if (showKillConfirm) {
-                if (ke.isConfirm()) {
-                    showKillConfirm = false;
-                    stopSelectedProcess(true);
-                } else {
-                    showKillConfirm = false;
-                }
-                return true;
-            }
-
-            // Escape: navigate back — delegate to active tab first
-            if (ke.isCancel()) {
-                MonitorTab tab = activeTab();
-                if (tab != null && tab.handleEscape()) {
-                    return true;
-                }
-                if (tabsState.selected() != TAB_OVERVIEW) {
-                    tabsState.select(TAB_OVERVIEW);
-                    return true;
-                }
-                if (ctx.selectedPid != null) {
-                    ctx.selectedPid = null;
-                    ctx.lastSelectedName = null;
-                    return true;
-                }
-                return true;
-            }
-            // Quit: q or Ctrl+c (skip when text input is active)
-            boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
-            boolean logSearchActive = tabsState.selected() == TAB_LOG && logTab.isSearchInputActive();
-            boolean textEditing = probeEditing || logSearchActive;
-            if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
-                runner.quit();
-                return true;
-            }
-            if (ke.isCtrlC()) {
-                runner.quit();
-                return true;
-            }
-            // Tab switching with number keys (skip when text input is active)
-            // When infra is selected, only Overview (1) and Log (2) are available
-            if (!textEditing) {
-                if (ke.isChar('1')) {
-                    return handleTabKey(TAB_OVERVIEW);
-                }
-                if (ke.isChar('2')) {
-                    return handleTabKey(TAB_LOG);
-                }
-                if (!isInfraSelected()) {
-                    if (ke.isChar('3')) {
-                        return handleTabKey(TAB_DIAGRAM);
-                    }
-                    if (ke.isChar('4')) {
-                        return handleTabKey(TAB_ROUTES);
-                    }
-                    if (ke.isChar('5')) {
-                        return handleTabKey(TAB_ENDPOINTS);
-                    }
-                    if (ke.isChar('6')) {
-                        return handleTabKey(TAB_HTTP);
-                    }
-                    if (ke.isChar('7')) {
-                        return handleTabKey(TAB_HEALTH);
-                    }
-                    if (ke.isChar('8')) {
-                        return handleTabKey(TAB_HISTORY);
-                    }
-                    if (ke.isChar('9')) {
-                        return handleTabKey(TAB_ERRORS);
-                    }
-                    if (ke.isChar('0')) {
-                        return handleTabKey(TAB_MORE);
-                    }
-                }
-            }
-
-            // Tab cycling (check Shift+Tab before Tab since Tab binding also matches Shift+Tab)
-            // Skip tab cycling when text input is active (Tab navigates fields)
-            if (ke.isFocusPrevious() && !textEditing) {
-                if (isInfraSelected()) {
-                    // Cycle between Overview and Log only
-                    int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
-                    tabsState.select(prev);
-                } else {
-                    int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
-                    if (prev != TAB_OVERVIEW) {
-                        overviewTab.selectCurrentIntegration();
-                    }
-                    tabsState.select(prev);
-                }
-                return true;
-            }
-            if (ke.isFocusNext() && !textEditing) {
-                if (isInfraSelected()) {
-                    int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
-                    tabsState.select(next);
-                } else {
-                    int next = (tabsState.selected() + 1) % NUM_TABS;
-                    if (next != TAB_OVERVIEW) {
-                        overviewTab.selectCurrentIntegration();
-                    }
-                    tabsState.select(next);
-                }
-                return true;
-            }
-
-            // Screenshot: Shift+F5
-            if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
-                takeScreenshot();
-                return true;
-            }
-
-            // F1 opens context-sensitive help
-            if (ke.isKey(KeyCode.F1)) {
-                if (helpOverlay.isVisible()) {
-                    helpOverlay.close();
-                } else {
-                    MonitorTab tab = activeTab();
-                    if (tab != null) {
-                        String help = tab.getHelpText();
-                        if (help != null) {
-                            helpOverlay.open(help);
-                        }
-                    }
-                }
-                return true;
-            }
-
-            // F2 opens actions menu (global)
-            if (ke.isKey(KeyCode.F2)) {
-                if (tabsState.selected() == TAB_ROUTES && routesTab != null) {
-                    actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
-                }
-                actionsPopup.open();
-                return true;
-            }
-
-            // F3 opens switch integration popup
-            if (ke.isKey(KeyCode.F3)) {
-                List<IntegrationInfo> switchList = getNonVanishingIntegrations();
-                if (switchList.size() > 1) {
-                    showSwitchPopup = true;
-                    // Pre-select the currently active integration
-                    for (int i = 0; i < switchList.size(); i++) {
-                        if (switchList.get(i).pid.equals(ctx.selectedPid)) {
-                            switchPopupState.select(i);
-                            break;
-                        }
-                    }
-                }
-                return true;
-            }
-
-            // Tab-specific keys — delegate to active tab first
-            int tab = tabsState.selected();
-            MonitorTab activeTab = activeTab();
-
-            // Navigation (all tabs)
-            if (ke.isUp()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-                navigateUp();
-                return true;
-            }
-            if (ke.isDown()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-                navigateDown();
-                return true;
-            }
-            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-                return true;
-            }
-            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-                return true;
-            }
-            if (ke.isLeft()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-            }
-            if (ke.isRight()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-            }
-            if (ke.isHome()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-            }
-            if (ke.isEnd()) {
-                if (activeTab != null && activeTab.handleKeyEvent(ke)) {
-                    return true;
-                }
-            }
-
-            // Enter to drill into selected integration
-            if (ke.isConfirm() && tab == TAB_OVERVIEW) {
-                overviewTab.selectCurrentIntegration();
-                if (ctx.selectedPid != null) {
-                    tabsState.select(TAB_LOG);
-                    refreshLogData();
-                }
-                return true;
-            }
-
-            // Overview tab: start/stop all routes for selected integration (not infra)
-            if (tab == TAB_OVERVIEW && ke.isChar('p') && ctx.selectedPid != null && !isInfraSelected()) {
-                IntegrationInfo selInfo = findSelectedIntegration();
-                if (selInfo != null) {
-                    String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
-                    sendRouteCommand(ctx.selectedPid, "*", cmd);
-                }
-                return true;
-            }
-            // Overview tab: stop process (SIGTERM) for selected integration or infra
-            if (tab == TAB_OVERVIEW && ke.isChar('x') && ctx.selectedPid != null) {
-                stopSelectedProcess(false);
-                return true;
-            }
-            // Overview tab: kill process (SIGKILL) — show confirm dialog first
-            if (tab == TAB_OVERVIEW && ke.isChar('X') && ctx.selectedPid != null) {
-                showKillConfirm = true;
-                return true;
-            }
-            // Overview tab: cold restart (stop + re-launch) for selected integration
-            if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !isInfraSelected()) {
-                restartSelectedProcess();
-                return true;
-            }
-            if (tab == TAB_OVERVIEW && ke.isChar('d') && ctx.selectedPid != null && !isInfraSelected()) {
-                IntegrationInfo selInfo = findSelectedIntegration();
-                if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
-                    actionsPopup.openDoc(selInfo);
-                    return true;
-                }
-            }
-            if (tab == TAB_OVERVIEW && ke.isChar('f') && ctx.selectedPid != null && !isInfraSelected()) {
-                openFilesPopup();
-                return true;
-            }
-            // Delegate remaining keys to active tab
-            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+            if (handleTabKeys(ke)) {
                 return true;
             }
         }
         if (event instanceof PasteEvent pe) {
-            if (actionsPopup.isVisible()) {
-                actionsPopup.handlePaste(pe.text());
-                return true;
-            }
-            if (httpTab.isProbeMode()) {
-                httpTab.handlePaste(pe.text());
-                return true;
-            }
-            if (logTab.isSearchInputActive()) {
-                logTab.handlePaste(pe.text());
-                return true;
-            }
-            if (overviewSourceViewer.isSearchInputActive()) {
-                overviewSourceViewer.handlePaste(pe.text());
-                return true;
-            }
+            return handlePasteEvent(pe);
         }
         if (event instanceof TickEvent) {
-            long now = System.currentTimeMillis();
-            boolean keyProcessed = false;
-            PendingKey pk;
-            while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
-                pendingKeys.poll();
-                mcpInjectedKey = true;
-                handleEvent(pk.event(), runner);
-                mcpInjectedKey = false;
-                keyProcessed = true;
-            }
-            if (keyProcessed) {
+            return handleTickEvent(runner);
+        }
+        return false;
+    }
+
+    private boolean handlePopupKeys(KeyEvent ke) {
+        if (filesBrowser.isVisible()) {
+            return filesBrowser.handleKeyEvent(ke);
+        }
+        if (showMorePopup) {
+            if (ke.isCancel()) {
+                showMorePopup = false;
                 return true;
             }
-            actionsPopup.tick(now);
-            drawOverlay.tick(now);
-            captionOverlay.tick(now);
-            if (recording && !recentKeys.isEmpty()) {
-                long cutoff = now - 2000;
-                recentKeys.removeIf(k -> k.timestamp() < cutoff);
+            if (ke.isUp()) {
+                morePopupState.selectPrevious();
+                return true;
             }
-            boolean anyDiagramShowing = routesTab.isShowDiagram() || diagramTab.isShowDiagram();
-            long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
-            if (now - lastRefresh >= interval) {
-                refreshData();
-                routesTab.refreshDiagramIfNeeded();
-                diagramTab.refreshDiagramIfNeeded();
+            if (ke.isDown()) {
+                morePopupState.selectNext(12);
+                return true;
+            }
+            int shortcutSel = morePopupShortcut(ke);
+            if (shortcutSel >= 0) {
+                morePopupState.select(shortcutSel);
+            }
+            if (ke.isConfirm() || shortcutSel >= 0) {
+                showMorePopup = false;
+                Integer sel = shortcutSel >= 0 ? shortcutSel : morePopupState.selected();
+                if (sel != null) {
+                    lastMoreSelection = sel;
+                    activeMoreTab = switch (sel) {
+                        case 0 -> beansTab;
+                        case 1 -> browseTab;
+                        case 2 -> circuitBreakerTab;
+                        case 3 -> classpathTab;
+                        case 4 -> configurationTab;
+                        case 5 -> consumersTab;
+                        case 6 -> inflightTab;
+                        case 7 -> memoryTab;
+                        case 8 -> metricsTab;
+                        case 9 -> spansTab;
+                        case 10 -> startupTab;
+                        case 11 -> threadsTab;
+                        default -> null;
+                    };
+                    if (activeMoreTab != null) {
+                        overviewTab.selectCurrentIntegration();
+                        tabsState.select(TAB_MORE);
+                        activeMoreTab.onTabSelected();
+                    }
+                }
                 return true;
             }
             return true;
         }
+        if (showSwitchPopup) {
+            if (ke.isCancel()) {
+                showSwitchPopup = false;
+                return true;
+            }
+            List<IntegrationInfo> switchList = getNonVanishingIntegrations();
+            if (ke.isUp()) {
+                switchPopupState.selectPrevious();
+                return true;
+            }
+            if (ke.isDown()) {
+                switchPopupState.selectNext(switchList.size());
+                return true;
+            }
+            if (ke.isConfirm()) {
+                showSwitchPopup = false;
+                Integer sel = switchPopupState.selected();
+                if (sel != null && sel >= 0 && sel < switchList.size()) {
+                    IntegrationInfo chosen = switchList.get(sel);
+                    ctx.selectedPid = chosen.pid;
+                    ctx.lastSelectedName = chosen.name;
+                    resetIntegrationTabState();
+                    if (tabsState.selected() == TAB_LOG) {
+                        refreshLogData();
+                    }
+                }
+                return true;
+            }
+            return true;
+        }
+        if (showKillConfirm) {
+            if (ke.isConfirm()) {
+                showKillConfirm = false;
+                stopSelectedProcess(true);
+            } else {
+                showKillConfirm = false;
+            }
+            return true;
+        }
         return false;
+    }
+
+    private boolean handleGlobalKeys(KeyEvent ke, TuiRunner runner) {
+        if (ke.isCancel()) {
+            MonitorTab tab = activeTab();
+            if (tab != null && tab.handleEscape()) {
+                return true;
+            }
+            if (tabsState.selected() != TAB_OVERVIEW) {
+                tabsState.select(TAB_OVERVIEW);
+                return true;
+            }
+            if (ctx.selectedPid != null) {
+                ctx.selectedPid = null;
+                ctx.lastSelectedName = null;
+                return true;
+            }
+            return true;
+        }
+        boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
+        boolean logSearchActive = tabsState.selected() == TAB_LOG && logTab.isSearchInputActive();
+        boolean spanFilterActive = tabsState.selected() == TAB_MORE && activeMoreTab == spansTab
+                && spansTab.isFilterInputActive();
+        boolean textEditing = probeEditing || logSearchActive || spanFilterActive;
+        if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
+            runner.quit();
+            return true;
+        }
+        if (ke.isCtrlC()) {
+            runner.quit();
+            return true;
+        }
+        if (!textEditing) {
+            if (ke.isChar('1')) {
+                return handleTabKey(TAB_OVERVIEW);
+            }
+            if (ke.isChar('2')) {
+                return handleTabKey(TAB_LOG);
+            }
+            if (!isInfraSelected()) {
+                if (ke.isChar('3')) {
+                    return handleTabKey(TAB_DIAGRAM);
+                }
+                if (ke.isChar('4')) {
+                    return handleTabKey(TAB_ROUTES);
+                }
+                if (ke.isChar('5')) {
+                    return handleTabKey(TAB_ENDPOINTS);
+                }
+                if (ke.isChar('6')) {
+                    return handleTabKey(TAB_HTTP);
+                }
+                if (ke.isChar('7')) {
+                    return handleTabKey(TAB_HEALTH);
+                }
+                if (ke.isChar('8')) {
+                    return handleTabKey(TAB_HISTORY);
+                }
+                if (ke.isChar('9')) {
+                    return handleTabKey(TAB_ERRORS);
+                }
+                if (ke.isChar('0')) {
+                    return handleTabKey(TAB_MORE);
+                }
+            }
+        }
+        if (ke.isFocusPrevious() && !textEditing) {
+            if (isInfraSelected()) {
+                int prev = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                tabsState.select(prev);
+            } else {
+                int prev = (tabsState.selected() - 1 + NUM_TABS) % NUM_TABS;
+                if (prev != TAB_OVERVIEW) {
+                    overviewTab.selectCurrentIntegration();
+                }
+                tabsState.select(prev);
+            }
+            return true;
+        }
+        if (ke.isFocusNext() && !textEditing) {
+            if (isInfraSelected()) {
+                int next = tabsState.selected() == TAB_OVERVIEW ? TAB_LOG : TAB_OVERVIEW;
+                tabsState.select(next);
+            } else {
+                int next = (tabsState.selected() + 1) % NUM_TABS;
+                if (next != TAB_OVERVIEW) {
+                    overviewTab.selectCurrentIntegration();
+                }
+                tabsState.select(next);
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
+            takeScreenshot();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F1)) {
+            if (helpOverlay.isVisible()) {
+                helpOverlay.close();
+            } else {
+                MonitorTab tab = activeTab();
+                if (tab != null) {
+                    String help = tab.getHelpText();
+                    if (help != null) {
+                        helpOverlay.open(help);
+                    }
+                }
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F2)) {
+            if (tabsState.selected() == TAB_ROUTES && routesTab != null) {
+                actionsPopup.setPreSelectedRouteId(routesTab.selectedRouteId());
+            }
+            actionsPopup.open();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F3)) {
+            List<IntegrationInfo> switchList = getNonVanishingIntegrations();
+            if (switchList.size() > 1) {
+                showSwitchPopup = true;
+                for (int i = 0; i < switchList.size(); i++) {
+                    if (switchList.get(i).pid.equals(ctx.selectedPid)) {
+                        switchPopupState.select(i);
+                        break;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleTabKeys(KeyEvent ke) {
+        MonitorTab activeTab = activeTab();
+
+        if (ke.isUp()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            navigateUp();
+            return true;
+        }
+        if (ke.isDown()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            navigateDown();
+            return true;
+        }
+        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            return true;
+        }
+        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+            return true;
+        }
+        if (ke.isLeft()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isRight()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isHome()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+        if (ke.isEnd()) {
+            if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+                return true;
+            }
+        }
+
+        int tab = tabsState.selected();
+        if (ke.isConfirm() && tab == TAB_OVERVIEW) {
+            overviewTab.selectCurrentIntegration();
+            if (ctx.selectedPid != null) {
+                tabsState.select(TAB_LOG);
+                refreshLogData();
+            }
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('p') && ctx.selectedPid != null && !isInfraSelected()) {
+            IntegrationInfo selInfo = findSelectedIntegration();
+            if (selInfo != null) {
+                String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
+                sendRouteCommand(ctx.selectedPid, "*", cmd);
+            }
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('x') && ctx.selectedPid != null) {
+            stopSelectedProcess(false);
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('X') && ctx.selectedPid != null) {
+            showKillConfirm = true;
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('r') && ctx.selectedPid != null && !isInfraSelected()) {
+            restartSelectedProcess();
+            return true;
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('d') && ctx.selectedPid != null && !isInfraSelected()) {
+            IntegrationInfo selInfo = findSelectedIntegration();
+            if (selInfo != null && selInfo.readmeFiles != null && !selInfo.readmeFiles.isEmpty()) {
+                actionsPopup.openDoc(selInfo);
+                return true;
+            }
+        }
+        if (tab == TAB_OVERVIEW && ke.isChar('f') && ctx.selectedPid != null && !isInfraSelected()) {
+            openFilesPopup();
+            return true;
+        }
+        if (activeTab != null && activeTab.handleKeyEvent(ke)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handlePasteEvent(PasteEvent pe) {
+        if (actionsPopup.isVisible()) {
+            actionsPopup.handlePaste(pe.text());
+            return true;
+        }
+        if (httpTab.isProbeMode()) {
+            httpTab.handlePaste(pe.text());
+            return true;
+        }
+        if (logTab.isSearchInputActive()) {
+            logTab.handlePaste(pe.text());
+            return true;
+        }
+        if (filesBrowser.isSourceViewerPasteActive()) {
+            filesBrowser.handlePaste(pe.text());
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleTickEvent(TuiRunner runner) {
+        long now = System.currentTimeMillis();
+        boolean keyProcessed = false;
+        PendingKey pk;
+        while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
+            pendingKeys.poll();
+            mcpInjectedKey = true;
+            handleEvent(pk.event(), runner);
+            mcpInjectedKey = false;
+            keyProcessed = true;
+        }
+        if (keyProcessed) {
+            return true;
+        }
+        actionsPopup.tick(now);
+        drawOverlay.tick(now);
+        captionOverlay.tick(now);
+        if (recording && !recentKeys.isEmpty()) {
+            long cutoff = now - 2000;
+            recentKeys.removeIf(k -> k.timestamp() < cutoff);
+        }
+        boolean anyDiagramShowing = routesTab.isShowDiagram() || diagramTab.isShowDiagram();
+        long interval = anyDiagramShowing ? Math.max(refreshInterval, 1000) : refreshInterval;
+        if (now - lastRefresh >= interval) {
+            refreshData();
+            routesTab.refreshDiagramIfNeeded();
+            diagramTab.refreshDiagramIfNeeded();
+            return true;
+        }
+        return true;
     }
 
     private String keyLabel(KeyEvent ke) {
@@ -1004,9 +907,7 @@ public class CamelMonitor extends CamelCommand {
         circuitBreakerTab.onIntegrationChanged();
         inflightTab.onIntegrationChanged();
 
-        showFilesPopup = false;
-        fileEntries = Collections.emptyList();
-        overviewSourceViewer.reset();
+        filesBrowser.reset();
 
         // Preload diagram data in background so it's ready when the user switches tabs
         routesTab.preloadDiagram();
@@ -1139,40 +1040,6 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Compute notification counts (0 if no integration selected)
-        List<IntegrationInfo> infos = data.get();
-        long activeCount = infos.stream().filter(i -> !i.vanishing).count();
-        IntegrationInfo sel = findSelectedIntegration();
-        boolean hasSelection = ctx.selectedPid != null && sel != null;
-        int routeCount = hasSelection ? sel.routes.size() : 0;
-        int endpointCount = hasSelection ? sel.endpoints.size() : 0;
-        int cbCount = hasSelection ? sel.circuitBreakers.size() : 0;
-        long cbOpenCount = hasSelection
-                ? sel.circuitBreakers.stream()
-                        .filter(cb -> cb.state != null && (cb.state.equalsIgnoreCase("open")
-                                || cb.state.equalsIgnoreCase("forced_open")))
-                        .count()
-                : 0;
-        int healthCount = hasSelection ? sel.healthChecks.size() : 0;
-        long healthDownCount = hasSelection
-                ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
-        long historyCount = hasSelection
-                ? historyTab.historyEntries.stream()
-                        .map(e -> {
-                            if (e.headers != null) {
-                                Object bid = e.headers.get("breadcrumbId");
-                                if (bid != null) {
-                                    return bid.toString();
-                                }
-                            }
-                            return e.exchangeId;
-                        })
-                        .distinct().count()
-                : 0;
-        boolean hasTraces = hasSelection && !traces.get().isEmpty();
-        int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
-
-        // Row 0: label-only titles — fixed width so the tab bar never shifts when badges appear
         Line[] labels = {
                 Line.from(" 1 Overview "),
                 Line.from(" 2 Log "),
@@ -1193,61 +1060,18 @@ public class CamelMonitor extends CamelCommand {
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
 
-        // Row 1: labels (Tabs widget renders at the top of whatever rect it receives)
         Rect labelsArea = area.height() >= 2
                 ? new Rect(area.x(), area.y() + 1, area.width(), 1)
                 : area;
         frame.renderStatefulWidget(tabs, labelsArea, tabsState);
 
-        // Row 0: badge counters centered above each tab label
         if (area.height() >= 2) {
+            String[] badgeTexts = new String[labels.length];
+            Style[] badgeStyles = new Style[labels.length];
+            computeTabBadges(badgeTexts, badgeStyles);
+
             int badgeY = area.y();
             int dividerW = CharWidth.of(" | ");
-
-            String[] badgeTexts = { "", "", "", "", "", "", "", "", "", "" };
-            Style[] badgeStyles = new Style[labels.length];
-            Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
-            Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
-            Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
-            for (int j = 0; j < badgeStyles.length; j++) {
-                badgeStyles[j] = yellow;
-            }
-
-            if (activeCount > 0) {
-                badgeTexts[TAB_OVERVIEW] = "(" + activeCount + ")";
-            }
-            if (routeCount > 0) {
-                badgeTexts[TAB_DIAGRAM] = "(1)";
-                badgeTexts[TAB_ROUTES] = "(" + routeCount + ")";
-            }
-            if (endpointCount > 0) {
-                badgeTexts[TAB_ENDPOINTS] = "(" + endpointCount + ")";
-            }
-            if (httpCount > 0) {
-                badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
-            }
-            if (healthDownCount > 0) {
-                badgeTexts[TAB_HEALTH] = "(" + healthDownCount + " DOWN)";
-                badgeStyles[TAB_HEALTH] = red;
-            } else if (healthCount > 0) {
-                badgeTexts[TAB_HEALTH] = "(" + healthCount + ")";
-            }
-            if (hasTraces) {
-                badgeTexts[TAB_HISTORY] = "(*)";
-                badgeStyles[TAB_HISTORY] = cyan;
-            } else if (historyCount > 0) {
-                badgeTexts[TAB_HISTORY] = "(" + historyCount + ")";
-            }
-            if (cbOpenCount > 0) {
-                badgeTexts[TAB_MORE] = "(" + cbOpenCount + " OPEN)";
-                badgeStyles[TAB_MORE] = red;
-            }
-            int errorCount = hasSelection ? sel.errorCount : 0;
-            if (errorCount > 0) {
-                badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
-                badgeStyles[TAB_ERRORS] = red;
-            }
-
             int tabX = 0;
             for (int i = 0; i < labels.length; i++) {
                 if (i > 0) {
@@ -1280,8 +1104,88 @@ public class CamelMonitor extends CamelCommand {
             renderSwitchPopup(frame, area);
         }
         // Render "Files" popup overlay when visible
-        if (showFilesPopup) {
-            renderFilesPopup(frame, area);
+        if (filesBrowser.isVisible()) {
+            filesBrowser.render(frame, area);
+        }
+    }
+
+    private void computeTabBadges(String[] badgeTexts, Style[] badgeStyles) {
+        Style yellow = Style.EMPTY.fg(Color.YELLOW).bold();
+        Style cyan = Style.EMPTY.fg(Color.CYAN).bold();
+        Style red = Style.EMPTY.fg(Color.LIGHT_RED).bold();
+        for (int j = 0; j < badgeStyles.length; j++) {
+            badgeTexts[j] = "";
+            badgeStyles[j] = yellow;
+        }
+
+        List<IntegrationInfo> infos = data.get();
+        long activeCount = infos.stream().filter(i -> !i.vanishing).count();
+        IntegrationInfo sel = findSelectedIntegration();
+        boolean hasSelection = ctx.selectedPid != null && sel != null;
+
+        if (activeCount > 0) {
+            badgeTexts[TAB_OVERVIEW] = "(" + activeCount + ")";
+        }
+        int routeCount = hasSelection ? sel.routes.size() : 0;
+        if (routeCount > 0) {
+            badgeTexts[TAB_DIAGRAM] = "(1)";
+            badgeTexts[TAB_ROUTES] = "(" + routeCount + ")";
+        }
+        int endpointCount = hasSelection ? sel.endpoints.size() : 0;
+        if (endpointCount > 0) {
+            badgeTexts[TAB_ENDPOINTS] = "(" + endpointCount + ")";
+        }
+        int httpCount = hasSelection ? sel.httpEndpoints.size() : 0;
+        if (httpCount > 0) {
+            badgeTexts[TAB_HTTP] = "(" + httpCount + ")";
+        }
+        long healthDownCount = hasSelection
+                ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
+        if (healthDownCount > 0) {
+            badgeTexts[TAB_HEALTH] = "(" + healthDownCount + " DOWN)";
+            badgeStyles[TAB_HEALTH] = red;
+        } else {
+            int healthCount = hasSelection ? sel.healthChecks.size() : 0;
+            if (healthCount > 0) {
+                badgeTexts[TAB_HEALTH] = "(" + healthCount + ")";
+            }
+        }
+        boolean hasTraces = hasSelection && !traces.get().isEmpty();
+        if (hasTraces) {
+            badgeTexts[TAB_HISTORY] = "(*)";
+            badgeStyles[TAB_HISTORY] = cyan;
+        } else {
+            long historyCount = hasSelection
+                    ? historyTab.historyEntries.stream()
+                            .map(e -> {
+                                if (e.headers != null) {
+                                    Object bid = e.headers.get("breadcrumbId");
+                                    if (bid != null) {
+                                        return bid.toString();
+                                    }
+                                }
+                                return e.exchangeId;
+                            })
+                            .distinct().count()
+                    : 0;
+            if (historyCount > 0) {
+                badgeTexts[TAB_HISTORY] = "(" + historyCount + ")";
+            }
+        }
+        long cbOpenCount = hasSelection
+                ? sel.circuitBreakers.stream()
+                        .filter(cb -> cb.state != null && (cb.state.equalsIgnoreCase("open")
+                                || cb.state.equalsIgnoreCase("forced_open")))
+                        .count()
+                : 0;
+        if (cbOpenCount > 0) {
+            badgeTexts[TAB_MORE] = "(" + cbOpenCount + " OPEN)";
+            badgeStyles[TAB_MORE] = red;
+        }
+        int errorCount = hasSelection ? sel.errorCount : 0;
+        if (errorCount > 0) {
+            badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
+            badgeStyles[TAB_ERRORS] = red;
         }
     }
 
@@ -1318,6 +1222,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
                 ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
         };
@@ -1384,207 +1289,9 @@ public class CamelMonitor extends CamelCommand {
 
     private void openFilesPopup() {
         IntegrationInfo info = findSelectedIntegration();
-        if (info == null) {
-            return;
+        if (info != null) {
+            filesBrowser.open(info);
         }
-        Path dir = resolveSourceDirectory(info);
-        if (dir == null || !Files.isDirectory(dir)) {
-            return;
-        }
-        List<FileEntry> entries = new ArrayList<>();
-        try (var stream = Files.list(dir)) {
-            stream.filter(Files::isRegularFile)
-                    .limit(99)
-                    .forEach(p -> {
-                        String name = p.getFileName().toString();
-                        String emoji = fileEmoji(p);
-                        long size = 0;
-                        try {
-                            size = Files.size(p);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                        entries.add(new FileEntry(emoji, name, size, p.toString()));
-                    });
-        } catch (IOException e) {
-            return;
-        }
-        if (entries.isEmpty()) {
-            return;
-        }
-        entries.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
-        fileEntries = entries;
-        filesPopupTitle = info.name != null ? info.name : "?";
-        filesPopupState.select(0);
-        showFilesPopup = true;
-        overviewSourceViewer.reset();
-    }
-
-    private void renderFilesPopup(Frame frame, Rect area) {
-        if (overviewSourceViewer.isVisible()) {
-            frame.renderWidget(Clear.INSTANCE, area);
-            overviewSourceViewer.render(frame, area);
-            return;
-        }
-        if (fileEntries.isEmpty()) {
-            showFilesPopup = false;
-            return;
-        }
-
-        int nameWidth = fileEntries.stream().mapToInt(e -> e.name().length()).max().orElse(10);
-        int sizeWidth = fileEntries.stream().mapToInt(e -> formatFileSize(e.size()).length()).max().orElse(4);
-        int itemWidth = 4 + nameWidth + 2 + sizeWidth + 2;
-        int popupW = Math.min(area.width() - 4, Math.max(30, itemWidth + 4));
-        int popupH = Math.min(area.height() - 4, fileEntries.size() + 2);
-
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + 2;
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        ListItem[] items = new ListItem[fileEntries.size()];
-        for (int i = 0; i < fileEntries.size(); i++) {
-            FileEntry entry = fileEntries.get(i);
-            String sizeStr = formatFileSize(entry.size());
-            String label = String.format("  %s %-" + nameWidth + "s  %s", entry.emoji(), entry.name(), sizeStr);
-            items[i] = ListItem.from(label);
-        }
-
-        ListWidget list = ListWidget.builder()
-                .items(items)
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED)
-                        .title(Title.from(Line
-                                .from(Span.styled(" Files: " + filesPopupTitle + " ", Style.EMPTY.fg(Color.YELLOW).bold()))))
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, popup, filesPopupState);
-    }
-
-    private static final String[] CAMEL_YAML_MARKERS = {
-            "- from:", "- route:",
-            "- routeTemplate:", "- route-template:",
-            "- templatedRoute:", "- templated-route:",
-            "- routeConfiguration:", "- route-configuration:",
-            "- rest:", "- beans:"
-    };
-
-    private static final String[] CAMEL_XML_MARKERS = {
-            "<route", "<routes", "<routeTemplate", "<routeTemplates",
-            "<templatedRoute", "<templatedRoutes",
-            "<rest", "<rests", "<routeConfiguration",
-            "<beans", "<blueprint", "<camel"
-    };
-
-    private static String fileEmoji(Path path) {
-        String name = path.getFileName().toString();
-        String lower = name.toLowerCase(Locale.ROOT);
-        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
-            return "🐪";
-        }
-        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
-            return isCamelYaml(path) ? "🐪" : "📋";
-        }
-        if (lower.endsWith(".xml")) {
-            return isCamelXml(path) ? "🐪" : "📋";
-        }
-        if (lower.endsWith(".java")) {
-            return isCamelJava(path) ? "🐪" : "☕";
-        }
-        if (lower.endsWith(".properties") || lower.endsWith(".cfg")) {
-            return "📄";
-        }
-        if (lower.startsWith("readme")) {
-            return "📖";
-        }
-        return "📋";
-    }
-
-    private static boolean isCamelYaml(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            for (String marker : CAMEL_YAML_MARKERS) {
-                if (content.contains(marker)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static boolean isCamelXml(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            for (String marker : CAMEL_XML_MARKERS) {
-                if (content.contains(marker)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static boolean isCamelJava(Path path) {
-        try {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            return content.contains("RouteBuilder")
-                    || content.contains("EndpointRouteBuilder");
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
-    }
-
-    private static Path resolveSourceDirectory(IntegrationInfo info) {
-        for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
-            if ("camel.main.routesIncludePattern".equals(cp.key) && cp.value != null) {
-                for (String part : cp.value.split(",")) {
-                    part = part.trim();
-                    if (part.startsWith("file:")) {
-                        String filePath = part.substring("file:".length());
-                        // strip query params like ?optional=true
-                        int q = filePath.indexOf('?');
-                        if (q > 0) {
-                            filePath = filePath.substring(0, q);
-                        }
-                        // source-dir pattern: file:/path/to/folder/** → use /path/to/folder directly
-                        if (filePath.endsWith("/**")) {
-                            Path dir = Path.of(filePath.substring(0, filePath.length() - 3));
-                            if (Files.isDirectory(dir)) {
-                                return dir;
-                            }
-                        }
-                        // individual file: file:/tmp/example/foo.yaml → use parent dir
-                        Path parent = Path.of(filePath).getParent();
-                        if (parent != null && Files.isDirectory(parent)) {
-                            return parent;
-                        }
-                    }
-                }
-            }
-        }
-        if (info.directory != null && !info.directory.isEmpty()) {
-            return Path.of(info.directory);
-        }
-        return null;
-    }
-
-    private static String formatFileSize(long bytes) {
-        if (bytes < 1024) {
-            return bytes + " B";
-        }
-        if (bytes < 1024 * 1024) {
-            return String.format("%.1f KB", bytes / 1024.0);
-        }
-        return String.format("%.1f MB", bytes / (1024.0 * 1024));
     }
 
     private List<IntegrationInfo> getNonVanishingIntegrations() {
@@ -1622,11 +1329,14 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isChar('e')) {
             return 8;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('o')) {
             return 9;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 10;
+        }
+        if (ke.isChar('t')) {
+            return 11;
         }
         return -1;
     }
@@ -1826,35 +1536,7 @@ public class CamelMonitor extends CamelCommand {
         root.put("action", "reset-stats");
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
-        // Clear local sparkline history — overview
-        throughputHistory.remove(pid);
-        failedHistory.remove(pid);
-        throughputSamples.remove(pid);
-        previousExchangesTime.remove(pid);
-        // Clear local sparkline history — endpoints
-        endpointInHistory.remove(pid);
-        endpointOutHistory.remove(pid);
-        endpointSamples.remove(pid);
-        previousEndpointTime.remove(pid);
-        endpointRemoteInHistory.remove(pid);
-        endpointRemoteOutHistory.remove(pid);
-        endpointRemoteSamples.remove(pid);
-        previousEndpointRemoteTime.remove(pid);
-        endpointRemoteStubInHistory.remove(pid);
-        endpointRemoteStubOutHistory.remove(pid);
-        endpointRemoteStubSamples.remove(pid);
-        previousEndpointRemoteStubTime.remove(pid);
-        endpointInSizeHistory.remove(pid);
-        endpointOutSizeHistory.remove(pid);
-        previousEndpointSizeTime.remove(pid);
-        String perEpPrefix = pid + "|";
-        perEndpointInHistory.keySet().removeIf(k -> k.startsWith(perEpPrefix));
-        perEndpointOutHistory.keySet().removeIf(k -> k.startsWith(perEpPrefix));
-        perEndpointSamples.keySet().removeIf(k -> k.startsWith(perEpPrefix));
-        previousPerEndpointTime.keySet().removeIf(k -> k.startsWith(perEpPrefix));
-        // Clear local sparkline history — heap memory
-        heapMemHistory.remove(pid);
-        previousHeapTime.remove(pid);
+        metrics.resetStats(pid);
     }
 
     private void sendRouteCommand(String pid, String routeId, String command) {
@@ -1925,14 +1607,8 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        if (showFilesPopup) {
-            if (overviewSourceViewer.isVisible()) {
-                overviewSourceViewer.renderFooter(spans);
-            } else {
-                hint(spans, "Up/Down", "navigate");
-                hint(spans, "Enter", "open");
-                hint(spans, "Esc", "close");
-            }
+        if (filesBrowser.isVisible()) {
+            filesBrowser.renderFooter(spans);
         } else if (showSwitchPopup) {
             hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "switch");
@@ -1948,16 +1624,7 @@ public class CamelMonitor extends CamelCommand {
                 renderOverviewFooter(spans);
             } else {
                 tab.renderFooter(spans);
-                int insertPos = Math.min(2, spans.size());
-                List<Span> fKeySpans = new ArrayList<>();
-                if (activeTab() != null && activeTab().getHelpText() != null) {
-                    hint(fKeySpans, "F1", "help");
-                }
-                hint(fKeySpans, "F2", "actions");
-                if (getNonVanishingIntegrations().size() > 1) {
-                    hint(fKeySpans, "F3", "switch");
-                }
-                spans.addAll(insertPos, fKeySpans);
+                insertFKeyHints(spans);
             }
         }
 
@@ -1998,6 +1665,9 @@ public class CamelMonitor extends CamelCommand {
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));
+            if (client == null) {
+                rightSpans.add(Span.styled("  F2 → Setup AI", Style.EMPTY.dim()));
+            }
         }
 
         if (!rightSpans.isEmpty()) {
@@ -2011,21 +1681,27 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
+    private void insertFKeyHints(List<Span> spans) {
+        int insertPos = Math.min(2, spans.size());
+        List<Span> fKeySpans = new ArrayList<>();
+        MonitorTab tab = activeTab();
+        if (tab != null && tab.getHelpText() != null) {
+            hint(fKeySpans, "F1", "help");
+        }
+        hint(fKeySpans, "F2", "actions");
+        if (getNonVanishingIntegrations().size() > 1) {
+            hint(fKeySpans, "F3", "switch");
+        }
+        spans.addAll(insertPos, fKeySpans);
+    }
+
     private void renderOverviewFooter(List<Span> spans) {
         if (actionsPopup.isVisible()) {
             actionsPopup.renderFooter(spans);
             return;
         }
         overviewTab.renderFooter(spans);
-        // Insert F2/F3 after first hint (q) — each hint is 2 spans (key + label)
-        int insertPos = Math.min(2, spans.size());
-        List<Span> fKeySpans = new ArrayList<>();
-        hint(fKeySpans, "F1", "help");
-        hint(fKeySpans, "F2", "actions");
-        if (getNonVanishingIntegrations().size() > 1) {
-            hint(fKeySpans, "F3", "switch");
-        }
-        spans.addAll(insertPos, fKeySpans);
+        insertFKeyHints(spans);
         // Process action hints
         if (ctx.selectedPid != null && !isInfraSelected()) {
             IntegrationInfo selInfo = findSelectedIntegration();
@@ -2067,52 +1743,9 @@ public class CamelMonitor extends CamelCommand {
                 logFileName = selected.pid + ".log";
             }
         }
-        if (logPid == null) {
-            return;
+        if (logPid != null) {
+            logTab.refreshFromFile(logPid, logFileName);
         }
-        if (!logPid.equals(logTab.logFilePid)) {
-            logTab.mutableFilteredEntries.clear();
-            logTab.logFilePos = -1;
-            logTab.logTotalLinesRead = 0;
-            logTab.logLineBuffer.setLength(0);
-            logTab.logLoading = true;
-        }
-        // Load older lines when scrolled to the top or Home pressed
-        boolean changed = false;
-        boolean loadAll = logTab.loadAllRequested;
-        if (logTab.logFileStartPos > 0
-                && (loadAll || (!logTab.followMode && logTab.scroll == 0))) {
-            logTab.loadAllRequested = false;
-            List<String> olderLines = new ArrayList<>();
-            logTab.readOlderLogLines(logFileName, loadAll, olderLines);
-            if (!olderLines.isEmpty()) {
-                changed = true;
-                List<LogEntry> olderEntries = new ArrayList<>();
-                for (String line : olderLines) {
-                    olderEntries.add(LogTab.parseLogLine(line));
-                }
-                logTab.mutableFilteredEntries.addAll(0, olderEntries);
-                logTab.logTotalLinesRead += olderLines.size();
-                logTab.scroll = olderEntries.size();
-            }
-        }
-        List<String> newRawLines = new ArrayList<>();
-        logTab.readNewLogLinesFromFile(logPid, logFileName, newRawLines);
-        changed |= !newRawLines.isEmpty();
-        if (changed) {
-            logTab.logTotalLinesRead += newRawLines.size();
-            for (String line : newRawLines) {
-                logTab.mutableFilteredEntries.add(LogTab.parseLogLine(line));
-            }
-            if (logTab.mutableFilteredEntries.size() > MAX_LOG_LINES) {
-                logTab.mutableFilteredEntries.subList(0, logTab.mutableFilteredEntries.size() - MAX_LOG_LINES)
-                        .clear();
-            }
-        }
-        if (changed || logTab.logLoading) {
-            logTab.filteredLogEntries = new ArrayList<>(logTab.mutableFilteredEntries);
-        }
-        logTab.logLoading = false;
     }
 
     private void refreshData() {
@@ -2137,198 +1770,208 @@ public class CamelMonitor extends CamelCommand {
     private void refreshDataSync() {
         lastRefresh = System.currentTimeMillis();
         try {
-            // Read log data early — before the heavy PID/status scan
             refreshLogData();
-
-            List<IntegrationInfo> infos = new ArrayList<>();
-            long now = System.currentTimeMillis();
-            boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
-            long scanInterval = isBurstMode() ? 1000 : 2000;
-            boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
-            List<Long> pids;
-            if (fullScan) {
-                pids = findPids(name);
-                cachedPids = pids;
-                lastFullScanTime = now;
-            } else {
-                pids = cachedPids;
-            }
-
-            // On non-Overview tabs, only refresh the selected integration for speed
-            List<Long> refreshPids;
-            if (!fullScan && ctx.selectedPid != null) {
-                try {
-                    refreshPids = List.of(Long.parseLong(ctx.selectedPid));
-                } catch (NumberFormatException e) {
-                    refreshPids = pids;
-                }
-            } else {
-                refreshPids = pids;
-            }
-            for (Long pid : refreshPids) {
-                JsonObject root = loadStatus(pid);
-                if (root != null) {
-                    ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
-                    if (ph == null) {
-                        continue;
-                    }
-                    IntegrationInfo info = StatusParser.parseIntegration(ph, root);
-                    if (info != null) {
-                        infos.add(info);
-                        updateThroughputHistory(info);
-                        updateEndpointHistory(info);
-                        updateCbHistory(info);
-                        updateHeapHistory(info);
-                        updateLoadMetrics(ph, info);
-                    }
-                }
-            }
-            // Carry forward non-selected integrations from previous data so they don't vanish
-            if (!fullScan && ctx.selectedPid != null) {
-                List<IntegrationInfo> previous = data.get();
-                for (IntegrationInfo prev : previous) {
-                    if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
-                        infos.add(prev);
-                    }
-                }
-            }
-
-            // Detect disappeared integrations and start vanishing
-            Set<String> livePids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
-            List<IntegrationInfo> previous = data.get();
-            for (IntegrationInfo prev : previous) {
-                if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
-                    stoppingPids.remove(prev.pid);
-                    vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
-                }
-            }
-
-            // Expire old vanishing entries
-            Iterator<Map.Entry<String, VanishingInfo>> it = vanishing.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, VanishingInfo> entry = it.next();
-                if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
-                    it.remove();
-                    throughputHistory.remove(entry.getKey());
-                    failedHistory.remove(entry.getKey());
-                    endpointInHistory.remove(entry.getKey());
-                    endpointOutHistory.remove(entry.getKey());
-                    endpointSamples.remove(entry.getKey());
-                    previousEndpointTime.remove(entry.getKey());
-                    endpointRemoteInHistory.remove(entry.getKey());
-                    endpointRemoteOutHistory.remove(entry.getKey());
-                    endpointRemoteSamples.remove(entry.getKey());
-                    previousEndpointRemoteTime.remove(entry.getKey());
-                    endpointRemoteStubInHistory.remove(entry.getKey());
-                    endpointRemoteStubOutHistory.remove(entry.getKey());
-                    endpointRemoteStubSamples.remove(entry.getKey());
-
-                    endpointInSizeHistory.remove(entry.getKey());
-                    endpointOutSizeHistory.remove(entry.getKey());
-                    previousEndpointSizeTime.remove(entry.getKey());
-                    previousEndpointRemoteStubTime.remove(entry.getKey());
-                    heapMemHistory.remove(entry.getKey());
-                    previousHeapTime.remove(entry.getKey());
-                    cpuLoadAvg.remove(entry.getKey());
-                    prevCpuSample.remove(entry.getKey());
-                    String vanishCbPrefix = entry.getKey() + "/";
-                    cbSuccessHistory.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
-                    cbFailHistory.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
-                    cbThroughputSamples.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
-                    previousCbTime.keySet().removeIf(k -> k.startsWith(vanishCbPrefix));
-                    String vanishEpPrefix = entry.getKey() + "|";
-                    perEndpointInHistory.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
-                    perEndpointOutHistory.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
-                    perEndpointSamples.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
-                    previousPerEndpointTime.keySet().removeIf(k -> k.startsWith(vanishEpPrefix));
-                } else if (!livePids.contains(entry.getKey())) {
-                    IntegrationInfo ghost = entry.getValue().info;
-                    ghost.vanishing = true;
-                    ghost.vanishStart = entry.getValue().startTime;
-                    infos.add(ghost);
-                } else {
-                    it.remove();
-                }
-            }
-
-            data.set(infos);
-
-            // Clear stale selection when the selected integration is gone
-            if (ctx.selectedPid != null && !isInfraSelected()) {
-                boolean stillAlive = infos.stream()
-                        .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
-                if (!stillAlive) {
-                    // Remember the name for auto-reselect when the integration restarts
-                    IntegrationInfo gone = infos.stream()
-                            .filter(i -> ctx.selectedPid.equals(i.pid))
-                            .findFirst().orElse(null);
-                    if (gone != null) {
-                        ctx.lastSelectedName = gone.name;
-                    }
-                    ctx.selectedPid = null;
-                }
-            }
-
-            // Auto-select a newly launched integration
-            String autoSelect = actionsPopup.getPendingAutoSelect();
-            if (autoSelect != null) {
-                for (IntegrationInfo info : infos) {
-                    if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
-                        ctx.selectedPid = info.pid;
-                        ctx.lastSelectedName = null;
-                        actionsPopup.clearPendingAutoSelect();
-                        break;
-                    }
-                }
-            }
-
-            // Auto-reselect by remembered name when the integration restarts
-            if (ctx.selectedPid == null && ctx.lastSelectedName != null && !isInfraSelected()) {
-                for (IntegrationInfo info : infos) {
-                    if (!info.vanishing && ctx.lastSelectedName.equalsIgnoreCase(info.name)) {
-                        ctx.selectedPid = info.pid;
-                        ctx.lastSelectedName = null;
-                        break;
-                    }
-                }
-            }
-
-            // Discover running infra services (only on Overview or switch popup)
-            if (fullScan) {
-                refreshInfraData();
-            }
-
-            // Auto-select first infra service when no active integrations exist
-            if (ctx.selectedPid == null && !infraData.get().isEmpty()
-                    && infos.stream().noneMatch(i -> !i.vanishing)) {
-                List<InfraInfo> infras = infraData.get();
-                if (!infras.isEmpty()) {
-                    int firstInfraIndex = infos.size() + (infras.size() > 0 ? 1 : 0);
-                    overviewTab.tableState.select(firstInfraIndex);
-                    ctx.selectedPid = infras.get(0).pid;
-                }
-            }
-
-            // Log data is now refreshed at the top of refreshDataSync() via refreshLogData()
-
-            // Scope history/error/trace refresh to the selected integration only
-            List<Long> selectedPids = selectedPidAsList();
-
-            // Refresh error data only when the Errors tab is visible
-            if (tabsState.selected() == TAB_ERRORS && !selectedPids.isEmpty()) {
-                refreshErrorData(selectedPids);
-            }
-
-            // Refresh trace data only when the History tab is visible
-            if (tabsState.selected() == TAB_HISTORY && !selectedPids.isEmpty()) {
-                if (historyTab.historyRefreshRequested) {
-                    historyTab.historyRefreshRequested = false;
-                    refreshHistoryData(selectedPids);
-                }
-                refreshTraceData(selectedPids);
-            }
+            boolean fullScan = scanIntegrations();
+            List<IntegrationInfo> infos = data.get();
+            handleAutoSelect(infos, fullScan);
+            refreshConditionalData();
         } catch (Exception e) {
             // ignore refresh errors
+        }
+    }
+
+    private boolean scanIntegrations() {
+        List<IntegrationInfo> infos = new ArrayList<>();
+        long now = System.currentTimeMillis();
+        boolean wantFullScan = tabsState.selected() == TAB_OVERVIEW || showSwitchPopup || cachedPids.isEmpty();
+        long scanInterval = isBurstMode() ? 1000 : 2000;
+        boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
+        List<Long> pids;
+        if (fullScan) {
+            pids = findPids(name);
+            cachedPids = pids;
+            lastFullScanTime = now;
+        } else {
+            pids = cachedPids;
+        }
+
+        List<Long> refreshPids;
+        if (!fullScan && ctx.selectedPid != null) {
+            try {
+                refreshPids = List.of(Long.parseLong(ctx.selectedPid));
+            } catch (NumberFormatException e) {
+                refreshPids = pids;
+            }
+        } else {
+            refreshPids = pids;
+        }
+        for (Long pid : refreshPids) {
+            JsonObject root = loadStatus(pid);
+            if (root != null) {
+                ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
+                if (ph == null) {
+                    continue;
+                }
+                IntegrationInfo info = StatusParser.parseIntegration(ph, root);
+                if (info != null) {
+                    infos.add(info);
+                    metrics.updateThroughputHistory(info);
+                    metrics.updateEndpointHistory(info);
+                    metrics.updateCbHistory(info);
+                    metrics.updateHeapHistory(info);
+                    metrics.updateLoadMetrics(ph, info);
+                }
+            }
+        }
+        if (!fullScan && ctx.selectedPid != null) {
+            List<IntegrationInfo> previous = data.get();
+            for (IntegrationInfo prev : previous) {
+                if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
+                    infos.add(prev);
+                }
+            }
+        }
+
+        handleVanishing(infos, now);
+        data.set(infos);
+        return fullScan;
+    }
+
+    private void handleVanishing(List<IntegrationInfo> infos, long now) {
+        Set<String> livePids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
+        List<IntegrationInfo> previous = data.get();
+        for (IntegrationInfo prev : previous) {
+            if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
+                stoppingPids.remove(prev.pid);
+                vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
+            }
+        }
+
+        Iterator<Map.Entry<String, VanishingInfo>> it = vanishing.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, VanishingInfo> entry = it.next();
+            if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
+                it.remove();
+                metrics.removeVanished(entry.getKey());
+            } else if (!livePids.contains(entry.getKey())) {
+                IntegrationInfo ghost = entry.getValue().info;
+                ghost.vanishing = true;
+                ghost.vanishStart = entry.getValue().startTime;
+                infos.add(ghost);
+            } else {
+                it.remove();
+            }
+        }
+    }
+
+    private void handleAutoSelect(List<IntegrationInfo> infos, boolean fullScan) {
+        if (ctx.selectedPid != null && !isInfraSelected()) {
+            boolean stillAlive = infos.stream()
+                    .anyMatch(i -> ctx.selectedPid.equals(i.pid) && !i.vanishing);
+            if (!stillAlive) {
+                IntegrationInfo gone = infos.stream()
+                        .filter(i -> ctx.selectedPid.equals(i.pid))
+                        .findFirst().orElse(null);
+                if (gone != null) {
+                    ctx.lastSelectedName = gone.name;
+                }
+                ctx.selectedPid = null;
+            }
+        }
+
+        String autoSelect = actionsPopup.getPendingAutoSelect();
+        if (autoSelect != null) {
+            for (IntegrationInfo info : infos) {
+                if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
+                    ctx.selectedPid = info.pid;
+                    ctx.lastSelectedName = null;
+                    actionsPopup.clearPendingAutoSelect();
+                    break;
+                }
+            }
+        }
+
+        if (ctx.selectedPid == null && ctx.lastSelectedName != null && !isInfraSelected()) {
+            for (IntegrationInfo info : infos) {
+                if (!info.vanishing && ctx.lastSelectedName.equalsIgnoreCase(info.name)) {
+                    ctx.selectedPid = info.pid;
+                    ctx.lastSelectedName = null;
+                    break;
+                }
+            }
+        }
+
+        if (fullScan) {
+            refreshInfraData();
+        }
+
+        if (ctx.selectedPid == null && !infraData.get().isEmpty()
+                && infos.stream().noneMatch(i -> !i.vanishing)) {
+            List<InfraInfo> infras = infraData.get();
+            if (!infras.isEmpty()) {
+                int firstInfraIndex = infos.size() + (infras.size() > 0 ? 1 : 0);
+                overviewTab.tableState.select(firstInfraIndex);
+                ctx.selectedPid = infras.get(0).pid;
+            }
+        }
+    }
+
+    private void refreshConditionalData() {
+        List<Long> selectedPids = selectedPidAsList();
+        if (tabsState.selected() == TAB_ERRORS && !selectedPids.isEmpty()) {
+            refreshErrorData(selectedPids);
+        }
+        if (tabsState.selected() == TAB_HISTORY && !selectedPids.isEmpty()) {
+            if (historyTab.historyRefreshRequested) {
+                historyTab.historyRefreshRequested = false;
+                refreshHistoryData(selectedPids);
+            }
+            refreshTraceData(selectedPids);
+        }
+        if (tabsState.selected() == TAB_MORE && activeMoreTab == spansTab
+                && ctx.selectedPid != null && spansTab.spanRefreshRequested) {
+            spansTab.spanRefreshRequested = false;
+            refreshSpanData();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void refreshSpanData() {
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            return;
+        }
+        try {
+            // Send action to request span data
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject action = new JsonObject();
+            action.put("action", "span");
+            action.put("dump", "true");
+            action.put("limit", "500");
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+            // Poll for response
+            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
+            if (response != null) {
+                Boolean enabled = response.getBoolean("enabled");
+                if (enabled != null && enabled) {
+                    JsonArray arr = response.getCollection("spans");
+                    if (arr != null) {
+                        List<SpanEntry> entries = new ArrayList<>();
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject spanObj = (JsonObject) arr.get(i);
+                            entries.add(SpanEntry.fromJson(spanObj));
+                        }
+                        otelSpans.set(entries);
+                    }
+                }
+                PathUtils.deleteFile(outputFile);
+            }
+        } catch (Exception e) {
+            // ignore
         }
     }
 
@@ -2415,170 +2058,6 @@ public class CamelMonitor extends CamelCommand {
         infraData.set(infraInfos);
     }
 
-    private void updateThroughputHistory(IntegrationInfo info) {
-        // Track exchangesTotal and exchangesFailed over a 1-second sliding window
-        long currentTotal = info.exchangesTotal;
-        long currentFailed = info.failed;
-        long now = System.currentTimeMillis();
-
-        String pid = info.pid;
-        LinkedList<long[]> samples = throughputSamples.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, currentTotal, currentFailed });
-
-        // Remove samples older than 1 second
-        while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
-            samples.remove(0);
-        }
-
-        // Compute throughput over the window
-        if (samples.size() >= 2) {
-            long[] oldest = samples.get(0);
-            long[] newest = samples.get(samples.size() - 1);
-            long deltaTotal = newest[1] - oldest[1];
-            long deltaFailed = newest[2] - oldest[2];
-            long deltaTimeMs = newest[0] - oldest[0];
-            long tp = deltaTimeMs > 0 ? (deltaTotal * 1000) / deltaTimeMs : 0;
-            long fp = deltaTimeMs > 0 ? (deltaFailed * 1000) / deltaTimeMs : 0;
-
-            // Only add one point per second to keep the sparkline meaningful
-            Long lastTime = previousExchangesTime.get(pid);
-            if (lastTime == null || now - lastTime >= 1000) {
-                previousExchangesTime.put(pid, now);
-                LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-                hist.add(tp);
-                while (hist.size() > MAX_SPARKLINE_POINTS) {
-                    hist.remove(0);
-                }
-                LinkedList<Long> fhist = failedHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-                fhist.add(fp);
-                while (fhist.size() > MAX_SPARKLINE_POINTS) {
-                    fhist.remove(0);
-                }
-            }
-        }
-    }
-
-    private void updateEndpointHistory(IntegrationInfo info) {
-        long inTotal = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction))
-                .mapToLong(ep -> ep.hits).sum();
-        long outTotal = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction))
-                .mapToLong(ep -> ep.hits).sum();
-        long inRemote = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction) && ep.remote)
-                .mapToLong(ep -> ep.hits).sum();
-        long outRemote = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction) && ep.remote)
-                .mapToLong(ep -> ep.hits).sum();
-        long inRemoteStub = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction) && (ep.remote || ep.stub))
-                .mapToLong(ep -> ep.hits).sum();
-        long outRemoteStub = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction) && (ep.remote || ep.stub))
-                .mapToLong(ep -> ep.hits).sum();
-
-        long now = System.currentTimeMillis();
-        String pid = info.pid;
-
-        recordEndpointSample(pid, now, inTotal, outTotal,
-                endpointSamples, previousEndpointTime, endpointInHistory, endpointOutHistory);
-        recordEndpointSample(pid, now, inRemote, outRemote,
-                endpointRemoteSamples, previousEndpointRemoteTime, endpointRemoteInHistory, endpointRemoteOutHistory);
-        recordEndpointSample(pid, now, inRemoteStub, outRemoteStub,
-                endpointRemoteStubSamples, previousEndpointRemoteStubTime,
-                endpointRemoteStubInHistory, endpointRemoteStubOutHistory);
-
-        // Record payload size snapshots (mean body size per direction)
-        long inMeanSize = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction) && ep.meanBodySize >= 0)
-                .mapToLong(ep -> ep.meanBodySize).max().orElse(0);
-        long outMeanSize = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction) && ep.meanBodySize >= 0)
-                .mapToLong(ep -> ep.meanBodySize).max().orElse(0);
-        Long lastSizeTime = previousEndpointSizeTime.get(pid);
-        if (lastSizeTime == null || now - lastSizeTime >= 1000) {
-            previousEndpointSizeTime.put(pid, now);
-            LinkedList<Long> inSizeHist = endpointInSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            inSizeHist.add(inMeanSize);
-            while (inSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                inSizeHist.remove(0);
-            }
-            LinkedList<Long> outSizeHist = endpointOutSizeHistory.computeIfAbsent(pid, k -> new LinkedList<>());
-            outSizeHist.add(outMeanSize);
-            while (outSizeHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                outSizeHist.remove(0);
-            }
-        }
-
-        // Per-endpoint rate history (keyed by pid|uri)
-        Map<String, long[]> perUri = new LinkedHashMap<>();
-        for (EndpointInfo ep : info.endpoints) {
-            if (ep.uri == null) {
-                continue;
-            }
-            long[] inOut = perUri.computeIfAbsent(ep.uri, k -> new long[2]);
-            if ("in".equals(ep.direction)) {
-                inOut[0] += ep.hits;
-            } else if ("out".equals(ep.direction)) {
-                inOut[1] += ep.hits;
-            }
-        }
-        for (Map.Entry<String, long[]> entry : perUri.entrySet()) {
-            String key = pid + "|" + entry.getKey();
-            long[] inOut = entry.getValue();
-            recordEndpointSample(key, now, inOut[0], inOut[1],
-                    perEndpointSamples, previousPerEndpointTime,
-                    perEndpointInHistory, perEndpointOutHistory);
-        }
-    }
-
-    private void recordEndpointSample(
-            String pid, long now, long inTotal, long outTotal,
-            Map<String, LinkedList<long[]>> samplesMap, Map<String, Long> prevTimeMap,
-            Map<String, LinkedList<Long>> inHistMap, Map<String, LinkedList<Long>> outHistMap) {
-        LinkedList<long[]> samples = samplesMap.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, inTotal, outTotal });
-        while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
-            samples.remove(0);
-        }
-        if (samples.size() >= 2) {
-            long[] oldest = samples.get(0);
-            long[] newest = samples.get(samples.size() - 1);
-            long deltaMs = newest[0] - oldest[0];
-            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 / deltaMs : 0;
-            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 / deltaMs : 0;
-            Long lastTime = prevTimeMap.get(pid);
-            if (lastTime == null || now - lastTime >= 1000) {
-                prevTimeMap.put(pid, now);
-                LinkedList<Long> inHist = inHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
-                inHist.add(Math.max(0, inRate));
-                while (inHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                    inHist.remove(0);
-                }
-                LinkedList<Long> outHist = outHistMap.computeIfAbsent(pid, k -> new LinkedList<>());
-                outHist.add(Math.max(0, outRate));
-                while (outHist.size() > MAX_ENDPOINT_CHART_POINTS) {
-                    outHist.remove(0);
-                }
-            }
-        }
-    }
-
-    private void updateCbHistory(IntegrationInfo info) {
-        long now = System.currentTimeMillis();
-        for (CircuitBreakerInfo cb : info.circuitBreakers) {
-            if (cb.id == null) {
-                continue;
-            }
-            String key = info.pid + "/" + cb.id;
-            long success = cb.successfulCalls;
-            long failed = cb.failedCalls;
-            recordEndpointSample(key, now, success, failed,
-                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory);
-        }
-    }
-
     // ---- Trace Data Loading ----
 
     private void refreshTraceData(List<Long> pids) {
@@ -2608,42 +2087,6 @@ public class CamelMonitor extends CamelCommand {
         }
 
         traces.set(allTraces);
-    }
-
-    private void updateHeapHistory(IntegrationInfo info) {
-        if (info.heapMemUsed > 0) {
-            long now = System.currentTimeMillis();
-            Long lastTime = previousHeapTime.get(info.pid);
-            if (lastTime == null || now - lastTime >= HEAP_SAMPLE_INTERVAL_MS) {
-                previousHeapTime.put(info.pid, now);
-                LinkedList<Long> hist = heapMemHistory.computeIfAbsent(info.pid, k -> new LinkedList<>());
-                hist.add(info.heapMemUsed);
-                while (hist.size() > MAX_HEAP_HISTORY_POINTS) {
-                    hist.remove(0);
-                }
-            }
-        }
-    }
-
-    private void updateLoadMetrics(ProcessHandle ph, IntegrationInfo info) {
-        String pid = info.pid;
-
-        // CPU EWMA — compute % from ProcessHandle CPU duration delta
-        Optional<Duration> durOpt = ph.info().totalCpuDuration();
-        if (durOpt.isPresent()) {
-            long cpuNanos = durOpt.get().toNanos();
-            long wallMs = System.currentTimeMillis();
-            long[] prev = prevCpuSample.get(pid);
-            if (prev != null) {
-                long deltaCpuNanos = cpuNanos - prev[0];
-                long deltaWallNanos = (wallMs - prev[1]) * 1_000_000L;
-                if (deltaWallNanos > 0) {
-                    double cpuPct = (double) deltaCpuNanos / deltaWallNanos * 100.0;
-                    cpuLoadAvg.computeIfAbsent(pid, k -> new LoadAvg()).update(Math.max(0, cpuPct));
-                }
-            }
-            prevCpuSample.put(pid, new long[] { cpuNanos, wallMs });
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -2754,76 +2197,11 @@ public class CamelMonitor extends CamelCommand {
         try {
             long pid = Long.parseLong(sel.pid);
             JsonObject root = loadErrorFile(pid);
-            if (root == null) {
-                return;
+            if (root != null) {
+                List<ErrorInfo> parsed = StatusParser.parseErrors(root);
+                sel.errors.clear();
+                sel.errors.addAll(parsed);
             }
-            JsonArray errorList = (JsonArray) root.get("errors");
-            if (errorList == null) {
-                return;
-            }
-            List<ErrorInfo> parsed = new ArrayList<>();
-            for (Object e : errorList) {
-                JsonObject ej = (JsonObject) e;
-                ErrorInfo ei = new ErrorInfo();
-                ei.routeId = ej.getString("routeId");
-                ei.nodeId = ej.getString("nodeId");
-                ei.exchangeId = ej.getString("exchangeId");
-                ei.handled = Boolean.TRUE.equals(ej.get("handled"));
-                Long ts = ej.getLong("timestamp");
-                if (ts != null) {
-                    ei.timestamp = ts;
-                }
-                ei.location = ej.getString("location");
-                ei.threadName = ej.getString("threadName");
-                Long elapsed = ej.getLong("elapsed");
-                if (elapsed != null) {
-                    ei.elapsed = elapsed;
-                }
-                ei.endpointUri = ej.getString("endpointUri");
-                ei.fromEndpointUri = ej.getString("fromEndpointUri");
-                // exception
-                JsonObject ex = (JsonObject) ej.get("exception");
-                if (ex != null) {
-                    ei.exceptionType = ex.getString("type");
-                    ei.exceptionMessage = ex.getString("message");
-                    ei.stackTrace = ex.getString("stackTrace");
-                }
-                // message history
-                Object mhObj = ej.get("messageHistory");
-                if (mhObj instanceof JsonArray mhArr) {
-                    ei.messageHistory = new String[mhArr.size()];
-                    for (int i = 0; i < mhArr.size(); i++) {
-                        ei.messageHistory[i] = mhArr.get(i).toString();
-                    }
-                }
-                // message (body, headers)
-                JsonObject msg = (JsonObject) ej.get("message");
-                if (msg != null) {
-                    Object bodyObj = msg.get("body");
-                    if (bodyObj instanceof JsonObject bodyJson) {
-                        ei.body = bodyJson.getString("value");
-                        ei.bodyType = bodyJson.getString("type");
-                    } else if (bodyObj != null) {
-                        ei.body = bodyObj.toString();
-                    }
-                    JsonArray hdrs = msg.getCollection("headers");
-                    if (hdrs != null) {
-                        StatusParser.parseKvArray(hdrs, ei.headers, ei.headerTypes);
-                    }
-                }
-                // exchange properties and variables
-                JsonArray props = ej.getCollection("exchangeProperties");
-                if (props != null) {
-                    StatusParser.parseKvArray(props, ei.properties, ei.propertyTypes);
-                }
-                JsonArray vars = ej.getCollection("exchangeVariables");
-                if (vars != null) {
-                    StatusParser.parseKvArray(vars, ei.variables, ei.variableTypes);
-                }
-                parsed.add(ei);
-            }
-            sel.errors.clear();
-            sel.errors.addAll(parsed);
         } catch (Exception e) {
             // ignore
         }
@@ -2863,11 +2241,13 @@ public class CamelMonitor extends CamelCommand {
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
             String baseName = "camel-tui-screenshot-" + timestamp;
+            Path svgPath = Path.of(baseName + ".svg");
             Path txtPath = Path.of(baseName + ".txt");
             Path ansPath = Path.of(baseName + ".ans");
+            ExportRequest.export(buf).svg().toFile(svgPath);
             ExportRequest.export(buf).text().toFile(txtPath);
             ExportRequest.export(buf).text().options(o -> o.styles(true)).toFile(ansPath);
-            screenshotMessage = "Screenshot saved to " + txtPath.toAbsolutePath() + " (and .ans with colors)";
+            screenshotMessage = "Screenshot saved to " + svgPath.toAbsolutePath() + " (and .txt, .ans)";
             screenshotMessageTime = System.currentTimeMillis();
         } catch (IOException e) {
             screenshotMessage = "Screenshot failed: " + e.getMessage();
@@ -3028,11 +2408,44 @@ public class CamelMonitor extends CamelCommand {
         drawOverlay.clear();
     }
 
+    private static final String[] MORE_TAB_NAMES = {
+            "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
+            "Consumers", "Inflight", "Memory", "Metrics", "Spans", "Startup", "Threads"
+    };
+
     String navigateToTab(String tabName) {
         for (int i = 0; i < TAB_NAMES.length; i++) {
             if (TAB_NAMES[i].equalsIgnoreCase(tabName)) {
                 handleTabKey(i);
                 return TAB_NAMES[i];
+            }
+        }
+        // Check More submenu tabs
+        for (int i = 0; i < MORE_TAB_NAMES.length; i++) {
+            if (MORE_TAB_NAMES[i].equalsIgnoreCase(tabName)) {
+                morePopupState.select(i);
+                lastMoreSelection = i;
+                activeMoreTab = switch (i) {
+                    case 0 -> beansTab;
+                    case 1 -> browseTab;
+                    case 2 -> circuitBreakerTab;
+                    case 3 -> classpathTab;
+                    case 4 -> configurationTab;
+                    case 5 -> consumersTab;
+                    case 6 -> inflightTab;
+                    case 7 -> memoryTab;
+                    case 8 -> metricsTab;
+                    case 9 -> spansTab;
+                    case 10 -> startupTab;
+                    case 11 -> threadsTab;
+                    default -> null;
+                };
+                if (activeMoreTab != null) {
+                    overviewTab.selectCurrentIntegration();
+                    tabsState.select(TAB_MORE);
+                    activeMoreTab.onTabSelected();
+                }
+                return MORE_TAB_NAMES[i];
             }
         }
         return null;
@@ -3054,7 +2467,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     List<String> getTabNames() {
-        return List.of(TAB_NAMES);
+        List<String> names = new ArrayList<>();
+        names.addAll(List.of(TAB_NAMES));
+        names.addAll(List.of(MORE_TAB_NAMES));
+        return names;
     }
 
     List<String> getActionLabels() {
@@ -3106,6 +2522,73 @@ public class CamelMonitor extends CamelCommand {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    JsonObject getFiles(String name, String file) {
+        List<IntegrationInfo> integrations = data.get();
+        IntegrationInfo target = null;
+        if (name != null && !name.isEmpty()) {
+            for (IntegrationInfo info : integrations) {
+                if (!info.vanishing && name.equals(info.name)) {
+                    target = info;
+                    break;
+                }
+            }
+        } else {
+            target = ctx != null ? ctx.findSelectedIntegration() : null;
+        }
+        if (target == null) {
+            return null;
+        }
+        Path dir = FilesBrowser.resolveSourceDirectory(target);
+        if (dir == null || !Files.isDirectory(dir)) {
+            return null;
+        }
+        if (file != null && !file.isEmpty()) {
+            Path filePath = dir.resolve(file);
+            if (!Files.isRegularFile(filePath)) {
+                return null;
+            }
+            try {
+                String content = Files.readString(filePath, StandardCharsets.UTF_8);
+                JsonObject result = new JsonObject();
+                result.put("file", file);
+                result.put("directory", dir.toString());
+                result.put("size", FilesBrowser.formatFileSize(Files.size(filePath)));
+                result.put("type", FilesBrowser.fileType(filePath));
+                result.put("content", content);
+                return result;
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        JsonArray files = new JsonArray();
+        try (var stream = Files.list(dir)) {
+            stream.filter(Files::isRegularFile)
+                    .sorted((a, b) -> a.getFileName().toString().compareToIgnoreCase(b.getFileName().toString()))
+                    .limit(99)
+                    .forEach(p -> {
+                        JsonObject entry = new JsonObject();
+                        entry.put("name", p.getFileName().toString());
+                        try {
+                            entry.put("size", FilesBrowser.formatFileSize(Files.size(p)));
+                        } catch (IOException e) {
+                            entry.put("size", "0 B");
+                        }
+                        entry.put("type", FilesBrowser.fileType(p));
+                        files.add(entry);
+                    });
+        } catch (IOException e) {
+            return null;
+        }
+        if (files.isEmpty()) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("directory", dir.toString());
+        result.put("files", files);
+        result.put("totalFiles", files.size());
+        return result;
     }
 
     int injectKeys(List<String> keys, int delayMs) {
@@ -3221,6 +2704,191 @@ public class CamelMonitor extends CamelCommand {
         return diagramTab.getTopologyDataAsJson();
     }
 
+    @SuppressWarnings("unchecked")
+    JsonObject getSpanData(String traceId, int limit) {
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            JsonObject err = new JsonObject();
+            err.put("error", "No integration selected");
+            return err;
+        }
+        try {
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject action = new JsonObject();
+            action.put("action", "span");
+            action.put("dump", "true");
+            action.put("limit", String.valueOf(limit));
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
+            if (response != null) {
+                PathUtils.deleteFile(outputFile);
+                Boolean enabled = response.getBoolean("enabled");
+                if (enabled == null || !enabled) {
+                    JsonObject err = new JsonObject();
+                    err.put("error", "OpenTelemetry not enabled (requires --observe flag)");
+                    return err;
+                }
+                if (traceId != null && !traceId.isBlank()) {
+                    JsonArray all = response.getCollection("spans");
+                    if (all != null) {
+                        JsonArray filtered = new JsonArray();
+                        for (int i = 0; i < all.size(); i++) {
+                            JsonObject span = (JsonObject) all.get(i);
+                            String tid = span.getString("traceId");
+                            if (tid != null && tid.contains(traceId)) {
+                                filtered.add(span);
+                            }
+                        }
+                        response.put("spans", filtered);
+                    }
+                }
+                return response;
+            }
+            JsonObject err = new JsonObject();
+            err.put("error", "Timeout waiting for span data");
+            return err;
+        } catch (Exception e) {
+            JsonObject err = new JsonObject();
+            err.put("error", e.getMessage());
+            return err;
+        }
+    }
+
+    String navigateDiagramToRoute(String routeId) {
+        navigateToTab("Diagram");
+        if (diagramTab.selectRoute(routeId)) {
+            return routeId;
+        }
+        return null;
+    }
+
+    String navigateDiagramToNode(String routeId, String nodeId) {
+        navigateToTab("Diagram");
+        if (diagramTab.selectNode(routeId, nodeId)) {
+            return nodeId;
+        }
+        return null;
+    }
+
+    JsonObject getDiagramState() {
+        return diagramTab.getDiagramStateAsJson();
+    }
+
+    JsonArray locateText(String search) {
+        Buffer buf = lastBuffer;
+        if (buf == null || search == null || search.isEmpty()) {
+            return new JsonArray();
+        }
+        String screen = ExportRequest.export(buf).text().toString();
+        String[] lines = screen.split("\n", -1);
+        int searchWidth = 0;
+        for (int i = 0; i < search.length();) {
+            int cp = search.codePointAt(i);
+            searchWidth += Math.max(1, CharWidth.of(cp));
+            i += Character.charCount(cp);
+        }
+        JsonArray matches = new JsonArray();
+        for (int y = 0; y < lines.length; y++) {
+            String line = lines[y];
+            int idx = line.indexOf(search);
+            while (idx >= 0) {
+                int visualCol = 0;
+                for (int i = 0; i < idx;) {
+                    int cp = line.codePointAt(i);
+                    visualCol += Math.max(1, CharWidth.of(cp));
+                    i += Character.charCount(cp);
+                }
+                JsonObject match = new JsonObject();
+                match.put("x", visualCol);
+                match.put("y", y);
+                match.put("width", searchWidth);
+                match.put("height", 1);
+                match.put("text", search);
+                matches.add(match);
+                idx = line.indexOf(search, idx + 1);
+            }
+            if (matches.size() >= 20) {
+                break;
+            }
+        }
+        return matches;
+    }
+
+    JsonObject locateNodes(List<String> nodeIds) {
+        return diagramTab.locateNodes(nodeIds);
+    }
+
+    JsonArray getFooterActionsAsJson() {
+        List<Span> spans = new ArrayList<>();
+        if (helpOverlay.isVisible()) {
+            helpOverlay.renderFooter(spans);
+        } else if (captionOverlay.isCaptionVisible()) {
+            captionOverlay.renderFooter(spans);
+        } else if (filesBrowser.isVisible()) {
+            filesBrowser.renderFooter(spans);
+        } else if (showSwitchPopup || showMorePopup) {
+            if (showSwitchPopup) {
+                hint(spans, "Up/Down", "select");
+                hint(spans, "Enter", "switch");
+                hint(spans, "Esc", "close");
+            } else {
+                hint(spans, "Up/Down", "select");
+                hint(spans, "Enter", "open");
+                hint(spans, "Esc", "close");
+            }
+        } else {
+            MonitorTab tab = activeTab();
+            if (tabsState.selected() == TAB_OVERVIEW) {
+                renderOverviewFooter(spans);
+            } else if (tab != null) {
+                tab.renderFooter(spans);
+                insertFKeyHints(spans);
+            }
+        }
+        JsonArray actions = new JsonArray();
+        for (int i = 0; i + 1 < spans.size(); i += 2) {
+            String key = spans.get(i).content().trim();
+            String rawLabel = spans.get(i + 1).content().trim();
+            // compact "show BHPV" pattern: key="show", then space, then 4 single-letter spans, then trailing space
+            if ("show".equals(key) && i + 6 < spans.size()) {
+                for (int j = 0; j < 4; j++) {
+                    Span letter = spans.get(i + 2 + j);
+                    String ch = letter.content();
+                    boolean on = ch.equals(ch.toUpperCase());
+                    JsonObject toggle = new JsonObject();
+                    toggle.put("key", ch.toLowerCase());
+                    String label = switch (ch.toLowerCase()) {
+                        case "b" -> "body";
+                        case "h" -> "headers";
+                        case "p" -> "properties";
+                        case "v" -> "variables";
+                        default -> ch;
+                    };
+                    toggle.put("label", label);
+                    toggle.put("state", on ? "on" : "off");
+                    actions.add(toggle);
+                }
+                i += 5; // skip the 7-span group (loop adds 2, we consumed 5 more)
+                continue;
+            }
+            JsonObject action = new JsonObject();
+            action.put("key", key);
+            int bracket = rawLabel.indexOf('[');
+            if (bracket > 0 && rawLabel.endsWith("]")) {
+                action.put("label", rawLabel.substring(0, bracket).trim());
+                action.put("state", rawLabel.substring(bracket + 1, rawLabel.length() - 1));
+            } else {
+                action.put("label", rawLabel);
+            }
+            actions.add(action);
+        }
+        return actions;
+    }
+
     void setLogLevel(String level) {
         logTab.setLogLevel(level);
     }
@@ -3248,6 +2916,49 @@ public class CamelMonitor extends CamelCommand {
             return null;
         }
         return RuntimeHelper.sendMessage(pid, endpoint, body, headers);
+    }
+
+    String controlIntegration(String action) {
+        if (action == null || action.isBlank()) {
+            return "Error: action is required";
+        }
+        if (ctx.selectedPid == null) {
+            return "Error: no integration selected";
+        }
+        String name = selectedName();
+        return switch (action) {
+            case "stop-routes", "pause" -> {
+                if (isInfraSelected()) {
+                    yield "Error: cannot stop routes on infra service";
+                }
+                sendRouteCommand(ctx.selectedPid, "*", "stop");
+                yield "Routes stopped for " + name;
+            }
+            case "start-routes", "resume" -> {
+                if (isInfraSelected()) {
+                    yield "Error: cannot start routes on infra service";
+                }
+                sendRouteCommand(ctx.selectedPid, "*", "start");
+                yield "Routes started for " + name;
+            }
+            case "restart" -> {
+                if (isInfraSelected()) {
+                    yield "Error: cannot restart infra service";
+                }
+                restartSelectedProcess();
+                yield "Restarting " + name;
+            }
+            case "stop" -> {
+                stopSelectedProcess(false);
+                yield "Stopping " + name;
+            }
+            case "kill" -> {
+                stopSelectedProcess(true);
+                yield "Killed " + name;
+            }
+            default -> "Unknown action: " + action
+                       + ". Available: stop-routes, start-routes, restart, stop, kill";
+        };
     }
 
     private record PendingKey(KeyEvent event, long fireAt) {

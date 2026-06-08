@@ -52,6 +52,43 @@ When starting your application, you may also need to configure OpenTelemetry SDK
 java -Dotel.metrics.exporter=none -Dotel.logs.exporter=none -jar my-app.jar
 ----
 
+=== Dev Profile (In-Memory Span Exporter)
+
+When the Camel profile is set to `dev` (the default for Camel JBang), the component automatically configures
+an in-memory span exporter. This captures OTel spans locally without requiring an external collector such as
+Jaeger or an OpenTelemetry Collector.
+
+This is useful during development when you want to inspect traces via the dev console or local tooling
+without setting up external infrastructure.
+
+With Camel JBang, enable it with the `--observe` flag:
+
+[source,bash]
+----
+camel run my-route.yaml --observe
+----
+
+The captured spans are available through the dev console at `/q/dev/opentelemetry`:
+
+[source,bash]
+----
+# Summary (span count, capacity)
+curl http://localhost:8080/q/dev/opentelemetry
+
+# Full span data as JSON
+curl http://localhost:8080/q/dev/opentelemetry?dump=true
+
+# Limit the number of returned spans
+curl http://localhost:8080/q/dev/opentelemetry?dump=true&limit=50
+----
+
+The in-memory exporter holds up to 500 spans with oldest-first eviction. When the buffer is full,
+the oldest spans are discarded to make room for new ones.
+
+NOTE: The in-memory exporter is only activated when the Camel profile is `dev` and no user-provided
+OTel `Tracer` bean is registered. For production deployments, configure a proper span exporter
+(OTLP, Jaeger, Zipkin, etc.).
+
 [[OpenTelemetry-JavaAgent]]
 === Using the OpenTelemetry Java Agent
 

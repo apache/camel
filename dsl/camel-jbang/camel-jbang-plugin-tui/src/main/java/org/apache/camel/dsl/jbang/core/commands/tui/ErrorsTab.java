@@ -363,7 +363,8 @@ class ErrorsTab implements MonitorTab {
                         Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Errors ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(" Errors (" + sorted.size() + ") sort:" + sort + " ").build())
                 .build();
 
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
@@ -416,10 +417,7 @@ class ErrorsTab implements MonitorTab {
         hint(spans, "s", "sort");
         hint(spans, "d", "diagram");
         hint(spans, "f", "handled [" + handledFilter + "]");
-        hint(spans, "p", "properties [" + (showProperties ? "on" : "off") + "]");
-        hint(spans, "v", "variables [" + (showVariables ? "on" : "off") + "]");
-        hint(spans, "h", "headers [" + (showHeaders ? "on" : "off") + "]");
-        hint(spans, "b", "body [" + (showBody ? "on" : "off") + "]");
+        hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
         hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
     }
 
