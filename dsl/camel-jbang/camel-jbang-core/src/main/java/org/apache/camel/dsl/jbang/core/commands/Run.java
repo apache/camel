@@ -1188,11 +1188,14 @@ public class Run extends CamelCommand {
         }
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");
-            dependencies.add("camel:platform-http-main");
-            if (serverOptions.port == -1) {
-                serverOptions.port = 8080;
+            boolean jaegerExport = "jaeger".equals(debugOptions.openTelemetryAgentExport);
+            if (!jaegerExport) {
+                dependencies.add("camel:platform-http-main");
+                if (serverOptions.port == -1) {
+                    serverOptions.port = 8080;
+                }
+                writeSetting(main, profileProperties, "camel.server.enabled", "true");
             }
-            writeSetting(main, profileProperties, "camel.server.enabled", "true");
         }
         if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
@@ -1701,19 +1704,25 @@ public class Run extends CamelCommand {
             cmds.removeIf(arg -> arg.startsWith("--jvm-debug"));
         }
         if (debugOptions.openTelemetryAgent) {
+            boolean jaegerExport = "jaeger".equals(debugOptions.openTelemetryAgentExport);
             jbangArgs.add("--javaagent=io.opentelemetry.javaagent:opentelemetry-javaagent:RELEASE");
-            int port = serverOptions.port > 0 ? serverOptions.port : 8080;
-            jbangArgs.add("-Dotel.exporter.otlp.traces.endpoint=http://localhost:" + port + "/v1/traces");
             jbangArgs.add("-Dotel.metrics.exporter=none");
             jbangArgs.add("-Dotel.logs.exporter=none");
             jbangArgs.add("-Dotel.service.name=camel");
             cmds.removeIf(arg -> arg.startsWith("--open-telemetry-agent"));
             cmds.add("--dep=camel:opentelemetry2");
-            cmds.add("--dep=camel:platform-http-main");
-            cmds.add("--dep=mvn:io.opentelemetry.proto:opentelemetry-proto:RELEASE");
             cmds.add("--prop=camel.opentelemetry2.enabled=true");
-            if (cmds.stream().noneMatch(a -> a.startsWith("--port"))) {
-                cmds.add("--port=" + port);
+            if (jaegerExport) {
+                jbangArgs.add("-Dotel.exporter.otlp.traces.endpoint=http://localhost:4318/v1/traces");
+                cmds.add("--prop=camel.opentelemetry2.exportTarget=jaeger");
+            } else {
+                int port = serverOptions.port > 0 ? serverOptions.port : 8080;
+                jbangArgs.add("-Dotel.exporter.otlp.traces.endpoint=http://localhost:" + port + "/v1/traces");
+                cmds.add("--dep=camel:platform-http-main");
+                cmds.add("--dep=mvn:io.opentelemetry.proto:opentelemetry-proto:RELEASE");
+                if (cmds.stream().noneMatch(a -> a.startsWith("--port"))) {
+                    cmds.add("--port=" + port);
+                }
             }
         }
 
@@ -2440,6 +2449,10 @@ public class Run extends CamelCommand {
         @Option(names = { "--open-telemetry-agent" }, defaultValue = "false",
                 description = "Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries")
         boolean openTelemetryAgent;
+
+        @Option(names = { "--open-telemetry-agent-export" }, defaultValue = "tui",
+                description = "Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger)")
+        String openTelemetryAgentExport = "tui";
     }
 
     public static class ExecutionLimitOptions {

@@ -153,6 +153,7 @@ class ActionsPopup {
 
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
     private DeferredExampleLaunch deferredLaunch;
+    private DeferredFolderLaunch deferredFolderLaunch;
     private String launchNotification;
     private boolean launchNotificationError;
     private long launchNotificationExpiry;
@@ -1349,8 +1350,19 @@ class ActionsPopup {
             displayName = Path.of(folder).getFileName().toString();
         }
         List<String> extraArgs = runOptionsForm.buildArgs();
+        boolean jaegerExport = runOptionsForm.isJaegerExport();
         runOptionsForm.close();
         selectedFolder = null;
+
+        if (jaegerExport && !isJaegerRunning()) {
+            if (!isContainerRuntimeAvailable()) {
+                setNotification("Docker/Podman required for Jaeger. Run Doctor for details", true);
+                return;
+            }
+            startMissingInfraAndDeferFolder(folder, displayName, extraArgs);
+            return;
+        }
+
         doLaunchFolder(folder, displayName, extraArgs);
     }
 
@@ -1418,10 +1430,15 @@ class ActionsPopup {
         }
         List<String> extraArgs = runOptionsForm.buildArgs();
         boolean stub = runOptionsForm.isStubMode();
+        boolean jaegerExport = runOptionsForm.isJaegerExport();
         runOptionsForm.close();
 
         if (!stub) {
             List<String> missing = findMissingInfraServices(selectedExample);
+            if (jaegerExport && !isJaegerRunning()) {
+                missing = new ArrayList<>(missing);
+                missing.add("jaeger");
+            }
             if (!missing.isEmpty()) {
                 if (!isContainerRuntimeAvailable()) {
                     setNotification("Docker/Podman required for infra services. Run Doctor for details", true);
@@ -1947,6 +1964,11 @@ class ActionsPopup {
         return missing;
     }
 
+    private boolean isJaegerRunning() {
+        return infraServices.get().stream()
+                .anyMatch(i -> i.alive && "jaeger".equals(i.alias));
+    }
+
     private void startMissingInfraAndDeferExample(
             List<String> missingInfra, String exampleName, String displayName, List<String> extraArgs) {
         for (String alias : missingInfra) {
@@ -1975,22 +1997,63 @@ class ActionsPopup {
         setNotification("Starting infra: " + infraList + " → then: " + displayName, false);
     }
 
-    private void checkDeferredLaunch(long now) {
-        if (deferredLaunch == null) {
-            return;
+    private void startMissingInfraAndDeferFolder(String folder, String displayName, List<String> extraArgs) {
+        List<String> missingInfra = List.of("jaeger");
+        for (String alias : missingInfra) {
+            try {
+                List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+                cmd.add("infra");
+                cmd.add("run");
+                cmd.add(alias);
+                cmd.add("--background");
+                Path outputFile = Files.createTempFile("camel-infra-", ".log");
+                outputFile.toFile().deleteOnExit();
+                ProcessBuilder pb = new ProcessBuilder(cmd);
+                pb.redirectErrorStream(true);
+                pb.redirectOutput(outputFile.toFile());
+                Process process = pb.start();
+                pendingLaunches.add(new PendingLaunch(alias, process, outputFile, System.currentTimeMillis()));
+            } catch (Exception e) {
+                setNotification("Failed to start infra: " + alias + " - " + e.getMessage(), true);
+                return;
+            }
         }
-        Set<String> runningAliases = infraServices.get().stream()
-                .filter(i -> i.alive)
-                .map(i -> i.alias)
-                .collect(Collectors.toSet());
-        boolean allReady = runningAliases.containsAll(deferredLaunch.requiredInfra);
-        if (allReady) {
-            DeferredExampleLaunch dl = deferredLaunch;
-            deferredLaunch = null;
-            doLaunchExample(dl.exampleName, dl.displayName, dl.extraArgs);
-        } else if (now - deferredLaunch.startTime > 120_000) {
-            deferredLaunch = null;
-            setNotification("Timeout waiting for infra services to start", true);
+        deferredFolderLaunch = new DeferredFolderLaunch(
+                folder, displayName, extraArgs, missingInfra, System.currentTimeMillis());
+        infraCatalog = null;
+        setNotification("Starting infra: jaeger → then: " + displayName, false);
+    }
+
+    private void checkDeferredLaunch(long now) {
+        if (deferredLaunch != null) {
+            Set<String> runningAliases = infraServices.get().stream()
+                    .filter(i -> i.alive)
+                    .map(i -> i.alias)
+                    .collect(Collectors.toSet());
+            boolean allReady = runningAliases.containsAll(deferredLaunch.requiredInfra);
+            if (allReady) {
+                DeferredExampleLaunch dl = deferredLaunch;
+                deferredLaunch = null;
+                doLaunchExample(dl.exampleName, dl.displayName, dl.extraArgs);
+            } else if (now - deferredLaunch.startTime > 120_000) {
+                deferredLaunch = null;
+                setNotification("Timeout waiting for infra services to start", true);
+            }
+        }
+        if (deferredFolderLaunch != null) {
+            Set<String> runningAliases = infraServices.get().stream()
+                    .filter(i -> i.alive)
+                    .map(i -> i.alias)
+                    .collect(Collectors.toSet());
+            boolean allReady = runningAliases.containsAll(deferredFolderLaunch.requiredInfra);
+            if (allReady) {
+                DeferredFolderLaunch dl = deferredFolderLaunch;
+                deferredFolderLaunch = null;
+                doLaunchFolder(dl.folder, dl.displayName, dl.extraArgs);
+            } else if (now - deferredFolderLaunch.startTime > 120_000) {
+                deferredFolderLaunch = null;
+                setNotification("Timeout waiting for infra services to start", true);
+            }
         }
     }
 
@@ -2148,6 +2211,11 @@ class ActionsPopup {
 
     private record DeferredExampleLaunch(
             String exampleName, String displayName, List<String> extraArgs,
+            List<String> requiredInfra, long startTime) {
+    }
+
+    private record DeferredFolderLaunch(
+            String folder, String displayName, List<String> extraArgs,
             List<String> requiredInfra, long startTime) {
     }
 }

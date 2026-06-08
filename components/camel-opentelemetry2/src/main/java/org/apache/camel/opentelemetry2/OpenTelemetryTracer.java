@@ -56,6 +56,7 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
     private Tracer tracer;
     private ContextPropagators contextPropagators;
     private OpenTelemetrySdk devSdk;
+    private String exportTarget;
 
     @Override
     protected void initTracer() {
@@ -94,7 +95,11 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
 
     private void initDevSpanExporter() {
         if (isOpenTelemetryAgentPresent()) {
-            LOG.info("OpenTelemetry Java Agent detected, using agent's tracer for proper trace context propagation");
+            if ("jaeger".equals(exportTarget)) {
+                LOG.info("OpenTelemetry Java Agent detected, exporting traces to Jaeger");
+                return;
+            }
+            LOG.info("OpenTelemetry Java Agent detected, using embedded OTLP receiver");
             initOtlpReceiver();
             return;
         }
@@ -147,6 +152,14 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
 
     void setContextPropagators(ContextPropagators cp) {
         this.contextPropagators = cp;
+    }
+
+    public String getExportTarget() {
+        return exportTarget;
+    }
+
+    public void setExportTarget(String exportTarget) {
+        this.exportTarget = exportTarget;
     }
 
     @Override

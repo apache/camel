@@ -33,17 +33,25 @@ public class JaegerLocalContainerInfraService implements JaegerInfraService, Con
 
     public JaegerLocalContainerInfraService() {
         container = new JaegerContainer();
-        String name = ContainerEnvironmentUtil.containerName(this.getClass());
-        if (name != null) {
-            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
-        }
+        initContainer();
     }
 
     public JaegerLocalContainerInfraService(String imageName) {
         container = JaegerContainer.initContainer(imageName, JaegerContainer.CONTAINER_NAME);
+        initContainer();
+    }
+
+    private void initContainer() {
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {
             container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
+        boolean fixedPort = ContainerEnvironmentUtil.isFixedPort(this.getClass());
+        if (fixedPort) {
+            ContainerEnvironmentUtil.configurePorts(container, true,
+                    ContainerEnvironmentUtil.PortConfig.primary(JaegerProperties.DEFAULT_COLLECTOR_HTTP_PORT),
+                    ContainerEnvironmentUtil.PortConfig.secondary(JaegerProperties.DEFAULT_COLLECTOR_GRPC_PORT),
+                    ContainerEnvironmentUtil.PortConfig.secondary(JaegerProperties.DEFAULT_QUERY_UI_PORT));
         }
     }
 

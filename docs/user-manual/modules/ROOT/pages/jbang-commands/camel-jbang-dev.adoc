@@ -62,6 +62,7 @@ camel dev [options]
 | `--observe` | Enable observability services | false | boolean
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
 | `--open-telemetry-agent` | Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries | false | boolean
+| `--open-telemetry-agent-export` | Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger) | tui | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | `--port` | Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number) |  | int
 | `--profile` | Profile to run (dev, test, prod). | dev | String

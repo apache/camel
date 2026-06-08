@@ -72,6 +72,7 @@ class RunOptionsForm {
     private boolean backlogTrace;
     private boolean stubMode;
     private boolean otelAgent;
+    private int otelExportTarget; // 0=TUI, 1=Jaeger
 
     private String exampleTitle;
 
@@ -98,6 +99,7 @@ class RunOptionsForm {
         backlogTrace = false;
         stubMode = false;
         otelAgent = false;
+        otelExportTarget = 0;
         selectedRow = ROW_NAME;
         page = PAGE_OPTIONS;
         selectedProperty = 0;
@@ -116,6 +118,10 @@ class RunOptionsForm {
 
     boolean isStubMode() {
         return stubMode;
+    }
+
+    boolean isJaegerExport() {
+        return otelAgent && otelExportTarget == 1;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -197,6 +203,9 @@ class RunOptionsForm {
         }
         if (otelAgent) {
             args.add("--open-telemetry-agent");
+            if (otelExportTarget == 1) {
+                args.add("--open-telemetry-agent-export=jaeger");
+            }
         }
         if (properties != null) {
             for (PropertyEntry pe : properties) {
@@ -240,6 +249,14 @@ class RunOptionsForm {
         }
         if (ke.isFocusPrevious()) {
             selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
+            return true;
+        }
+        if (ke.isRight() && selectedRow == ROW_OTEL_AGENT && otelAgent) {
+            otelExportTarget = (otelExportTarget + 1) % 2;
+            return true;
+        }
+        if (ke.isLeft() && selectedRow == ROW_OTEL_AGENT && otelAgent) {
+            otelExportTarget = (otelExportTarget + 1) % 2;
             return true;
         }
         if (ke.isRight() && hasProperties() && selectedRow >= ROW_OTEL_AGENT) {
@@ -452,6 +469,18 @@ class RunOptionsForm {
 
         renderCheckbox(frame, innerX, rowY, innerW, "OTel Java Agent (auto-instrument)", otelAgent,
                 selectedRow == ROW_OTEL_AGENT);
+        if (otelAgent) {
+            String tuiLabel = otelExportTarget == 0 ? "[TUI]" : " TUI ";
+            String jaegerLabel = otelExportTarget == 1 ? "[Jaeger]" : " Jaeger ";
+            Style tuiStyle = otelExportTarget == 0 ? Style.EMPTY.bold() : Style.EMPTY.dim();
+            Style jaegerStyle = otelExportTarget == 1 ? Style.EMPTY.bold() : Style.EMPTY.dim();
+            int exportX = innerX + 38;
+            Rect exportArea = new Rect(exportX, rowY, innerW - 36, 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(tuiLabel, tuiStyle),
+                    Span.styled(" ", Style.EMPTY),
+                    Span.styled(jaegerLabel, jaegerStyle))), exportArea);
+        }
     }
 
     private void renderPropertiesPage(Frame frame, Rect area) {

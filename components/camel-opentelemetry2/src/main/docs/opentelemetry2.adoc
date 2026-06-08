@@ -30,6 +30,7 @@ The configuration properties for the OpenTelemetry2 tracer are:
 | `excludePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to exclude from tracing. Spans matching these patterns will be disabled. If nothing is specified, no processors are excluded by default.
 | `includePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to explicitly include in a trace. Spans matching these patterns will be enabled. If nothing is specified, all processors are included by default.
 | `traceHeadersInclusion`| `false` | If set to `true`, adds the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
+| `exportTarget` | | Where to export traces when using the OpenTelemetry Java Agent: `tui` (embedded OTLP receiver, default) or `jaeger` (external Jaeger collector).
 |=======================================================================
 
 === Using with Standalone Camel
@@ -113,17 +114,33 @@ The agent sends protobuf-encoded spans to the embedded OTLP receiver, which pars
 them into the in-memory `DevSpanExporter`. The captured spans are then visible in the Camel TUI
 under the OTel Spans tab, or through the dev console.
 
-==== When to use `--open-telemetry-agent` vs `--observe`
+==== Exporting to Jaeger
 
-Both flags enable tracing during development, but they cover different scopes:
+Instead of viewing traces in the TUI, you can export them to https://www.jaegertracing.io/[Jaeger]
+for a full tracing UI experience. Start Jaeger first, then run your application with the `jaeger` export target:
 
-[width="100%",cols="30%,35%,35%",options="header"]
+[source,bash]
+----
+camel infra run jaeger
+camel run my-route.yaml --open-telemetry-agent --open-telemetry-agent-export=jaeger
+----
+
+This configures the Java Agent to export traces directly to Jaeger's OTLP endpoint on port 4318.
+No embedded OTLP receiver is started — the agent handles all export. Open the Jaeger UI at
+`http://localhost:16686` to browse traces for the `camel` service.
+
+==== When to use `--observe` vs `--open-telemetry-agent` vs Jaeger
+
+All three modes enable tracing during development, but they cover different scopes:
+
+[width="100%",cols="25%,25%,25%,25%",options="header"]
 |=======================================================================
-| | `--observe` | `--open-telemetry-agent`
-| *Instrumentation* | Camel routes only | Camel routes + JVM, HTTP clients, databases, messaging, and other libraries
-| *Setup* | Built-in SDK | Downloads OTel Java Agent
-| *Collector* | Not needed | Not needed (embedded OTLP receiver)
-| *Use case* | Quick Camel route debugging | Full-stack observability during development
+| | `--observe` | `--open-telemetry-agent` | `--open-telemetry-agent` + Jaeger
+| *Instrumentation* | Camel routes only | Camel + JVM, HTTP, DB, etc. | Camel + JVM, HTTP, DB, etc.
+| *Setup* | Built-in SDK | Downloads OTel Java Agent | Downloads OTel Java Agent
+| *Collector* | Not needed | Not needed (embedded receiver) | Jaeger (via `camel infra run jaeger`)
+| *View traces* | TUI / dev console | TUI / dev console | Jaeger UI (localhost:16686)
+| *Use case* | Quick Camel route debugging | Full-stack observability in TUI | Full tracing UI with search and timeline
 |=======================================================================
 
 NOTE: The embedded OTLP receiver is only activated in `dev` profile mode and is intended for local
