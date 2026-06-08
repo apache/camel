@@ -2447,11 +2447,13 @@ public class Run extends CamelCommand {
         boolean backlogTrace;
 
         @Option(names = { "--open-telemetry-agent" }, defaultValue = "false",
-                description = "Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries")
+                description = "Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries (HTTP clients, JDBC, Kafka clients, gRPC, etc.). "
+                              + "Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta.")
         boolean openTelemetryAgent;
 
         @Option(names = { "--open-telemetry-agent-export" }, defaultValue = "tui",
-                description = "Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger)")
+                description = "Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger). "
+                              + "With jaeger, start Jaeger first via 'camel infra run jaeger' and view traces at http://localhost:16686")
         String openTelemetryAgentExport = "tui";
     }
 
@@ -2492,7 +2494,7 @@ public class Run extends CamelCommand {
         boolean metrics;
 
         @Option(names = { "--observe" }, defaultValue = "false",
-                description = "Enable observability services")
+                description = "Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab)")
         boolean observe;
     }
 

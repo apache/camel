@@ -419,7 +419,7 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                morePopupState.selectNext(12);
+                morePopupState.selectNext(13);
                 return true;
             }
             int shortcutSel = morePopupShortcut(ke);
@@ -2424,7 +2424,7 @@ public class CamelMonitor extends CamelCommand {
 
     private static final String[] MORE_TAB_NAMES = {
             "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-            "Consumers", "Inflight", "Memory", "Metrics", "Spans", "Startup", "Threads"
+            "Consumers", "Inflight", "Memory", "Metrics", "Spans", "Process", "Startup", "Threads"
     };
 
     String navigateToTab(String tabName) {
@@ -2450,8 +2450,9 @@ public class CamelMonitor extends CamelCommand {
                     case 7 -> memoryTab;
                     case 8 -> metricsTab;
                     case 9 -> spansTab;
-                    case 10 -> startupTab;
-                    case 11 -> threadsTab;
+                    case 10 -> processTab;
+                    case 11 -> startupTab;
+                    case 12 -> threadsTab;
                     default -> null;
                 };
                 if (activeMoreTab != null) {

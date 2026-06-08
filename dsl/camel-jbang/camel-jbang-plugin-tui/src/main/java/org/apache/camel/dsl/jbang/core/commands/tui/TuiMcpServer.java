@@ -263,7 +263,7 @@ class TuiMcpServer {
                 "Navigates the TUI: switch tabs and/or select an integration. "
                                 + "All parameters are optional — set whichever you want to change. "
                                 + "Tab names: Overview, Log, Diagram, Routes, Endpoints, HTTP, Health, Inspect, "
-                                + "Circuit Breaker. "
+                                + "Circuit Breaker, Spans, Process. "
                                 + "Use 'route' to select a route in the Diagram topology, "
                                 + "and 'node' to drill down into a route and select a specific processor/EIP node. "
                                 + "Returns screen content and selection metadata after navigating.",

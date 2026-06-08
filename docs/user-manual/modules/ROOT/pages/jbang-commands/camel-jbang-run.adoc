@@ -59,10 +59,10 @@ camel run [options]
 | `--metrics` _(deprecated)_ | Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) | false | boolean
 | `--modeline` | Whether to support JBang style //DEPS to specify additional dependencies | true | boolean
 | `--name` | The name of the Camel application | CamelJBang | String
-| `--observe` | Enable observability services | false | boolean
+| `--observe` | Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab) | false | boolean
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
-| `--open-telemetry-agent` | Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries | false | boolean
-| `--open-telemetry-agent-export` | Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger) | tui | String
+| `--open-telemetry-agent` | Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries (HTTP clients, JDBC, Kafka clients, gRPC, etc.). Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta. | false | boolean
+| `--open-telemetry-agent-export` | Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger). With jaeger, start Jaeger first via 'camel infra run jaeger' and view traces at \http://localhost:16686 | tui | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | `--port` | Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number) |  | int
 | `--profile` | Profile to run (dev, test, prod). | dev | String

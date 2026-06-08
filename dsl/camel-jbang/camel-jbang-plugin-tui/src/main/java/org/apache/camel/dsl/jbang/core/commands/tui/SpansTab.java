@@ -498,11 +498,15 @@ class SpansTab implements MonitorTab {
         int pad = Math.max(1, 8 - durationStr.length());
 
         boolean error = node.span.isError();
+        boolean camelSpan = node.span.isCamelSpan();
         Style labelStyle;
         Style bandStyle;
         if (error) {
             labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.LIGHT_RED);
             bandStyle = Style.EMPTY.fg(Color.LIGHT_RED);
+        } else if (!camelSpan) {
+            labelStyle = selected ? Style.EMPTY.fg(Color.LIGHT_MAGENTA).bold() : Style.EMPTY.fg(Color.LIGHT_MAGENTA);
+            bandStyle = Style.EMPTY.fg(Color.LIGHT_MAGENTA);
         } else {
             labelStyle = selected ? Style.EMPTY.fg(Color.CYAN).bold() : Style.EMPTY.fg(Color.CYAN);
             bandStyle = TuiHelper.colorForDuration(node.span.durationMs(), minDuration, maxDuration);
@@ -547,8 +551,8 @@ class SpansTab implements MonitorTab {
                 Span.styled("  Duration: ", Style.EMPTY.dim()),
                 Span.raw(span.durationMs() + "ms")));
 
-        // Row 3: route and processor context
-        if (span.routeId() != null || span.processorId() != null) {
+        // Row 3: route, processor context, and scope (for 3rd-party spans)
+        if (span.routeId() != null || span.processorId() != null || !span.isCamelSpan()) {
             List<Span> ctx = new ArrayList<>();
             if (span.routeId() != null) {
                 ctx.add(Span.styled(" Route:  ", Style.EMPTY.dim()));
@@ -557,6 +561,10 @@ class SpansTab implements MonitorTab {
             if (span.processorId() != null) {
                 ctx.add(Span.styled("  Processor: ", Style.EMPTY.dim()));
                 ctx.add(Span.styled(span.processorId(), Style.EMPTY.fg(Color.YELLOW)));
+            }
+            if (!span.isCamelSpan()) {
+                ctx.add(Span.styled("  Source: ", Style.EMPTY.dim()));
+                ctx.add(Span.styled(span.scopeName(), Style.EMPTY.fg(Color.LIGHT_MAGENTA)));
             }
             lines.add(Line.from(ctx));
         }
@@ -924,7 +932,9 @@ class SpansTab implements MonitorTab {
                 # OTel Spans
 
                 The Spans tab shows OpenTelemetry traces captured from the running
-                integration. Requires the `--observe` flag when starting the integration.
+                integration. Use `--observe` for lightweight Camel-only tracing, or
+                `--open-telemetry-agent` for full auto-instrumentation (HTTP clients,
+                JDBC, Kafka clients, etc.) via the OpenTelemetry Java Agent.
 
                 ## Trace List
 
@@ -950,6 +960,17 @@ class SpansTab implements MonitorTab {
                 bars are proportional to the trace envelope so you can visually spot
                 where time is spent. Colors indicate relative duration: green (fast),
                 yellow (medium), red (slow).
+
+                ### Span Colors
+
+                - **Cyan** — Camel spans (route execution, processors, endpoints)
+                - **Magenta** — 3rd-party spans from the OTel Java Agent
+                  (HTTP clients, JDBC, Kafka clients, gRPC, etc.)
+                - **Red** — Error spans (regardless of source)
+
+                The 3rd-party spans are only visible when using `--open-telemetry-agent`.
+                The detail panel shows the **Source** field for agent-instrumented spans
+                (e.g., `io.opentelemetry.jdk-http-client`).
 
                 Processor spans (setBody, log, etc.) are shown by default. Press **p**
                 to toggle them off for a cleaner view focused on endpoint-to-endpoint
