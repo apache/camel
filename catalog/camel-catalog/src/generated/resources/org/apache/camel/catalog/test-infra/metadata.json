@@ -597,7 +597,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-qdrant",
   "version" : "4.21.0-SNAPSHOT",
-  "serviceVersion" : "v1.18.0-unprivileged"
+  "serviceVersion" : "v1.18.1-unprivileged"
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded FTPS Server",
