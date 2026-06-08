@@ -123,9 +123,11 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -964,6 +966,20 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         CamelContextAware.trySetCamelContext(strategy, camelContext);
         return strategy;
+    }
+
+    /**
+     * Checks if a URI is an optional property placeholder that resolved to null/empty, meaning the endpoint is not
+     * needed and the processor should be skipped.
+     */
+    protected static boolean isOptionalUriAndNotResolved(CamelContext camelContext, String rawUri) {
+        if (rawUri == null || !rawUri.contains(PropertiesComponent.PREFIX_OPTIONAL_TOKEN)) {
+            return false;
+        }
+        String resolved = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, rawUri);
+        // if resolved is null/empty, or still contains unresolved optional placeholders, then skip
+        return resolved == null || resolved.isEmpty()
+                || resolved.contains(PropertiesComponent.PREFIX_OPTIONAL_TOKEN);
     }
 
     /**

@@ -52,7 +52,11 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         // route templates should pre parse uri as they have dynamic values as part of their template parameters
         RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
         if (rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            String rawUri = uri;
             uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+            if (isOptionalUriAndNotResolved(camelContext, rawUri)) {
+                return null;
+            }
         }
 
         Enricher enricher = new Enricher(exp, uri);
