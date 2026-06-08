@@ -127,7 +127,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-nats",
   "version" : "4.21.0-SNAPSHOT",
-  "serviceVersion" : "2.12.6"
+  "serviceVersion" : "2.14.2"
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
