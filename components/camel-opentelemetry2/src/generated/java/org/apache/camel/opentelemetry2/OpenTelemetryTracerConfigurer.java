@@ -33,8 +33,6 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "includePatterns": target.setIncludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "spanlifecyclemanager":
         case "spanLifecycleManager": target.setSpanLifecycleManager(property(camelContext, org.apache.camel.telemetry.SpanLifecycleManager.class, value)); return true;
-        case "tracecustomidonly":
-        case "traceCustomIdOnly": target.setTraceCustomIdOnly(property(camelContext, boolean.class, value)); return true;
         case "traceheadersinclusion":
         case "traceHeadersInclusion": target.setTraceHeadersInclusion(property(camelContext, boolean.class, value)); return true;
         case "traceprocessors":
@@ -56,8 +54,6 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "includePatterns": return java.lang.String.class;
         case "spanlifecyclemanager":
         case "spanLifecycleManager": return org.apache.camel.telemetry.SpanLifecycleManager.class;
-        case "tracecustomidonly":
-        case "traceCustomIdOnly": return boolean.class;
         case "traceheadersinclusion":
         case "traceHeadersInclusion": return boolean.class;
         case "traceprocessors":
@@ -80,8 +76,6 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "includePatterns": return target.getIncludePatterns();
         case "spanlifecyclemanager":
         case "spanLifecycleManager": return target.getSpanLifecycleManager();
-        case "tracecustomidonly":
-        case "traceCustomIdOnly": return target.isTraceCustomIdOnly();
         case "traceheadersinclusion":
         case "traceHeadersInclusion": return target.isTraceHeadersInclusion();
         case "traceprocessors":
