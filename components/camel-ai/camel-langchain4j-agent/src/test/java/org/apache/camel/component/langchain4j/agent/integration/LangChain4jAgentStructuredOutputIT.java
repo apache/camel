@@ -169,6 +169,7 @@ public class LangChain4jAgentStructuredOutputIT extends CamelTestSupport {
                             + "&jsonSchema=file:" + schemaFile.toAbsolutePath())
                         .to("json-validator:classpath:person-schema.json")
                         .to("mock:file-result");
+
             }
         };
     }

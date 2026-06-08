@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.agent;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.*;
@@ -321,6 +322,13 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             resolved = content;
         }
 
+        // Validates that resolved is valid JSON (whether loaded from a resource or used as inline content)
+        try {
+            objectMapper.readTree(resolved);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "jsonSchema endpoint property does not contain valid JSON. Provided value: " + jsonSchema, e);
+        }
         JsonRawSchema jsonRawSchema = JsonRawSchema.from(resolved);
         // Use a fixed name consistent with camel-openai for cross-component portability
         ResponseFormat responseFormat = ResponseFormat.builder()
@@ -334,13 +342,29 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         ((AbstractAgent<?>) agent).setResponseFormat(responseFormat);
     }
 
-    private String resolveResourceContent(String property) {
+    /**
+     * Tries to load {@code property} as a Camel resource and return its content as a String.
+     * <p>
+     * If {@code property} has an explicit scheme (e.g. {@code classpath:}, {@code file:}), the resource must exist — a
+     * missing resource throws {@link java.io.FileNotFoundException}.
+     * <p>
+     * If there is no scheme, classpath resolution is attempted. Returns {@code null} on failure, signalling the caller
+     * to use {@code property} as-is (inline JSON).
+     */
+    private String resolveResourceContent(String property) throws IOException {
+        if (ResourceHelper.hasScheme(property)) {
+            // Explicit scheme: mandatory load — throws FileNotFoundException if the resource does not exist
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), property)) {
+                return endpoint.getCamelContext().getTypeConverter().convertTo(String.class, is);
+            }
+        }
+        // No scheme: try implicit classpath resolution — fall through and treat as inline JSON content if not found
         try (InputStream is = ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(), property)) {
             if (is != null) {
                 return endpoint.getCamelContext().getTypeConverter().convertTo(String.class, is);
             }
         } catch (Exception e) {
-            // Not a resolvable resource URI — fall through and treat as inline JSON content
+            // not a resolvable resource URI — fall through and treat as inline JSON content
         }
         return null;
     }
