@@ -258,7 +258,7 @@
         <jackson3-version>3.1.4</jackson3-version>
         <jackrabbit-version>2.22.3</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
-        <jandex-version>3.5.3</jandex-version>
+        <jandex-version>3.6.0</jandex-version>
         <jansi-version>2.4.3</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.2.0</java-grok-version>
