@@ -84,8 +84,8 @@ public class IrcPrivmsgIT extends IrcIntegrationITSupport {
         if (!sentMessages) {
             sentMessages = true;
 
-            template.sendBodyAndHeader(sendUri(), body1, "irc.target", properties.get("camelFrom"));
-            template.sendBodyAndHeader(sendUri(), body2, "irc.target", properties.get("camelFrom"));
+            template.sendBodyAndHeader(sendUri(), body1, IrcConstants.IRC_TARGET, properties.get("camelFrom"));
+            template.sendBodyAndHeader(sendUri(), body2, IrcConstants.IRC_TARGET, properties.get("camelFrom"));
         }
     }
 }
