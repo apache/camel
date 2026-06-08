@@ -811,8 +811,8 @@ class ActionsPopup {
                         .borderType(BorderType.ROUNDED)
                         .title(" Run an Example (" + exampleCatalog.size() + ") ")
                         .titleBottom(Title.from(Line.from(
-                                Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" run │"),
-                                Span.styled(" r", MonitorContext.HINT_KEY_STYLE), Span.raw(" run... │"),
+                                Span.styled(" r", MonitorContext.HINT_KEY_STYLE), Span.raw(" run │"),
+                                Span.styled(" Enter", MonitorContext.HINT_KEY_STYLE), Span.raw(" run... │"),
                                 Span.styled(" d", MonitorContext.HINT_KEY_STYLE), Span.raw(" docs │"),
                                 Span.styled(" ↑↓", MonitorContext.HINT_KEY_STYLE), Span.raw(" navigate │"),
                                 Span.styled(" Esc", MonitorContext.HINT_KEY_STYLE), Span.raw(" back "))))
