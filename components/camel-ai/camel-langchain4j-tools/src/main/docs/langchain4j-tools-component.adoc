@@ -168,6 +168,53 @@ List<ChatMessage> messages = new ArrayList<>();
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 ----
 
+=== Tool Names
+
+Each tool route is registered with a name that the LLM uses to invoke it. By default, the name is derived automatically
+from the `description` option by converting it to CamelCase. For example:
+
+[cols="1,1", options="header"]
+|===
+| Description | Generated Tool Name
+| `Query user database by user ID` | `QueryUserDatabaseByUserId`
+| `Get current promotions` | `GetCurrentPromotions`
+| `Amend an order by its ID` | `AmendAnOrderByItsID`
+|===
+
+You can override the generated name by setting the `name` option explicitly on the consumer endpoint:
+
+[source, java]
+----
+from("langchain4j-tools:test1?tags=orders&name=amendOrder&description=Amend an order by its ID&parameter.orderId=string")
+    .setBody(constant("order amended"));
+----
+
+=== Using stop() in Tool Routes
+
+Tool routes can use the `stop()` EIP to discontinue route processing early. When the LLM invokes multiple tools
+in parallel, each tool route executes independently — `stop()` in one tool does not affect the others.
+
+.Example with two tools where one uses stop():
+[source, java]
+----
+from("direct:chat")
+    .to("langchain4j-tools:test1?tags=orders")
+    .log("response is: ${body}");
+
+// Tool that uses stop() to end processing early
+from("langchain4j-tools:test1?tags=orders&description=Amend an order by its ID&parameter.orderId=string")
+    .setBody(constant("order amended"))
+    .stop();
+
+// Tool that returns JSON — executes independently
+from("langchain4j-tools:test1?tags=orders&description=Get current promotions")
+    .setBody(constant("{\"status\":\"ok\",\"promotions\":[\"10% off\"]}"));
+----
+
+When the LLM invokes both tools, each produces its own result. The `stop()` in the first tool does not
+prevent the second tool from executing, nor does it stop the calling route from continuing after the tools
+producer completes.
+
 === Using a specific Model
 
 The Camel LangChain4j tools component provides an abstraction for interacting with various types of Large Language Models (LLMs)

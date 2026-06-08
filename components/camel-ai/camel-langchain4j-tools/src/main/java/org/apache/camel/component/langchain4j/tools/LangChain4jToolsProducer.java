@@ -167,6 +167,10 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                 continue;
             }
 
+            // Reset route stop flag from previous tool invocation to prevent
+            // stop() EIP in one tool from short-circuiting subsequent tools
+            exchange.setRouteStop(false);
+
             final CamelToolSpecification camelToolSpecification = toolPair.callableTools().stream()
                     .filter(c -> c.getToolSpecification().name().equals(toolName)).findFirst().get();
 
@@ -226,6 +230,10 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                     toolExecutionRequest.name(),
                     exchange.getIn().getBody(String.class)));
         }
+
+        // Clear route stop flag after all tools so it does not leak
+        // into the calling route and prevent subsequent steps from executing
+        exchange.setRouteStop(false);
     }
 
     /**
