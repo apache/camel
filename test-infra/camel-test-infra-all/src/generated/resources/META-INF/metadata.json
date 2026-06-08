@@ -557,7 +557,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-jaeger",
   "version" : "4.21.0-SNAPSHOT",
-  "serviceVersion" : "2.18.0"
+  "serviceVersion" : "2.19.0"
 }, {
   "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
   "description" : "Infinispan is a distributed in-memory key/value data store",
