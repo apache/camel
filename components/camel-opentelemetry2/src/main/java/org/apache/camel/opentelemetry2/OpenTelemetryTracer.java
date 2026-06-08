@@ -117,6 +117,10 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
         DevSpanExporter exporter = new DevSpanExporter();
         getCamelContext().getRegistry().bind("DevSpanExporter", exporter);
 
+        // exclude the receiver route from tracing to avoid self-tracing loop
+        String ep = getExcludePatterns();
+        setExcludePatterns(ep != null ? ep + ",platform-http:/v1/traces*" : "platform-http:/v1/traces*");
+
         try {
             getCamelContext().addRoutes(new RouteBuilder() {
                 @Override
