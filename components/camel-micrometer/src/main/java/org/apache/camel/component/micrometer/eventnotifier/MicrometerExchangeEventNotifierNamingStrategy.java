@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.micrometer.eventnotifier;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import io.micrometer.core.instrument.Meter;
@@ -23,6 +24,7 @@ import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.util.StringHelper;
 
@@ -73,22 +75,29 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
             }
         }
         String routeId = event.getExchange().getFromRouteId();
-        if (routeId != null) {
-            return Tags.of(
-                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-                    KIND, KIND_EXCHANGE,
-                    EVENT_TYPE_TAG, event.getClass().getSimpleName(),
-                    ROUTE_ID_TAG, routeId,
-                    ENDPOINT_NAME, uri,
-                    FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
-        } else {
-            return Tags.of(
-                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-                    KIND, KIND_EXCHANGE,
-                    EVENT_TYPE_TAG, event.getClass().getSimpleName(),
-                    ENDPOINT_NAME, uri,
-                    FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
+        if (routeId == null) {
+            final String finalUri = uri;
+            final Optional<Route> eventRoute = event.getExchange().getContext().getRoutes().stream()
+                    .filter(route -> finalUri.equals(route.getEndpoint().getEndpointBaseUri())).findFirst();
+
+            if (eventRoute.isEmpty()) {
+                return Tags.of(
+                        CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
+                        KIND, KIND_EXCHANGE,
+                        EVENT_TYPE_TAG, event.getClass().getSimpleName(),
+                        ENDPOINT_NAME, uri,
+                        FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
+            }
+
+            routeId = eventRoute.get().getId();
         }
+        return Tags.of(
+                CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
+                KIND, KIND_EXCHANGE,
+                EVENT_TYPE_TAG, event.getClass().getSimpleName(),
+                ROUTE_ID_TAG, routeId,
+                ENDPOINT_NAME, uri,
+                FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
     }
 
     default Tags getInflightExchangesTags(CamelContext camelContext, String routeId) {

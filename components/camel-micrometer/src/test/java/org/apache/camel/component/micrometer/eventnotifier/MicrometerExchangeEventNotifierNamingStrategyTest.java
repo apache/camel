@@ -16,12 +16,34 @@
  */
 package org.apache.camel.component.micrometer.eventnotifier;
 
+import java.util.List;
+
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Route;
+import org.apache.camel.impl.event.ExchangeSentEvent;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ENDPOINT_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.FAILED_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_EXCHANGE;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class MicrometerExchangeEventNotifierNamingStrategyTest {
+
+    private static final String CONTEXT_NAME = "testContext";
+    private static final String ENDPOINT_URI = "seda://in";
+    private static final String ROUTE_ID = "someId";
 
     @Test
     void testDefaultFormatName() {
@@ -55,6 +77,85 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
         String result = strategy.getInflightExchangesName();
 
         assertEquals("CamelExchangesInflight", result);
+    }
+
+    @Test
+    void getTagsWhenRouteIdIsPresentShouldIncludeRouteIdTag() {
+        final var strategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+        final var exchange = mock(Exchange.class);
+        final var context = mock(CamelContext.class);
+        final var endpoint = mock(Endpoint.class);
+
+        when(exchange.getFromRouteId()).thenReturn("existingRoute");
+        when(exchange.getContext()).thenReturn(context);
+        when(exchange.isFailed()).thenReturn(false);
+        when(context.getName()).thenReturn(CONTEXT_NAME);
+        when(endpoint.toString()).thenReturn(ENDPOINT_URI);
+
+        final var event = new ExchangeSentEvent(exchange, endpoint, 10L);
+        final var tags = strategy.getTags(event, endpoint);
+
+        assertThat(tagValue(tags, ROUTE_ID_TAG)).isEqualTo("existingRoute");
+        assertThat(tagValue(tags, EVENT_TYPE_TAG)).isEqualTo("ExchangeSentEvent");
+    }
+
+    @Test
+    void getTagsWhenRouteIdIsNullAndRouteMatchesEndpointShouldResolveRouteIdTag() {
+        final var strategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+        final var exchange = mock(Exchange.class);
+        final var context = mock(CamelContext.class);
+        final var routeEndpoint = mock(Endpoint.class);
+        final var route = mock(Route.class);
+        final var endpoint = mock(Endpoint.class);
+
+        when(exchange.getFromRouteId()).thenReturn(null);
+        when(exchange.getContext()).thenReturn(context);
+        when(exchange.isFailed()).thenReturn(false);
+        when(context.getName()).thenReturn(CONTEXT_NAME);
+        when(context.getRoutes()).thenReturn(List.of(route));
+        when(route.getId()).thenReturn(ROUTE_ID);
+        when(route.getEndpoint()).thenReturn(routeEndpoint);
+        when(routeEndpoint.getEndpointBaseUri()).thenReturn(ENDPOINT_URI);
+        when(endpoint.toString()).thenReturn(ENDPOINT_URI + "?timeout=1000");
+
+        final var event = new ExchangeSentEvent(exchange, endpoint, 10L);
+        final var tags = strategy.getTags(event, endpoint);
+
+        assertThat(tagValue(tags, ROUTE_ID_TAG)).isEqualTo(ROUTE_ID);
+        assertThat(tagValue(tags, ENDPOINT_NAME)).isEqualTo(ENDPOINT_URI);
+    }
+
+    @Test
+    void getTagsWhenRouteIdIsNullAndNoRouteMatchesShouldOmitRouteIdTag() {
+        final var strategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+        final var exchange = mock(Exchange.class);
+        final var context = mock(CamelContext.class);
+        final var endpoint = mock(Endpoint.class);
+
+        when(exchange.getFromRouteId()).thenReturn(null);
+        when(exchange.getContext()).thenReturn(context);
+        when(exchange.isFailed()).thenReturn(true);
+        when(context.getName()).thenReturn(CONTEXT_NAME);
+        when(context.getRoutes()).thenReturn(List.of());
+        when(endpoint.toString()).thenReturn("mock://other");
+
+        final var event = new ExchangeSentEvent(exchange, endpoint, 10L);
+        final var tags = strategy.getTags(event, endpoint);
+
+        assertThat(tagValue(tags, ROUTE_ID_TAG)).isNull();
+        assertThat(tagValue(tags, CAMEL_CONTEXT_TAG)).isEqualTo(CONTEXT_NAME);
+        assertThat(tagValue(tags, KIND)).isEqualTo(KIND_EXCHANGE);
+        assertThat(tagValue(tags, EVENT_TYPE_TAG)).isEqualTo("ExchangeSentEvent");
+        assertThat(tagValue(tags, ENDPOINT_NAME)).isEqualTo("mock://other");
+        assertThat(tagValue(tags, FAILED_TAG)).isEqualTo("true");
+    }
+
+    private static String tagValue(final Tags tags, final String key) {
+        return tags.stream()
+                .filter(tag -> key.equals(tag.getKey()))
+                .map(Tag::getValue)
+                .findFirst()
+                .orElse(null);
     }
 
 }
