@@ -60,14 +60,14 @@ public class SpanBeanTest extends TelemetryDevTracerTestSupport {
 
     private void checkTrace(DevTrace trace, String expectedBody) {
         List<DevSpanAdapter> spans = trace.getSpans();
-        assertEquals(7, spans.size());
+        // to("log:info") no longer produces a processor span (SendProcessor implements EndpointSending)
+        assertEquals(6, spans.size());
         DevSpanAdapter testProducer = spans.get(0);
         DevSpanAdapter direct = spans.get(1);
         DevSpanAdapter logProcessor = spans.get(2);
         DevSpanAdapter beanProcessor = spans.get(3);
         DevSpanAdapter beanMySpan = spans.get(4);
         DevSpanAdapter to = spans.get(5);
-        DevSpanAdapter toProcessor = spans.get(6);
 
         // Validate span completion
         assertEquals("true", testProducer.getTag("isDone"));
@@ -76,15 +76,13 @@ public class SpanBeanTest extends TelemetryDevTracerTestSupport {
         assertEquals("true", beanProcessor.getTag("isDone"));
         assertEquals("true", beanMySpan.getTag("isDone"));
         assertEquals("true", to.getTag("isDone"));
-        assertEquals("true", toProcessor.getTag("isDone"));
 
         // Validate same trace
         assertEquals(testProducer.getTag("traceid"), direct.getTag("traceid"));
-        assertEquals(direct.getTag("traceid"), to.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), logProcessor.getTag("traceid"));
-        assertEquals(testProducer.getTag("traceid"), toProcessor.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), beanProcessor.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), beanMySpan.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), to.getTag("traceid"));
 
         // Validate hierarchy
         assertNull(testProducer.getTag("parentSpan"));
@@ -93,7 +91,6 @@ public class SpanBeanTest extends TelemetryDevTracerTestSupport {
         assertEquals(direct.getTag("spanid"), beanProcessor.getTag("parentSpan"));
         assertEquals(beanProcessor.getTag("spanid"), beanMySpan.getTag("parentSpan"));
         assertEquals(direct.getTag("spanid"), to.getTag("parentSpan"));
-        assertEquals(to.getTag("spanid"), toProcessor.getTag("parentSpan"));
 
         // Validate operations
         assertEquals(Op.EVENT_SENT.toString(), testProducer.getTag("op"));
@@ -101,9 +98,6 @@ public class SpanBeanTest extends TelemetryDevTracerTestSupport {
 
         // Validate message logging
         assertEquals("A message", logProcessor.getLogEntries().get(0).getFields().get("message"));
-        assertEquals(
-                "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                toProcessor.getLogEntries().get(0).getFields().get("message"));
 
     }
 

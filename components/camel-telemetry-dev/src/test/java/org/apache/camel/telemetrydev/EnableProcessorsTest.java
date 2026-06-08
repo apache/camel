@@ -55,14 +55,14 @@ public class EnableProcessorsTest extends TelemetryDevTracerTestSupport {
 
     private void checkTrace(DevTrace trace) {
         List<DevSpanAdapter> spans = trace.getSpans();
-        assertEquals(6, spans.size());
+        // to("log:info") no longer produces a processor span (SendProcessor implements EndpointSending)
+        assertEquals(5, spans.size());
 
         DevSpanAdapter testProducer = spans.get(0);
         DevSpanAdapter direct = spans.get(1);
         DevSpanAdapter innerLog = spans.get(2);
         DevSpanAdapter innerProcessor = spans.get(3);
         DevSpanAdapter log = spans.get(4);
-        DevSpanAdapter innerToLog = spans.get(5);
 
         // Validate span completion
         assertEquals("true", testProducer.getTag("isDone"));
@@ -70,14 +70,12 @@ public class EnableProcessorsTest extends TelemetryDevTracerTestSupport {
         assertEquals("true", innerLog.getTag("isDone"));
         assertEquals("true", innerProcessor.getTag("isDone"));
         assertEquals("true", log.getTag("isDone"));
-        assertEquals("true", innerToLog.getTag("isDone"));
 
         // Validate same trace
         assertEquals(testProducer.getTag("traceid"), direct.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), innerLog.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), innerProcessor.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), log.getTag("traceid"));
-        assertEquals(testProducer.getTag("traceid"), innerToLog.getTag("traceid"));
 
         // Validate op
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getTag("op"));
@@ -89,7 +87,6 @@ public class EnableProcessorsTest extends TelemetryDevTracerTestSupport {
         assertEquals(direct.getTag("spanid"), innerLog.getTag("parentSpan"));
         assertEquals(direct.getTag("spanid"), innerProcessor.getTag("parentSpan"));
         assertEquals(direct.getTag("spanid"), log.getTag("parentSpan"));
-        assertEquals(log.getTag("spanid"), innerToLog.getTag("parentSpan"));
     }
 
     @Override
