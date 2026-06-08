@@ -61,46 +61,39 @@ public class SpanToBeanTest extends OpenTelemetryTracerTestSupport {
 
     private void checkTrace(OtelTrace trace) {
         List<SpanData> spans = trace.getSpans();
-        assertEquals(8, spans.size());
+        // to("bean:myBean") and to("log:info") no longer produce processor spans (SendProcessor implements EndpointSending)
+        assertEquals(6, spans.size());
         SpanData testProducer = spans.get(0);
         SpanData direct = spans.get(1);
         SpanData innerLog = spans.get(2);
-        SpanData beanTo = spans.get(3);
-        SpanData beanProcessor = spans.get(4);
-        SpanData beanMethod = spans.get(5);
-        SpanData log = spans.get(6);
-        SpanData innerToLog = spans.get(7);
+        SpanData beanProcessor = spans.get(3);
+        SpanData beanMethod = spans.get(4);
+        SpanData log = spans.get(5);
 
         // Validate span completion
         assertTrue(testProducer.hasEnded());
         assertTrue(direct.hasEnded());
         assertTrue(innerLog.hasEnded());
-        assertTrue(beanTo.hasEnded());
         assertTrue(beanProcessor.hasEnded());
         assertTrue(beanMethod.hasEnded());
         assertTrue(log.hasEnded());
-        assertTrue(innerToLog.hasEnded());
 
         // Validate same trace
         assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), innerLog.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), beanTo.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), beanProcessor.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), beanMethod.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), innerToLog.getSpanContext().getTraceId());
 
         // Validate hierarchy
         assertFalse(testProducer.getParentSpanContext().isValid());
 
         assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
         assertEquals(direct.getSpanContext().getSpanId(), innerLog.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), beanTo.getParentSpanContext().getSpanId());
-        assertEquals(beanTo.getSpanContext().getSpanId(), beanProcessor.getParentSpanContext().getSpanId());
-        // NOTE: the bean method belongs to the component ("to") node.
-        assertEquals(beanTo.getSpanContext().getSpanId(), beanMethod.getParentSpanContext().getSpanId());
+        assertEquals(direct.getSpanContext().getSpanId(), beanProcessor.getParentSpanContext().getSpanId());
+        // beanMethod's parent is direct (OTel context set by scope wrapper, not the event span)
+        assertEquals(direct.getSpanContext().getSpanId(), beanMethod.getParentSpanContext().getSpanId());
         assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
-        assertEquals(log.getSpanContext().getSpanId(), innerToLog.getParentSpanContext().getSpanId());
     }
 
     @Override

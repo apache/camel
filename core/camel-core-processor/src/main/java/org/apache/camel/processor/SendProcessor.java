@@ -24,6 +24,7 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
+import org.apache.camel.EndpointSending;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @see SendDynamicProcessor
  */
 public class SendProcessor extends BaseProcessorSupport
-        implements Traceable, EndpointAware, IdAware, RouteIdAware, StepIdAware {
+        implements Traceable, EndpointAware, EndpointSending, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
 

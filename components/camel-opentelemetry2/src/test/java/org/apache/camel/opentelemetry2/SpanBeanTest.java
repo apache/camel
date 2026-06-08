@@ -63,14 +63,14 @@ public class SpanBeanTest extends OpenTelemetryTracerTestSupport {
 
     private void checkTrace(OtelTrace trace) {
         List<SpanData> spans = trace.getSpans();
-        assertEquals(7, spans.size());
+        // to("log:info") no longer produces a processor span (SendProcessor implements EndpointSending)
+        assertEquals(6, spans.size());
         SpanData testProducer = spans.get(0);
         SpanData direct = spans.get(1);
         SpanData innerLog = spans.get(2);
         SpanData beanProcessor = spans.get(3);
         SpanData beanMethod = spans.get(4);
         SpanData log = spans.get(5);
-        SpanData innerToLog = spans.get(6);
 
         // Validate span completion
         assertTrue(testProducer.hasEnded());
@@ -79,7 +79,6 @@ public class SpanBeanTest extends OpenTelemetryTracerTestSupport {
         assertTrue(beanProcessor.hasEnded());
         assertTrue(beanMethod.hasEnded());
         assertTrue(log.hasEnded());
-        assertTrue(innerToLog.hasEnded());
 
         // Validate same trace
         assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
@@ -87,7 +86,6 @@ public class SpanBeanTest extends OpenTelemetryTracerTestSupport {
         assertEquals(testProducer.getSpanContext().getTraceId(), beanProcessor.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), beanMethod.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), innerToLog.getSpanContext().getTraceId());
 
         // Validate operations
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getAttributes().get(AttributeKey.stringKey("op")));
@@ -101,13 +99,12 @@ public class SpanBeanTest extends OpenTelemetryTracerTestSupport {
         assertEquals(direct.getSpanContext().getSpanId(), beanProcessor.getParentSpanContext().getSpanId());
         assertEquals(beanProcessor.getSpanContext().getSpanId(), beanMethod.getParentSpanContext().getSpanId());
         assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
-        assertEquals(log.getSpanContext().getSpanId(), innerToLog.getParentSpanContext().getSpanId());
 
         // Validate message logging
         assertEquals("A message", innerLog.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         assertEquals(
                 "Exchange[ExchangePattern: InOnly, BodyType: String, Body: my-body]",
-                innerToLog.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
+                log.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
     }
 
     @Override

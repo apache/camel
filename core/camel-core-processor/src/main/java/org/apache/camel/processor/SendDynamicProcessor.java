@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointSending;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -54,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.processor.SendProcessor
  */
 public class SendDynamicProcessor extends BaseProcessorSupport
-        implements IdAware, RouteIdAware, StepIdAware, CamelContextAware {
+        implements EndpointSending, IdAware, RouteIdAware, StepIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SendDynamicProcessor.class);
 
