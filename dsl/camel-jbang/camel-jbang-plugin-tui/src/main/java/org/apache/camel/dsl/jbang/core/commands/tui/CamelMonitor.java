@@ -151,6 +151,8 @@ public class CamelMonitor extends CamelCommand {
     // Trace/history data — shared between CamelMonitor and tabs
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
     private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
+    // OTel span data — shared between CamelMonitor and SpansTab
+    private final AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
 
     // selectedPid is stored on ctx (MonitorContext) so tabs can access it
 
@@ -217,6 +219,7 @@ public class CamelMonitor extends CamelCommand {
     private InflightTab inflightTab;
     private MemoryTab memoryTab;
     private ThreadsTab threadsTab;
+    private SpansTab spansTab;
     private OverviewTab overviewTab;
 
     // "Switch integration" popup state
@@ -285,6 +288,7 @@ public class CamelMonitor extends CamelCommand {
         inflightTab = new InflightTab(ctx);
         memoryTab = new MemoryTab(ctx, metrics);
         threadsTab = new ThreadsTab(ctx);
+        spansTab = new SpansTab(ctx, otelSpans);
         overviewTab = new OverviewTab(
                 ctx, metrics, stoppingPids,
                 this::resetIntegrationTabState);
@@ -413,7 +417,7 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                morePopupState.selectNext(11);
+                morePopupState.selectNext(12);
                 return true;
             }
             int shortcutSel = morePopupShortcut(ke);
@@ -435,8 +439,9 @@ public class CamelMonitor extends CamelCommand {
                         case 6 -> inflightTab;
                         case 7 -> memoryTab;
                         case 8 -> metricsTab;
-                        case 9 -> startupTab;
-                        case 10 -> threadsTab;
+                        case 9 -> spansTab;
+                        case 10 -> startupTab;
+                        case 11 -> threadsTab;
                         default -> null;
                     };
                     if (activeMoreTab != null) {
@@ -510,7 +515,9 @@ public class CamelMonitor extends CamelCommand {
         }
         boolean probeEditing = tabsState.selected() == TAB_HTTP && httpTab.isProbeMode();
         boolean logSearchActive = tabsState.selected() == TAB_LOG && logTab.isSearchInputActive();
-        boolean textEditing = probeEditing || logSearchActive;
+        boolean spanFilterActive = tabsState.selected() == TAB_MORE && activeMoreTab == spansTab
+                && spansTab.isFilterInputActive();
+        boolean textEditing = probeEditing || logSearchActive || spanFilterActive;
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
             runner.quit();
             return true;
@@ -1215,6 +1222,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("I", keyStyle), Span.raw("nflight"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
                 ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
         };
@@ -1321,11 +1329,14 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isChar('e')) {
             return 8;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('o')) {
             return 9;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 10;
+        }
+        if (ke.isChar('t')) {
+            return 11;
         }
         return -1;
     }
@@ -1917,6 +1928,51 @@ public class CamelMonitor extends CamelCommand {
             }
             refreshTraceData(selectedPids);
         }
+        if (tabsState.selected() == TAB_MORE && activeMoreTab == spansTab
+                && ctx.selectedPid != null && spansTab.spanRefreshRequested) {
+            spansTab.spanRefreshRequested = false;
+            refreshSpanData();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void refreshSpanData() {
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            return;
+        }
+        try {
+            // Send action to request span data
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject action = new JsonObject();
+            action.put("action", "span");
+            action.put("dump", "true");
+            action.put("limit", "500");
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+            // Poll for response
+            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
+            if (response != null) {
+                Boolean enabled = response.getBoolean("enabled");
+                if (enabled != null && enabled) {
+                    JsonArray arr = response.getCollection("spans");
+                    if (arr != null) {
+                        List<SpanEntry> entries = new ArrayList<>();
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject spanObj = (JsonObject) arr.get(i);
+                            entries.add(SpanEntry.fromJson(spanObj));
+                        }
+                        otelSpans.set(entries);
+                    }
+                }
+                PathUtils.deleteFile(outputFile);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -2352,11 +2408,44 @@ public class CamelMonitor extends CamelCommand {
         drawOverlay.clear();
     }
 
+    private static final String[] MORE_TAB_NAMES = {
+            "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
+            "Consumers", "Inflight", "Memory", "Metrics", "Spans", "Startup", "Threads"
+    };
+
     String navigateToTab(String tabName) {
         for (int i = 0; i < TAB_NAMES.length; i++) {
             if (TAB_NAMES[i].equalsIgnoreCase(tabName)) {
                 handleTabKey(i);
                 return TAB_NAMES[i];
+            }
+        }
+        // Check More submenu tabs
+        for (int i = 0; i < MORE_TAB_NAMES.length; i++) {
+            if (MORE_TAB_NAMES[i].equalsIgnoreCase(tabName)) {
+                morePopupState.select(i);
+                lastMoreSelection = i;
+                activeMoreTab = switch (i) {
+                    case 0 -> beansTab;
+                    case 1 -> browseTab;
+                    case 2 -> circuitBreakerTab;
+                    case 3 -> classpathTab;
+                    case 4 -> configurationTab;
+                    case 5 -> consumersTab;
+                    case 6 -> inflightTab;
+                    case 7 -> memoryTab;
+                    case 8 -> metricsTab;
+                    case 9 -> spansTab;
+                    case 10 -> startupTab;
+                    case 11 -> threadsTab;
+                    default -> null;
+                };
+                if (activeMoreTab != null) {
+                    overviewTab.selectCurrentIntegration();
+                    tabsState.select(TAB_MORE);
+                    activeMoreTab.onTabSelected();
+                }
+                return MORE_TAB_NAMES[i];
             }
         }
         return null;
@@ -2378,7 +2467,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     List<String> getTabNames() {
-        return List.of(TAB_NAMES);
+        List<String> names = new ArrayList<>();
+        names.addAll(List.of(TAB_NAMES));
+        names.addAll(List.of(MORE_TAB_NAMES));
+        return names;
     }
 
     List<String> getActionLabels() {
@@ -2610,6 +2702,60 @@ public class CamelMonitor extends CamelCommand {
 
     JsonObject getTopologyData() {
         return diagramTab.getTopologyDataAsJson();
+    }
+
+    @SuppressWarnings("unchecked")
+    JsonObject getSpanData(String traceId, int limit) {
+        String pid = ctx.selectedPid;
+        if (pid == null) {
+            JsonObject err = new JsonObject();
+            err.put("error", "No integration selected");
+            return err;
+        }
+        try {
+            Path outputFile = ctx.getOutputFile(pid);
+            PathUtils.deleteFile(outputFile);
+
+            JsonObject action = new JsonObject();
+            action.put("action", "span");
+            action.put("dump", "true");
+            action.put("limit", String.valueOf(limit));
+            Path actionFile = ctx.getActionFile(pid);
+            PathUtils.writeTextSafely(action.toJson(), actionFile);
+
+            JsonObject response = MonitorContext.pollJsonResponse(outputFile, 3000);
+            if (response != null) {
+                PathUtils.deleteFile(outputFile);
+                Boolean enabled = response.getBoolean("enabled");
+                if (enabled == null || !enabled) {
+                    JsonObject err = new JsonObject();
+                    err.put("error", "OpenTelemetry not enabled (requires --observe flag)");
+                    return err;
+                }
+                if (traceId != null && !traceId.isBlank()) {
+                    JsonArray all = response.getCollection("spans");
+                    if (all != null) {
+                        JsonArray filtered = new JsonArray();
+                        for (int i = 0; i < all.size(); i++) {
+                            JsonObject span = (JsonObject) all.get(i);
+                            String tid = span.getString("traceId");
+                            if (tid != null && tid.contains(traceId)) {
+                                filtered.add(span);
+                            }
+                        }
+                        response.put("spans", filtered);
+                    }
+                }
+                return response;
+            }
+            JsonObject err = new JsonObject();
+            err.put("error", "Timeout waiting for span data");
+            return err;
+        } catch (Exception e) {
+            JsonObject err = new JsonObject();
+            err.put("error", e.getMessage());
+            return err;
+        }
     }
 
     String navigateDiagramToRoute(String routeId) {

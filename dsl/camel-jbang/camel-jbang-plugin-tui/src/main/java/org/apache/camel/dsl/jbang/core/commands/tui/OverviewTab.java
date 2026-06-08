@@ -383,7 +383,8 @@ class OverviewTab implements MonitorTab {
             Line titleLine;
             if (chartMode == CHART_SINGLE && ctx.selectedPid != null) {
                 IntegrationInfo chartSel = ctx.findSelectedIntegration();
-                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12) : ctx.selectedPid;
+                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12)
+                        : ctx.selectedPid != null ? ctx.selectedPid : "?";
                 titleLine = Line.from(
                         Span.raw(" ["),
                         Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),

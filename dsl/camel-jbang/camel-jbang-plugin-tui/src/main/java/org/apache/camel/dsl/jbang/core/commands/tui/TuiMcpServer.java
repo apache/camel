@@ -262,7 +262,8 @@ class TuiMcpServer {
                 "tui_navigate",
                 "Navigates the TUI: switch tabs and/or select an integration. "
                                 + "All parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Diagram, Routes, Consumers, Endpoints, HTTP, Health, Inspect, Circuit Breaker. "
+                                + "Tab names: Overview, Log, Diagram, Routes, Endpoints, HTTP, Health, Inspect, "
+                                + "Circuit Breaker. "
                                 + "Use 'route' to select a route in the Diagram topology, "
                                 + "and 'node' to drill down into a route and select a specific processor/EIP node. "
                                 + "Returns screen content and selection metadata after navigating.",
@@ -499,6 +500,18 @@ class TuiMcpServer {
                         "file", propDef("string",
                                 "Filename to read. If omitted, returns the file list instead."))));
         toolList.add(toolDef(
+                "tui_get_spans",
+                "Returns raw OpenTelemetry span data as structured JSON from the selected integration. "
+                                 + "Each span includes: traceId, spanId, parentSpanId, name, kind, status, "
+                                 + "startEpochNanos, endEpochNanos, durationMs, routeId, processorId, and attributes. "
+                                 + "Use traceId to filter spans for a specific trace. "
+                                 + "The parentSpanId chain shows the span hierarchy for building waterfall views.",
+                Map.of("traceId", propDef("string",
+                        "Filter to spans matching this trace ID (substring match). "
+                                                    + "If omitted, returns all recent spans."),
+                        "limit", propDef("integer",
+                                "Maximum number of spans to return (default 500)"))));
+        toolList.add(toolDef(
                 "tui_locate",
                 "Locates elements on the TUI screen and returns their exact screen coordinates (x, y, width, height). "
                               + "Use 'text' to find text on screen with proper wide-character handling (emoji, CJK). "
@@ -558,6 +571,7 @@ class TuiMcpServer {
                 case "tui_get_readme" -> callGetReadme(args);
                 case "tui_control" -> callControl(args);
                 case "tui_get_files" -> callGetFiles(args);
+                case "tui_get_spans" -> callGetSpans(args);
                 case "tui_locate" -> callLocate(args);
                 case "tui_draw_shape" -> callDrawShape(args);
                 default -> {
@@ -1145,6 +1159,16 @@ class TuiMcpServer {
         if (data == null) {
             return "No topology data available. The Diagram tab may not have loaded yet.";
         }
+        return Jsoner.serialize(data);
+    }
+
+    private String callGetSpans(Map<String, Object> args) {
+        String traceId = args.get("traceId") instanceof String s ? s : null;
+        int limit = 500;
+        if (args.get("limit") instanceof Number n) {
+            limit = n.intValue();
+        }
+        JsonObject data = monitor.getSpanData(traceId, limit);
         return Jsoner.serialize(data);
     }
 
