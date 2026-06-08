@@ -60,5 +60,5 @@
     </bean>
 
     <!-- datasource used to create the database tables -->
-    <jdbc:embedded-database id="myNonXADataSource" type="DERBY"/>
+    <jdbc:embedded-database id="myNonXADataSource" type="H2"/>
 </beans>
