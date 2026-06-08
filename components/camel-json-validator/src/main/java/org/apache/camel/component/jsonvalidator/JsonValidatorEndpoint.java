@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
 import org.apache.camel.Category;
@@ -35,6 +32,10 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Validate JSON payloads using NetworkNT JSON Schema.
@@ -84,21 +85,23 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
-        }
+
+        var builder = (objectMapper != null)
+                ? objectMapper.rebuild()
+                : JsonMapper.builder();
+
         if (enabledDeserializationFeatures != null) {
             for (var featureName : enabledDeserializationFeatures.split(",")) {
-                var feature = DeserializationFeature.valueOf(featureName);
-                objectMapper.enable(feature);
+                builder.enable(DeserializationFeature.valueOf(featureName.trim()));
             }
         }
         if (disabledDeserializationFeatures != null) {
             for (var featureName : disabledDeserializationFeatures.split(",")) {
-                var feature = DeserializationFeature.valueOf(featureName);
-                objectMapper.disable(feature);
+                builder.disable(DeserializationFeature.valueOf(featureName.trim()));
             }
         }
+
+        objectMapper = builder.build();
     }
 
     @Override
