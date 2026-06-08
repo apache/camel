@@ -237,7 +237,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-keycloak",
   "version" : "4.21.0-SNAPSHOT",
-  "serviceVersion" : "26.6.2"
+  "serviceVersion" : "26.6.3"
 }, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
   "description" : "HiveMQ is an MQTT-based messaging platform for IoT",
