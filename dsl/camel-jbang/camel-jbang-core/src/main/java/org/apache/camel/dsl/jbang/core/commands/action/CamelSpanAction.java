@@ -270,9 +270,7 @@ public class CamelSpanAction extends ActionBaseCommand {
                         remoteSchemes.add(scheme.toString());
                     }
                 }
-                if (!isEventProcess(r)) {
-                    ts.spanCount++;
-                }
+                ts.spanCount++;
             }
             ts.totalDurationMs = traceStart < Long.MAX_VALUE ? (traceEnd - traceStart) / 1_000_000 : 0;
             ts.routeCount = routes.size();
@@ -556,12 +554,6 @@ public class CamelSpanAction extends ActionBaseCommand {
             addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
             return;
         }
-        // Collapse EVENT_PROCESS → EVENT_SENT wrapper
-        if (isEventProcess(row) && !"ERROR".equals(row.status) && children != null && children.size() == 1
-                && isEventSent(children.get(0))) {
-            addToWaterfall(result, children.get(0), childrenMap, depth, included, spanIdToDepth);
-            return;
-        }
         result.add(new WaterfallNode(row, depth));
         if (children != null) {
             for (Row child : children) {
@@ -669,10 +661,6 @@ public class CamelSpanAction extends ActionBaseCommand {
 
     private static boolean isEventReceived(Row row) {
         return row.attributes != null && "EVENT_RECEIVED".equals(row.attributes.get("op"));
-    }
-
-    private static boolean isEventProcess(Row row) {
-        return row.attributes != null && "EVENT_PROCESS".equals(row.attributes.get("op"));
     }
 
     private static boolean isRemoteScheme(String scheme) {
