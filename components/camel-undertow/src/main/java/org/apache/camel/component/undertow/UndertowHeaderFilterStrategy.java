@@ -22,8 +22,27 @@ import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 
 public class UndertowHeaderFilterStrategy extends HttpHeaderFilterStrategy {
 
+    /**
+     * Legacy {@code websocket.*} Exchange-header prefix used by {@code UndertowConstants} for the dispatch and event
+     * headers ({@code websocket.connectionKey}, {@code websocket.connectionKey.list}, {@code websocket.sendToAll},
+     * {@code websocket.eventType}, {@code websocket.eventTypeEnum}, {@code websocket.channel},
+     * {@code websocket.exchange}). Added to the in/out filter prefixes (CAMEL-23588) so the undertow boundary does not
+     * propagate these values onto outbound wire frames or map them in from inbound HTTP-style headers. This is
+     * defence-in-depth — cross-component routes that flow an untrusted message into an undertow producer should also
+     * {@code .removeHeaders("websocket.*")} at the trust boundary, because the producer reads these headers via
+     * {@code in.getHeader(...)} which bypasses the {@code HeaderFilterStrategy}.
+     */
+    static final String WEBSOCKET_FILTER_STARTS_WITH = "websocket.";
+
     public UndertowHeaderFilterStrategy() {
         initialize();
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        setOutFilterStartsWith("Camel", "camel", WEBSOCKET_FILTER_STARTS_WITH);
+        setInFilterStartsWith("Camel", "camel", WEBSOCKET_FILTER_STARTS_WITH);
     }
 
     @Override
