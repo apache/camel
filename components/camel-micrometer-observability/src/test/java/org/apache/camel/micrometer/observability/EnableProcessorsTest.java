@@ -56,14 +56,14 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagati
 
     private void checkTrace(OtelTrace trace) {
         List<SpanData> spans = trace.getSpans();
-        assertEquals(6, spans.size());
+        // to("log:info") no longer produces a processor span (SendProcessor implements EndpointSending)
+        assertEquals(5, spans.size());
 
         SpanData testProducer = spans.get(0);
         SpanData direct = spans.get(1);
         SpanData innerLog = spans.get(2);
         SpanData innerProcessor = spans.get(3);
         SpanData log = spans.get(4);
-        SpanData innerToLog = spans.get(5);
 
         // Validate span completion
         assertTrue(testProducer.hasEnded());
@@ -71,14 +71,12 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagati
         assertTrue(innerLog.hasEnded());
         assertTrue(innerProcessor.hasEnded());
         assertTrue(log.hasEnded());
-        assertTrue(innerToLog.hasEnded());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
         assertEquals(testProducer.getTraceId(), innerLog.getTraceId());
         assertEquals(testProducer.getTraceId(), innerProcessor.getTraceId());
         assertEquals(testProducer.getTraceId(), log.getTraceId());
-        assertEquals(testProducer.getTraceId(), innerToLog.getTraceId());
 
         // Validate op
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getAttributes().get(AttributeKey.stringKey("op")));
@@ -90,7 +88,6 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagati
         assertEquals(direct.getSpanId(), innerLog.getParentSpanId());
         assertEquals(direct.getSpanId(), innerProcessor.getParentSpanId());
         assertEquals(direct.getSpanId(), log.getParentSpanId());
-        assertEquals(log.getSpanId(), innerToLog.getParentSpanId());
     }
 
     @Override

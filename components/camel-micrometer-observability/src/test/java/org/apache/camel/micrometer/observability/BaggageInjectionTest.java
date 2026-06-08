@@ -101,7 +101,8 @@ public class BaggageInjectionTest extends MicrometerObservabilityTracerPropagati
 
     private void checkTrace(OtelTrace trace, String parentTrace, String parentSpan) {
         List<SpanData> spans = trace.getSpans();
-        assertEquals(7, spans.size());
+        // to("log:info") no longer produces a processor span (SendProcessor implements EndpointSending)
+        assertEquals(6, spans.size());
 
         SpanData mySpan = spans.get(0);
         SpanData testProducer = spans.get(1);
@@ -109,7 +110,6 @@ public class BaggageInjectionTest extends MicrometerObservabilityTracerPropagati
         SpanData innerLog = spans.get(3);
         SpanData innerProcessor = spans.get(4);
         SpanData log = spans.get(5);
-        SpanData innerToLog = spans.get(6);
 
         // Validate span completion
         assertTrue(mySpan.hasEnded());
@@ -118,7 +118,6 @@ public class BaggageInjectionTest extends MicrometerObservabilityTracerPropagati
         assertTrue(innerLog.hasEnded());
         assertTrue(innerProcessor.hasEnded());
         assertTrue(log.hasEnded());
-        assertTrue(innerToLog.hasEnded());
 
         // MySpan validation
         assertEquals("mySpan", mySpan.getName());
@@ -129,7 +128,6 @@ public class BaggageInjectionTest extends MicrometerObservabilityTracerPropagati
         assertEquals(testProducer.getSpanContext().getTraceId(), innerLog.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), innerProcessor.getSpanContext().getTraceId());
         assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), innerToLog.getSpanContext().getTraceId());
 
         // Validate operations
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getAttributes().get(AttributeKey.stringKey("op")));
@@ -144,7 +142,6 @@ public class BaggageInjectionTest extends MicrometerObservabilityTracerPropagati
         assertEquals(direct.getSpanContext().getSpanId(), innerLog.getParentSpanContext().getSpanId());
         assertEquals(direct.getSpanContext().getSpanId(), innerProcessor.getParentSpanContext().getSpanId());
         assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
-        assertEquals(log.getSpanContext().getSpanId(), innerToLog.getParentSpanContext().getSpanId());
     }
 
     @Override
