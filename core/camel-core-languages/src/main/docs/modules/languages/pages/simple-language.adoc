@@ -227,6 +227,42 @@ to access Camel functionality and content of the message being routed.
 The core functions are powerful to give easy access to the current `Exchange` / `Message` being routed so
 you can get the message body, headers, variables and exchange properties.
 
+The `body` function returns the message body as-is. If the body is a `String` with value `Hello World`, then `$\{body}` returns `Hello World`.
+
+The `bodyAs` function converts the body to the given type. For example if the body is the integer `42`, then `${bodyAs(String)}` returns `"42"` as a String.
+And `${mandatoryBodyAs(Integer)}` will throw an exception if the body is `null`, otherwise it converts and returns the value.
+
+The `bodyOneLine` function converts the body to a String and removes all line-breaks, so the string is in one line. This is useful for logging.
+
+The `bodyType` function returns the Java class of the message body. For example if the body is `"Hello"`, then the type is `java.lang.String`.
+
+The `convertTo` function converts the message body (or a given expression) to the specified type.
+For example `${convertTo(int)}` converts the body to an `Integer`, and `${convertTo(byte[])}` converts to a byte array.
+You can also convert a nested expression: `${convertTo($\{body},String)}`.
+
+The `headerAs` function returns a header value converted to the given type. For example if a header `num` contains the string `"42"`,
+then `${headerAs(num,Integer)}` returns the integer `42`.
+
+The `variableAs` function works similarly for variables. If a variable `num` contains `"99"`,
+then `${variableAs(num,Integer)}` returns the integer `99`.
+
+The `exchangeProperty` function returns an exchange property. You can use dot, colon, or bracket notation:
+`${exchangeProperty.color}`, `${exchangeProperty:color}`, or `${exchangeProperty[color]}` all return the same value.
+
+The `setHeader` function sets a message header from an expression. For example `${setHeader(foo,$\{body})}` sets the header `foo` to the current body.
+You can also specify a type: `${setHeader(bar,int,$\{body})}` converts the body to an `Integer` before setting the header.
+Setting a header to `null` removes it: `${setHeader(bar,$\{null})}`.
+
+The `setVariable` function works the same as `setHeader` but for exchange variables. For example `${setVariable(count,$\{body.length})}` stores
+the body length in a variable named `count`, which can later be used as `${variable.count}`.
+
+The `val` function returns its argument as a constant value (unchanged). For example `${val(abc)}` returns the string `abc`.
+When using a nested function `${val($\{body})}`, it captures the current body value at evaluation time.
+
+The `kindOfType` function returns a string describing the _kind_ of a value. It returns one of: `null`, `string`, `number`, `boolean`, `array`, or `object`.
+For example `${kindOfType('Hello')}` returns `string`, `${kindOfType(123)}` returns `number`,
+and if the body is a `List` then `${kindOfType()}` returns `array`.
+
 During routing, you can use the xref:eips:log-eip.adoc[LogEIP] to write to the log, for example:
 
 [tabs]
@@ -356,6 +392,19 @@ and you want to skip this line, then you can use `${skip(1)}` that then returns 
 The `split` function is as the name implies used for splitting the message body or the value (using a separator) into an array of sub elements.
 For example if the message body a CSV payload then using `${split(\\n)}` (you need to escape the new-line character) will split
 this into a `String[]` separated by new-line.
+If the body is `a:b:c` then `${split(:)}` returns a list `[a, b, c]`.
+You can also split a header or variable value: `${split($\{header.csv},-)}` splits the header value using `-` as separator.
+
+The `sort` function sorts values in natural order. If the body is a list `[b, a, c]` then `${sort()}` returns `[a, b, c]`.
+To sort in reverse (descending) order use `${sort(true)}` which returns `[c, b, a]`.
+
+The `createEmpty` function creates a new empty object. `${createEmpty(list)}` returns an empty `ArrayList`,
+`${createEmpty(map)}` returns an empty `LinkedHashMap`, `${createEmpty(set)}` returns an empty `LinkedHashSet`,
+and `${createEmpty(string)}` returns an empty `String`.
+
+The `filter` function filters elements from a collection based on a predicate.
+For example if the body is `Camel,Dog,Cheese` then `${filter($\{body},$\{length() > 4})}` returns a list with `[Camel, Cheese]`
+(only elements with more than 4 characters). You can also filter by content: `${filter($\{body},$\{contains(dog)})}` returns `[Dog]`.
 
 
 === Boolean & Condition Functions
@@ -400,7 +449,13 @@ So `${isAlpha('Hello World')}` will actually return `false` because there is a w
 
 TIP: You can use the `regex` operator to use regular expressions for more advanced tests.
 
-And the `not` function is function to inverse the boolean value.
+The `not` function inverts a boolean value. If the body is empty then `${not()}` returns `true`.
+If the body is `"Hello"` then `${not()}` returns `false`.
+You can also negate a predicate: `${not($\{body} == 'Hello')}` returns `false` when the body is `Hello`, and `true` otherwise.
+
+The `assert` function evaluates a condition and throws an exception if it fails.
+For example `${assert($\{body} == 'Hello', 'Must be Hello')}` will pass when the body is `Hello`,
+but throws a `SimpleAssertionException` with the message `Must be Hello` when the body is anything else.
 
 
 === Date & Time Functions
@@ -424,6 +479,14 @@ And to get the time 8 hours in the future `${date:now+8h:hh:mm:ss}`.
 
 There is also a timezone supported function so you can say `date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS`.
 This will get the `Date` object from the header with key birthday, and format that using the given pattern in the timezone GMT+8.
+
+You can also use date offsets with headers or exchange properties. For example `${date:header.birthday+24h:yyyyMMdd}` returns the date
+from the header shifted forward by 24 hours. And `${date:header.birthday-10s:yyyy-MM-dd'T'HH:mm:ss:SSS}` subtracts 10 seconds.
+
+Exchange properties work the same way: `${date:exchangeProperty.birthday:yyyyMMdd}` formats the property date.
+
+The `date:exchangeCreated` command returns the timestamp when the current exchange was created:
+`${date:exchangeCreated:hh:mm:ss a}` formats it as a 12-hour time with AM/PM marker.
 
 
 === Math & Numeric Functions
@@ -496,20 +559,29 @@ Other kind of functions.
 
 To use OS environment variables you use the `${env.key}` function, such as `${env.PATH}` or `${env.HOME}`, or `${env.JAVA_HOME}`.
 Notice how the key should be in uppercase, as required by OS environment variables.
+For example `${env.HOME}` returns the home directory path such as `/home/scott`.
 
 The `hash` function is used for calculating a hash value of the given value. The `${hash()}` would use the message body and SHA-256 as algorithm and
 return a hash value as String hex-decimal.
+For example if the body is `hello` then `${hash()}` returns the SHA-256 hash as a hex string.
+You can also specify the algorithm: `${hash($\{body},SHA3-256)}` uses SHA3-256 instead of the default SHA-256.
+To hash a specific expression: `${hash($\{header.apiKey})}` hashes the value of a header.
 
 The `hostname` function returns the OS hostname and does not require using parenthesis, so just use `$\{hostname}`.
+For example `$\{hostname}` returns the local machine hostname such as `myserver`.
 
-The `null` function returns a `null` value such as `$\{null}`.
+The `null` function returns a `null` value such as `$\{null}`. This is useful for setting a header or variable to null:
+`${setHeader(foo,$\{null})}` removes the header `foo`.
 
 To use OS environment variables you can also use the `${sysenv.key}` function (an alias for `${env.key}`), such as `${sysenv.PATH}` or `${sysenv.HOME}`.
 
-You can get the current thread id by the `$\{threadId}` function, and the name via `$\{threadName}`.
+You can get the current thread id by the `$\{threadId}` function (returns a numeric id),
+and the name via `$\{threadName}` (returns the thread name such as `Camel (camel-1) thread #1 - direct://start`).
 
 And you can generate unique IDs with the xref:manual::uuidgenerator.adoc[Camel UUID Generator] by the `uuid` function.
 The generator supports different kinds `default`, `classic`, `short`, `simple` and `random`, such as `${uuid(random)}`.
+For example `$\{uuid}` returns a UUID like `ID-myhost-1234-1234567890-0-1`, and `${uuid(short)}` returns a shorter form.
+You can also bind a custom `UuidGenerator` to the registry and use it by name: `${uuid(myGenerator)}`.
 
 To load data from classpath, you can use the load function such as `$\{load(myrules.json)}`.
 If the file is not present on classpath, then an exception is thrown. However, you can mark the file as optional as follows:
@@ -575,6 +647,7 @@ To use semicolon as separator you would use `${join(;)}`. The `prefix` argument 
 
 The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
 So `${lowercase('Hello World')}` returns `hello world` and `${uppercase('Hello World')}` returns `HELLO WORLD`.
+Without arguments, they operate on the message body: if the body is `HELLO` then `${lowercase()}` returns `hello`.
 
 You can use the `normalizeWhitespace` function to _clean up_ a value by removing extra whitespaces. This is done by ensuring that
 there are exactly only 1 whitespace between words. And as well trimming the value for empty whitespace
@@ -605,12 +678,22 @@ So the previous example can also be trimmed by nesting the function as follows:
 `${trim(${substringBetween('great','how')})}` which would return `"big World"`.
 
 And of course `${trim('  hello world  ')}` returns `hello world`.
+Without arguments, `${trim()}` trims the message body. If the body is `"  hello  "` then `${trim()}` returns `hello`.
+
+The `length` function calculates the payload length in bytes. If the body is `Hello` then `${length()}` returns `5`.
+You can also pass a literal: `${length('Hello World')}` returns `11`.
+
+The `size` function returns the number of elements in a collection or array.
+If the body is a `List` with elements `[a, b, c]` then `${size()}` returns `3`.
 
 The `quote` function is making sure the returned value is enclosed in double quotes.
 If the value is currently in single quote, then this will be converted to double quotes.
 
 If the message body contains `Hello World` then `${quote()}` returns `"Hello World"`.
 And using `${quote('Hi from me')}` then `"Hi from me"` is returned.
+
+The `unquote` function removes any surrounding single or double quotes from a value.
+If the body contains `'hello'` then `${unquote()}` returns `hello` (without the quotes).
 
 The `safeQuote` function is quoting the value depending on the value type
 (uses the same logic as `kindOfType` function). In essence values that are null, boolean or numbers are not quoted,
