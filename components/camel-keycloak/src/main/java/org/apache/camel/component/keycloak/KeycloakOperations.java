@@ -64,6 +64,12 @@ public enum KeycloakOperations {
     // User session operations
     listUserSessions,
     logoutUser,
+    logoutAllUsers,
+    // Token operations
+    revokeAccessToken,
+    revokeRefreshToken,
+    introspectToken,
+    pushNotBefore,
     // Client scope operations
     createClientScope,
     deleteClientScope,

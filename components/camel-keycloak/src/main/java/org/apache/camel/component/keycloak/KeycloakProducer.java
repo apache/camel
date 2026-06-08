@@ -18,6 +18,7 @@ package org.apache.camel.component.keycloak;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +29,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.keycloak.security.KeycloakTokenIntrospector;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.Configuration;
@@ -211,6 +219,21 @@ public class KeycloakProducer extends DefaultProducer {
                 break;
             case logoutUser:
                 logoutUser(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case logoutAllUsers:
+                logoutAllUsers(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case revokeAccessToken:
+                revokeAccessToken(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case revokeRefreshToken:
+                revokeRefreshToken(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case introspectToken:
+                introspectToken(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case pushNotBefore:
+                pushNotBefore(getEndpoint().getKeycloakClient(), exchange);
                 break;
             case createClientScope:
                 createClientScope(getEndpoint().getKeycloakClient(), exchange);
@@ -1245,6 +1268,124 @@ public class KeycloakProducer extends DefaultProducer {
         keycloakClient.realm(realmName).users().get(userId).logout();
         Message message = getMessageForResponse(exchange);
         message.setBody("User logged out successfully");
+    }
+
+    private void logoutAllUsers(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        keycloakClient.realm(realmName).logoutAll();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("All users logged out successfully");
+    }
+
+    private void revokeAccessToken(Keycloak keycloakClient, Exchange exchange) throws Exception {
+        revokeToken(exchange, "access_token");
+    }
+
+    private void revokeRefreshToken(Keycloak keycloakClient, Exchange exchange) throws Exception {
+        revokeToken(exchange, "refresh_token");
+    }
+
+    private void revokeToken(Exchange exchange, String defaultTypeHint) throws Exception {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            realmName = getConfiguration().getRealm();
+        }
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String token = exchange.getIn().getHeader(KeycloakConstants.TOKEN, String.class);
+        if (ObjectHelper.isEmpty(token)) {
+            token = exchange.getIn().getBody(String.class);
+        }
+        if (ObjectHelper.isEmpty(token)) {
+            throw new IllegalArgumentException("Token must be specified for revocation");
+        }
+
+        String typeHint = exchange.getIn().getHeader(KeycloakConstants.TOKEN_TYPE_HINT, String.class);
+        if (ObjectHelper.isEmpty(typeHint)) {
+            typeHint = defaultTypeHint;
+        }
+
+        String serverUrl = getConfiguration().getServerUrl();
+        String clientId = getConfiguration().getClientId();
+        String clientSecret = getConfiguration().getClientSecret();
+
+        String revocationUrl = String.format("%s/realms/%s/protocol/openid-connect/revoke", serverUrl, realmName);
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost request = new HttpPost(revocationUrl);
+
+            // Add Basic authentication header
+            String auth = clientId + ":" + clientSecret;
+            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+            request.setHeader("Authorization", "Basic " + encodedAuth);
+            request.setHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("token", token));
+            params.add(new BasicNameValuePair("token_type_hint", typeHint));
+            request.setEntity(new UrlEncodedFormEntity(params));
+
+            httpClient.execute(request, response -> {
+                int statusCode = response.getCode();
+                if (statusCode != 200) {
+                    throw new RuntimeException("Token revocation failed with status " + statusCode);
+                }
+                return null;
+            });
+        }
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Token revoked successfully");
+    }
+
+    private void introspectToken(Keycloak keycloakClient, Exchange exchange) throws Exception {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            realmName = getConfiguration().getRealm();
+        }
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String token = exchange.getIn().getHeader(KeycloakConstants.TOKEN, String.class);
+        if (ObjectHelper.isEmpty(token)) {
+            token = exchange.getIn().getBody(String.class);
+        }
+        if (ObjectHelper.isEmpty(token)) {
+            throw new IllegalArgumentException("Token must be specified for introspection");
+        }
+
+        KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+                getConfiguration().getServerUrl(),
+                realmName,
+                getConfiguration().getClientId(),
+                getConfiguration().getClientSecret(),
+                false, 0);
+
+        try {
+            KeycloakTokenIntrospector.IntrospectionResult result = introspector.introspect(token);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result.getAllClaims());
+        } finally {
+            introspector.close();
+        }
+    }
+
+    private void pushNotBefore(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        keycloakClient.realm(realmName).pushRevocation();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Not-before policy pushed successfully");
     }
 
     private void createClientScope(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
