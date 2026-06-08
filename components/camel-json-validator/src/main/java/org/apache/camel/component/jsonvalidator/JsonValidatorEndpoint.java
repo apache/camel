@@ -92,12 +92,12 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
 
         if (enabledDeserializationFeatures != null) {
             for (var featureName : enabledDeserializationFeatures.split(",")) {
-                builder.enable(DeserializationFeature.valueOf(featureName.trim()));
+                builder.enable(DeserializationFeature.valueOf(featureName));
             }
         }
         if (disabledDeserializationFeatures != null) {
             for (var featureName : disabledDeserializationFeatures.split(",")) {
-                builder.disable(DeserializationFeature.valueOf(featureName.trim()));
+                builder.disable(DeserializationFeature.valueOf(featureName));
             }
         }
 
