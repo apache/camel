@@ -18,8 +18,9 @@ IMPORTANT: The MCP server does **not** expose REST endpoints — all communicati
 
 == Available Tools
 
-The server exposes 30 catalog tools organized into twelve functional areas, 21 runtime introspection tools for
-inspecting and interacting with live Camel processes, plus 3 prompts that provide structured multi-step workflows.
+The server exposes catalog tools for exploring components, validating routes, and assisting with migration,
+runtime introspection tools for inspecting and interacting with live Camel processes,
+plus prompts that provide structured multi-step workflows.
 
 === Catalog Exploration
 
@@ -59,6 +60,10 @@ inspecting and interacting with live Camel processes, plus 3 prompts that provid
 
 | `camel_catalog_eip_doc`
 | Get detailed documentation for a specific EIP including all its options.
+
+| `camel_component_properties`
+| List valid configuration property keys for a Camel component in `camel.component.<scheme>.<name>` form,
+  including option name, type, default value, and description.
 |===
 
 === Kamelet Catalog
@@ -177,6 +182,26 @@ inspecting and interacting with live Camel processes, plus 3 prompts that provid
 
 | `camel_transform_route`
 | Assists with route DSL format transformation between YAML and XML.
+
+| `camel_configuration_validate`
+| Validate Camel configuration property lines (e.g., from `application.properties`). Detects misspelled option
+  names, invalid values, and returns suggestions.
+
+| `camel_properties_translate`
+| Translate Camel configuration properties between runtimes (`main`, `spring-boot`, `quarkus`). Handles
+  runtime-specific keys like HTTP server and management endpoint configuration.
+|===
+
+=== Route Diagram
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_render_route_diagram`
+| Generate a diagram of Camel routes from a source file (YAML, XML, Java). Supports image themes (dark, light,
+  transparent) written as PNG, and text themes (ascii, unicode) returned directly. Useful for visualizing route
+  structure for review, documentation, or troubleshooting.
 |===
 
 === OpenAPI Contract-First
@@ -289,6 +314,10 @@ process is running).
 
 | `camel_runtime_route_control`
 | Control a route: start, stop, suspend, or resume it by route ID.
+
+| `camel_runtime_route_topology`
+| Get the inter-route topology showing how routes connect to each other and to external endpoints.
+  Returns nodes and edges describing the route graph.
 |===
 
 ==== Observability
@@ -314,6 +343,17 @@ process is running).
 
 | `camel_runtime_memory`
 | Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.
+
+| `camel_runtime_errors`
+| Get captured routing errors from the running application. Returns error details including exception,
+  exchange context, and route information.
+
+| `camel_runtime_history`
+| Get the message history trace of the last completed exchange. Shows the route path, processors visited,
+  headers, body, and timing.
+
+| `camel_runtime_thread_dump`
+| Get a JVM thread dump showing thread names, states, and stack traces.
 |===
 
 ==== Configuration and Registry
@@ -352,6 +392,14 @@ process is running).
 
 | `camel_runtime_browse`
 | Browse messages in a Camel endpoint (e.g., messages queued in a SEDA endpoint).
+
+| `camel_runtime_receive`
+| Receive (poll) a message from a Camel endpoint in the running application. Consumes one message
+  from the endpoint.
+
+| `camel_runtime_stop`
+| Initiate graceful shutdown of a running Camel application. Finishes processing in-flight exchanges
+  before stopping.
 |===
 
 == Available Prompts
