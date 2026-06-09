@@ -493,7 +493,7 @@
         <spring-security-version>7.0.5</spring-security-version>
         <spring-ws-version>5.0.1</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
-        <squareup-okhttp5-version>5.3.2</squareup-okhttp5-version>
+        <squareup-okhttp5-version>5.4.0</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
         <sshd-version>2.18.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
