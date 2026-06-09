@@ -80,16 +80,27 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
   Pipes, clipboard, Spring Boot and Quarkus runtimes.
 
 | xref:camel-jbang-devtools.adoc[Development Tools]
-| Sending and receiving messages, route debugging, data transformation, dependency injection,
-  JDBC configuration, terminal scripting.
+| Sending and receiving messages, dependency injection, JDBC configuration,
+  terminal scripting, validate plugin.
+
+| xref:camel-jbang-debugging.adoc[Debugging]
+| Camel route debugging from the CLI, IDE integration (VSCode, IDEA), Java-level debugging.
+
+| xref:camel-jbang-transforming.adoc[Data Transformation]
+| Transforming messages with live reload, using expression languages, components,
+  data formats, and converting between route DSL formats.
 
 | xref:camel-jbang-managing.adoc[Managing Integrations]
-| Listing and stopping processes, route and group control, log tailing, message tracing,
-  health checks, metrics, circuit breaker status, Jolokia and Hawtio.
+| Listing and stopping processes, route and group control, developer console, message history,
+  log tailing, message tracing, health checks, metrics, circuit breaker status, Jolokia and Hawtio.
 
 | xref:camel-jbang-projects.adoc[Projects and Catalog]
-| Camel version management, plugin management, component catalog, exporting to Spring Boot /
-  Quarkus / Camel Main, SBOM generation, infrastructure services, automated upgrades.
+| Component catalog, exporting to Spring Boot / Quarkus / Camel Main,
+  SBOM generation, plugin management, version management, automated upgrades.
+
+| xref:camel-jbang-dev-services.adoc[Dev Services]
+| Start and manage local infrastructure services (databases, message brokers, etc.)
+  for development and testing, powered by Camel test-infra and containers.
 
 | xref:camel-jbang-configuration.adoc[Configuration]
 | CLI configuration options, config commands, configuration precedence, troubleshooting.

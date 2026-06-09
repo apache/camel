@@ -2,241 +2,6 @@
 
 The Camel CLI helps you manage the full project lifecycle — from exploring the component catalog and managing dependencies to exporting production-ready projects and upgrading Camel versions.
 
-== Using a specific Camel version
-
-You can specify which Camel version to run as shown:
-
-[source,bash]
-----
-jbang -Dcamel.jbang.version=3.18.4 camel@apache/camel [command]
-----
-
-NOTE: Older versions of Camel may not work as well with Camel CLI as the newest versions.
-Starting from Camel 3.20 onwards are the versions that are recommended to be used onwards.
-
-TIP: In Camel *3.20.3* onwards there is a `version` command, see the following section for more details.
-
-In *Camel 3.20.2* onwards the `run` command has built-in support, using `--camel-version`,
-for specifying the Camel version to use for the running Camel integration.
-
-[source,bash]
-----
-camel run * --camel-version=3.18.4
-----
-
-TIP: This makes it easy to try different Camel versions, for example, when you need to reproduce an issue,
-and find out how it works in a different Camel version.
-
-You can also try bleeding-edge development by using SNAPSHOT such as:
-
-[source,bash]
-----
-jbang --fresh -Dcamel.jbang.version=3.21.0-SNAPSHOT camel@apache/camel [command]
-----
-
-== Using the version command
-
-In *Camel 3.20.3* onwards the `version` command makes it possible to configure a specific version
-of Camel to use when running or exporting. This makes it possible to use the latest Camel CLI
-and run integrations using an older Camel version.
-
-[source,bash]
-----
-camel version
-Camel CLI version: 3.20.3
-----
-
-Here Camel CLI is using version 3.20.3. Now suppose we want to run Camel integrations with version 3.18.2.
-
-[source,bash]
-----
-camel version set 3.18.2
-----
-
-And you can see what Camel version has been set by:
-
-[source,bash]
-----
-camel version
-Camel CLI version: 3.20.3
-User configuration:
-    camel-version = 3.18.2
-----
-
-And when running an integration, then Camel CLI will show you the _overridden version_ when starting.
-
-[source,bash]
-----
-camel run foo.java
-Running integration with the following configuration:
-    --camel-version=3.18.2
-2023-03-17 13:35:13.876  INFO 28451 --- [           main] org.apache.camel.main.MainSupport        : Apache Camel (JBang) 3.18.2 is starting
-...
-----
-
-IMPORTANT: You cannot use both a set version via `camel version set` and also a version specified via `--camel-version` option,
-i.e., the following is not possible:
-
-[source,bash]
-----
-camel version set 4.0.1
-camel run * --camel-version=4.3.0
-----
-
-If you want to unset the version, you can use the `--reset` option:
-
-[source,bash]
-----
-camel version set --reset
-----
-
-Then the Camel version in use will be the same version as Camel CLI.
-
-=== Listing available Camel releases
-
-The `version` command can also show available Camel releases by checking the Maven central repository.
-
-[source,bash]
-----
-camel version list
- CAMEL VERSION   JDK   KIND     RELEASED     SUPPORTED UNTIL
-    3.14.0       8,11  LTS    December 2021    December 2023
-    3.14.1       8,11  LTS     January 2022    December 2023
-    3.14.2       8,11  LTS       March 2022    December 2023
-    3.14.3       8,11  LTS         May 2022    December 2023
-    3.14.4       8,11  LTS        June 2022    December 2023
-    3.14.5       8,11  LTS      August 2022    December 2023
-    3.14.6       8,11  LTS    November 2022    December 2023
-    3.14.7       8,11  LTS    December 2022    December 2023
-    3.15.0         11         February 2022
-    3.16.0         11            March 2022
-    3.17.0      11,17              May 2022
-    3.18.0      11,17  LTS        July 2022        July 2023
-    3.18.1      11,17  LTS      August 2022        July 2023
-    3.18.2      11,17  LTS   September 2022        July 2023
-    3.18.3      11,17  LTS     October 2022        July 2023
-    3.18.4      11,17  LTS    December 2022        July 2023
-    3.18.5      11,17  LTS     January 2023        July 2023
-    3.19.0      11,17          October 2022
-    3.20.0      11,17  LTS    December 2022    December 2023
-    3.20.1      11,17  LTS     January 2023    December 2023
-    3.20.2      11,17  LTS    February 2023    December 2023
-   4.0.0-M1        17   RC    February 2023
-   4.0.0-M2        17   RC       March 2023
-----
-
-NOTE: The `version list` shows the latest releases going back a few versions, at this time of writing the minimum version
-is Camel 3.14. To show all Camel 3.x releases, you can specify `--from-version=3.0` and the list is longer.
-The list can only go back to Camel 2.18, as we do not have all release meta-data for older releases.
-
-You can also show Camel releases for either Spring Boot or Quarkus using the `--runtime` option, such as:
-
-[source,bash]
-----
-camel version list --runtime=quarkus
- CAMEL VERSION  QUARKUS   JDK  KIND     RELEASED     SUPPORTED UNTIL
-    3.14.0       2.6.0     11         December 2021
-    3.14.1       2.7.0     11  LTS    February 2022      August 2022
-    3.14.2       2.7.1     11  LTS       April 2022      August 2022
-    3.14.4       2.7.2     11  LTS        July 2022      August 2022
-    3.15.0      2.8.0-M1   11            March 2022
-    3.16.0       2.8.0     11            April 2022
-    3.16.0       2.9.0     11              May 2022
-    3.17.0       2.10.0    11             June 2022
-    3.18.0       2.11.0    11             July 2022
-    3.18.1       2.12.0    11        September 2022
-    3.18.2       2.13.0    11  LTS   September 2022       March 2023
-    3.18.3       2.13.1    11  LTS    November 2022       March 2023
-    3.18.3       2.13.2    11  LTS    December 2022       March 2023
-    3.19.0       2.14.0    11         November 2022
-    3.19.0       2.15.0    11         December 2022
-    3.20.1       2.16.0    11          January 2023
-----
-
-TIP: See more options with `camel version list --help`.
-
-== Manage plugins
-
-Camel CLI uses a plugin concept for some of the subcommands so users can add functionality on demand.
-Each provided plugin adds a list of commands to the Camel CLI command line tool.
-
-You can list the supported plugins with
-
-[source,bash]
-----
-camel plugin get --all
-----
-
-[source,text]
-----
-Supported plugins:
-
- NAME        COMMAND     VENDOR  DEPENDENCY                                      DESCRIPTION
- kubernetes  kubernetes  ASF     org.apache.camel:camel-jbang-plugin-kubernetes  Run Camel applications on Kubernetes
- generate    generate    ASF     org.apache.camel:camel-jbang-plugin-generate    Generate code such as DTOs
- ...
-
-Known 3rd party plugins:
-
- NAME        COMMAND  VENDOR     DEPENDENCY                                        DESCRIPTION
- forage      forage   Community  io.kaoto.forage:camel-jbang-plugin-forage         Production ready Apache Camel components configurations via properties
- camel-kit   kit      Community  io.github.luigidemasi:camel-kit-jbang-plugin      Design Apache Camel Integrations with AI
-----
-
-The `VENDOR` column indicates whether the plugin is from `ASF` (Apache Software Foundation) or `Community` (3rd party).
-
-In case you want to enable a plugin and its functionality, you can add it as follows:
-
-[source,bash]
-----
-camel plugin add <plugin-name>
-----
-
-For example to install `generate` you execute:
-
-[source,bash]
-----
-camel plugin add generate
-----
-
-This adds the plugin, and all subcommands are now available for execution.
-
-Known 3rd party plugins can be installed by name as well. For example:
-
-[source,bash]
-----
-camel plugin add forage
-----
-
-To install a specific version of a 3rd party plugin, use the `--version` option:
-
-[source,bash]
-----
-camel plugin add forage --version=1.2.3
-----
-
-You can list the currently installed plugins with:
-
-[source,bash]
-----
-camel plugin get
-----
-
-To remove a plugin from the current Camel CLI command line tooling, you can use the `plugin delete` command.
-
-[source,bash]
-----
-camel plugin delete <plugin-name>
-----
-
-=== Building custom plugins
-
-It is possible to build custom Camel CLI plugins. We suggest to take a look at one of the https://github.com/apache/camel/tree/main/dsl/camel-jbang[existing plugins],
-to see how that is done.
-
-IMPORTANT: The name of the plugin Maven **artifactId** must start with `camel-jbang-plugin-`. For example if the plugin is named `cheese`, then
-the maven artifact must be named `camel-jbang-plugin-cheese`.
-
 == Listing what Camel components are available
 
 Camel comes with a lot of artifacts out of the box which comes as:
@@ -349,167 +114,6 @@ a Camel route with the naming convention `direct:<operationId>`.
 This make it quick to implement a Camel route for a given operation.
 
 See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api[open-api example] for more details.
-
-== Gathering list of dependencies
-
-When working with Camel CLI, then dependencies are automatically resolved. This means that
-you do not have to use a build system like Maven to add every Camel component
-as a dependency.
-
-However, you may want to know what dependencies are required to run the Camel integration.
-To see this, you can use the `dependency` command. The command output does not output a detailed
-tree, such as `mvn dependencies:tree`, as the output is intended to list which Camel components,
-and other JARs needed (when using Kamelets).
-
-The dependency output by default is _vanilla_ Apache Camel with the camel-main as runtime, as shown below:
-
-[source,bash]
-----
-camel dependency list
-org.apache.camel:camel-dsl-modeline:3.20.0
-org.apache.camel:camel-health:3.20.0
-org.apache.camel:camel-kamelet:3.20.0
-org.apache.camel:camel-log:3.20.0
-org.apache.camel:camel-rest:3.20.0
-org.apache.camel:camel-stream:3.20.0
-org.apache.camel:camel-timer:3.20.0
-org.apache.camel:camel-yaml-dsl:3.20.0
-org.apache.camel.kamelets:camel-kamelets:0.9.3
-----
-
-The output is by default a line per maven dependency in GAV format (_groupId:artifactId:version_).
-
-You can also specify the output should be in _Maven format_ as shown:
-
-[source,bash]
-----
-camel dependency list --output=maven
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-main</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-dsl-modeline</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-health</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-kamelet</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-log</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-rest</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-stream</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-timer</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-yaml-dsl</artifactId>
-    <version>3.20.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.camel.kamelets</groupId>
-    <artifactId>camel-kamelets</artifactId>
-    <version>0.9.3</version>
-</dependency>
-----
-
-You can also choose the target runtime as either _quarkus_ or _spring-boot_ as shown:
-
-[source,bash]
-----
-camel dependency --runtime=spring-boot
-org.springframework.boot:spring-boot-starter-actuator:2.7.5
-org.springframework.boot:spring-boot-starter-web:2.7.5
-org.apache.camel.springboot:camel-spring-boot-engine-starter:3.20.0
-org.apache.camel.springboot:camel-dsl-modeline-starter:3.20.0
-org.apache.camel.springboot:camel-kamelet-starter:3.20.0
-org.apache.camel.springboot:camel-log-starter:3.20.0
-org.apache.camel.springboot:camel-rest-starter:3.20.0
-org.apache.camel.springboot:camel-stream-starter:3.20.0
-org.apache.camel.springboot:camel-timer-starter:3.20.0
-org.apache.camel.springboot:camel-yaml-dsl-starter:3.20
-org.apache.camel.kamelets:camel-kamelets:0.9.3
-----
-
-== Generating SBOM report
-
-[source,bash]
-
-You can generate a SBOM report of your integration by running the following command
-
-----
-camel sbom
-----
-
-By default, it will generate a file named `sbom.json` in `cyclonedx` format.
-
-You can also choose to use an `spdx` format with the following command
-
-----
-camel sbom --sbom-format=spdx
-----
-
-You can also choose the target runtime as either _quarkus_ or _spring-boot_ as shown:
-
-----
-camel sbom --runtime=quarkus
-----
-
-or
-
-----
-camel sbom --runtime=spring-boot
-----
-
-by default `camel-main` will be used
-
-=== Copying dependency JARs to a specific directory
-
-You can use the `camel dependency copy` command to copy the required JARs to a specific folder.
-
-IMPORTANT: The `camel dependency copy` and `camel dependency list` uses Apache Maven,
-This requires having Apache Maven installed, and `mvn` command in PATH environment, so Camel CLI
-can invoke `mvn` command.
-
-By default, the JARs are copied to `lib` folder:
-
-[source,bash]
-----
-camel dependency copy
-ls lib
-camel-api-3.21.0.jar                    camel-health-3.21.0.jar                 camel-yaml-dsl-3.21.0.jar
-camel-base-3.21.0.jar                   camel-main-3.21.0.jar                   camel-yaml-dsl-common-3.21.0.jar
-camel-base-engine-3.21.0.jar            camel-management-api-3.21.0.jar         camel-yaml-dsl-deserializers-3.21.0.jar
-camel-core-engine-3.21.0.jar            camel-rest-3.21.0.jar                   jakarta.activation-api-1.2.2.jar
-camel-core-languages-3.21.0.jar         camel-support-3.21.0.jar                jakarta.xml.bind-api-2.3.3.jar
-camel-core-model-3.21.0.jar             camel-timer-3.21.0.jar                  slf4j-api-1.7.36.jar
-camel-core-processor-3.21.0.jar         camel-tooling-model-3.21.0.jar          snakeyaml-engine-2.3.jar
-camel-core-reifier-3.21.0.jar           camel-util-3.21.0.jar
-camel-dsl-support-3.21.0.jar            camel-util-json-3.21.0.jar
-----
 
 == Creating Projects
 
@@ -697,158 +301,430 @@ which also can be used to specific parameters for export such as selecting the r
 
 The full list of `camel.jbang.*` options is in the xref:camel-jbang-configuration.adoc[Configuration] page.
 
-== Infrastructure
+== Gathering list of dependencies
 
-Camel CLI `infra` command can be used to `list`, `run` and `stop` external services that can be used for fast prototyping and testing.
-Apache Camel test-infra Services are exposed via the `infra` command, in this way, the same infrastructure that is used to test
-Apache Camel itself, is exposed via Camel CLI, and services that are already proved to work with Apache Camel can be easily used.
+When working with Camel CLI, then dependencies are automatically resolved. This means that
+you do not have to use a build system like Maven to add every Camel component
+as a dependency.
 
-=== List Services
+However, you may want to know what dependencies are required to run the Camel integration.
+To see this, you can use the `dependency` command. The command output does not output a detailed
+tree, such as `mvn dependencies:tree`, as the output is intended to list which Camel components,
+and other JARs needed (when using Kamelets).
 
-Supported external services can be listed with the following command:
-
-[source,bash]
-----
-camel infra list
-----
-
-Following is the output for the above-mentioned configuration.
+The dependency output by default is _vanilla_ Apache Camel with the camel-main as runtime, as shown below:
 
 [source,bash]
 ----
-ALIAS                   IMPLEMENTATION
- ignite
- azure                   storage-queue
- openldap
- event-bridge
- xmpp
- kinesis
- redis
+camel dependency list
+org.apache.camel:camel-dsl-modeline:3.20.0
+org.apache.camel:camel-health:3.20.0
+org.apache.camel:camel-kamelet:3.20.0
+org.apache.camel:camel-log:3.20.0
+org.apache.camel:camel-rest:3.20.0
+org.apache.camel:camel-stream:3.20.0
+org.apache.camel:camel-timer:3.20.0
+org.apache.camel:camel-yaml-dsl:3.20.0
+org.apache.camel.kamelets:camel-kamelets:0.9.3
+----
+
+The output is by default a line per maven dependency in GAV format (_groupId:artifactId:version_).
+
+You can also specify the output should be in _Maven format_ as shown:
+
+[source,bash]
+----
+camel dependency list --output=maven
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-main</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-dsl-modeline</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-health</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kamelet</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-log</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-rest</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-stream</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-timer</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-yaml-dsl</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel.kamelets</groupId>
+    <artifactId>camel-kamelets</artifactId>
+    <version>0.9.3</version>
+</dependency>
+----
+
+You can also choose the target runtime as either _quarkus_ or _spring-boot_ as shown:
+
+[source,bash]
+----
+camel dependency --runtime=spring-boot
+org.springframework.boot:spring-boot-starter-actuator:2.7.5
+org.springframework.boot:spring-boot-starter-web:2.7.5
+org.apache.camel.springboot:camel-spring-boot-engine-starter:3.20.0
+org.apache.camel.springboot:camel-dsl-modeline-starter:3.20.0
+org.apache.camel.springboot:camel-kamelet-starter:3.20.0
+org.apache.camel.springboot:camel-log-starter:3.20.0
+org.apache.camel.springboot:camel-rest-starter:3.20.0
+org.apache.camel.springboot:camel-stream-starter:3.20.0
+org.apache.camel.springboot:camel-timer-starter:3.20.0
+org.apache.camel.springboot:camel-yaml-dsl-starter:3.20
+org.apache.camel.kamelets:camel-kamelets:0.9.3
+----
+
+== Generating SBOM report
+
+[source,bash]
+
+You can generate a SBOM report of your integration by running the following command
+
+----
+camel sbom
+----
+
+By default, it will generate a file named `sbom.json` in `cyclonedx` format.
+
+You can also choose to use an `spdx` format with the following command
+
+----
+camel sbom --sbom-format=spdx
+----
+
+You can also choose the target runtime as either _quarkus_ or _spring-boot_ as shown:
+
+----
+camel sbom --runtime=quarkus
+----
+
+or
+
+----
+camel sbom --runtime=spring-boot
+----
+
+by default `camel-main` will be used
+
+=== Copying dependency JARs to a specific directory
+
+You can use the `camel dependency copy` command to copy the required JARs to a specific folder.
+
+IMPORTANT: The `camel dependency copy` and `camel dependency list` uses Apache Maven,
+This requires having Apache Maven installed, and `mvn` command in PATH environment, so Camel CLI
+can invoke `mvn` command.
+
+By default, the JARs are copied to `lib` folder:
+
+[source,bash]
+----
+camel dependency copy
+ls lib
+camel-api-3.21.0.jar                    camel-health-3.21.0.jar                 camel-yaml-dsl-3.21.0.jar
+camel-base-3.21.0.jar                   camel-main-3.21.0.jar                   camel-yaml-dsl-common-3.21.0.jar
+camel-base-engine-3.21.0.jar            camel-management-api-3.21.0.jar         camel-yaml-dsl-deserializers-3.21.0.jar
+camel-core-engine-3.21.0.jar            camel-rest-3.21.0.jar                   jakarta.activation-api-1.2.2.jar
+camel-core-languages-3.21.0.jar         camel-support-3.21.0.jar                jakarta.xml.bind-api-2.3.3.jar
+camel-core-model-3.21.0.jar             camel-timer-3.21.0.jar                  slf4j-api-1.7.36.jar
+camel-core-processor-3.21.0.jar         camel-tooling-model-3.21.0.jar          snakeyaml-engine-2.3.jar
+camel-core-reifier-3.21.0.jar           camel-util-3.21.0.jar
+camel-dsl-support-3.21.0.jar            camel-util-json-3.21.0.jar
+----
+
+== Manage plugins
+
+Camel CLI uses a plugin concept for some of the subcommands so users can add functionality on demand.
+Each provided plugin adds a list of commands to the Camel CLI command line tool.
+
+You can list the supported plugins with
+
+[source,bash]
+----
+camel plugin get --all
+----
+
+[source,text]
+----
+Supported plugins:
+
+ NAME        COMMAND     VENDOR  DEPENDENCY                                      DESCRIPTION
+ kubernetes  kubernetes  ASF     org.apache.camel:camel-jbang-plugin-kubernetes  Run Camel applications on Kubernetes
+ generate    generate    ASF     org.apache.camel:camel-jbang-plugin-generate    Generate code such as DTOs
  ...
+
+Known 3rd party plugins:
+
+ NAME        COMMAND  VENDOR     DEPENDENCY                                        DESCRIPTION
+ forage      forage   Community  io.kaoto.forage:camel-jbang-plugin-forage         Production ready Apache Camel components configurations via properties
+ camel-kit   kit      Community  io.github.luigidemasi:camel-kit-jbang-plugin      Design Apache Camel Integrations with AI
 ----
 
-=== Run Service
+The `VENDOR` column indicates whether the plugin is from `ASF` (Apache Software Foundation) or `Community` (3rd party).
 
-Supported external services can be run with the following command (Docker or Podman is required for most of the service):
+In case you want to enable a plugin and its functionality, you can add it as follows:
 
 [source,bash]
 ----
-camel infra run $SERVICE ($OPTIONAL_SERVICE_IMPLEMENTATION)
+camel plugin add <plugin-name>
 ----
 
-Once the service is up and running, information about the service are printed as json that can be easily used in the Camel Routes,
-for example:
+For example to install `generate` you execute:
 
 [source,bash]
 ----
-$ camel infra run ftp
-
-Starting service ftp
-{
-  "getPort" : 52472,
-  "getFtpRootDir" : "file://path/to/current/directory/target/ftp/camel-test-infra-test-directory/camel-test-infra-configuration-test-directory"
-}
+camel plugin add generate
 ----
+
+This adds the plugin, and all subcommands are now available for execution.
+
+Known 3rd party plugins can be installed by name as well. For example:
 
 [source,bash]
 ----
-$ camel infra run kafka redpanda
-
-Starting service kafka with implementation redpanda
-{
-  "getBootstrapServers" : "localhost:32771"
-}
+camel plugin add forage
 ----
+
+To install a specific version of a 3rd party plugin, use the `--version` option:
 
 [source,bash]
 ----
-$ camel infra run openldap
-
-Starting service openldap
-{
-  "getPort" : 32774,
-  "getSslPort" : 32775,
-  "getHost" : "localhost"
-}
+camel plugin add forage --version=1.2.3
 ----
 
-=== Stop Service
-
-Stop a running infrastructure service:
+You can list the currently installed plugins with:
 
 [source,bash]
 ----
-$ camel infra run arangodb
+camel plugin get
+----
+
+To remove a plugin from the current Camel CLI command line tooling, you can use the `plugin delete` command.
+
+[source,bash]
+----
+camel plugin delete <plugin-name>
+----
+
+=== Building custom plugins
+
+It is possible to build custom Camel CLI plugins. We suggest to take a look at one of the https://github.com/apache/camel/tree/main/dsl/camel-jbang[existing plugins],
+to see how that is done.
+
+IMPORTANT: The name of the plugin Maven **artifactId** must start with `camel-jbang-plugin-`. For example if the plugin is named `cheese`, then
+the maven artifact must be named `camel-jbang-plugin-cheese`.
+
+== Generate JSON schema plugin
+
+The *generate schema* plugin automatically creates JSON Schema definitions for Java objects, enabling seamless integration with low-code/no-code platforms and visual development tools.
+
+=== Key Benefits
+
+==== Low-Code Platform Integration
+
+- *Visual Development*: Integrates with low-code platforms like Kaoto and Karavan
+- *Drag-and-Drop Compatibility*: Generated schemas enable intuitive component configuration in visual builders
+
+==== Alternative to Custom Processors
+
+- *Eliminates Custom Code*: Replaces the need for custom processors with declarative schema definitions
+- *Standardized Approach*: Uses industry-standard JSON Schema format for consistent data modeling
+- *Reduced Development Time*: Accelerates integration development by providing ready-to-use object definitions
+
+=== Examples
+
+[source,bash]
+----
+# Generate schema for FHIR Patient object
+$ camel generate schema fhir org.hl7.fhir.r4.model.Patient
+
+Schema saved to: ./org.hl7.fhir.r4.model.Patient-schema.json
+----
+
+The generated schemas can then be imported into visual development tools, enabling drag-and-drop integration development without requiring deep knowledge of the underlying Java objects.
+
+== Using a specific Camel version
+
+You can specify which Camel version to run as shown:
+
+[source,bash]
+----
+jbang -Dcamel.jbang.version=3.18.4 camel@apache/camel [command]
+----
+
+NOTE: Older versions of Camel may not work as well with Camel CLI as the newest versions.
+Starting from Camel 3.20 onwards are the versions that are recommended to be used onwards.
+
+TIP: In Camel *3.20.3* onwards there is a `version` command, see the following section for more details.
+
+In *Camel 3.20.2* onwards the `run` command has built-in support, using `--camel-version`,
+for specifying the Camel version to use for the running Camel integration.
+
+[source,bash]
+----
+camel run * --camel-version=3.18.4
+----
+
+TIP: This makes it easy to try different Camel versions, for example, when you need to reproduce an issue,
+and find out how it works in a different Camel version.
+
+You can also try bleeding-edge development by using SNAPSHOT such as:
+
+[source,bash]
+----
+jbang --fresh -Dcamel.jbang.version=3.21.0-SNAPSHOT camel@apache/camel [command]
+----
+
+== Using the version command
+
+In *Camel 3.20.3* onwards the `version` command makes it possible to configure a specific version
+of Camel to use when running or exporting. This makes it possible to use the latest Camel CLI
+and run integrations using an older Camel version.
+
+[source,bash]
+----
+camel version
+Camel CLI version: 3.20.3
+----
+
+Here Camel CLI is using version 3.20.3. Now suppose we want to run Camel integrations with version 3.18.2.
+
+[source,bash]
+----
+camel version set 3.18.2
+----
+
+And you can see what Camel version has been set by:
+
+[source,bash]
+----
+camel version
+Camel CLI version: 3.20.3
+User configuration:
+    camel-version = 3.18.2
+----
+
+And when running an integration, then Camel CLI will show you the _overridden version_ when starting.
+
+[source,bash]
+----
+camel run foo.java
+Running integration with the following configuration:
+    --camel-version=3.18.2
+2023-03-17 13:35:13.876  INFO 28451 --- [           main] org.apache.camel.main.MainSupport        : Apache Camel (JBang) 3.18.2 is starting
 ...
-
-$ camel infra ps
- ALIAS             IMPLEMENTATION  DESCRIPTION
- arangodb                          ArangoDB is a multi-model database for high-performance applications.
-
-$ camel infra stop arangodb
-Shutting down service arangodb (PID: {pidNumber})
 ----
 
-=== List running services
-
-Display running services, useful to retrieve the service ALIAS
+IMPORTANT: You cannot use both a set version via `camel version set` and also a version specified via `--camel-version` option,
+i.e., the following is not possible:
 
 [source,bash]
 ----
-$ camel infra run arangodb
-...
-
-$ camel infra ps
- ALIAS             IMPLEMENTATION  DESCRIPTION
- arangodb                          ArangoDB is a multi-model database for high-performance applications.
+camel version set 4.0.1
+camel run * --camel-version=4.3.0
 ----
 
-=== Get running service
-
-Display running service information, the command will print the json containing information about the running service (ex. host, port, username)
+If you want to unset the version, you can use the `--reset` option:
 
 [source,bash]
 ----
-$ camel infra run openldap
-...
-
-$ camel infra get openldap
-{
-  "getPort" : 32774,
-  "getSslPort" : 32775,
-  "getHost" : "localhost"
-}
+camel version set --reset
 ----
 
-=== Get running services logs
+Then the Camel version in use will be the same version as Camel CLI.
 
-The command `camel infra log` gathers and displays the log of all running services (similar to tail command)
+=== Listing available Camel releases
+
+The `version` command can also show available Camel releases by checking the Maven central repository.
 
 [source,bash]
 ----
-$ camel infra log
-[service1] ...
-[service2] ...
-[service1] ...
-[service2] ...
-[service2] ...
-[service2] ...
-[service1] ...
-[service2] ...
-[service1] ...
-[service1] ...
-[service1] ...
+camel version list
+ CAMEL VERSION   JDK   KIND     RELEASED     SUPPORTED UNTIL
+    3.14.0       8,11  LTS    December 2021    December 2023
+    3.14.1       8,11  LTS     January 2022    December 2023
+    3.14.2       8,11  LTS       March 2022    December 2023
+    3.14.3       8,11  LTS         May 2022    December 2023
+    3.14.4       8,11  LTS        June 2022    December 2023
+    3.14.5       8,11  LTS      August 2022    December 2023
+    3.14.6       8,11  LTS    November 2022    December 2023
+    3.14.7       8,11  LTS    December 2022    December 2023
+    3.15.0         11         February 2022
+    3.16.0         11            March 2022
+    3.17.0      11,17              May 2022
+    3.18.0      11,17  LTS        July 2022        July 2023
+    3.18.1      11,17  LTS      August 2022        July 2023
+    3.18.2      11,17  LTS   September 2022        July 2023
+    3.18.3      11,17  LTS     October 2022        July 2023
+    3.18.4      11,17  LTS    December 2022        July 2023
+    3.18.5      11,17  LTS     January 2023        July 2023
+    3.19.0      11,17          October 2022
+    3.20.0      11,17  LTS    December 2022    December 2023
+    3.20.1      11,17  LTS     January 2023    December 2023
+    3.20.2      11,17  LTS    February 2023    December 2023
+   4.0.0-M1        17   RC    February 2023
+   4.0.0-M2        17   RC       March 2023
 ----
 
-In order to retrieve the log of a specific service the service alias can be provided
+NOTE: The `version list` shows the latest releases going back a few versions, at this time of writing the minimum version
+is Camel 3.14. To show all Camel 3.x releases, you can specify `--from-version=3.0` and the list is longer.
+The list can only go back to Camel 2.18, as we do not have all release meta-data for older releases.
+
+You can also show Camel releases for either Spring Boot or Quarkus using the `--runtime` option, such as:
 
 [source,bash]
 ----
-$ camel infra log service
-[service] ...
-[service] ...
-[service] ...
+camel version list --runtime=quarkus
+ CAMEL VERSION  QUARKUS   JDK  KIND     RELEASED     SUPPORTED UNTIL
+    3.14.0       2.6.0     11         December 2021
+    3.14.1       2.7.0     11  LTS    February 2022      August 2022
+    3.14.2       2.7.1     11  LTS       April 2022      August 2022
+    3.14.4       2.7.2     11  LTS        July 2022      August 2022
+    3.15.0      2.8.0-M1   11            March 2022
+    3.16.0       2.8.0     11            April 2022
+    3.16.0       2.9.0     11              May 2022
+    3.17.0       2.10.0    11             June 2022
+    3.18.0       2.11.0    11             July 2022
+    3.18.1       2.12.0    11        September 2022
+    3.18.2       2.13.0    11  LTS   September 2022       March 2023
+    3.18.3       2.13.1    11  LTS    November 2022       March 2023
+    3.18.3       2.13.2    11  LTS    December 2022       March 2023
+    3.19.0       2.14.0    11         November 2022
+    3.19.0       2.15.0    11         December 2022
+    3.20.1       2.16.0    11          January 2023
 ----
+
+TIP: See more options with `camel version list --help`.
 
 == Update
 
@@ -930,32 +806,3 @@ Update a Spring Boot application with and extra Spring Boot 3.3 upgrade recipe
 ----
 $ camel update run 4.9.0 --runtime=spring-boot --extraActiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 --extraRecipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:6.0.2
 ----
-
-=== Generate JSON schema plugin
-
-The *generate schema* plugin automatically creates JSON Schema definitions for Java objects, enabling seamless integration with low-code/no-code platforms and visual development tools.
-
-==== Key Benefits
-
-===== Low-Code Platform Integration
-
-- *Visual Development*: Integrates with low-code platforms like Kaoto and Karavan
-- *Drag-and-Drop Compatibility*: Generated schemas enable intuitive component configuration in visual builders
-
-===== Alternative to Custom Processors
-
-- *Eliminates Custom Code*: Replaces the need for custom processors with declarative schema definitions
-- *Standardized Approach*: Uses industry-standard JSON Schema format for consistent data modeling
-- *Reduced Development Time*: Accelerates integration development by providing ready-to-use object definitions
-
-==== Examples
-
-[source,bash]
-----
-# Generate schema for FHIR Patient object
-$ camel generate schema fhir org.hl7.fhir.r4.model.Patient
-
-Schema saved to: ./org.hl7.fhir.r4.model.Patient-schema.json
-----
-
-The generated schemas can then be imported into visual development tools, enabling drag-and-drop integration development without requiring deep knowledge of the underlying Java objects.

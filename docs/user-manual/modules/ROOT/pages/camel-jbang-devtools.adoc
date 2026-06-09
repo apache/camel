@@ -1,6 +1,8 @@
 = Camel CLI - Development Tools
 
-The Camel CLI includes a suite of development tools for sending and receiving messages, debugging routes, transforming data, and managing dependencies.
+The Camel CLI includes a suite of development tools for sending and receiving messages, managing dependencies, scripting, and configuring beans and data sources.
+
+For debugging, see xref:camel-jbang-debugging.adoc[Debugging]. For data transformation, see xref:camel-jbang-transforming.adoc[Data Transformation].
 
 == Sending messages via Camel
 
@@ -125,6 +127,8 @@ $ camel cmd send --body=file:payload.json --infra=nats
 ----
 
 The command automatically discovers the running infrastructure service, reads its connection details from the JSON file (stored in `~/.camel/`), and constructs the appropriate endpoint URI with the server information using the Camel Catalog.
+
+TIP: See xref:camel-jbang-dev-services.adoc[Dev Services] for more information on starting infrastructure services.
 
 ==== Specifying a custom endpoint
 
@@ -316,6 +320,105 @@ works in two modes:
 
 IMPORTANT: The default mode is due to historically how the stream component was created.
 Therefore, you may want to set `stream:in?readLine=false` to use raw mode.
+
+== Editing code using VSCode or IDEA editors
+
+You can use JBang to edit the source code by using the `jbang` CLI to download dependencies,
+and set up a project for being ready to load into an IDE of choice, such as IDEA, VSCode, or Eclipse.
+
+This is typically in use when you use Java DSL and have Camel routes in .java source code.
+To let JBang understand which dependencies are in use, then you need to use JBang style for specifying
+dependencies by using `//DEPS` code comments in Java code.
+
+TIP: If you specify `//DEPS` in YAML DSL then this must be in the syntax as `\#//DEPS`
+as YAML uses leading `#` in commented lines.
+
+Given the following source file in `foo.java` file:
+
+[source,java]
+----
+//DEPS org.apache.camel:camel-bom:4.3.0@pom
+//DEPS org.apache.camel:camel-endpointdsl
+//DEPS org.apache.camel:camel-netty-http
+//DEPS org.apache.camel:camel-stream
+
+// add more dependencies here
+
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+import org.apache.camel.component.netty.http.NettyHttpMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class foo extends EndpointRouteBuilder {
+
+    private static final Logger LOG = LoggerFactory.getLogger(foo.class);
+
+    @Override
+    public void configure() {
+        from(timer("trigger").period(5000).repeatCount(3))
+                .to(nettyHttp("https://random-data-api.com/api/v2/banks").keepAlive(true))
+                .process(e -> {
+                    // use classes from camel-netty-http dependency in the source code
+                    // and have jbang able to generate project with the dependencies ready
+                    // to use in your IDE of choice
+                    NettyHttpMessage msg = e.getMessage(NettyHttpMessage.class);
+                    LOG.info("Netty HTTP response:\n\n\n{}\n\n\n", msg.getHttpResponse());
+                })
+                .log("Found bank:")
+          .to(stream("out"));
+    }
+}
+----
+
+TIP: You can use `camel dependency update foo.java` to update the dependencies.
+
+Notice how we specify https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang dependencies] at the top of the file.
+We want JBang to know and prepare for the IDE of choice.
+The first `//DEPS` is the `@pom` which set up the Camel version to use.
+The following `//DEPS` declares the Camel component we use.
+
+You can now open this source file for editing in your IDE of choice by using jbang CLI as follows:
+
+[source,bash]
+----
+$ jbang edit -b foo.java
+----
+
+You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/jbang-edit
+
+== Updating dependencies in source code
+
+When working with Java source code, then you can keep the JBang dependencies up to date using the following command:
+
+[source,bash]
+----
+$ camel dependency update foo.java
+----
+
+TIP: You can use `--clean` to not keep any existing dependencies and generate a clean fresh list.
+
+This will then automatic insert or update the JBang dependencies (`//DEPS`) in the top of the source file.
+
+You may want to use this for making it easier to load the source into an IDE editor to do coding.
+See the previous section for more details.
+
+=== Updating dependencies in Maven projects
+
+Camel CLI can also help with keeping Camel Maven dependencies up-to-date for Maven based projects.
+
+For example if start using new Camel components, in your Camel routes. Then you would have to
+add the corresponding Camel JAR dependencies to the pom.xml file.
+
+You can use the `camel dependency update` command to automate this, by executing from the project folder:
+
+[source,bash]
+----
+$ camel dependency update pom.xml
+----
+
+Notice, that only adding new Camel dependencies is supported. If you remove a component,
+then you need to remove the dependency from the pom.xml manually.
+Also, this is only intended for production code from `src/main` folder.
 
 == Dependency Injection in Java classes
 
@@ -577,810 +680,38 @@ And you can set logging to DEBUG on hikari to see the actual configuration:
 logging.level.com.zaxxer.hikari = DEBUG
 ----
 
-== Debugging
+== Validate Plugin
 
-There are two kinds of debugging:
+*Available as of Camel 4.18*
 
-* _Java debugging_: Java code debugging (Standard Java)
-* _Camel route debugging_: Debugging Camel routes (requires Camel tooling plugins)
+You can add the *validate* plugin to camel-jbang which makes it easy to quickly validate your Camel source code, such as YAML DSL
+files if they can be parsed and are valid according to the YAML DSL spec.
 
-=== Java debugging
-
-Camel CLI makes it easy to do _Java debugging_ when you run your integration with the `--jvm-debug` option as shown below:
+First install the validate plugin
 
 [source,bash]
 ----
-camel run hello.yaml --jvm-debug
-Listening for transport dt_socket at address: 4004
+$ camel plugin add validate
 ----
 
-As you can see the default listening port is 4004 but can be configured as described in https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging].
-
-This is a standard Java debug socket. You can then use the IDE of your choice. For instance, see the generic documentation for https://www.jetbrains.com/help/idea/attaching-to-local-process.html#create-rc[IntelliJ], https://code.visualstudio.com/docs/java/java-debugging#_attach[VS Code] and https://www.vogella.com/tutorials/EclipseDebugging/article.html#remote-debugging[Eclipse Desktop]. You will surely want to add `Processor` to be able to put breakpoints hit during route execution (as opposed to route definition creation).
-
-==== Standard JBang debugging
-
-You can debug your integration scripts by making use of the `--debug` flag provided by JBang.
+Then you can use this plugin to validate source files such as:
 
 [source,bash]
 ----
-jbang --debug  camel@apache/camel run hello.yaml
-Listening for transport dt_socket at address: 4004
+$ camel validate yaml cheese.yaml bad.yaml
+Validation error detected (errors:1)
+
+	File: bad.yaml
+		/0/from: required property 'steps' not found
 ----
 
-This makes it possible to debug any of the Camel CLI commands, not only the `run` command as shown above.
+Here you can see we validated 2 files (cheese.yaml and bad.yaml) and there was a validation error in bad.yaml as show above.
 
-=== Camel route debugging
+If all files are valid then the command report success:
 
-With *Camel 4.2* onwards you can now easily debug Camel routes from the command shell with the `debug` command as shown below:
 
 [source,bash]
 ----
-camel debug hello.yaml
+$ camel validate yaml cheese.yaml bad.yaml
+Validation success (files:2)
 ----
-
-This will run the integration (in background), and the current shell running in foreground will act as a CLI based debugger.
-You can see snippets from the log (in the top), the middle section shown the current breakpoint.
-And in the bottom you can see content of the message (similar to the `camel trace` command)
-
-[source,text]
-----
-2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.loggingLevel=DEBUG
-2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.singleStepIncludeStartEnd=true
-2023-11-03 18:15:06.787  INFO 33384 --- [           main] mel.cli.connector.LocalCliConnector : Camel CLI enabled (local)
-2023-11-03 18:15:06.833  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.7.0 (foo) is starting
-2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport : Property-placeholders summary
-2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [application.properties]       my-name=Donald Duck
-2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Routes startup (started:1)
-2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext :     Started route-07a6 (timer://yaml)
-2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.7.0 (foo) started in 91ms (build:0ms init:0ms start:91ms)
-2023-11-03 18:15:11.951  INFO 33384 --- [ - timer://yaml] foo.camel.yaml:10                   : Before:
-
-Source: foo.camel.yaml:13                                                         History
---------------------------------------------------------------------------------  ------------------------------------------------------------------------------------------
-  10:              - log:                                                         route-07a6/from-c041           (0ms)    4:       uri: timer
-  11:                  message: 'Before: ${body}'                                 route-07a6/log1                (1ms)   10:         - log:
-  12:                  id: log1
-  13: --->         - setProperty:
-  14:                  name: myProp
-  15:                  expression:
-  16:                    constant:
-  17:                      expression: '123'
-  18:                      id: constant-4004
-
-
-2023-11-03 18:15:11.951  33384 --- [ thread #4 - timer://yaml]              route-07a6/setProperty-321c :     3 - Breakpoint (4ms)
- Exchange  (DefaultExchange)  InOnly  D48642E54410AF9-0000000000000000
- Message   (DefaultMessage)
- Body      (null)
-
-
-    Breakpoint suspended. Press ENTER to continue.
-----
-
-This is _basic_ but yet powerful, as you have this debugger always readily available, without having to start up VSCode or IDEA tooling.
-
-TIP: The `camel debug` can debug almost all the DSLs (there is a problem with groovy).
-
-==== Configuring breakpoints
-
-When using `camel debug` then breakpoints are by default added to every route.
-However, you can specify which breakpoints to use instead with the `--breakpoint` option.
-This parameter is able to match the Camel routes using a pattern style:
-
-1. Exact match by node ids
-2. Match node ids by pattern (wildcard and regular expression)
-3. Match by EIP kind (setHeader, setBody, choice, split, etc.)
-4. Match by source and line number
-5. Match by line number
-
-Multiple breakpoints can be separated by comma.
-
-For example, to set a breakpoint at the setHeader EIP, you do:
-
-[source,bash]
-----
-camel debug hello.yaml --breakpoint=setHeader
-----
-
-To set a breakpoint at line 18:
-
-[source,bash]
-----
-camel debug hello.yaml --breakpoint=18
-----
-
-To set a breakpoint at line 18 and 34
-
-[source,bash]
-----
-camel debug hello.yaml --breakpoint=18,34
-----
-
-==== Camel Spring Boot route debugging
-
-In *Camel 4.14* we added support for using Camel CLI to debug an existing Camel Spring Boot Maven based project.
-
-All that is needed is to execute:
-
-[source,bash]
-----
-camel debug pom.xml
-----
-
-This tells Camel CLI to look inside the Maven pom.xml file and if `camel-spring-boot-bom` is detected,
-then Camel CLI will automatically run Spring Boot with debugging enabled. This is done by letting Spring Boot
-compile and build a fat-jar, that then is launched in the background and the output is shown in the console; just as shown
-above. You will then get the same user experience as debugging plain Camel Main files.
-
-=== Editing code using VSCode or IDEA editors
-
-You can use JBang to edit the source code by using the `jbang` CLI to download dependencies,
-and set up a project for being ready to load into an IDE of choice, such as IDEA, VSCode, or Eclipse.
-
-This is typically in use when you use Java DSL and have Camel routes in .java source code.
-To let JBang understand which dependencies are in use, then you need to use JBang style for specifying
-dependencies by using `//DEPS` code comments in Java code.
-
-TIP: If you specify `//DEPS` in YAML DSL then this must be in the syntax as `\#//DEPS`
-as YAML uses leading `#` in commented lines.
-
-Given the following source file in `foo.java` file:
-
-[source,java]
-----
-//DEPS org.apache.camel:camel-bom:4.3.0@pom
-//DEPS org.apache.camel:camel-endpointdsl
-//DEPS org.apache.camel:camel-netty-http
-//DEPS org.apache.camel:camel-stream
-
-// add more dependencies here
-
-import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
-import org.apache.camel.component.netty.http.NettyHttpMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class foo extends EndpointRouteBuilder {
-
-    private static final Logger LOG = LoggerFactory.getLogger(foo.class);
-
-    @Override
-    public void configure() {
-        from(timer("trigger").period(5000).repeatCount(3))
-                .to(nettyHttp("https://random-data-api.com/api/v2/banks").keepAlive(true))
-                .process(e -> {
-                    // use classes from camel-netty-http dependency in the source code
-                    // and have jbang able to generate project with the dependencies ready
-                    // to use in your IDE of choice
-                    NettyHttpMessage msg = e.getMessage(NettyHttpMessage.class);
-                    LOG.info("Netty HTTP response:\n\n\n{}\n\n\n", msg.getHttpResponse());
-                })
-                .log("Found bank:")
-          .to(stream("out"));
-    }
-}
-----
-
-TIP: You can use `camel dependency update foo.java` to update the dependencies.
-
-Notice how we specify https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang dependencies] at the top of the file.
-We want JBang to know and prepare for the IDE of choice.
-The first `//DEPS` is the `@pom` which set up the Camel version to use.
-The following `//DEPS` declares the Camel component we use.
-
-You can now open this source file for editing in your IDE of choice by using jbang CLI as follows:
-
-[source,bash]
-----
-$ jbang edit -b foo.java
-----
-
-You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/jbang-edit
-
-=== Updating dependencies in source code
-
-When working with Java source code, then you can keep the JBang dependencies up to date using the following command:
-
-[source,bash]
-----
-$ camel dependency update foo.java
-----
-
-TIP: You can use `--clean` to not keep any existing dependencies and generate a clean fresh list.
-
-This will then automatic insert or update the JBang dependencies (`//DEPS`) in the top of the source file.
-
-You may want to use this for making it easier to load the source into an IDE editor to do coding.
-See the previous section for more details.
-
-==== Updating dependencies in Maven projects
-
-Camel CLI can also help with keeping Camel Maven dependencies up-to-date for Maven based projects.
-
-For example if start using new Camel components, in your Camel routes. Then you would have to
-add the corresponding Camel JAR dependencies to the pom.xml file.
-
-You can use the `camel dependency update` command to automate this, by executing from the project folder:
-
-[source,bash]
-----
-$ camel dependency update pom.xml
-----
-
-Notice, that only adding new Camel dependencies is supported. If you remove a component,
-then you need to remove the dependency from the pom.xml manually.
-Also, this is only intended for production code from `src/main` folder.
-
-=== Camel route debugging using VSCode or IDEA editors
-
-The Camel route debugger is available by default (the `camel-debug` component is automatically added to the classpath). By default, it can be reached through JMX at the URL `service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel`.
-
-You can then use the Integrated Development Environment (IDE) of your choice. For instance, https://plugins.jetbrains.com/plugin/9371-apache-camel[IntelliJ], https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel[VS Code] or https://marketplace.eclipse.org/content/textual-debugging-apache-camel[Eclipse Desktop].
-
-A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42qk[video].
-
-TIP: When exporting to Maven projects, then you can use the maven profile `camel.debug` that will include the `camel-debug` JAR
-to make it possible for Camel IDE tools to do Camel route debugging.
-
-=== Health Checks
-
-The status of health checks can be accessed via Camel CLI from the CLI as follows:
-
-[source,bash]
-----
-camel get health
-  PID   NAME    AGE  ID             RL  STATE  RATE    SINCE   MESSAGE
- 61005  mybind   8s  camel/context   R   UP    2/2/-  1s/3s/-
-----
-
-Here we can see the Camel is _UP_. The application has just been running for 8 seconds, and there
- have been two health checks invoked.
-
-The output is showing the _default_ level of checks as:
-
-- `CamelContext` health check
-- Component-specific health checks (such as from `camel-kafka` or `camel-aws`, ...)
-- Custom health checks
-- Any check that are not UP
-
-The _RATE_ column shows 3 numbers separated by `/`. So `2/2/-` means two checks in total, two successes, and no failures.
-The two last columns will reset when a health check changes state as this number is the number of consecutive
-checks that was successful or failure. So if the health check starts to fail, then the numbers could be:
-
-[source,bash]
-----
-camel get health
-  PID   NAME     AGE   ID             RL  STATE   RATE    SINCE    MESSAGE
- 61005  mybind   3m2s  camel/context   R   UP    77/-/3  1s/-/17s  some kind of error
-----
-
-Here we can see the numbers are changed to `77/-/3`. This means the total is 77. There is no success, but
-the check has been failing three times in a row. The _SINCE_ column corresponds to the _RATE_. So in this
- case, we can see the last check was 1 second ago, and that the check has been failing for 17 seconds in a row.
-
-You can use `--level=full` to output every health check, that will include consumer and route level checks
-as well.
-
-A health check may often be failed due to an exception was thrown which can be shown via `--trace` flag:
-
-[source,bash]
-----
-camel get health --trace
-  PID   NAME      AGE   ID                                        RL  STATE    RATE       SINCE     MESSAGE
- 61038  mykafka  6m19s  camel/context                             R   UP    187/187/-  1s/6m16s/-
- 61038  mykafka  6m19s  camel/kafka-consumer-kafka-not-secure...  R  DOWN   187/-/187  1s/-/6m16s  KafkaConsumer is not ready - Error: Invalid url in bootstrap.servers: value
-
-
-------------------------------------------------------------------------------------------------------------------------
-                                                       STACK-TRACE
-------------------------------------------------------------------------------------------------------------------------
-	PID: 61038
-	NAME: mykafka
-	AGE: 6m19s
-	CHECK-ID: camel/kafka-consumer-kafka-not-secured-source-1
-	STATE: DOWN
-	RATE: 187
-	SINCE: 6m16s
-	METADATA:
-		bootstrap.servers = value
-		group.id = 7d8117be-41b4-4c81-b4df-cf26b928d38a
-		route.id = kafka-not-secured-source-1
-		topic = value
-	MESSAGE: KafkaConsumer is not ready - Error: Invalid url in bootstrap.servers: value
-	org.apache.kafka.common.KafkaException: Failed to construct kafka consumer
-		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:823)
-		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:664)
-		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:645)
-		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:625)
-		at org.apache.camel.component.kafka.DefaultKafkaClientFactory.getConsumer(DefaultKafkaClientFactory.java:34)
-		at org.apache.camel.component.kafka.KafkaFetchRecords.createConsumer(KafkaFetchRecords.java:241)
-		at org.apache.camel.component.kafka.KafkaFetchRecords.createConsumerTask(KafkaFetchRecords.java:201)
-		at org.apache.camel.support.task.ForegroundTask.run(ForegroundTask.java:123)
-		at org.apache.camel.component.kafka.KafkaFetchRecords.run(KafkaFetchRecords.java:125)
-		at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
-		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
-		at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
-		at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
-		at java.base/java.lang.Thread.run(Thread.java:829)
-	Caused by: org.apache.kafka.common.config.ConfigException: Invalid url in bootstrap.servers: value
-		at org.apache.kafka.clients.ClientUtils.parseAndValidateAddresses(ClientUtils.java:59)
-		at org.apache.kafka.clients.ClientUtils.parseAndValidateAddresses(ClientUtils.java:48)
-		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:730)
-		... 13 more
-----
-
-Here we can easily see that the health check is failing because of the `org.apache.kafka.common.config.ConfigException`
-which is due to invalid configuration: `Invalid url in bootstrap.servers: value`.
-
-TIP: Use `camel get health --help` to see all the various options.
-
-== Transforming message (data mapping)
-
-When integrating a system, you often need to transform messages from one system to another. Camel has a rich set
-of capabilities for this such as various data formats, templating languages, and much more. However, for basic
-data mapping such as taking an existing incoming JSON document and transforming this to a smaller JSON document,
-you may want to do this quickly with Camel.
-
-The `camel transform message` command can be used for such tasks, where it can take an existing source file as input,
-and then a template that defines how to transform the data, and then show the output (in real time).
-
-For example, given this JSon document (in a file named `random.json`), we want to combine the name, and select a few fields:
-
-[source,json]
-----
-{
-  "id": 9914,
-  "uid": "eb5fa603-1db6-45f9-912a-431a6ed59b18",
-  "password": "ei7gvYKdnN",
-  "first_name": "Khalilah",
-  "last_name": "Monahan",
-  "username": "khalilah.monahan",
-  "email": "khalilah.monahan@email.com",
-  "avatar": "https://robohash.org/utnumquamexcepturi.png?size=300x300&set=set1",
-  "gender": "Agender",
-  "phone_number": "+54 (421) 591-5640 x333",
-  "social_insurance_number": "268418308",
-  "date_of_birth": "1975-03-11",
-  "employment": {
-    "title": "Product Design Director",
-    "key_skill": "Work under pressure"
-  },
-  "address": {
-    "city": "New Fritzchester",
-    "street_name": "Patrick Common",
-    "street_address": "4538 Reggie Inlet",
-    "zip_code": "16282-7045",
-    "state": "New York",
-    "country": "United States",
-    "coordinates": {
-      "lat": -1.9868753435474673,
-      "lng": 39.09763956726292
-    }
-  },
-  "credit_card": {
-    "cc_number": "4493983042212"
-  },
-  "subscription": {
-    "plan": "Student",
-    "status": "Active",
-    "payment_method": "Debit card",
-    "term": "Monthly"
-  }
-}
-----
-
-Then we can have a `transform.json` file as the beginning of the template, with the structure of the desired output:
-
-[source,json]
-----
-{
-    "sid": 123,
-	"name": "TODO",
-	"country": "TODO",
-	"phone": "TODO",
-	"student": false
-}
-----
-
-We can then run `camel transform message` and have it update (in real time) the output every time we change the template.
-
-[source,bash]
-----
-$ camel transform message --body=file:random.json --language=simple --template=file:transform.json --pretty --watch
-----
-
-What happens is then Camel will output on the console as you go:
-
-[source,bash]
-----
- Exchange  (DefaultExchange)  InOut   23F5DD4CE6C260B-0000000000000002
- Message   (DefaultMessage)
- Body      (String) (bytes: 118)
- {
-   "sid": 123,
-   "name": "TODO",
-   "country": "TODO",
-   "phone": "TODO",
-   "student": false
- }
-----
-
-Then you can update the `transform.json` file and save it and see the generated output:
-
-[source,json]
-----
-{
-   "sid": ${jq(.id)},
-   "name": "${jq(.first_name)} ${jq(.last_name)}",
-   "country": "TODO",
-   "phone": "TODO",
-   "student": false
-}
-----
-
-And the output:
-
-[source,bash]
-----
- Exchange  (DefaultExchange)  InOut   23F5DD4CE6C260B-0000000000000018
- Message   (DefaultMessage)
- Body      (String) (bytes: 158)
- {
-   "sid": 9914,
-   "name": "Khalilah Monahan",
-   "country": "TODO",
-   "phone": "TODO",
-   "student": false
- }
-----
-
-Then you can continue to update the `transform.json` until you have the desired result.
-And if you make a mistake, then you see an error (in red) with stacktrace that hopefully can help you out how to fix this.
-
-=== Transforming directly from the Camel DSL source
-
-In the example above we externalize the transformation into a template file named `transform.json`.
-However, it's possible to transform directly in the Camel DSL route.
-
-NOTE: Currently Java DSL is not working in --watch mode (reload on change)
-
-In the following, we cover the json-transform example from: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/json-transform
-
-In this example, a random beer is fetched via the beer-source kamelet. The beer data is as follows:
-
-[source,json]
-----
- {
-   "id": 2104,
-   "uid": "cefb36e1-e42f-4083-8f97-fc4ff85e56fb",
-   "brand": "Pabst Blue Ribbon",
-   "name": "St. Bernardus Abt 12",
-   "style": "Belgian Strong Ale",
-   "hop": "Amarillo",
-   "yeast": "1388 - Belgian Strong Ale",
-   "malts": "Caramel",
-   "ibu": "43 IBU",
-   "alcohol": "3.8%",
-   "blg": "16.0°Blg"
- }
-----
-
-We save this beer into a file named `sample.json` as we want to use this as source for message transformation.
-
-Now suppose we want to transform this to a smaller JSON document with only a few elements, then we can do this
-directly in the route:
-
-[source,yaml]
-----
-- route:
-    nodePrefixId: route-c38
-    id: route-66b0
-    from:
-      uri: kamelet:beer-source
-      id: from-3996
-      steps:
-        - setBody:
-            expression:
-              simple:
-                expression: >-
-                  TODO
-                id: simple-b320
-            id: setBody-fa01
-        - log:
-            message: ${body}
-            id: log-0c79
-----
-
-As we can see the route has a `setBody` where we want to transform the message, which we can do with the simple
-language combined with JQ (or JSonPath). At first, we just write TODO to get started:
-
-[source,bash]
-----
-camel transform message --body=file:sample.json --source=beer-jq.yaml  --watch --pretty
-----
-
-And the output from the transformation is:
-
-[source,text]
-----
- Exchange  (DefaultExchange)  InOut   D9F909701338607-0000000000000004
- Message   (DefaultMessage)
- Body      (String) (bytes: 4)
- TODO
-----
-
-We can now do live updates in the Camel route, and when we save the file, the transform command will output the changes in the terminal.
-So we modify the DSL to grab the details we want, such as:
-
-[source,yaml]
-----
-    expression: >-
-      {
-        "kind": "${jq(.brand)}",
-        "beer": "${jq(.name)}"
-      }
-    id: simple-b320
-----
-
-Notice how we use inlined JQ expressions to grab the desired data from the sample, and when saving the file, we have
-the result shown in the terminal:
-
-[source,text]
-----
- Exchange  (DefaultExchange)  InOut   D9F909701338607-000000000000003E
- Message   (DefaultMessage)
- Body      (String) (bytes: 78)
- {
-   "kind": "Pabst Blue Ribbon",
-   "beer": "St. Bernardus Abt 12"
- }
-----
-
-And when we are done with the transformation we can stop by `ctrl + c` to exit the command.
-
-When transforming messages directly from the DSL (using the `--source` option), then by default
-Camel will pick the last expression in the route. If you only have one expression like in this example,
-then that is easy. But when you have many, then you need to tell which one to use.
-
-You can do this either by referring to the line number in the source code of the EIP / expression, or
-by its id (if specified).
-
-So suppose the example had many expressions, and the one we want to use is on line 11, then we can do as follows:
-
-[source,bash]
-----
-camel transform message --body=file:sample.json --source=beer-jq.yaml:11  --watch --pretty
-----
-
-Notice how we specify the line number in the source file name, by prefixing with `:line-number`.
-The line number does not have to be 100% accurate, as long the number is within range of the EIP, until
-the next EIP in the route. In the example, this means you can pick number in range 8-17.
-
-If we want to use the id of the expression/EIP, we can do the same as shown below:
-
-[source,bash]
-----
-camel transform message --body=file:sample.json --source=beer-jq.yaml:setBody-fa01  --watch --pretty
-----
-
-You can also transform the message from JSON to XML as shown (or any other kind of fixed structure):
-
-[source,yaml]
-----
-- setBody:
-    expression:
-      simple:
-        expression: >-
-          <beer id="${jq(.id)}">
-            <name>${jq(.name)}</name>
-            <kind>${jq(.brand)}</kind>
-          </beer>
-        id: simple-b320
-    id: setBody-fa01
-----
-
-You can configure options that the language format should use, such as shown below:
-
-[source,bash]
-----
-$ camel transform message --body=file:sample.json --language=jsonpath --template="beer.unknown" --option=suppressExceptions=true
-----
-
-TIP: You can specify multiple options by repeating the `--option` argument.
-
-Pay attention that we now use JSONPath as the language, and the template is a tiny JSON path expression.
-Because the sample does not have a `beer.unknown` path, then JSonPath would normally throw an exception.
-This can be suppressed by setting the option `suppressExceptions` to `true` as shown above. Then the output is as follows:
-
-[source,text]
-----
-2023-12-04 13:02:50.923  66291 --- Message transformed (success) (239ms)
- Exchange  (DefaultExchange)  InOut   6118686CA3995FF-0000000000000000
- Message   (DefaultMessage)
- Body      (null) (bytes: 14)
- [Body is null]
-----
-
-=== Transforming the message using Components
-
-Some components can also be used for message transformation such as FlatPack, Velocity, FreeMarker, Thymeleaf, and good old XSLT.
-
-TIP: You can use `camel catalog component --filter=transform` to see which components can be transformation.
-
-Given the below XML in the `sample.xml` file:
-
-[source,xml]
-----
-<hash>
-  <id type="integer">1369</id>
-  <uid>8c946e1a-fdc5-40d3-9098-44271bdfad65</uid>
-  <account-number>8673088731</account-number>
-  <iban>GB38EFUA27474531363797</iban>
-  <bank-name>ABN AMRO MEZZANINE (UK) LIMITED</bank-name>
-  <routing-number>053228004</routing-number>
-  <swift-bic>AACCGB21</swift-bic>
-</hash>
-----
-
-Then you can transform this using an XSLT named `mystyle.xsl`:
-
-[source,xml]
-----
-<?xml version = "1.0"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
-  <xsl:template match="/">
-    <bank>
-    	<name><xsl:value-of select="/hash/bank-name/text()"/></name>
-    	<bic><xsl:value-of select="/hash/swift-bic/text()"/></bic>
-    </bank>
-  </xsl:template>
-
-</xsl:stylesheet>
-----
-
-Then you can do live changes to the stylesheet and see the output in real-time with Camel CLI by running:
-
-[source,bash]
-----
-$ camel transform message --body=file:sample.xml --component=xslt --template=file:mystyle.xsl --pretty --watch
-----
-
-You can then edit the `mystyle.xsl` file, and save the file, and watch the terminal for the updated result.
-
-You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/xslt-transform
-
-You can configure options that the XSLT component format should use, such as shown below:
-
-[source,bash]
-----
-$ camel transform message --body=file:sample.xml --component=xslt --template=file:mystyle.xsl --option=output=bytes --pretty --watch
-----
-
-TIP: You can specify multiple options by repeating the `--option` argument.
-
-NOTE: The transform message with the component is limited as some components require configuring complex options that cannot be set from command line.
-
-=== Transforming a message using Data Formats
-
-Some data formats can also be used for message transformation such as Base64, Csv, FlatPack.
-
-TIP: You can use `camel catalog dataformat --filter=transform` to see which components can be transformation.
-
-Given the below CSV file in the `daltons.csv`:
-
-[source,text]
-----
-Jack Dalton, 115, mad at Averell
-Joe Dalton, 105, calming Joe
-William Dalton, 105, keeping Joe from killing Averell
-Averell Dalton, 80, playing with Rantanplan
-Lucky Luke, 120, capturing the Daltons
-----
-
-Then you can transform this via Camel CSV dataformat from its form into Java objects (unmarshal).
-This will NOT transform the CSV into another format such as XML, but allows you to quickly try out the dataformat,
-and be able to inspect the Java object inside Camel.
-
-[source,bash]
-----
-$ camel transform message --body=file:daltons.csv --dataformat=csv
-----
-
-This will then output:
-
-[source,text]
-----
-2023-12-04 10:53:45.578  55793 --- Message transformed (success) (176ms)
- Exchange  (DefaultExchange)  InOut   6673987D34F3B54-0000000000000000
- Message   (DefaultMessage)
- Body      (ArrayList) (size: 5 bytes: 224)
- [[Jack Dalton,  115,  mad at Averell], [Joe Dalton,  105,  calming Joe], [William Dalton,  105,  keeping Joe from killing Averell], [Averell Dalton,  80,
- playing with Rantanplan], [Lucky Luke,  120,  capturing the Daltons]]
-----
-
-As you can see Camel CSV dataformat will then unmarshal the input (from CSV file) to a `java.util.ArrayList` object
-with 5 elements (one per row), and each row is another List of the columns.
-
-You can configure options that the CSV data format should use, such as shown below:
-
-[source,bash]
-----
-$ camel transform message --body=file:daltons.csv --dataformat=csv --option=captureHeaderRecord=true
-----
-
-TIP: You can specify multiple options by repeating the `--option` argument.
-
-NOTE: The transform message with dataformat is limited as some dataformat requires configuring complex options that cannot be set from the command line.
-
-== Transforming routes DSL
-
-Camel offers different DSLs, such as Java, XML, YAML, and more. Many graphical editors and code generators use XML and YAML Camel DSL, therefore, for some use cases it may be required to use one DSL or the other.
-The `camel transform route` command can be used to transform a YAML route into an XML and vice versa, the command takes a list of files as input and transforms the DSL.
-
-For example, given the following YAML content, in a file named route.yaml
-
-[source, yaml]
-----
-- route:
-    id: route-b785
-    nodePrefixId: route-14b
-    from:
-      id: from-959e
-      uri: direct
-      parameters:
-        name: start
-      steps:
-        - choice:
-            id: choice-52fe
-            when:
-              - id: when-b126
-                expression:
-                  simple:
-                    id: simple-576d
-                    expression: ${header.foo} == 'bar'
-                steps:
-                  - to:
-                      id: to-65f9
-                      uri: jms
-                      parameters:
-                        destinationName: queue
-            otherwise:
-              id: otherwise-c07f
-              steps:
-                - to:
-                    id: to-dc76
-                    uri: log
-                    parameters:
-                      loggerName: default
-----
-
-The following command
-
-[source, bash]
-----
-camel transform route --format=xml /path/to/route.yaml
-----
-
-Automatically transform the route in XML DSL (Camel XML IO DSL)
-
-[source, xml]
-----
-<camel>
-    <route id="route-b785" nodePrefixId="route-14b">
-        <from id="from-959e" uri="direct:start"/>
-        <choice id="choice-52fe">
-            <when id="when-b126">
-                <simple>${header.foo} == 'bar'</simple>
-                <to id="to-65f9" uri="jms:queue"/>
-            </when>
-            <otherwise id="otherwise-c07f">
-                <to id="to-dc76" uri="log:default"/>
-            </otherwise>
-        </choice>
-    </route>
-</camel>
-----
-
-TIP: If all the input files have the same extension and are written with the same DSL, for example, `.yaml`, the transformation will default to the XML DSL and vice versa.
