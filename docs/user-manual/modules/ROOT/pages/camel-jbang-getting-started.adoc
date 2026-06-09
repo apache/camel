@@ -193,6 +193,30 @@ To make it permanent:
 echo 'source <(camel completion)' >> ~/.bashrc
 ----
 
+== Interactive shell
+
+Launch an interactive shell with command history, autocompletion, and alias support:
+
+[source,bash]
+----
+camel shell
+----
+
+All CLI commands are available inside the shell without the `camel` prefix.
+The shell stores history in `~/.camel-jbang-history` and aliases in `~/.camel-jbang-aliases`.
+
+== Check your environment
+
+Run the doctor to verify that your environment is set up correctly:
+
+[source,bash]
+----
+camel doctor
+----
+
+This checks Camel and Java versions, JBang availability, Maven repository connectivity,
+container runtime (Docker/Podman), and disk space.
+
 == Explore commands
 
 Every command supports `--help`:

@@ -94,6 +94,9 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Sending and receiving messages, JDBC configuration,
   terminal scripting, IDE editing, validate plugin.
 
+| xref:camel-jbang-ai.adoc[AI Tools]
+| Ask questions about running integrations, explain routes, and get security hardening suggestions — powered by local or cloud LLMs.
+
 | xref:camel-jbang-debugging.adoc[Debugging]
 | Camel route debugging from the CLI, IDE integration (VSCode, IDEA), Java-level debugging.
 

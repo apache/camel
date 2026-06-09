@@ -404,6 +404,27 @@ $ camel transform message --body=file:daltons.csv --dataformat=csv --option=capt
 
 NOTE: Some data formats require complex options that cannot be set from the command line.
 
+== Evaluating expressions
+
+Quickly evaluate a Camel expression without writing a route:
+
+[source,bash]
+----
+camel eval expression --language=simple --template='Hello ${body}' --body='World'
+camel eval expression --language=jq --template='.name' --body=file:data.json
+camel eval expression --language=jsonpath --template='$.store.book[0].title' --body=file:store.json
+----
+
+This runs the expression in an isolated process. To evaluate against a running integration
+(using its Exchange context), specify the process name or PID:
+
+[source,bash]
+----
+camel eval expression myApp --language=simple --template='${header.myHeader}'
+----
+
+Use `--predicate` to evaluate as a boolean predicate instead of a value expression.
+
 == Transforming route DSL format
 
 The `camel transform route` command converts between YAML and XML DSL formats —

@@ -12,6 +12,7 @@
 *** xref:camel-jbang-dev-services.adoc[Dev Services]
 *** xref:camel-jbang-transforming.adoc[Data Transformation]
 *** xref:camel-jbang-devtools.adoc[Development Tools]
+*** xref:camel-jbang-ai.adoc[AI Tools]
 *** xref:camel-jbang-debugging.adoc[Debugging]
 *** xref:camel-jbang-managing.adoc[Managing Integrations]
 *** xref:camel-jbang-projects.adoc[Export to Maven]

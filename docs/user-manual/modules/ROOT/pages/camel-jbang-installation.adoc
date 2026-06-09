@@ -59,7 +59,26 @@ jbang app install --force --fresh \
 
 The catalog URL points to a specific release tag, so JBang will not pull a newer version.
 
-=== Option 3: Use the Camel Launcher
+=== Option 3: Use the Camel Wrapper
+
+Similar to the Maven Wrapper, the Camel Wrapper creates version-pinning scripts in your project directory:
+
+[source,bash]
+----
+camel wrapper
+----
+
+This creates a `.camel/camel-wrapper.properties` file and launcher scripts
+so anyone working on the project uses the same Camel CLI version — no manual install needed.
+
+Pin a specific version:
+
+[source,bash]
+----
+camel wrapper --camel-version=4.18.0
+----
+
+=== Option 4: Use the Camel Launcher
 
 The xref:camel-jbang-launcher.adoc[Camel CLI Launcher] is a self-contained executable JAR
 that runs without JBang entirely.

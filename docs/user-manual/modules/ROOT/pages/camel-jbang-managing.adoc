@@ -30,6 +30,13 @@ Stopping running Camel integration (pid: 62506)
 NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_.
 To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`
 
+Restart an integration (stop + re-launch):
+
+[source,bash]
+----
+camel restart dude
+----
+
 Stop all integrations (omit the name):
 
 [source,bash]
@@ -149,6 +156,38 @@ camel top route
  22104  chuck    log-sink-2             kamelet://source?routeId=log-sink-2  Started     10s      1       0         0     0    0    0          9s
  14242  MyCamel  hello                  timer://hello?period=2000            Started  31m41s    948       0         0     0    0    4          0s
 ----
+
+== Visualizing routes
+
+Render a visual diagram of routes in a running integration:
+
+[source,bash]
+----
+camel cmd route-diagram myApp
+----
+
+This prints a Unicode route diagram in the terminal. Use `--theme=ascii` for plain text,
+or `--output=diagram.png --theme=light` to save as an image.
+
+You can also render diagrams directly from source files (no running process needed):
+
+[source,bash]
+----
+camel cmd route-diagram my-route.yaml
+----
+
+Show how routes connect to each other and to external systems with the topology view:
+
+[source,bash]
+----
+camel cmd route-topology myApp
+camel cmd route-topology myApp --external
+----
+
+The `--external` flag includes external systems (Kafka, databases, etc.) as nodes in the graph.
+Both commands include live metrics by default — use `--metric=false` to disable.
+
+TIP: The xref:camel-jbang-tui.adoc[Camel TUI] shows route diagrams and topology interactively.
 
 == Starting and stopping routes
 
@@ -406,6 +445,31 @@ camel trace --action=stop
 
 Use `--action=clear` to discard already-traced messages.
 
+=== OpenTelemetry spans
+
+When OpenTelemetry tracing is enabled, view collected spans:
+
+[source,bash]
+----
+camel cmd span myApp
+----
+
+Filter by trace ID, route, component, or exchange ID:
+
+[source,bash]
+----
+camel cmd span myApp --filter=route1
+----
+
+Show a waterfall timeline for a specific trace:
+
+[source,bash]
+----
+camel cmd span myApp --trace=abc123
+----
+
+Use `--flat` for a flat list of individual spans instead of grouped traces.
+
 == Health checks
 
 View health check status:
@@ -574,6 +638,23 @@ camel jolokia 62506 --stop
 ----
 
 TIP: Run `camel hawtio --help` for options.
+
+== Thread dump
+
+List threads in a running Camel integration:
+
+[source,bash]
+----
+camel cmd thread-dump myApp
+----
+
+By default only Camel-related threads are shown. Use `--filter=all` for all JVM threads,
+or `--state=BLOCKED` to find blocked threads. Add `--trace` to include stack traces:
+
+[source,bash]
+----
+camel cmd thread-dump myApp --filter=all --state=BLOCKED --trace
+----
 
 == See Also
 
