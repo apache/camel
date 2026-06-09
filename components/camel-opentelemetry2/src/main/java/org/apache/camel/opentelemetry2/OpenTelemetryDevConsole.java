@@ -165,6 +165,11 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
         jo.put("endEpochNanos", span.getEndEpochNanos());
         jo.put("durationMs", (span.getEndEpochNanos() - span.getStartEpochNanos()) / 1_000_000);
 
+        String scopeName = span.getInstrumentationScopeInfo().getName();
+        if (scopeName != null && !scopeName.isEmpty()) {
+            jo.put("scopeName", scopeName);
+        }
+
         JsonObject attrs = new JsonObject();
         span.getAttributes().forEach((key, value) -> attrs.put(key.getKey(), value));
         if (!attrs.isEmpty()) {

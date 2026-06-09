@@ -220,6 +220,7 @@ public class CamelMonitor extends CamelCommand {
     private MemoryTab memoryTab;
     private ThreadsTab threadsTab;
     private SpansTab spansTab;
+    private ProcessTab processTab;
     private OverviewTab overviewTab;
 
     // "Switch integration" popup state
@@ -289,6 +290,7 @@ public class CamelMonitor extends CamelCommand {
         memoryTab = new MemoryTab(ctx, metrics);
         threadsTab = new ThreadsTab(ctx);
         spansTab = new SpansTab(ctx, otelSpans);
+        processTab = new ProcessTab(ctx);
         overviewTab = new OverviewTab(
                 ctx, metrics, stoppingPids,
                 this::resetIntegrationTabState);
@@ -417,7 +419,7 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                morePopupState.selectNext(12);
+                morePopupState.selectNext(13);
                 return true;
             }
             int shortcutSel = morePopupShortcut(ke);
@@ -440,8 +442,9 @@ public class CamelMonitor extends CamelCommand {
                         case 7 -> memoryTab;
                         case 8 -> metricsTab;
                         case 9 -> spansTab;
-                        case 10 -> startupTab;
-                        case 11 -> threadsTab;
+                        case 10 -> processTab;
+                        case 11 -> startupTab;
+                        case 12 -> threadsTab;
                         default -> null;
                     };
                     if (activeMoreTab != null) {
@@ -906,6 +909,9 @@ public class CamelMonitor extends CamelCommand {
         consumersTab.onIntegrationChanged();
         circuitBreakerTab.onIntegrationChanged();
         inflightTab.onIntegrationChanged();
+        spansTab.onIntegrationChanged();
+        processTab.onIntegrationChanged();
+        otelSpans.set(List.of());
 
         filesBrowser.reset();
 
@@ -1191,7 +1197,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderMorePopup(Frame frame, Rect area) {
         int popupW = 22;
-        int popupH = 12;
+        int popupH = 15;
         // Position just below the "0 More▾" tab label
         int dividerW = CharWidth.of(" | ");
         int tabBarX = 0;
@@ -1223,6 +1229,7 @@ public class CamelMonitor extends CamelCommand {
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("M", keyStyle), Span.raw("emory"))),
                 ListItem.from(Line.from(Span.raw("  M"), Span.styled("e", keyStyle), Span.raw("trics"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("O", keyStyle), Span.raw("Tel Spans"))),
+                ListItem.from(Line.from(Span.raw("  "), Span.styled("P", keyStyle), Span.raw("rocess"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("S", keyStyle), Span.raw("tartup"))),
                 ListItem.from(Line.from(Span.raw("  "), Span.styled("T", keyStyle), Span.raw("hreads"))),
         };
@@ -1332,11 +1339,14 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isChar('o')) {
             return 9;
         }
-        if (ke.isChar('s')) {
+        if (ke.isChar('p')) {
             return 10;
         }
-        if (ke.isChar('t')) {
+        if (ke.isChar('s')) {
             return 11;
+        }
+        if (ke.isChar('t')) {
+            return 12;
         }
         return -1;
     }
@@ -2414,7 +2424,7 @@ public class CamelMonitor extends CamelCommand {
 
     private static final String[] MORE_TAB_NAMES = {
             "Beans", "Browse", "Circuit Breaker", "Classpath", "Configuration",
-            "Consumers", "Inflight", "Memory", "Metrics", "Spans", "Startup", "Threads"
+            "Consumers", "Inflight", "Memory", "Metrics", "Spans", "Process", "Startup", "Threads"
     };
 
     String navigateToTab(String tabName) {
@@ -2440,8 +2450,9 @@ public class CamelMonitor extends CamelCommand {
                     case 7 -> memoryTab;
                     case 8 -> metricsTab;
                     case 9 -> spansTab;
-                    case 10 -> startupTab;
-                    case 11 -> threadsTab;
+                    case 10 -> processTab;
+                    case 11 -> startupTab;
+                    case 12 -> threadsTab;
                     default -> null;
                 };
                 if (activeMoreTab != null) {

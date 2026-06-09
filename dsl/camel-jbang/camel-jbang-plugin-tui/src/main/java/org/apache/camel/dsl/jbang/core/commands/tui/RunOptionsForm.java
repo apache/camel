@@ -50,7 +50,8 @@ class RunOptionsForm {
     private static final int ROW_OBSERVE = 4;
     private static final int ROW_TRACE = 5;
     private static final int ROW_STUB = 6;
-    private static final int ROW_COUNT = 7;
+    private static final int ROW_OTEL_AGENT = 7;
+    private static final int ROW_COUNT = 8;
 
     private boolean visible;
     private int page;
@@ -70,6 +71,8 @@ class RunOptionsForm {
     private boolean observe;
     private boolean backlogTrace;
     private boolean stubMode;
+    private boolean otelAgent;
+    private int otelExportTarget; // 0=TUI, 1=Jaeger
 
     private String exampleTitle;
 
@@ -95,6 +98,8 @@ class RunOptionsForm {
         observe = false;
         backlogTrace = false;
         stubMode = false;
+        otelAgent = false;
+        otelExportTarget = 0;
         selectedRow = ROW_NAME;
         page = PAGE_OPTIONS;
         selectedProperty = 0;
@@ -113,6 +118,10 @@ class RunOptionsForm {
 
     boolean isStubMode() {
         return stubMode;
+    }
+
+    boolean isJaegerExport() {
+        return otelAgent && otelExportTarget == 1;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -192,6 +201,12 @@ class RunOptionsForm {
         if (stubMode) {
             args.add("--stub=remote");
         }
+        if (otelAgent) {
+            args.add("--open-telemetry-agent");
+            if (otelExportTarget == 1) {
+                args.add("--open-telemetry-agent-export=jaeger");
+            }
+        }
         if (properties != null) {
             for (PropertyEntry pe : properties) {
                 String current = pe.valueInput().text();
@@ -215,7 +230,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isDown()) {
-            if (selectedRow == ROW_STUB && hasProperties()) {
+            if (selectedRow == ROW_OTEL_AGENT && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -224,7 +239,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isFocusNext()) {
-            if (selectedRow == ROW_STUB && hasProperties()) {
+            if (selectedRow == ROW_OTEL_AGENT && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -236,7 +251,15 @@ class RunOptionsForm {
             selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
             return true;
         }
-        if (ke.isRight() && hasProperties() && selectedRow >= ROW_STUB) {
+        if (ke.isRight() && selectedRow == ROW_OTEL_AGENT && otelAgent) {
+            otelExportTarget = (otelExportTarget + 1) % 2;
+            return true;
+        }
+        if (ke.isLeft() && selectedRow == ROW_OTEL_AGENT && otelAgent) {
+            otelExportTarget = (otelExportTarget + 1) % 2;
+            return true;
+        }
+        if (ke.isRight() && hasProperties() && selectedRow >= ROW_OTEL_AGENT) {
             page = PAGE_PROPERTIES;
             selectedProperty = 0;
             return true;
@@ -261,6 +284,7 @@ class RunOptionsForm {
                 case ROW_OBSERVE -> observe = !observe;
                 case ROW_TRACE -> backlogTrace = !backlogTrace;
                 case ROW_STUB -> stubMode = !stubMode;
+                case ROW_OTEL_AGENT -> otelAgent = !otelAgent;
             }
             return true;
         }
@@ -287,7 +311,7 @@ class RunOptionsForm {
             editingKey = false;
             if (selectedProperty == 0) {
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_STUB;
+                selectedRow = ROW_OTEL_AGENT;
             } else {
                 selectedProperty--;
             }
@@ -317,7 +341,7 @@ class RunOptionsForm {
             } else if (selectedProperty == 0) {
                 editingKey = false;
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_STUB;
+                selectedRow = ROW_OTEL_AGENT;
             } else {
                 editingKey = false;
                 selectedProperty--;
@@ -333,7 +357,7 @@ class RunOptionsForm {
                     return true;
                 }
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_STUB;
+                selectedRow = ROW_OTEL_AGENT;
                 editingKey = false;
                 return true;
             }
@@ -376,7 +400,7 @@ class RunOptionsForm {
 
     private void renderOptionsPage(Frame frame, Rect area) {
         int popupW = Math.min(56, area.width() - 4);
-        int popupH = 11;
+        int popupH = 12;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
@@ -441,6 +465,22 @@ class RunOptionsForm {
         rowY++;
 
         renderCheckbox(frame, innerX, rowY, innerW, "Stub (no Docker needed)", stubMode, selectedRow == ROW_STUB);
+        rowY++;
+
+        renderCheckbox(frame, innerX, rowY, innerW, "OTel Java Agent (auto-instrument)", otelAgent,
+                selectedRow == ROW_OTEL_AGENT);
+        if (otelAgent) {
+            String tuiLabel = otelExportTarget == 0 ? "[TUI]" : " TUI ";
+            String jaegerLabel = otelExportTarget == 1 ? "[Jaeger]" : " Jaeger ";
+            Style tuiStyle = otelExportTarget == 0 ? Style.EMPTY.bold() : Style.EMPTY.dim();
+            Style jaegerStyle = otelExportTarget == 1 ? Style.EMPTY.bold() : Style.EMPTY.dim();
+            int exportX = innerX + 38;
+            Rect exportArea = new Rect(exportX, rowY, innerW - 36, 1);
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(tuiLabel, tuiStyle),
+                    Span.styled(" ", Style.EMPTY),
+                    Span.styled(jaegerLabel, jaegerStyle))), exportArea);
+        }
     }
 
     private void renderPropertiesPage(Frame frame, Rect area) {

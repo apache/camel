@@ -558,7 +558,7 @@ public class Run extends CamelCommand {
     }
 
     private boolean isDebugMode() {
-        return jvmDebugPort > 0;
+        return jvmDebugPort > 0 || debugOptions.openTelemetryAgent;
     }
 
     private void writeSetting(KameletMain main, Properties existing, String key, String value) {
@@ -1186,6 +1186,17 @@ public class Run extends CamelCommand {
             dependencies.add("camel:observability-services");
             main.addOverrideProperty("camel.metrics.logMetricsOnShutdown", "false");
         }
+        if (debugOptions.openTelemetryAgent) {
+            dependencies.add("camel:opentelemetry2");
+            boolean jaegerExport = "jaeger".equals(debugOptions.openTelemetryAgentExport);
+            if (!jaegerExport) {
+                dependencies.add("camel:platform-http-main");
+                if (serverOptions.port == -1) {
+                    serverOptions.port = 8080;
+                }
+                writeSetting(main, profileProperties, "camel.server.enabled", "true");
+            }
+        }
         if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
             main.addInitialProperty(DEPENDENCIES, joined);
@@ -1688,9 +1699,31 @@ public class Run extends CamelCommand {
         if (debugSuspend != null) {
             jbangArgs.add("-D" + BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME + "=" + debugSuspend);
         }
-        if (isDebugMode()) {
+        if (jvmDebugPort > 0) {
             jbangArgs.add("--debug=" + jvmDebugPort); // jbang --debug=port
             cmds.removeIf(arg -> arg.startsWith("--jvm-debug"));
+        }
+        if (debugOptions.openTelemetryAgent) {
+            boolean jaegerExport = "jaeger".equals(debugOptions.openTelemetryAgentExport);
+            jbangArgs.add("--javaagent=io.opentelemetry.javaagent:opentelemetry-javaagent:RELEASE");
+            jbangArgs.add("-Dotel.metrics.exporter=none");
+            jbangArgs.add("-Dotel.logs.exporter=none");
+            jbangArgs.add("-Dotel.service.name=camel");
+            cmds.removeIf(arg -> arg.startsWith("--open-telemetry-agent"));
+            cmds.add("--dep=camel:opentelemetry2");
+            cmds.add("--prop=camel.opentelemetry2.enabled=true");
+            if (jaegerExport) {
+                jbangArgs.add("-Dotel.exporter.otlp.traces.endpoint=http://localhost:4318/v1/traces");
+                cmds.add("--prop=camel.opentelemetry2.exportTarget=jaeger");
+            } else {
+                int port = serverOptions.port > 0 ? serverOptions.port : 8080;
+                jbangArgs.add("-Dotel.exporter.otlp.traces.endpoint=http://localhost:" + port + "/v1/traces");
+                cmds.add("--dep=camel:platform-http-main");
+                cmds.add("--dep=mvn:io.opentelemetry.proto:opentelemetry-proto:RELEASE");
+                if (cmds.stream().noneMatch(a -> a.startsWith("--port"))) {
+                    cmds.add("--port=" + port);
+                }
+            }
         }
 
         if (javaVersion != null) {
@@ -2412,6 +2445,16 @@ public class Run extends CamelCommand {
         @Option(names = { "--backlog-trace" }, defaultValue = "false",
                 description = "Enables backlog tracing of the routed messages")
         boolean backlogTrace;
+
+        @Option(names = { "--open-telemetry-agent" }, defaultValue = "false",
+                description = "Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries (HTTP clients, JDBC, Kafka clients, gRPC, etc.). "
+                              + "Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta.")
+        boolean openTelemetryAgent;
+
+        @Option(names = { "--open-telemetry-agent-export" }, defaultValue = "tui",
+                description = "Where to export OpenTelemetry Agent traces: tui (embedded receiver in TUI) or jaeger (external Jaeger). "
+                              + "With jaeger, start Jaeger first via 'camel infra run jaeger' and view traces at http://localhost:16686")
+        String openTelemetryAgentExport = "tui";
     }
 
     public static class ExecutionLimitOptions {
@@ -2451,7 +2494,7 @@ public class Run extends CamelCommand {
         boolean metrics;
 
         @Option(names = { "--observe" }, defaultValue = "false",
-                description = "Enable observability services")
+                description = "Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab)")
         boolean observe;
     }
 
