@@ -83,6 +83,10 @@ This works for all DSLs (YAML, Java, XML).
 TIP: Dev mode is the fastest way to prototype integrations.
 Keep it running while you iterate on your routes.
 
+TIP: Want a visual overview of your running routes, message flow, and health status — right in the terminal?
+Try the xref:camel-jbang-tui.adoc[Camel TUI] (`camel tui`), a full-featured dashboard that works
+over SSH, in containers, and anywhere a browser is not available.
+
 == Try a built-in example
 
 Don't have a route yet? The CLI ships with a catalog of ready-to-run examples:
