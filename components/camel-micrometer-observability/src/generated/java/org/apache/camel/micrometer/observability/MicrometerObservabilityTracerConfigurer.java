@@ -36,6 +36,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "propagator": target.setPropagator(property(camelContext, io.micrometer.tracing.propagation.Propagator.class, value)); return true;
         case "spanlifecyclemanager":
         case "spanLifecycleManager": target.setSpanLifecycleManager(property(camelContext, org.apache.camel.telemetry.SpanLifecycleManager.class, value)); return true;
+        case "tracecustomidonly":
+        case "traceCustomIdOnly": target.setTraceCustomIdOnly(property(camelContext, boolean.class, value)); return true;
         case "traceheadersinclusion":
         case "traceHeadersInclusion": target.setTraceHeadersInclusion(property(camelContext, boolean.class, value)); return true;
         case "traceprocessors":
@@ -61,6 +63,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "propagator": return io.micrometer.tracing.propagation.Propagator.class;
         case "spanlifecyclemanager":
         case "spanLifecycleManager": return org.apache.camel.telemetry.SpanLifecycleManager.class;
+        case "tracecustomidonly":
+        case "traceCustomIdOnly": return boolean.class;
         case "traceheadersinclusion":
         case "traceHeadersInclusion": return boolean.class;
         case "traceprocessors":
@@ -87,6 +91,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "propagator": return target.getPropagator();
         case "spanlifecyclemanager":
         case "spanLifecycleManager": return target.getSpanLifecycleManager();
+        case "tracecustomidonly":
+        case "traceCustomIdOnly": return target.isTraceCustomIdOnly();
         case "traceheadersinclusion":
         case "traceHeadersInclusion": return target.isTraceHeadersInclusion();
         case "traceprocessors":
