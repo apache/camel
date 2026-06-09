@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.platform.http;
 
+import org.apache.camel.Exchange;
+
 public final class PlatformHttpConstants {
 
     public static final String PLATFORM_HTTP_COMPONENT_NAME = "platform-http";
     public static final String PLATFORM_HTTP_ENGINE_NAME = "platform-http-engine";
     public static final String PLATFORM_HTTP_ENGINE_FACTORY = "platform-http-engine";
+    /**
+     * Exchange property containing the OAuth token validation result for successfully authenticated platform-http
+     * requests. This intentionally does not use {@link Exchange#AUTHENTICATION}, so OAuth bearer-token validation does
+     * not overwrite or conflict with other Camel authentication mechanisms.
+     */
     public static final String OAUTH_TOKEN_VALIDATION_RESULT = "CamelOAuthTokenValidationResult";
 
     private PlatformHttpConstants() {

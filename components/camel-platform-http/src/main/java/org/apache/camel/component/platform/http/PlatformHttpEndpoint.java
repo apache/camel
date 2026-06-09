@@ -201,7 +201,8 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     protected PlatformHttpSecurityHandler createSecurityHandler() throws Exception {
         if (ObjectHelper.isNotEmpty(oauthProfile)) {
-            OAuthTokenValidationFactory factory = OAuthHelper.resolveOAuthTokenValidationFactory(getCamelContext());
+            OAuthTokenValidationFactory factory
+                    = OAuthHelper.resolveOAuthTokenValidationFactory(getCamelContext(), oauthProfile);
             factory.validateConfiguration(getCamelContext(), oauthProfile);
             return new OAuthPlatformHttpSecurityHandler(oauthProfile, factory);
         }

@@ -96,6 +96,17 @@ the route fails to start. Add `camel-oauth` for the default provider or include 
 provider from the platform integration.
 ====
 
+Camel first checks whether the selected profile has a profile-specific validation factory:
+
+[source,properties]
+----
+camel.oauth.myprofile.validation-factory=#bean:myTokenValidationFactory
+----
+
+If this property is set, the referenced bean must exist and implement `OAuthTokenValidationFactory`.
+Otherwise, Camel looks for a single `OAuthTokenValidationFactory` in the registry before falling back
+to the classpath provider.
+
 [source,java]
 ----
 from("platform-http:/secure?oauthProfile=myprofile")

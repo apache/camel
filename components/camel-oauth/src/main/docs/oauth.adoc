@@ -280,6 +280,19 @@ camel.oauth.myprofile.connect-timeout-seconds=5
 camel.oauth.myprofile.read-timeout-seconds=10
 ----
 
+To use a runtime-specific or application-specific validator for one profile, bind an
+`OAuthTokenValidationFactory` bean and reference it from the profile:
+
+[source,properties]
+----
+camel.oauth.myprofile.validation-factory=#bean:myTokenValidationFactory
+----
+
+For the default unnamed profile, use `camel.oauth.validation-factory`.
+
+If this property is configured, the referenced bean must exist and implement
+`OAuthTokenValidationFactory`; otherwise the route fails to start.
+
 Use HTTPS endpoints for OIDC discovery, JWKS, and introspection in production. Plain HTTP endpoints
 are rejected by default; set `allow-insecure-http=true` only for local testing or other trusted
 development environments.
@@ -341,7 +354,7 @@ import org.apache.camel.spi.OAuthTokenValidationFactory;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.support.OAuthHelper;
 
-OAuthTokenValidationFactory factory = OAuthHelper.resolveOAuthTokenValidationFactory(camelContext);
+OAuthTokenValidationFactory factory = OAuthHelper.resolveOAuthTokenValidationFactory(camelContext, "myprofile");
 
 OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
         .setJwksEndpoint("https://idp.example.com/.well-known/jwks.json")

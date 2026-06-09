@@ -52,7 +52,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.OAuthTokenValidationConfig;
-import org.apache.camel.spi.OAuthTokenValidationFactory;
+import org.apache.camel.spi.OAuthTokenValidationConfigResolver;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.spi.OAuthTokenValidationResult.ErrorCode;
 import org.junit.jupiter.api.AfterEach;
@@ -293,7 +293,7 @@ class DefaultOAuthTokenValidationFactoryTest {
             context.setPropertiesComponent(pc);
             context.start();
 
-            OAuthTokenValidationConfig config = OAuthTokenValidationFactory.resolveProfileConfig(context, "myprofile");
+            OAuthTokenValidationConfig config = OAuthTokenValidationConfigResolver.resolveProfileConfig(context, "myprofile");
 
             assertEquals("at+jwt", config.getExpectedTokenType());
         }

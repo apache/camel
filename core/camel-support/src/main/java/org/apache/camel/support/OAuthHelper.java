@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.OAuthClientAuthenticationFactory;
 import org.apache.camel.spi.OAuthTokenValidationFactory;
 import org.apache.camel.spi.OAuthTokenValidationResult;
@@ -30,6 +31,9 @@ import org.apache.camel.spi.OAuthTokenValidationResult;
  * own implementation backed by their native security stack.
  */
 public final class OAuthHelper {
+
+    private static final String OAUTH_PROFILE_PREFIX = "camel.oauth.";
+    private static final String VALIDATION_FACTORY_PROPERTY = "validation-factory";
 
     private OAuthHelper() {
     }
@@ -55,12 +59,71 @@ public final class OAuthHelper {
 
     /**
      * Resolves the OAuth token validation factory.
+     * <p/>
+     * The default profile can reference a registry bean with {@code camel.oauth.validation-factory}. If configured, the
+     * referenced bean must exist and implement {@link OAuthTokenValidationFactory}.
      *
      * @param  context the CamelContext
      * @return         the token validation factory
      * @since          4.21
      */
     public static OAuthTokenValidationFactory resolveOAuthTokenValidationFactory(CamelContext context) {
+        OAuthTokenValidationFactory factory
+                = resolveConfiguredValidationFactory(context, OAUTH_PROFILE_PREFIX + VALIDATION_FACTORY_PROPERTY);
+        if (factory == null) {
+            factory = context.getRegistry()
+                    .lookupByNameAndType(OAuthTokenValidationFactory.FACTORY, OAuthTokenValidationFactory.class);
+        }
+        if (factory == null) {
+            factory = context.getRegistry().findSingleByType(OAuthTokenValidationFactory.class);
+        }
+        if (factory == null) {
+            factory = resolveBootstrapValidationFactory(context);
+        }
+        return CamelContextAware.trySetCamelContext(factory, context);
+    }
+
+    /**
+     * Resolves the OAuth token validation factory for the given profile.
+     * <p/>
+     * The profile-specific {@code camel.oauth.<profileName>.validation-factory} property can reference a registry bean
+     * by name. If configured, the referenced bean must exist and implement {@link OAuthTokenValidationFactory}.
+     *
+     * @param  context     the CamelContext
+     * @param  profileName the OAuth profile name
+     * @return             the token validation factory
+     * @since              4.21
+     */
+    public static OAuthTokenValidationFactory resolveOAuthTokenValidationFactory(CamelContext context, String profileName) {
+        if (profileName != null && !profileName.isBlank()) {
+            OAuthTokenValidationFactory factory = resolveConfiguredValidationFactory(
+                    context, OAUTH_PROFILE_PREFIX + profileName + "." + VALIDATION_FACTORY_PROPERTY);
+            if (factory != null) {
+                return CamelContextAware.trySetCamelContext(factory, context);
+            }
+        }
+        return resolveOAuthTokenValidationFactory(context);
+    }
+
+    private static OAuthTokenValidationFactory resolveConfiguredValidationFactory(CamelContext context, String propertyKey) {
+        String factoryReference = context.getPropertiesComponent().resolveProperty(propertyKey)
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .orElse(null);
+        if (factoryReference == null) {
+            return null;
+        }
+
+        Object factory = EndpointHelper.resolveReferenceParameter(context, factoryReference, Object.class);
+        if (factory instanceof OAuthTokenValidationFactory tokenValidationFactory) {
+            return tokenValidationFactory;
+        }
+        throw new IllegalArgumentException(
+                "OAuth token validation factory property " + propertyKey + " references " + factoryReference
+                                           + " which is not an " + OAuthTokenValidationFactory.class.getName());
+    }
+
+    private static OAuthTokenValidationFactory resolveBootstrapValidationFactory(CamelContext context) {
         return ResolverHelper.resolveMandatoryBootstrapService(
                 context,
                 OAuthTokenValidationFactory.FACTORY,
@@ -84,7 +147,7 @@ public final class OAuthHelper {
      */
     public static OAuthTokenValidationResult validateOAuthToken(
             CamelContext context, String profileName, String token) {
-        return resolveOAuthTokenValidationFactory(context).validateToken(context, profileName, token);
+        return resolveOAuthTokenValidationFactory(context, profileName).validateToken(context, profileName, token);
     }
 
     /**
