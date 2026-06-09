@@ -50,6 +50,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "expiryInSeconds": target.getConfiguration().setExpiryInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "getworkflowio":
         case "getWorkflowIO": target.getConfiguration().setGetWorkflowIO(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpextension":
         case "httpExtension": target.getConfiguration().setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
         case "key": target.getConfiguration().setKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -132,6 +134,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "expiryInSeconds": return java.lang.Integer.class;
         case "getworkflowio":
         case "getWorkflowIO": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
         case "key": return java.lang.String.class;
@@ -210,6 +214,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "expiryInSeconds": return target.getConfiguration().getExpiryInSeconds();
         case "getworkflowio":
         case "getWorkflowIO": return target.getConfiguration().isGetWorkflowIO();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpextension":
         case "httpExtension": return target.getConfiguration().getHttpExtension();
         case "key": return target.getConfiguration().getKey();
