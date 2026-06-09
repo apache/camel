@@ -79,7 +79,7 @@ to any tab, or use *Tab* / *Shift+Tab* to cycle.
 | 7 | Health | Health check status.
 | 8 | Inspect | Message history and tracing -- step through exchanges processor by processor.
 | 9 | Errors | Failures with stack traces and exchange context.
-| 0 | More | Additional tabs: Beans, Browse, Circuit Breaker, Classpath, Configuration, Consumers, Inflight, Memory, Metrics, Startup, Threads.
+| 0 | More | Additional tabs: Beans, Browse, Circuit Breaker, Classpath, Configuration, Consumers, Inflight, Memory, Metrics, Process, Spans, Startup, Threads.
 |===
 
 Tab badges show live counts -- the Errors tab shows a red badge when errors exist,
@@ -224,6 +224,39 @@ For deeper troubleshooting, switch to the Inspect tab (Tab 8) and use the diagra
 
 This combination of error details + visual diagram replay gives you a complete picture of
 what went wrong and why -- without leaving the terminal.
+
+== OpenTelemetry Spans
+
+The Spans tab (under More, shortcut *o*) visualizes OpenTelemetry traces collected from your
+running integration. It shows every span with trace ID, span name, kind, status, duration,
+and Camel-specific context (route ID, processor ID).
+
+Run your integration with OpenTelemetry enabled:
+
+[source,bash]
+----
+camel run my-route.yaml --dep=camel:opentelemetry
+----
+
+Features:
+
+* *Waterfall view* -- spans displayed as a timeline showing parent-child relationships
+  and duration bars, color-coded from green (fast) to red (slow)
+* *Trace grouping* -- spans grouped by trace ID so you can follow a complete request
+  across multiple routes and components
+* *Camel-only filter* -- toggle to show only Camel-originated spans, hiding framework
+  and library spans
+* *Sort and search* -- sort by trace ID, route, status, duration, or span count;
+  filter with text search
+* *Error highlighting* -- failed spans (status ERROR) are highlighted in red
+
+This is especially useful for understanding latency in multi-route integrations and for
+correlating Camel processing with external service calls (HTTP, database, messaging).
+
+== Process Information
+
+The Process tab (under More, shortcut *p*) shows JVM process details for the selected
+integration: Java version, PID, uptime, command-line arguments, and system properties.
 
 == Actions Menu (F2)
 
