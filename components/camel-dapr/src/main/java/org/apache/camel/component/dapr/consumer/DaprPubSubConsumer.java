@@ -102,17 +102,42 @@ public class DaprPubSubConsumer extends DefaultConsumer {
         message.setBody(cloudEvent.getData());
 
         // set headers
-        message.setHeader(DaprConstants.PUBSUB_NAME, cloudEvent.getPubsubName());
-        message.setHeader(DaprConstants.TOPIC, cloudEvent.getTopic());
-        message.setHeader(DaprConstants.ID, cloudEvent.getId());
-        message.setHeader(DaprConstants.SOURCE, cloudEvent.getSource());
-        message.setHeader(DaprConstants.TYPE, cloudEvent.getType());
-        message.setHeader(DaprConstants.SPECIFIC_VERSION, cloudEvent.getSpecversion());
-        message.setHeader(DaprConstants.DATA_CONTENT_TYPE, cloudEvent.getDatacontenttype());
-        message.setHeader(DaprConstants.BINARY_DATA, cloudEvent.getBinaryData());
-        message.setHeader(DaprConstants.TIME, cloudEvent.getTime());
-        message.setHeader(DaprConstants.TRACE_PARENT, cloudEvent.getTraceParent());
-        message.setHeader(DaprConstants.TRACE_STATE, cloudEvent.getTraceState());
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.ID, cloudEvent.getId(),
+                exchange)) {
+            message.setHeader(DaprConstants.ID, cloudEvent.getId());
+        }
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.SOURCE, cloudEvent.getSource(),
+                exchange)) {
+            message.setHeader(DaprConstants.SOURCE, cloudEvent.getSource());
+        }
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.TYPE, cloudEvent.getType(),
+                exchange)) {
+            message.setHeader(DaprConstants.TYPE, cloudEvent.getType());
+        }
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.SPECIFIC_VERSION,
+                cloudEvent.getSpecversion(), exchange)) {
+            message.setHeader(DaprConstants.SPECIFIC_VERSION, cloudEvent.getSpecversion());
+        }
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.DATA_CONTENT_TYPE,
+                cloudEvent.getDatacontenttype(), exchange)) {
+            message.setHeader(DaprConstants.DATA_CONTENT_TYPE, cloudEvent.getDatacontenttype());
+        }
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.BINARY_DATA,
+                cloudEvent.getBinaryData(), exchange)) {
+            message.setHeader(DaprConstants.BINARY_DATA, cloudEvent.getBinaryData());
+        }
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.TIME, cloudEvent.getTime(),
+                exchange)) {
+            message.setHeader(DaprConstants.TIME, cloudEvent.getTime());
+        }
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.TRACE_PARENT,
+                cloudEvent.getTraceParent(), exchange)) {
+            message.setHeader(DaprConstants.TRACE_PARENT, cloudEvent.getTraceParent());
+        }
+        if (!getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(DaprConstants.TRACE_STATE,
+                cloudEvent.getTraceState(), exchange)) {
+            message.setHeader(DaprConstants.TRACE_STATE, cloudEvent.getTraceState());
+        }
 
         return exchange;
     }
