@@ -52,8 +52,6 @@ Source: foo.camel.yaml:13                                                       
 
 This is _basic_ but yet powerful, as you have this debugger always readily available, without having to start up VSCode or IDEA tooling.
 
-TIP: The `camel debug` can debug almost all the DSLs (there is a problem with groovy).
-
 === Configuring breakpoints
 
 When using `camel debug` then breakpoints are by default added to every route.

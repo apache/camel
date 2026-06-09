@@ -5,7 +5,7 @@ It gives you a complete, terminal-native development environment for building in
 -- from a first prototype to a production-ready project -- without requiring an IDE, a Maven project,
 or boilerplate code.
 
-Write a route in YAML, XML, Java, or Groovy. Run it. Debug it. Trace messages flowing through it.
+Write a route in YAML, Java, or XML. Run it. Debug it. Trace messages flowing through it.
 Spin up the infrastructure it needs. Export it to Spring Boot or Quarkus when you are ready.
 All from the terminal.
 
@@ -73,7 +73,10 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Area | What it covers
 
 | xref:camel-jbang-getting-started.adoc[Getting Started]
-| Installation, container images, shell completion, creating and running your first route.
+| Installation, shell completion, creating and running your first route.
+
+| xref:camel-jbang-installation.adoc[Installation Options]
+| Version-pinned installs, offline-safe setups, container images, installing without JBang.
 
 | xref:camel-jbang-running.adoc[Running Routes]
 | Dev mode with hot reload, profiles, properties, dependency management, GitHub-hosted routes,

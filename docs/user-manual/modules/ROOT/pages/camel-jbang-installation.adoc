@@ -1,0 +1,137 @@
+= Camel CLI - Installation Options
+
+This page covers alternative ways to install and run the Camel CLI —
+version-pinned installs, offline-safe setups, and container images.
+
+For the standard installation, see xref:camel-jbang-getting-started.adoc[Getting Started].
+
+== Installing a specific Camel CLI version
+
+By default, Camel CLI installs the latest release, which may not be the desired version.
+
+To use a specific version then you need to provide these when installing from jbang such as 4.14.1:
+
+[source,bash]
+----
+jbang app install --force --fresh -Dcamel.jbang.version=4.14.1 -Dcamel-kamelets.version=4.14.1 camel@apache/camel
+----
+
+TIP: You can use `--force` and `--fresh` to tell JBang to force installing the version and refresh downloading,
+so no previous downloaded cache etc. may cause a problem.
+
+IMPORTANT: From Camel 4.17 onwards then Kamelets are optional, and only downloaded on demand. You define the version
+of kamelets via `--kamelets-version` parameter to `camel run` or can pre-configure the version via `camel config set kamelets-version=4.17.0`.
+
+== Installing Offline-Safe or Version-Pinned Camel CLI
+
+When installing Camel CLI using `jbang app install`, JBang will occasionally check
+upstream sources and update the installed application automatically. This may be undesirable if you
+want to ensure your Camel CLI installation remains on a specific Camel release.
+
+The following options allow you to install Camel CLI in a way that prevents unexpected upgrades.
+
+=== Option 1: Pin by Installing from a Local `CamelJBang.java`
+
+This approach pins the Camel version directly in the source file used to install the application.
+
+1. Download the `CamelJBang.java` file to your local machine:
++
+[source]
+----
+https://github.com/apache/camel/blob/main/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java
+----
+
+2. Edit the `CamelJBang.java` file and set the Camel version you want to use.
+
+3. Install Camel CLI locally:
++
+[source,bash]
+----
+jbang app install CamelJBang.java
+----
+
+4. After installation, the `CamelJBang.java` file can be deleted.
+
+=== Option 2: Install from a Version-Pinned Catalog
+
+Another option is to install Camel CLI from a catalog tied to a specific Camel release tag.
+
+Example:
+[source,bash]
+----
+CAMEL_VERSION="4.18.0"
+CAMEL_TAG="camel-${CAMEL_VERSION}"
+CAMEL_JBANG_CATALOG_URL="https://raw.githubusercontent.com/apache/camel/${CAMEL_TAG}/jbang-catalog.json"
+
+jbang app install --force --fresh \
+  -Dcamel.jbang.version="${CAMEL_VERSION}" \
+  -Dcamel-kamelets.version="${CAMEL_VERSION}" \
+  camel@"${CAMEL_JBANG_CATALOG_URL}"
+----
+
+In this example:
+
+* The catalog URL points to a specific Camel release tag.
+* `-Dcamel.jbang.version` ensures the installed application uses that same Camel version.
+
+[NOTE]
+====
+Option 1 provides the most deterministic installation and is best suited for fully offline-safe environments.
+
+Option 2 offers a simpler installation while still ensuring the version is pinned to a specific Camel release.
+====
+
+=== Option 3: Use Camel Launcher
+
+See xref:camel-jbang-launcher.adoc[Camel CLI Launcher]
+
+== Container Image
+
+There is also a container image available in https://hub.docker.com/r/apache/camel-jbang/[Dockerhub]
+
+[source,bash]
+----
+docker pull apache/camel-jbang:4.21.0
+----
+
+or
+
+[source,bash]
+----
+podman pull apache/camel-jbang:4.21.0
+----
+
+Once you have the image in your local registry, you can run all the commands listed below by simple doing:
+
+[source,bash]
+----
+docker run apache/camel-jbang:4.21.0 version
+----
+
+or
+
+[source,bash]
+----
+podman run apache/camel-jbang:4.21.0 version
+----
+
+This will print the following result:
+
+[source,bash]
+----
+Camel CLI version: 4.21.0
+----
+
+So running a simple route will be as easy as doing the following:
+
+[source,bash]
+----
+docker run -v .:/integrations apache/camel-jbang:4.21.0 run /integrations/example.yaml
+----
+
+or
+
+[source,bash]
+----
+podman run -v .:/integrations apache/camel-jbang:4.21.0 run /integrations/example.yaml
+----

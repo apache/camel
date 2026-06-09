@@ -53,7 +53,6 @@ In the example above the test uses YAML as a domain specific language.
 The plugin supports the following languages to write automated tests:
 
 * YAML
-* Groovy
 * Java
 * XML
 * Cucumber (.feature file extension)

@@ -7,6 +7,7 @@
 ** xref:camel-console.adoc[Camel Developer Console]
 ** xref:camel-jbang.adoc[Camel CLI]
 *** xref:camel-jbang-getting-started.adoc[Getting Started]
+*** xref:camel-jbang-installation.adoc[Installation Options]
 *** xref:camel-jbang-running.adoc[Running Routes]
 *** xref:camel-jbang-dev-services.adoc[Dev Services]
 *** xref:camel-jbang-devtools.adoc[Development Tools]

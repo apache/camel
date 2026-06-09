@@ -168,7 +168,6 @@ camel get route
   PID   NAME      ID      FROM                        STATUS    AGE   TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
  61818  MyCamel   hello   timer://hello?period=2000   Running  29m2s    870       0         0     0    0   14     0s/0s/-
  63051  dude      java    timer://java?period=1000    Running    46s     46       0         0     0    0    9     0s/0s/-
- 63068  mygroovy  groovy  timer://groovy?period=1000  Running    34s     34       0         0     0    0    5     0s/0s/-
 ----
 
 TIP: Use `camel get --help` to display all the available commands as additional will be added in upcoming releases.

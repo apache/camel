@@ -457,14 +457,7 @@ then copy the URL from the browser window and run the example with Camel CLI:
 camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/hello-java
 ----
 
-You can also use wildcards (i.e. `*`) to match multiple files, such as running all the groovy files:
-
-[source,bash]
-----
-camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/languages/*.groovy
-----
-
-Or you can run all files starting with rou*
+You can also use wildcards (i.e. `*`) to match multiple files, or you can run all files starting with rou*
 
 [source,bash]
 ----
@@ -526,13 +519,6 @@ You can also download a single file, such as one of the Camel Kamelets examples:
 [source,bash]
 ----
 camel init https://github.com/apache/camel-kamelets-examples/blob/main/jbang/hello-yaml/hello.camel.yaml
-----
-
-This is a groovy route, which you can run with (or use `*`):
-
-[source,bash]
-----
-camel run simple.groovy
 ----
 
 === Downloading routes form GitHub gists
@@ -848,28 +834,6 @@ And for Quarkus:
 camel run foo.camel.yaml --runtime=quarkus --quarkus-version=3.9.4
 ----
 
-== Running Camel with Groovy Sources
-
-*Available as of Camel 4.14*
-
-In Camel 4.14 then support for using Groovy source together with Camel CLI has been improved.
-You can now include `.groovy` source files when you use `camel run` and let the Groovy source files be pre-compiled during startup.
-This allows to have a common set of groovy classes and functions which can be used by Camel and Java.
-
-Because this class-loader is required to be in use for being able to load the groovy pre-compiled
-classes, then this feature will only work via Camel which has control of classloading when used
-with Camel features that would support this such as in the route DSL and elsewhere.
-
-However, there may be some features in Camel where this may not work (yet).
-
-You can find an example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/groovy
-
-IMPORTANT: This feature is only intended to include smaller groovy sources as small functions, DTOs
-that makes it easier to use together with Camel for low-code integrations. It is not
-intended to support Groovy as a general purpose programming language for Camel. For this kind
-then you can use groovy and Java together and follow best practices for this, such as
-using the joint-compilation via Maven plugins during build.
-
 == Downloading JARs over the internet
 
 By default, Camel CLI will automatically resolve dependencies needed to run Camel, which is done
@@ -1028,3 +992,20 @@ If you want to run Camel application without assuming any location (even `~/.m2/
 ----
 camel run foo.java --maven-settings=false
 ----
+
+== Running a Maven based project
+
+Camel CLI is intended for flat-file-based projects, where you run small integrations.
+However, Camel CLI may be used as a tool for migrating existing Maven based projects.
+To make the migration easier, then JBang can do _best effort_ to run, export, or transform these projects.
+
+For example, if you have a Maven-based project, you can execute
+
+[source,bash]
+----
+camel run pom.xml
+----
+
+Camel CLI will then scan in `src/main/java` and `src/main/resources` for files to include (recursive).
+
+NOTE: Using `camel run pom.xml` is not intended as a fully compatible way of running an existing Maven-based project. It cannot start Quarkus or Spring Boot applications; instead, use the proper plugins/commands. The command is mainly used to migrate from old projects.
