@@ -1,23 +1,20 @@
 = Camel CLI - Dev Services
 
-The Camel CLI can start and manage local infrastructure services (databases, message brokers, etc.) for development and testing. This works similar to Spring Boot Dev Services and Quarkus Dev Services — powered by Apache Camel test-infra and containers (Docker or Podman). For the full overview, see xref:camel-jbang.adoc[Camel CLI].
+The Camel CLI can start and manage local infrastructure services (databases, message brokers, etc.)
+for development and testing — similar to Spring Boot Dev Services and Quarkus Dev Services.
+Services are powered by Apache Camel test-infra and run in containers (Docker or Podman).
 
-Camel CLI `infra` command can be used to `list`, `run` and `stop` external services that can be used for fast prototyping and testing.
-Apache Camel test-infra Services are exposed via the `infra` command, in this way, the same infrastructure that is used to test
-Apache Camel itself, is exposed via Camel CLI, and services that are already proved to work with Apache Camel can be easily used.
+NOTE: The CLI commands use `camel infra` (short for infrastructure). In the documentation we call
+this feature _Dev Services_ to align with Spring Boot and Quarkus terminology — they mean the same thing.
 
 == Listing available services
-
-Supported external services can be listed with the following command:
 
 [source,bash]
 ----
 camel infra list
 ----
 
-Following is the output for the above-mentioned configuration.
-
-[source,bash]
+[source]
 ----
 ALIAS                   IMPLEMENTATION
  ignite
@@ -32,15 +29,19 @@ ALIAS                   IMPLEMENTATION
 
 == Running a service
 
-Supported external services can be run with the following command (Docker or Podman is required for most of the service):
+[source,bash]
+----
+camel infra run $SERVICE
+----
+
+Some services offer multiple implementations — pass the implementation name as a second argument:
 
 [source,bash]
 ----
-camel infra run $SERVICE ($OPTIONAL_SERVICE_IMPLEMENTATION)
+camel infra run kafka redpanda
 ----
 
-Once the service is up and running, information about the service are printed as json that can be easily used in the Camel Routes,
-for example:
+Once running, the service prints its connection details as JSON:
 
 [source,bash]
 ----
@@ -49,7 +50,7 @@ $ camel infra run ftp
 Starting service ftp
 {
   "getPort" : 52472,
-  "getFtpRootDir" : "file://path/to/current/directory/target/ftp/camel-test-infra-test-directory/camel-test-infra-configuration-test-directory"
+  "getFtpRootDir" : "file://path/to/current/directory/target/ftp/..."
 }
 ----
 
@@ -63,44 +64,17 @@ Starting service kafka with implementation redpanda
 }
 ----
 
-[source,bash]
-----
-$ camel infra run openldap
-
-Starting service openldap
-{
-  "getPort" : 32774,
-  "getSslPort" : 32775,
-  "getHost" : "localhost"
-}
-----
-
 == Stopping a service
 
-Stop a running infrastructure service:
-
 [source,bash]
 ----
-$ camel infra run arangodb
-...
-
-$ camel infra ps
- ALIAS             IMPLEMENTATION  DESCRIPTION
- arangodb                          ArangoDB is a multi-model database for high-performance applications.
-
-$ camel infra stop arangodb
-Shutting down service arangodb (PID: {pidNumber})
+camel infra stop arangodb
 ----
 
 == Listing running services
 
-Display running services, useful to retrieve the service ALIAS
-
 [source,bash]
 ----
-$ camel infra run arangodb
-...
-
 $ camel infra ps
  ALIAS             IMPLEMENTATION  DESCRIPTION
  arangodb                          ArangoDB is a multi-model database for high-performance applications.
@@ -108,13 +82,10 @@ $ camel infra ps
 
 == Getting service details
 
-Display running service information, the command will print the json containing information about the running service (ex. host, port, username)
+Retrieve connection details for a running service:
 
 [source,bash]
 ----
-$ camel infra run openldap
-...
-
 $ camel infra get openldap
 {
   "getPort" : 32774,
@@ -125,32 +96,18 @@ $ camel infra get openldap
 
 == Viewing service logs
 
-The command `camel infra log` gathers and displays the log of all running services (similar to tail command)
+Tail logs from all running services:
 
 [source,bash]
 ----
-$ camel infra log
-[service1] ...
-[service2] ...
-[service1] ...
-[service2] ...
-[service2] ...
-[service2] ...
-[service1] ...
-[service2] ...
-[service1] ...
-[service1] ...
-[service1] ...
+camel infra log
 ----
 
-In order to retrieve the log of a specific service the service alias can be provided
+Or from a specific service:
 
 [source,bash]
 ----
-$ camel infra log service
-[service] ...
-[service] ...
-[service] ...
+camel infra log openldap
 ----
 
 == See Also

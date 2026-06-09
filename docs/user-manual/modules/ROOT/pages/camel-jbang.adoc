@@ -87,8 +87,12 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
   for development and testing, powered by Camel test-infra and containers.
 
 | xref:camel-jbang-devtools.adoc[Development Tools]
-| Sending and receiving messages, dependency injection, JDBC configuration,
-  terminal scripting, validate plugin.
+| Sending and receiving messages, JDBC configuration,
+  terminal scripting, IDE editing, validate plugin.
+
+| xref:camel-jbang-dependency-injection.adoc[Dependency Injection]
+| Camel, Spring Boot, and Quarkus annotation-based DI in standalone mode,
+  XML DSL bean definitions, Spring Beans XML support.
 
 | xref:camel-jbang-debugging.adoc[Debugging]
 | Camel route debugging from the CLI, IDE integration (VSCode, IDEA), Java-level debugging.

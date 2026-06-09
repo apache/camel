@@ -11,6 +11,7 @@
 *** xref:camel-jbang-running.adoc[Running Camel]
 *** xref:camel-jbang-dev-services.adoc[Dev Services]
 *** xref:camel-jbang-devtools.adoc[Development Tools]
+*** xref:camel-jbang-dependency-injection.adoc[Dependency Injection]
 *** xref:camel-jbang-debugging.adoc[Debugging]
 *** xref:camel-jbang-transforming.adoc[Data Transformation]
 *** xref:camel-jbang-managing.adoc[Managing Integrations]
