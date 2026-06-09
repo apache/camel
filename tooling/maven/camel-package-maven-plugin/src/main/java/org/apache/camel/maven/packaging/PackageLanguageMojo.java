@@ -348,7 +348,47 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         fun.setGroup(group);
         fun.setLabel(label);
         fun.setOgnl(ognl);
+        // parse examples from @Metadata.examples()
+        if (metadata.examples() != null) {
+            for (String ex : metadata.examples()) {
+                if (!Strings.isNullOrEmpty(ex)) {
+                    fun.addExample(ex.trim());
+                }
+            }
+        }
+        // parse param= entries from field-level @Metadata.annotations()
+        if (metadata.annotations() != null) {
+            for (String s : metadata.annotations()) {
+                if (s.startsWith("param=")) {
+                    LanguageModel.FunctionParamModel param = parseParam(s.substring(6));
+                    if (param != null) {
+                        fun.addParam(param);
+                    }
+                }
+            }
+        }
         model.addFunction(fun);
+    }
+
+    private static LanguageModel.FunctionParamModel parseParam(String value) {
+        // format: name:javaType:required|optional:defaultValue:description
+        String[] parts = value.split(":", 5);
+        if (parts.length < 2) {
+            return null;
+        }
+        LanguageModel.FunctionParamModel param = new LanguageModel.FunctionParamModel();
+        param.setName(parts[0].trim());
+        param.setJavaType(parts[1].trim());
+        if (parts.length > 2) {
+            param.setRequired("required".equalsIgnoreCase(parts[2].trim()));
+        }
+        if (parts.length > 3 && !parts[3].trim().isEmpty()) {
+            param.setDefaultValue(parts[3].trim());
+        }
+        if (parts.length > 4) {
+            param.setDescription(parts[4].trim());
+        }
+        return param;
     }
 
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext)

@@ -641,6 +641,30 @@ public final class JsonMapper {
         func.setDescription(mp.getString("description"));
         func.setOgnl(mp.getBoolean("ognl"));
         func.setSuffix(mp.getString("suffix"));
+        // parse params array
+        Object paramsObj = mp.get("params");
+        if (paramsObj instanceof JsonArray paramsArr) {
+            for (Object p : paramsArr) {
+                if (p instanceof JsonObject po) {
+                    LanguageModel.FunctionParamModel param = new LanguageModel.FunctionParamModel();
+                    param.setName(po.getString("name"));
+                    param.setJavaType(po.getString("javaType"));
+                    param.setRequired(po.getBooleanOrDefault("required", false));
+                    param.setDefaultValue(po.getString("defaultValue"));
+                    param.setDescription(po.getString("description"));
+                    func.addParam(param);
+                }
+            }
+        }
+        // parse examples array
+        Object examplesObj = mp.get("examples");
+        if (examplesObj instanceof JsonArray examplesArr) {
+            for (Object e : examplesArr) {
+                if (e instanceof String s) {
+                    func.addExample(s);
+                }
+            }
+        }
     }
 
     public static JsonObject asJsonObject(List<? extends BaseOptionModel> options) {
@@ -665,6 +689,28 @@ public final class JsonMapper {
             }
             if (o.getSuffix() != null) {
                 jo.put("suffix", o.getSuffix());
+            }
+            if (!o.getParams().isEmpty()) {
+                JsonArray paramsArr = new JsonArray();
+                for (LanguageModel.FunctionParamModel p : o.getParams()) {
+                    JsonObject po = new JsonObject();
+                    po.put("name", p.getName());
+                    if (p.getJavaType() != null) {
+                        po.put("javaType", p.getJavaType());
+                    }
+                    po.put("required", p.isRequired());
+                    if (p.getDefaultValue() != null) {
+                        po.put("defaultValue", p.getDefaultValue());
+                    }
+                    if (p.getDescription() != null) {
+                        po.put("description", p.getDescription());
+                    }
+                    paramsArr.add(po);
+                }
+                jo.put("params", paramsArr);
+            }
+            if (!o.getExamples().isEmpty()) {
+                jo.put("examples", new JsonArray(o.getExamples()));
             }
             json.put(o.getName(), jo);
         }

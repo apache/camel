@@ -209,4 +209,11 @@ public @interface Metadata {
      */
     boolean important() default false;
 
+    /**
+     * Usage examples for documentation and AI tooling.
+     *
+     * Each entry is a compact expression and result pair such as "${abs(-5)} -> 5".
+     */
+    String[] examples() default {};
+
 }
