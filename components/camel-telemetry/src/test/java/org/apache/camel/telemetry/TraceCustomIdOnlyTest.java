@@ -57,6 +57,20 @@ public class TraceCustomIdOnlyTest extends ExchangeTestSupport {
         checkTrace(traces.values().iterator().next());
     }
 
+    @Test
+    void testRouteWithoutCustomIdProducesNoSpans() {
+        template.sendBody("direct:background", "bg-body");
+        Map<String, MockTrace> traces = mockTracer.traces();
+        // The route has no custom routeId, so no route span, no processor spans,
+        // and no endpoint send spans are created within it — even though bgProcessor has a custom .id().
+        // Only the producer-side EVENT_SENT span from the test template is created (sender is outside any route).
+        assertEquals(1, traces.size());
+        MockTrace trace = traces.values().iterator().next();
+        assertEquals(1, trace.spans().size());
+        MockSpanAdapter span = (MockSpanAdapter) trace.spans().get(0);
+        assertEquals(Op.EVENT_SENT.toString(), span.getTag("op"));
+    }
+
     private void checkTrace(MockTrace trace) {
         List<Span> spans = trace.spans();
         // Expected spans:
@@ -109,6 +123,17 @@ public class TraceCustomIdOnlyTest extends ExchangeTestSupport {
                             }
                         }).id("myProcessor")
                         .to("log:info");
+
+                // route without custom routeId — should be entirely excluded from tracing
+                from("direct:background")
+                        .log("Background processing")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getIn().setHeader("bg", "done");
+                            }
+                        }).id("bgProcessor")
+                        .to("log:background");
             }
         };
     }

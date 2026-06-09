@@ -504,6 +504,17 @@ If you have custom telemetry code that relies on the processor span existing as 
 endpoint span for `to`, `toD`, `wireTap`, or `enrich`, you will need to adjust your span hierarchy
 expectations.
 
+==== Route-level filtering with `traceCustomIdOnly`
+
+The `traceCustomIdOnly` option now also applies at the route level. Routes without an explicit
+`.routeId()` are excluded entirely from tracing — no route span, no processor spans, and no
+endpoint send spans are created within them. Previously, `traceCustomIdOnly` only filtered
+individual processors within all routes.
+
+This means that if you relied on `traceCustomIdOnly=true` while leaving routes with auto-generated
+IDs, those routes will now produce zero spans. To restore tracing for a route, assign it an explicit
+`.routeId()`.
+
 === camel-opentelemetry2
 
 In order to prevent a potential leak when running asynchronous components we need to rethink the implementation details of `camel-opentelemetry2` and remove the  `Scope` wrapping that, when asynchronous, was opening the `Scope` in a thread and closing in another (what we had called "dirty" context). We are now removing this wrapping and moving this part exclusively in the custom Camel `Processors`. Here Camel will take care to open the Opentelemetry scope and close it within the same thread.

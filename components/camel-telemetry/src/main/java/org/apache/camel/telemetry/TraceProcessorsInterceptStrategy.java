@@ -111,9 +111,15 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
             if (isEndpointSending(processor)) {
                 return false;
             }
-            // when traceCustomIdOnly is enabled, only trace processors with an explicit .id()
-            if (tracer.isTraceCustomIdOnly() && !processorDefinition.hasCustomIdAssigned()) {
-                return false;
+            if (tracer.isTraceCustomIdOnly()) {
+                // skip all processors in routes without a custom routeId
+                if (!tracer.isCustomIdRoute(exchange.getFromRouteId())) {
+                    return false;
+                }
+                // within custom-id routes, only trace processors with an explicit .id()
+                if (!processorDefinition.hasCustomIdAssigned()) {
+                    return false;
+                }
             }
             String shortName = processorDefinition.getShortName();
             boolean enabled = isCoreProcessEnabled(shortName) || isCustomProcessEnabled(shortName);
