@@ -136,7 +136,7 @@ For the full list of commands, see the xref:jbang-commands/camel-jbang-commands.
 |===
 | Next step | When to use it
 
-| xref:camel-jbang-running.adoc[Running Routes]
+| xref:camel-jbang-running.adoc[Running Camel]
 | Dev mode options, profiles, properties, GitHub-hosted routes, Spring Boot and Quarkus runtimes.
 
 | xref:camel-jbang-dev-services.adoc[Dev Services]

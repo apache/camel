@@ -78,7 +78,7 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | xref:camel-jbang-installation.adoc[Installation Options]
 | Version-pinned installs, offline-safe setups, container images, installing without JBang.
 
-| xref:camel-jbang-running.adoc[Running Routes]
+| xref:camel-jbang-running.adoc[Running Camel]
 | Dev mode with hot reload, profiles, properties, dependency management, GitHub-hosted routes,
   Pipes, clipboard, Spring Boot and Quarkus runtimes.
 

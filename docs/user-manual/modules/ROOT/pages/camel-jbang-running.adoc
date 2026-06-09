@@ -1,4 +1,4 @@
-= Camel CLI - Running Routes
+= Camel CLI - Running Camel
 
 This page covers the many ways to run Camel integrations using the CLI, from interactive prompts to dev mode with hot reload.
 
