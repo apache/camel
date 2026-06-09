@@ -15,6 +15,7 @@
 *** xref:camel-jbang-transforming.adoc[Data Transformation]
 *** xref:camel-jbang-managing.adoc[Managing Integrations]
 *** xref:camel-jbang-projects.adoc[Projects and Catalog]
+*** xref:camel-jbang-tips.adoc[Tips and Recipes]
 *** xref:camel-jbang-configuration.adoc[Configuration]
 *** xref:jbang-commands/camel-jbang-commands.adoc[Command Reference]
 *** xref:camel-jbang-launcher.adoc[Camel CLI Launcher]

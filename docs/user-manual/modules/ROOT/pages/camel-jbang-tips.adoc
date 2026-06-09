@@ -1,0 +1,222 @@
+= Camel CLI - Tips and Recipes
+
+A collection of productivity shortcuts and advanced techniques for working with the Camel CLI.
+
+== Run from clipboard
+
+Run a route directly from the OS clipboard — copy some code, then run it:
+
+[source,bash]
+----
+camel run clipboard.yaml
+----
+
+The extension tells the CLI which DSL the clipboard content uses (`yaml`, `java`, `xml`).
+
+You can also run from clipboard in dev mode for live reload:
+
+[source,bash]
+----
+camel run clipboard.yaml --dev
+----
+
+Edit your code, copy it again, and Camel reloads automatically.
+
+== Run with inline code
+
+For quick one-liners, pass the route directly on the command line:
+
+[source,bash]
+----
+camel run --code='from("kamelet:beer-source").to("log:beer")'
+----
+
+Limitations:
+
+- Java DSL only
+- Wrap code in single quotes so you can use double quotes inside
+- All routes must fit in a single `--code` parameter
+
+From Camel 4.7, `--code` can also reference a `.java` file that contains bare route definitions
+(no `public class` wrapper):
+
+[source,java]
+----
+from("timer:java?period=1000")
+    .setBody()
+        .simple("Hello from ${routeId}")
+    .log("${body}");
+----
+
+[source,bash]
+----
+camel run --code=quick.java
+----
+
+== Interactive prompt for placeholder values
+
+Run with `--prompt` to have Camel ask for missing placeholder values at startup:
+
+[source,bash]
+----
+camel run foo.java --prompt
+----
+
+Camel will prompt for each unresolved `{{placeholder}}` in the terminal.
+Placeholders with default values (e.g. `{{time:1000}}`) can be accepted by pressing Enter.
+
+This is useful for prototypes where you want users to enter custom values quickly.
+Values can also be pre-configured in `application.properties`.
+
+== Stub components
+
+When troubleshooting a route that uses components you cannot connect to (JMS brokers, databases, etc.),
+stub them out:
+
+[source,bash]
+----
+camel run myroute.java --stub=jms
+----
+
+Camel replaces the stubbed component with an in-memory substitute, keeping the original endpoint URIs.
+You can then send test messages with:
+
+[source,bash]
+----
+camel cmd send --body='Something here'
+----
+
+Other stub options:
+
+[source,bash]
+----
+camel run myroute.java --stub=jms:inbox    # stub a specific endpoint
+camel run myroute.java --stub=jms,sql      # stub multiple components
+camel run myroute.java --stub=remote       # stub all remote components
+camel run myroute.java --stub=all          # stub everything
+----
+
+The `remote` flag uses the Camel catalog to determine which components connect to external systems.
+
+Use `camel cmd stub` to list stubbed endpoints, and `camel cmd stub --browse` to browse their messages.
+
+== Run from GitHub
+
+Run a route directly from a GitHub repository:
+
+[source,bash]
+----
+camel run github:apache:camel-kamelets-examples:jbang/hello-java/Hey.java
+----
+
+Or use the full HTTPS URL — copy it from your browser:
+
+[source,bash]
+----
+camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/hello-java
+----
+
+Wildcards work too:
+
+[source,bash]
+----
+camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/languages/rou*
+----
+
+=== Run from GitHub gists
+
+Gists are a quick way to share small Camel routes:
+
+[source,bash]
+----
+camel run https://gist.github.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92
+----
+
+A gist can contain multiple files (routes, properties, Java beans) — the CLI gathers them all.
+
+== Download from GitHub
+
+Download examples from GitHub to local disk for editing:
+
+[source,bash]
+----
+camel init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection
+camel run *
+----
+
+Use `--directory` to download into a specific folder:
+
+[source,bash]
+----
+camel init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection --directory=myproject
+----
+
+Single files and gists work the same way:
+
+[source,bash]
+----
+camel init https://github.com/apache/camel-kamelets-examples/blob/main/jbang/hello-yaml/hello.camel.yaml
+camel init https://gist.github.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92
+----
+
+== Upload files via HTTP
+
+When running with `--source-dir`, `--console`, and `--dev`, you can upload, modify, or delete
+source files over HTTP:
+
+[source,bash]
+----
+camel run --source-dir=mycode --console --dev
+----
+
+Upload or update a file:
+
+[source,bash]
+----
+curl -T bar.java http://0.0.0.0:8080/q/upload/bar.java
+----
+
+Delete files (wildcards supported):
+
+[source,bash]
+----
+curl -X DELETE http://0.0.0.0:8080/q/upload/bar.java
+curl -X DELETE http://0.0.0.0:8080/q/upload/*.java
+curl -X DELETE http://0.0.0.0:8080/q/upload/*
+----
+
+== Maven configuration
+
+By default, Camel CLI loads `~/.m2/settings.xml` for Maven mirrors, credentials, and repositories.
+
+You can override the settings file location:
+
+[source,bash]
+----
+camel run foo.java --maven-settings=/path/to/settings.xml --maven-settings-security=/path/to/settings-security.xml
+----
+
+Or disable Maven settings entirely:
+
+[source,bash]
+----
+camel run foo.java --maven-settings=false
+----
+
+For encrypted passwords in Maven settings, configure a master password with `mvn -emp`,
+store it in `~/.m2/settings-security.xml`, then encrypt repository passwords with `mvn -ep`.
+See the https://maven.apache.org/guides/mini/guide-encryption.html[Maven encryption guide] for details.
+
+== Running a Maven based project
+
+Camel CLI can do a _best effort_ run of an existing Maven-based project for migration purposes:
+
+[source,bash]
+----
+camel run pom.xml
+----
+
+Camel CLI scans `src/main/java` and `src/main/resources` for files to include.
+
+NOTE: This is not a fully compatible way to run Maven projects. It cannot start Spring Boot or Quarkus
+applications — use the proper plugins for those. This command is mainly useful for migrating from old projects.
