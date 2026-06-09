@@ -243,6 +243,26 @@ Camel version, the plugin GAV, or the effective `--repos`/`--repo` value
 changes. No user action is required; existing plugin entries are populated on
 first use after upgrade.
 
+=== camel-opentelemetry2 — Embedded OTLP receiver for OpenTelemetry Java Agent
+
+A new `exportTarget` option has been added to `OpenTelemetryTracer`. When using the OpenTelemetry Java Agent
+via Camel JBang, this option controls where spans are exported:
+
+* `tui` (default) — an embedded OTLP receiver is started inside the Camel process; the agent exports spans
+  to this receiver, which feeds them into the TUI Spans tab. No external collector is needed.
+* `jaeger` — the agent exports spans directly to a Jaeger instance (OTLP on port 4318). No embedded
+  receiver is created.
+
+Two new CLI flags have been added to `camel run`, `camel dev`, and `camel debug`:
+
+* `--open-telemetry-agent` — attaches the OpenTelemetry Java Agent to the Camel process. The agent
+  auto-instruments HTTP clients, JDBC, Kafka clients, gRPC, and other libraries.
+* `--open-telemetry-agent-export=<tui|jaeger>` — selects the export target (default: `tui`).
+
+The `camel-opentelemetry2` module now has an additional `provided`-scope dependency on
+`io.opentelemetry.proto:opentelemetry-proto` for the embedded OTLP receiver. This dependency is not
+pulled transitively into applications using `camel-opentelemetry2` at runtime.
+
 === camel-yaml-dsl
 
 A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
