@@ -62,130 +62,50 @@ The camel.jbang supports 48 options, which are listed below.
 
 == Configuration Commands
 
-Camel CLI `config` command is used to store and use the user configuration. This eliminates the need to specify CLI options each time. For example, to run a different Camel version, instead of executing
-
-[source,bash]
-----
-camel run * --camel-version=3.18.4
-----
-
-the camel-version can be added to the user configuration such as:
+Store frequently used CLI options so you don't have to specify them each time:
 
 [source,bash]
 ----
 camel config set camel-version=3.18.4
-----
-
-Now, the run command picks the user configuration:
-
-[source,bash]
-----
 camel run *
 ----
 
-=== Configuration Locations
+=== Configuration locations
 
-Camel CLI uses two possible configuration files:
+Camel CLI uses two configuration files:
 
-- Global configuration: ~/.camel-jbang-user.properties
-- Local configuration: ./camel-jbang-user.properties
+- Global: `~/.camel-jbang-user.properties`
+- Local: `./camel-jbang-user.properties` (takes precedence)
 
-=== Configuration Precedence
+Commands target global by default. Use `--global=false` for local configuration.
 
-When both files exist, the local configuration takes precedence over the global configuration.
+IMPORTANT: A set version via `camel config set` cannot be combined with `--camel-version` on the command line.
 
-=== Using Configuration Commands
-
-All camel config commands target the global configuration by default. To work with the local configuration instead, add the `--global=false` flag:
-[source,bash]
-----
-camel config <command> --global=false
-----
-This directs all configuration changes to the local ./camel-jbang-user.properties file.
-
-IMPORTANT: You cannot use both a set version via `camel config set` and also a version specified via `--camel-version` option,
-i.e., the following is not possible:
+=== Set, unset, list, and get
 
 [source,bash]
 ----
-camel config set camel-version=4.0.1
-camel run * --camel-version=4.3.0
-----
-
-=== Set and unset configuration
-
-Every Camel CLI option is added to the user configuration. For example, to export a simple project such as
-
-[source,bash]
-----
-camel init foo.yaml
 camel config set gav=com.foo:acme:1.0-SNAPSHOT
 camel config set runtime=spring-boot
-camel config set deps=org.apache.camel.springboot:camel-timer-starter
-camel config set camel-spring-boot-version=3.20.1
-
-camel export
-----
-
-User configuration keys are unset using the following:
-
-[source,bash]
-----
-camel config unset camel-spring-boot-version
-----
-
-=== List and get configurations
-
-User configuration keys are listed using the following:
-
-[source,bash]
-----
+camel config unset runtime
 camel config list
-----
-
-Following is the output for the above-mentioned configuration.
-
-[source,bash]
-----
-runtime = spring-boot
-deps = org.apache.camel.springboot:camel-timer-starter
-gav = com.foo:acme:1.0-SNAPSHOT
-----
-
-To obtain a value for the given key, use the `get` command.
-
-[source,bash]
-----
 camel config get gav
-
-com.foo:acme:1.0-SNAPSHOT
 ----
 
-=== Placeholders' substitutes
+=== Placeholder substitution
 
-User configuration values can be used as placeholder substitutes with command line properties, for example:
+Configuration values can be referenced as placeholders with `#optionName`:
 
 [source,bash]
 ----
 camel config set repos=https://maven.repository.my.repo.com/ga
-
-camel run 'Test.java' --logging-level=info --repos=#repos,https://packages.atlassian.com/maven-external
+camel run 'Test.java' --repos=#repos,https://packages.atlassian.com/maven-external
 ----
 
-In this example, since `repos` is set in the user configuration (`config set`) and the `camel run` command declares the placeholder `#repos`, `camel run` will replace the placeholder so that both repositories will be used during the execution.
-Notice, that to refer to the configuration value the syntax is `#optionName` eg `#repos`.
-
-NOTE: The placeholder substitution only works for every option that a given Camel command has.
-You can see all the options a command has via the help, eg `camel run --help`.
+NOTE: Placeholders only work for options that the given command supports. Run `camel <command> --help` to see available options.
 
 == Troubleshooting
 
-When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
-This is also the location where JBang stores downloaded JARs.
-
-Camel CLI also downloads needed dependencies while running. However, these dependencies
-are downloaded to your local Maven repository `~/.m2`.
-
-So if you find problems with running Camel CLI using what is seems like an outdated JAR, then you can
-try to delete these directories or parts of it.
+JBang stores state and downloaded JARs in `~/.jbang`. Camel CLI downloads dependencies to `~/.m2`.
+If you encounter issues with outdated JARs, try deleting the relevant entries in these directories.
 
