@@ -1,0 +1,305 @@
+= Camel CLI - Getting Started
+
+This guide covers installing the Camel CLI and running your first integration.
+For the full overview, see xref:camel-jbang.adoc[Camel CLI].
+
+== Installation
+
+First, you must install https://www.jbang.dev/[JBang], which is used for launching Camel.
+See instructions on https://www.jbang.dev/download/[JBang] how to download and install.
+
+After JBang is installed, you can verify JBang is working by executing the following command from a command shell:
+
+[source,bash]
+----
+jbang version
+----
+
+Which should output the version of JBang.
+
+To make it easier to use Camel CLI, then install the following:
+
+[source,bash]
+----
+jbang app install camel@apache/camel
+----
+
+This will install Apache Camel as the `camel` command within JBang, meaning that you can run Camel from the command line
+by just executing `camel` (see more next).
+
+Note: It requires access to the internet, in case of using a proxy, please ensure that the proxy is configured for your system.
+If Camel CLI is not working with your current configuration,
+please look to https://www.jbang.dev/documentation/jbang/latest/configuration.html#proxy-configuration[Proxy configuration in JBang documentation].
+
+=== Installing without JBang
+
+It is also possible to install and run Camel CLI without _JBang_ using the xref:camel-jbang-launcher.adoc[Camel CLI Launcher] which essentially is
+a standard Java _fat-jar_ with launch scripts.
+
+=== Installing a specific Camel CLI version
+
+By default, Camel CLI installs the latest release, which may not be the desired version.
+
+To use a specific version then you need to provide these when installing from jbang such as 4.14.1:
+
+[source,bash]
+----
+jbang app install --force --fresh -Dcamel.jbang.version=4.14.1 -Dcamel-kamelets.version=4.14.1 camel@apache/camel
+----
+
+TIP: You can use `--force` and `--fresh` to tell JBang to force installing the version and refresh downloading,
+so no previous downloaded cache etc. may cause a problem.
+
+IMPORTANT: From Camel 4.17 onwards then Kamelets are optional, and only downloaded on demand. You define the version
+of kamelets via `--kamelets-version` parameter to `camel run` or can pre-configure the version via `camel config set kamelets-version=4.17.0`.
+
+=== Installing Offline-Safe or Version-Pinned Camel CLI
+
+When installing Camel CLI using `jbang app install`, JBang will occasionally check
+upstream sources and update the installed application automatically. This may be undesirable if you
+want to ensure your Camel CLI installation remains on a specific Camel release.
+
+The following options allow you to install Camel CLI in a way that prevents unexpected upgrades.
+
+==== Option 1: Pin by Installing from a Local `CamelJBang.java`
+
+This approach pins the Camel version directly in the source file used to install the application.
+
+1. Download the `CamelJBang.java` file to your local machine:
++
+[source]
+----
+https://github.com/apache/camel/blob/main/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java
+----
+
+2. Edit the `CamelJBang.java` file and set the Camel version you want to use.
+
+3. Install Camel CLI locally:
++
+[source,bash]
+----
+jbang app install CamelJBang.java
+----
+
+4. After installation, the `CamelJBang.java` file can be deleted.
+
+==== Option 2: Install from a Version-Pinned Catalog
+
+Another option is to install Camel CLI from a catalog tied to a specific Camel release tag.
+
+Example:
+[source,bash]
+----
+CAMEL_VERSION="4.18.0"
+CAMEL_TAG="camel-${CAMEL_VERSION}"
+CAMEL_JBANG_CATALOG_URL="https://raw.githubusercontent.com/apache/camel/${CAMEL_TAG}/jbang-catalog.json"
+
+jbang app install --force --fresh \
+  -Dcamel.jbang.version="${CAMEL_VERSION}" \
+  -Dcamel-kamelets.version="${CAMEL_VERSION}" \
+  camel@"${CAMEL_JBANG_CATALOG_URL}"
+----
+
+In this example:
+
+* The catalog URL points to a specific Camel release tag.
+* `-Dcamel.jbang.version` ensures the installed application uses that same Camel version.
+
+[NOTE]
+====
+Option 1 provides the most deterministic installation and is best suited for fully offline-safe environments.
+
+Option 2 offers a simpler installation while still ensuring the version is pinned to a specific Camel release.
+====
+
+==== Option 3: Use Camel Launcher
+
+See xref:camel-jbang-launcher.adoc[Camel CLI Launcher]
+
+
+== Container Image
+
+There is also a container image available in https://hub.docker.com/r/apache/camel-jbang/[Dockerhub]
+
+[source,bash]
+----
+docker pull apache/camel-jbang:4.21.0
+----
+
+or
+
+[source,bash]
+----
+podman pull apache/camel-jbang:4.21.0
+----
+
+Once you have the image in your local registry, you can run all the commands listed below by simple doing:
+
+[source,bash]
+----
+docker run apache/camel-jbang:4.21.0 version
+----
+
+or
+
+[source,bash]
+----
+podman run apache/camel-jbang:4.21.0 version
+----
+
+This will print the following result:
+
+[source,bash]
+----
+Camel CLI version: 4.21.0
+----
+
+So running a simple route will be as easy as doing the following:
+
+[source,bash]
+----
+docker run -v .:/integrations apache/camel-jbang:4.21.0 run /integrations/example.yaml
+----
+
+or
+
+[source,bash]
+----
+podman run -v .:/integrations apache/camel-jbang:4.21.0 run /integrations/example.yaml
+----
+
+== Using Camel CLI
+
+The Camel CLI supports multiple commands. Running the command below will print all of them:
+
+[source,bash]
+----
+camel --help
+----
+
+TIP: The first time you run this command, it may cause dependencies to be cached, therefore taking a few extra seconds to run. If you are already using JBang and you get first time to run errors such as `Exception in thread "main" java.lang.NoClassDefFoundError: "org/apache/camel/dsl/jbang/core/commands/CamelJBangMain"` you may try clearing the JBang cache and re-install again.
+
+All the commands support the `--help` and will display the appropriate help if that flag is provided.
+
+TIP: For a complete reference of all commands and their options, see the xref:jbang-commands/camel-jbang-commands.adoc[Camel CLI Command Reference].
+
+=== Enable shell completion
+
+Camel CLI provides shell completion for bash and zsh out of the box. To enable shell completion for Camel CLI, run:
+
+[source,bash]
+----
+source <(camel completion)
+----
+
+To make it permanent, run:
+
+[source,bash]
+----
+echo 'source <(camel completion)' >> ~/.bashrc
+----
+
+== REPL loop
+
+A simple read-eval-print loop is available, you can launch it with:
+
+[source, bash]
+----
+camel shell
+----
+
+== Creating and running Camel routes
+
+You can create a new basic routes with the `init` command.
+
+For example, to create an XML route, you can run:
+
+[source,bash]
+----
+camel init cheese.xml
+----
+
+Which creates the file `cheese.xml` (in the current directory) with a sample route.
+
+To run the file, you do:
+
+[source,bash]
+----
+camel run cheese.xml
+----
+
+NOTE: You can create and run any of the supported xref:dsl.adoc[DSLs] in Camel such as YAML, XML, Java, Groovy.
+
+To create a new .java route, you simply do:
+
+[source,bash]
+----
+camel init foo.java
+----
+
+When using the init command, then Camel will by default create the file in the current directory.
+However, you can use
+the `--directory` option to create the file in the specified directory.
+For example, to create in a folder
+named `_foobar_` you can do:
+
+[source,bash]
+----
+camel init foo.java --directory=foobar
+----
+
+=== Running Routes from multiple files
+
+You can run more than one file, for example, to run two YAML files you can do:
+
+[source,bash]
+----
+camel run one.yaml two.yaml
+----
+
+You can also mix different xref:dsl.adoc[DSLs] such as YAML and Java:
+
+[source,bash]
+----
+camel run one.yaml hello.java
+----
+
+You can also use wildcards (i.e. `*`) to match multiple files, such as running all the YAML files:
+
+[source,bash]
+----
+camel run *.yaml
+----
+
+Or you can run all files starting with foo*
+
+[source,bash]
+----
+camel run foo*
+----
+
+And to run everything
+
+[source,bash]
+----
+camel run *
+----
+
+TIP: The run goal can also detect files that are `properties`, such as `application.properties`.
+
+=== Running a Maven based project
+
+Camel CLI is intended for flat-file-based projects, where you run small integrations.
+However, Camel CLI may be used as a tool for migrating existing Maven based projects.
+To make the migration easier, then JBang can do _best effort_ to run, export, or transform these projects.
+
+For example, if you have a Maven-based project, you can execute
+
+[source,bash]
+----
+camel run pom.xml
+----
+
+Camel CLI will then scan in `src/main/java` and `src/main/resources` for files to include (recursive).
+
+NOTE: Using `camel run pom.xml` is not intended as a fully compatible way of running an existing Maven-based project. It cannot start Quarkus or Spring Boot applications; instead, use the proper plugins/commands. The command is mainly used to migrate from old projects.

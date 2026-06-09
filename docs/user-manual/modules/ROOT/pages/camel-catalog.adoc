@@ -34,7 +34,7 @@ The following tools uses the catalog in their editor:
 The xref:camel-report-maven-plugin.adoc[Camel Maven validation] plugin uses the catalog during validation of all the
 Camel endpoints found while scanning the source code.
 
-The xref:camel-jbang.adoc[Camel CLI] CLI uses the catalog in some of the commands and actions.
+The xref:camel-jbang.adoc[Camel CLI] uses the catalog in some of the commands and actions.
 
 === Layout of camel-catalog
 

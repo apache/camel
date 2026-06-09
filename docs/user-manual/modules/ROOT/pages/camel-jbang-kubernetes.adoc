@@ -170,7 +170,7 @@ The Camel CLI Kubernetes export command provides several options to customize th
 |The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.
 
 |--profile
-|The developer xref:manual::camel-jbang.adoc#_using_profiles[profile] to use a specific configuration in configuration files using the naming style `application-<profile>.properties`.
+|The developer xref:manual::camel-jbang-running.adoc#_using_profiles[profile] to use a specific configuration in configuration files using the naming style `application-<profile>.properties`.
 |=======================================================================
 
 The Kubernetes plugin export command also inherits all options from the arbitrary Camel CLI export command.
