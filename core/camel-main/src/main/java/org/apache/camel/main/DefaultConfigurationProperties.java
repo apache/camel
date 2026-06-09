@@ -430,14 +430,14 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public boolean isModeline() {
         return modeline;
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public void setModeline(boolean modeline) {
         this.modeline = modeline;
@@ -450,7 +450,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical
      * (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel
-     * JBang to normalize existing routes: camel yaml normalize &lt;file&gt;
+     * CLI to normalize existing routes: camel yaml normalize &lt;file&gt;
      */
     public void setYamlDslCompactNotationWarn(boolean yamlDslCompactNotationWarn) {
         this.yamlDslCompactNotationWarn = yamlDslCompactNotationWarn;
@@ -1926,7 +1926,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel CLI
      */
     public T withModeline(boolean modeline) {
         this.modeline = modeline;

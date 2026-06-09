@@ -11,7 +11,7 @@ For example as shown below:
 
 image::images/route-diagram-sample.png[Foo Camel Route Diagram]
 
-== Generating Route Diagrams with Camel JBang
+== Generating Route Diagrams with Camel CLI
 
 You can generate route diagrams with JBang such:
 
@@ -36,7 +36,7 @@ camel cmd route-diagram MyRoute.java foo.yaml
 
 TIP: See more options with `camel cmd route-diagram --help`.
 
-And if you run Camel JBang with `--console` then the developer console also comes with this functionality,
+And if you run Camel CLI with `--console` then the developer console also comes with this functionality,
 by opening the link: http://localhost:8080/q/dev/route-diagram
 
 
@@ -140,9 +140,9 @@ and `couchbase:http://host:8091?bucket=invoices` target different buckets. Camel
 on component parameters to correctly match endpoints — two URIs that differ only in identity parameters are treated
 as different destinations in the topology.
 
-=== Generating Topology Diagrams with Camel JBang
+=== Generating Topology Diagrams with Camel CLI
 
-When running with Camel JBang, you can generate topology diagrams via:
+When running with Camel CLI, you can generate topology diagrams via:
 
 [source,bash]
 ----

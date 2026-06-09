@@ -1,6 +1,6 @@
 ## Groovy
 
-This example shows how to use Groovy with extra dependencies in Camel JBang.
+This example shows how to use Groovy with extra dependencies in Camel CLI.
 
 The route uses `EmailValidator` from [Apache Commons Validator](https://commons.apache.org/proper/commons-validator/)
 to validate an email address and route the message accordingly using content-based routing.
@@ -30,7 +30,7 @@ To run this example you can either install Camel on JBang via:
 $ jbang app install camel@apache/camel
 ```
 
-Which allows to run Camel JBang with `camel` as shown below.
+Which allows to run Camel CLI with `camel` as shown below.
 
 ### How to run
 

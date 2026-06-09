@@ -228,7 +228,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     }
 
     /**
-     * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
+     * Clear the captured metrics data when Camel is reloading routes such as when using Camel CLI.
      */
     public void setClearOnReload(boolean clearOnReload) {
         this.clearOnReload = clearOnReload;

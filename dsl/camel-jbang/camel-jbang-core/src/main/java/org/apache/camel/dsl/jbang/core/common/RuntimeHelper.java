@@ -33,9 +33,9 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * Shared helper for discovering running Camel processes and communicating with them via the file-based IPC protocol.
  * <p>
- * Camel JBang applications write status snapshots to {@code ~/.camel/{pid}-status.json}. Actions are requested by
- * writing to {@code {pid}-action-{requestId}.json} and reading the response from {@code {pid}-output-{requestId}.json}.
- * Each request gets a unique ID so concurrent callers (CLI, MCP server, etc.) don't interfere with each other.
+ * Camel CLI applications write status snapshots to {@code ~/.camel/{pid}-status.json}. Actions are requested by writing
+ * to {@code {pid}-action-{requestId}.json} and reading the response from {@code {pid}-output-{requestId}.json}. Each
+ * request gets a unique ID so concurrent callers (CLI, MCP server, etc.) don't interfere with each other.
  * <p>
  * This class is used by both the {@code camel ask} CLI command and the MCP server's {@code RuntimeService}.
  *

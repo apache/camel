@@ -177,8 +177,8 @@ When reviewing PRs, apply the same investigative rigor:
 When writing or modifying `.adoc` documentation:
 
 - **Use `xref:` for internal links**, never external `https://camel.apache.org/...` URLs.
-  Example: `xref:manual::camel-jbang.adoc[Camel JBang]` instead of
-  `https://camel.apache.org/manual/camel-jbang.html[Camel JBang]`.
+  Example: `xref:manual::camel-jbang.adoc[Camel CLI]` instead of
+  `https://camel.apache.org/manual/camel-jbang.html[Camel CLI]`.
 - **Cross-version xref fragments**: When linking to a section anchor (e.g., `#_my_section`) using
   the `components::` prefix, verify that the target section exists in the **current released version**,
   not just on `main`. The `components::` prefix resolves to the latest released version, so anchors

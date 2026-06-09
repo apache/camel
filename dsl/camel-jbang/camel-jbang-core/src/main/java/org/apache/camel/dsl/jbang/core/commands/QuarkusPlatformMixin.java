@@ -58,7 +58,7 @@ public class QuarkusPlatformMixin extends QuarkusExtensionRegistryMixin implemen
      * matching the specified {@code camelVersion}.
      *
      * @param  camelVersion    version of Camel either specified via {@code --camel-version} or the version of the
-     *                         currently running Camel JBang
+     *                         currently running Camel CLI
      * @param  mavenDownloader the {@link MavenDownloader} to use for resolving Maven Artifacts
      * @return                 a new {@link QuarkusPlatformBom}
      */

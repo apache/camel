@@ -31,7 +31,7 @@
     <artifactId>camel-jbang-plugin-kubernetes</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Kubernetes</name>
-    <description>Camel JBang Kubernetes Plugin</description>
+    <description>Camel CLI Kubernetes Plugin</description>
 
     <properties>
         <firstVersion>4.8.0</firstVersion>

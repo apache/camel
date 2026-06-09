@@ -31,7 +31,7 @@
     <artifactId>camel-jbang-plugin-route-parser</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Route Parser</name>
-    <description>Camel JBang Route Parser</description>
+    <description>Camel CLI Route Parser</description>
 
     <properties>
         <firstVersion>4.17.0</firstVersion>

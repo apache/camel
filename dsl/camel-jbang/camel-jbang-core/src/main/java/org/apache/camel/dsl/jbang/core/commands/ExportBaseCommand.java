@@ -238,7 +238,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected MavenResolverMixin mavenResolver;
 
     @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
     protected boolean packageScanJars;
 
     @CommandLine.Option(names = { "--build-property" },

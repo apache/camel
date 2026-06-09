@@ -129,7 +129,7 @@ public class CliLocalProcessService implements CliService {
             execute(String.format("config set repos=%s", mavenRepos));
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Camel JBang version {}", version());
+            LOG.debug("Camel CLI version {}", version());
         }
     }
 
@@ -343,7 +343,7 @@ public class CliLocalProcessService implements CliService {
                         version = StringHelper.between(versionSummary, "camel-version = ", "\n").trim();
                     }
                     if (version == null) {
-                        version = StringHelper.between(versionSummary, "Camel JBang version:", "\n").trim();
+                        version = StringHelper.between(versionSummary, "Camel CLI version:", "\n").trim();
                     }
                     return version;
                 });

@@ -4,7 +4,7 @@
     "group": "camel-jbang",
     "name": "source-dir",
     "title": "Source Directory",
-    "description": "Information about Camel JBang source files",
+    "description": "Information about Camel CLI source files",
     "deprecated": false,
     "javaType": "org.apache.camel.jbang.console.SourceDirDevConsole",
     "groupId": "org.apache.camel",

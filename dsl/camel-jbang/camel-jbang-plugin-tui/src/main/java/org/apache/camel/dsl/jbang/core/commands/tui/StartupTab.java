@@ -402,7 +402,7 @@ class StartupTab implements MonitorTab {
 
                 ## Startup Recorder
 
-                This tab requires the startup recorder to be enabled. Camel JBang
+                This tab requires the startup recorder to be enabled. Camel CLI
                 enables it by default in `dev` profile. For production deployments,
                 enable it with `camel.main.startup-recorder=true`.
 

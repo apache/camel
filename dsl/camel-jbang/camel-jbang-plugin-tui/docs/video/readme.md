@@ -6,7 +6,7 @@ This produces Asciinema `.cast` files with pixel-perfect rendering
 
 ## Prerequisites
 
-- [Camel JBang](https://camel.apache.org/manual/camel-jbang.html) installed
+- [Camel CLI](https://camel.apache.org/manual/camel-jbang.html) installed
 - [camel-jbang-examples](https://github.com/apache/camel-jbang-examples) cloned
   (for the circuit-breaker, openapi, and routes demos)
 - Optional: [agg](https://github.com/asciinema/agg) to convert `.cast` to `.gif`

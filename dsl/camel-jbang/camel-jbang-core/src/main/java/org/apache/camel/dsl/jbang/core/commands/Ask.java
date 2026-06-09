@@ -419,13 +419,13 @@ public class Ask extends CamelCommand {
         // Example tools
         tools.add(new LlmClient.ToolDef(
                 "list_examples",
-                "List available Camel JBang examples. Returns name, title, description, difficulty level, and tags.",
+                "List available Camel CLI examples. Returns name, title, description, difficulty level, and tags.",
                 objectParams(Map.of(
                         "filter", stringProp("Filter by name, description, or tag (case-insensitive)"),
                         "level", stringProp("Filter by difficulty: beginner, intermediate, or advanced")))));
         tools.add(new LlmClient.ToolDef(
                 "get_example_file",
-                "Get the content of a file from a bundled Camel JBang example. Use list_examples first to find available examples.",
+                "Get the content of a file from a bundled Camel CLI example. Use list_examples first to find available examples.",
                 objectParams(Map.of(
                         "example", stringProp("Example name (e.g., timer-log, rest-api, circuit-breaker)"),
                         "file", stringProp("File name within the example (e.g., route.camel.yaml)")))));

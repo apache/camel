@@ -43,7 +43,7 @@ public class Doctor extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        printer().println("Camel JBang Doctor");
+        printer().println("Camel CLI Doctor");
         printer().println("==================");
         printer().println();
 

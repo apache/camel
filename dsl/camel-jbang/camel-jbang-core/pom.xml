@@ -33,7 +33,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: JBang :: Core</name>
-    <description>Camel JBang Core</description>
+    <description>Camel CLI Core</description>
 
     <properties>
         <firstVersion>3.12.0</firstVersion>

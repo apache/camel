@@ -127,6 +127,9 @@ and dev consoles for nodes inside Choice EIP branches.
 
 === camel-jbang
 
+Camel JBang has been rebranded as Camel CLI in the documentation.
+Camel CLI is powered by https://www.jbang.dev/[JBang].
+
 README files (`README.md`, `README.adoc`, etc.) are now included when running integrations with `camel run`.
 Previously these files were silently excluded. The README files are added to the classpath
 and exposed via the CLI connector so tools such as `camel monitor` can display them.

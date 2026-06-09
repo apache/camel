@@ -34,7 +34,7 @@ import org.jline.utils.InfoCmp;
 import org.jline.utils.Status;
 
 /**
- * Interactive terminal that runs in full screen and allows a more immersive user experience with Camel JBang CLI.
+ * Interactive terminal that runs in full screen and allows a more immersive user experience with Camel CLI CLI.
  */
 public class InteractiveTerminal implements Closeable {
 

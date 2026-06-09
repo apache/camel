@@ -31,7 +31,7 @@
     <artifactId>camel-jbang-plugin-tui</artifactId>
 
     <name>Camel :: JBang :: Plugin :: TUI</name>
-    <description>Camel JBang TUI Plugin - Terminal UI dashboards for monitoring Camel integrations</description>
+    <description>Camel CLI TUI Plugin - Terminal UI dashboards for monitoring Camel integrations</description>
 
     <properties>
         <firstVersion>4.20.0</firstVersion>

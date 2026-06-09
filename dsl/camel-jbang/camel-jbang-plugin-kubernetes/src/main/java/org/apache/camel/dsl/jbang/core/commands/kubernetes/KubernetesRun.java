@@ -208,7 +208,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     List<String> excludes = new ArrayList<>();
 
     @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
     boolean packageScanJars;
 
     @CommandLine.Option(names = { "--maven-settings" },

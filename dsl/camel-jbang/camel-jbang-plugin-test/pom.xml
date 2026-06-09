@@ -31,7 +31,7 @@
     <artifactId>camel-jbang-plugin-test</artifactId>
 
     <name>Camel :: JBang :: Plugin :: Testing</name>
-    <description>Camel JBang Testing Plugin</description>
+    <description>Camel CLI Testing Plugin</description>
 
     <properties>
         <firstVersion>4.14.0</firstVersion>

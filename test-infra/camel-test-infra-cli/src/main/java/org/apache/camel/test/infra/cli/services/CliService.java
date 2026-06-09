@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- * Test infra service for Camel Cli (Camel JBang)
+ * Test infra service for Camel Cli (Camel CLI)
  */
 public interface CliService extends BeforeEachCallback, AfterEachCallback, TestService {
 

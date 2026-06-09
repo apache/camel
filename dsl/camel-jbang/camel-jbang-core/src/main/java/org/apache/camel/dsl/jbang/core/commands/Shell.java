@@ -37,7 +37,7 @@ import org.jline.utils.AttributedStyle;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "shell",
-                     description = "Interactive Camel JBang shell.",
+                     description = "Interactive Camel CLI shell.",
                      footer = {
                              "%nExamples:",
                              "  camel shell",
@@ -150,7 +150,7 @@ public class Shell extends CamelCommand {
             }
             writer.println(sb.toAnsi(shell.terminal()));
         } else {
-            String banner = "Apache Camel JBang Shell";
+            String banner = "Apache Camel CLI Shell";
             if (camelVersion != null) {
                 banner += " v" + camelVersion;
             }

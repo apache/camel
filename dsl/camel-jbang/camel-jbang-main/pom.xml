@@ -32,7 +32,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: JBang :: Main</name>
-    <description>Camel JBang</description>
+    <description>Camel CLI</description>
 
     <properties>
         <firstVersion>3.12.0</firstVersion>
