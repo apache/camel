@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -170,32 +171,40 @@ class ListProcessTest extends ProcessCommandTestSupport {
 
     @Test
     void testSortByName() throws Exception {
-        long pid1 = 11111L;
-        long pid2 = 22222L;
+        long zebraPid = 11111L;
+        long applePid = 22222L;
 
         JsonObject status1 = buildContextStatus("zebra", 5);
         JsonObject status2 = buildContextStatus("apple", 5);
-        writeStatusFile(pid1, status1);
-        writeStatusFile(pid2, status2);
+        writeStatusFile(zebraPid, status1);
+        writeStatusFile(applePid, status2);
 
+        // zebra process first in stream — sort must promote apple to top
+        assertAppleBeforeZebra(zebraPid, applePid);
+        // apple process first in stream — sort must preserve the order
+        printer = new StringPrinter();
+        assertAppleBeforeZebra(applePid, zebraPid);
+    }
+
+    private void assertAppleBeforeZebra(long firstPid, long secondPid) throws Exception {
         ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
         command.sort = "name";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
-            ProcessHandle ph1 = mockProcessHandle(pid1);
-            ProcessHandle ph2 = mockProcessHandle(pid2);
+            ProcessHandle ph1 = mockProcessHandle(firstPid);
+            ProcessHandle ph2 = mockProcessHandle(secondPid);
             ProcessHandle currentHandle = mockCurrentHandle();
             mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            // fresh stream per invocation so allProcesses() can be called multiple times
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph1, ph2));
 
             int exit = command.doCall();
 
             assertEquals(0, exit);
             String output = printer.getOutput();
-            // apple should appear before zebra when sorted ascending by name
             int applePos = output.indexOf("apple");
             int zebraPos = output.indexOf("zebra");
-            assertTrue(applePos < zebraPos, "Sort by name ascending: apple must precede zebra");
+            assertTrue(applePos < zebraPos, "Sort by name ascending: apple must precede zebra regardless of stream order");
         }
     }
 
