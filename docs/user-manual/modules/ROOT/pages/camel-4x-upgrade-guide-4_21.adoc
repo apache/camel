@@ -18,6 +18,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The library used for Camel Grok component has been migrated from no more maintained `io.krakens:java-grok` to its fork `io.github.whatap:java-grok`.
 It implies small differences listed https://github.com/whatap/java-grok#what-is-different-from-iokrakensjava-grok[here].
 
+=== camel-micrometer
+
+The `MicrometerExchangeEventNotifier` now always includes the `routeId` tag on exchange event metrics.
+When `fromRouteId` is not available (for example, on Exchanges created by `ProducerTemplate`), the tag value is an empty string instead of omitting the tag.
+This ensures Prometheus-compatible metric export when Route triggered and ProducerTemplate Exchanges are mixed.
+Dashboards or alerts that assumed the `routeId` label was absent must be updated to treat `routeId=""` accordingly.
+
 === camel-core
 
 ==== Simple language: internal builder classes reorganized
