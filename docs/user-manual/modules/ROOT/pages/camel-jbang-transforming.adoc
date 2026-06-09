@@ -260,6 +260,49 @@ Here JSONPath would normally throw for a missing path — `suppressExceptions=tr
  [Body is null]
 ----
 
+=== Transforming with Groovy
+
+Groovy is a powerful option for data transformation — its concise syntax and built-in JSON/XML
+support make it ideal for reshaping messages.
+
+Use Groovy as the expression language to transform JSON:
+
+[source,bash]
+----
+camel transform message --body=file:random.json --language=groovy --template=file:transform.groovy --pretty --watch
+----
+
+Where `transform.groovy` uses Groovy's `JsonSlurper` and `JsonBuilder`:
+
+[source,groovy]
+----
+import groovy.json.*
+
+def input = new JsonSlurper().parseText(request.body)
+def output = new JsonBuilder()
+output {
+    name "${input.first_name} ${input.last_name}"
+    country input.address.country
+    phone input.phone_number
+    student input.subscription.plan == 'Student'
+}
+output.toPrettyString()
+----
+
+Camel also provides two Groovy-based data formats for quick marshal/unmarshal without writing scripts:
+
+* `groovyJson` — transform between JSON and `Map`/`List` objects using Groovy's built-in JSON slurper and builder
+* `groovyXml` — transform between XML and Groovy `Node` objects
+
+[source,bash]
+----
+camel transform message --body=file:data.json --dataformat=groovyJson
+camel transform message --body=file:data.xml --dataformat=groovyXml
+----
+
+These data formats have minimal configuration and are convenient for quick inspection
+or when combined with Groovy expressions in a route for further manipulation.
+
 === Using components
 
 Components like XSLT, Velocity, FreeMarker, and Thymeleaf can also be used for transformation.
