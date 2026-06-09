@@ -324,7 +324,7 @@
 
         <!-- NullAway / Error Prone (used by -Pnullcheck profile, requires JDK 21+) -->
         <error-prone-version>2.49.0</error-prone-version>
-        <nullaway-version>0.13.5</nullaway-version>
+        <nullaway-version>0.13.6</nullaway-version>
         <jt400-version>21.0.6</jt400-version>
         <jte-version>3.2.4</jte-version>
         <junit-jupiter-version>5.14.4</junit-jupiter-version>
