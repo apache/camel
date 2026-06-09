@@ -341,7 +341,7 @@ defense-in-depth only. The primary mitigation should be configured at the messag
 
 === camel-json-validator
 
-The component has been upgraded to Jackson 3, moving all core classes from the legacy `com.fasterxml.jackson` package to `tools.jackson`. Jackson 3 now enforces strict object immutability to ensure optimal runtime thread safety. If you use a custom mapper, you must migrate from the traditional `new ObjectMapper()` constructor to the new `JsonMapper.builder()` syntax.
+The underlying NetworkNT JSON Schema Validator library has been upgraded to version 3.0.3, which internally updates its dependencies to Jackson 3. This moves all core Jackson classes from the legacy `com.fasterxml.jackson` package to `tools.jackson` and enforces strict object immutability. If you use a custom mapper, you must migrate from the traditional `new ObjectMapper()` constructor to the new `JsonMapper.builder()` syntax.
 
 === camel-jms
 
