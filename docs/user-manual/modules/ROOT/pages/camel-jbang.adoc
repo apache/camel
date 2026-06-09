@@ -79,6 +79,10 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Dev mode with hot reload, profiles, properties, dependency management, GitHub-hosted routes,
   Pipes, clipboard, Spring Boot and Quarkus runtimes.
 
+| xref:camel-jbang-dev-services.adoc[Dev Services]
+| Start and manage local infrastructure services (databases, message brokers, etc.)
+  for development and testing, powered by Camel test-infra and containers.
+
 | xref:camel-jbang-devtools.adoc[Development Tools]
 | Sending and receiving messages, dependency injection, JDBC configuration,
   terminal scripting, validate plugin.
@@ -97,10 +101,6 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | xref:camel-jbang-projects.adoc[Projects and Catalog]
 | Component catalog, exporting to Spring Boot / Quarkus / Camel Main,
   SBOM generation, plugin management, version management, automated upgrades.
-
-| xref:camel-jbang-dev-services.adoc[Dev Services]
-| Start and manage local infrastructure services (databases, message brokers, etc.)
-  for development and testing, powered by Camel test-infra and containers.
 
 | xref:camel-jbang-configuration.adoc[Configuration]
 | CLI configuration options, config commands, configuration precedence, troubleshooting.
