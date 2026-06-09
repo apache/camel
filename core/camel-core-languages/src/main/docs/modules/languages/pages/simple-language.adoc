@@ -309,10 +309,10 @@ For example `${throwException('Invalid order')}` throws an `IllegalArgumentExcep
 You can also specify the exception type: `${throwException('Not found',java.io.FileNotFoundException)}`.
 
 The `exchangeId` function returns the unique identifier of the current exchange.
-This is commonly used for correlation in log messages: `${exchangeId}` returns a value like `ID-myhost-1234-1234567890-0-1`.
+This is commonly used for correlation in log messages: `$\{exchangeId}` returns a value like `ID-myhost-1234-1234567890-0-1`.
 
 The `routeId` function returns the id of the route currently processing the exchange.
-For example `${routeId}` returns `myRoute` when the exchange is inside a route with `routeId("myRoute")`.
+For example `$\{routeId}` returns `myRoute` when the exchange is inside a route with `routeId("myRoute")`.
 The `fromRouteId` function returns the route id where the exchange was _originally created_, which can differ from `routeId`
 when the exchange has been forwarded to another route via `direct` or `seda`.
 
