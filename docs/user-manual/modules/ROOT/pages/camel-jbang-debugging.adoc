@@ -2,7 +2,8 @@
 
 The Camel CLI provides built-in debugging capabilities — from Camel's own route debugger to standard Java debugging. For the full overview, see xref:camel-jbang.adoc[Camel CLI].
 
-TIP: The xref:camel-jbang-tui.adoc[Camel TUI] includes a Spans tab that shows OpenTelemetry traces
+TIP: Just type `camel tui` — the plugin auto-installs on first use.
+The xref:camel-jbang-tui.adoc[Camel TUI] includes a Spans tab that shows OpenTelemetry traces
 as a waterfall view — useful for understanding message flow and spotting slow processors.
 
 == Camel route debugging

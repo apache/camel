@@ -3,8 +3,9 @@
 Once your Camel integrations are running, the CLI provides comprehensive management and monitoring capabilities — from listing processes and tailing logs to tracing messages and checking health.
 
 TIP: Prefer a visual dashboard over individual commands?
-The xref:camel-jbang-tui.adoc[Camel TUI] (`camel tui`) shows routes, messages, health, traces,
-and more in a single terminal view — everything on this page, at a glance.
+Just type `camel tui` — the plugin auto-installs on first use.
+It shows routes, messages, health, traces, and more in a single terminal view.
+See xref:camel-jbang-tui.adoc[Camel TUI] for details.
 
 == Controlling local Camel integrations
 
