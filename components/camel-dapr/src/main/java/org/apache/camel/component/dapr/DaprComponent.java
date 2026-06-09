@@ -19,6 +19,7 @@ package org.apache.camel.component.dapr;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -28,6 +29,9 @@ public class DaprComponent extends DefaultComponent {
 
     @Metadata
     private DaprConfiguration configuration = new DaprConfiguration();
+    @Metadata(label = "advanced",
+              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (remaining == null || remaining.isBlank()) {
@@ -37,7 +41,8 @@ public class DaprComponent extends DefaultComponent {
         final DaprConfiguration config = this.configuration != null ? this.configuration.copy() : new DaprConfiguration();
         config.setOperation(DaprOperation.valueOf(remaining));
 
-        Endpoint endpoint = new DaprEndpoint(uri, this, config);
+        DaprEndpoint endpoint = new DaprEndpoint(uri, this, config);
+        endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         setProperties(endpoint, parameters);
 
         return endpoint;
@@ -52,5 +57,16 @@ public class DaprComponent extends DefaultComponent {
 
     public void setConfiguration(DaprConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 }
