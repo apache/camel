@@ -325,7 +325,7 @@ Only production code in `src/main` is scanned.
 The Camel CLI supports annotation-based dependency injection using Camel-native, Spring Boot,
 or Quarkus annotations — even though the runtime is standalone `camel-main` (no Spring or Quarkus container).
 
-See xref:camel-jbang-dependency-injection.adoc[Dependency Injection] for the full reference
+See xref:camel-jbang-beans.adoc[Java Beans] for the full reference
 including XML DSL bean definitions and Spring Beans XML support.
 
 == Configuring JDBC DataSources

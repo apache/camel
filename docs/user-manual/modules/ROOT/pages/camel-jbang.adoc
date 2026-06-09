@@ -86,20 +86,16 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Start and manage local infrastructure services (databases, message brokers, etc.)
   for development and testing, powered by Camel test-infra and containers.
 
+| xref:camel-jbang-transforming.adoc[Data Transformation]
+| Transforming messages with live reload, using expression languages, components,
+  data formats, and converting between route DSL formats.
+
 | xref:camel-jbang-devtools.adoc[Development Tools]
 | Sending and receiving messages, JDBC configuration,
   terminal scripting, IDE editing, validate plugin.
 
-| xref:camel-jbang-dependency-injection.adoc[Dependency Injection]
-| Camel, Spring Boot, and Quarkus annotation-based DI in standalone mode,
-  XML DSL bean definitions, Spring Beans XML support.
-
 | xref:camel-jbang-debugging.adoc[Debugging]
 | Camel route debugging from the CLI, IDE integration (VSCode, IDEA), Java-level debugging.
-
-| xref:camel-jbang-transforming.adoc[Data Transformation]
-| Transforming messages with live reload, using expression languages, components,
-  data formats, and converting between route DSL formats.
 
 | xref:camel-jbang-managing.adoc[Managing Integrations]
 | Listing and stopping processes, route and group control, developer console, message history,
@@ -112,6 +108,9 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | xref:camel-jbang-tips.adoc[Tips and Recipes]
 | Run from GitHub or clipboard, stub components, inline code, interactive prompts,
   upload via HTTP, Maven configuration.
+
+| xref:camel-jbang-beans.adoc[Java Beans]
+| Writing and wiring Java beans into routes using Camel, Spring Boot, or Quarkus annotations.
 
 | xref:camel-jbang-configuration.adoc[Configuration]
 | CLI configuration options, config commands, configuration precedence, troubleshooting.
