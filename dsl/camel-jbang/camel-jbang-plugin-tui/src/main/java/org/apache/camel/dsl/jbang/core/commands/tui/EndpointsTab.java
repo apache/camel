@@ -430,11 +430,11 @@ class EndpointsTab implements MonitorTab {
         for (int i = 0; i < renderPoints; i++) {
             int idx = inHist.size() - renderPoints + i;
             if (idx >= 0) {
-                inArr[i] = inHist.get(idx);
+                inArr[i] = unbox(inHist.get(idx));
             }
             idx = outHist.size() - renderPoints + i;
             if (idx >= 0) {
-                outArr[i] = outHist.get(idx);
+                outArr[i] = unbox(outHist.get(idx));
             }
         }
         long curIn = inArr[renderPoints - 1];
@@ -532,11 +532,11 @@ class EndpointsTab implements MonitorTab {
         for (int i = 0; i < renderPoints; i++) {
             int idx = inHist.size() - renderPoints + i;
             if (idx >= 0) {
-                inArr[i] = inHist.get(idx);
+                inArr[i] = unbox(inHist.get(idx));
             }
             idx = outHist.size() - renderPoints + i;
             if (idx >= 0) {
-                outArr[i] = outHist.get(idx);
+                outArr[i] = unbox(outHist.get(idx));
             }
         }
         long curIn = inArr[renderPoints - 1];
@@ -578,11 +578,11 @@ class EndpointsTab implements MonitorTab {
         for (int i = 0; i < renderPoints; i++) {
             int idx = inHist.size() - renderPoints + i;
             if (idx >= 0) {
-                inArr[i] = inHist.get(idx);
+                inArr[i] = unbox(inHist.get(idx));
             }
             idx = outHist.size() - renderPoints + i;
             if (idx >= 0) {
-                outArr[i] = outHist.get(idx);
+                outArr[i] = unbox(outHist.get(idx));
             }
         }
         long curIn = inArr[renderPoints - 1];
@@ -605,6 +605,10 @@ class EndpointsTab implements MonitorTab {
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(Title.from(chartTitle)).build())
                 .build(), area);
+    }
+
+    private static long unbox(Long value) {
+        return value != null ? value : 0L;
     }
 
     private static String sizeToYLabel(long size) {
