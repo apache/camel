@@ -62,8 +62,8 @@ Run with `--prompt` to have Camel ask for missing placeholder values at startup:
 camel run foo.java --prompt
 ----
 
-Camel will prompt for each unresolved `{{placeholder}}` in the terminal.
-Placeholders with default values (e.g. `{{time:1000}}`) can be accepted by pressing Enter.
+Camel will prompt for each unresolved `\{{placeholder}}` in the terminal.
+Placeholders with default values (e.g. `\{{time:1000}}`) can be accepted by pressing Enter.
 
 This is useful for prototypes where you want users to enter custom values quickly.
 Values can also be pre-configured in `application.properties`.

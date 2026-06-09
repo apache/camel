@@ -23,7 +23,7 @@ Notes:
 - The `--profile` option is not supported when exporting to Quarkus.
 - For Spring Boot, you can override versions with `--camel-spring-boot-version`.
 
-==== Exporting with Java Agent included
+=== Exporting with Java Agent included
 
 NOTE: Only `camel-main` runtime supports Java Agents.
 
