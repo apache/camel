@@ -30,6 +30,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Thread-safe JWKS cache with TTL and key-rotation-aware re-fetch.
+ * <p/>
+ * The cache is a JVM-wide singleton shared by all Camel contexts in the same classloader. Entries are keyed by JWKS
+ * endpoint URL and contain public key material only.
  */
 final class JwksCache {
 

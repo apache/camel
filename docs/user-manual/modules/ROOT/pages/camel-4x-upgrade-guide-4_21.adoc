@@ -811,6 +811,12 @@ aligning the component with the rest of the Camel component catalog (`camel-kafk
 names from NATS messages can supply a custom `headerFilterStrategy` to restore the previous
 behaviour.
 
+=== camel-oauth
+
+`OAuthTokenRequest.refreshTokenGrant(...)` now sends the RFC 6749 `refresh_token` form parameter for
+the refresh token grant instead of the incorrect `token` parameter.
+Custom test servers or identity-provider mocks that expected the old request body should be updated.
+
 === camel-platform-http
 
 The `platform-http` consumer endpoint now has an `oauthProfile` option for opt-in validation of incoming
@@ -818,6 +824,9 @@ The `platform-http` consumer endpoint now has an `oauthProfile` option for opt-i
 Existing routes are unchanged unless this option is set.
 Routes that enable `oauthProfile` need an `OAuthTokenValidationFactory`; `camel-oauth` provides the
 default implementation and runtimes can provide their own implementation backed by native security.
+Applications can also select a profile-specific validator with
+`camel.oauth.<profile>.validation-factory=#bean:myTokenValidationFactory`; if configured, the referenced
+bean must exist and implement `OAuthTokenValidationFactory`.
 The default `camel-oauth` provider requires `expected-issuer`/`base-uri`, `expected-audience`, and HTTPS
 identity-provider endpoints unless the new explicit opt-out properties are set.
 JWT validation profiles can also set `expected-token-type` to require a specific JWT `typ` header

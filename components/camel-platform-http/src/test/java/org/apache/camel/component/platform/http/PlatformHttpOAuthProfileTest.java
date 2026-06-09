@@ -17,7 +17,9 @@
 package org.apache.camel.component.platform.http;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,8 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.component.platform.http.spi.PlatformHttpSecurityHandler;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.OAuthTokenValidationConfig;
+import org.apache.camel.spi.OAuthTokenValidationFactory;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultExchange;
@@ -46,6 +50,7 @@ class PlatformHttpOAuthProfileTest {
     @BeforeEach
     void resetStubFactory() {
         StubOAuthTokenValidationFactory.reset();
+        ProfileBeanOAuthTokenValidationFactory.reset();
     }
 
     @Test
@@ -87,6 +92,111 @@ class PlatformHttpOAuthProfileTest {
                     @Override
                     public void configure() {
                         from("platform-http:/secure?oauthProfile=invalid-profile")
+                                .setBody().constant("secured");
+                    }
+                });
+
+                context.start();
+            }
+        });
+    }
+
+    @Test
+    void oauthProfileUsesProfileSpecificValidationFactoryBean() throws Exception {
+        CapturingEngine engine = new CapturingEngine();
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.getRegistry().bind("profileFactory", new ProfileBeanOAuthTokenValidationFactory());
+            context.getPropertiesComponent().addInitialProperty(
+                    "camel.oauth.myprofile.validation-factory", "#bean:profileFactory");
+
+            PlatformHttpComponent component = new PlatformHttpComponent();
+            component.setEngine(engine);
+            context.addComponent("platform-http", component);
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/secure?oauthProfile=myprofile")
+                            .setBody().constant("secured");
+                }
+            });
+
+            context.start();
+
+            assertEquals("myprofile", ProfileBeanOAuthTokenValidationFactory.lastConfigurationProfileName);
+            assertNull(StubOAuthTokenValidationFactory.lastConfigurationProfileName);
+            assertNotNull(engine.securityHandler);
+        }
+    }
+
+    @Test
+    void oauthProfileUsesSingleRegistryValidationFactoryBean() throws Exception {
+        CapturingEngine engine = new CapturingEngine();
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.getRegistry().bind("registryFactory", new ProfileBeanOAuthTokenValidationFactory());
+
+            PlatformHttpComponent component = new PlatformHttpComponent();
+            component.setEngine(engine);
+            context.addComponent("platform-http", component);
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/secure?oauthProfile=myprofile")
+                            .setBody().constant("secured");
+                }
+            });
+
+            context.start();
+
+            assertEquals("myprofile", ProfileBeanOAuthTokenValidationFactory.lastConfigurationProfileName);
+            assertNull(StubOAuthTokenValidationFactory.lastConfigurationProfileName);
+            assertNotNull(engine.securityHandler);
+        }
+    }
+
+    @Test
+    void oauthProfileSpecificMissingValidationFactoryBeanFailsStartup() {
+        CapturingEngine engine = new CapturingEngine();
+
+        assertThrows(Exception.class, () -> {
+            try (DefaultCamelContext context = new DefaultCamelContext()) {
+                context.getPropertiesComponent().addInitialProperty(
+                        "camel.oauth.myprofile.validation-factory", "#bean:missingFactory");
+
+                PlatformHttpComponent component = new PlatformHttpComponent();
+                component.setEngine(engine);
+                context.addComponent("platform-http", component);
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("platform-http:/secure?oauthProfile=myprofile")
+                                .setBody().constant("secured");
+                    }
+                });
+
+                context.start();
+            }
+        });
+    }
+
+    @Test
+    void oauthProfileSpecificWrongTypeValidationFactoryBeanFailsStartup() {
+        CapturingEngine engine = new CapturingEngine();
+
+        assertThrows(Exception.class, () -> {
+            try (DefaultCamelContext context = new DefaultCamelContext()) {
+                context.getRegistry().bind("profileFactory", "not a token validation factory");
+                context.getPropertiesComponent().addInitialProperty(
+                        "camel.oauth.myprofile.validation-factory", "#bean:profileFactory");
+
+                PlatformHttpComponent component = new PlatformHttpComponent();
+                component.setEngine(engine);
+                context.addComponent("platform-http", component);
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("platform-http:/secure?oauthProfile=myprofile")
                                 .setBody().constant("secured");
                     }
                 });
@@ -283,6 +393,35 @@ class PlatformHttpOAuthProfileTest {
         @Override
         public PlatformHttpEndpoint getEndpoint() {
             return (PlatformHttpEndpoint) super.getEndpoint();
+        }
+    }
+
+    private static final class ProfileBeanOAuthTokenValidationFactory implements OAuthTokenValidationFactory {
+
+        private static String lastConfigurationProfileName;
+
+        private static void reset() {
+            lastConfigurationProfileName = null;
+        }
+
+        @Override
+        public OAuthTokenValidationResult validateToken(OAuthTokenValidationConfig config, String token) {
+            return OAuthTokenValidationResult.valid(
+                    "profile-bean-user",
+                    "https://issuer.example",
+                    List.of("camel-api"),
+                    List.of("read"),
+                    Map.of(),
+                    0);
+        }
+
+        @Override
+        public void validateConfiguration(OAuthTokenValidationConfig config) {
+        }
+
+        @Override
+        public void validateConfiguration(CamelContext context, String profileName) {
+            lastConfigurationProfileName = profileName;
         }
     }
 }
