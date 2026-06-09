@@ -1,0 +1,128 @@
+= Camel CLI - Debugging
+
+The Camel CLI provides built-in debugging capabilities — from Camel's own route debugger to standard Java debugging. For the full overview, see xref:camel-jbang.adoc[Camel CLI].
+
+TIP: Just type `camel tui` — the plugin auto-installs on first use.
+The xref:camel-jbang-tui.adoc[Camel TUI] includes a Spans tab that shows OpenTelemetry traces
+as a waterfall view — useful for understanding message flow and spotting slow processors.
+
+== Camel route debugging
+
+*Available since Camel 4.2*
+
+Debug Camel routes directly from the terminal:
+
+[source,bash]
+----
+camel debug hello.yaml
+----
+
+The integration runs in the background while the foreground shell acts as a CLI debugger.
+The top shows log output, the middle shows the current breakpoint with source context,
+and the bottom shows the message content:
+
+[source,text]
+----
+2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.loggingLevel=DEBUG
+2023-11-03 18:15:06.715  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [Command Line]                 camel.debug.singleStepIncludeStartEnd=true
+2023-11-03 18:15:06.787  INFO 33384 --- [           main] mel.cli.connector.LocalCliConnector : Camel CLI enabled (local)
+2023-11-03 18:15:06.833  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.7.0 (foo) is starting
+2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport : Property-placeholders summary
+2023-11-03 18:15:06.906  INFO 33384 --- [           main] g.apache.camel.main.BaseMainSupport :     [application.properties]       my-name=Donald Duck
+2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Routes startup (started:1)
+2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext :     Started route-07a6 (timer://yaml)
+2023-11-03 18:15:06.924  INFO 33384 --- [           main] el.impl.engine.AbstractCamelContext : Apache Camel 4.7.0 (foo) started in 91ms (build:0ms init:0ms start:91ms)
+2023-11-03 18:15:11.951  INFO 33384 --- [ - timer://yaml] foo.camel.yaml:10                   : Before:
+
+Source: foo.camel.yaml:13                                                         History
+--------------------------------------------------------------------------------  ------------------------------------------------------------------------------------------
+  10:              - log:                                                         route-07a6/from-c041           (0ms)    4:       uri: timer
+  11:                  message: 'Before: ${body}'                                 route-07a6/log1                (1ms)   10:         - log:
+  12:                  id: log1
+  13: --->         - setProperty:
+  14:                  name: myProp
+  15:                  expression:
+  16:                    constant:
+  17:                      expression: '123'
+  18:                      id: constant-4004
+
+
+2023-11-03 18:15:11.951  33384 --- [ thread #4 - timer://yaml]              route-07a6/setProperty-321c :     3 - Breakpoint (4ms)
+ Exchange  (DefaultExchange)  InOnly  D48642E54410AF9-0000000000000000
+ Message   (DefaultMessage)
+ Body      (null)
+
+
+    Breakpoint suspended. Press ENTER to continue.
+----
+
+=== Configuring breakpoints
+
+By default, breakpoints are added to every route. Use `--breakpoint` to target specific nodes.
+The option supports multiple match styles (comma-separated):
+
+- Exact or pattern match by node id (wildcard and regex)
+- EIP kind (`setHeader`, `setBody`, `choice`, `split`, etc.)
+- Source file and/or line number
+
+Examples:
+
+[source,bash]
+----
+camel debug hello.yaml --breakpoint=setHeader
+camel debug hello.yaml --breakpoint=18
+camel debug hello.yaml --breakpoint=18,34
+----
+
+=== Spring Boot route debugging
+
+*Available since Camel 4.14*
+
+Debug an existing Spring Boot Maven project by pointing at its `pom.xml`:
+
+[source,bash]
+----
+camel debug pom.xml
+----
+
+Camel CLI detects `camel-spring-boot-bom`, builds a fat JAR, and launches it in the background
+with debugging enabled — the same experience as debugging plain Camel files.
+
+== IDE route debugging
+
+The Camel route debugger is available by default via JMX at
+`service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel`.
+
+Supported IDE plugins:
+https://plugins.jetbrains.com/plugin/9371-apache-camel[IntelliJ],
+https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel[VS Code],
+https://marketplace.eclipse.org/content/textual-debugging-apache-camel[Eclipse Desktop].
+
+TIP: When exporting to a Maven project, use the `camel.debug` Maven profile to include
+the `camel-debug` JAR for IDE-based route debugging.
+
+== Java debugging
+
+Use `--jvm-debug` to open a standard Java debug socket (default port 4004):
+
+[source,bash]
+----
+camel run hello.yaml --jvm-debug
+Listening for transport dt_socket at address: 4004
+----
+
+Attach from
+https://www.jetbrains.com/help/idea/attaching-to-local-process.html#create-rc[IntelliJ],
+https://code.visualstudio.com/docs/java/java-debugging#_attach[VS Code], or
+https://www.vogella.com/tutorials/EclipseDebugging/article.html#remote-debugging[Eclipse].
+Port configuration is described in the https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging] guide.
+
+=== JBang-level debugging
+
+Use JBang's `--debug` flag to debug any CLI command (not just `run`):
+
+[source,bash]
+----
+jbang --debug camel@apache/camel run hello.yaml
+Listening for transport dt_socket at address: 4004
+----
