@@ -2,17 +2,12 @@
 
 The Camel CLI includes tools for transforming messages and converting between route DSL formats — with live reload for interactive development. For the full overview, see xref:camel-jbang.adoc[Camel CLI].
 
-== Transforming message (data mapping)
+== Transforming messages (data mapping)
 
-When integrating a system, you often need to transform messages from one system to another. Camel has a rich set
-of capabilities for this such as various data formats, templating languages, and much more. However, for basic
-data mapping such as taking an existing incoming JSON document and transforming this to a smaller JSON document,
-you may want to do this quickly with Camel.
+The `camel transform message` command takes an input message and a template, and shows the
+transformed output in real time — with live reload as you edit the template.
 
-The `camel transform message` command can be used for such tasks, where it can take an existing source file as input,
-and then a template that defines how to transform the data, and then show the output (in real time).
-
-For example, given this JSon document (in a file named `random.json`), we want to combine the name, and select a few fields:
+For example, given this JSON document (`random.json`):
 
 [source,json]
 ----
@@ -57,7 +52,7 @@ For example, given this JSon document (in a file named `random.json`), we want t
 }
 ----
 
-Then we can have a `transform.json` file as the beginning of the template, with the structure of the desired output:
+Create a `transform.json` template with the desired output structure:
 
 [source,json]
 ----
@@ -70,14 +65,14 @@ Then we can have a `transform.json` file as the beginning of the template, with 
 }
 ----
 
-We can then run `camel transform message` and have it update (in real time) the output every time we change the template.
+Run with `--watch` to see output update live as you edit the template:
 
 [source,bash]
 ----
 $ camel transform message --body=file:random.json --language=simple --template=file:transform.json --pretty --watch
 ----
 
-What happens is then Camel will output on the console as you go:
+Initial output:
 
 [source,bash]
 ----
@@ -93,7 +88,7 @@ What happens is then Camel will output on the console as you go:
  }
 ----
 
-Then you can update the `transform.json` file and save it and see the generated output:
+Now edit `transform.json` to add JQ expressions and save — the output updates instantly:
 
 [source,json]
 ----
@@ -106,7 +101,7 @@ Then you can update the `transform.json` file and save it and see the generated 
 }
 ----
 
-And the output:
+Output:
 
 [source,bash]
 ----
@@ -122,19 +117,15 @@ And the output:
  }
 ----
 
-Then you can continue to update the `transform.json` until you have the desired result.
-And if you make a mistake, then you see an error (in red) with stacktrace that hopefully can help you out how to fix this.
+Continue editing the template until you have the desired result. Errors are shown in red with a stack trace.
 
-=== Transforming directly from the Camel DSL source
+=== Transforming directly from a Camel route
 
-In the example above we externalize the transformation into a template file named `transform.json`.
-However, it's possible to transform directly in the Camel DSL route.
+Instead of an external template, you can transform directly inside a Camel route using `--source`.
 
-NOTE: Currently Java DSL is not working in --watch mode (reload on change)
+NOTE: Java DSL does not support `--watch` mode (live reload on change).
 
-In the following, we cover the json-transform example from: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/json-transform
-
-In this example, a random beer is fetched via the beer-source kamelet. The beer data is as follows:
+For example, given this beer JSON (`sample.json`):
 
 [source,json]
 ----
@@ -153,10 +144,7 @@ In this example, a random beer is fetched via the beer-source kamelet. The beer 
  }
 ----
 
-We save this beer into a file named `sample.json` as we want to use this as source for message transformation.
-
-Now suppose we want to transform this to a smaller JSON document with only a few elements, then we can do this
-directly in the route:
+And a route with a `setBody` expression (starting with TODO):
 
 [source,yaml]
 ----
@@ -179,15 +167,14 @@ directly in the route:
             id: log-0c79
 ----
 
-As we can see the route has a `setBody` where we want to transform the message, which we can do with the simple
-language combined with JQ (or JSonPath). At first, we just write TODO to get started:
+Run the transform command against the route:
 
 [source,bash]
 ----
-camel transform message --body=file:sample.json --source=beer-jq.yaml  --watch --pretty
+camel transform message --body=file:sample.json --source=beer-jq.yaml --watch --pretty
 ----
 
-And the output from the transformation is:
+Initial output:
 
 [source,text]
 ----
@@ -197,8 +184,7 @@ And the output from the transformation is:
  TODO
 ----
 
-We can now do live updates in the Camel route, and when we save the file, the transform command will output the changes in the terminal.
-So we modify the DSL to grab the details we want, such as:
+Edit the expression in the route to use JQ and save — the output updates live:
 
 [source,yaml]
 ----
@@ -210,8 +196,7 @@ So we modify the DSL to grab the details we want, such as:
     id: simple-b320
 ----
 
-Notice how we use inlined JQ expressions to grab the desired data from the sample, and when saving the file, we have
-the result shown in the terminal:
+Output:
 
 [source,text]
 ----
@@ -224,34 +209,24 @@ the result shown in the terminal:
  }
 ----
 
-And when we are done with the transformation we can stop by `ctrl + c` to exit the command.
+Press Ctrl+C to stop.
 
-When transforming messages directly from the DSL (using the `--source` option), then by default
-Camel will pick the last expression in the route. If you only have one expression like in this example,
-then that is easy. But when you have many, then you need to tell which one to use.
-
-You can do this either by referring to the line number in the source code of the EIP / expression, or
-by its id (if specified).
-
-So suppose the example had many expressions, and the one we want to use is on line 11, then we can do as follows:
+By default, `--source` picks the last expression in the route. With multiple expressions,
+specify which one by line number or EIP id:
 
 [source,bash]
 ----
 camel transform message --body=file:sample.json --source=beer-jq.yaml:11  --watch --pretty
 ----
 
-Notice how we specify the line number in the source file name, by prefixing with `:line-number`.
-The line number does not have to be 100% accurate, as long the number is within range of the EIP, until
-the next EIP in the route. In the example, this means you can pick number in range 8-17.
-
-If we want to use the id of the expression/EIP, we can do the same as shown below:
+The line number does not need to be exact — any number within the EIP's range works. By id:
 
 [source,bash]
 ----
 camel transform message --body=file:sample.json --source=beer-jq.yaml:setBody-fa01  --watch --pretty
 ----
 
-You can also transform the message from JSON to XML as shown (or any other kind of fixed structure):
+You can also transform to XML or any other structure:
 
 [source,yaml]
 ----
@@ -267,18 +242,14 @@ You can also transform the message from JSON to XML as shown (or any other kind 
     id: setBody-fa01
 ----
 
-You can configure options that the language format should use, such as shown below:
+Configure language options with `--option` (repeatable):
 
 [source,bash]
 ----
 $ camel transform message --body=file:sample.json --language=jsonpath --template="beer.unknown" --option=suppressExceptions=true
 ----
 
-TIP: You can specify multiple options by repeating the `--option` argument.
-
-Pay attention that we now use JSONPath as the language, and the template is a tiny JSON path expression.
-Because the sample does not have a `beer.unknown` path, then JSonPath would normally throw an exception.
-This can be suppressed by setting the option `suppressExceptions` to `true` as shown above. Then the output is as follows:
+Here JSONPath would normally throw for a missing path — `suppressExceptions=true` returns null instead:
 
 [source,text]
 ----
@@ -289,13 +260,13 @@ This can be suppressed by setting the option `suppressExceptions` to `true` as s
  [Body is null]
 ----
 
-=== Transforming the message using Components
+=== Using components
 
-Some components can also be used for message transformation such as FlatPack, Velocity, FreeMarker, Thymeleaf, and good old XSLT.
+Components like XSLT, Velocity, FreeMarker, and Thymeleaf can also be used for transformation.
 
-TIP: You can use `camel catalog component --filter=transform` to see which components can be transformation.
+TIP: Run `camel catalog component --filter=transform` to list transformation-capable components.
 
-Given the below XML in the `sample.xml` file:
+Given this XML (`sample.xml`):
 
 [source,xml]
 ----
@@ -310,7 +281,7 @@ Given the below XML in the `sample.xml` file:
 </hash>
 ----
 
-Then you can transform this using an XSLT named `mystyle.xsl`:
+Transform it with an XSLT stylesheet (`mystyle.xsl`):
 
 [source,xml]
 ----
@@ -327,35 +298,29 @@ Then you can transform this using an XSLT named `mystyle.xsl`:
 </xsl:stylesheet>
 ----
 
-Then you can do live changes to the stylesheet and see the output in real-time with Camel CLI by running:
+Run with live reload:
 
 [source,bash]
 ----
 $ camel transform message --body=file:sample.xml --component=xslt --template=file:mystyle.xsl --pretty --watch
 ----
 
-You can then edit the `mystyle.xsl` file, and save the file, and watch the terminal for the updated result.
-
-You can find this example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/xslt-transform
-
-You can configure options that the XSLT component format should use, such as shown below:
+Configure component options with `--option` (repeatable):
 
 [source,bash]
 ----
 $ camel transform message --body=file:sample.xml --component=xslt --template=file:mystyle.xsl --option=output=bytes --pretty --watch
 ----
 
-TIP: You can specify multiple options by repeating the `--option` argument.
+NOTE: Some components require complex options that cannot be set from the command line.
 
-NOTE: The transform message with the component is limited as some components require configuring complex options that cannot be set from command line.
+=== Using data formats
 
-=== Transforming a message using Data Formats
+Data formats (Base64, CSV, FlatPack, etc.) can unmarshal input into Java objects for inspection.
 
-Some data formats can also be used for message transformation such as Base64, Csv, FlatPack.
+TIP: Run `camel catalog dataformat --filter=transform` to list available data formats.
 
-TIP: You can use `camel catalog dataformat --filter=transform` to see which components can be transformation.
-
-Given the below CSV file in the `daltons.csv`:
+Given this CSV file (`daltons.csv`):
 
 [source,text]
 ----
@@ -366,16 +331,14 @@ Averell Dalton, 80, playing with Rantanplan
 Lucky Luke, 120, capturing the Daltons
 ----
 
-Then you can transform this via Camel CSV dataformat from its form into Java objects (unmarshal).
-This will NOT transform the CSV into another format such as XML, but allows you to quickly try out the dataformat,
-and be able to inspect the Java object inside Camel.
+Unmarshal with the CSV data format:
 
 [source,bash]
 ----
 $ camel transform message --body=file:daltons.csv --dataformat=csv
 ----
 
-This will then output:
+Output:
 
 [source,text]
 ----
@@ -387,26 +350,23 @@ This will then output:
  playing with Rantanplan], [Lucky Luke,  120,  capturing the Daltons]]
 ----
 
-As you can see Camel CSV dataformat will then unmarshal the input (from CSV file) to a `java.util.ArrayList` object
-with 5 elements (one per row), and each row is another List of the columns.
+The CSV data format produces an `ArrayList` — one list per row, each containing the column values.
 
-You can configure options that the CSV data format should use, such as shown below:
+Configure data format options with `--option` (repeatable):
 
 [source,bash]
 ----
 $ camel transform message --body=file:daltons.csv --dataformat=csv --option=captureHeaderRecord=true
 ----
 
-TIP: You can specify multiple options by repeating the `--option` argument.
+NOTE: Some data formats require complex options that cannot be set from the command line.
 
-NOTE: The transform message with dataformat is limited as some dataformat requires configuring complex options that cannot be set from the command line.
+== Transforming route DSL format
 
-== Transforming routes DSL
+The `camel transform route` command converts between YAML and XML DSL formats —
+useful when working with graphical editors or code generators that target a specific DSL.
 
-Camel offers different DSLs, such as Java, XML, YAML, and more. Many graphical editors and code generators use XML and YAML Camel DSL, therefore, for some use cases it may be required to use one DSL or the other.
-The `camel transform route` command can be used to transform a YAML route into an XML and vice versa, the command takes a list of files as input and transforms the DSL.
-
-For example, given the following YAML content, in a file named route.yaml
+For example, given this YAML route (`route.yaml`):
 
 [source, yaml]
 ----
@@ -443,14 +403,14 @@ For example, given the following YAML content, in a file named route.yaml
                       loggerName: default
 ----
 
-The following command
+Convert to XML:
 
 [source, bash]
 ----
 camel transform route --format=xml /path/to/route.yaml
 ----
 
-Automatically transform the route in XML DSL (Camel XML IO DSL)
+Output:
 
 [source, xml]
 ----
@@ -470,4 +430,4 @@ Automatically transform the route in XML DSL (Camel XML IO DSL)
 </camel>
 ----
 
-TIP: If all the input files have the same extension and are written with the same DSL, for example, `.yaml`, the transformation will default to the XML DSL and vice versa.
+TIP: When all input files share the same extension (e.g., `.yaml`), the target format defaults to the other DSL (XML) and vice versa.
