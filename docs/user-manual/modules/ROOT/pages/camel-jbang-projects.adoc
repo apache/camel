@@ -1,55 +1,6 @@
-= Camel CLI - Projects and Catalog
+= Camel CLI - Export to Maven
 
-The Camel CLI helps you manage the full project lifecycle — from exploring the component catalog and managing dependencies to exporting production-ready projects and upgrading Camel versions.
-
-== Component catalog
-
-Browse the Camel catalog — components, data formats, languages, and Kamelets:
-
-[source,bash]
-----
-camel catalog component
-camel catalog kamelet
-----
-
-TIP: Run `camel catalog --help` to see all sub-commands.
-
-=== Component documentation
-
-Show quick reference documentation (description + all configuration options):
-
-[source,bash]
-----
-camel doc kafka
-camel doc jackson
-camel doc aws-kinesis-sink
-----
-
-NOTE: This shows catalog-level documentation with option tables, not the full website documentation.
-
-If a component and data format share the same name, prefix with `dataformat:` (e.g., `camel doc dataformat:thrift`).
-
-Open the online documentation in a browser with `--open-url`, or get just the URL with `--url`:
-
-[source,bash]
-----
-camel doc kafka --open-url
-----
-
-Filter options by name, description, or group (producer, security, advanced, etc.):
-
-[source,bash]
-----
-camel doc kafka --filter=security
-camel doc kafka --filter=timeout
-----
-
-== Open API
-
-Camel CLI supports contract-first REST development — each OpenAPI operation is bridged to
-a Camel route via `direct:<operationId>`.
-
-See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api[open-api example] for details.
+Export your Camel CLI integrations to production-ready Maven projects, manage dependencies, and upgrade Camel versions.
 
 == Creating Projects
 

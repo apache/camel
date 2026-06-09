@@ -105,8 +105,8 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Listing and stopping processes, route and group control, developer console, message history,
   log tailing, message tracing, health checks, metrics, circuit breaker status, Jolokia and Hawtio.
 
-| xref:camel-jbang-projects.adoc[Projects and Catalog]
-| Component catalog, exporting to Spring Boot / Quarkus / Camel Main,
+| xref:camel-jbang-projects.adoc[Export to Maven]
+| Exporting to Spring Boot / Quarkus / Camel Main,
   SBOM generation, plugin management, version management, automated upgrades.
 
 | xref:camel-jbang-tips.adoc[Tips and Recipes]
