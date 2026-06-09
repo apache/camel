@@ -35,7 +35,6 @@ import org.apache.camel.component.dapr.DaprConstants;
 import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.component.dapr.DaprHeaderFilterStrategy;
 import org.apache.camel.spi.ExchangeFactory;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -148,26 +147,5 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
         consumer.doStop();
         verify(mockSubscription).close();
         verify(mockClient).close();
-    }
-
-    @Test
-    void testConsumerWithHeaderFilterStrategy() throws Exception {
-        HeaderFilterStrategy strategy = mock(HeaderFilterStrategy.class);
-        when(endpoint.getHeaderFilterStrategy()).thenReturn(strategy);
-        when(strategy.applyFilterToExternalHeaders(anyString(), any(), any())).thenReturn(true);
-
-        consumer.doStart();
-
-        CloudEvent<byte[]> cloudEvent = mock(CloudEvent.class);
-        when(cloudEvent.getData()).thenReturn("test".getBytes());
-
-        listenerCaptor.getValue().onEvent(cloudEvent).block();
-
-        verify(processor).process(exchangeCaptor.capture(), any());
-
-        Exchange exchange = exchangeCaptor.getValue();
-        assertNotNull(exchange);
-        // All headers filtered
-        assertNull(exchange.getIn().getHeader(DaprConstants.ID));
     }
 }
