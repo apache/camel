@@ -4,7 +4,7 @@ Once your Camel integrations are running, the CLI provides comprehensive managem
 
 == Controlling local Camel integrations
 
-To list the currently running Camel integrations, you use the `ps` command:
+List running integrations with `ps`:
 
 [source,bash]
 ----
@@ -14,10 +14,7 @@ camel ps
  62506  dude                             1/1   Running   4m34s
 ----
 
-This lists the PID, the name and age of the integration.
-
-You can use the `stop` command to stop any of these running Camel integrations.
-For example, to stop dude, you can do
+Stop by name or PID:
 
 [source,bash]
 ----
@@ -25,21 +22,10 @@ camel stop dude
 Stopping running Camel integration (pid: 62506)
 ----
 
-You can also stop by the PID:
+NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_.
+To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`
 
-[source,bash]
-----
-camel stop 62506
-Stopping running Camel integration (pid: 62506)
-----
-
-NOTE: You do not have to type the full name, as the stop command will match using integrations
-that start with the input, for example, you can do `camel stop d` to stop all integrations
-starting with d. If you have multiple integrations running with similar name such as `dude`, `dude2`, then
-if you type `camel stop dude` then Camel will stop both integrations. However, if you want to only
-stop a single integration then either stop via PID or use `camel stop dude!` with the `!` at the end.
-
-To stop all integrations, then execute without any pid:
+Stop all integrations (omit the name):
 
 [source,bash]
 ----
@@ -48,10 +34,9 @@ Stopping running Camel integration (pid: 61818)
 Stopping running Camel integration (pid: 62506)
 ----
 
-=== Watching local Camel integrations
+=== Watch mode
 
-Most of the management commands can run in _watch_ mode, which repetitively output the status in full-screen mode.
-This is done using the `--watch` parameter as follows:
+Most management commands support `--watch` for continuous full-screen output:
 
 [source,bash]
 ----
@@ -63,12 +48,10 @@ camel ps --watch
 
 == Controlling Spring Boot and Quarkus integrations
 
-The Camel CLI will by default only control Camel integrations that are running using the CLI, eg `camel run foo.java`.
+By default, the CLI only manages integrations started with `camel run`.
+To manage Spring Boot or Quarkus applications, add the CLI connector dependency.
 
-For the CLI to be able to control and manage Spring Boot or Quarkus applications, then you need to add a dependency
-to these projects to integrate with Camel CLI.
-
-In Spring Boot, you add the following dependency:
+Spring Boot:
 
 [source,xml]
 ----
@@ -78,7 +61,7 @@ In Spring Boot, you add the following dependency:
 </dependency>
 ----
 
-In Quarkus, you need to add the following dependency:
+Quarkus:
 
 [source,xml]
 ----
@@ -88,52 +71,24 @@ In Quarkus, you need to add the following dependency:
 </dependency>
 ----
 
-== Running Camel integrations in background
+== Running in background
 
-The `run` command allows running Camel in the background with the `--background` option.
-Therefore, to see and understand what happens then the management commands
-cane be used, such as `camel ps`, `camel get`, and `camel log`.
-
-NOTE: Only Camel Main is supported to run in background
+Use `--background` to run an integration as a background process (Camel Main only):
 
 [source,bash]
 ----
-$ camel run chuck.yaml --background --runtime=main
+$ camel run chuck.yaml --background
 Running Camel integration: chuck in background with PID: 80093
-
-$ camel ps
-  PID   NAME    READY  STATUS   AGE
- 80093  chuck    1/1   Running  33s
 ----
 
-To see the log use `camel log`
-[source,bash]
-----
-$ camel log
-chuck     | 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
-chuck     | 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
-...
-----
+Use `camel ps` to list, `camel log` to tail output, and `camel stop` to shut down.
 
-To stop the integration you can use `camel stop`
+Since Camel 4.10, the command waits for startup to complete and reports any errors
+before returning. Disable with `--background-wait=false`.
 
-[source,bash]
-----
-$ camel stop chuck
-Shutting down Camel integration (pid: 80093)
-----
+== Getting status
 
-When running in background, then Camel CLI (**4.10 onwards**) will now automatic wait for the integration
-to startup before returning from the CLI command. This ensures that if there are any startup
-errors such as compilation errors or DSL errors etc. then these are captured and printed in the shell.
-You can use the option `--background-wait=false` to turn this off.
-
-== Getting status of Camel integrations
-
-The `get` command in Camel CLI is used for getting Camel specific status for one
-or all of the running Camel integrations.
-
-To display the status of the running Camel integrations:
+The `camel get` command (equivalent to `camel get context`) shows overall status:
 
 [source,bash]
 ----
@@ -142,25 +97,15 @@ camel get
  42240  cheese  4.12.0  JBang v0.126.0  dev      1/1   Running       0  1m8s    2/2   1.01     65     0         0     0     -1     1s/1s/-
 ----
 
-The `camel get` command will default display Camel application (context), which is equivalent to
-typing `camel get context`.
+The _Since Last_ column shows three time-since values: started/completed/failed.
+For example, `0s/0s/-` means the last started and completed message just happened with no failures yet.
+Use `--remote` to break down TOTAL into remote/total pairs.
 
-This displays overall information for every Camel integration, where you can see
-the total number of messages processed. The column _Since Last_
-shows how long time ago the last processed message for 3 stages (started/completed/failed).
-
-The value of `0s/0s/-` means that the last started and completed message just happened (0 seconds ago),
-and  that there has not been any failed message yet. And this example `9s/9s/1h3m` means that last started and
-completed message is 9 seconds ago, and last failed were 1 hour and 3 minutes ago.
-
-The TOTAL column shows the total number of messages processed.
-You can use `--remote` to break down the numbers into remote/total pair.
-
-TIP: You can run in _watch_ mode using: `camel get --watch`
+TIP: Use `camel get --watch` for continuous updates.
 
 == Route status
 
-You can also see the status of every route, from all the local Camel integrations with `camel get route`:
+See per-route statistics across all running integrations:
 
 [source,bash]
 ----
@@ -170,12 +115,11 @@ camel get route
  63051  dude      java    timer://java?period=1000    Running    46s     46       0         0     0    0    9     0s/0s/-
 ----
 
-TIP: Use `camel get --help` to display all the available commands as additional will be added in upcoming releases.
+TIP: Run `camel get --help` to see all available sub-commands.
 
-== Top status of Camel integrations
+== Top status
 
-The `camel top` command is intended for getting top utilization statistics (highest to lowest heap used memory)
-of the running Camel integrations.
+The `camel top` command shows utilization statistics sorted by heap usage:
 
 [source,bash]
 ----
@@ -186,12 +130,9 @@ camel top
  22116  bar      11.0.13  3.20.0  JBang               Running    2m7s   33/268/4294 MB  54/58 MB  20ms (4)      7/8  6104/6104
 ----
 
-The _HEAP_ column shows the heap memory (used/committed/max) and the non-heap (used/committed).
-The _GC_ column shows garbage collection information (time and total runs).
-The _CLASSES_ column shows the number of classes (loaded/total).
+Columns: HEAP = used/committed/max, NON-HEAP = used/committed, GC = time (runs), CLASSES = loaded/total.
 
-You can also see the top performing routes (highest to lowest mean processing time)
-of every route, from all the local Camel integrations with `camel top route`:
+Show routes sorted by slowest mean processing time with `camel top route`:
 
 [source,bash]
 ----
@@ -204,78 +145,45 @@ camel top route
  14242  MyCamel  hello                  timer://hello?period=2000            Started  31m41s    948       0         0     0    0    4          0s
 ----
 
-TIP: Use `camel top --help` to display all the available commands as additional will be added in upcoming releases.
+== Starting and stopping routes
 
-== Starting and Stopping routes
-
-The `camel cmd` is intended for executing miscellaneous commands in the running Camel integrations.
-For example, there are commands to start and stop routes.
-
-To stop all the routes in the chuck integration, you execute:
+Stop all routes in an integration:
 
 [source,bash]
 ----
 camel cmd stop-route chuck
 ----
 
-And the status will then report the status as _Stopped_ for the chuck integration:
-
-[source,bash]
-----
-camel get route
-  PID   NAME     ID                     FROM                                 STATUS    AGE   TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
- 81663  chuck    chuck                  kamelet://chuck-norris-source        Stopped           600       0         0     0    0    1          4s
- 81663  chuck    chuck-norris-source-1  timer://chuck?period=10000           Stopped           600       0         0    65   52  290          4s
- 81663  chuck    log-sink-2             kamelet://source?routeId=log-sink-2  Stopped           600       0         0     0    0    1          4s
- 83415  bar      route1                 timer://yaml2?period=1000            Started  5m30s    329       0         0     0    0   10          0s
- 83695  MyCamel  hello                  timer://hello?period=2000            Started  3m52s    116       0         0     0    0    9          1s
-----
-
-To start the routes, you can do:
+Start them again:
 
 [source,bash]
 ----
 camel cmd start-route chuck
 ----
 
-To stop _all_ routes in every Camel integration:
+Without a name, the command applies to all integrations: `camel cmd stop-route` / `camel cmd start-route`.
 
-[source,bash]
-----
-camel cmd stop-route
-----
-
-And you can start _all_ routes using:
-
-[source,bash]
-----
-camel cmd start-route
-----
-
-To start a specific route, you need to use `--id` parameter such as the following,
-which will start routes named `route1` in all running integrations:
+Target a specific route with `--id`:
 
 [source,bash]
 ----
 camel cmd start-route --id=route1
 ----
 
-If you want to do this in a specific integration, you must include the name or pid:
+Scope to a specific integration by adding its name:
 
 [source,bash]
 ----
 camel cmd start-route bar --id=route1
 ----
 
-TIP: You can stop one or more route by their ids by separating using
-comma such as `camel cmd start-route --id=route1,hello`.
-Use `camel cmd start-route --help` for more details.
+TIP: Separate multiple IDs with commas: `--id=route1,hello`.
 
-== Starting and Stopping route groups
+== Starting and stopping route groups
 
-*Available as of Camel 4.14*
+*Available since Camel 4.14*
 
-If you group together routes, then you can also control by groups. For example, you can see status of route groups via:
+View group status (aggregate of all routes in each group):
 
 [source,bash]
 ----
@@ -285,126 +193,69 @@ camel get group
  53173  foo   second       3  Started  40s    7/7   0.00      8     0         0  2260  2256  2263  2263     +6     5s/2s/-
 ----
 
-The data shown above is _aggregate_ of all the routes within each group. There are _2_ routes in first and _3_ routes in seconds.
-
-You can then stop a group such as _first_ via:
+Stop a group:
 
 [source,bash]
 ----
 camel cmd stop-group foo --id=first
 ----
 
-And when you see the status it is listed as _Stopped_:
-
-[source,bash]
-----
-camel get group
-  PID   NAME  GROUP   ROUTES  STATUS   AGE  COVER  MSG/S  TOTAL  FAIL  INFLIGHT  MEAN  MIN   MAX   LAST  DELTA  SINCE-LAST
- 53173  foo   first        2  Stopped         0/0   0.00      8     0         0   504   501   511   502     -1   11s/11s/-
- 53173  foo   second       3  Started  19s    7/7   1.00      4     0         0  2259  2256  2261  2260     -1     3s/1s/-
-----
-
-And you can of course also start the group again:
+Start it again:
 
 [source,bash]
 ----
 camel cmd start-group foo --id=first
 ----
 
-The route group commands works similar to how you control routes (see above).
+Group commands work the same way as route commands (see above).
 
-== Enabling and Disabling EIPs
+== Enabling and disabling EIPs
 
-*Available as of Camel 4.14*
+*Available since Camel 4.14*
 
-When developing prototypes or trouble-shooting, you may want to quickly be able to disable some EIPs that
-should not be active, without having to change source code.
-
-[source,bash]
-----
-camel get processor
-PID   NAME  ID            PROCESSOR                 STATUS   TOTAL  FAIL  INFLIGHT  MEAN  MIN   MAX   LAST  DELTA  SINCE-LAST
- 5202  foo   a             direct://a                Started     14     0         1   504   501   506   501     -5        1s/-
-             delay1          delay                   Started     14     0         1   503   500   505   500     -5        1s/-
-             log1            log                     Started     14     0         0     0     0     1     0      0        1s/-
-----
-
-The route above have 2 processors, and we can quickly disable one of them such as _log1_ as follows:
+Disable individual processors at runtime without changing source code.
+List processors with `camel get processor`, then disable by id:
 
 [source,bash]
 ----
 camel cmd disable-processor --id=log1
 ----
 
-[source,bash]
-----
-camel get processor
- PID   NAME  ID            PROCESSOR                  STATUS   TOTAL  FAIL  INFLIGHT  MEAN  MIN   MAX   LAST  DELTA  SINCE-LAST
- 5202  foo   a             direct://a                Started     116     0         1   503   500   506   503     -1        0s/-
-             delay1          delay                   Started     116     0         1   503   500   505   503     -1        0s/-
-             log1            log                     Disabled    112     0         0     0     0     1     0      0        4s/-
-----
-
-The status is now changed to _Disabled_ and the EIP is not in use, and it's statistics will not be updated as it does not process any messages.
-
-You can enable the EIP again either explicit:
+Re-enable a specific processor or all at once:
 
 [source,bash]
 ----
 camel cmd enable-processor --id=log1
-----
-
-Or to quickly enable all EIPs
-
-[source,bash]
-----
 camel cmd enable-processor
 ----
 
-TIP: You can also disable multiple EIPs seperated by comma, such as `--id=log1,log2,setBody2,choice1`
+TIP: Separate multiple IDs with commas: `--id=log1,log2,setBody2`.
 
 == Developer Console
 
-You can enable the developer console, which presents a variety of information to the developer.
+Enable the web-based developer console with `--console`:
 
 [source,bash]
 ----
 camel run hello.java --console
 ----
 
-The console is then accessible from a web browser at: http://localhost:8080/q/dev (by default).
-The link is also shown in the log when Camel is starting up.
-
-The console can give you insights into your running Camel integration, such as reporting the top
-routes that takes the longest time to process messages. You can then drill down to pinpoint exactly
-which individual EIPs in these routes are the slowest.
-
-The developer console can also output the data in JSON format, which, for example, can be used by 3rd-party tooling
-to scrape the information.
-
-For example, to output the top routes via curl, you can execute:
+The console is accessible at http://localhost:8080/q/dev and provides insights into routes,
+performance, and EIP-level metrics. It also supports JSON output for tooling:
 
 [source,bash]
 ----
-curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/
+curl -s -H "Accept: application/json" http://0.0.0.0:8080/q/dev/top/ | jq
 ----
 
-And if you have `jq` installed which can format and output the JSON data in color, then do:
+== Message history
 
-[source,bash]
-----
-curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/ | jq
-----
+*Available since Camel 4.17*
 
-== History of last completed message
+The `camel get history` command shows a step-by-step summary of the last completed message
+— what each EIP did, with curated details at each step.
 
-*Available from Camel 4.17*
-
-When developers are coding Camel using the high level DSL with EIPs and components then it can appear as a mystery box what happened when Camel processed an incoming message. There are of course many ways to find out with logging, tracing, debugging, and good old System.out.println.
-
-In Camel 4.17 there is the `camel get history` command that show a summary of the last completed message of every step of the message; with a column that shows curanted important information. This is a high level summary to quickly allow users to see what happened.
-
-For example the following `foo.java` source file contains a Camel route that consumes a file, split the file line by line, and filter if the line contains world. After the split then calls a non-existing page on the Camel website, and then logs at the end.
+Example route that reads a file, splits by line, filters, calls HTTP, and logs:
 
 [source,java]
 ----
@@ -430,17 +281,7 @@ public class foo extends RouteBuilder {
 }
 ----
 
-And the file contains 4 lines:
-
-[source,text]
-----
-hello
-world
-from
-me
-----
-
-And when you execute the `camel get history` you would see:
+With a 4-line input file (`hello`, `world`, `from`, `me`), the history shows:
 
 [source,bash]
 ----
@@ -465,113 +306,62 @@ Message History of last completed (id:32E020F6050C165-0000000000000000 status:su
  *<--  foo.java:7   from[file://inbox?noop=true]                               157       0000  Success
 ----
 
-The history command shows what happened and as you can see we are able to show that the there are 4 entries in the Split, and also how each splitted message has its own unique exchange id, that links to the parent exchange id. Also notice how the HTTP call we can see the 404 error code, and the response body is in text/plain.
+Each split message gets its own exchange id linked to the parent. The HTTP call shows the 404 status and content type.
 
-=== Interactive mode with full message history details
+=== Interactive mode
 
-The `camel get history` command can be used in _interactive mode_ via `camel get history --it` which shows
-more detailed information for each step. (similar screen like `camel debug`). This allows you to see the content
-of the message including message headers, body, etc.
+Use `camel get history --it` for an interactive step-through view (similar to `camel debug`),
+showing full message details including headers and body. Press ENTER to advance, P+ENTER to go back.
 
-You can then go forward (press ENTER), or go back (press P + ENTER).
-
-TIP: Use `camel get history --help` to see all available options.
+TIP: Run `camel get history --help` for all options.
 
 == Tailing logs
 
-When you run Camel integrations, then they will by default run in the foreground and output logs.
+Tail logs from one, several, or all integrations:
 
-NOTE: The `camel log` command is **not** supported when running in Spring Boot or Quarkus runtimes.
-
-You can from another terminal access the logs from any Camel integration with the `log` command, as follows:
+NOTE: The `camel log` command is not supported in Spring Boot or Quarkus runtimes.
 
 [source,bash]
 ----
 camel log chuck
-chuck     | 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
-chuck     | 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
-...
+camel log bar,chuck
+camel log
 ----
 
-You can also watch logs for all Camel integrations by `camel log`, or you can specify by name/pids (separate by comma) `camel log bar,chuck`.
-
-It is also possible to find and highlight keywords from the log using `--find`, such as:
-
-[source,bash]
-----
-camel log chuck --find=invoice
-----
-
-You can find multiple items by repeating the option, i.e.:
+Highlight keywords with `--find` (repeatable) or filter lines with `--grep` (case-insensitive):
 
 [source,bash]
 ----
 camel log chuck --find=invoice --find=order
-----
-
-There is also a _grep_ option that will filter the logs to only show lines that matches text (ignore case).
-
-[source,bash]
-----
 camel log chuck --grep=error
 ----
 
-The log command will by default tail the logs for new lines. If you want to exit the command immediately, you
-can turn off the following as shown:
-
-[source,bash]
-----
-camel log chuck --grep=error --follow=false
-----
-
-This will grep the logs for log lines with matches text `error` and output only these logs, and exit.
+By default, `log` tails continuously. Use `--follow=false` to output matching lines and exit.
 
 == Configuring logging levels
 
-You can see the current logging levels of the running Camel integrations by:
+View and change logging levels at runtime:
 
 [source,bash]
 ----
 camel cmd logger
-  PID   NAME   AGE   LOGGER  LEVEL
- 90857  bar   2m48s  root    INFO
- 91103  foo     20s  root    INFO
-----
-
-The logging level can be changed at runtime, for example, to change foo to DEBUG you execute:
-
-[source,bash]
-----
 camel cmd logger --logging-level=DEBUG foo
 ----
 
-TIP: You can use `--all` to change logging levels for all running integrations.
+TIP: Use `--all` to change levels for all running integrations.
 
-=== Configuring individual logging levels
+=== Per-category logging
 
-From *Camel 4.6* onwards you can easily configure different logging levels from CLI and `application.properties`.
+*Available since Camel 4.6*
 
-For example from CLI, you can specify using the `--logging-category` option.
-For example, to enable DEBUG logging if using Kafka:
-
-[source,bash]
-----
-$ camel run myapp.yaml --logging-category=org.apache.kafka=DEBUG
-----
-
-You can specify multiple categories by repeating the CLI option as shown:
+Set category-specific levels from the CLI (repeatable):
 
 [source,bash]
 ----
 $ camel run myapp.yaml --logging-category=org.apache.kafka=DEBUG --logging-category=com.foo.something=TRACE
 ----
 
-You can also configure logging levels in `application.properties` using two styles
-
-- `logging.level.` it is the default style used by Camel and Spring Boot
-- `quarkus.log.category.` is used by Quarkus
-
-For example, you can declare as follows:
+Or in `application.properties` (both Camel/Spring Boot and Quarkus styles are supported):
 
 [source,properties]
 ----
@@ -587,60 +377,33 @@ quarkus.log.category."com.foo.something".level = TRACE
 
 == Tracing messages
 
-The `trace` command is used for showing how messages are routed in Camel. The command has similar output as the `log`
-command but only display message tracing information. This allows you to see every _step_ a message is routed in Camel.
+The `camel trace` command shows every step a message takes through your routes.
+Exchange ids are colour-grouped for correlation when traces are interleaved.
 
-The `trace` command has many options and can be used to _filter_, _grep_ or output on different detail _levels`.
-The _exchange id_ is logged (and grouped by colour), so you can use that to correlate the events when traces are interleaved.
-
-The trace command will by default list the status of whether tracing is enabled or not in the integrations:
+Check tracing status:
 
 [source,bash]
 ----
 camel trace
- PID   NAME   AGE  STATUS   TOTAL  QUEUE  FILTER  PATTERN
- 6911  chuck   5s  Standby      0      0
 ----
 
-Here we can see that the tracer is in standby mode, and you need to start the tracer before Camel will capture messages:
+TIP: Since Camel 4.8, tracing starts in standby mode (dev profile). Enable on startup
+with `camel.trace.enabled=true` in `application.properties`.
 
-TIP: Camel 4.8 onwards has tracing in standby mode (when using dev profile). You can enable tracing on startup by setting the configuration `camel.trace.enabled=true` in `application.properties`.
+Start, dump, and stop tracing:
 
 [source,bash]
 ----
 camel trace --action=start
-----
-
-And if you run `camel trace` again you can see the tracer is started:
-
-[source,bash]
-----
-camel trace
-PID   NAME   AGE   STATUS   TOTAL  QUEUE  FILTER  PATTERN
-6911  chuck  1m5s  Started     16      4
-----
-
-And to show the traces you need to use the `dump` action as follows:
-
-[source,bash]
-----
-camel trace chuck --action=dump
-----
-
-You can also dump traces from all running integrations:
-
-[source,bash]
-----
 camel trace --action=dump
+camel trace --action=stop
 ----
 
-To stop tracing use `--action=stop`.
+Use `--action=clear` to discard already-traced messages.
 
-And you can also clear the already traced messages with `--action=clear`.
+== Health checks
 
-== Health Checks
-
-The status of health checks can be accessed via Camel CLI from the CLI as follows:
+View health check status:
 
 [source,bash]
 ----
@@ -649,35 +412,10 @@ camel get health
  61005  mybind   8s  camel/context   R   UP    2/2/-  1s/3s/-
 ----
 
-Here we can see the Camel is _UP_. The application has just been running for 8 seconds, and there
- have been two health checks invoked.
+The RATE column shows total/success/failure counts. SINCE shows time-since for each.
+When a check starts failing, e.g., `77/-/3` means 77 total, 0 consecutive successes, 3 consecutive failures.
 
-The output is showing the _default_ level of checks as:
-
-- `CamelContext` health check
-- Component-specific health checks (such as from `camel-kafka` or `camel-aws`, ...)
-- Custom health checks
-- Any check that are not UP
-
-The _RATE_ column shows 3 numbers separated by `/`. So `2/2/-` means two checks in total, two successes, and no failures.
-The two last columns will reset when a health check changes state as this number is the number of consecutive
-checks that was successful or failure. So if the health check starts to fail, then the numbers could be:
-
-[source,bash]
-----
-camel get health
-  PID   NAME     AGE   ID             RL  STATE   RATE    SINCE    MESSAGE
- 61005  mybind   3m2s  camel/context   R   UP    77/-/3  1s/-/17s  some kind of error
-----
-
-Here we can see the numbers are changed to `77/-/3`. This means the total is 77. There is no success, but
-the check has been failing three times in a row. The _SINCE_ column corresponds to the _RATE_. So in this
- case, we can see the last check was 1 second ago, and that the check has been failing for 17 seconds in a row.
-
-You can use `--level=full` to output every health check, that will include consumer and route level checks
-as well.
-
-A health check may often be failed due to an exception was thrown which can be shown via `--trace` flag:
+Use `--level=full` for consumer and route-level checks. Use `--trace` to show exception stack traces:
 
 [source,bash]
 ----
@@ -725,16 +463,11 @@ camel get health --trace
 		... 13 more
 ----
 
-Here we can easily see that the health check is failing because of the `org.apache.kafka.common.config.ConfigException`
-which is due to invalid configuration: `Invalid url in bootstrap.servers: value`.
-
-TIP: Use `camel get health --help` to see all the various options.
+TIP: Run `camel get health --help` for all options.
 
 == Listing services
 
-Some Camel integrations may host a service which clients can call, such as REST, or SOAP-WS, or socket-level services using TCP protocols.
-
-You can list the available services as shown in the example below:
+List hosted services (REST, TCP, etc.) across all running integrations:
 
 [source,bash]
 ----
@@ -745,18 +478,11 @@ camel get service
  2023  greetings  platform-http  http      http://0.0.0.0:7777/q/dev
 ----
 
-Here you can see 2 Camel integrations. The netty integration hosts a TCP service that is available on port 4444.
-The other Camel integration hosts a REST service that can be called via GET only.
-And finally the integration comes with embedded web console (started with the `--console` option).
-
-NOTE: For a service to be listed then Camel components must be able to advertise the services using xref:camel-console.adoc[].
+NOTE: Components must advertise services via the xref:camel-console.adoc[Developer Console] to appear here.
 
 == Observability with metrics
 
-Camel CLI comes with support for using Micrometer for metrics that easily can be made available.
-
-You simply either run with `--observe` option (use `--metrcis` in older Camel versions),
-or enable and have more control of the configuration in the `application.properties` file as shown below:
+Enable Micrometer metrics with `--observe` or configure in `application.properties`:
 
 [source,properties]
 ----
@@ -772,9 +498,7 @@ camel.metrics.enableMessageHistory=true
 camel.metrics.binders=processor,jvm-info,file-descriptor
 ----
 
-Then you can access metrics from the web browser at: http://localhost:8080/observe/metrics[http://localhost:8080/observe/metrics]
-
-You can also see metrics from the CLI as shown below:
+Access metrics at http://localhost:8080/observe/metrics or from the CLI:
 
 [source,bash]
 ----
@@ -793,10 +517,9 @@ $ camel get metric
  11562  MyCoolCamel  gauge  system.load.average.1m                        3.58935546875
 ----
 
-== Listing state of Circuit Breakers
+== Circuit breaker status
 
-If your Camel integration uses xref:components:eips:circuitBreaker-eip.adoc[Circuit Breaker],
-then you can output the status of the breakers with Camel CLI as follows:
+View the state of xref:components:eips:circuitBreaker-eip.adoc[Circuit Breakers]:
 
 [source,bash]
 ----
@@ -805,30 +528,14 @@ camel get circuit-breaker
  56033  mycb  resilience4j  route1  circuitBreaker1  HALF_OPEN        5        2     3       0
 ----
 
-Here we can see the circuit breaker is in _half-open_ state, i.e., a state where the breaker is attempting
-to transition back to closed if the failures start to drop.
-
-TIP: You can run the command with watch to keep showing the latest state `watch camel get circuit-breaker`.
+TIP: Use `camel get circuit-breaker --watch` for continuous updates.
 
 == Using Jolokia and Hawtio
 
-The https://hawt.io/[Hawtio] web console allows inspecting running Camel integrations, such
-as all the JMX management information, and not but least to visualize the Camel routes
-with live performance metrics. Hawtio is a handy tool for many years, and we have made it
-easy to use Hawtio with Camel CLI.
+https://hawt.io/[Hawtio] provides a web console for inspecting Camel integrations via JMX,
+including route visualization with live performance metrics.
 
-To let Hawtio able to inspect the Camel integrations, then the Jolokia JVM Agent
-must be installed in the running integration, this can be done, either explicit as follows:
-
-[source,bash]
-----
-camel ps
-  PID   NAME                             READY  STATUS    AGE
- 61818  sample.camel.MyCamelApplica...   1/1   Running  26m38s
- 62506  dude.java                        1/1   Running   4m34s
-----
-
-With the PID you can then attach Jolokia:
+Attach the Jolokia JVM agent to a running integration (by PID or name):
 
 [source,bash]
 ----
@@ -837,54 +544,31 @@ Started Jolokia for PID 62506
 http://127.0.0.1:8778/jolokia/
 ----
 
-Instead of using PID, you can also attach by name pattern.
-In this example, because the
-two Camel integrations have unique names (foo and dude), then you can also attach Jolokia
-without knowing the PID as follows:
-
-[source,bash]
-----
-camel jolokia du
-Started Jolokia for PID 62506
-http://127.0.0.1:8778/jolokia/
-----
-
-Then you can launch https://hawt.io/[Hawtio] using Camel CLI:
+Then launch Hawtio (automatically downloads and opens in browser):
 
 [source,bash]
 ----
 camel hawtio
 ----
 
-This will automatically download and start Hawtio, and open in web browser.
+In Hawtio, click the _Discover_ tab to see all local Jolokia agents,
+then click the green _lightning_ icon to connect.
 
-TIP: See `camel hawtio --help` for options.
-
-And when Hawtio launches in the web browser, click the _Discover_ tab which should
-list all the local available Jolokia Agents (yes you can use `camel jolokia PID` to connect
-to multiple different Camel integrations and from this list select which to load).
-
-Click the green _lightning_ icon to connect to running Camel integration (of choice).
-
-You can uninstall the Jolokia JVM Agent in a running Camel integration when no longer needed:
-
-[source,bash]
-----
-camel jolokia 62506 --stop
-Stopped Jolokia for PID 62506
-----
-
-It is also possible to do this with only one command, as follows:
+Or do it in one command — attach Jolokia and launch Hawtio together:
 
 [source,bash]
 ----
 camel hawtio dude
 ----
 
-Where _dude_ is the name of the running Camel integration. When you stop Hawtio (using `ctrl` + `c`)
-then Camel will attempt to uninstall the Jolokia JVM Agent. However, this may not be
-able to do this always, because the JVM is being terminated which can prevent camel-jbang
-from doing JVM process communication to the running Camel integration.
+Uninstall Jolokia when done:
+
+[source,bash]
+----
+camel jolokia 62506 --stop
+----
+
+TIP: Run `camel hawtio --help` for options.
 
 == See Also
 
