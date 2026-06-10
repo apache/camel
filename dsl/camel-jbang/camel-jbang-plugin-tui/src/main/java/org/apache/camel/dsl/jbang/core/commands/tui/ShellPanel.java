@@ -132,8 +132,8 @@ class ShellPanel {
                 if (bytes != null && bytes.length > 0) {
                     virtualTerminal.processInputBytes(bytes);
                 }
-            } catch (IOException e) {
-                // terminal closed
+            } catch (IOException | ArrayIndexOutOfBoundsException e) {
+                // terminal closed or buffer resized concurrently
             }
         }
         return true;
@@ -190,10 +190,15 @@ class ShellPanel {
             return;
         }
 
-        // Dump screen buffer
+        // Dump screen buffer (may race with shell thread writing)
         long[] screen = new long[innerWidth * innerHeight];
         int[] cursor = new int[2];
-        screenTerminal.dump(screen, cursor);
+        try {
+            screenTerminal.dump(screen, cursor);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // buffer resized concurrently — skip this frame
+            return;
+        }
 
         // Convert to TamboUI lines
         List<Line> lines = new ArrayList<>(innerHeight);
@@ -469,21 +474,33 @@ class ShellPanel {
         @Override
         public void write(int b) throws IOException {
             if (delegate != null) {
-                delegate.write(b);
+                try {
+                    delegate.write(b);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    // ScreenTerminal buffer resized concurrently — safe to ignore
+                }
             }
         }
 
         @Override
         public void write(byte[] b, int off, int len) throws IOException {
             if (delegate != null) {
-                delegate.write(b, off, len);
+                try {
+                    delegate.write(b, off, len);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    // ScreenTerminal buffer resized concurrently — safe to ignore
+                }
             }
         }
 
         @Override
         public void flush() throws IOException {
             if (delegate != null) {
-                delegate.flush();
+                try {
+                    delegate.flush();
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    // ScreenTerminal buffer resized concurrently — safe to ignore
+                }
             }
         }
 
