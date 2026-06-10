@@ -838,10 +838,11 @@ behaviour.
 the refresh token grant instead of the incorrect `token` parameter.
 Custom test servers or identity-provider mocks that expected the old request body should be updated.
 
-=== camel-platform-http
+=== camel-platform-http, camel-servlet, camel-jetty, camel-netty-http, and camel-undertow
 
-The `platform-http` consumer endpoint now has an `oauthProfile` option for opt-in validation of incoming
-`Authorization: Bearer` tokens using the public OAuth token validation SPI.
+The `platform-http`, `servlet`, `jetty`, `netty-http`, and `undertow` HTTP consumer endpoints now have an
+`oauthProfile` option for opt-in validation of incoming `Authorization: Bearer` tokens using the public OAuth
+token validation SPI. Undertow WebSocket consumer endpoints also support the option.
 Existing routes are unchanged unless this option is set.
 Routes that enable `oauthProfile` need an `OAuthTokenValidationFactory`; `camel-oauth` provides the
 default implementation and runtimes can provide their own implementation backed by native security.
@@ -852,13 +853,43 @@ The default `camel-oauth` provider requires `expected-issuer`/`base-uri`, `expec
 identity-provider endpoints unless the new explicit opt-out properties are set.
 JWT validation profiles can also set `expected-token-type` to require a specific JWT `typ` header
 such as `at+jwt`.
-Requests without a Bearer token or with an invalid token are rejected with HTTP 401.
-Static profile configuration is validated at route startup. Token validation infrastructure failures
-are rejected with HTTP 503.
+HTTP requests and supported WebSocket upgrade requests without a Bearer token or with an invalid
+token are rejected with HTTP 401; missing credentials receive a `WWW-Authenticate: Bearer` response
+header and invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`.
+Malformed `Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`.
+Static profile configuration is resolved and validated at route startup. Updates to OAuth profile
+properties from `application.properties`, secrets, config maps, vaults, or other property sources
+require restarting the route or Camel context before they take effect. Token validation infrastructure
+failures are rejected with HTTP 503.
 For valid tokens, the token validation result is stored on the exchange as the
 `CamelOAuthTokenValidationResult` exchange property. Route code can use the result to read the
 principal name, token scopes, and immutable token attributes/claims. The raw `Authorization` header is
 removed before the route is invoked.
+This is a pre-route authentication check; HTTP consumers may still accept, decode, or bind the
+inbound request before validation according to their normal transport lifecycle.
+For Undertow WebSocket consumers, validation happens during the HTTP upgrade handshake and the result
+is attached to the `ONOPEN` event exchange when `fireWebSocketChannelEvents=true`, and to subsequent
+message exchanges for that connection.
+Rest DSL and contract-first OpenAPI routes pass the option to the selected HTTP consumer with
+`restConfiguration().endpointProperty("oauthProfile", "myprofile")`.
+Direct contract-first OpenAPI consumer routes can also pass the option on the endpoint URI, for example
+`rest-openapi:petstore-v3.json?consumerComponentName=platform-http&oauthProfile=myprofile`.
+OpenAPI `securitySchemes` are not converted into `oauthProfile` automatically.
+Because `rest-openapi` endpoint URIs are lenient, pass-through options such as `oauthProfile` are
+accepted by the selected consumer delegate but may not appear as first-class `rest-openapi` options in
+component metadata or tooling. Verify that the selected delegate supports the pass-through option;
+delegates that ignore unknown options can otherwise start without the expected endpoint protection.
+For netty-http consumers, `oauthProfile` requires `usingExecutorService=true` and `sync=true`, which
+are the defaults, so blocking validation does not run on a Netty event-loop thread and rejection
+responses can be returned to the client. Routes that combine `oauthProfile`
+with `nettySharedHttpServer` fail at startup, because the shared pipeline does not use the endpoint
+executor service. When several netty-http consumers share the same host and port, a consumer with
+`oauthProfile` fails at startup when another endpoint already initialized the shared server with
+`usingExecutorService=false`, because the first consumer on an address decides the effective pipeline
+configuration.
+The `atmosphere-websocket` component does not support `oauthProfile` and rejects the option at route
+startup.
 
 The public incoming-token validation SPI consists of `OAuthTokenValidationFactory`,
 `OAuthTokenValidationConfig`, and `OAuthTokenValidationResult`.

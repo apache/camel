@@ -77,6 +77,8 @@ public class JettyHttpEndpoint12Configurer extends PropertyConfigurerSupport imp
         case "multipartFilter": target.setMultipartFilter(property(camelContext, jakarta.servlet.Filter.class, value)); return true;
         case "muteexception":
         case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": target.setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "optionsenabled":
         case "optionsEnabled": target.setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
         case "responsebuffersize":
@@ -156,6 +158,8 @@ public class JettyHttpEndpoint12Configurer extends PropertyConfigurerSupport imp
         case "multipartFilter": return jakarta.servlet.Filter.class;
         case "muteexception":
         case "muteException": return boolean.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "optionsenabled":
         case "optionsEnabled": return boolean.class;
         case "responsebuffersize":
@@ -236,6 +240,8 @@ public class JettyHttpEndpoint12Configurer extends PropertyConfigurerSupport imp
         case "multipartFilter": return target.getMultipartFilter();
         case "muteexception":
         case "muteException": return target.isMuteException();
+        case "oauthprofile":
+        case "oauthProfile": return target.getOauthProfile();
         case "optionsenabled":
         case "optionsEnabled": return target.isOptionsEnabled();
         case "responsebuffersize":

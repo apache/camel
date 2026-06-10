@@ -22,6 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxHttpTransferExceptionTest extends VertxHttpTestSupport {
@@ -42,6 +44,8 @@ public class VertxHttpTransferExceptionTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // muteException=false is required since CAMEL-23651 flipped the undertow default to true,
+                // and muteException takes precedence over transferException
                 from(getTestServerUri() + "?transferException=true&muteException=false")
                         .throwException(new IllegalStateException("Forced Exception"));
             }

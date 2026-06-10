@@ -292,6 +292,24 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth profile name for validating incoming Authorization: Bearer
+         * tokens. When set, the HTTP request or WebSocket upgrade request is
+         * authenticated before the route is processed. This requires an
+         * OAuthTokenValidationFactory; camel-oauth provides the default
+         * implementation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default UndertowEndpointConsumerBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
+        /**
          * OConfiguration used by UndertowSecurityProvider. Security
          * configuration object for use from UndertowSecurityProvider.
          * Configuration is UndertowSecurityProvider specific. Each provider

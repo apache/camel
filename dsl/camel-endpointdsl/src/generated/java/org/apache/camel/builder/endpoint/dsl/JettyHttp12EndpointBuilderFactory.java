@@ -629,6 +629,24 @@ public interface JettyHttp12EndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth profile name for validating incoming Authorization: Bearer
+         * tokens. When set, the request is authenticated before the route is
+         * processed. This requires an OAuthTokenValidationFactory; camel-oauth
+         * provides the default implementation. This is Camel endpoint-level
+         * validation and does not replace Jetty handlers or container security.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default JettyHttp12EndpointBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:

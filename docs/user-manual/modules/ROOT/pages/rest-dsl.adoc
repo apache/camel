@@ -1031,6 +1031,56 @@ header is set then that value takes precedence over the default value.
 You can set multiple options of the same level, so you can, for
 example, configure two component options, and three endpoint options, etc.
 
+=== OAuth Bearer token validation
+
+For HTTP consumer components that support OAuth Bearer token validation, such as
+`platform-http`, `servlet`, `jetty`, `netty-http`, and `undertow`, set the `oauthProfile` endpoint
+option with `endpointProperty`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+restConfiguration()
+    .component("netty-http")
+    .endpointProperty("oauthProfile", "myprofile");
+----
+XML::
++
+[source,xml]
+----
+<restConfiguration component="netty-http">
+  <endpointProperty key="oauthProfile" value="myprofile"/>
+</restConfiguration>
+----
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    component: netty-http
+    endpointProperty:
+      - key: oauthProfile
+        value: myprofile
+----
+====
+
+When using the default validator implementation, add the xref:components:others:oauth.adoc[camel-oauth]
+component to the application classpath and configure the named profile with `camel.oauth.<profile>.*`
+properties. The OAuth check runs before route processors. Depending on the selected HTTP consumer,
+the transport may already have accepted, decoded, or bound parts of the inbound request.
+
+For valid tokens, route code can read the validation result from the exchange property:
+
+[source,java]
+----
+OAuthTokenValidationResult result = exchange.getProperty(
+    "CamelOAuthTokenValidationResult",
+    OAuthTokenValidationResult.class);
+----
+
 
 == Enabling or disabling Jackson JSON features
 

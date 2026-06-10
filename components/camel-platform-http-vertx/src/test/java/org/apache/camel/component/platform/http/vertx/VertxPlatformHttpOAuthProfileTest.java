@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VertxPlatformHttpOAuthProfileTest {
 
@@ -101,7 +102,8 @@ class VertxPlatformHttpOAuthProfileTest {
                     .body(equalTo("vertx-user:hello"));
 
             assertEquals(1, routeInvocations.get());
-            assertEquals("myprofile", VertxStubOAuthTokenValidationFactory.lastProfileName);
+            assertEquals("myprofile", VertxStubOAuthTokenValidationFactory.lastConfigurationProfileName);
+            assertTrue(VertxStubOAuthTokenValidationFactory.validatedWithConfig);
             assertEquals("valid-token", VertxStubOAuthTokenValidationFactory.lastToken);
         } finally {
             context.stop();
@@ -125,7 +127,8 @@ class VertxPlatformHttpOAuthProfileTest {
                     .body(equalTo("Unauthorized"));
 
             assertEquals(0, routeInvocations.get());
-            assertEquals("myprofile", VertxStubOAuthTokenValidationFactory.lastProfileName);
+            assertEquals("myprofile", VertxStubOAuthTokenValidationFactory.lastConfigurationProfileName);
+            assertTrue(VertxStubOAuthTokenValidationFactory.validatedWithConfig);
             assertEquals("invalid-token", VertxStubOAuthTokenValidationFactory.lastToken);
         } finally {
             context.stop();
@@ -149,7 +152,8 @@ class VertxPlatformHttpOAuthProfileTest {
                     .body(equalTo("Service Unavailable"));
 
             assertEquals(0, routeInvocations.get());
-            assertEquals("myprofile", VertxStubOAuthTokenValidationFactory.lastProfileName);
+            assertEquals("myprofile", VertxStubOAuthTokenValidationFactory.lastConfigurationProfileName);
+            assertTrue(VertxStubOAuthTokenValidationFactory.validatedWithConfig);
             assertEquals("error-token", VertxStubOAuthTokenValidationFactory.lastToken);
         } finally {
             context.stop();

@@ -26,6 +26,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyEndpoint;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -49,10 +51,12 @@ import org.slf4j.LoggerFactory;
           annotations = {
                   "protocol=http",
           })
-public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
+public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware, OAuthProfileAwareHttpEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     static final String PROXY_NOT_SUPPORTED_MESSAGE = "Netty Http Producer does not support proxy mode";
+
+    private OAuthHttpSecuritySupport oauthHttpSecurity;
 
     @UriParam
     private NettyHttpConfiguration configuration;
@@ -74,6 +78,13 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private NettyHttpSecurityConfiguration securityConfiguration;
     @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
     private Map<String, Object> securityOptions; // to include in component docs
+    @UriParam(label = "consumer,security", displayName = "OAuth Profile",
+              description = "OAuth profile name for validating incoming Authorization: Bearer tokens. "
+                            + "When set, the request is authenticated before the route is processed. "
+                            + "This requires an OAuthTokenValidationFactory; camel-oauth provides the default implementation. "
+                            + "Requires usingExecutorService=true and sync=true (the defaults), and is not supported "
+                            + "with nettySharedHttpServer.")
+    private String oauthProfile;
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
 
@@ -88,6 +99,22 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        if (ObjectHelper.isNotEmpty(oauthProfile) && !getConfiguration().isUsingExecutorService()) {
+            throw new IllegalArgumentException(
+                    "The netty-http oauthProfile option requires usingExecutorService=true so token validation "
+                                               + "does not run on a Netty event-loop thread");
+        }
+        if (ObjectHelper.isNotEmpty(oauthProfile) && nettySharedHttpServer != null) {
+            throw new IllegalArgumentException(
+                    "The netty-http oauthProfile option is not supported with nettySharedHttpServer because "
+                                               + "the shared pipeline does not use the endpoint executor service");
+        }
+        if (ObjectHelper.isNotEmpty(oauthProfile) && !getConfiguration().isSync()) {
+            throw new IllegalArgumentException(
+                    "The netty-http oauthProfile option requires sync=true so token validation rejection "
+                                               + "responses can be returned to the client");
+        }
+
         NettyHttpConsumer answer = new NettyHttpConsumer(this, processor, getConfiguration());
         configureConsumer(answer);
 
@@ -107,6 +134,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     @Override
     public Producer createProducer() throws Exception {
+        if (ObjectHelper.isNotEmpty(oauthProfile)) {
+            throw new IllegalArgumentException("The netty-http oauthProfile option is only supported on consumers");
+        }
         if (isProxyProtocol()) {
             doFail(new IllegalArgumentException(PROXY_NOT_SUPPORTED_MESSAGE));
         }
@@ -223,6 +253,18 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         this.securityOptions = securityOptions;
     }
 
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
+    }
+
+    public OAuthHttpSecuritySupport getOauthHttpSecurity() {
+        return oauthHttpSecurity;
+    }
+
     public CookieHandler getCookieHandler() {
         return cookieHandler;
     }
@@ -253,6 +295,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
                 securityConfiguration.setSecurityAuthenticator(jaas);
             }
         }
+
+        oauthHttpSecurity = OAuthHttpSecuritySupport.create(getCamelContext(), oauthProfile);
     }
 
     private boolean isProxyProtocol() {
