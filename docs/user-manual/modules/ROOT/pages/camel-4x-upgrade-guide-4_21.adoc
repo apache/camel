@@ -2158,3 +2158,14 @@ non-`Camel`-prefixed application headers and map them to the corresponding
 the `salesforce:` `to`. As defence-in-depth, strip inbound Camel-internal headers
 arriving from untrusted producers with `removeHeaders("CamelSalesforce*")` (or the
 broader `removeHeaders("Camel*")`) before the producer.
+
+=== camel-pqc
+
+The key lifecycle managers now store key metadata as JSON instead of using Java serialization.
+`AwsSecretsManagerKeyLifecycleManager` and `HashicorpVaultKeyLifecycleManager` previously stored the
+`KeyMetadata` as a Base64-encoded, Java-serialized value; they now store it as JSON, consistent with
+`FileBasedKeyLifecycleManager`. Metadata written by previous versions is still read transparently and
+is migrated to JSON the next time the metadata is updated.
+
+Because older versions cannot read the new JSON metadata, downgrading after new key metadata has been
+written is not supported.
