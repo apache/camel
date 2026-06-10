@@ -185,8 +185,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
         String name = getNamingStrategy().getName(sentEvent.getExchange(), sentEvent.getEndpoint());
         Tags tags = getNamingStrategy().getTags(sentEvent, sentEvent.getEndpoint());
-        Timer timer = Timer.builder(name).tags(tags).description("Time taken to send message to the endpoint")
-                .register(getMeterRegistry());
+        Timer timer = getOrCreateTimer(name, tags, "Time taken to send message to the endpoint");
         timer.record(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
     }
 
@@ -201,9 +200,18 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         // Would have preferred LongTaskTimer, but you cannot set the FAILED_TAG once it is registered
         Timer.Sample sample = (Timer.Sample) doneEvent.getExchange().removeProperty("eventTimer:" + name);
         if (sample != null) {
-            sample.stop(getMeterRegistry().timer(name, tags));
+            Timer timer = getOrCreateTimer(name, tags, "Time taken for exchange processing");
+            sample.stop(timer);
         }
         setLastTimeExchange();
+    }
+
+    private Timer getOrCreateTimer(final String name, final Tags tags, final String description) {
+        Timer timer = getMeterRegistry().find(name).tags(tags).timer();
+        if (timer == null) {
+            timer = Timer.builder(name).tags(tags).description(description).register(getMeterRegistry());
+        }
+        return timer;
     }
 
     private void setLastTimeExchange() {
