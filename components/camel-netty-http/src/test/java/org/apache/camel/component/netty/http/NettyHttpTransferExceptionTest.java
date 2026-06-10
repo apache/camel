@@ -46,7 +46,7 @@ public class NettyHttpTransferExceptionTest extends BaseNettyTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://0.0.0.0:{{port}}/foo?transferException=true")
+                from("netty-http:http://0.0.0.0:{{port}}/foo?muteException=false&transferException=true")
                         .to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
