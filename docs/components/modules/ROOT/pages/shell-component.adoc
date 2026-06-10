@@ -1,0 +1,1 @@
+../../../../../components/camel-shell/src/main/docs/shell-component.adoc

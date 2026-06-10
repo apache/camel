@@ -14615,6 +14615,46 @@ public class StaticEndpointBuilders {
         return SftpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * Syntax: <code>shell:prompt</code>
+     * 
+     * Path parameter: prompt (required)
+     * Shell prompt
+     * 
+     * @param path prompt
+     * @return the dsl builder
+     */
+    public static ShellEndpointBuilderFactory.ShellEndpointBuilder shell(String path) {
+        return shell("shell", path);
+    }
+    /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * Syntax: <code>shell:prompt</code>
+     * 
+     * Path parameter: prompt (required)
+     * Shell prompt
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path prompt
+     * @return the dsl builder
+     */
+    public static ShellEndpointBuilderFactory.ShellEndpointBuilder shell(String componentName, String path) {
+        return ShellEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
