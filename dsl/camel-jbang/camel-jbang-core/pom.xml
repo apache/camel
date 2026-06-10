@@ -290,6 +290,10 @@
                                                      usetimestamp="true"/>
                                             </sequential>
                                         </macrodef>
+                                        <!-- camel-1-trbute -->
+                                        <sync-example name="camel-1-tribute" file="README.md"/>
+                                        <sync-example name="camel-1-tribute" file="application.properties"/>
+                                        <sync-example name="camel-1-tribute" file="jms-to-file.camel.yaml"/>
                                         <!-- circuit-breaker -->
                                         <sync-example name="circuit-breaker" file="README.md"/>
                                         <sync-example name="circuit-breaker" file="route.camel.yaml"/>
