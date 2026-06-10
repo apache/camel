@@ -62,7 +62,7 @@
 		<property name="defaultUri" value="http://localhost/" />
 		<property name="messageSender">
 			<bean
-				class="net.javacrumbs.springws.test.helper.InMemoryWebServiceMessageSender" />
+				class="net.javacrumbs.springws.test.helper.InMemoryWebServiceMessageSender2" />
 		</property>
 	</bean>
 

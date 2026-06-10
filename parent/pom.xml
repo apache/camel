@@ -492,7 +492,7 @@
         <spring-version>7.0.8</spring-version>
         <spring-rabbitmq-version>4.0.3</spring-rabbitmq-version>
         <spring-security-version>7.1.0</spring-security-version>
-        <spring-ws-version>5.0.1</spring-ws-version>
+        <spring-ws-version>5.0.2</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp5-version>5.4.0</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
