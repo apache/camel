@@ -14,46 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.undertow;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
+package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class UndertowTransferExceptionTest extends BaseUndertowTest {
+public class RestUndertowMuteExceptionByDefaultTest extends BaseUndertowTest {
 
     @Test
-    public void getSerializedExceptionTest() throws IOException, ClassNotFoundException {
-        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/test/transfer");
-        get.addHeader("Accept", "application/x-java-serialized-object");
-
+    public void muteExceptionByDefaultTest() throws Exception {
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/api/fail");
+        get.addHeader("Accept", "application/text");
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
              CloseableHttpResponse response = httpClient.execute(get)) {
 
-            ObjectInputStream in = new ObjectInputStream(response.getEntity().getContent());
-            IllegalArgumentException e = (IllegalArgumentException) in.readObject();
-            assertNotNull(e);
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertNotNull(responseString);
+            assertEquals("", responseString);
             assertEquals(500, response.getCode());
-            assertEquals("Camel cannot do this", e.getMessage());
         }
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-
+            @Override
             public void configure() {
-                from("undertow:http://localhost:" + getPort() + "/test/transfer?muteException=false&transferException=true")
-                        .to("mock:input")
+                restConfiguration().component("undertow").host("localhost").port(getPort());
+
+                // muteException is not configured so the default (true) applies
+                rest("/api")
+                        .get("fail").to("direct:fail");
+
+                from("direct:fail")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };

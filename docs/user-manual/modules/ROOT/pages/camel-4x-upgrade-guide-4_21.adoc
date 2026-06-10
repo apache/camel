@@ -1191,6 +1191,31 @@ Routes that intentionally relied on undertow mapping `websocket.*` wire
 headers in or out can supply a custom `headerFilterStrategy` endpoint option
 to restore the previous behaviour.
 
+=== camel-netty-http / camel-undertow - potential breaking change
+
+The `muteException` consumer option now defaults to `true` in `camel-netty-http` and
+`camel-undertow`, aligning these components with the other HTTP server components
+(`camel-http`, `camel-jetty`, `camel-servlet`, and `camel-platform-http`), which have
+been defaulting `muteException` to `true` for a long time.
+
+When an exchange fails processing on the consumer side, the HTTP response now has an
+empty body. Previously the response body contained the exception stack trace as
+`text/plain`.
+
+Routes that rely on the exception stack trace being present in the response body must
+set `muteException=false` explicitly on the endpoint or component after the upgrade:
+
+[source,text]
+----
+netty-http:http://0.0.0.0:8080/foo?muteException=false
+undertow:http://0.0.0.0:8080/foo?muteException=false
+----
+
+Note that `muteException` takes precedence over `transferException`, as it already does
+in the other HTTP server components. Routes using `transferException=true` on these two
+components must now also set `muteException=false` for the serialized exception to be
+returned in the response.
+
 === camel-web3j - potential breaking change
 
 The Exchange header constants in `Web3jConstants` have been renamed to follow the
