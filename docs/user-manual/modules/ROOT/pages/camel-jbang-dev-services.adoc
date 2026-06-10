@@ -112,4 +112,4 @@ camel infra log openldap
 
 == See Also
 
-The xref:camel-jbang-devtools.adoc#_sending_messages_to_infrastructure_services[Sending messages to infrastructure services] feature in the Development Tools page can send messages directly to services started with `camel infra run`.
+The xref:camel-jbang-devtools.adoc#_sending_to_infrastructure_services[Sending messages to infrastructure services] feature in the Development Tools page can send messages directly to services started with `camel infra run`.
