@@ -18,13 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import dev.tamboui.layout.Constraint;
-import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
@@ -35,6 +35,9 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.block.Block;
+import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -79,6 +82,9 @@ class ShellPanel {
 
     private int lastWidth;
     private int lastHeight;
+    private int scrollOffset;
+    private int lastHistorySize;
+    private volatile boolean shellExited;
 
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
@@ -98,8 +104,9 @@ class ShellPanel {
 
     void open() {
         visible = true;
-        if (startError != null) {
+        if (startError != null || shellExited) {
             startError = null;
+            shellExited = false;
             screenTerminal = null;
             virtualTerminal = null;
         }
@@ -125,6 +132,20 @@ class ShellPanel {
             return true;
         }
 
+        // Shift+PageUp/Down for scrollback through history
+        if (ke.isKey(KeyCode.PAGE_UP) && ke.hasShift()) {
+            int histSize = screenTerminal != null ? getHistorySize(screenTerminal) : 0;
+            scrollOffset = Math.min(scrollOffset + lastHeight, histSize);
+            return true;
+        }
+        if (ke.isKey(KeyCode.PAGE_DOWN) && ke.hasShift()) {
+            scrollOffset = Math.max(0, scrollOffset - lastHeight);
+            return true;
+        }
+
+        // Any regular key input resets scrollback to live view
+        scrollOffset = 0;
+
         // Forward everything else to the virtual terminal
         if (virtualTerminal != null) {
             try {
@@ -144,9 +165,21 @@ class ShellPanel {
             return;
         }
 
-        // Reserve 1 row for separator line at top
-        int innerWidth = area.width();
-        int innerHeight = area.height() - 1;
+        if (shellExited) {
+            close();
+            return;
+        }
+
+        // Render border matching other tabs
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(Title.from(Line.from(Span.styled(" Shell ", Style.EMPTY.bold()))))
+                .build();
+        frame.renderWidget(block, area);
+        Rect inner = block.inner(area);
+
+        int innerWidth = inner.width();
+        int innerHeight = inner.height();
 
         // Start shell on first render (we now know the size)
         if (screenTerminal == null && innerWidth > 2 && innerHeight > 2) {
@@ -163,26 +196,12 @@ class ShellPanel {
             lastHeight = innerHeight;
         }
 
-        // Split: separator line + content
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.length(1), Constraint.fill())
-                .split(area);
-
-        // Render separator line with title
-        String sep = "─".repeat(Math.max(0, innerWidth - 8));
-        frame.renderWidget(
-                Paragraph.from(Line.from(
-                        Span.styled("── ", Style.EMPTY.dim()),
-                        Span.styled("Shell", Style.EMPTY.bold()),
-                        Span.styled(" " + sep, Style.EMPTY.dim()))),
-                chunks.get(0));
-
         // Show error from shell thread crash
         if (startError != null) {
             frame.renderWidget(
                     Paragraph.from(Line.from(
                             Span.styled(startError, Style.EMPTY.fg(Color.LIGHT_RED)))),
-                    chunks.get(1));
+                    inner);
             return;
         }
 
@@ -200,35 +219,18 @@ class ShellPanel {
             return;
         }
 
-        // Convert to TamboUI lines
-        List<Line> lines = new ArrayList<>(innerHeight);
-        for (int row = 0; row < innerHeight; row++) {
-            List<Span> spans = new ArrayList<>();
-            int col = 0;
-            while (col < innerWidth) {
-                long cell = screen[row * innerWidth + col];
-                int ch = (int) (cell & 0xffffffffL);
-                long attr = cell >>> 32;
-                Style style = convertAttrToStyle(attr);
+        // Auto-follow: reset scroll when new history appears
+        int histSize = getHistorySize(screenTerminal);
+        if (histSize > lastHistorySize && scrollOffset > 0) {
+            scrollOffset = 0;
+        }
+        lastHistorySize = histSize;
 
-                // Merge consecutive cells with same attributes
-                StringBuilder sb = new StringBuilder();
-                sb.appendCodePoint(ch == 0 ? ' ' : ch);
-                int nextCol = col + 1;
-                while (nextCol < innerWidth) {
-                    long nextCell = screen[row * innerWidth + nextCol];
-                    long nextAttr = nextCell >>> 32;
-                    if (nextAttr != attr) {
-                        break;
-                    }
-                    int nextCh = (int) (nextCell & 0xffffffffL);
-                    sb.appendCodePoint(nextCh == 0 ? ' ' : nextCh);
-                    nextCol++;
-                }
-                spans.add(Span.styled(sb.toString(), style));
-                col = nextCol;
-            }
-            lines.add(Line.from(spans));
+        List<Line> lines;
+        if (scrollOffset > 0) {
+            lines = renderScrolledView(screen, innerWidth, innerHeight);
+        } else {
+            lines = renderLiveView(screen, innerWidth, innerHeight);
         }
 
         frame.renderWidget(
@@ -236,13 +238,77 @@ class ShellPanel {
                         .text(Text.from(lines))
                         .overflow(Overflow.CLIP)
                         .build(),
-                chunks.get(1));
+                inner);
     }
 
     void renderFooter(List<Span> spans) {
         MonitorContext.hint(spans, "F6", "close");
         int nextPct = SPLIT_PERCENTS[(splitIndex + 1) % SPLIT_PERCENTS.length];
         MonitorContext.hint(spans, "Shift+F6", nextPct + "%");
+        MonitorContext.hint(spans, "Shift+PgUp/Dn", "scroll");
+    }
+
+    private List<Line> renderLiveView(long[] screen, int width, int height) {
+        List<Line> lines = new ArrayList<>(height);
+        for (int row = 0; row < height; row++) {
+            lines.add(convertRow(screen, row * width, width));
+        }
+        return lines;
+    }
+
+    private List<Line> renderScrolledView(long[] screen, int width, int height) {
+        List<long[]> history = getHistory(screenTerminal);
+        if (history.isEmpty()) {
+            return renderLiveView(screen, width, height);
+        }
+
+        int totalLines = history.size() + height;
+        int viewStart = Math.max(0, totalLines - scrollOffset - height);
+
+        List<Line> lines = new ArrayList<>(height);
+        for (int i = 0; i < height; i++) {
+            int lineIdx = viewStart + i;
+            if (lineIdx < history.size()) {
+                long[] histLine = history.get(lineIdx);
+                lines.add(convertRow(histLine, 0, Math.min(histLine.length, width)));
+            } else {
+                int screenRow = lineIdx - history.size();
+                if (screenRow >= 0 && screenRow < height) {
+                    lines.add(convertRow(screen, screenRow * width, width));
+                } else {
+                    lines.add(Line.from(Span.raw("")));
+                }
+            }
+        }
+        return lines;
+    }
+
+    private static Line convertRow(long[] buffer, int offset, int width) {
+        List<Span> spans = new ArrayList<>();
+        int col = 0;
+        while (col < width) {
+            long cell = buffer[offset + col];
+            int ch = (int) (cell & 0xffffffffL);
+            long attr = cell >>> 32;
+            Style style = convertAttrToStyle(attr);
+
+            StringBuilder sb = new StringBuilder();
+            sb.appendCodePoint(ch == 0 ? ' ' : ch);
+            int nextCol = col + 1;
+            while (nextCol < width) {
+                long nextCell = buffer[offset + nextCol];
+                long nextAttr = nextCell >>> 32;
+                if (nextAttr != attr) {
+                    break;
+                }
+                int nextCh = (int) (nextCell & 0xffffffffL);
+                sb.appendCodePoint(nextCh == 0 ? ' ' : nextCh);
+                nextCol++;
+            }
+            spans.add(Span.styled(sb.toString(), style));
+            col = nextCol;
+        }
+        return Line.from(spans);
     }
 
     private String startError;
@@ -338,6 +404,7 @@ class ShellPanel {
                     .build()) {
                 EnvironmentHelper.setActiveTerminal(terminal);
                 shell.run();
+                shellExited = true;
             } finally {
                 EnvironmentHelper.setActiveTerminal(null);
                 EnvironmentHelper.setSelectedProcess(null);
@@ -466,6 +533,25 @@ class ShellPanel {
             case F12 -> "\033[24~".getBytes(StandardCharsets.UTF_8);
             default -> null;
         };
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<long[]> getHistory(ScreenTerminal st) {
+        try {
+            Method m = ScreenTerminal.class.getMethod("getHistory");
+            return (List<long[]>) m.invoke(st);
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    private static int getHistorySize(ScreenTerminal st) {
+        try {
+            Method m = ScreenTerminal.class.getMethod("getHistorySize");
+            return (int) m.invoke(st);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     private static class DelegateOutputStream extends OutputStream {
