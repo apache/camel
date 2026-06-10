@@ -98,8 +98,8 @@ public class UndertowEndpoint extends DefaultEndpoint
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean transferException = Boolean.FALSE;
-    @UriParam(label = "consumer", defaultValue = "false")
-    private Boolean muteException = Boolean.FALSE;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private Boolean muteException = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean keepAlive = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "true")

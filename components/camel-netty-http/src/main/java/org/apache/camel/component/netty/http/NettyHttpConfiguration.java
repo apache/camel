@@ -55,8 +55,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean transferException;
     @UriParam(label = "advanced,security")
     private String deserializationFilter;
-    @UriParam(label = "consumer")
-    private boolean muteException;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
     @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam(label = "consumer,advanced", defaultValue = "true")

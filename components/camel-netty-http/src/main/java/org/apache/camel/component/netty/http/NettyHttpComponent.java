@@ -74,8 +74,8 @@ public class NettyHttpComponent extends NettyComponent
     private NettyHttpSecurityConfiguration securityConfiguration;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "consumer")
-    private boolean muteException;
+    @Metadata(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
