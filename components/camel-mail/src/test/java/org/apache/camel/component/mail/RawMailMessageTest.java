@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -34,6 +35,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -166,6 +168,11 @@ public class RawMailMessageTest extends CamelTestSupport {
         // insert one signed message
         folder.appendMessages(messages);
         folder.close(true);
+
+        await()
+            .atMost(500, TimeUnit.MILLISECONDS)
+            .alias("Await that the sent mail is ready in the Mailbox before starting the Camel route")
+            .untilAsserted(() -> assertEquals(1, user.getInbox().getNewMessageCount()));
     }
 
     @Override
