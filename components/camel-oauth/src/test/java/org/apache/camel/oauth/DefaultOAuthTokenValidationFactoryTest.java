@@ -34,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.gson.JsonObject;
@@ -86,6 +87,7 @@ class DefaultOAuthTokenValidationFactoryTest {
         JWKSet jwkSet = new JWKSet(rsaKey.toPublicJWK());
         JwksCache.instance().put(JWKS_ENDPOINT, jwkSet);
         DefaultOAuthTokenValidationFactory.clearDiscoveryCache();
+        OAuthTokenRequest.clearIntrospectionFailures();
         factory = new DefaultOAuthTokenValidationFactory();
     }
 
@@ -93,6 +95,7 @@ class DefaultOAuthTokenValidationFactoryTest {
     void tearDown() {
         JwksCache.instance().clear();
         DefaultOAuthTokenValidationFactory.clearDiscoveryCache();
+        OAuthTokenRequest.clearIntrospectionFailures();
     }
 
     @Test
@@ -591,6 +594,7 @@ class DefaultOAuthTokenValidationFactoryTest {
     @Test
     void introspectionNonSuccessResponsesThrowOAuthException() throws Exception {
         for (int statusCode : List.of(400, 401, 500, 503, 204)) {
+            OAuthTokenRequest.clearIntrospectionFailures();
             HttpServer server = startIntrospectionServer(new AtomicInteger(), new AtomicReference<>(), new AtomicReference<>(),
                     new AtomicReference<>(), statusCode, statusCode == 204 ? "" : "{\"active\":true}");
             try {
@@ -609,6 +613,72 @@ class DefaultOAuthTokenValidationFactoryTest {
             } finally {
                 server.stop(0);
             }
+        }
+    }
+
+    @Test
+    void introspectionFailureIsRateLimitedPerEndpoint() throws Exception {
+        AtomicInteger requests = new AtomicInteger();
+        AtomicLong now = new AtomicLong(1_000L);
+        OAuthTokenRequest.setCurrentTimeMillisSupplier(now::get);
+        HttpServer server = startIntrospectionServer(requests, new AtomicReference<>(), new AtomicReference<>(),
+                new AtomicReference<>(), 503, "{\"active\":true}");
+        try {
+            OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                    .setIntrospectionEndpoint("http://127.0.0.1:" + server.getAddress().getPort() + "/introspect")
+                    .setIntrospectionClientId("client")
+                    .setIntrospectionClientSecret("secret")
+                    .setAllowMissingAudience(true)
+                    .setAllowMissingIssuer(true)
+                    .setAllowInsecureHttp(true);
+
+            assertThrows(OAuthException.class, () -> factory.validateToken(config, "opaque-token-no-dots"));
+            assertEquals(1, requests.get());
+
+            OAuthException exception = assertThrows(OAuthException.class,
+                    () -> factory.validateToken(config, "opaque-token-no-dots"));
+
+            assertTrue(exception.getMessage().contains("attempted recently"));
+            assertEquals(1, requests.get());
+
+            now.addAndGet(31_000L);
+            OAuthException retry = assertThrows(OAuthException.class,
+                    () -> factory.validateToken(config, "opaque-token-no-dots"));
+
+            assertTrue(retry.getMessage().contains("Failed to introspect token"));
+            assertEquals(2, requests.get());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void introspectionResponseShapeFailureIsNotRateLimited() throws Exception {
+        AtomicInteger requests = new AtomicInteger();
+        AtomicLong now = new AtomicLong(1_000L);
+        OAuthTokenRequest.setCurrentTimeMillisSupplier(now::get);
+        HttpServer server = startIntrospectionServer(requests, new AtomicReference<>(), new AtomicReference<>(),
+                new AtomicReference<>(), 200, "\"not-a-json-object\"");
+        try {
+            OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                    .setIntrospectionEndpoint("http://127.0.0.1:" + server.getAddress().getPort() + "/introspect")
+                    .setIntrospectionClientId("client")
+                    .setIntrospectionClientSecret("secret")
+                    .setAllowMissingAudience(true)
+                    .setAllowMissingIssuer(true)
+                    .setAllowInsecureHttp(true);
+
+            // a response-shape failure must not open the fail-fast window: the next request goes to the wire
+            assertThrows(OAuthException.class, () -> factory.validateToken(config, "opaque-token-no-dots"));
+            assertEquals(1, requests.get());
+
+            OAuthException second = assertThrows(OAuthException.class,
+                    () -> factory.validateToken(config, "opaque-token-no-dots"));
+
+            assertTrue(second.getMessage().contains("Failed to introspect token"));
+            assertEquals(2, requests.get());
+        } finally {
+            server.stop(0);
         }
     }
 
@@ -634,6 +704,7 @@ class DefaultOAuthTokenValidationFactoryTest {
     @Test
     void introspectionNonJsonOrNonObjectSuccessResponseThrowsOAuthException() throws Exception {
         for (String response : List.of("not-json", "[]")) {
+            OAuthTokenRequest.clearIntrospectionFailures();
             HttpServer server = startIntrospectionServer(new AtomicInteger(), new AtomicReference<>(), new AtomicReference<>(),
                     new AtomicReference<>(), response);
             try {
@@ -992,6 +1063,58 @@ class DefaultOAuthTokenValidationFactoryTest {
     }
 
     @Test
+    void oidcDiscoveryFetchForOneUrlDoesNotBlockCollidingUrl() throws Exception {
+        CountDownLatch blockingRequest = new CountDownLatch(1);
+        CountDownLatch releaseBlocking = new CountDownLatch(1);
+        AtomicInteger normalRequests = new AtomicInteger();
+        ExecutorService serverExecutor = Executors.newFixedThreadPool(2);
+        HttpServer discoveryServer = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        discoveryServer.setExecutor(serverExecutor);
+        discoveryServer.createContext("/.well-known/openid-configuration", exchange -> {
+            String response = """
+                    {"issuer":"%s","jwks_uri":"http://127.0.0.1:1/jwks"}
+                    """.formatted(ISSUER);
+            if ("Aa".equals(exchange.getRequestURI().getQuery())) {
+                blockingRequest.countDown();
+                try {
+                    releaseBlocking.await(30, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException(e);
+                }
+            } else {
+                normalRequests.incrementAndGet();
+            }
+            sendResponse(exchange, response);
+        });
+        discoveryServer.start();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        try {
+            String discoveryPrefix = "http://127.0.0.1:" + discoveryServer.getAddress().getPort()
+                                     + "/.well-known/openid-configuration?";
+            String blockingDiscoveryUrl = discoveryPrefix + "Aa";
+            String normalDiscoveryUrl = discoveryPrefix + "BB";
+            assertEquals(blockingDiscoveryUrl.hashCode(), normalDiscoveryUrl.hashCode());
+
+            Future<?> blockedDiscovery = executor.submit(
+                    () -> factory.validateConfiguration(discoveryConfig(blockingDiscoveryUrl)));
+
+            assertTrue(blockingRequest.await(5, TimeUnit.SECONDS));
+            assertTimeoutPreemptively(Duration.ofSeconds(2),
+                    () -> factory.validateConfiguration(discoveryConfig(normalDiscoveryUrl)));
+            assertEquals(1, normalRequests.get());
+
+            releaseBlocking.countDown();
+            blockedDiscovery.get(5, TimeUnit.SECONDS);
+        } finally {
+            releaseBlocking.countDown();
+            executor.shutdownNow();
+            discoveryServer.stop(0);
+            serverExecutor.shutdownNow();
+        }
+    }
+
+    @Test
     void oidcDiscoveryIsCached() throws Exception {
         AtomicInteger discoveryRequests = new AtomicInteger();
         AtomicInteger jwksRequests = new AtomicInteger();
@@ -1024,6 +1147,8 @@ class DefaultOAuthTokenValidationFactoryTest {
     void oidcDiscoveryRefreshesAfterCacheTtl() throws Exception {
         AtomicInteger discoveryRequests = new AtomicInteger();
         AtomicInteger jwksRequests = new AtomicInteger();
+        AtomicLong now = new AtomicLong(1_000L);
+        DefaultOAuthTokenValidationFactory.setCurrentTimeMillisSupplier(now::get);
         AtomicReference<JWKSet> serverJwkSet = new AtomicReference<>(new JWKSet(rsaKey.toPublicJWK()));
         HttpServer jwksServer = startJwksServer(serverJwkSet, jwksRequests);
         HttpServer discoveryServer = startDiscoveryServer(discoveryRequests,
@@ -1042,10 +1167,9 @@ class DefaultOAuthTokenValidationFactoryTest {
             assertTrue(factory.validateToken(config, createJwt(ISSUER, AUDIENCE, futureDate(300))).isValid());
             assertEquals(1, discoveryRequests.get());
 
-            await().atMost(Duration.ofSeconds(3)).pollInterval(Duration.ofMillis(100)).untilAsserted(() -> {
-                assertTrue(factory.validateToken(config, createJwt(ISSUER, AUDIENCE, futureDate(300))).isValid());
-                assertEquals(2, discoveryRequests.get());
-            });
+            now.addAndGet(2_000L);
+            assertTrue(factory.validateToken(config, createJwt(ISSUER, AUDIENCE, futureDate(300))).isValid());
+            assertEquals(2, discoveryRequests.get());
         } finally {
             discoveryServer.stop(0);
             jwksServer.stop(0);
@@ -1055,6 +1179,8 @@ class DefaultOAuthTokenValidationFactoryTest {
     @Test
     void oidcDiscoveryFailureIsRateLimited() throws Exception {
         AtomicInteger discoveryRequests = new AtomicInteger();
+        AtomicLong now = new AtomicLong(1_000L);
+        DefaultOAuthTokenValidationFactory.setCurrentTimeMillisSupplier(now::get);
         HttpServer discoveryServer = startDiscoveryServer(discoveryRequests, "not-json");
         try {
             OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
@@ -1070,6 +1196,11 @@ class DefaultOAuthTokenValidationFactoryTest {
             OAuthException exception = assertThrows(OAuthException.class, () -> factory.validateConfiguration(config));
             assertTrue(exception.getMessage().contains("attempted recently"));
             assertEquals(1, discoveryRequests.get());
+
+            now.addAndGet(31_000L);
+            OAuthException retry = assertThrows(OAuthException.class, () -> factory.validateConfiguration(config));
+            assertTrue(retry.getMessage().contains("Failed to discover OIDC endpoints"));
+            assertEquals(2, discoveryRequests.get());
         } finally {
             discoveryServer.stop(0);
         }
@@ -1419,6 +1550,14 @@ class DefaultOAuthTokenValidationFactoryTest {
                 = DefaultOAuthTokenValidationFactory.checkIntrospectionTemporalClaims(json, 60);
 
         assertNull(result);
+    }
+
+    private static OAuthTokenValidationConfig discoveryConfig(String discoveryUrl) {
+        return new OAuthTokenValidationConfig()
+                .setOidcDiscoveryUrl(discoveryUrl)
+                .setExpectedIssuer(ISSUER)
+                .setExpectedAudience(AUDIENCE)
+                .setAllowInsecureHttp(true);
     }
 
     private String createJwt(String issuer, String audience, Date expiration) {

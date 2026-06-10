@@ -76,7 +76,7 @@ public class PlatformHttpOAuthProfileHttpTest extends AbstractPlatformHttpTest {
                 .get("/secure")
                 .then()
                 .statusCode(401)
-                .header("WWW-Authenticate", is("Bearer"))
+                .header("WWW-Authenticate", is("Bearer error=\"invalid_token\""))
                 .body(is("Unauthorized"));
 
         assertEquals(0, ROUTE_INVOCATIONS.get());
@@ -92,9 +92,9 @@ public class PlatformHttpOAuthProfileHttpTest extends AbstractPlatformHttpTest {
                     .when()
                     .get("/secure")
                     .then()
-                    .statusCode(401)
-                    .header("WWW-Authenticate", is("Bearer"))
-                    .body(is("Unauthorized"));
+                    .statusCode(400)
+                    .header("WWW-Authenticate", is("Bearer error=\"invalid_request\""))
+                    .body(is("Bad Request"));
         }
 
         assertEquals(0, ROUTE_INVOCATIONS.get());
@@ -110,7 +110,7 @@ public class PlatformHttpOAuthProfileHttpTest extends AbstractPlatformHttpTest {
                 .then()
                 .statusCode(401)
                 .header("Authorization", emptyOrNullString())
-                .header("WWW-Authenticate", is("Bearer"))
+                .header("WWW-Authenticate", is("Bearer error=\"invalid_token\""))
                 .body(is("Unauthorized"));
 
         assertEquals(0, ROUTE_INVOCATIONS.get());

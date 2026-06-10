@@ -140,9 +140,14 @@ signing keys. See xref:components:others:oauth.adoc[camel-oauth] for timeout and
 options.
 ====
 
-When `oauthProfile` is set, static profile configuration is validated at route startup.
+When `oauthProfile` is set, static profile configuration is resolved and validated at route startup.
+Updates to OAuth profile properties require restarting the route or Camel context before they take effect.
 Requests without a Bearer token or with an invalid token are rejected with HTTP 401 before the
-route is processed. Token validation infrastructure failures are rejected with HTTP 503.
+route is processed; missing credentials receive a `WWW-Authenticate: Bearer` response header and
+invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`. Malformed
+`Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`. Token validation infrastructure failures are
+rejected with HTTP 503.
 With the Vert.x platform-http engine, Bearer token validation runs before the request body handler,
 so unauthenticated requests are rejected before body buffering, form parsing, or file uploads.
 For valid tokens, the token validation result is stored on the exchange as the

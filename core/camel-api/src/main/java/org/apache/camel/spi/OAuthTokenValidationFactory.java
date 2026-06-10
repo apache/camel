@@ -26,6 +26,10 @@ import org.apache.camel.CamelContext;
  * <p/>
  * The camel-oauth component provides the default implementation. Runtime-specific integrations can provide their own
  * implementation backed by their native security stack.
+ * <p/>
+ * Implementations that call identity-provider infrastructure, such as OIDC discovery, JWKS endpoints, or RFC 7662
+ * introspection endpoints, should apply bounded connect/read timeouts and avoid unbounded blocking in
+ * request-processing paths.
  *
  * @since 4.21
  */

@@ -103,6 +103,19 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         consumer.createUoW(exchange);
 
         beforeProcess(exchange, ctx, msg);
+        if (exchange.isRouteStop()) {
+            try {
+                if (consumer.getConfiguration().isSync()) {
+                    sendResponse(ctx, exchange);
+                }
+            } catch (Exception e) {
+                consumer.getExceptionHandler().handleException(e);
+            } finally {
+                consumer.doneUoW(exchange);
+                consumer.releaseExchange(exchange, false);
+            }
+            return;
+        }
 
         // process accordingly to endpoint configuration
         if (consumer.getEndpoint().isSynchronous()) {
@@ -122,6 +135,9 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
 
     /**
      * Allows any custom logic before the {@link Exchange} is processed by the routing engine.
+     * <p/>
+     * Implementations may set {@link Exchange#setRouteStop(boolean)} to stop routing and let this handler write the
+     * response and release the exchange for synchronous consumers.
      *
      * @param exchange the exchange
      * @param ctx      the channel handler context

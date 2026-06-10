@@ -19,9 +19,11 @@ package org.apache.camel.component.platform.http.main.authentication;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -31,18 +33,20 @@ public class BasicAuthenticationMainHttpServerTest {
 
     private static Main main;
 
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @BeforeAll
     static void init() {
-        main = new Main();
-        main.setPropertyPlaceholderLocations("basic-auth.properties");
-        main.configure().addRoutesBuilder(new BasicAuthenticationMainHttpServerTest.PlatformHttpRouteBuilder());
+        main = MainHttpServerAuthenticationTestSupport.createMain(
+                "basic-auth.properties", port, new PlatformHttpRouteBuilder());
         main.enableTrace();
         main.start();
     }
 
     @AfterAll
     static void tearDown() {
-        main.stop();
+        MainHttpServerAuthenticationTestSupport.stopMain(main);
     }
 
     @Test
