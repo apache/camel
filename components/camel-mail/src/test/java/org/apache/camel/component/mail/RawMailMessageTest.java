@@ -170,9 +170,9 @@ public class RawMailMessageTest extends CamelTestSupport {
         folder.close(true);
 
         await()
-            .atMost(500, TimeUnit.MILLISECONDS)
-            .alias("Await that the sent mail is ready in the Mailbox before starting the Camel route")
-            .untilAsserted(() -> assertEquals(1, user.getInbox().getNewMessageCount()));
+                .atMost(500, TimeUnit.MILLISECONDS)
+                .alias("Await that the sent mail is ready in the Mailbox before starting the Camel route")
+                .untilAsserted(() -> assertEquals(1, user.getInbox().getNewMessageCount()));
     }
 
     @Override
