@@ -62,9 +62,6 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <systemPropertyVariables>
-                        <derby.stream.error.file>target/derby.log</derby.stream.error.file>
-                    </systemPropertyVariables>
                     <!-- run with low memory to test stream caching should avoid OOME -->
                     <argLine>-XX:MaxDirectMemorySize=512k</argLine>
                 </configuration>
