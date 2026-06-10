@@ -20,9 +20,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.util.StopWatch;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
+import org.jline.terminal.Terminal;
 import picocli.CommandLine;
 
 abstract class ActionWatchCommand extends ActionBaseCommand {
@@ -41,7 +43,10 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     @Override
     public Integer doCall() throws Exception {
         int exit;
-        if (watch) {
+        if (watch && EnvironmentHelper.isEmbedded()) {
+            printer().println("Tip: use the TUI tabs for live monitoring");
+            exit = doWatchCall();
+        } else if (watch) {
             Thread t = new Thread(() -> {
                 waitUserTask = waitForUserEnter();
                 waitUserTask.run();
@@ -72,7 +77,13 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     }
 
     protected void clearScreen() {
-        AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
+        Terminal t = EnvironmentHelper.getActiveTerminal();
+        if (t != null) {
+            t.writer().print("\033[2J\033[H");
+            t.writer().flush();
+        } else {
+            AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
+        }
     }
 
     protected boolean watchWait(StopWatch watch) {

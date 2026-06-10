@@ -60,6 +60,13 @@ public final class EnvironmentHelper {
     }
 
     /**
+     * Returns true if the current command is running inside the TUI's embedded shell panel.
+     */
+    public static boolean isEmbedded() {
+        return activeTerminal != null;
+    }
+
+    /**
      * Sets the selected Camel process name/PID. Called by the TUI to make the selected integration available to
      * subcommands like ask.
      */
