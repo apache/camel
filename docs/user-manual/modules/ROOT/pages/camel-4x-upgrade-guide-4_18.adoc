@@ -1536,3 +1536,92 @@ non-`Camel`-prefixed application header and map it to
 the `kafka:` `to`. Allowing untrusted senders to drive
 `KafkaConstants.OVERRIDE_TOPIC` (which redirects the producer's target topic)
 without such a mapping step is not the intended use of the component.
+
+=== camel-salesforce - potential breaking change
+
+The Exchange header constants in `SalesforceEndpointConfig` have been renamed to
+follow the Camel naming convention used across the rest of the component catalog,
+so that they are governed by the default `HeaderFilterStrategy` (which only filters
+`Camel`/`camel`-prefixed headers). The Java field names are unchanged; only the
+header string values have changed.
+
+These parameters are dual-use: they can be supplied either as endpoint options (for
+example `salesforce:query?sObjectQuery=...`) or as message headers. *The endpoint
+option spelling is unchanged* -- only the *header* name has changed.
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SalesforceEndpointConfig.SOBJECT_NAME` | `sObjectName` | `CamelSalesforceSObjectName`
+| `SalesforceEndpointConfig.SOBJECT_ID` | `sObjectId` | `CamelSalesforceSObjectId`
+| `SalesforceEndpointConfig.SOBJECT_IDS` | `sObjectIds` | `CamelSalesforceSObjectIds`
+| `SalesforceEndpointConfig.SOBJECT_FIELDS` | `sObjectFields` | `CamelSalesforceSObjectFields`
+| `SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME` | `sObjectIdName` | `CamelSalesforceSObjectIdName`
+| `SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE` | `sObjectIdValue` | `CamelSalesforceSObjectIdValue`
+| `SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME` | `sObjectBlobFieldName` | `CamelSalesforceSObjectBlobFieldName`
+| `SalesforceEndpointConfig.SOBJECT_CLASS` | `sObjectClass` | `CamelSalesforceSObjectClass`
+| `SalesforceEndpointConfig.SOBJECT_QUERY` | `sObjectQuery` | `CamelSalesforceSObjectQuery`
+| `SalesforceEndpointConfig.STREAM_QUERY_RESULT` | `streamQueryResult` | `CamelSalesforceStreamQueryResult`
+| `SalesforceEndpointConfig.SOBJECT_SEARCH` | `sObjectSearch` | `CamelSalesforceSObjectSearch`
+| `SalesforceEndpointConfig.APEX_METHOD` | `apexMethod` | `CamelSalesforceApexMethod`
+| `SalesforceEndpointConfig.APEX_URL` | `apexUrl` | `CamelSalesforceApexUrl`
+| `SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX` | `apexQueryParam.` | `CamelSalesforceApexQueryParam.`
+| `SalesforceEndpointConfig.COMPOSITE_METHOD` | `compositeMethod` | `CamelSalesforceCompositeMethod`
+| `SalesforceEndpointConfig.LIMIT` | `limit` | `CamelSalesforceLimit`
+| `SalesforceEndpointConfig.ALL_OR_NONE` | `allOrNone` | `CamelSalesforceAllOrNone`
+| `SalesforceEndpointConfig.EVENT_NAME` | `eventName` | `CamelSalesforceEventName`
+| `SalesforceEndpointConfig.EVENT_SCHEMA_ID` | `eventSchemaId` | `CamelSalesforceEventSchemaId`
+| `SalesforceEndpointConfig.EVENT_SCHEMA_FORMAT` | `eventSchemaFormat` | `CamelSalesforceEventSchemaFormat`
+| `SalesforceEndpointConfig.CONTENT_TYPE` | `contentType` | `CamelSalesforceContentType`
+| `SalesforceEndpointConfig.JOB_ID` | `jobId` | `CamelSalesforceJobId`
+| `SalesforceEndpointConfig.BATCH_ID` | `batchId` | `CamelSalesforceBatchId`
+| `SalesforceEndpointConfig.RESULT_ID` | `resultId` | `CamelSalesforceResultId`
+| `SalesforceEndpointConfig.QUERY_LOCATOR` | `queryLocator` | `CamelSalesforceQueryLocator`
+| `SalesforceEndpointConfig.LOCATOR` | `locator` | `CamelSalesforceLocator`
+| `SalesforceEndpointConfig.MAX_RECORDS` | `maxRecords` | `CamelSalesforceMaxRecords`
+| `SalesforceEndpointConfig.PK_CHUNKING` | `pkChunking` | `CamelSalesforcePkChunking`
+| `SalesforceEndpointConfig.PK_CHUNKING_CHUNK_SIZE` | `pkChunkingChunkSize` | `CamelSalesforcePkChunkingChunkSize`
+| `SalesforceEndpointConfig.PK_CHUNKING_PARENT` | `pkChunkingParent` | `CamelSalesforcePkChunkingParent`
+| `SalesforceEndpointConfig.PK_CHUNKING_START_ROW` | `pkChunkingStartRow` | `CamelSalesforcePkChunkingStartRow`
+| `SalesforceEndpointConfig.REPORT_ID` | `reportId` | `CamelSalesforceReportId`
+| `SalesforceEndpointConfig.INCLUDE_DETAILS` | `includeDetails` | `CamelSalesforceIncludeDetails`
+| `SalesforceEndpointConfig.REPORT_METADATA` | `reportMetadata` | `CamelSalesforceReportMetadata`
+| `SalesforceEndpointConfig.INSTANCE_ID` | `instanceId` | `CamelSalesforceInstanceId`
+| `SalesforceEndpointConfig.RAW_PATH` | `rawPath` | `CamelSalesforceRawPath`
+| `SalesforceEndpointConfig.RAW_METHOD` | `rawMethod` | `CamelSalesforceRawMethod`
+| `SalesforceEndpointConfig.RAW_QUERY_PARAMETERS` | `rawQueryParameters` | `CamelSalesforceRawQueryParameters`
+| `SalesforceEndpointConfig.RAW_HTTP_HEADERS` | `rawHttpHeaders` | `CamelSalesforceRawHttpHeaders`
+|===
+
+Routes that reference the constants symbolically (for example
+`setHeader(SalesforceEndpointConfig.SOBJECT_QUERY, ...)`) continue to work without
+changes. Routes that set the value as a *header* by its literal string (for example
+`setHeader("sObjectQuery", ...)`) must be updated to the new value
+(`setHeader("CamelSalesforceSObjectQuery", ...)`), or preferably switch to the
+symbolic constant. The `apexQueryParam.` header prefix is likewise renamed to
+`CamelSalesforceApexQueryParam.`, so a header such as `apexQueryParam.foo` must now
+be set as `CamelSalesforceApexQueryParam.foo`.
+
+The configuration-only options that are never read from a message header --
+`apiVersion`, `format`, `rawPayload`, `defaultReplayId`, `fallBackReplayId`,
+`initialReplayIdMap`, `replayPreset`, `pubSubDeserializeType`, `pubSubPojoClass`,
+`notFoundBehaviour` and `fallbackToLatestReplayId` -- are unchanged, as is the
+Approval API `approval` / `approval.<property>` mechanism (whose endpoint-option and
+header spellings are intentionally identical and bound to the `approval` endpoint
+parameter name).
+
+==== Behaviour change: cross-transport propagation
+
+Because the renamed header values now begin with `Camel`, they are filtered by the
+standard transport `HeaderFilterStrategy` (`HttpHeaderFilterStrategy`,
+`JmsHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design --
+`Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (HTTP, JMS, ...) into a `salesforce:`
+producer and let the sender choose, for example, the SOQL query, the target SObject
+or the Apex endpoint via these headers must carry those values in
+non-`Camel`-prefixed application headers and map them to the corresponding
+`SalesforceEndpointConfig` constants in the route between the transport `from` and
+the `salesforce:` `to`. As defence-in-depth, strip inbound Camel-internal headers
+arriving from untrusted producers with `removeHeaders("CamelSalesforce*")` (or the
+broader `removeHeaders("Camel*")`) before the producer.
