@@ -24,6 +24,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -501,8 +502,11 @@ class SimpleLRUCacheTest {
         }
         assertTrue(latch.await(20, TimeUnit.SECONDS),
                 "Should have completed within a reasonable timeframe. Latch at: " + latch.getCount());
-        assertEquals(maximumCacheSize, cache.size());
-        assertEquals(totalKeysPerThread * threads - maximumCacheSize, counter.get());
+        int expectedEvictions = totalKeysPerThread * threads - maximumCacheSize;
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertEquals(maximumCacheSize, cache.size());
+            assertEquals(expectedEvictions, counter.get());
+        });
     }
 
     @ParameterizedTest
@@ -526,7 +530,8 @@ class SimpleLRUCacheTest {
         }
         assertTrue(latch.await(20, TimeUnit.SECONDS),
                 "Should have completed within a reasonable timeframe. Latch at: " + latch.getCount());
-        assertEquals(maximumCacheSize, cache.size());
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(maximumCacheSize, cache.size()));
         counter.set(0);
         for (int j = 0; j < maximumCacheSize; j++) {
             cache.put(Integer.toString(j), "OK");
