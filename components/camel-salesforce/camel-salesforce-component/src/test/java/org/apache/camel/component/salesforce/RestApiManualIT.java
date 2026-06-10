@@ -348,10 +348,12 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         assertTrue(contactResult.getSuccess(), "Create success");
 
         // delete the Contact
-        template().requestBodyAndHeader("salesforce:deleteSObject", contactResult.getId(), "sObjectName", "Contact");
+        template().requestBodyAndHeader("salesforce:deleteSObject", contactResult.getId(), "CamelSalesforceSObjectName",
+                "Contact");
 
         // delete the Account
-        template().requestBodyAndHeader("salesforce:deleteSObject", accountResult.getId(), "sObjectName", "Account");
+        template().requestBodyAndHeader("salesforce:deleteSObject", accountResult.getId(), "CamelSalesforceSObjectName",
+                "Account");
     }
 
     @Test
@@ -373,11 +375,12 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         assertNotNull(updateAccountResult);
 
         Account updatedAccount = (Account) template().requestBodyAndHeader("salesforce:getSObject?sObjectFields=Id,Name,Site",
-                account.getId(), "sObjectName", "Account");
+                account.getId(), "CamelSalesforceSObjectName", "Account");
         assertNull(updatedAccount.getSite());
 
         // delete the Account
-        template().requestBodyAndHeader("salesforce:deleteSObject", accountResult.getId(), "sObjectName", "Account");
+        template().requestBodyAndHeader("salesforce:deleteSObject", accountResult.getId(), "CamelSalesforceSObjectName",
+                "Account");
     }
 
     @Test
@@ -408,10 +411,12 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         assertNotNull(updateContactResult);
 
         // delete the Contact
-        template().requestBodyAndHeader("salesforce:deleteSObject", contactResult.getId(), "sObjectName", "Contact");
+        template().requestBodyAndHeader("salesforce:deleteSObject", contactResult.getId(), "CamelSalesforceSObjectName",
+                "Contact");
 
         // delete the Account
-        template().requestBodyAndHeader("salesforce:deleteSObject", accountResult.getId(), "sObjectName", "Account");
+        template().requestBodyAndHeader("salesforce:deleteSObject", accountResult.getId(), "CamelSalesforceSObjectName",
+                "Account");
     }
 
     @Test
@@ -802,9 +807,10 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
     public void testStatus300() throws Exception {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
-        final Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject", merchandiseId, "sObjectFields",
-                "Name,Description__c,Price__c,Total_Inventory__c",
-                Merchandise__c.class);
+        final Merchandise__c merchandise
+                = template().requestBodyAndHeader("direct:getSObject", merchandiseId, "CamelSalesforceSObjectFields",
+                        "Name,Description__c,Price__c,Total_Inventory__c",
+                        Merchandise__c.class);
         assertNotNull(merchandise);
         assertNotNull(merchandise.getName());
         assertNotNull(merchandise.getPrice__c());
@@ -844,8 +850,9 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
     public void testStatus400() throws Exception {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
-        final Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject", merchandiseId, "sObjectFields",
-                "Description__c,Price__c", Merchandise__c.class);
+        final Merchandise__c merchandise
+                = template().requestBodyAndHeader("direct:getSObject", merchandiseId, "CamelSalesforceSObjectFields",
+                        "Description__c,Price__c", Merchandise__c.class);
         assertNotNull(merchandise);
         assertNotNull(merchandise.getPrice__c());
         assertNull(merchandise.getTotal_Inventory__c());
@@ -981,14 +988,14 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
 
                 // testQuery
                 from("direct:queryStreamResult")
-                        .setHeader("sObjectClass", constant(QueryRecordsLine_Item__c.class.getName()))
+                        .setHeader("CamelSalesforceSObjectClass", constant(QueryRecordsLine_Item__c.class.getName()))
                         .setHeader("Sforce-Query-Options", constant("batchSize=200"))
                         .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c Order By Name"
                             + "&streamQueryResult=true");
 
                 // testQuery
                 from("direct:queryAllStreamResult")
-                        .setHeader("sObjectClass", constant(QueryRecordsLine_Item__c.class.getName()))
+                        .setHeader("CamelSalesforceSObjectClass", constant(QueryRecordsLine_Item__c.class.getName()))
                         .setHeader("Sforce-Query-Options", constant("batchSize=200"))
                         .to("salesforce:queryAll?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c Order By Name"
                             + "&streamQueryResult=true");

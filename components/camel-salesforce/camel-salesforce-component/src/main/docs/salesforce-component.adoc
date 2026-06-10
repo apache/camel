@@ -129,6 +129,26 @@ The request message body should be an SObject DTO generated using the maven plug
 ...to("salesforce:upsertSObject?sObjectIdName=Name")...
 ----
 
+==== Supplying operation parameters as message headers
+
+The operation parameters described in the per-operation tables below (such as `sObjectQuery`,
+`sObjectName`, `sObjectId`, `sObjectSearch`, `apexUrl`, `apexMethod`, the `apexQueryParam.` prefix and
+the Bulk/Analytics/RAW parameters) can be supplied either as endpoint options or as message headers.
+
+[IMPORTANT]
+====
+Starting with Camel 4.18.3, when these parameters are supplied as *message headers*, the header names
+follow the standard `CamelSalesforce` naming convention so that they are governed by the default
+`HeaderFilterStrategy` (which only filters `Camel`/`camel`-prefixed headers). For example, set the
+`CamelSalesforceSObjectQuery` header instead of `sObjectQuery`, `CamelSalesforceApexUrl` instead of
+`apexUrl`, and use the `CamelSalesforceApexQueryParam.` prefix instead of `apexQueryParam.`. The
+*endpoint option* spelling is unchanged (for example `salesforce:query?sObjectQuery=...` still works).
+
+Prefer referencing the constants in `SalesforceEndpointConfig` (for example
+`SalesforceEndpointConfig.SOBJECT_QUERY`) when setting these headers, so route code is unaffected by
+the value change. See the Camel 4.18 upgrade guide for the full list of renamed header names.
+====
+
 === Passing in Salesforce headers and fetching Salesforce response headers
 
 There is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
