@@ -176,6 +176,7 @@ public class CamelMonitor extends CamelCommand {
     private final CaptionOverlay captionOverlay = new CaptionOverlay();
     private final DrawOverlay drawOverlay = new DrawOverlay();
     private final HelpOverlay helpOverlay = new HelpOverlay();
+    private final ShellPanel shellPanel = new ShellPanel();
 
     private final ActionsPopup actionsPopup = new ActionsPopup(
             () -> data.get().stream()
@@ -269,6 +270,8 @@ public class CamelMonitor extends CamelCommand {
         ctx = new MonitorContext(data, infraData);
         actionsPopup.setContext(ctx);
         actionsPopup.setResetStatsAction(this::resetStats);
+        shellPanel.setContext(ctx);
+        actionsPopup.setOpenShellAction(shellPanel::open);
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
         logTab = new LogTab(ctx);
         diagramTab = new DiagramTab(ctx);
@@ -332,6 +335,7 @@ public class CamelMonitor extends CamelCommand {
                     this::handleEvent,
                     this::render);
         } finally {
+            shellPanel.destroy();
             if (mcpServer != null) {
                 mcpServer.stop();
             }
@@ -382,6 +386,14 @@ public class CamelMonitor extends CamelCommand {
             }
             if (helpOverlay.isVisible()) {
                 return helpOverlay.handleKeyEvent(ke);
+            }
+            if (shellPanel.isOpen()) {
+                // Shift+F6 cycles shell height — handle before delegating to shell
+                if (ke.isKey(KeyCode.F6) && ke.hasShift()) {
+                    shellPanel.cycleHeight();
+                    return true;
+                }
+                return shellPanel.handleKeyEvent(ke);
             }
             if (actionsPopup.isVisible()) {
                 return actionsPopup.handleKeyEvent(ke);
@@ -604,6 +616,14 @@ public class CamelMonitor extends CamelCommand {
                         helpOverlay.open(help);
                     }
                 }
+            }
+            return true;
+        }
+        if (ke.isKey(KeyCode.F6)) {
+            if (shellPanel.isOpen()) {
+                shellPanel.close();
+            } else {
+                shellPanel.open();
             }
             return true;
         }
@@ -948,19 +968,30 @@ public class CamelMonitor extends CamelCommand {
         // mainChunks.get(1) is the empty spacer row
         renderTabs(frame, mainChunks.get(2));
         // mainChunks.get(3) is the empty spacer row between tabs and content
-        renderContent(frame, mainChunks.get(4));
+        Rect contentArea = mainChunks.get(4);
+        if (shellPanel.isOpen()) {
+            List<Rect> splitChunks = Layout.vertical()
+                    .constraints(Constraint.percentage(100 - shellPanel.panelPercent()),
+                            Constraint.percentage(shellPanel.panelPercent()))
+                    .split(contentArea);
+            renderContent(frame, splitChunks.get(0));
+            shellPanel.render(frame, splitChunks.get(1));
+        } else {
+            renderContent(frame, contentArea);
+        }
+        // Overlays render on top of the full content area regardless of shell state
         if (drawOverlay.isVisible()) {
-            drawOverlay.render(frame, mainChunks.get(4));
+            drawOverlay.render(frame, contentArea);
         }
         if (showKillConfirm) {
-            renderKillConfirm(frame, mainChunks.get(4));
+            renderKillConfirm(frame, contentArea);
         }
-        actionsPopup.render(frame, mainChunks.get(4));
+        actionsPopup.render(frame, contentArea);
         if (captionOverlay.isCaptionVisible()) {
-            captionOverlay.render(frame, mainChunks.get(4));
+            captionOverlay.render(frame, contentArea);
         }
         if (helpOverlay.isVisible()) {
-            helpOverlay.render(frame, mainChunks.get(4));
+            helpOverlay.render(frame, contentArea);
         }
         renderFooter(frame, mainChunks.get(5));
 
@@ -1627,6 +1658,8 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "open");
             hint(spans, "Esc", "close");
+        } else if (shellPanel.isOpen()) {
+            shellPanel.renderFooter(spans);
         } else {
             MonitorTab tab = activeTab();
 
@@ -1702,6 +1735,7 @@ public class CamelMonitor extends CamelCommand {
         if (getNonVanishingIntegrations().size() > 1) {
             hint(fKeySpans, "F3", "switch");
         }
+        hint(fKeySpans, "F6", "shell");
         spans.addAll(insertPos, fKeySpans);
     }
 

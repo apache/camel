@@ -40,6 +40,7 @@ import org.jline.terminal.Terminal;
 public final class EnvironmentHelper {
 
     private static volatile Terminal activeTerminal;
+    private static volatile String selectedProcess;
 
     private EnvironmentHelper() {
     }
@@ -56,6 +57,21 @@ public final class EnvironmentHelper {
      */
     public static Terminal getActiveTerminal() {
         return activeTerminal;
+    }
+
+    /**
+     * Sets the selected Camel process name/PID. Called by the TUI to make the selected integration available to
+     * subcommands like ask.
+     */
+    public static void setSelectedProcess(String name) {
+        selectedProcess = name;
+    }
+
+    /**
+     * Returns the selected Camel process name, or null if none is selected.
+     */
+    public static String getSelectedProcess() {
+        return selectedProcess;
     }
 
     /**

@@ -250,13 +250,18 @@ public class Ask extends CamelCommand {
     // ---- Process discovery (delegates to RuntimeHelper) ----
 
     private RuntimeHelper.ProcessInfo findProcess(String nameOrPid) {
+        // Fall back to TUI-selected process if no explicit name given
+        if ((nameOrPid == null || nameOrPid.isBlank()) && EnvironmentHelper.getSelectedProcess() != null) {
+            nameOrPid = EnvironmentHelper.getSelectedProcess();
+        }
+
         RuntimeHelper.ProcessInfo found = RuntimeHelper.findProcess(nameOrPid);
         if (found != null) {
             return found;
         }
 
+        List<RuntimeHelper.ProcessInfo> processes = RuntimeHelper.discoverProcesses();
         if (nameOrPid != null && !nameOrPid.isBlank()) {
-            List<RuntimeHelper.ProcessInfo> processes = RuntimeHelper.discoverProcesses();
             if (processes.isEmpty()) {
                 printer().printErr("No running Camel processes found.");
                 printer().printErr("Start a Camel application first: camel run myRoute.yaml");
@@ -267,6 +272,10 @@ public class Ask extends CamelCommand {
             } else {
                 printer().printErr("No Camel process found matching: " + nameOrPid);
             }
+        } else if (processes.size() > 1) {
+            printer().println("Multiple Camel processes found. Use --name to specify one:");
+            processes.forEach(p -> printer().println("  " + p.name() + " (PID " + p.pid() + ")"));
+            printer().println();
         }
         return null;
     }
@@ -282,6 +291,13 @@ public class Ask extends CamelCommand {
             sb.append("You are connected to a running Camel application: ");
             sb.append(process.name()).append(" (PID ").append(process.pid()).append("). ");
             sb.append("Use the runtime inspection tools to gather information about it.\n\n");
+        } else {
+            List<RuntimeHelper.ProcessInfo> available = RuntimeHelper.discoverProcesses();
+            if (!available.isEmpty()) {
+                sb.append("No Camel process is currently selected. ");
+                sb.append("Use list_processes to see available processes, then select_process to connect to one. ");
+                sb.append("Runtime inspection tools will not work until a process is selected.\n\n");
+            }
         }
 
         sb.append("You can search the Camel catalog (components, EIPs), browse examples, ");
@@ -308,6 +324,17 @@ public class Ask extends CamelCommand {
 
     private List<LlmClient.ToolDef> buildToolDefinitions() {
         List<LlmClient.ToolDef> tools = new ArrayList<>();
+
+        // Process discovery and selection
+        tools.add(new LlmClient.ToolDef(
+                "list_processes",
+                "List all running Camel processes with their PID and name. Use this to discover available processes before selecting one.",
+                emptyParams()));
+        tools.add(new LlmClient.ToolDef(
+                "select_process",
+                "Select a running Camel process by name or PID to inspect. Required when multiple processes are running. After selection, all runtime tools (get_routes, get_context, etc.) will target this process.",
+                objectParams(Map.of(
+                        "name", stringProp("Name or PID of the Camel process to connect to")))));
 
         // Status-file tools (no parameters needed)
         tools.add(new LlmClient.ToolDef(
@@ -475,6 +502,8 @@ public class Ask extends CamelCommand {
         try {
             return switch (name) {
                 // Runtime tools (require a running process)
+                case "list_processes" -> executeListProcesses();
+                case "select_process" -> executeSelectProcess(args);
                 case "get_context" ->
                     targetPid < 0 ? NO_PROCESS : RuntimeHelper.readStatusSection(targetPid, "context");
                 case "get_routes" ->
@@ -522,6 +551,47 @@ public class Ask extends CamelCommand {
         } catch (Exception e) {
             return "Error executing " + name + ": " + e.getMessage();
         }
+    }
+
+    private String executeListProcesses() {
+        List<RuntimeHelper.ProcessInfo> processes = RuntimeHelper.discoverProcesses();
+        if (processes.isEmpty()) {
+            return "No running Camel processes found. Start one with: camel run <file>";
+        }
+        JsonObject response = new JsonObject();
+        response.put("count", processes.size());
+        List<JsonObject> list = new ArrayList<>();
+        for (RuntimeHelper.ProcessInfo p : processes) {
+            JsonObject entry = new JsonObject();
+            entry.put("pid", p.pid());
+            entry.put("name", p.name());
+            entry.put("selected", p.pid() == targetPid);
+            list.add(entry);
+        }
+        response.put("processes", list);
+        if (targetPid < 0) {
+            response.put("hint", "No process selected. Use select_process to connect to one.");
+        }
+        return response.toJson();
+    }
+
+    private String executeSelectProcess(JsonObject args) {
+        String name = args.getString("name");
+        if (name == null || name.isBlank()) {
+            return "Error: name or PID is required";
+        }
+        RuntimeHelper.ProcessInfo found = RuntimeHelper.findProcess(name);
+        if (found == null) {
+            List<RuntimeHelper.ProcessInfo> processes = RuntimeHelper.discoverProcesses();
+            if (processes.isEmpty()) {
+                return "No running Camel processes found.";
+            }
+            StringBuilder sb = new StringBuilder("No process found matching: " + name + ". Available:\n");
+            processes.forEach(p -> sb.append("  ").append(p.name()).append(" (PID ").append(p.pid()).append(")\n"));
+            return sb.toString();
+        }
+        targetPid = found.pid();
+        return "Connected to " + found.name() + " (PID " + found.pid() + "). Runtime tools are now active.";
     }
 
     private String executeRouteSource(JsonObject args) {

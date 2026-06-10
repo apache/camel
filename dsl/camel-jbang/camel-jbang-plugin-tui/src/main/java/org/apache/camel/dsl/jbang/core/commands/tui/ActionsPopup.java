@@ -85,11 +85,13 @@ class ActionsPopup {
         SHOW_KEYSTROKES,
         SETUP_AI,
         MCP_INFO,
-        MCP_LOG
+        MCP_LOG,
+        SHELL
     }
 
     private static final int[] GROUP_SIZES = { 5, 4, 5 };
     private static final int MCP_GROUP_SIZE = 3;
+    private static final int SHELL_GROUP_SIZE = 1;
 
     private final Supplier<Set<String>> runningNames;
     private final Supplier<List<IntegrationInfo>> integrations;
@@ -101,6 +103,7 @@ class ActionsPopup {
     private final Runnable burstCallback;
     private Runnable resetStatsAction;
     private Runnable resetScreenAction;
+    private Runnable openShellAction;
     private Runnable browseFilesAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
@@ -197,6 +200,10 @@ class ActionsPopup {
         this.resetScreenAction = resetScreenAction;
     }
 
+    void setOpenShellAction(Runnable openShellAction) {
+        this.openShellAction = openShellAction;
+    }
+
     void setBrowseFilesAction(Runnable browseFilesAction) {
         this.browseFilesAction = browseFilesAction;
     }
@@ -220,6 +227,8 @@ class ActionsPopup {
             total += MCP_GROUP_SIZE;
             dividers++;
         }
+        total += SHELL_GROUP_SIZE;
+        dividers++;
         return total + dividers;
     }
 
@@ -234,26 +243,40 @@ class ActionsPopup {
         }
         if (mcpEnabled) {
             pos += MCP_GROUP_SIZE;
+            if (visualIndex == pos) {
+                return true;
+            }
+            pos++;
         }
+        pos += SHELL_GROUP_SIZE;
         return false;
     }
 
     private Action resolveAction(int visualIndex) {
-        int dividers = 0;
-        int pos = 0;
-        int groupCount = mcpEnabled ? GROUP_SIZES.length + 1 : GROUP_SIZES.length;
-        for (int i = 0; i < groupCount; i++) {
-            int gs = i < GROUP_SIZES.length ? GROUP_SIZES[i] : MCP_GROUP_SIZE;
-            pos += gs;
-            if (visualIndex < pos + dividers) {
-                break;
-            }
-            if (i < groupCount - 1) {
-                dividers++;
-                pos++;
-            }
+        List<Action> flat = buildVisualActionList();
+        if (visualIndex >= 0 && visualIndex < flat.size()) {
+            return flat.get(visualIndex);
         }
-        return Action.values()[visualIndex - dividers];
+        return null;
+    }
+
+    private List<Action> buildVisualActionList() {
+        List<Action> flat = new ArrayList<>();
+        flat.addAll(List.of(
+                Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES));
+        flat.add(null);
+        flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.RESET_SCREEN, Action.STOP_ALL));
+        flat.add(null);
+        flat.addAll(List.of(
+                Action.SCREENSHOT, Action.TAPE_RECORDING, Action.TAPE_INSTRUCTIONS, Action.CAPTION,
+                Action.SHOW_KEYSTROKES));
+        if (mcpEnabled) {
+            flat.add(null);
+            flat.addAll(List.of(Action.SETUP_AI, Action.MCP_INFO, Action.MCP_LOG));
+        }
+        flat.add(null);
+        flat.add(Action.SHELL);
+        return flat;
     }
 
     private void navigateActionsMenu(int direction) {
@@ -343,6 +366,8 @@ class ActionsPopup {
             labels.add("MCP Info");
             labels.add("MCP Log");
         }
+        labels.add("───");
+        labels.add("Shell");
         return labels;
     }
 
@@ -538,7 +563,14 @@ class ActionsPopup {
                 Integer sel = actionsMenuState.selected();
                 if (sel != null) {
                     Action action = resolveAction(sel);
-                    if (action == Action.RUN_EXAMPLE) {
+                    if (action == null) {
+                        // divider selected, ignore
+                    } else if (action == Action.SHELL) {
+                        showActionsMenu = false;
+                        if (openShellAction != null) {
+                            openShellAction.run();
+                        }
+                    } else if (action == Action.RUN_EXAMPLE) {
                         openExampleBrowser();
                     } else if (action == Action.RUN_FOLDER) {
                         openFolderInput();
@@ -776,6 +808,9 @@ class ActionsPopup {
             items.add(ListItem.from("  🤖 MCP Info"));
             items.add(ListItem.from("  📋 MCP Log"));
         }
+        // Group 5: Shell
+        items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
+        items.add(ListItem.from("  >_ Shell"));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
