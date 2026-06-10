@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
@@ -1817,6 +1818,67 @@ public class CamelCatalogTest {
         String json = cat.summaryAsJson();
         assertNotNull(json);
         assertTrue(json.contains("99.0.0-test"), "summaryAsJson should contain the custom version");
+    }
+
+    @Test
+    public void testSimpleValidatorJsExists() throws Exception {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("org/apache/camel/catalog/simple/camel-simple-validator.js")) {
+            assertNotNull(is, "camel-simple-validator.js should exist in catalog");
+            String js = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+
+            // Verify catalog data sections are present
+            assertTrue(js.contains("const FUNCTIONS = {"), "JS should contain FUNCTIONS object");
+            assertTrue(js.contains("const OPERATORS = {"), "JS should contain OPERATORS object");
+
+            // Verify key functions are present (from simple.json)
+            assertTrue(js.contains("'body': true"), "JS should contain body function");
+            assertTrue(js.contains("'header': true"), "JS should contain header function");
+            assertTrue(js.contains("'exchangeProperty': true"), "JS should contain exchangeProperty function");
+
+            // Verify operators are present
+            assertTrue(js.contains("'==':"), "JS should contain == operator");
+            assertTrue(js.contains("'contains':"), "JS should contain contains operator");
+            assertTrue(js.contains("'regex':"), "JS should contain regex operator");
+
+            // Verify API functions are present
+            assertTrue(js.contains("function validate("), "JS should contain validate function");
+            assertTrue(js.contains("function complete("), "JS should contain complete function");
+
+            // Verify the function count matches simple.json
+            String langJson = catalog.languageJSonSchema("simple");
+            assertNotNull(langJson, "simple language JSON should exist");
+            LanguageModel model = JsonMapper.generateLanguageModel(langJson);
+            long expectedFunctions = model.getFunctions().stream()
+                    .map(f -> {
+                        String name = f.getName();
+                        for (char ch : new char[] { '(', '.', ':' }) {
+                            int pos = name.indexOf(ch);
+                            if (pos != -1) {
+                                name = name.substring(0, pos);
+                            }
+                        }
+                        return name;
+                    })
+                    .distinct()
+                    .count();
+            long actualFunctions = js.lines()
+                    .filter(line -> line.matches("\\s+'[^']+': true.*"))
+                    .count();
+            assertEquals(expectedFunctions, actualFunctions,
+                    "JS FUNCTIONS count should match unique base names from simple.json");
+        }
+    }
+
+    @Test
+    public void testSimpleValidatorHtmlExists() throws Exception {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("org/apache/camel/catalog/simple/camel-simple-validator.html")) {
+            assertNotNull(is, "camel-simple-validator.html should exist in catalog");
+            String html = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertTrue(html.contains("Simple Language Validator"), "HTML should contain title");
+            assertTrue(html.contains("camel-simple-validator.js"), "HTML should reference the JS file");
+        }
     }
 
 }

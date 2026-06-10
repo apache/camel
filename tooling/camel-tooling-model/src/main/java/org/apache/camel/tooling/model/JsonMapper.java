@@ -414,6 +414,15 @@ public final class JsonMapper {
                 model.addFunction(func);
             }
         }
+        JsonObject mpro = (JsonObject) obj.get("operators");
+        if (mpro != null) {
+            for (Map.Entry<String, Object> entry : mpro.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                LanguageModel.LanguageOperatorModel op = new LanguageModel.LanguageOperatorModel();
+                parseOperator(mp, op, entry.getKey());
+                model.addOperator(op);
+            }
+        }
         return model;
     }
 
@@ -435,6 +444,10 @@ public final class JsonMapper {
         final List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
         if (!functions.isEmpty()) {
             wrapper.put("functions", asJsonObjectFunctions(functions));
+        }
+        final List<LanguageModel.LanguageOperatorModel> operators = model.getOperators();
+        if (!operators.isEmpty()) {
+            wrapper.put("operators", asJsonObjectOperators(operators));
         }
         return wrapper;
     }
@@ -667,6 +680,37 @@ public final class JsonMapper {
         }
     }
 
+    private static void parseOperator(JsonObject mp, LanguageModel.LanguageOperatorModel op, String name) {
+        op.setName(name);
+        op.setConstantName(name);
+        Integer idx = mp.getInteger("index");
+        if (idx != null) {
+            op.setIndex(idx);
+        }
+        op.setKind(mp.getString("kind"));
+        op.setDisplayName(mp.getString("displayName"));
+        op.setGroup(mp.getString("group"));
+        op.setLabel(mp.getString("label"));
+        op.setJavaType(mp.getString("javaType"));
+        op.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
+        op.setDeprecationNote(mp.getString("deprecationNote"));
+        op.setDescription(mp.getString("description"));
+        op.setOperatorKind(mp.getString("operatorKind"));
+        op.setOperatorSyntax(mp.getString("operatorSyntax"));
+        Integer prec = mp.getInteger("precedence");
+        if (prec != null) {
+            op.setPrecedence(prec);
+        }
+        Object examplesObj = mp.get("examples");
+        if (examplesObj instanceof JsonArray examplesArr) {
+            for (Object e : examplesArr) {
+                if (e instanceof String s) {
+                    op.addExample(s);
+                }
+            }
+        }
+    }
+
     public static JsonObject asJsonObject(List<? extends BaseOptionModel> options) {
         JsonObject json = new JsonObject();
         for (int i = 0; i < options.size(); i++) {
@@ -709,6 +753,27 @@ public final class JsonMapper {
                 }
                 jo.put("params", paramsArr);
             }
+            if (!o.getExamples().isEmpty()) {
+                jo.put("examples", new JsonArray(o.getExamples()));
+            }
+            json.put(o.getName(), jo);
+        }
+        return json;
+    }
+
+    public static JsonObject asJsonObjectOperators(List<LanguageModel.LanguageOperatorModel> options) {
+        JsonObject json = new JsonObject();
+        for (int i = 0; i < options.size(); i++) {
+            var o = options.get(i);
+            o.setIndex(i);
+            JsonObject jo = asJsonObject(o);
+            if (o.getOperatorKind() != null) {
+                jo.put("operatorKind", o.getOperatorKind());
+            }
+            if (o.getOperatorSyntax() != null) {
+                jo.put("operatorSyntax", o.getOperatorSyntax());
+            }
+            jo.put("precedence", o.getPrecedence());
             if (!o.getExamples().isEmpty()) {
                 jo.put("examples", new JsonArray(o.getExamples()));
             }

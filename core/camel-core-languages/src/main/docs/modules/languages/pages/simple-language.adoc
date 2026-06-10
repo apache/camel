@@ -2247,6 +2247,52 @@ If you use standalone Camel you can add `@BindToRegistry("foo-function")` to the
 For Spring Boot use `@Component` or `@Service` and Quarkus you can for example use `@ApplicationScoped`.
 
 
+== JavaScript Validator
+
+The `camel-catalog` JAR includes a self-contained JavaScript validator for the Simple language.
+It can syntax-check expressions and predicates in any browser or Node.js environment — no Java backend required.
+
+The files are located in the JAR under:
+
+----
+org/apache/camel/catalog/simple/camel-simple-validator.js
+org/apache/camel/catalog/simple/camel-simple-validator.html
+----
+
+The `.js` file is auto-generated from `simple.json` during the Maven build, so its list of functions and operators
+always matches the current Camel version.
+
+=== API
+
+The validator exposes these functions:
+
+* `validate(input, mode)` — validate a Simple expression or predicate.
+  `mode` is `'expression'` (default) or `'predicate'`.
+  Returns `{ valid: boolean, diagnostics: [...] }`.
+* `complete(input, pos)` — return completion suggestions at the given cursor position.
+* `getFunctions()` — return the list of known Simple function names.
+* `getOperators()` — return the list of known Simple operators with their kind and description.
+
+=== Usage in Node.js
+
+[source,javascript]
+----
+const { validate, complete } = require('./camel-simple-validator.js');
+
+const result = validate("${body} == 'hello'", 'predicate');
+console.log(result.valid);       // true
+console.log(result.diagnostics); // []
+
+const bad = validate("${bdy}", 'expression');
+console.log(bad.valid);          // false
+console.log(bad.diagnostics[0].message); // "Unknown function 'bdy', did you mean 'body'?"
+----
+
+=== Usage in a browser
+
+Extract `camel-simple-validator.html` from the JAR and open it in a browser.
+It provides an interactive form where you can type Simple expressions and validate them with instant feedback.
+
 == Dependencies
 
 The Simple language is part of *camel-core*.

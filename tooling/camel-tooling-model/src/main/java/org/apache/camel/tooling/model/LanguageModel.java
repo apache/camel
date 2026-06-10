@@ -24,6 +24,7 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
     protected String modelName;
     protected String modelJavaType;
     protected final List<LanguageFunctionModel> functions = new ArrayList<>();
+    protected final List<LanguageOperatorModel> operators = new ArrayList<>();
 
     public static class LanguageOptionModel extends BaseOptionModel {
 
@@ -59,6 +60,14 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
 
     public void addFunction(LanguageFunctionModel function) {
         functions.add(function);
+    }
+
+    public List<LanguageOperatorModel> getOperators() {
+        return operators;
+    }
+
+    public void addOperator(LanguageOperatorModel operator) {
+        operators.add(operator);
     }
 
     public static class LanguageFunctionModel extends BaseOptionModel {
@@ -133,6 +142,55 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
 
         public void addParam(FunctionParamModel param) {
             params.add(param);
+        }
+
+        public List<String> getExamples() {
+            return examples;
+        }
+
+        public void addExample(String example) {
+            examples.add(example);
+        }
+    }
+
+    public static class LanguageOperatorModel extends BaseOptionModel {
+
+        private String constantName;
+        private String operatorKind;
+        private String operatorSyntax;
+        private int precedence;
+        private final List<String> examples = new ArrayList<>();
+
+        public String getConstantName() {
+            return constantName;
+        }
+
+        public void setConstantName(String constantName) {
+            this.constantName = constantName;
+        }
+
+        public String getOperatorKind() {
+            return operatorKind;
+        }
+
+        public void setOperatorKind(String operatorKind) {
+            this.operatorKind = operatorKind;
+        }
+
+        public String getOperatorSyntax() {
+            return operatorSyntax;
+        }
+
+        public void setOperatorSyntax(String operatorSyntax) {
+            this.operatorSyntax = operatorSyntax;
+        }
+
+        public int getPrecedence() {
+            return precedence;
+        }
+
+        public void setPrecedence(int precedence) {
+            this.precedence = precedence;
         }
 
         public List<String> getExamples() {
