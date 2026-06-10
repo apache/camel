@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -50,6 +51,12 @@ class LlmClient {
     private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
     private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int HEALTH_CHECK_TIMEOUT_SECONDS = 5;
+
+    // Pre-4.6 Claude models require a @date suffix on Vertex AI
+    private static final Map<String, String> VERTEX_MODEL_MAP = Map.of(
+            "claude-sonnet-4-5", "claude-sonnet-4-5@20250929",
+            "claude-opus-4-5", "claude-opus-4-5@20251101",
+            "claude-haiku-4-5", "claude-haiku-4-5@20251001");
 
     enum ApiType {
         ollama,
@@ -363,7 +370,8 @@ class LlmClient {
                     builder.build(), HttpResponse.BodyHandlers.ofLines());
 
             if (response.statusCode() != 200) {
-                handleErrorStatus(response.statusCode(), "Streaming request failed");
+                String errorBody = response.body().collect(Collectors.joining("\n"));
+                handleErrorStatus(response.statusCode(), errorBody);
                 return new ChatResponse(null, List.of(), "error", false);
             }
 
@@ -609,9 +617,10 @@ class LlmClient {
 
     private String resolveAnthropicUrl() {
         if (isVertexAi()) {
+            String vertexModel = resolveVertexModel(model);
             return String.format(
                     "https://%s-aiplatform.googleapis.com/v1/projects/%s/locations/%s/publishers/anthropic/models/%s:rawPredict",
-                    vertexRegion, vertexProjectId, vertexRegion, model);
+                    vertexRegion, vertexProjectId, vertexRegion, vertexModel);
         }
         String base = url != null ? url : DEFAULT_ANTHROPIC_URL;
         if (base.endsWith("/")) {
@@ -640,6 +649,13 @@ class LlmClient {
 
     private boolean isVertexAi() {
         return vertexRegion != null && vertexProjectId != null;
+    }
+
+    static String resolveVertexModel(String model) {
+        if (model == null || model.contains("@")) {
+            return model;
+        }
+        return VERTEX_MODEL_MAP.getOrDefault(model, model);
     }
 
     private String getGcloudAccessToken() {
@@ -925,7 +941,8 @@ class LlmClient {
                     builder.build(), HttpResponse.BodyHandlers.ofLines());
 
             if (response.statusCode() != 200) {
-                handleErrorStatus(response.statusCode(), "Streaming request failed");
+                String errorBody = response.body().collect(Collectors.joining("\n"));
+                handleErrorStatus(response.statusCode(), errorBody);
                 return null;
             }
 
@@ -972,7 +989,8 @@ class LlmClient {
                     builder.build(), HttpResponse.BodyHandlers.ofLines());
 
             if (response.statusCode() != 200) {
-                handleErrorStatus(response.statusCode(), "Streaming request failed");
+                String errorBody = response.body().collect(Collectors.joining("\n"));
+                handleErrorStatus(response.statusCode(), errorBody);
                 return null;
             }
 
@@ -1211,13 +1229,46 @@ class LlmClient {
         printer.println("LLM returned status: " + statusCode);
         switch (statusCode) {
             case 401 -> printer.println("Authentication failed. Check your API key.");
+            case 404 -> {
+                if (isVertexAi()) {
+                    printer.println("Model not found. Check that the model identifier is valid for Vertex AI.");
+                } else {
+                    printer.println("Endpoint not found.");
+                }
+            }
             case 429 -> printer.println("Rate limit exceeded.");
             default -> {
             }
         }
         if (body != null && !body.isBlank()) {
-            printer.println(body);
+            String errorMessage = extractErrorMessage(body);
+            if (errorMessage != null) {
+                printer.println(errorMessage);
+            }
         }
+    }
+
+    static String extractErrorMessage(String body) {
+        String trimmed = body.strip();
+        if (trimmed.startsWith("{")) {
+            try {
+                JsonObject json = (JsonObject) Jsoner.deserialize(trimmed);
+                Object error = json.get("error");
+                if (error instanceof JsonObject) {
+                    String message = ((JsonObject) error).getString("message");
+                    if (message != null && !message.isBlank()) {
+                        return message;
+                    }
+                } else if (error instanceof String && !((String) error).isBlank()) {
+                    return (String) error;
+                }
+                return trimmed;
+            } catch (Exception e) {
+                return trimmed;
+            }
+        }
+        // Non-JSON response (e.g., HTML error page) — don't dump it
+        return null;
     }
 
     // ---- OpenAI message helpers ----
