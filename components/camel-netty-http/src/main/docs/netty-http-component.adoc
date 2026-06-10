@@ -96,6 +96,59 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== OAuth Bearer token validation
+
+Netty HTTP consumers can validate incoming `Authorization: Bearer` tokens by setting the
+`oauthProfile` endpoint option.
+The profile is resolved through Camel's `OAuthTokenValidationFactory` SPI. The
+xref:components:others:oauth.adoc[camel-oauth] component provides the default implementation for
+standalone Camel applications; see its documentation for validation profile options and production
+hardening (expected issuer and audience, HTTPS for JWKS, OIDC discovery, and introspection
+endpoints). Runtimes can also provide their own implementation.
+
+[NOTE]
+====
+If `oauthProfile` is set but no `OAuthTokenValidationFactory` is available, the route fails to start.
+Add `camel-oauth` for the default provider or include a runtime-specific provider from the platform integration.
+====
+
+[source,java]
+----
+from("netty-http:http://0.0.0.0:8080/secure?oauthProfile=myprofile")
+    .to("direct:businessLogic");
+----
+
+When `oauthProfile` is set, static profile configuration is resolved and validated at route startup.
+Updates to OAuth profile properties require restarting the route or Camel context before they take effect.
+Requests without a Bearer token or with an invalid token are rejected with HTTP 401 before the
+route is processed; missing credentials receive a `WWW-Authenticate: Bearer` response header and
+invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`. Malformed
+`Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`.
+Token validation infrastructure failures are rejected with HTTP 503.
+For valid tokens, the token validation result is stored on the exchange as the
+`CamelOAuthTokenValidationResult` exchange property. The raw `Authorization` header is removed before
+the route is invoked.
+
+OAuth validation can perform blocking calls to identity-provider infrastructure during JWKS refresh,
+OIDC discovery, or token introspection. For this reason, netty-http consumers reject `oauthProfile`
+when `usingExecutorService=false`; keep `usingExecutorService=true` so validation does not run on a
+Netty event-loop thread. When several consumers share the same host and port, the first consumer
+decides the effective pipeline configuration, so a consumer with `oauthProfile` also fails at startup
+when another endpoint already initialized the shared server with `usingExecutorService=false`.
+The `oauthProfile` option is not supported with `nettySharedHttpServer`, because the shared pipeline
+does not use the endpoint executor service.
+The `oauthProfile` option also requires `sync=true`, which is the default, so token validation
+rejection responses can be returned to the client.
+
+[NOTE]
+====
+Automatic `OPTIONS` handling runs before OAuth validation. `OPTIONS` requests, including browser
+CORS preflight requests, are answered with an `Allow` header without authentication and without
+invoking the route, unless the endpoint is restricted to the `OPTIONS` method with
+`httpMethodRestrict`. All other HTTP methods are authenticated when `oauthProfile` is set.
+====
+
 === Access to Netty types
 
 This component uses the

@@ -23,8 +23,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.LongSupplier;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -53,8 +56,10 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
     private static final Logger LOG = LoggerFactory.getLogger(DefaultOAuthTokenValidationFactory.class);
     private static final int MAX_DISCOVERY_SIZE_BYTES = 64 * 1024;
     private static final long MIN_DISCOVERY_RETRY_INTERVAL_MILLIS = 30_000L;
-    private static final Map<String, DiscoveryCacheEntry> DISCOVERY_CACHE = new ConcurrentHashMap<>();
-    private static final Map<String, Long> DISCOVERY_FAILURES = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, DiscoveryCacheEntry> DISCOVERY_CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, FailureRecord> DISCOVERY_FAILURES = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Object> DISCOVERY_LOCKS = new ConcurrentHashMap<>();
+    private static volatile LongSupplier currentTimeMillis = System::currentTimeMillis;
 
     @Override
     public OAuthTokenValidationResult validateToken(OAuthTokenValidationConfig config, String token) {
@@ -268,42 +273,63 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
     }
 
     private static JsonObject discoverEndpoints(OAuthTokenValidationConfig config, String discoveryUrl) {
-        long now = System.currentTimeMillis();
-        return DISCOVERY_CACHE.compute(discoveryUrl, (key, cached) -> {
+        long now = now();
+        DiscoveryCacheEntry cached = DISCOVERY_CACHE.get(discoveryUrl);
+        if (cached != null && !cached.isExpired(config.getOidcDiscoveryCacheTtlSeconds(), now)) {
+            return cached.json;
+        }
+
+        Object lock = DISCOVERY_LOCKS.computeIfAbsent(discoveryUrl, key -> new Object());
+        synchronized (lock) {
+            now = now();
+            cached = DISCOVERY_CACHE.get(discoveryUrl);
             if (cached != null && !cached.isExpired(config.getOidcDiscoveryCacheTtlSeconds(), now)) {
-                return cached;
+                return cached.json;
             }
 
-            Long failedAt = DISCOVERY_FAILURES.get(key);
-            if (failedAt != null && now - failedAt < MIN_DISCOVERY_RETRY_INTERVAL_MILLIS) {
-                throw new OAuthException("OIDC discovery from " + key + " was attempted recently");
+            FailureRecord failure = DISCOVERY_FAILURES.get(discoveryUrl);
+            if (failure != null && now - failure.failedAtMillis < MIN_DISCOVERY_RETRY_INTERVAL_MILLIS) {
+                throw new OAuthException(
+                        "OIDC discovery from " + discoveryUrl + " was attempted recently", failure.cause);
             }
 
             try {
-                LOG.debug("Discovering OIDC endpoints from {}", key);
+                LOG.debug("Discovering OIDC endpoints from {}", discoveryUrl);
                 DefaultResourceRetriever retriever = new DefaultResourceRetriever(
                         config.getConnectTimeoutSeconds() * 1000,
                         config.getReadTimeoutSeconds() * 1000,
                         MAX_DISCOVERY_SIZE_BYTES);
-                Resource resource = retriever.retrieveResource(URI.create(key).toURL());
+                Resource resource = retriever.retrieveResource(URI.create(discoveryUrl).toURL());
                 JsonObject json = JsonParser.parseString(resource.getContent()).getAsJsonObject();
-                DISCOVERY_FAILURES.remove(key);
-                return new DiscoveryCacheEntry(json, now);
+                DISCOVERY_FAILURES.remove(discoveryUrl);
+                DISCOVERY_CACHE.put(discoveryUrl, new DiscoveryCacheEntry(json, now));
+                return json;
             } catch (Exception e) {
-                DISCOVERY_FAILURES.put(key, now);
-                throw new OAuthException("Failed to discover OIDC endpoints from " + key, e);
+                DISCOVERY_FAILURES.put(discoveryUrl, new FailureRecord(now, e));
+                throw new OAuthException("Failed to discover OIDC endpoints from " + discoveryUrl, e);
             }
-        }).json;
+        }
     }
 
     static void clearDiscoveryCache() {
         DISCOVERY_CACHE.clear();
         DISCOVERY_FAILURES.clear();
+        DISCOVERY_LOCKS.clear();
+        currentTimeMillis = System::currentTimeMillis;
+    }
+
+    static void setCurrentTimeMillisSupplier(LongSupplier currentTimeMillis) {
+        DefaultOAuthTokenValidationFactory.currentTimeMillis
+                = Objects.requireNonNull(currentTimeMillis, "currentTimeMillis");
+    }
+
+    private static long now() {
+        return currentTimeMillis.getAsLong();
     }
 
     static OAuthTokenValidationResult checkIntrospectionTemporalClaims(
             JsonObject json, int clockSkewSeconds) {
-        long now = System.currentTimeMillis() / 1000L;
+        long now = now() / 1000L;
 
         if (json.has("exp")) {
             long exp = readOptionalNumericDate(json, "exp", 0);
@@ -489,6 +515,16 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
             map.put(entry.getKey(), toClaimValue(entry.getValue()));
         }
         return Collections.unmodifiableMap(map);
+    }
+
+    private static final class FailureRecord {
+        final long failedAtMillis;
+        final Throwable cause;
+
+        FailureRecord(long failedAtMillis, Throwable cause) {
+            this.failedAtMillis = failedAtMillis;
+            this.cause = cause;
+        }
     }
 
     private static final class DiscoveryCacheEntry {

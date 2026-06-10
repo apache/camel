@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -42,7 +43,7 @@ import org.apache.camel.util.StringHelper;
                               + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
                               + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort,nonProxyHosts,"
                               + "oauth2ClientId,oauth2ClientSecret,oauth2TokenEndpoint,oauth2Scope,oauth2CacheTokens,oauth2CachedTokensDefaultExpirySeconds,"
-                              + "oauth2CachedTokensExpirationMarginSeconds,oauth2ResourceIndicator,oauth2BodyAuthentication",
+                              + "oauth2CachedTokensExpirationMarginSeconds,oauth2ResourceIndicator,oauth2BodyAuthentication,oauthProfile",
           annotations = {
                   "protocol=http",
           })
@@ -95,6 +96,14 @@ public class WebsocketEndpoint extends ServletEndpoint {
 
     public boolean isUseStreaming() {
         return useStreaming;
+    }
+
+    @Override
+    public void setOauthProfile(String oauthProfile) {
+        if (ObjectHelper.isNotEmpty(oauthProfile)) {
+            throw new IllegalArgumentException("The atmosphere-websocket component does not support oauthProfile");
+        }
+        super.setOauthProfile(oauthProfile);
     }
 
     /**

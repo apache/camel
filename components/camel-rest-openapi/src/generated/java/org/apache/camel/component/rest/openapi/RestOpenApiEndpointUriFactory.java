@@ -90,7 +90,7 @@ public class RestOpenApiEndpointUriFactory extends org.apache.camel.support.comp
 
     @Override
     public boolean isLenientProperties() {
-        return false;
+        return true;
     }
 }
 

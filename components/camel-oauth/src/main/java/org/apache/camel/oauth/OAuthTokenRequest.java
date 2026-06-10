@@ -27,6 +27,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.LongSupplier;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,6 +51,9 @@ public final class OAuthTokenRequest {
 
     private static final Logger LOG = LoggerFactory.getLogger(OAuthTokenRequest.class);
     private static final int MAX_INTROSPECTION_RESPONSE_SIZE_BYTES = 64 * 1024;
+    private static final long MIN_INTROSPECTION_RETRY_INTERVAL_MILLIS = 30_000L;
+    private static final ConcurrentMap<String, FailureRecord> INTROSPECTION_FAILURES = new ConcurrentHashMap<>();
+    private static volatile LongSupplier currentTimeMillis = System::currentTimeMillis;
 
     private OAuthTokenRequest() {
     }
@@ -115,6 +122,9 @@ public final class OAuthTokenRequest {
     public static JsonObject introspect(
             String introspectionEndpoint, String clientId, String clientSecret, String token,
             int connectTimeoutSeconds, int readTimeoutSeconds) {
+        long now = now();
+        assertCanAttemptIntrospection(introspectionEndpoint, now);
+
         HttpURLConnection connection = null;
         try {
             byte[] body = ("token=" + formEncode(token) + "&token_type_hint=access_token")
@@ -134,7 +144,12 @@ public final class OAuthTokenRequest {
 
             int statusCode = connection.getResponseCode();
             if (statusCode != HttpURLConnection.HTTP_OK) {
-                throw new OAuthException("Introspection endpoint returned HTTP " + statusCode);
+                OAuthException failure = new OAuthException("Introspection endpoint returned HTTP " + statusCode);
+                if (statusCode >= 500) {
+                    // server-side outage: enter the fail-fast window so the dead endpoint is not hammered
+                    INTROSPECTION_FAILURES.put(introspectionEndpoint, new FailureRecord(now, failure));
+                }
+                throw failure;
             }
 
             String content = readBoundedStream(connection, MAX_INTROSPECTION_RESPONSE_SIZE_BYTES);
@@ -147,7 +162,13 @@ public final class OAuthTokenRequest {
             if (!json.isJsonObject()) {
                 throw new OAuthException("Introspection endpoint returned a non-object JSON response");
             }
+            INTROSPECTION_FAILURES.remove(introspectionEndpoint);
             return json.getAsJsonObject();
+        } catch (IOException e) {
+            // transport-level failure (connect/read timeout, connection refused): enter the fail-fast window;
+            // response-shape failures do not, so one malformed response cannot block all requests for 30s
+            INTROSPECTION_FAILURES.put(introspectionEndpoint, new FailureRecord(now, e));
+            throw new OAuthException("Failed to introspect token at " + introspectionEndpoint, e);
         } catch (Exception e) {
             throw new OAuthException("Failed to introspect token at " + introspectionEndpoint, e);
         } finally {
@@ -155,6 +176,37 @@ public final class OAuthTokenRequest {
                 connection.disconnect();
             }
         }
+    }
+
+    static void clearIntrospectionFailures() {
+        INTROSPECTION_FAILURES.clear();
+        currentTimeMillis = System::currentTimeMillis;
+    }
+
+    static void setCurrentTimeMillisSupplier(LongSupplier currentTimeMillis) {
+        OAuthTokenRequest.currentTimeMillis = Objects.requireNonNull(currentTimeMillis, "currentTimeMillis");
+    }
+
+    private static void assertCanAttemptIntrospection(String introspectionEndpoint, long now) {
+        FailureRecord failure = INTROSPECTION_FAILURES.get(introspectionEndpoint);
+        if (failure != null && now - failure.failedAtMillis < MIN_INTROSPECTION_RETRY_INTERVAL_MILLIS) {
+            throw new OAuthException(
+                    "Introspection at " + introspectionEndpoint + " was attempted recently", failure.cause);
+        }
+    }
+
+    private static final class FailureRecord {
+        final long failedAtMillis;
+        final Throwable cause;
+
+        FailureRecord(long failedAtMillis, Throwable cause) {
+            this.failedAtMillis = failedAtMillis;
+            this.cause = cause;
+        }
+    }
+
+    private static long now() {
+        return currentTimeMillis.getAsLong();
     }
 
     private static String readBoundedStream(HttpURLConnection connection, int maxResponseSizeBytes) throws IOException {

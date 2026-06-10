@@ -43,7 +43,9 @@ public class VertxHttpTransferExceptionTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri() + "?transferException=true")
+                // muteException=false is required since CAMEL-23651 flipped the undertow default to true,
+                // and muteException takes precedence over transferException
+                from(getTestServerUri() + "?transferException=true&muteException=false")
                         .throwException(new IllegalStateException("Forced Exception"));
             }
         };
