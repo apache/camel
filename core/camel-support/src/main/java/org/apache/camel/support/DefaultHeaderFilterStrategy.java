@@ -377,7 +377,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     private boolean tryPattern(String headerName, String lower, Pattern pattern) {
-        // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
+        // optimize if it's the default pattern as we know the pattern is to check for keys starting with Camel
         if (pattern == CAMEL_FILTER_PATTERN) {
             boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel");
             if (match) {
