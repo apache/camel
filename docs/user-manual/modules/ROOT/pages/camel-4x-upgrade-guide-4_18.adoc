@@ -950,6 +950,39 @@ must therefore carry the value in a non-`Camel`-prefixed application header and
 map it to the appropriate `CamelSolrField.*` / `CamelSolrParam.*` header in the
 route between the transport `from` and the `solr:` `to`.
 
+=== camel-dapr - potential breaking change
+
+The `dapr` component now ships a default `DaprHeaderFilterStrategy` (extending
+`DefaultHeaderFilterStrategy`) and exposes it via the standard `headerFilterStrategy`
+endpoint/component option, aligning the component with the rest of the Camel component
+catalog (`camel-iggy`, `camel-kafka`, `camel-jms`, ...). The strategy filters headers
+starting with `Camel` / `camel` (case-insensitive) in both directions.
+
+In addition, the `dapr-pubsub` consumer no longer copies the inbound CloudEvent's
+`pubsubName` and `topic` into the `CamelDaprPubSubName` (`DaprConstants.PUBSUB_NAME`)
+and `CamelDaprTopic` (`DaprConstants.TOPIC`) message headers. These two constants are
+producer-direction routing headers: they are read back on the producer side by
+`DaprConfigurationOptionsProxy` and take precedence over the endpoint-configured
+`pubSubName` / `topic`. Setting them on a consumed exchange caused a route such as
+
+[source,java]
+----
+from("dapr-pubsub:configured-pubsub:configured-topic")
+    .to("dapr-pubsub:configured-pubsub:another-topic");
+----
+
+to carry the inbound pubsubName / topic into the producer hop instead of using the
+configured destination. The remaining CloudEvent metadata headers (`CamelDaprID`,
+`CamelDaprSource`, `CamelDaprType`, `CamelDaprSpecificVersion`,
+`CamelDaprDataContentType`, `CamelDaprBinaryData`, `CamelDaprTime`,
+`CamelDaprTraceParent`, `CamelDaprTraceState`) are unchanged and are still set on the
+inbound exchange.
+
+Because a `dapr-pubsub` consumer subscribes to a single, fixed `pubSubName` / `topic`,
+the removed headers were redundant with the endpoint configuration. Routes that relied
+on reading `CamelDaprPubSubName` / `CamelDaprTopic` from a consumed exchange should read
+the configured destination from the endpoint URI instead.
+
 == Upgrading from 4.18.0 to 4.18.1
 
 === camel-bom
