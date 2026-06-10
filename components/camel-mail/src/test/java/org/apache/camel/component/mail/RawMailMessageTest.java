@@ -51,12 +51,16 @@ public class RawMailMessageTest extends CamelTestSupport {
     private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
 
     @Override
-    public void doPreSetup() throws Exception {
-        Mailbox.clearAll();
+    protected void setupResources() throws Exception {
         prepareMailbox(jonesPop3);
         prepareMailbox(jonesRawPop3);
         prepareMailbox(jonesImap);
         prepareMailbox(jonesRawImap);
+    }
+
+    @Override
+    protected void cleanupResources() throws Exception {
+        Mailbox.clearAll();
     }
 
     @Test
