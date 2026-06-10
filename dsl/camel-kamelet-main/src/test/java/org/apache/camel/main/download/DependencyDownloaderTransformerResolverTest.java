@@ -25,14 +25,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DependencyDownloaderTransformerResolverTest {
 
     @Test
     void stubTransformerShouldHaveNameSet() {
         SimpleCamelContext context = new SimpleCamelContext();
+        // transformers require "transformer:" prefix to be stubbed
         DependencyDownloaderTransformerResolver resolver
-                = new DependencyDownloaderTransformerResolver(context, "*", true);
+                = new DependencyDownloaderTransformerResolver(context, "transformer:*", true);
 
         // use a name not in the catalog to avoid triggering artifact download
         String transformerName = "test-stub:application-json";
@@ -45,6 +47,19 @@ public class DependencyDownloaderTransformerResolverTest {
 
         TransformerKey resultKey = TransformerKey.createFrom(transformer);
         assertNotNull(resultKey);
+    }
+
+    @Test
+    void wildcardPatternShouldNotStubTransformers() {
+        SimpleCamelContext context = new SimpleCamelContext();
+        // stub pattern "*" should NOT stub transformers (only components)
+        DependencyDownloaderTransformerResolver resolver
+                = new DependencyDownloaderTransformerResolver(context, "*", true);
+
+        // transformer is not stubbed so resolve will throw for unknown names
+        String transformerName = "test-stub:application-json";
+        TransformerKey key = new TransformerKey(transformerName);
+        assertThrows(IllegalArgumentException.class, () -> resolver.resolve(key, context));
     }
 
     @Test
