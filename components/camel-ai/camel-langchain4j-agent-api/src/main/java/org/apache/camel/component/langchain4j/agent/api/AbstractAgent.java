@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.langchain4j.mcp.McpToolProvider;
-import dev.langchain4j.model.chat.request.ChatRequestParameters;
-import dev.langchain4j.model.chat.request.DefaultChatRequestParameters;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
@@ -149,17 +147,8 @@ public abstract class AbstractAgent<S> implements Agent {
         }
 
         // Response Format (structured output / JSON schema)
-        // Temporary fix: see https://issues.apache.org/jira/browse/CAMEL-23695
         if (responseFormat != null) {
-            ResponseFormat format = responseFormat;
-            builder.chatRequestTransformer(req -> {
-                ChatRequestParameters existing = req.parameters();
-                ChatRequestParameters withFormat = existing != null
-                        ? existing.overrideWith(
-                                DefaultChatRequestParameters.builder().responseFormat(format).build())
-                        : DefaultChatRequestParameters.builder().responseFormat(format).build();
-                return req.toBuilder().parameters(withFormat).build();
-            });
+            builder.chatRequestTransformer(chatRequest -> chatRequest.toBuilder().responseFormat(responseFormat).build());
         }
     }
 }
