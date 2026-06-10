@@ -524,8 +524,8 @@ public class KameletMain extends MainCommandLineSupport {
         infos.forEach(LOG::info);
 
         answer.getCamelContextExtension().setRegistry(registry);
-        if (silent || "*".equals(stubPattern)) {
-            registry.addBeanRepository(new StubBeanRepository(stubPattern));
+        if (silent || "*".equals(stubPattern) || "component:*".equals(stubPattern)) {
+            registry.addBeanRepository(new StubBeanRepository("*"));
         }
 
         // load camel component and custom health-checks
