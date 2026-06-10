@@ -283,7 +283,13 @@ class ShellPanel {
 
     private void runShell(LineDisciplineTerminal terminal) {
         try {
-            PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine());
+            // TODO: replace with new PicocliCommandRegistry(commandLine, "Camel") when JLine merges #1947
+            PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine()) {
+                @Override
+                public String name() {
+                    return "Camel";
+                }
+            };
             String camelVersion = VersionHelper.extractCamelVersion();
 
             // Redirect command output (printer()) through the virtual terminal
