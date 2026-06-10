@@ -59,6 +59,7 @@ import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.Clear;
@@ -405,6 +406,11 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (handleTabKeys(ke)) {
+                return true;
+            }
+        }
+        if (event instanceof MouseEvent me) {
+            if (shellPanel.isOpen() && shellPanel.handleMouseEvent(me)) {
                 return true;
             }
         }

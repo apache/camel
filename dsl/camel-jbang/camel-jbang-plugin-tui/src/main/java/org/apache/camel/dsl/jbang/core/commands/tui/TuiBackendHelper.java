@@ -35,10 +35,10 @@ final class TuiBackendHelper {
         if (activeTerminal != null) {
             Backend backend = createBackendForTerminal(activeTerminal);
             if (backend != null) {
-                return TuiRunner.create(TuiConfig.builder().backend(backend).build());
+                return TuiRunner.create(TuiConfig.builder().backend(backend).mouseCapture(true).build());
             }
         }
-        return TuiRunner.create();
+        return TuiRunner.create(TuiConfig.builder().mouseCapture(true).build());
     }
 
     private static Backend createBackendForTerminal(Terminal terminal) {

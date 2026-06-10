@@ -35,6 +35,8 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
@@ -71,6 +73,7 @@ import org.jline.utils.AttributedStyle;
 class ShellPanel {
 
     private static final int[] SPLIT_PERCENTS = { 25, 50, 75 };
+    private static final int MOUSE_SCROLL_LINES = 3;
 
     private boolean visible;
     private int splitIndex = 1; // default 50%
@@ -84,6 +87,7 @@ class ShellPanel {
     private int lastHeight;
     private int scrollOffset;
     private int lastHistorySize;
+    private Rect lastArea;
     private volatile boolean shellExited;
 
     void setContext(MonitorContext ctx) {
@@ -160,6 +164,28 @@ class ShellPanel {
         return true;
     }
 
+    boolean handleMouseEvent(MouseEvent me) {
+        if (!visible || lastArea == null) {
+            return false;
+        }
+        int mx = me.x();
+        int my = me.y();
+        if (mx < lastArea.x() || mx >= lastArea.x() + lastArea.width()
+                || my < lastArea.y() || my >= lastArea.y() + lastArea.height()) {
+            return false;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_UP) {
+            int histSize = screenTerminal != null ? getHistorySize(screenTerminal) : 0;
+            scrollOffset = Math.min(scrollOffset + MOUSE_SCROLL_LINES, histSize);
+            return true;
+        }
+        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+            scrollOffset = Math.max(0, scrollOffset - MOUSE_SCROLL_LINES);
+            return true;
+        }
+        return false;
+    }
+
     void render(Frame frame, Rect area) {
         if (!visible) {
             return;
@@ -169,6 +195,8 @@ class ShellPanel {
             close();
             return;
         }
+
+        lastArea = area;
 
         // Render border matching other tabs
         Block block = Block.builder()
