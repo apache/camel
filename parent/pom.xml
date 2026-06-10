@@ -89,7 +89,7 @@
         <braintree-gateway-version>3.50.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
         <bytebuddy-version>1.18.10</bytebuddy-version>
-        <c3p0-version>0.14.0</c3p0-version>
+        <c3p0-version>0.14.1</c3p0-version>
         <caffeine-version>3.2.4</caffeine-version>
         <californium-version>3.14.0</californium-version>
         <californium-scandium-version>3.14.0</californium-scandium-version>
