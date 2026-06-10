@@ -42,9 +42,8 @@ public class CamelDirectSender implements WebServiceMessageSender {
     }
 
     @Override
-    public boolean supports(URI uri) {
+    public boolean supports(URI uri, UriSource uriSource) {
         try {
-            // Just check if it throws an exception on parsing the destination
             CamelDirectConnection.destination(uri);
             return true;
         } catch (URISyntaxException e) {
