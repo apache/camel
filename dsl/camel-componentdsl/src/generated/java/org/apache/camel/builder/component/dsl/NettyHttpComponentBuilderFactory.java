@@ -248,7 +248,7 @@ public interface NettyHttpComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param muteException the value to set
