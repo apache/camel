@@ -67,6 +67,30 @@
         ]
     },
     {
+        "name": "camel-1-tribute",
+        "title": "Camel 1.0 Tribute",
+        "description": "A tribute to the very first Apache Camel example from 2007 - JMS to File",
+        "level": "beginner",
+        "tags": [
+            "beginner",
+            "jms",
+            "file",
+            "artemis",
+            "tribute"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "application.properties",
+            "jms-to-file.camel.yaml"
+        ],
+        "infraServices": [
+            "artemis"
+        ]
+    },
+    {
         "name": "circuit-breaker",
         "title": "Circuit Breaker",
         "description": "Use the circuit breaker EIP for fault tolerance",
