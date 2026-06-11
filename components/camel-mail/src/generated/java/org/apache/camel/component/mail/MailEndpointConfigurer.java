@@ -141,6 +141,12 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "unseen": target.getConfiguration().setUnseen(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "useheaderfrom":
+        case "useHeaderFrom": target.getConfiguration().setUseHeaderFrom(property(camelContext, boolean.class, value)); return true;
+        case "useheaderrecipients":
+        case "useHeaderRecipients": target.getConfiguration().setUseHeaderRecipients(property(camelContext, boolean.class, value)); return true;
+        case "useheadersubject":
+        case "useHeaderSubject": target.getConfiguration().setUseHeaderSubject(property(camelContext, boolean.class, value)); return true;
         case "useinlineattachments":
         case "useInlineAttachments": target.getConfiguration().setUseInlineAttachments(property(camelContext, boolean.class, value)); return true;
         case "usejavamailsessionpropertiesfromheaders":
@@ -271,6 +277,12 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "unseen": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "useheaderfrom":
+        case "useHeaderFrom": return boolean.class;
+        case "useheaderrecipients":
+        case "useHeaderRecipients": return boolean.class;
+        case "useheadersubject":
+        case "useHeaderSubject": return boolean.class;
         case "useinlineattachments":
         case "useInlineAttachments": return boolean.class;
         case "usejavamailsessionpropertiesfromheaders":
@@ -402,6 +414,12 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "unseen": return target.getConfiguration().isUnseen();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "useheaderfrom":
+        case "useHeaderFrom": return target.getConfiguration().isUseHeaderFrom();
+        case "useheaderrecipients":
+        case "useHeaderRecipients": return target.getConfiguration().isUseHeaderRecipients();
+        case "useheadersubject":
+        case "useHeaderSubject": return target.getConfiguration().isUseHeaderSubject();
         case "useinlineattachments":
         case "useInlineAttachments": return target.getConfiguration().isUseInlineAttachments();
         case "usejavamailsessionpropertiesfromheaders":

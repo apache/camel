@@ -109,6 +109,12 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "unseen": getOrCreateConfiguration(target).setUnseen(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "useheaderfrom":
+        case "useHeaderFrom": getOrCreateConfiguration(target).setUseHeaderFrom(property(camelContext, boolean.class, value)); return true;
+        case "useheaderrecipients":
+        case "useHeaderRecipients": getOrCreateConfiguration(target).setUseHeaderRecipients(property(camelContext, boolean.class, value)); return true;
+        case "useheadersubject":
+        case "useHeaderSubject": getOrCreateConfiguration(target).setUseHeaderSubject(property(camelContext, boolean.class, value)); return true;
         case "useinlineattachments":
         case "useInlineAttachments": getOrCreateConfiguration(target).setUseInlineAttachments(property(camelContext, boolean.class, value)); return true;
         case "usejavamailsessionpropertiesfromheaders":
@@ -200,6 +206,12 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "unseen": return boolean.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
+        case "useheaderfrom":
+        case "useHeaderFrom": return boolean.class;
+        case "useheaderrecipients":
+        case "useHeaderRecipients": return boolean.class;
+        case "useheadersubject":
+        case "useHeaderSubject": return boolean.class;
         case "useinlineattachments":
         case "useInlineAttachments": return boolean.class;
         case "usejavamailsessionpropertiesfromheaders":
@@ -292,6 +304,12 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "unseen": return getOrCreateConfiguration(target).isUnseen();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
+        case "useheaderfrom":
+        case "useHeaderFrom": return getOrCreateConfiguration(target).isUseHeaderFrom();
+        case "useheaderrecipients":
+        case "useHeaderRecipients": return getOrCreateConfiguration(target).isUseHeaderRecipients();
+        case "useheadersubject":
+        case "useHeaderSubject": return getOrCreateConfiguration(target).isUseHeaderSubject();
         case "useinlineattachments":
         case "useInlineAttachments": return getOrCreateConfiguration(target).isUseInlineAttachments();
         case "usejavamailsessionpropertiesfromheaders":

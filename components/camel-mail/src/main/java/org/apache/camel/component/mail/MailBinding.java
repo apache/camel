@@ -130,7 +130,7 @@ public class MailBinding {
             throws MessagingException, IOException {
 
         // camel message headers takes precedence over endpoint configuration
-        if (hasRecipientHeaders(exchange)) {
+        if (endpoint.getConfiguration().isUseHeaderRecipients() && hasRecipientHeaders(exchange)) {
             setRecipientFromCamelMessage(mimeMessage, endpoint.getConfiguration(), exchange);
         } else {
             // fallback to endpoint configuration
@@ -548,17 +548,23 @@ public class MailBinding {
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                     if (headerName.equalsIgnoreCase("subject")) {
-                        mimeMessage.setSubject(asString(exchange, headerValue), determineCharSet(configuration, exchange));
+                        if (configuration.isUseHeaderSubject()) {
+                            mimeMessage.setSubject(asString(exchange, headerValue), determineCharSet(configuration, exchange));
+                        }
                         continue;
                     }
                     if (headerName.equalsIgnoreCase("from")) {
-                        mimeMessage.setFrom(asEncodedInternetAddress(asString(exchange, headerValue),
-                                determineCharSet(configuration, exchange)));
+                        if (configuration.isUseHeaderFrom()) {
+                            mimeMessage.setFrom(asEncodedInternetAddress(asString(exchange, headerValue),
+                                    determineCharSet(configuration, exchange)));
+                        }
                         continue;
                     }
                     if (headerName.equalsIgnoreCase("sender")) {
-                        mimeMessage.setSender(asEncodedInternetAddress(asString(exchange, headerValue),
-                                determineCharSet(configuration, exchange)));
+                        if (configuration.isUseHeaderFrom()) {   // reuses the same flag — from covers sender
+                            mimeMessage.setSender(asEncodedInternetAddress(asString(exchange, headerValue),
+                                    determineCharSet(configuration, exchange)));
+                        }
                         continue;
                     }
                     if (isRecipientHeader(headerName)) {

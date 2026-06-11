@@ -253,6 +253,34 @@ headers.put("to", "davsclaus@apache.org");
 template.sendBodyAndHeaders("smtp://admin@localhost?to=info@mycompany.com", "Hello World", headers);
 ------------------------------------------------------------------------------------------------------------
 
+==== Opting out of header overrides (trust-boundary hardening)
+
+For routes where message headers originate from an untrusted source (for
+example messages bridged from an HTTP endpoint, a JMS queue, or a Kafka
+topic), allowing inbound headers to override recipients, sender, or
+subject can enable an attacker to redirect mail, forge the sender
+address, or inject arbitrary subjects. Three opt-in `@UriParam` options
+let you lock the endpoint configuration so it cannot be overridden by
+message headers:
+
+[options="header"]
+|===
+| Option               | Default | Effect when set to `false`
+| `useHeaderRecipients`| `true`  | Endpoint URI to/cc/bcc always used; To/CC/BCC headers ignored.
+| `useHeaderFrom`      | `true`  | Endpoint URI from always used; From/Sender headers ignored.
+| `useHeaderSubject`   | `true`  | Endpoint URI subject always used; Subject header ignored.
+|===
+
+All three default to `true` so existing behaviour is preserved. Example:
+
+[source,java]
+----
+.to("smtp://relay@mailhost?to=safe@mycompany.com&from=noreply@mycompany.com"
+  + "&useHeaderRecipients=false&useHeaderFrom=false");
+----
+
+NOTE: These options do *not* strip the headers from the exchange. See the xref:manual::security-model.adoc#_deployment_hardening[Camel Security Model]
+
 === Multiple recipients for easier configuration
 
 It is possible to set multiple recipients using a comma-separated or a
