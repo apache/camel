@@ -115,6 +115,9 @@ public class RestOpenApiEndpointV3Test {
             endpoint.createConsumer(exchange -> {
             });
 
+            // oauthProfile is a first-class endpoint option bound to the endpoint and injected into
+            // the parameters passed to the delegate consumer factory
+            assertThat(endpoint.getOauthProfile()).isEqualTo("myprofile");
             assertThat(delegate.parameters).containsEntry("oauthProfile", "myprofile");
         } finally {
             camelContext.stop();

@@ -90,8 +90,7 @@ import static org.apache.camel.util.StringHelper.before;
  * To call and expose REST services using OpenAPI specification as contract.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
-             syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API },
-             lenientProperties = true)
+             syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API })
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiEndpoint.class);
@@ -177,6 +176,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private String mockIncludePattern;
     @UriParam(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
     private String apiContextPath;
+    @UriParam(label = "consumer,security", displayName = "OAuth Profile",
+              description = "OAuth profile name passed to the HTTP consumer delegate for validating incoming"
+                            + " Authorization: Bearer tokens. The selected consumer component must support the"
+                            + " oauthProfile option; delegates that ignore unknown options will start without"
+                            + " endpoint protection.")
+    private String oauthProfile;
 
     public RestOpenApiEndpoint() {
         // help tooling instantiate endpoint
@@ -324,6 +329,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (factory != null) {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
             Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
+            // pass oauthProfile to the delegate consumer, which is responsible for enforcing it
+            if (isNotEmpty(oauthProfile)) {
+                copy.put("oauthProfile", oauthProfile);
+            }
             // avoid duplicate context-path
             if (basePath.equals(config.getContextPath())) {
                 basePath = "";
@@ -502,6 +511,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
+    }
+
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
     }
 
     public String getBindingPackageScan() {

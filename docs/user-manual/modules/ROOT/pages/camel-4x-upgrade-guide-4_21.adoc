@@ -876,10 +876,10 @@ Rest DSL and contract-first OpenAPI routes pass the option to the selected HTTP 
 Direct contract-first OpenAPI consumer routes can also pass the option on the endpoint URI, for example
 `rest-openapi:petstore-v3.json?consumerComponentName=platform-http&oauthProfile=myprofile`.
 OpenAPI `securitySchemes` are not converted into `oauthProfile` automatically.
-Because `rest-openapi` endpoint URIs are lenient, pass-through options such as `oauthProfile` are
-accepted by the selected consumer delegate but may not appear as first-class `rest-openapi` options in
-component metadata or tooling. Verify that the selected delegate supports the pass-through option;
-delegates that ignore unknown options can otherwise start without the expected endpoint protection.
+The `oauthProfile` option is a first-class `rest-openapi` endpoint option that is forwarded to the
+selected consumer delegate, which is responsible for enforcing it. Verify that the selected delegate
+supports `oauthProfile`; delegates that ignore the option can otherwise start without the expected
+endpoint protection.
 For netty-http consumers, `oauthProfile` requires `usingExecutorService=true` and `sync=true`, which
 are the defaults, so blocking validation does not run on a Netty event-loop thread and rejection
 responses can be returned to the client. Routes that combine `oauthProfile`

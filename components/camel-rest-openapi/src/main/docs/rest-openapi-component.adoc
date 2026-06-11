@@ -138,8 +138,8 @@ xref:components:others:oauth.adoc[camel-oauth] or from the runtime integration.
 OpenAPI `securitySchemes` and operation security requirements are not converted into `oauthProfile`
 configuration; select the OAuth profile explicitly with the REST endpoint property or direct endpoint
 URI option.
-Because `rest-openapi` endpoint URIs are lenient, pass-through options are accepted by
-`rest-openapi` and forwarded to the selected delegate. If the delegate ignores an unknown option,
+The `oauthProfile` option is a first-class `rest-openapi` endpoint option that is forwarded to the
+selected delegate, which is responsible for enforcing it. If the delegate ignores the option,
 the endpoint can start without the expected protection, so verify that the selected consumer
 component supports `oauthProfile`.
 

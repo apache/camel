@@ -65,9 +65,9 @@ support it. Direct `rest-openapi` consumer endpoint URIs can also pass the optio
 for example `rest-openapi:petstore-v3.json?consumerComponentName=platform-http&oauthProfile=myprofile`.
 Consumer endpoint URIs identify the OpenAPI specification and do not include an `#operationId`
 fragment.
-Because `rest-openapi` endpoint URIs are lenient, delegate options may be accepted by
-`rest-openapi` even when the selected delegate ignores them. Verify that the selected consumer
-component supports `oauthProfile`.
+The `oauthProfile` option is forwarded to the selected delegate, which is responsible for
+enforcing it. Verify that the selected consumer component supports `oauthProfile`; a delegate
+that ignores the option starts without the expected protection.
 
 == Contract first
 
