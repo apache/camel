@@ -29,6 +29,7 @@ import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -115,7 +116,12 @@ public abstract class AbstractJpaMethodTest extends AbstractJpaMethodSupport {
         assertTrue(latch.await(50, TimeUnit.SECONDS));
 
         consumer.stop();
-        Thread.sleep(1000);
+
+        // wait for the consumer to delete the entities once done, so the database is empty
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertEntitiesInDatabase(0, Customer.class.getName());
+            assertEntitiesInDatabase(0, Address.class.getName());
+        });
 
         assertNotNull(receivedCustomer);
         assertEquals(customer.getName(), receivedCustomer.getName());
@@ -123,12 +129,6 @@ public abstract class AbstractJpaMethodTest extends AbstractJpaMethodSupport {
         assertEquals(customer.getAddress().getAddressLine1(), receivedCustomer.getAddress().getAddressLine1());
         assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
         assertEquals(customer.getAddress().getId(), receivedCustomer.getAddress().getId());
-
-        // give a bit time for consumer to delete after done
-        Thread.sleep(1000);
-
-        assertEntitiesInDatabase(0, Customer.class.getName());
-        assertEntitiesInDatabase(0, Address.class.getName());
     }
 
 }
