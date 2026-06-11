@@ -2205,3 +2205,27 @@ is migrated to JSON the next time the metadata is updated.
 
 Because older versions cannot read the new JSON metadata, downgrading after new key metadata has been
 written is not supported.
+
+=== camel-http
+
+The `camel-http` component now requires Apache HttpClient 5.5 or later (previously 5.4+). The
+`ClientTlsStrategyBuilder.buildClassic()` and `setHostVerificationPolicy()` APIs used internally
+were introduced in HttpClient 5.5. Overriding the `httpclient5` version to 5.4.x or earlier will
+produce `NoSuchMethodError` at runtime.
+
+==== TLS hostname verification policy
+
+`camel-http` now explicitly uses `HostnameVerificationPolicy.CLIENT` when constructing the TLS
+strategy. This means only the configured `x509HostnameVerifier` (defaulting to
+`DefaultHostnameVerifier`) decides whether a certificate matches the target hostname. The JDK's
+built-in endpoint-identification check via `SSLParameters.setEndpointIdentificationAlgorithm("https")`
+is not applied.
+
+This restores the behavior from HttpClient 5.5.2, where `NoopHostnameVerifier` actually disabled
+hostname verification. HttpClient 5.6 changed the default to `HostnameVerificationPolicy.BOTH`,
+which enables the JDK check alongside the custom verifier — making `NoopHostnameVerifier` ineffective
+because the JDK check runs first and rejects mismatched certificates.
+
+The `CLIENT` policy is a deliberate choice: it preserves backward compatibility and allows
+`NoopHostnameVerifier` to work as documented. A future release may add an option to opt into the
+`BOTH` policy for defense-in-depth.
