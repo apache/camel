@@ -35,6 +35,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -136,7 +137,9 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         if (ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
             builder.withBasicAuthCredentials(configuration.getUsername(), configuration.getPassword());
         }
-        if (ObjectHelper.isNotEmpty(configuration.getCertificatePath())) {
+        if (configuration.getSslContextParameters() != null) {
+            builder.withSSLContext(createSslContext(getCamelContext(), configuration.getSslContextParameters()));
+        } else if (ObjectHelper.isNotEmpty(configuration.getCertificatePath())) {
             builder.withSSLContext(createSslContextFromCa(getCamelContext(), configuration.getCertificatePath()));
         }
         if (configuration.getCollection() != null) {
@@ -150,6 +153,21 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
             return false;
         }
         return configuration.isAsync();
+    }
+
+    /**
+     * An SSL context based on the provided {@link SSLContextParameters}. Using SSLContextParameters allows fine-grained
+     * TLS configuration such as named groups, signature schemes, cipher suites and protocols (e.g. for post-quantum
+     * readiness on JDK 25+).
+     *
+     * @return a customized SSL Context
+     */
+    private static SSLContext createSslContext(CamelContext camelContext, SSLContextParameters sslContextParameters) {
+        try {
+            return sslContextParameters.createSSLContext(camelContext);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create SSLContext from SSLContextParameters", e);
+        }
     }
 
     /**

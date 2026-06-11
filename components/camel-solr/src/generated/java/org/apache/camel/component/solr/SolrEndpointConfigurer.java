@@ -47,6 +47,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "size": target.getConfiguration().setSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "solrclient":
         case "solrClient": target.getConfiguration().setSolrClient(property(camelContext, org.apache.solr.client.solrj.SolrClient.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -79,6 +81,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "size": return java.lang.Integer.class;
         case "solrclient":
         case "solrClient": return org.apache.solr.client.solrj.SolrClient.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -112,6 +116,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "size": return target.getConfiguration().getSize();
         case "solrclient":
         case "solrClient": return target.getConfiguration().getSolrClient();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }
