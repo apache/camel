@@ -40,6 +40,10 @@ public class SolrComponentConfigurer extends PropertyConfigurerSupport implement
         case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "solrclient":
         case "solrClient": target.setSolrClient(property(camelContext, org.apache.solr.client.solrj.SolrClient.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -70,6 +74,10 @@ public class SolrComponentConfigurer extends PropertyConfigurerSupport implement
         case "requestTimeout": return long.class;
         case "solrclient":
         case "solrClient": return org.apache.solr.client.solrj.SolrClient.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -96,6 +104,10 @@ public class SolrComponentConfigurer extends PropertyConfigurerSupport implement
         case "requestTimeout": return target.getRequestTimeout();
         case "solrclient":
         case "solrClient": return target.getSolrClient();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username": return target.getUsername();
         default: return null;
         }
