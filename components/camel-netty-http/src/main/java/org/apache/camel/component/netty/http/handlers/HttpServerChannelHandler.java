@@ -49,8 +49,6 @@ import org.apache.camel.component.netty.http.NettyHttpConstants;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
-import org.apache.camel.http.base.OAuthHttpSecuritySupport;
-import org.apache.camel.http.base.OAuthHttpSecuritySupport.Validation;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -322,20 +320,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         final Message in = exchange.getIn();
-        OAuthHttpSecuritySupport security = consumer.getEndpoint().getOauthHttpSecurity();
-        if (security != null) {
-            Validation validation = security.validate(
-                    exchange.getContext(), request.headers().getAll(HttpHeaderNames.AUTHORIZATION));
-            request.headers().remove(HttpHeaderNames.AUTHORIZATION);
-            OAuthHttpSecuritySupport.removeAuthorizationHeader(in);
-            if (validation.isAuthenticated()) {
-                OAuthHttpSecuritySupport.applyAuthenticatedResult(exchange, validation.getValidationResult());
-            } else {
-                OAuthHttpSecuritySupport.reject(exchange, validation);
-                return;
-            }
-        }
-
         if (configuration.isHttpProxy()) {
             in.removeHeader("Proxy-Connection");
         }

@@ -152,7 +152,7 @@ public class DefaultUndertowHost implements UndertowHost {
                 }
             }
             if (consumer != null && consumer.isRest()) {
-                restHandler.addConsumer(consumer, handler);
+                restHandler.addConsumer(consumer);
                 return restHandler;
             } else {
                 return rootHandler.add(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(),

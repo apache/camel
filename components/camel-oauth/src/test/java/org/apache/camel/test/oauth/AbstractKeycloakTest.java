@@ -18,13 +18,11 @@ package org.apache.camel.test.oauth;
 
 import jakarta.servlet.ServletException;
 
-import io.restassured.RestAssured;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.servlet.Servlets;
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assumptions;
 
 import static org.apache.camel.test.oauth.KeycloakAdmin.AdminParams;
@@ -34,8 +32,7 @@ import static org.apache.camel.test.oauth.KeycloakAdmin.UserParams;
 
 abstract class AbstractKeycloakTest {
 
-    static final AvailablePortFinder.Port SERVER_PORT = AvailablePortFinder.find();
-    static final int port = SERVER_PORT.getPort();
+    static final int port = 8080; // AvailablePortFinder.getNextAvailable();
     static final String APP_BASE_URL = "http://127.0.0.1:" + port + "/";
 
     static final String KEYCLOAK_REALM = "camel";
@@ -83,8 +80,6 @@ abstract class AbstractKeycloakTest {
     }
 
     protected static Undertow createUndertowServer() throws ServletException {
-        RestAssured.port = port;
-
         var deploymentInfo = Servlets.deployment()
                 .setContextPath("/")
                 .setDeploymentName("CamelServlet")
@@ -96,12 +91,5 @@ abstract class AbstractKeycloakTest {
 
         PathHandler path = Handlers.path(Handlers.redirect("/")).addPrefixPath("/", manager.start());
         return Undertow.builder().addHttpListener(port, "0.0.0.0").setHandler(path).build();
-    }
-
-    protected static void stopUndertowServer(Undertow server) {
-        if (server != null) {
-            server.stop();
-        }
-        RestAssured.reset();
     }
 }

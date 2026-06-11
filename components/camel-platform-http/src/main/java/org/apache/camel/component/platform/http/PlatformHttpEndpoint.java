@@ -30,15 +30,16 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.component.platform.http.spi.PlatformHttpSecurityHandler;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
-import org.apache.camel.http.base.OAuthHttpSecuritySupport;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.OAuthTokenValidationFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.OAuthHelper;
 import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -140,7 +141,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     @UriParam(label = "advanced,consumer",
               description = "The period in milliseconds after which the request should be timed out.")
     private long requestTimeout;
-    @UriParam(label = "consumer,security", displayName = "OAuth Profile",
+    @UriParam(label = "security",
               description = "OAuth profile name for validating incoming Authorization: Bearer tokens. "
                             + "When set, the request is authenticated before the route is processed. "
                             + "This requires an OAuthTokenValidationFactory; camel-oauth provides the default implementation.")
@@ -200,8 +201,10 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     protected PlatformHttpSecurityHandler createSecurityHandler() throws Exception {
         if (ObjectHelper.isNotEmpty(oauthProfile)) {
-            return new OAuthPlatformHttpSecurityHandler(
-                    OAuthHttpSecuritySupport.create(getCamelContext(), oauthProfile));
+            OAuthTokenValidationFactory factory
+                    = OAuthHelper.resolveOAuthTokenValidationFactory(getCamelContext(), oauthProfile);
+            factory.validateConfiguration(getCamelContext(), oauthProfile);
+            return new OAuthPlatformHttpSecurityHandler(oauthProfile, factory);
         }
         return null;
     }

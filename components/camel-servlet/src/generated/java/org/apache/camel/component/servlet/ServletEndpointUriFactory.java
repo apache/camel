@@ -24,7 +24,7 @@ public class ServletEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(25);
+        Set<String> props = new HashSet<>(24);
         props.add("async");
         props.add("attachmentMultipartBinding");
         props.add("bridgeErrorHandler");
@@ -44,7 +44,6 @@ public class ServletEndpointUriFactory extends org.apache.camel.support.componen
         props.add("mapHttpMessageHeaders");
         props.add("matchOnUriPrefix");
         props.add("muteException");
-        props.add("oauthProfile");
         props.add("optionsEnabled");
         props.add("responseBufferSize");
         props.add("servletName");

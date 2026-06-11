@@ -49,7 +49,9 @@ public class OAuthClientCredentialsServletTest extends AbstractOAuthClientCreden
 
     @AfterAll
     static void tearDown() {
-        stopUndertowServer(server);
+        if (server != null) {
+            server.stop();
+        }
     }
 
     @Test

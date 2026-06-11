@@ -48,7 +48,9 @@ class OAuthCodeFlowServletTest extends AbstractOAuthCodeFlowTest {
 
     @AfterAll
     static void tearDown() {
-        stopUndertowServer(server);
+        if (server != null) {
+            server.stop();
+        }
     }
 
     @Override

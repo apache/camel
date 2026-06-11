@@ -105,6 +105,38 @@ public interface ServletEndpointBuilderFactory {
             return this;
         }
         /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder chunked(boolean chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder chunked(String chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
          * If enabled and an Exchange failed processing on the consumer side,
          * and if the caused Exception was send back serialized in the response
          * as a application/x-java-serialized-object content type. On the
@@ -178,38 +210,6 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder async(String async) {
             doSetProperty("async", async);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder chunked(boolean chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder chunked(String chunked) {
-            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -368,25 +368,6 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder servletName(String servletName) {
             doSetProperty("servletName", servletName);
-            return this;
-        }
-        /**
-         * OAuth profile name for validating incoming Authorization: Bearer
-         * tokens. When set, the request is authenticated before the route is
-         * processed. This requires an OAuthTokenValidationFactory; camel-oauth
-         * provides the default implementation. This is Camel endpoint-level
-         * validation and does not replace servlet container or framework
-         * security.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param oauthProfile the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder oauthProfile(String oauthProfile) {
-            doSetProperty("oauthProfile", oauthProfile);
             return this;
         }
     }

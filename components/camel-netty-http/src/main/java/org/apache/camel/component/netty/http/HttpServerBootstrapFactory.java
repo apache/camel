@@ -54,14 +54,6 @@ public class HttpServerBootstrapFactory extends SingleTCPNettyServerBootstrapFac
                 bootstrapConfiguration.toStringBootstrapConfiguration());
     }
 
-    /**
-     * The bootstrap configuration of the first consumer that initialized this factory, which decides the effective
-     * pipeline configuration for all consumers sharing the same address.
-     */
-    public NettyServerBootstrapConfiguration getBootstrapConfiguration() {
-        return bootstrapConfiguration;
-    }
-
     @Override
     public void addConsumer(NettyConsumer consumer) {
         if (compatibleCheck) {

@@ -27,26 +27,22 @@ import org.apache.camel.spi.OAuthTokenValidationResult.ErrorCode;
 
 public final class VertxStubOAuthTokenValidationFactory implements OAuthTokenValidationFactory {
 
-    static String lastConfigurationProfileName;
+    static String lastProfileName;
     static String lastToken;
-    static boolean validatedWithConfig;
 
     static void reset() {
-        lastConfigurationProfileName = null;
+        lastProfileName = null;
         lastToken = null;
-        validatedWithConfig = false;
     }
 
     @Override
     public OAuthTokenValidationResult validateToken(OAuthTokenValidationConfig config, String token) {
-        validatedWithConfig = true;
-        lastToken = token;
         return validate(token);
     }
 
     @Override
     public OAuthTokenValidationResult validateToken(CamelContext context, String profileName, String token) {
-        lastConfigurationProfileName = profileName;
+        lastProfileName = profileName;
         lastToken = token;
         return validate(token);
     }
@@ -57,7 +53,6 @@ public final class VertxStubOAuthTokenValidationFactory implements OAuthTokenVal
 
     @Override
     public void validateConfiguration(CamelContext context, String profileName) {
-        lastConfigurationProfileName = profileName;
     }
 
     private OAuthTokenValidationResult validate(String token) {

@@ -19,11 +19,9 @@ package org.apache.camel.component.platform.http.main.authentication;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -37,19 +35,17 @@ public class BasicAuthenticationSelectivePathTest {
 
     private static Main main;
 
-    @RegisterExtension
-    static AvailablePortFinder.Port port = AvailablePortFinder.find();
-
     @BeforeAll
     static void init() {
-        main = MainHttpServerAuthenticationTestSupport.createMain(
-                "basic-auth-nonroot-path-selective.properties", port, new PlatformHttpRouteBuilder());
+        main = new Main();
+        main.setPropertyPlaceholderLocations("basic-auth-nonroot-path-selective.properties");
+        main.configure().addRoutesBuilder(new PlatformHttpRouteBuilder());
         main.start();
     }
 
     @AfterAll
     static void tearDown() {
-        MainHttpServerAuthenticationTestSupport.stopMain(main);
+        main.stop();
     }
 
     @Test

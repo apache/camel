@@ -57,8 +57,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
         case "muteexception":
         case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
-        case "oauthprofile":
-        case "oauthProfile": target.setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "optionsenabled":
         case "optionsEnabled": target.setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
         case "responsebuffersize":
@@ -110,8 +108,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "matchOnUriPrefix": return boolean.class;
         case "muteexception":
         case "muteException": return boolean.class;
-        case "oauthprofile":
-        case "oauthProfile": return java.lang.String.class;
         case "optionsenabled":
         case "optionsEnabled": return boolean.class;
         case "responsebuffersize":
@@ -164,8 +160,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "matchOnUriPrefix": return target.isMatchOnUriPrefix();
         case "muteexception":
         case "muteException": return target.isMuteException();
-        case "oauthprofile":
-        case "oauthProfile": return target.getOauthProfile();
         case "optionsenabled":
         case "optionsEnabled": return target.isOptionsEnabled();
         case "responsebuffersize":

@@ -145,57 +145,18 @@ Components reference a profile by name via the `oauthProfile` parameter:
 === Incoming Bearer Token Validation
 
 The camel-oauth module also provides an `OAuthTokenValidationFactory` SPI for validating incoming
-`Authorization: Bearer` tokens. HTTP consumer components such as
-xref:components::platform-http-component.adoc[Platform HTTP], xref:components::servlet-component.adoc[Servlet],
-xref:components::jetty-component.adoc[Jetty], xref:components::netty-http-component.adoc[Netty HTTP], and
-xref:components::undertow-component.adoc[Undertow HTTP/WebSocket] can use this SPI without a compile-time dependency on
-camel-oauth. This module is the default provider for the SPI; runtime-specific integrations can provide their own
-implementation backed by their native security stack.
+`Authorization: Bearer` tokens. Components such as xref:components::platform-http-component.adoc[Platform HTTP]
+can use this SPI without a compile-time dependency on camel-oauth. This module is the default
+provider for the SPI; runtime-specific integrations can provide their own implementation backed by
+their native security stack.
 
 JWT tokens are validated locally with JWKS. The validator verifies the JWS signature, checks `exp`
 and `nbf`, and validates `iss` and `aud`. Opaque tokens are validated with RFC 7662 introspection
 using a strict bounded HTTP/JSON implementation.
 
-HTTP consumer integrations share the same request contract. The inbound header must use
-`Authorization: Bearer <token>`. The token part must use the RFC 6750 `b64token` character set
-(`A-Z`, `a-z`, `0-9`, `-`, `.`, `_`, `~`, `+`, `/`) with optional trailing `=` padding, and is
-limited to 8192 characters. Malformed Bearer syntax and oversized tokens are rejected before the
-validation factory is called. When an HTTP transport exposes duplicate `Authorization` header
-values to Camel, they are also treated as malformed.
-
-HTTP integrations reject missing credentials and invalid tokens with HTTP 401. Missing
-credentials receive the bare `WWW-Authenticate: Bearer` challenge, while invalid tokens receive
-the RFC 6750 `WWW-Authenticate: Bearer error="invalid_token"` challenge. Malformed `Authorization`
-headers are rejected with HTTP 400 and the
-RFC 6750 `WWW-Authenticate: Bearer error="invalid_request"` challenge. Token validation
-infrastructure failures are rejected with HTTP 503. For valid tokens, the validation result is
-stored on the exchange as the `CamelOAuthTokenValidationResult` exchange property and the raw
-`Authorization` header is removed before route processors run. Token validation is an
-authentication check only: scope, role, or per-operation authorization is not enforced, and route
-code must check scopes or claims itself from the `CamelOAuthTokenValidationResult` exchange
-property.
-
-==== Identity-Provider Failure Behavior
-
-Calls to identity-provider infrastructure (OIDC discovery, JWKS fetch, and token introspection) are
-bounded by the configured connect and read timeouts. After a transport-level failure such as a
-connection refusal, timeout, or HTTP 5xx response, further attempts against the same endpoint URL
-are skipped for 30 seconds and requests fail fast; the resulting HTTP 503 rejections include the
-original failure as the cause in debug logs. The fail-fast window is shared JVM-wide across Camel
-contexts. It also applies to OIDC discovery performed during route startup, so restarting a route
-within 30 seconds of a startup discovery failure fails with the recorded cause until the window
-elapses.
-
-JWT validation degrades gracefully during an identity-provider outage: when a JWKS refresh fails
-and a previously fetched key set is cached, the cached (possibly expired) keys are used so that
-requests with valid signatures continue to be accepted. HTTP 503 is returned only when no key set
-was ever fetched. The JWKS cache contains public key material only.
-
 ==== Incoming Token Validation Properties
 
-Properties are resolved from `camel.oauth.<profileName>.*` when the HTTP endpoint or route starts.
-Updates to property sources such as `application.properties`, secrets, config maps, or vault-backed
-values require restarting the route or Camel context before they are used for token validation.
+Properties are resolved from `camel.oauth.<profileName>.*`:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===

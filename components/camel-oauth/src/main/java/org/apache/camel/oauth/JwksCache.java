@@ -44,8 +44,7 @@ final class JwksCache {
 
     private final ConcurrentMap<String, CacheEntry> cache = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Long> forcedRefreshAttempts = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, FailureRecord> normalRefreshFailures = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, Object> refreshLocks = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Long> normalRefreshFailures = new ConcurrentHashMap<>();
     private volatile LongSupplier currentTimeMillis = System::currentTimeMillis;
 
     private JwksCache() {
@@ -64,56 +63,36 @@ final class JwksCache {
     }
 
     JWKSet refreshJwkSet(String jwksEndpoint, int connectTimeoutMs, int readTimeoutMs) {
-        Object lock = refreshLocks.computeIfAbsent(jwksEndpoint, key -> new Object());
-        synchronized (lock) {
-            CacheEntry existing = cache.get(jwksEndpoint);
+        return cache.compute(jwksEndpoint, (key, existing) -> {
             long now = now();
-            if (existing != null && !canAttemptRefresh(jwksEndpoint, now)) {
-                LOG.debug("Skipping forced JWKS refresh from {} because a refresh was attempted recently", jwksEndpoint);
-                return existing.jwkSet;
+            if (existing != null && !canAttemptRefresh(key, now)) {
+                LOG.debug("Skipping forced JWKS refresh from {} because a refresh was attempted recently", key);
+                return existing;
             }
-            LOG.debug("Forcing JWKS refresh from {}", jwksEndpoint);
-            recordRefreshAttempt(jwksEndpoint, now);
-            CacheEntry refreshed = fetch(jwksEndpoint, connectTimeoutMs, readTimeoutMs, now);
-            normalRefreshFailures.remove(jwksEndpoint);
-            cache.put(jwksEndpoint, refreshed);
-            return refreshed.jwkSet;
-        }
+            LOG.debug("Forcing JWKS refresh from {}", key);
+            recordRefreshAttempt(key, now);
+            CacheEntry refreshed = fetch(key, connectTimeoutMs, readTimeoutMs, now);
+            normalRefreshFailures.remove(key);
+            return refreshed;
+        }).jwkSet;
     }
 
     private JWKSet fetchAndCache(String jwksEndpoint, long ttlSeconds, int connectTimeoutMs, int readTimeoutMs) {
-        Object lock = refreshLocks.computeIfAbsent(jwksEndpoint, key -> new Object());
-        synchronized (lock) {
-            CacheEntry existing = cache.get(jwksEndpoint);
+        return cache.compute(jwksEndpoint, (key, existing) -> {
             long now = now();
             if (existing != null && !existing.isExpired(ttlSeconds, now)) {
-                return existing.jwkSet;
+                return existing;
             }
-            FailureRecord recentFailure = recentNormalRefreshFailure(jwksEndpoint, now);
-            if (recentFailure != null) {
-                if (existing != null) {
-                    // serve-stale-on-error: the cache holds public key material only, so an expired entry is
-                    // preferable to failing all requests while the identity provider is unreachable
-                    LOG.debug("Serving stale JWKS from {} while refresh is rate-limited", jwksEndpoint);
-                    return existing.jwkSet;
-                }
-                throw new OAuthException(
-                        "JWKS fetch from " + jwksEndpoint + " was attempted recently", recentFailure.cause);
-            }
+            assertCanAttemptNormalRefresh(key, now);
             try {
-                CacheEntry refreshed = fetch(jwksEndpoint, connectTimeoutMs, readTimeoutMs, now);
-                normalRefreshFailures.remove(jwksEndpoint);
-                cache.put(jwksEndpoint, refreshed);
-                return refreshed.jwkSet;
+                CacheEntry refreshed = fetch(key, connectTimeoutMs, readTimeoutMs, now);
+                normalRefreshFailures.remove(key);
+                return refreshed;
             } catch (RuntimeException e) {
-                normalRefreshFailures.put(jwksEndpoint, new FailureRecord(now, e));
-                if (existing != null) {
-                    LOG.warn("JWKS refresh from {} failed, using cached keys: {}", jwksEndpoint, e.getMessage());
-                    return existing.jwkSet;
-                }
+                normalRefreshFailures.put(key, now);
                 throw e;
             }
-        }
+        }).jwkSet;
     }
 
     void put(String endpoint, JWKSet jwkSet) {
@@ -128,7 +107,6 @@ final class JwksCache {
         cache.clear();
         forcedRefreshAttempts.clear();
         normalRefreshFailures.clear();
-        refreshLocks.clear();
         currentTimeMillis = System::currentTimeMillis;
     }
 
@@ -163,21 +141,10 @@ final class JwksCache {
         forcedRefreshAttempts.put(jwksEndpoint, now);
     }
 
-    private FailureRecord recentNormalRefreshFailure(String jwksEndpoint, long now) {
-        FailureRecord failure = normalRefreshFailures.get(jwksEndpoint);
-        if (failure != null && now - failure.failedAtMillis < MIN_NORMAL_REFRESH_RETRY_INTERVAL_MILLIS) {
-            return failure;
-        }
-        return null;
-    }
-
-    private static final class FailureRecord {
-        final long failedAtMillis;
-        final Throwable cause;
-
-        FailureRecord(long failedAtMillis, Throwable cause) {
-            this.failedAtMillis = failedAtMillis;
-            this.cause = cause;
+    private void assertCanAttemptNormalRefresh(String jwksEndpoint, long now) {
+        Long failedAt = normalRefreshFailures.get(jwksEndpoint);
+        if (failedAt != null && now - failedAt < MIN_NORMAL_REFRESH_RETRY_INTERVAL_MILLIS) {
+            throw new OAuthException("JWKS fetch from " + jwksEndpoint + " was attempted recently");
         }
     }
 

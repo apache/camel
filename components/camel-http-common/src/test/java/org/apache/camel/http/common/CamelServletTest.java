@@ -21,22 +21,15 @@ import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.http.base.OAuthHttpSecuritySupport;
-import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelServletTest {
 
@@ -73,52 +66,5 @@ public class CamelServletTest {
                 = assertThrows(IllegalStateException.class, () -> camelServlet.connect(httpConsumer2));
         assertEquals("Duplicate request path for rest:post://camel.apache.org",
                 illegalStateException.getMessage());
-    }
-
-    @Test
-    public void testOAuthFailsClosedWhenSecuritySupportNotInitialized() throws URISyntaxException {
-        CamelServlet camelServlet = new CamelServlet();
-        DefaultCamelContext dc = new DefaultCamelContext();
-
-        OAuthStubEndpoint endpoint = new OAuthStubEndpoint();
-        endpoint.setEndpointUriIfNotSpecified("servlet:/secure");
-        endpoint.setHttpUri(new URI("servlet:/secure"));
-        endpoint.setCamelContext(dc);
-
-        HttpConsumer consumer = new HttpConsumer(endpoint, null);
-        Exchange exchange = new DefaultExchange(dc);
-        exchange.getMessage().setHeader("Authorization", "Bearer some-token");
-
-        boolean authenticated = camelServlet.authenticateOAuth(null, exchange, consumer);
-
-        assertFalse(authenticated);
-        assertEquals(503, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Service Unavailable", exchange.getMessage().getBody(String.class));
-        assertNull(exchange.getMessage().getHeader("Authorization"));
-        assertTrue(exchange.isRouteStop());
-    }
-
-    private static class OAuthStubEndpoint extends HttpCommonEndpoint implements OAuthProfileAwareHttpEndpoint {
-
-        @Override
-        public Producer createProducer() {
-            return null;
-        }
-
-        @Override
-        public Consumer createConsumer(Processor processor) {
-            return null;
-        }
-
-        @Override
-        public String getOauthProfile() {
-            return "myprofile";
-        }
-
-        @Override
-        public OAuthHttpSecuritySupport getOauthHttpSecurity() {
-            // simulates the window before endpoint initialization
-            return null;
-        }
     }
 }

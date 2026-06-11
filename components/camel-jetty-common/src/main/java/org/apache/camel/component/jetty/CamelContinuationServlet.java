@@ -235,17 +235,6 @@ public class CamelContinuationServlet extends CamelServlet {
             }
 
             ClassLoader oldTccl = overrideTccl(exchange);
-            if (!authenticateOAuth(request, exchange, consumer)) {
-                try {
-                    afterProcess(response, consumer, exchange, true);
-                } finally {
-                    if (oldTccl != null) {
-                        restoreTccl(exchange, oldTccl);
-                    }
-                    asyncContext.complete();
-                }
-                return;
-            }
 
             if (log.isTraceEnabled()) {
                 log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
