@@ -44,8 +44,6 @@ public class MailHeaderOverrideOptionsTest extends CamelTestSupport {
         Mailbox.clearAll();
     }
 
-    // --- useHeaderRecipients Tests ---
-
     @Test
     public void testUseHeaderRecipientsTrue_headerWins() throws Exception {
         template.sendBodyAndHeaders(baseUri + "&useHeaderRecipients=true&to=" + epRcpt.getEmail(), "Camel rocks",
@@ -71,8 +69,6 @@ public class MailHeaderOverrideOptionsTest extends CamelTestSupport {
         assertEquals(epRcpt.getEmail(), epRcpt.getInbox().get(0).getRecipients(Message.RecipientType.TO)[0].toString());
     }
 
-    // --- useHeaderFrom Tests ---
-
     @Test
     public void testUseHeaderFromTrue_headerWins() throws Exception {
         template.sendBodyAndHeaders(baseUri + "&useHeaderFrom=true&from=ep-from@example.com&to=" + epRcpt.getEmail(),
@@ -88,8 +84,6 @@ public class MailHeaderOverrideOptionsTest extends CamelTestSupport {
         assertEquals(1, epRcpt.getInbox().getMessageCount());
         assertEquals("ep-from@example.com", epRcpt.getInbox().get(0).getFrom()[0].toString());
     }
-
-    // --- useHeaderSubject Tests ---
 
     @Test
     public void testUseHeaderSubjectTrue_headerWins() throws Exception {
