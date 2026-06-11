@@ -50,4 +50,16 @@ public interface RestOpenApiConsumerFactory {
             CamelContext camelContext, Processor processor, String contextPath,
             RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception;
+
+    /**
+     * Whether consumers created by this factory enforce the {@code oauthProfile} option for validating incoming
+     * {@code Authorization: Bearer} tokens. Factories that do not enforce the option must return {@code false}, so
+     * callers such as the rest-openapi endpoint can fail fast at startup instead of starting an unprotected consumer.
+     *
+     * @return true when consumers created by this factory enforce the {@code oauthProfile} option
+     * @since  4.21
+     */
+    default boolean supportsOAuthProfile() {
+        return false;
+    }
 }

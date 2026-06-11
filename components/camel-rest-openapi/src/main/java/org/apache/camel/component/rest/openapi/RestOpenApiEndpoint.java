@@ -327,6 +327,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
+            // fail closed: never start an unprotected consumer when oauthProfile is configured but the
+            // delegate factory does not declare that its consumers enforce it
+            if (isNotEmpty(oauthProfile) && !factory.supportsOAuthProfile()) {
+                throw new IllegalArgumentException(
+                        "The oauthProfile option is not supported by the resolved RestOpenApiConsumerFactory ("
+                                                   + factory.getClass().getName()
+                                                   + "); select a consumer component that enforces oauthProfile");
+            }
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
             Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
             // pass oauthProfile to the delegate consumer, which is responsible for enforcing it
