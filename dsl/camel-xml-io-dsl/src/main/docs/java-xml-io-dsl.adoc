@@ -111,7 +111,7 @@ Here's an example `camel.xml` file, which defines both the routes and beans used
 
 A `my-route` route is referring to `greeter` bean which is defined using Spring `<bean>` element.
 
-More examples can be found in xref:manual:ROOT:camel-jbang.adoc#_using_spring_beans_in_camel_xml_dsl[Camel JBang] page.
+More examples can be found in xref:manual:ROOT:camel-jbang-beans.adoc#_using_spring_beans_xml_in_camel_xml_dsl[Camel JBang] page.
 
 === Using bean with constructors
 
