@@ -17,10 +17,15 @@
 package org.apache.camel.spi;
 
 /**
- * A factory for creating {@link DataFormat} instances. The factory is used when a data format needs custom
- * instantiation logic beyond the default resolution mechanism.
+ * Factory for creating fresh {@link DataFormat} instances on demand, used when a data format requires per-use
+ * instantiation rather than sharing a single instance across the route.
  * <p/>
- * Each call to {@link #newInstance()} should return a new data format instance.
+ * Most data formats are stateless singletons resolved directly from the registry or the META-INF service files. This
+ * factory is needed for formats that hold mutable per-invocation state (codec contexts, stream writers, etc.) and must
+ * therefore not be reused concurrently. When Camel encounters a {@code DataFormatFactory} in the registry, it calls
+ * {@link #newInstance()} for each {@code .marshal()} or {@code .unmarshal()} call rather than reusing one instance.
+ *
+ * @see DataFormat
  */
 @FunctionalInterface
 public interface DataFormatFactory {
