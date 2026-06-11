@@ -19,10 +19,9 @@ package org.apache.camel.component.vertx.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxHttpTransferExceptionTest extends VertxHttpTestSupport {
@@ -33,9 +32,9 @@ public class VertxHttpTransferExceptionTest extends VertxHttpTestSupport {
         assertTrue(exchange.isFailed());
 
         Exception exception = exchange.getException();
-        assertNotNull(exception);
-        assertTrue(exception instanceof IllegalStateException);
-        assertEquals("Forced Exception", exception.getMessage());
+        Assertions.assertThat(exception)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Forced Exception");
     }
 
     @Override
@@ -43,7 +42,7 @@ public class VertxHttpTransferExceptionTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri() + "?transferException=true")
+                from(getTestServerUri() + "?transferException=true&muteException=false")
                         .throwException(new IllegalStateException("Forced Exception"));
             }
         };
