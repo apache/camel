@@ -1330,6 +1330,21 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIStripThinking";
         }
         /**
+         * The MIME type of the message body when sending a file or binary
+         * content (File, WrappedFile, byte or InputStream) to the model. Takes
+         * precedence over component content-type headers and automatic MIME
+         * type detection.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIMediaType}.
+         */
+        public String openAIMediaType() {
+            return "CamelOpenAIMediaType";
+        }
+        /**
          * The thinking content extracted from ... blocks in the model response.
          * 
          * The option is a: {@code String} type.
