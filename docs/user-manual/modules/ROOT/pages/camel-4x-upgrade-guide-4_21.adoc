@@ -346,6 +346,10 @@ defense-in-depth only. The primary mitigation should be configured at the messag
 * ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
 * ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property
 
+=== camel-json-validator
+
+The underlying NetworkNT JSON Schema Validator library has been upgraded to version 3.0.3, which internally updates its dependencies to Jackson 3. This moves all core Jackson classes from the legacy `com.fasterxml.jackson` package to `tools.jackson` and enforces strict object immutability. If you use a custom mapper, you must migrate from the traditional `new ObjectMapper()` constructor to the new `JsonMapper.builder()` syntax.
+
 === camel-jms
 
 JMS `ObjectMessage` support is now disabled by default. Java object serialization is a recurring source

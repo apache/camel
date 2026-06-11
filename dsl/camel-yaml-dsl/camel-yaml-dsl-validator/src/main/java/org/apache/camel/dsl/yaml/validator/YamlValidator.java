@@ -23,15 +23,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaLocation;
 import com.networknt.schema.SchemaRegistry;
 import com.networknt.schema.SchemaRegistryConfig;
 import com.networknt.schema.SpecificationVersion;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 /**
  * YAML DSL validator that tooling can use to validate Camel source files if they can be parsed and are valid according
@@ -42,7 +42,7 @@ public class YamlValidator {
     private static final String LOCATION = "/schema/camelYamlDsl.json";
     private static final String LOCATION_CANONICAL = "/schema/camelYamlDsl-canonical.json";
 
-    private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    private final YAMLMapper mapper = YAMLMapper.builder().build();
     private final boolean canonical;
     private Schema schema;
 
@@ -58,14 +58,14 @@ public class YamlValidator {
         return canonical;
     }
 
-    public List<Error> validate(File file) throws Exception {
+    public List<Error> validate(File file) {
         if (schema == null) {
             init();
         }
         try {
             var target = mapper.readTree(file);
             return new ArrayList<>(schema.validate(target));
-        } catch (Exception e) {
+        } catch (JacksonException e) {
             Error error = Error.builder()
                     .messageKey("parser")
                     .format(new MessageFormat(e.getClass().getName() + ": " + e.getMessage()))
@@ -74,7 +74,7 @@ public class YamlValidator {
         }
     }
 
-    public void init() throws Exception {
+    public void init() {
         String location = canonical ? LOCATION_CANONICAL : LOCATION;
         var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         var version = getSpecificationVersion(model).orElse(SpecificationVersion.DRAFT_4);
