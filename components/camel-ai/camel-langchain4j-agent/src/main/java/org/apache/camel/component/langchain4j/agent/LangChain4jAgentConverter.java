@@ -34,6 +34,7 @@ import dev.langchain4j.data.pdf.PdfFile;
 import dev.langchain4j.data.video.Video;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.slf4j.Logger;
@@ -94,18 +95,9 @@ public final class LangChain4jAgentConverter {
      */
     @Converter
     public static AiAgentBody<?> toAiAgentBody(WrappedFile<?> wrappedFile, Exchange exchange) {
-        Object fileObj = wrappedFile.getFile();
-        if (fileObj == null) {
-            throw new IllegalArgumentException("WrappedFile contains null file");
-        }
-        if (!(fileObj instanceof File)) {
-            throw new IllegalArgumentException(
-                    "WrappedFile must contain a java.io.File instance, got: " + fileObj.getClass().getName());
-        }
-
-        File file = (File) fileObj;
-        String mimeType = detectMimeType(file, exchange);
-        byte[] fileData = readFileBytes(file);
+        String fileName = resolveFileName(wrappedFile, exchange);
+        byte[] fileData = resolveFileData(wrappedFile, exchange);
+        String mimeType = detectMimeType(fileName, exchange);
         Content content = createContent(fileData, mimeType);
 
         String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
@@ -119,6 +111,45 @@ public final class LangChain4jAgentConverter {
         body.setContent(content);
 
         return body;
+    }
+
+    private static String resolveFileName(WrappedFile<?> wrappedFile, Exchange exchange) {
+        String headerName = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+        if (headerName != null) {
+            return headerName;
+        }
+        Object fileObj = wrappedFile.getFile();
+        if (fileObj instanceof File file) {
+            return file.getName();
+        }
+        Object body = wrappedFile.getBody();
+        if (body instanceof File file) {
+            return file.getName();
+        }
+        return null;
+    }
+
+    private static byte[] resolveFileData(WrappedFile<?> wrappedFile, Exchange exchange) {
+        Object fileObj = wrappedFile.getFile();
+        if (fileObj instanceof File file) {
+            return readFileBytes(file);
+        }
+        Object body = wrappedFile.getBody();
+        if (body instanceof File file) {
+            return readFileBytes(file);
+        }
+        if (body instanceof byte[] bytes) {
+            return bytes;
+        }
+        if (body != null) {
+            try {
+                return exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, body);
+            } catch (NoTypeConversionAvailableException e) {
+                throw new IllegalArgumentException(
+                        "WrappedFile body could not be converted to byte[]: " + body.getClass().getName(), e);
+            }
+        }
+        throw new IllegalArgumentException("WrappedFile body is null");
     }
 
     /**
@@ -240,7 +271,7 @@ public final class LangChain4jAgentConverter {
      * <li>Auto-detection from file extension</li>
      * </ol>
      */
-    private static String detectMimeType(File file, Exchange exchange) {
+    private static String detectMimeType(String fileName, Exchange exchange) {
         // Check agent-specific header first (highest priority)
         String mediaType = exchange.getIn().getHeader(MEDIA_TYPE, String.class);
         if (mediaType != null) {
@@ -253,8 +284,14 @@ public final class LangChain4jAgentConverter {
             return fileContentType;
         }
 
+        if (fileName == null) {
+            throw new IllegalArgumentException(
+                    "Cannot determine MIME type: no file name available. "
+                                               + "Set the CamelLangChain4jAgentMediaType, CamelFileContentType, or CamelFileName header.");
+        }
+
         // Auto-detect from file extension
-        return detectMimeTypeFromExtension(file.getName());
+        return detectMimeTypeFromExtension(fileName);
     }
 
     /**
@@ -405,4 +442,5 @@ public final class LangChain4jAgentConverter {
             throw new IllegalArgumentException("Failed to read file: " + file.getAbsolutePath(), e);
         }
     }
+
 }
