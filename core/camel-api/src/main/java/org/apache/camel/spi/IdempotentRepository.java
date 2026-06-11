@@ -20,17 +20,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 
 /**
- * Access to a repository of Message IDs to implement the
- * <a href="https://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
+ * Persistent store of message identifiers that implements the
+ * <a href="https://camel.apache.org/manual/idempotent-consumer.html">Idempotent Consumer</a> pattern, ensuring each
+ * message is processed at most once.
  * <p/>
- * The <tt>add</tt> and <tt>contains</tt> methods is operating according to the {@link java.util.Set} contract.
+ * The {@code add} and {@code contains} methods follow the {@link java.util.Set} contract: {@link #add(String)} returns
+ * {@code true} only when the key is new (first occurrence), and {@link #contains(String)} tests membership without
+ * adding.
  * <p/>
- * The repository supports eager (default) and non-eager mode.
+ * The repository supports two processing modes, controlled by the Idempotent Consumer EIP configuration:
  * <ul>
- * <li>eager: calls <tt>add</tt> and <tt>confirm</tt> if complete, or <tt>remove</tt> if failed</li>
- * <li>non-eager: calls <tt>contains</tt> and <tt>add</tt> if complete, or <tt>remove</tt> if failed</li>
+ * <li><b>eager (default)</b> — {@link #add(String)} is called on entry. On success, {@link #confirm(String)} commits
+ * the key. On failure, {@link #remove(String)} rolls back so the message can be redelivered.</li>
+ * <li><b>non-eager</b> — {@link #contains(String)} guards entry; {@link #add(String)} is only called on success.
+ * {@link #remove(String)} is still called on failure.</li>
  * </ul>
- * Notice the remove callback, can be configured to be disabled.
+ * The removal-on-failure callback can be disabled via the EIP option, which is useful for at-most-once semantics even
+ * when the downstream processing fails. Persistent implementations backed by a file, JDBC database, Redis, or Hazelcast
+ * are available as separate Camel components.
  */
 public interface IdempotentRepository extends Service {
 
