@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.pojos.CarRentalRecommendation;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
@@ -92,6 +93,46 @@ public class LangChain4jAgentStructuredOutputTest {
                 public void configure() {
                     from("direct:test")
                             .to("langchain4j-agent:test?agentConfiguration=#myConfig&jsonSchema=RAW(this is not json)");
+                }
+            });
+
+            // FailedToStartRouteException -> RuntimeCamelException -> IllegalArgumentException
+            Exception ex = assertThrows(Exception.class, context::start);
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause().getCause());
+        }
+    }
+
+    @Test
+    void testJsonSchemaAndResponseTypeMutuallyExclusiveThrowsIllegalArgumentException() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            AgentConfiguration config = new AgentConfiguration();
+            context.getRegistry().bind("myConfig", config);
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:test")
+                            .to("langchain4j-agent:test?agentConfiguration=#myConfig"
+                                + "&jsonSchema=RAW({\"type\":\"object\"})"
+                                + "&responseType=" + CarRentalRecommendation.class.getName());
+                }
+            });
+
+            // FailedToStartRouteException -> RuntimeCamelException -> IllegalArgumentException
+            Exception ex = assertThrows(Exception.class, context::start);
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause().getCause());
+        }
+    }
+
+    @Test
+    void testResponseTypeWithoutAgentConfigurationThrowsIllegalArgumentException() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    // responseType without agentConfiguration — should fail at startup
+                    from("direct:test")
+                            .to("langchain4j-agent:myAgent?responseType=" + CarRentalRecommendation.class.getName());
                 }
             });
 

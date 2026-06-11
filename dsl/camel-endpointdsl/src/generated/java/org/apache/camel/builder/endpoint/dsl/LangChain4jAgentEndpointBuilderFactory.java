@@ -144,7 +144,8 @@ public interface LangChain4jAgentEndpointBuilderFactory {
         }
         /**
          * JSON schema for structured output validation. This option works only
-         * when using agentConfiguration (inline agent creation mode).
+         * when using agentConfiguration (inline agent creation mode). Mutually
+         * exclusive with responseType.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -158,6 +159,44 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          */
         default LangChain4jAgentEndpointBuilder jsonSchema(String jsonSchema) {
             doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Java class to use as response format for structured outputs. Camel
+         * will automatically derive the JSON schema from the class structure
+         * and unmarshal the response. This option works only when using
+         * agentConfiguration (inline agent creation mode). Mutually exclusive
+         * with jsonSchema.
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param responseType the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder responseType(Class<java.lang.Object> responseType) {
+            doSetProperty("responseType", responseType);
+            return this;
+        }
+        /**
+         * Java class to use as response format for structured outputs. Camel
+         * will automatically derive the JSON schema from the class structure
+         * and unmarshal the response. This option works only when using
+         * agentConfiguration (inline agent creation mode). Mutually exclusive
+         * with jsonSchema.
+         * 
+         * The option will be converted to a
+         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param responseType the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder responseType(String responseType) {
+            doSetProperty("responseType", responseType);
             return this;
         }
         /**

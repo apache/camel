@@ -1393,6 +1393,73 @@ The `jsonSchema` option accepts:
 * Inline JSON: `jsonSchema={"type":"object","properties":{"name":{"type":"string"}}}`
 * Property placeholders: `jsonSchema=resource:classpath:${schema.location}`
 
+
+
+==== Using the responseType endpoint option (Java Class-based Schema)
+
+As an alternative to providing a JSON schema directly, you can use the `responseType` endpoint option to specify a Java class. The Camel LangChain4j agent will automatically:
+
+1. Derive the JSON schema from the class structure
+2. Configure the AI model to return JSON matching that schema
+3. Unmarshal the JSON response directly to an instance of your Java class
+
+This approach is mutually exclusive with `jsonSchema` — you can use one or the other, but not both.
+
+===== Example with Java POJO
+
+First, define your response class. Annotate required fields with `@JsonProperty(required = true)` so they appear in the `required` array of the generated JSON schema, ensuring the model always populates them. Use `@Description` to add semantic hints:
+
+[source,java]
+----
+import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.langchain4j.model.output.structured.Description;
+
+public class PersonInfo {
+    @JsonProperty(required = true)
+    @Description("The person's full name")
+    private String name;
+
+    @JsonProperty(required = true)
+    @Description("The person's age in years")
+    private int age;
+
+    @JsonProperty(required = true)
+    @Description("The person's job or profession")
+    private String occupation;
+
+    // Getters and setters...
+}
+----
+
+Then configure the endpoint to use this class as the response type. Use the fully qualified class name (FQCN) directly — no registry binding needed:
+
+[source,java]
+----
+AgentConfiguration agentConfiguration = new AgentConfiguration()
+        .withChatModel(chatModel);
+
+context.getRegistry().bind("myAgentConfig", agentConfiguration);
+
+from("direct:extract-person-info")
+    .setBody(constant("Extract information about John Smith, a 35-year-old software engineer"))
+    .to("langchain4j-agent:structured?agentConfiguration=#myAgentConfig"
+            + "&responseType=com.example.PersonInfo")
+    .process(exchange -> {
+        // Response is automatically unmarshalled to PersonInfo
+        PersonInfo person = exchange.getIn().getBody(PersonInfo.class);
+        log.info("Name: {}, Age: {}, Occupation: {}",
+            person.getName(), person.getAge(), person.getOccupation());
+    });
+----
+
+[NOTE]
+====
+* Both `jsonSchema` and `responseType` only work when using `agentConfiguration` (inline agent creation mode)
+* You cannot use both options simultaneously — they are mutually exclusive
+* The AI model must support structured outputs (e.g., OpenAI GPT-4o, GPT-4o-mini, or Ollama models with JSON mode)
+* Complex nested objects and collections are fully supported with `responseType`
+====
+
 ==== Alternative: configuring ResponseFormat on the ChatModel
 
 You can also define the `ResponseFormat` at the `ChatModel` level. See the https://docs.langchain4j.dev/tutorials/structured-outputs#using-json-schema-with-chatmodel[LangChain4j Structured Outputs documentation] for details.

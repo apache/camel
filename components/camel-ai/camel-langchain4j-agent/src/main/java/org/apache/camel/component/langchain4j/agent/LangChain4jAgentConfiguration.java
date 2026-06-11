@@ -58,9 +58,17 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     @UriParam
     @Metadata(description = "JSON schema for structured output validation. "
-                            + "This option works only when using agentConfiguration (inline agent creation mode).",
+                            + "This option works only when using agentConfiguration (inline agent creation mode). "
+                            + "Mutually exclusive with responseType.",
               supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String jsonSchema;
+
+    @UriParam
+    @Metadata(description = "Java class to use as response format for structured outputs. "
+                            + "Camel will automatically derive the JSON schema from the class structure and unmarshal the response. "
+                            + "This option works only when using agentConfiguration (inline agent creation mode). "
+                            + "Mutually exclusive with jsonSchema.")
+    private Class<?> responseType;
 
     @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
                             + " Supported properties: transportType (stdio, http, streamableHttp, or sse, default: stdio),"
@@ -179,5 +187,18 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setJsonSchema(String jsonSchema) {
         this.jsonSchema = jsonSchema;
+    }
+
+    /**
+     * Java class to use as response format for structured outputs
+     *
+     * @return the response type class
+     */
+    public Class<?> getResponseType() {
+        return responseType;
+    }
+
+    public void setResponseType(Class<?> responseType) {
+        this.responseType = responseType;
     }
 }

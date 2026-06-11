@@ -119,7 +119,8 @@ public interface Langchain4jAgentComponentBuilderFactory {
     
         /**
          * JSON schema for structured output validation. This option works only
-         * when using agentConfiguration (inline agent creation mode).
+         * when using agentConfiguration (inline agent creation mode). Mutually
+         * exclusive with responseType.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -158,6 +159,26 @@ public interface Langchain4jAgentComponentBuilderFactory {
          */
         default Langchain4jAgentComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        /**
+         * Java class to use as response format for structured outputs. Camel
+         * will automatically derive the JSON schema from the class structure
+         * and unmarshal the response. This option works only when using
+         * agentConfiguration (inline agent creation mode). Mutually exclusive
+         * with jsonSchema.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param responseType the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder responseType(java.lang.Class<java.lang.Object> responseType) {
+            doSetProperty("responseType", responseType);
             return this;
         }
     
@@ -264,6 +285,7 @@ public interface Langchain4jAgentComponentBuilderFactory {
             case "configuration": ((LangChain4jAgentComponent) component).setConfiguration((org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) value); return true;
             case "jsonSchema": getOrCreateConfiguration((LangChain4jAgentComponent) component).setJsonSchema((java.lang.String) value); return true;
             case "lazyStartProducer": ((LangChain4jAgentComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "responseType": getOrCreateConfiguration((LangChain4jAgentComponent) component).setResponseType((java.lang.Class) value); return true;
             case "tags": getOrCreateConfiguration((LangChain4jAgentComponent) component).setTags((java.lang.String) value); return true;
             case "autowiredEnabled": ((LangChain4jAgentComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "mcpClients": getOrCreateConfiguration((LangChain4jAgentComponent) component).setMcpClients((java.util.List) value); return true;

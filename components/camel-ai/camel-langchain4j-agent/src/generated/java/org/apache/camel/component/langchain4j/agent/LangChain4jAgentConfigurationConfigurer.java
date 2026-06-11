@@ -34,6 +34,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "mcpClients": target.setMcpClients(property(camelContext, java.util.List.class, value)); return true;
         case "mcpserver":
         case "mcpServer": target.setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
+        case "responsetype":
+        case "responseType": target.setResponseType(property(camelContext, java.lang.Class.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -53,6 +55,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "mcpClients": return java.util.List.class;
         case "mcpserver":
         case "mcpServer": return java.util.Map.class;
+        case "responsetype":
+        case "responseType": return java.lang.Class.class;
         case "tags": return java.lang.String.class;
         default: return null;
         }
@@ -73,6 +77,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "mcpClients": return target.getMcpClients();
         case "mcpserver":
         case "mcpServer": return target.getMcpServer();
+        case "responsetype":
+        case "responseType": return target.getResponseType();
         case "tags": return target.getTags();
         default: return null;
         }

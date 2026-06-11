@@ -32,6 +32,8 @@ import dev.langchain4j.model.chat.request.ResponseFormatType;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.request.json.JsonRawSchema;
 import dev.langchain4j.model.chat.request.json.JsonSchema;
+import dev.langchain4j.service.output.JsonSchemas;
+import dev.langchain4j.service.output.ServiceOutputParser;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
@@ -56,6 +58,10 @@ import org.slf4j.LoggerFactory;
 
 public class LangChain4jAgentProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jAgentProducer.class);
+    // ServiceOutputParser is used intentionally: beyond JSON parsing, it strips markdown code fences
+    // (e.g. ```json ... ```) that some LLMs emit even when ResponseFormat is explicitly set to JSON.
+    // Plain Jackson would throw a JsonParseException on such responses.
+    private static final ServiceOutputParser SERVICE_OUTPUT_PARSER = new ServiceOutputParser();
 
     private final LangChain4jAgentEndpoint endpoint;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -72,15 +78,28 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     protected void doInit() throws Exception {
         super.doInit();
 
+        if (endpoint.getConfiguration().getResponseType() != null
+                && endpoint.getConfiguration().getAgentConfiguration() == null) {
+            throw new IllegalArgumentException(
+                    "responseType requires agentConfiguration to be set. "
+                                               + "It only works when Camel creates the agent internally (inline agent creation mode).");
+        }
+
         if (endpoint.getConfiguration().getAgent() != null) {
             agent = endpoint.getConfiguration().getAgent();
         } else if (endpoint.getConfiguration().getAgentConfiguration() != null) {
+            if (ObjectHelper.isNotEmpty(endpoint.getConfiguration().getJsonSchema())
+                    && endpoint.getConfiguration().getResponseType() != null) {
+                throw new IllegalArgumentException(
+                        "jsonSchema and responseType are mutually exclusive. Please specify only one.");
+            }
+
             AgentConfiguration agentConfiguration = endpoint.getConfiguration().getAgentConfiguration();
             agent = agentConfiguration.getChatMemoryProvider() != null
                     ? new AgentWithMemory(agentConfiguration)
                     : new AgentWithoutMemory(agentConfiguration);
-            // Apply jsonSchema only when Camel creates the agent internally — we cannot modify user-provided agents
-            resolveAndApplyJsonSchema();
+            // Apply jsonSchema or responseType only when Camel creates the agent internally — we cannot modify user-provided agents
+            resolveAndApplyStructuredOutput();
         } else {
             agent = endpoint.getCamelContext().getRegistry().lookupByNameAndType(endpoint.getAgentId(), Agent.class);
         }
@@ -102,7 +121,13 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         ToolProvider toolProvider = createComposedToolProvider(tags, exchange);
         String response = agent.chat(aiAgentBody, toolProvider);
-        exchange.getMessage().setBody(response);
+
+        Class<?> responseType = endpoint.getConfiguration().getResponseType();
+        if (responseType != null) {
+            exchange.getMessage().setBody(SERVICE_OUTPUT_PARSER.parseText(responseType, response));
+        } else {
+            exchange.getMessage().setBody(response);
+        }
     }
 
     /**
@@ -305,41 +330,55 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     }
 
     /**
-     * Resolves the jsonSchema endpoint property: loads from classpath/filesystem if it is a resource URI, otherwise
-     * treats it as inline JSON. Converts the raw JSON string into a langchain4j ResponseFormat and sets it on the
-     * agent. Only called when the agent is created internally from agentConfiguration.
+     * Resolves and applies structured output configuration (jsonSchema or responseType) to the agent. Only called when
+     * the agent is created internally from agentConfiguration.
      */
-    private void resolveAndApplyJsonSchema() throws Exception {
+    private void resolveAndApplyStructuredOutput() throws Exception {
         String jsonSchema = endpoint.getConfiguration().getJsonSchema();
-        if (ObjectHelper.isEmpty(jsonSchema)) {
+        Class<?> responseType = endpoint.getConfiguration().getResponseType();
+
+        if (ObjectHelper.isEmpty(jsonSchema) && responseType == null) {
             return;
         }
 
-        String resolved = endpoint.getCamelContext().resolvePropertyPlaceholders(jsonSchema);
+        if (responseType != null) {
+            JsonSchema schema = JsonSchemas.jsonSchemaFrom(responseType)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot derive JSON schema from responseType: " + responseType.getName()
+                                                                    + ". Ensure the class has public fields or getters and is not a raw generic type."));
+            ResponseFormat derivedFormat = ResponseFormat.builder()
+                    .type(ResponseFormatType.JSON)
+                    .jsonSchema(schema)
+                    .build();
+            ((AbstractAgent<?>) agent).setResponseFormat(derivedFormat);
+            LOG.debug("Configured structured output with response type: {}", responseType.getName());
+        } else {
+            // Handle jsonSchema property (existing logic)
+            String resolved = endpoint.getCamelContext().resolvePropertyPlaceholders(jsonSchema);
 
-        String content = resolveResourceContent(resolved);
-        if (content != null) {
-            resolved = content;
+            String content = resolveResourceContent(resolved);
+            if (content != null) {
+                resolved = content;
+            }
+
+            // Validates that resolved is valid JSON (whether loaded from a resource or used as inline content)
+            try {
+                objectMapper.readTree(resolved);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(
+                        "jsonSchema endpoint property does not contain valid JSON. Provided value: " + jsonSchema, e);
+            }
+            JsonRawSchema jsonRawSchema = JsonRawSchema.from(resolved);
+            // Use a fixed name consistent with camel-openai for cross-component portability
+            ResponseFormat responseFormat = ResponseFormat.builder()
+                    .type(ResponseFormatType.JSON)
+                    .jsonSchema(JsonSchema.builder()
+                            .name("camel_schema")
+                            .rootElement(jsonRawSchema)
+                            .build())
+                    .build();
+            ((AbstractAgent<?>) agent).setResponseFormat(responseFormat);
         }
-
-        // Validates that resolved is valid JSON (whether loaded from a resource or used as inline content)
-        try {
-            objectMapper.readTree(resolved);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    "jsonSchema endpoint property does not contain valid JSON. Provided value: " + jsonSchema, e);
-        }
-        JsonRawSchema jsonRawSchema = JsonRawSchema.from(resolved);
-        // Use a fixed name consistent with camel-openai for cross-component portability
-        ResponseFormat responseFormat = ResponseFormat.builder()
-                .type(ResponseFormatType.JSON)
-                .jsonSchema(JsonSchema.builder()
-                        .name("camel_schema")
-                        .rootElement(jsonRawSchema)
-                        .build())
-                .build();
-
-        ((AbstractAgent<?>) agent).setResponseFormat(responseFormat);
     }
 
     /**
