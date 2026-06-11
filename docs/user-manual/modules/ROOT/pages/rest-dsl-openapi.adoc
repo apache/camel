@@ -66,8 +66,9 @@ for example `rest-openapi:petstore-v3.json?consumerComponentName=platform-http&o
 Consumer endpoint URIs identify the OpenAPI specification and do not include an `#operationId`
 fragment.
 The `oauthProfile` option is forwarded to the selected delegate, which is responsible for
-enforcing it. Verify that the selected consumer component supports `oauthProfile`; a delegate
-that ignores the option starts without the expected protection.
+enforcing it. The route fails at startup when the resolved `RestOpenApiConsumerFactory` does not
+declare that its consumers enforce `oauthProfile`, so a misconfigured delegate cannot start
+without the expected protection.
 
 == Contract first
 

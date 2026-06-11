@@ -125,6 +125,33 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
+    public void oauthProfileFailsClosedWhenDelegateDoesNotSupportIt() throws Exception {
+        final CamelContext camelContext = new DefaultCamelContext();
+        final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
+        String specificationUri = Objects.requireNonNull(RestOpenApiEndpointV3Test.class.getResource("/openapi-v3.json"))
+                .toString();
+        camelContext.addComponent("rest-openapi", component);
+        camelContext.addComponent("no-oauth-http", new NoOAuthRestOpenApiConsumerFactory());
+        camelContext.start();
+
+        try {
+            RestOpenApiEndpoint endpoint = camelContext.getEndpoint(
+                    "rest-openapi:" + specificationUri + "?consumerComponentName=no-oauth-http&oauthProfile=myprofile",
+                    RestOpenApiEndpoint.class);
+
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> endpoint.createConsumer(exchange -> {
+                    }));
+
+            assertThat(exception.getMessage())
+                    .contains("The oauthProfile option is not supported by the resolved RestOpenApiConsumerFactory")
+                    .contains(NoOAuthRestOpenApiConsumerFactory.class.getName());
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    @Test
     public void unknownEndpointPropertyIsTolerated() throws Exception {
         final CamelContext camelContext = new DefaultCamelContext();
         final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
@@ -516,6 +543,28 @@ public class RestOpenApiEndpointV3Test {
             this.parameters = new HashMap<>(parameters);
             return mock(Consumer.class);
         }
+
+        @Override
+        public boolean supportsOAuthProfile() {
+            return true;
+        }
+    }
+
+    private static final class NoOAuthRestOpenApiConsumerFactory extends DefaultComponent
+            implements RestOpenApiConsumerFactory {
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Consumer createConsumer(
+                CamelContext camelContext, Processor processor, String contextPath, RestConfiguration configuration,
+                Map<String, Object> parameters) {
+            return mock(Consumer.class);
+        }
+        // does not override supportsOAuthProfile: the default is false
     }
 
 }
