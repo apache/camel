@@ -524,6 +524,19 @@ the TLS settings regardless of whether basic authentication (`user`/`password`) 
 that set `certificatePath` without credentials will now correctly use the configured TLS context where it
 was previously a no-op.
 
+=== camel-openai
+
+The `chat-completion` operation now accepts `WrappedFile` (the body type produced by the file, FTP, SFTP and SMB
+components), `Path`, `byte[]` and `InputStream` message bodies for file-based and vision model input, in addition
+to `java.io.File`. Previously such bodies were converted to a String, which corrupted binary image content.
+
+The MIME type of the body is now detected from headers (the new `CamelOpenAIMediaType` header, `CamelFileContentType`,
+cloud storage content-type headers such as `CamelAwsS3ContentType`, or `Content-Type`), and finally the file name
+extension using the Camel built-in MIME type table. Previously only `Files.probeContentType()` was used, which could
+fail to detect the type on some platforms. A `byte[]` or `InputStream` body whose detected MIME type is an image is now
+sent to the model as a base64-encoded image instead of being converted to text; bodies without image MIME type metadata
+keep the previous text behavior. XML and JSON files (`application/xml`, `application/json`) are treated as text prompts.
+
 === camel-stomp removal
 
 Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.
