@@ -24,7 +24,7 @@ public class ElasticsearchEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(22);
         props.add("certificatePath");
         props.add("clusterName");
         props.add("connectionTimeout");
@@ -44,6 +44,7 @@ public class ElasticsearchEndpointUriFactory extends org.apache.camel.support.co
         props.add("sniffAfterFailureDelay");
         props.add("snifferInterval");
         props.add("socketTimeout");
+        props.add("sslContextParameters");
         props.add("useScroll");
         props.add("waitForActiveShards");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

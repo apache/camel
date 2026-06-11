@@ -23,6 +23,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.HttpHost;
 
 @UriParams
@@ -62,6 +63,8 @@ public class ElasticsearchConfiguration {
     @UriParam(label = "security")
     @Metadata(supportFileReference = true)
     private String certificatePath;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
     @UriParam
     private boolean useScroll;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
@@ -225,6 +228,19 @@ public class ElasticsearchConfiguration {
 
     public void setCertificatePath(String certificatePath) {
         this.certificatePath = certificatePath;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. When configured, this takes precedence over the
+     * {@code certificatePath} option. This allows configuring named groups, signature schemes, cipher suites, and
+     * protocols for the TLS connection.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     /**

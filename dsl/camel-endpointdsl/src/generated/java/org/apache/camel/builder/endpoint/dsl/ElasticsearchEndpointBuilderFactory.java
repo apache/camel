@@ -460,6 +460,42 @@ public interface ElasticsearchEndpointBuilderFactory {
             doSetProperty("enableSSL", enableSSL);
             return this;
         }
+        /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option. This allows
+         * configuring named groups, signature schemes, cipher suites, and
+         * protocols for the TLS connection.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option. This allows
+         * configuring named groups, signature schemes, cipher suites, and
+         * protocols for the TLS connection.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
     }
 
     /**
