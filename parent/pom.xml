@@ -107,7 +107,7 @@
         <cloudant-version>0.10.18</cloudant-version>
         <com-ibm-mq-jakarta-client-version>9.4.5.1</com-ibm-mq-jakarta-client-version>
         <cometd-java-client-version>9.0.0</cometd-java-client-version>
-        <cometd-java-server-version>9.0.0</cometd-java-server-version>
+        <cometd-java-server-version>9.0.1</cometd-java-server-version>
         <commons-beanutils-version>1.11.0</commons-beanutils-version>
         <commons-codec-version>1.22.0</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
