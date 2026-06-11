@@ -17,8 +17,8 @@
 package org.apache.camel.component.openai;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -46,6 +46,7 @@ import com.openai.models.completions.CompletionUsage;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
@@ -244,8 +245,10 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             userPrompt = config.getUserMessage();
         }
 
-        if (body instanceof File) {
+        if (body instanceof WrappedFile || body instanceof File || body instanceof Path) {
             return buildFileMessage(in, userPrompt, config);
+        } else if (body instanceof byte[] || body instanceof InputStream) {
+            return buildBinaryMessage(in, userPrompt, config);
         } else {
             return buildTextMessage(in, userPrompt, config);
         }
@@ -261,15 +264,28 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private ChatCompletionMessageParam buildFileMessage(Message in, String userPrompt, OpenAIConfiguration config)
             throws Exception {
-        File inputFile = in.getBody(File.class);
-        Path path = inputFile.toPath();
-        String mime = Files.probeContentType(path);
+        Object body = in.getBody();
+        File inputFile = null;
+        if (body instanceof WrappedFile<?> wrappedFile && wrappedFile.getFile() instanceof File file) {
+            // local file-based components (camel-file) expose the underlying java.io.File
+            inputFile = file;
+        } else if (body instanceof File file) {
+            inputFile = file;
+        } else if (body instanceof Path path) {
+            inputFile = path.toFile();
+        }
 
-        if (mime != null && mime.startsWith("text/")) {
+        // for remote file-based components (FTP, SFTP, ...) there is no local java.io.File, so the
+        // MIME type is detected from headers and the file name only, before reading any content
+        String mime = inputFile != null
+                ? MimeTypeHelper.resolveForFile(in, inputFile) : MimeTypeHelper.resolveForBinary(in);
+
+        if (MimeTypeHelper.isText(mime)) {
             // Handle text files - read content and use buildTextMessage logic
             String prompt = userPrompt;
             if (prompt == null || prompt.isEmpty()) {
-                prompt = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+                // the type converter reads the content honoring the charset configured on file-based endpoints
+                prompt = in.getBody(String.class);
             }
 
             if (prompt == null || prompt.isEmpty()) {
@@ -277,23 +293,46 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         "File content or user message configuration must contain the prompt text");
             }
             return createTextMessage(prompt);
-        } else if (mime != null && mime.startsWith("image/")) {
-            // Handle image files - require user prompt and combine with image
-            if (userPrompt == null || userPrompt.isEmpty()) {
-                throw new IllegalArgumentException("User message configuration must be set when using image File body");
-            }
-
-            ChatCompletionContentPart imageContentPart = createImageContentPart(inputFile, mime);
-            ChatCompletionContentPart textContentPart = createTextContentPart(userPrompt);
-
-            return ChatCompletionMessageParam.ofUser(
-                    ChatCompletionUserMessageParam.builder()
-                            .content(ChatCompletionUserMessageParam.Content.ofArrayOfContentParts(
-                                    List.of(textContentPart, imageContentPart)))
-                            .build());
+        } else if (MimeTypeHelper.isImage(mime)) {
+            byte[] image = inputFile != null ? Files.readAllBytes(inputFile.toPath()) : readBodyBytes(in);
+            return createImageMessage(image, mime, userPrompt);
         } else {
-            throw new IllegalArgumentException("Only text and image files are supported");
+            throw unsupportedMimeType(mime,
+                    inputFile != null ? inputFile.getName() : in.getHeader(Exchange.FILE_NAME, String.class));
         }
+    }
+
+    private ChatCompletionMessageParam buildBinaryMessage(Message in, String userPrompt, OpenAIConfiguration config)
+            throws Exception {
+        String mime = MimeTypeHelper.resolveForBinary(in);
+        if (MimeTypeHelper.isImage(mime)) {
+            return createImageMessage(readBodyBytes(in), mime, userPrompt);
+        }
+        // not an image: keep the previous behavior and treat the payload as text
+        return buildTextMessage(in, userPrompt, config);
+    }
+
+    private byte[] readBodyBytes(Message in) throws IOException {
+        Object body = in.getBody();
+        if (body instanceof byte[] bytes) {
+            return bytes;
+        }
+        InputStream is = in.getBody(InputStream.class);
+        if (is == null) {
+            throw new IllegalArgumentException(
+                    "Cannot read message body as InputStream: " + (body != null ? body.getClass().getName() : "null"));
+        }
+        try (is) {
+            return is.readAllBytes();
+        }
+    }
+
+    private IllegalArgumentException unsupportedMimeType(String mime, String fileName) {
+        return new IllegalArgumentException(
+                "Only text and image files are supported. Detected MIME type: " + mime
+                                            + (fileName != null ? " for file: " + fileName : "")
+                                            + ". Set the " + OpenAIConstants.MEDIA_TYPE
+                                            + " header to override the MIME type detection");
     }
 
     private ChatCompletionMessageParam createTextMessage(String prompt) {
@@ -317,10 +356,24 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         .build());
     }
 
-    private ChatCompletionContentPart createImageContentPart(File inputFile, String mime) throws Exception {
-        Path path = inputFile.toPath();
-        byte[] img = Files.readAllBytes(path);
-        String dataUrl = "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(img);
+    private ChatCompletionMessageParam createImageMessage(byte[] image, String mime, String userPrompt) {
+        // image input requires a user prompt to combine with the image
+        if (userPrompt == null || userPrompt.isEmpty()) {
+            throw new IllegalArgumentException("User message configuration must be set when using an image body");
+        }
+
+        ChatCompletionContentPart imageContentPart = createImageContentPart(image, mime);
+        ChatCompletionContentPart textContentPart = createTextContentPart(userPrompt);
+
+        return ChatCompletionMessageParam.ofUser(
+                ChatCompletionUserMessageParam.builder()
+                        .content(ChatCompletionUserMessageParam.Content.ofArrayOfContentParts(
+                                List.of(textContentPart, imageContentPart)))
+                        .build());
+    }
+
+    private ChatCompletionContentPart createImageContentPart(byte[] image, String mime) {
+        String dataUrl = "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(image);
 
         return ChatCompletionContentPart.ofImageUrl(
                 ChatCompletionContentPartImage.builder()
