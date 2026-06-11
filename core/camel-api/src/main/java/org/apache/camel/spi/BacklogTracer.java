@@ -24,8 +24,21 @@ import org.apache.camel.NamedNode;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Backlog tracer that captures the last N messages during routing in a backlog.
+ * Passive message capture mechanism that records a rolling window of the last N exchange snapshots as they pass through
+ * route nodes, as described in the <a href="https://camel.apache.org/manual/backlog-tracer.html">Backlog Tracer</a>
+ * documentation.
+ * <p/>
+ * Unlike the {@link Debugger}/{@link BacklogDebugger} which can suspend and step through exchanges, the
+ * {@code BacklogTracer} is non-blocking: it takes a snapshot of each exchange at each route node and adds it to a
+ * bounded circular queue (the "backlog"). Snapshots are available via {@link #dumpTracedMessagesAsXml(String, boolean)}
+ * or {@link #dumpTracedMessagesAsJSon(String, boolean)} for inspection or test assertions. The maximum number of
+ * messages held in the backlog is configured by {@link #setBacklogSize(int)}.
+ * <p/>
+ * The tracer can be filtered to a subset of routes and nodes via {@link #setTraceFilter(String)}, and can be put in
+ * standby mode (activated but not collecting) so it can be toggled at runtime via JMX without restarting Camel.
  *
+ * @see   BacklogTracerEventMessage
+ * @see   BacklogDebugger
  * @since 4.0
  */
 public interface BacklogTracer {
