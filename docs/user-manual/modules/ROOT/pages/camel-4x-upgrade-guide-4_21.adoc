@@ -456,6 +456,17 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
+=== camel-keycloak
+
+The `KeycloakSecurityPolicy` route policy now always verifies the access token when one is present - signature,
+issuer and expiry for local JWT verification, or active state and issuer when token introspection is enabled -
+even when neither `requiredRoles` nor `requiredPermissions` is configured. Previously the token was only verified
+when at least one role or permission was required.
+
+Routes that attach a `KeycloakSecurityPolicy` without any roles or permissions and that previously forwarded an
+unverified or invalid token will now have such requests rejected with a `CamelAuthorizationException`. Provide a
+valid, verifiable token (or configure `requiredRoles` / `requiredPermissions`) for these routes.
+
 === camel-stomp removal
 
 Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.
