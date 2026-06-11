@@ -3,7 +3,7 @@
 This page covers configuring the Camel CLI — available options, configuration commands, and how to set up your environment.
 
 // jbang options: START
-=== Camel CLI configurations
+== Camel CLI configurations
 The camel.jbang supports 48 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
