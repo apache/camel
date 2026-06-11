@@ -18,6 +18,7 @@ package org.apache.camel.processor.jpa;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.persistence.Query;
 
@@ -31,6 +32,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
 import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test using jpa idempotent repository for the file consumer.
@@ -90,19 +92,20 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Thread.sleep(1000);
+        // wait for the consumed file to be moved to the done directory
+        File file = new File("target/idempotent/done/report.txt");
+        await().atMost(5, TimeUnit.SECONDS).until(file::exists);
 
         // reset mock and set new expectations
         mock.reset();
         mock.expectedMessageCount(0);
 
         // move file back
-        File file = new File("target/idempotent/done/report.txt");
         File renamed = new File("target/idempotent/report.txt");
         file.renameTo(renamed);
 
-        // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
-        Thread.sleep(2000);
+        // should NOT consume the file again, assert for 2 secs that the consumer does not consume it again
+        mock.setAssertPeriod(2000);
         MockEndpoint.assertIsSatisfied(context);
     }
 
