@@ -461,10 +461,34 @@ public class MainSSLTest {
                 = (X509Certificate) ks.getCertificate("camel-self-signed");
         assertNotNull(cert);
 
+        // the default key type is EC (NIST P-256) signed with SHA256withECDSA
+        Assertions.assertEquals("EC", cert.getPublicKey().getAlgorithm());
+        Assertions.assertEquals("SHA256withECDSA", cert.getSigAlgName());
+
         // verify the certificate has a SAN extension with localhost
         Collection<List<?>> sans = cert.getSubjectAlternativeNames();
         assertNotNull(sans);
         // should have DNS:localhost and IP:127.0.0.1
+        Assertions.assertTrue(sans.size() >= 2);
+    }
+
+    @Test
+    public void testSelfSignedCertificateGeneratorRSA() throws Exception {
+        KeyStore ks = SelfSignedCertificateGenerator.generateKeyStore("test-password", "RSA");
+        assertNotNull(ks);
+        Assertions.assertTrue(ks.containsAlias("camel-self-signed"));
+        assertNotNull(ks.getKey("camel-self-signed", "test-password".toCharArray()));
+
+        X509Certificate cert
+                = (X509Certificate) ks.getCertificate("camel-self-signed");
+        assertNotNull(cert);
+
+        // RSA remains selectable, signed with SHA256withRSA
+        Assertions.assertEquals("RSA", cert.getPublicKey().getAlgorithm());
+        Assertions.assertEquals("SHA256withRSA", cert.getSigAlgName());
+
+        Collection<List<?>> sans = cert.getSubjectAlternativeNames();
+        assertNotNull(sans);
         Assertions.assertTrue(sans.size() >= 2);
     }
 
