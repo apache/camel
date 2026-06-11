@@ -132,6 +132,16 @@ Previously these nodes were flattened to the same level as their parent `choice`
 with the tree structure exposed by `getChildren()`. This affects level values reported via JMX (`ManagedProcessor.getLevel()`)
 and dev consoles for nodes inside Choice EIP branches.
 
+=== camel-main
+
+The development-only self-signed certificate generated when `camel.ssl.selfSigned=true` (used to enable HTTPS without
+providing a keystore) now defaults to an *EC* key (NIST P-256, signed with SHA256withECDSA) instead of *RSA-2048*.
+The key algorithm is configurable via the new `camel.ssl.selfSignedKeyType` option, which accepts `EC` (default) or
+`RSA`. Set `camel.ssl.selfSignedKeyType=RSA` to retain the previous behaviour.
+
+This certificate is intended for development use only and is regenerated on each restart, so the change does not affect
+production deployments, which must provide their own keystore via `camel.ssl.keyStore`.
+
 === camel-jbang
 
 Camel JBang has been rebranded as Camel CLI in the documentation.

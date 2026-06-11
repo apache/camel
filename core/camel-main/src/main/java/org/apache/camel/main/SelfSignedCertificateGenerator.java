@@ -27,8 +27,10 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.ECGenParameterSpec;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 
 /**
  * Generates a self-signed certificate for development use. This allows enabling HTTPS with minimal configuration when
@@ -42,20 +44,50 @@ final class SelfSignedCertificateGenerator {
     }
 
     /**
+     * The default key algorithm used to generate the self-signed certificate.
+     */
+    static final String DEFAULT_KEY_TYPE = "EC";
+
+    /**
      * Generates a PKCS12 KeyStore containing a self-signed certificate with Subject Alternative Names for localhost and
-     * 127.0.0.1.
+     * 127.0.0.1, using the default key algorithm ({@value #DEFAULT_KEY_TYPE}).
      *
      * @param  password  the password for the keystore and key entry
      * @return           a KeyStore containing the self-signed certificate
      * @throws Exception if certificate generation fails
      */
     static KeyStore generateKeyStore(String password) throws Exception {
+        return generateKeyStore(password, DEFAULT_KEY_TYPE);
+    }
+
+    /**
+     * Generates a PKCS12 KeyStore containing a self-signed certificate with Subject Alternative Names for localhost and
+     * 127.0.0.1.
+     *
+     * @param  password  the password for the keystore and key entry
+     * @param  keyType   the key algorithm to use, either {@code EC} (default, NIST P-256) or {@code RSA} (2048-bit)
+     * @return           a KeyStore containing the self-signed certificate
+     * @throws Exception if certificate generation fails
+     */
+    static KeyStore generateKeyStore(String password, String keyType) throws Exception {
+        String type = keyType == null || keyType.isBlank()
+                ? DEFAULT_KEY_TYPE : keyType.trim().toUpperCase(Locale.ROOT);
+
         SecureRandom random = new SecureRandom();
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048, random);
+        KeyPairGenerator keyGen;
+        if ("EC".equals(type)) {
+            keyGen = KeyPairGenerator.getInstance("EC");
+            keyGen.initialize(new ECGenParameterSpec("secp256r1"), random);
+        } else if ("RSA".equals(type)) {
+            keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048, random);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported self-signed certificate key type: " + keyType + " (supported: EC, RSA)");
+        }
         KeyPair keyPair = keyGen.generateKeyPair();
 
-        X509Certificate cert = generateCertificate(keyPair, random);
+        X509Certificate cert = generateCertificate(keyPair, type, random);
 
         KeyStore ks = KeyStore.getInstance("PKCS12");
         ks.load(null, password.toCharArray());
@@ -65,7 +97,8 @@ final class SelfSignedCertificateGenerator {
         return ks;
     }
 
-    private static X509Certificate generateCertificate(KeyPair keyPair, SecureRandom random) throws Exception {
+    private static X509Certificate generateCertificate(KeyPair keyPair, String keyType, SecureRandom random)
+            throws Exception {
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
 
@@ -73,39 +106,43 @@ final class SelfSignedCertificateGenerator {
         ZonedDateTime expiry = now.plusDays(365);
 
         // Build self-signed X.509 certificate using DER encoding
-        byte[] encoded = buildSelfSignedCertificateDer(publicKey, privateKey, now, expiry, random);
+        byte[] encoded = buildSelfSignedCertificateDer(publicKey, privateKey, keyType, now, expiry, random);
 
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(encoded));
     }
 
     private static byte[] buildSelfSignedCertificateDer(
-            PublicKey publicKey, PrivateKey privateKey,
+            PublicKey publicKey, PrivateKey privateKey, String keyType,
             ZonedDateTime notBefore, ZonedDateTime notAfter,
             SecureRandom random)
             throws Exception {
+
+        boolean ec = "EC".equals(keyType);
+        String signatureAlgorithmName = ec ? "SHA256withECDSA" : "SHA256withRSA";
+        byte[] signatureAlgorithm = ec ? ecdsaWithSha256AlgorithmIdentifier() : sha256WithRsaAlgorithmIdentifier();
 
         // DN: CN=localhost, O=Apache Camel (self-signed)
         byte[] issuerDn = buildDn();
 
         // TBS Certificate
-        byte[] tbsCertificate = buildTbsCertificate(publicKey, issuerDn, notBefore, notAfter, random);
+        byte[] tbsCertificate
+                = buildTbsCertificate(publicKey, issuerDn, signatureAlgorithm, notBefore, notAfter, random);
 
         // Sign the TBS certificate
-        Signature sig = Signature.getInstance("SHA256withRSA");
+        Signature sig = Signature.getInstance(signatureAlgorithmName);
         sig.initSign(privateKey);
         sig.update(tbsCertificate);
         byte[] signature = sig.sign();
 
         // Build the full certificate: SEQUENCE { tbsCertificate, signatureAlgorithm, signature }
-        byte[] signatureAlgorithm = sha256WithRsaAlgorithmIdentifier();
         byte[] signatureBitString = wrapBitString(signature);
 
         return wrapSequence(concat(tbsCertificate, signatureAlgorithm, signatureBitString));
     }
 
     private static byte[] buildTbsCertificate(
-            PublicKey publicKey, byte[] dn,
+            PublicKey publicKey, byte[] dn, byte[] signatureAlgorithm,
             ZonedDateTime notBefore, ZonedDateTime notAfter,
             SecureRandom random) {
 
@@ -117,9 +154,6 @@ final class SelfSignedCertificateGenerator {
         random.nextBytes(serialBytes);
         serialBytes[0] &= 0x7F; // ensure positive
         byte[] serial = wrapInteger(serialBytes);
-
-        // Signature algorithm
-        byte[] signatureAlgorithm = sha256WithRsaAlgorithmIdentifier();
 
         // Validity
         byte[] validity = wrapSequence(concat(encodeUtcTime(notBefore), encodeUtcTime(notAfter)));
@@ -169,6 +203,13 @@ final class SelfSignedCertificateGenerator {
                 0x06, 0x09, 0x2A, (byte) 0x86, 0x48, (byte) 0x86, (byte) 0xF7, 0x0D, 0x01, 0x01, 0x0B };
         byte[] nullParam = new byte[] { 0x05, 0x00 };
         return wrapSequence(concat(oid, nullParam));
+    }
+
+    private static byte[] ecdsaWithSha256AlgorithmIdentifier() {
+        // OID 1.2.840.10045.4.3.2 (ecdsa-with-SHA256); per RFC 5758 the parameters field is absent
+        byte[] oid = new byte[] {
+                0x06, 0x08, 0x2A, (byte) 0x86, 0x48, (byte) 0xCE, 0x3D, 0x04, 0x03, 0x02 };
+        return wrapSequence(oid);
     }
 
     private static byte[] encodeUtcTime(ZonedDateTime dateTime) {
