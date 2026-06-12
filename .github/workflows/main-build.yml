@@ -51,6 +51,18 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
+      - name: Get Atlassian dependency version
+        id: atlassian-version
+        run: |
+          JIRA_VERSION=$(./mvnw help:evaluate -Dexpression=jira-rest-client-api-version -q -DforceStdout -N -f parent/pom.xml)
+          echo "version=${JIRA_VERSION}" >> $GITHUB_OUTPUT
+      - name: Restore Atlassian Maven Cache
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: |
+            ~/.m2/repository/com/atlassian
+            ~/.m2/repository/io/atlassian
+          key: atlassian-maven-${{ steps.atlassian-version.outputs.version }}
       - name: maven build
         run: ./etc/scripts/regen.sh
       - name: archive logs
@@ -59,6 +71,15 @@ jobs:
         with:
           name: main-build-${{ matrix.java }}.log
           path: build.log
+      - name: Save Atlassian Maven Cache
+        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        if: always()
+        with:
+          path: |
+            ~/.m2/repository/com/atlassian
+            ~/.m2/repository/io/atlassian
+          key: atlassian-maven-${{ steps.atlassian-version.outputs.version }}
+
       - name: Fail if there are uncommitted changes
         shell: bash
         run: |
