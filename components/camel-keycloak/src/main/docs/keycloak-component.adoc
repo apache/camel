@@ -3416,6 +3416,11 @@ beans:
 ----
 ====
 
+NOTE: When an access token is present, it is always verified - signature, issuer and expiry for local JWT
+verification, or active state and issuer when token introspection is enabled - regardless of whether
+`requiredRoles` or `requiredPermissions` are configured. Role and permission checks are applied only after the
+token has been verified. A request without a token is rejected.
+
 === Role-based Authorization
 
 [tabs]
