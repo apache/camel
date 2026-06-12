@@ -120,6 +120,8 @@ public class MailConfiguration implements Cloneable {
     private boolean useHeaderFrom = true;
     @UriParam(defaultValue = "true", label = "producer")
     private boolean useHeaderSubject = true;
+    @UriParam(defaultValue = "true", label = "producer")
+    private boolean useHeaderReplyTo = true;
     @UriParam
     @Metadata(label = "consumer")
     private boolean disconnect;
@@ -756,6 +758,18 @@ public class MailConfiguration implements Cloneable {
      */
     public void setUseHeaderSubject(boolean useHeaderSubject) {
         this.useHeaderSubject = useHeaderSubject;
+    }
+
+    public boolean isUseHeaderReplyTo() {
+        return useHeaderReplyTo;
+    }
+
+    /**
+     * Whether message header Reply-To overrides the replyTo pre-configured in the endpoint URI. Defaults to true. Set
+     * to false to always use the endpoint URI replyTo, ignoring any Reply-To header from the message.
+     */
+    public void setUseHeaderReplyTo(boolean useHeaderReplyTo) {
+        this.useHeaderReplyTo = useHeaderReplyTo;
     }
 
     public boolean isIgnoreUnsupportedCharset() {

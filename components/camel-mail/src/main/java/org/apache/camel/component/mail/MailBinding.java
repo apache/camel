@@ -138,11 +138,16 @@ public class MailBinding {
         }
 
         // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
-        // and headers the headers win.
-        String replyTo = exchange.getIn().getHeader(MailConstants.MAIL_REPLY_TO, String.class);
+        // and headers, the headers win UNLESS useHeaderReplyTo is set to false.
+        String replyTo = null;
+        if (endpoint.getConfiguration().isUseHeaderReplyTo()) {
+            replyTo = exchange.getIn().getHeader(MailConstants.MAIL_REPLY_TO, String.class);
+        }
+
         if (replyTo == null) {
             replyTo = endpoint.getConfiguration().getReplyTo();
         }
+
         if (replyTo != null) {
             List<InternetAddress> replyToAddresses = new ArrayList<>();
             for (String reply : splitRecipients(replyTo)) {
@@ -158,7 +163,7 @@ public class MailBinding {
         }
 
         // set the subject if it was passed in as an option in the uri. Note: if it is in both the URI
-        // and headers the headers win.
+        // and headers the headers win UNLESS useHeaderSubject is set to false.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
             mimeMessage.setSubject(subject, ExchangeHelper.getCharsetName(exchange, false));
@@ -569,6 +574,11 @@ public class MailBinding {
                     }
                     if (isRecipientHeader(headerName)) {
                         // skip any recipients as they are handled specially
+                        continue;
+                    }
+
+                    if (headerName.equalsIgnoreCase(MailConstants.MAIL_REPLY_TO)) {
+                        // skip Reply-To as it is handled specially
                         continue;
                     }
 

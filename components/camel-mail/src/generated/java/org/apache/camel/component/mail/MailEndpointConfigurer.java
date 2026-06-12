@@ -145,6 +145,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useHeaderFrom": target.getConfiguration().setUseHeaderFrom(property(camelContext, boolean.class, value)); return true;
         case "useheaderrecipients":
         case "useHeaderRecipients": target.getConfiguration().setUseHeaderRecipients(property(camelContext, boolean.class, value)); return true;
+        case "useheaderreplyto":
+        case "useHeaderReplyTo": target.getConfiguration().setUseHeaderReplyTo(property(camelContext, boolean.class, value)); return true;
         case "useheadersubject":
         case "useHeaderSubject": target.getConfiguration().setUseHeaderSubject(property(camelContext, boolean.class, value)); return true;
         case "useinlineattachments":
@@ -281,6 +283,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useHeaderFrom": return boolean.class;
         case "useheaderrecipients":
         case "useHeaderRecipients": return boolean.class;
+        case "useheaderreplyto":
+        case "useHeaderReplyTo": return boolean.class;
         case "useheadersubject":
         case "useHeaderSubject": return boolean.class;
         case "useinlineattachments":
@@ -418,6 +422,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useHeaderFrom": return target.getConfiguration().isUseHeaderFrom();
         case "useheaderrecipients":
         case "useHeaderRecipients": return target.getConfiguration().isUseHeaderRecipients();
+        case "useheaderreplyto":
+        case "useHeaderReplyTo": return target.getConfiguration().isUseHeaderReplyTo();
         case "useheadersubject":
         case "useHeaderSubject": return target.getConfiguration().isUseHeaderSubject();
         case "useinlineattachments":

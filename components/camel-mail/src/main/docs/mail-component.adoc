@@ -257,11 +257,11 @@ template.sendBodyAndHeaders("smtp://admin@localhost?to=info@mycompany.com", "Hel
 
 For routes where message headers originate from an untrusted source (for
 example messages bridged from an HTTP endpoint, a JMS queue, or a Kafka
-topic), allowing inbound headers to override recipients, sender, or
-subject can enable an attacker to redirect mail, forge the sender
-address, or inject arbitrary subjects. Three opt-in `@UriParam` options
-let you lock the endpoint configuration so it cannot be overridden by
-message headers:
+topic), allowing inbound headers to override recipients, sender, subject, 
+or reply-to addresses can enable an attacker to redirect mail, intercept 
+replies, forge the sender address, or inject arbitrary subjects. Four 
+opt-in `@UriParam` options let you lock the endpoint configuration so it 
+cannot be overridden by message headers:
 
 [options="header"]
 |===
@@ -269,17 +269,18 @@ message headers:
 | `useHeaderRecipients`| `true`  | Endpoint URI to/cc/bcc always used; To/CC/BCC headers ignored.
 | `useHeaderFrom`      | `true`  | Endpoint URI from always used; From/Sender headers ignored.
 | `useHeaderSubject`   | `true`  | Endpoint URI subject always used; Subject header ignored.
+| `useHeaderReplyTo`   | `true`  | Endpoint URI replyTo always used; Reply-To header ignored.
 |===
 
-All three default to `true` so existing behaviour is preserved. Example:
+All four default to `true` so existing behaviour is preserved. Example:
 
 [source,java]
 ----
 .to("smtp://relay@mailhost?to=safe@mycompany.com&from=noreply@mycompany.com"
-  + "&useHeaderRecipients=false&useHeaderFrom=false");
+  + "&useHeaderRecipients=false&useHeaderFrom=false&useHeaderReplyTo=false");
 ----
 
-NOTE: These options do *not* strip the headers from the exchange. See the xref:manual::security-model.adoc#_deployment_hardening[Camel Security Model]
+NOTE: These options do *not* strip the headers from the exchange. See the xref:manual::security-model.adoc#_deployment_hardening[Deployment hardening] section of the Security Model.
 
 === Multiple recipients for easier configuration
 

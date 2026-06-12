@@ -86,6 +86,16 @@ public class MailHeaderOverrideOptionsTest extends CamelTestSupport {
     }
 
     @Test
+    public void testSenderHeaderOverrideDisabled() throws Exception {
+        template.sendBodyAndHeaders(baseUri + "&useHeaderFrom=false&from=ep-from@example.com&to=" + epRcpt.getEmail(),
+                "Camel rocks", Map.of("Sender", "malicious-sender@attacker.com"));
+        assertEquals(1, epRcpt.getInbox().getMessageCount());
+
+        // The message should completely ignore the Sender header and preserve the configured From address
+        assertEquals("ep-from@example.com", epRcpt.getInbox().get(0).getFrom()[0].toString());
+    }
+
+    @Test
     public void testUseHeaderSubjectTrue_headerWins() throws Exception {
         template.sendBodyAndHeaders(baseUri + "&useHeaderSubject=true&subject=endpoint-subject&to=" + epRcpt.getEmail(),
                 "Camel rocks", Map.of("Subject", "header-subject"));
@@ -99,5 +109,29 @@ public class MailHeaderOverrideOptionsTest extends CamelTestSupport {
                 "Camel rocks", Map.of("Subject", "header-subject"));
         assertEquals(1, epRcpt.getInbox().getMessageCount());
         assertEquals("endpoint-subject", epRcpt.getInbox().get(0).getSubject());
+    }
+
+    @Test
+    public void testUseHeaderReplyToTrue_headerWins() throws Exception {
+        template.sendBodyAndHeaders(baseUri + "&useHeaderReplyTo=true&replyTo=ep-reply@example.com&to=" + epRcpt.getEmail(),
+                "Camel rocks", Map.of("Reply-To", "hdr-reply@example.com"));
+        assertEquals(1, epRcpt.getInbox().getMessageCount());
+        assertEquals("hdr-reply@example.com", epRcpt.getInbox().get(0).getReplyTo()[0].toString());
+    }
+
+    @Test
+    public void testUseHeaderReplyToFalse_endpointWins() throws Exception {
+        template.sendBodyAndHeaders(baseUri + "&useHeaderReplyTo=false&replyTo=ep-reply@example.com&to=" + epRcpt.getEmail(),
+                "Camel rocks", Map.of("Reply-To", "hdr-reply@example.com"));
+        assertEquals(1, epRcpt.getInbox().getMessageCount());
+        assertEquals("ep-reply@example.com", epRcpt.getInbox().get(0).getReplyTo()[0].toString());
+    }
+
+    @Test
+    public void testUseHeaderReplyToTrue_noHeaderFallsBackToEndpoint() throws Exception {
+        template.sendBodyAndHeaders(baseUri + "&useHeaderReplyTo=true&replyTo=ep-reply@example.com&to=" + epRcpt.getEmail(),
+                "Camel rocks", Map.of());
+        assertEquals(1, epRcpt.getInbox().getMessageCount());
+        assertEquals("ep-reply@example.com", epRcpt.getInbox().get(0).getReplyTo()[0].toString());
     }
 }

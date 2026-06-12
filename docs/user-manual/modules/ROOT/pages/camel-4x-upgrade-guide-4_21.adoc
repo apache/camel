@@ -1738,6 +1738,19 @@ As a consequence, the generated Endpoint DSL header accessors on
 `MailHeaderNameBuilder` have been renamed: `copyTo()` -> `mailCopyTo()`,
 `moveTo()` -> `mailMoveTo()`, and `delete()` -> `mailDelete()`.
 
+**Header Override Options (Hardening)**
+
+Added new configuration options to `camel-mail` to provide finer control over message header overrides for security and hardening purposes. 
+
+The following options have been added to the mail endpoint:
+
+* `useHeaderRecipients`
+* `useHeaderFrom`
+* `useHeaderSubject`
+* `useHeaderReplyTo`
+
+These options default to `true` to maintain backward compatibility. Users who wish to prevent exchange headers from overriding pre-configured endpoint URI values can now set these to `false` to secure their routes against unintended header injection.
+
 === camel-milo - potential breaking change
 
 The `MiloConstants.HEADER_AWAIT` constant, which controls whether milo-client
