@@ -68,6 +68,37 @@ and enable compile-time null checking with tools like NullAway. If you want to l
 your own code or tooling, add `org.jspecify:jspecify` explicitly to your project dependencies.
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
+If your application relies on case-sensitive header name matching (for example, two headers that differ only in
+case such as `X-Foo` and `x-foo`), restore the previous behavior by calling `setLowerCase(false)` on your strategy.
+
+The `DefaultHeaderFilterStrategy` now blocks headers whose names start with `Camel` or `camel`
+(case-insensitive) by default in both the inbound (external to Camel) and outbound
+(Camel to external) directions. Previously this required each component to explicitly call
+`setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH)` and `setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH)`.
+
+This affects anyone who:
+
+* Configures `DefaultHeaderFilterStrategy` directly, OR
+* Extends `DefaultHeaderFilterStrategy` in a custom component without explicitly calling `setInFilterStartsWith` or `setOutFilterStartsWith`.
+
+If these headers need to pass through, opt out by calling `setInFilterStartsWith((String[]) null)` and/or
+`setOutFilterStartsWith((String[]) null)`, or by supplying a custom filter array.
+See `ClassicJmsHeaderFilterStrategy` for a worked example of the opt-out pattern.
+
+The following component-specific header filter strategy classes have been removed because
+`DefaultHeaderFilterStrategy` now provides equivalent behavior by default:
+
+* `CoAPHeaderFilterStrategy`
+* `CometdHeaderFilterStrategy`
+* `IggyHeaderFilterStrategy`
+* `NatsHeaderFilterStrategy`
+* `VertxWebsocketHeaderFilterStrategy`
+* `XmppHeaderFilterStrategy`
+
+If your code references any of these classes directly, replace them with `new DefaultHeaderFilterStrategy()`, which now provides the same behavior by default.
+
+The class `org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy` has been deprecated.
+Use `org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy` directly instead.
 
 ==== Error Registry SPI changes
 

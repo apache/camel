@@ -50,7 +50,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)Camel[.a-zA-z0-9]*");
 
     /**
-     * A filter pattern for keys starting with <tt>Camel</tt>, or <tt>camel</tt>.
+     * A filter pattern for keys starting with <tt>Camel</tt> or <tt>camel</tt>.
      */
     public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel" };
 
@@ -59,14 +59,14 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                             + " Multiple patterns can be separated by comma")
     private Set<String> inFilter;
     private Pattern inFilterPattern;
-    private String[] inFilterStartsWith;
+    private String[] inFilterStartsWith = CAMEL_FILTER_STARTS_WITH.clone();
 
     @Metadata(javaType = "java.lang.String",
               description = "Sets the out direction filter set. The out direction is referred to copying headers from a Camel message to an external message."
                             + " Multiple patterns can be separated by comma")
     private Set<String> outFilter;
     private Pattern outFilterPattern;
-    private String[] outFilterStartsWith;
+    private String[] outFilterStartsWith = CAMEL_FILTER_STARTS_WITH.clone();
 
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Whether header names should be converted to lower case before checking it with the filter Set. This ensures that all variations of header names will be taken into account."
@@ -377,7 +377,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     private boolean tryPattern(String headerName, String lower, Pattern pattern) {
-        // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
+        // optimize if it's the default pattern as we know the pattern is to check for keys starting with Camel
         if (pattern == CAMEL_FILTER_PATTERN) {
             boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel");
             if (match) {
