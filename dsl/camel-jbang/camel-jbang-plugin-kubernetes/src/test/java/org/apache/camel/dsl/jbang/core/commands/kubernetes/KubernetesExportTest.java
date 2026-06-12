@@ -487,7 +487,8 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertEquals("image-registry.openshift-image-registry.svc:5000/route-service:1.0-SNAPSHOT",
+                container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
@@ -498,8 +499,10 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
 
         Properties props = model.getProperties();
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("image-registry.openshift-image-registry.svc:5000/route-service:1.0-SNAPSHOT",
+                props.get("jkube.image.name"));
+        Assertions.assertEquals("image-registry.openshift-image-registry.svc:5000/route-service:1.0-SNAPSHOT",
+                props.get("jkube.container-image.name"));
 
         Route route = getRoute(rt);
         Assertions.assertEquals("route-service", route.getMetadata().getName());

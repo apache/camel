@@ -86,14 +86,13 @@ public class ContainerTrait extends BaseTrait {
         }
         container.withResources(resourceRequirementsBuilder.build());
 
-        io.fabric8.kubernetes.api.model.Container cc = container.build();
         context.doWithKnativeServices(s -> s.editOrNewSpec()
                 .editOrNewTemplate()
                 .editOrNewMetadata()
                 .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
                 .endMetadata()
                 .editOrNewSpec()
-                .addToContainers(cc)
+                .addToContainers(container.build())
                 .endSpec()
                 .endTemplate()
                 .endSpec());
