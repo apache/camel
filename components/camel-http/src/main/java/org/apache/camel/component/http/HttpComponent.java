@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -62,8 +63,9 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
-import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
 import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.protocol.HttpContext;
@@ -604,14 +606,18 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             HostnameVerifier x509HostnameVerifier,
             SSLContextParameters sslContextParams, boolean useSystemProperties)
             throws GeneralSecurityException, IOException {
-        // create the TLS strategy to use
-        if (sslContextParams != null) {
-            return new DefaultClientTlsStrategy(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier);
-        } else {
-            return new DefaultClientTlsStrategy(
-                    useSystemProperties ? SSLContexts.createSystemDefault() : SSLContexts.createDefault(),
-                    x509HostnameVerifier);
-        }
+        SSLContext sslContext = sslContextParams != null
+                ? sslContextParams.createSSLContext(getCamelContext())
+                : (useSystemProperties ? SSLContexts.createSystemDefault() : SSLContexts.createDefault());
+        // httpclient 5.6 changed DefaultClientTlsStrategy to use BOTH policy by default,
+        // which enables the JDK built-in hostname check via SSLParameters in addition to the
+        // custom verifier. Use CLIENT so only the configured verifier decides — this restores
+        // the 5.5.2 behavior where NoopHostnameVerifier actually disables verification.
+        return ClientTlsStrategyBuilder.create()
+                .setSslContext(sslContext)
+                .setHostnameVerifier(x509HostnameVerifier)
+                .setHostVerificationPolicy(HostnameVerificationPolicy.CLIENT)
+                .buildClassic();
     }
 
     protected HttpClientConnectionManager createConnectionManager(

@@ -12,7 +12,63 @@ which makes it plugin to Camel Spring Boot, Camel Quarkus or can run standalone 
 === Limitations
 
 Camel does not support websockets from the OpenAPI 3.1 specification.
-Neither is (at this time of writing) any security aspects from the OpenAPI specification in use.
+OpenAPI security schemes and operation security requirements are not interpreted from the
+specification; configure any Camel endpoint security explicitly.
+
+=== OAuth Bearer token validation
+
+OpenAPI `securitySchemes` are not mapped automatically to Camel endpoint security options.
+To validate incoming `Authorization: Bearer` tokens, pass the `oauthProfile` endpoint option to the
+HTTP consumer component selected by Rest DSL.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+restConfiguration()
+    .endpointProperty("oauthProfile", "myprofile");
+
+rest().openApi("petstore-v3.json");
+----
+XML::
++
+[source,xml]
+----
+<restConfiguration>
+  <endpointProperty key="oauthProfile" value="myprofile"/>
+</restConfiguration>
+
+<rest>
+  <openApi specification="petstore-v3.json"/>
+</rest>
+----
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    endpointProperty:
+      - key: oauthProfile
+        value: myprofile
+- rest:
+    openApi:
+      specification: petstore-v3.json
+----
+====
+
+The built-in Rest OpenAPI consumer uses
+xref:components::platform-http-component.adoc[platform-http], which supports the `oauthProfile`
+option. Custom `RestOpenApiConsumerFactory` delegates can also receive the endpoint property if they
+support it. Direct `rest-openapi` consumer endpoint URIs can also pass the option to the delegate,
+for example `rest-openapi:petstore-v3.json?consumerComponentName=platform-http&oauthProfile=myprofile`.
+Consumer endpoint URIs identify the OpenAPI specification and do not include an `#operationId`
+fragment.
+The `oauthProfile` option is forwarded to the selected delegate, which is responsible for
+enforcing it. The route fails at startup when the resolved `RestOpenApiConsumerFactory` does not
+declare that its consumers enforce `oauthProfile`, so a misconfigured delegate cannot start
+without the expected protection.
 
 == Contract first
 

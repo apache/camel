@@ -108,4 +108,3 @@ NOTE: Placeholders only work for options that the given command supports. Run `c
 
 JBang stores state and downloaded JARs in `~/.jbang`. Camel CLI downloads dependencies to `~/.m2`.
 If you encounter issues with outdated JARs, try deleting the relevant entries in these directories.
-

@@ -33,12 +33,15 @@ import io.undertow.server.handlers.accesslog.AccessLogHandler;
 import io.undertow.server.handlers.accesslog.AccessLogReceiver;
 import io.undertow.server.handlers.accesslog.JBossLoggingAccessLogReceiver;
 import io.undertow.server.handlers.form.EagerFormParsingHandler;
+import io.undertow.util.AttachmentKey;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import io.undertow.util.MimeMappings;
 import io.undertow.util.StatusCodes;
+import io.undertow.websockets.core.CloseMessage;
 import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.core.WebSockets;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -51,6 +54,8 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
@@ -65,6 +70,8 @@ import org.slf4j.LoggerFactory;
 public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
+    static final AttachmentKey<OAuthTokenValidationResult> OAUTH_TOKEN_VALIDATION_RESULT_ATTACHMENT
+            = AttachmentKey.create(OAuthTokenValidationResult.class);
     private CamelWebSocketHandler webSocketHandler;
     private boolean rest;
     private volatile boolean suspended;
@@ -115,6 +122,11 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         } else {
             // allow for HTTP 1.1 continue
             HttpHandler httpHandler = new EagerFormParsingHandler().setNext(UndertowConsumer.this);
+            if (endpoint.getOauthHttpSecurity() != null) {
+                httpHandler = new OAuthUndertowHttpHandler(
+                        endpoint.getCamelContext(), endpoint.getOauthHttpSecurity(), httpHandler, endpoint.isOptionsEnabled(),
+                        this::isSuspended);
+            }
             if (endpoint.getAccessLog()) {
                 AccessLogReceiver accessLogReceiver;
                 if (endpoint.getAccessLogReceiver() != null) {
@@ -292,6 +304,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
      * @param message       the message received via the {@link WebSocketChannel}
      */
     public void sendMessage(final String connectionKey, WebSocketChannel channel, final Object message) {
+        if (rejectUnauthenticatedWebSocketChannel(connectionKey, channel)) {
+            return;
+        }
 
         final Exchange exchange = createExchange(true);
 
@@ -300,6 +315,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         if (channel != null) {
             exchange.getIn().setHeader(UndertowConstants.CHANNEL, channel);
         }
+        setOAuthTokenValidationResult(exchange, channel);
         exchange.getIn().setBody(message);
 
         // use default consumer callback
@@ -317,6 +333,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
      */
     public void sendEventNotification(
             String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
+        if (rejectUnauthenticatedWebSocketChannel(connectionKey, channel)) {
+            return;
+        }
         final Exchange exchange = createExchange(true);
 
         final Message in = exchange.getIn();
@@ -326,6 +345,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         if (channel != null) {
             in.setHeader(UndertowConstants.CHANNEL, channel);
         }
+        setOAuthTokenValidationResult(exchange, channel);
         if (transportExchange != null) {
             in.setHeader(UndertowConstants.EXCHANGE, transportExchange);
         }
@@ -358,10 +378,19 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         exchange.setPattern(ExchangePattern.InOut);
 
         Message in = getEndpoint().getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
+        OAuthTokenValidationResult oauthTokenValidationResult
+                = httpExchange.getAttachment(OAUTH_TOKEN_VALIDATION_RESULT_ATTACHMENT);
+        if (oauthTokenValidationResult != null) {
+            exchange.setProperty(OAuthHttpSecuritySupport.OAUTH_TOKEN_VALIDATION_RESULT, oauthTokenValidationResult);
+        }
 
         //securityProvider could add its own header into result exchange
         if (getEndpoint().getSecurityProvider() != null) {
             getEndpoint().getSecurityProvider().addHeader((key, value) -> in.setHeader(key, value), httpExchange);
+        }
+
+        if (oauthTokenValidationResult != null) {
+            OAuthHttpSecuritySupport.removeAuthorizationHeader(in);
         }
 
         // Only set charset if explicitly specified in the Content-Type header.
@@ -380,6 +409,39 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
 
         exchange.setIn(in);
         return exchange;
+    }
+
+    /**
+     * Fails closed for WebSocket channels whose handshake was not OAuth validated while this consumer requires it. Such
+     * channels can exist when the shared {@link CamelWebSocketHandler} accepted a handshake while no consumer was set
+     * on it, for example between producer registration and consumer start, or across a consumer restart. Returns
+     * {@code true} when the event must not be delivered to the route; the channel is closed if still open.
+     */
+    private boolean rejectUnauthenticatedWebSocketChannel(String connectionKey, WebSocketChannel channel) {
+        if (getEndpoint().getOauthHttpSecurity() == null) {
+            return false;
+        }
+        boolean authenticated = channel != null
+                && channel.getAttribute(
+                        OAuthHttpSecuritySupport.OAUTH_TOKEN_VALIDATION_RESULT) instanceof OAuthTokenValidationResult;
+        if (authenticated) {
+            return false;
+        }
+        LOG.warn("Rejecting WebSocket event from connection {} whose handshake was not OAuth validated", connectionKey);
+        if (channel != null && channel.isOpen()) {
+            WebSockets.sendClose(CloseMessage.MSG_VIOLATES_POLICY, "Authentication required", channel, null);
+        }
+        return true;
+    }
+
+    private static void setOAuthTokenValidationResult(Exchange exchange, WebSocketChannel channel) {
+        if (channel == null) {
+            return;
+        }
+        Object oauthTokenValidationResult = channel.getAttribute(OAuthHttpSecuritySupport.OAUTH_TOKEN_VALIDATION_RESULT);
+        if (oauthTokenValidationResult instanceof OAuthTokenValidationResult) {
+            exchange.setProperty(OAuthHttpSecuritySupport.OAUTH_TOKEN_VALIDATION_RESULT, oauthTokenValidationResult);
+        }
     }
 
 }

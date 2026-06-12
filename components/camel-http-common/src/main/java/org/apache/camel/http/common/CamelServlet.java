@@ -41,6 +41,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
@@ -298,6 +300,15 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             exchange.setException(e);
         }
 
+        if (exchange.getException() == null && !authenticateOAuth(req, exchange, consumer)) {
+            try {
+                afterProcess(res, consumer, exchange, true);
+            } finally {
+                restoreTccl(exchange, oldTccl);
+            }
+            return null;
+        }
+
         boolean isAsync = false;
         CompletionStage<?> result = null;
         try {
@@ -324,6 +335,34 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             restoreTccl(exchange, oldTccl);
         }
         return result;
+    }
+
+    /**
+     * Authenticates the request with the endpoint OAuth profile, when configured, before route processing.
+     */
+    protected boolean authenticateOAuth(HttpServletRequest req, Exchange exchange, HttpConsumer consumer) {
+        if (consumer.getEndpoint() instanceof OAuthProfileAwareHttpEndpoint endpoint) {
+            OAuthHttpSecuritySupport security = endpoint.getOauthHttpSecurity();
+            if (security == null) {
+                if (ObjectHelper.isNotEmpty(endpoint.getOauthProfile())) {
+                    // fail closed: the endpoint requires OAuth validation but the security support is not
+                    // initialized, so the request cannot be authenticated
+                    OAuthHttpSecuritySupport.reject(exchange, OAuthHttpSecuritySupport.Validation.serviceUnavailable());
+                    return false;
+                }
+                return true;
+            }
+            OAuthHttpSecuritySupport.Validation validation = security.validate(
+                    exchange.getContext(), Collections.list(req.getHeaders("Authorization")));
+            OAuthHttpSecuritySupport.removeAuthorizationHeader(exchange.getMessage());
+            if (validation.isAuthenticated()) {
+                OAuthHttpSecuritySupport.applyAuthenticatedResult(exchange, validation.getValidationResult());
+                return true;
+            }
+            OAuthHttpSecuritySupport.reject(exchange, validation);
+            return false;
+        }
+        return true;
     }
 
     private CompletionStage<?> tryAsyncProcess(

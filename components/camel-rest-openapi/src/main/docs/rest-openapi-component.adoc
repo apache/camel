@@ -105,6 +105,46 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Consumer OAuth Bearer token validation
+
+When `rest-openapi` is used as a consumer, HTTP requests are served by the selected
+`RestOpenApiConsumerFactory` delegate, such as the built-in `platform-http` delegate or a custom
+delegate.
+To validate incoming `Authorization: Bearer` tokens from Rest DSL contract-first routes, pass the
+delegate endpoint option `oauthProfile` through the REST configuration endpoint properties.
+
+[source,java]
+----
+restConfiguration()
+    .component("platform-http")
+    .endpointProperty("oauthProfile", "myprofile");
+
+rest().openApi("petstore-v3.json");
+----
+
+For direct `rest-openapi` consumer routes, pass the delegate endpoint option directly on the
+consumer endpoint URI. Consumer URIs identify the OpenAPI specification and do not include an
+`#operationId` fragment.
+
+[source,java]
+----
+from("rest-openapi:petstore-v3.json?consumerComponentName=platform-http&oauthProfile=myprofile")
+    .to("direct:businessLogic");
+----
+
+The selected delegate component must support the `oauthProfile` endpoint option. The built-in
+`platform-http` delegate supports this option. An `OAuthTokenValidationFactory` must be available, for example from
+xref:components:others:oauth.adoc[camel-oauth] or from the runtime integration.
+OpenAPI `securitySchemes` and operation security requirements are not converted into `oauthProfile`
+configuration; select the OAuth profile explicitly with the REST endpoint property or direct endpoint
+URI option.
+The `oauthProfile` option is a first-class `rest-openapi` endpoint option that is forwarded to the
+selected delegate, which is responsible for enforcing it. The route fails at startup when the
+resolved `RestOpenApiConsumerFactory` does not declare that its consumers enforce `oauthProfile`,
+so a misconfigured delegate cannot start without the expected protection. Custom factories that
+enforce the option must override `RestOpenApiConsumerFactory.supportsOAuthProfile()` to return
+`true`.
+
 == Request validation
 
 API requests can be validated against the configured OpenAPI specification before they are sent by setting the `requestValidationEnabled` option to `true`.

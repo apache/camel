@@ -24,7 +24,7 @@ public class JettyHttp12EndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(39);
+        Set<String> props = new HashSet<>(40);
         props.add("async");
         props.add("bridgeErrorHandler");
         props.add("chunked");
@@ -55,6 +55,7 @@ public class JettyHttp12EndpointUriFactory extends org.apache.camel.support.comp
         props.add("maxRequestSize");
         props.add("multipartFilter");
         props.add("muteException");
+        props.add("oauthProfile");
         props.add("optionsEnabled");
         props.add("responseBufferSize");
         props.add("sendDateHeader");

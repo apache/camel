@@ -456,6 +456,17 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
+=== camel-keycloak
+
+The `KeycloakSecurityPolicy` route policy now always verifies the access token when one is present - signature,
+issuer and expiry for local JWT verification, or active state and issuer when token introspection is enabled -
+even when neither `requiredRoles` nor `requiredPermissions` is configured. Previously the token was only verified
+when at least one role or permission was required.
+
+Routes that attach a `KeycloakSecurityPolicy` without any roles or permissions and that previously forwarded an
+unverified or invalid token will now have such requests rejected with a `CamelAuthorizationException`. Provide a
+valid, verifiable token (or configure `requiredRoles` / `requiredPermissions`) for these routes.
+
 === camel-elasticsearch / camel-elasticsearch-rest-client / camel-solr
 
 The `camel-elasticsearch`, `camel-elasticsearch-rest-client` and `camel-solr` components now support
@@ -843,10 +854,11 @@ behaviour.
 the refresh token grant instead of the incorrect `token` parameter.
 Custom test servers or identity-provider mocks that expected the old request body should be updated.
 
-=== camel-platform-http
+=== camel-platform-http, camel-servlet, camel-jetty, camel-netty-http, and camel-undertow
 
-The `platform-http` consumer endpoint now has an `oauthProfile` option for opt-in validation of incoming
-`Authorization: Bearer` tokens using the public OAuth token validation SPI.
+The `platform-http`, `servlet`, `jetty`, `netty-http`, and `undertow` HTTP consumer endpoints now have an
+`oauthProfile` option for opt-in validation of incoming `Authorization: Bearer` tokens using the public OAuth
+token validation SPI. Undertow WebSocket consumer endpoints also support the option.
 Existing routes are unchanged unless this option is set.
 Routes that enable `oauthProfile` need an `OAuthTokenValidationFactory`; `camel-oauth` provides the
 default implementation and runtimes can provide their own implementation backed by native security.
@@ -857,13 +869,45 @@ The default `camel-oauth` provider requires `expected-issuer`/`base-uri`, `expec
 identity-provider endpoints unless the new explicit opt-out properties are set.
 JWT validation profiles can also set `expected-token-type` to require a specific JWT `typ` header
 such as `at+jwt`.
-Requests without a Bearer token or with an invalid token are rejected with HTTP 401.
-Static profile configuration is validated at route startup. Token validation infrastructure failures
-are rejected with HTTP 503.
+HTTP requests and supported WebSocket upgrade requests without a Bearer token or with an invalid
+token are rejected with HTTP 401; missing credentials receive a `WWW-Authenticate: Bearer` response
+header and invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`.
+Malformed `Authorization` headers are rejected with HTTP 400 and
+`WWW-Authenticate: Bearer error="invalid_request"`.
+Static profile configuration is resolved and validated at route startup. Updates to OAuth profile
+properties from `application.properties`, secrets, config maps, vaults, or other property sources
+require restarting the route or Camel context before they take effect. Token validation infrastructure
+failures are rejected with HTTP 503.
 For valid tokens, the token validation result is stored on the exchange as the
 `CamelOAuthTokenValidationResult` exchange property. Route code can use the result to read the
 principal name, token scopes, and immutable token attributes/claims. The raw `Authorization` header is
 removed before the route is invoked.
+This is a pre-route authentication check; HTTP consumers may still accept, decode, or bind the
+inbound request before validation according to their normal transport lifecycle.
+For Undertow WebSocket consumers, validation happens during the HTTP upgrade handshake and the result
+is attached to the `ONOPEN` event exchange when `fireWebSocketChannelEvents=true`, and to subsequent
+message exchanges for that connection.
+Rest DSL and contract-first OpenAPI routes pass the option to the selected HTTP consumer with
+`restConfiguration().endpointProperty("oauthProfile", "myprofile")`.
+Direct contract-first OpenAPI consumer routes can also pass the option on the endpoint URI, for example
+`rest-openapi:petstore-v3.json?consumerComponentName=platform-http&oauthProfile=myprofile`.
+OpenAPI `securitySchemes` are not converted into `oauthProfile` automatically.
+The `oauthProfile` option is a first-class `rest-openapi` endpoint option that is forwarded to the
+selected consumer delegate, which is responsible for enforcing it. The route fails at startup when
+the resolved `RestOpenApiConsumerFactory` does not declare that its consumers enforce `oauthProfile`
+via the new `RestOpenApiConsumerFactory.supportsOAuthProfile()` method, which defaults to `false`.
+Custom factories that enforce the option must override it to return `true`; the built-in
+`platform-http` delegate declares support.
+For netty-http consumers, `oauthProfile` requires `usingExecutorService=true` and `sync=true`, which
+are the defaults, so blocking validation does not run on a Netty event-loop thread and rejection
+responses can be returned to the client. Routes that combine `oauthProfile`
+with `nettySharedHttpServer` fail at startup, because the shared pipeline does not use the endpoint
+executor service. When several netty-http consumers share the same host and port, a consumer with
+`oauthProfile` fails at startup when another endpoint already initialized the shared server with
+`usingExecutorService=false`, because the first consumer on an address decides the effective pipeline
+configuration.
+The `atmosphere-websocket` component does not support `oauthProfile` and rejects the option at route
+startup.
 
 The public incoming-token validation SPI consists of `OAuthTokenValidationFactory`,
 `OAuthTokenValidationConfig`, and `OAuthTokenValidationResult`.
@@ -2210,3 +2254,27 @@ is migrated to JSON the next time the metadata is updated.
 
 Because older versions cannot read the new JSON metadata, downgrading after new key metadata has been
 written is not supported.
+
+=== camel-http
+
+The `camel-http` component now requires Apache HttpClient 5.5 or later (previously 5.4+). The
+`ClientTlsStrategyBuilder.buildClassic()` and `setHostVerificationPolicy()` APIs used internally
+were introduced in HttpClient 5.5. Overriding the `httpclient5` version to 5.4.x or earlier will
+produce `NoSuchMethodError` at runtime.
+
+==== TLS hostname verification policy
+
+`camel-http` now explicitly uses `HostnameVerificationPolicy.CLIENT` when constructing the TLS
+strategy. This means only the configured `x509HostnameVerifier` (defaulting to
+`DefaultHostnameVerifier`) decides whether a certificate matches the target hostname. The JDK's
+built-in endpoint-identification check via `SSLParameters.setEndpointIdentificationAlgorithm("https")`
+is not applied.
+
+This restores the behavior from HttpClient 5.5.2, where `NoopHostnameVerifier` actually disabled
+hostname verification. HttpClient 5.6 changed the default to `HostnameVerificationPolicy.BOTH`,
+which enables the JDK check alongside the custom verifier — making `NoopHostnameVerifier` ineffective
+because the JDK check runs first and rejects mismatched certificates.
+
+The `CLIENT` policy is a deliberate choice: it preserves backward compatibility and allows
+`NoopHostnameVerifier` to work as documented. A future release may add an option to opt into the
+`BOTH` policy for defense-in-depth.

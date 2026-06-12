@@ -16,12 +16,19 @@
  */
 package org.apache.camel.oauth;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,6 +50,7 @@ import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.spi.OAuthTokenValidationResult.ErrorCode;
@@ -54,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JwtTokenValidatorTest {
@@ -365,7 +374,7 @@ class JwtTokenValidatorTest {
     }
 
     @Test
-    void expiredJwksRefreshFailureIsRateLimited() throws Exception {
+    void expiredJwksRefreshFailureServesStaleKeys() throws Exception {
         AtomicInteger requests = new AtomicInteger();
         HttpServer server = startMalformedJwksServer(requests);
         try {
@@ -376,14 +385,15 @@ class JwtTokenValidatorTest {
 
             String token = createToken(ISSUER, AUDIENCE, futureDate(300), null);
 
-            assertThrows(OAuthException.class,
-                    () -> JwtTokenValidator.validate(
-                            token, endpoint, 1, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null));
-            OAuthException second = assertThrows(OAuthException.class,
-                    () -> JwtTokenValidator.validate(
-                            token, endpoint, 1, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null));
+            // serve-stale-on-error: the refresh fails, but the expired cached keys keep validating tokens
+            OAuthTokenValidationResult first = JwtTokenValidator.validate(
+                    token, endpoint, 1, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null);
+            // while the failure is rate-limited, stale keys are served without contacting the endpoint again
+            OAuthTokenValidationResult second = JwtTokenValidator.validate(
+                    token, endpoint, 1, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null);
 
-            assertTrue(second.getMessage().contains("attempted recently"));
+            assertTrue(first.isValid());
+            assertTrue(second.isValid());
             assertEquals(1, requests.get());
         } finally {
             server.stop(0);
@@ -416,6 +426,58 @@ class JwtTokenValidatorTest {
     }
 
     @Test
+    void jwksFetchForOneEndpointDoesNotBlockCollidingEndpoint() throws Exception {
+        CountDownLatch blockingRequest = new CountDownLatch(1);
+        CountDownLatch releaseBlocking = new CountDownLatch(1);
+        AtomicInteger normalRequests = new AtomicInteger();
+        ExecutorService serverExecutor = Executors.newFixedThreadPool(2);
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.setExecutor(serverExecutor);
+        server.createContext("/jwks", exchange -> {
+            if ("Aa".equals(exchange.getRequestURI().getQuery())) {
+                blockingRequest.countDown();
+                try {
+                    releaseBlocking.await(30, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException(e);
+                }
+            } else {
+                normalRequests.incrementAndGet();
+            }
+            sendResponse(exchange, jwkSet.toString());
+        });
+        server.start();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        try {
+            String endpointPrefix = "http://127.0.0.1:" + server.getAddress().getPort() + "/jwks?";
+            String blockingEndpoint = endpointPrefix + "Aa";
+            String normalEndpoint = endpointPrefix + "BB";
+            assertEquals(blockingEndpoint.hashCode(), normalEndpoint.hashCode());
+
+            String token = createToken(ISSUER, AUDIENCE, futureDate(300), null);
+            Future<OAuthTokenValidationResult> blockedFetch = executor.submit(
+                    () -> JwtTokenValidator.validate(
+                            token, blockingEndpoint, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null));
+
+            assertTrue(blockingRequest.await(5, TimeUnit.SECONDS));
+            OAuthTokenValidationResult result = assertTimeoutPreemptively(Duration.ofSeconds(2),
+                    () -> JwtTokenValidator.validate(
+                            token, normalEndpoint, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null));
+            assertTrue(result.isValid());
+            assertEquals(1, normalRequests.get());
+
+            releaseBlocking.countDown();
+            assertTrue(blockedFetch.get(5, TimeUnit.SECONDS).isValid());
+        } finally {
+            releaseBlocking.countDown();
+            executor.shutdownNow();
+            server.stop(0);
+            serverExecutor.shutdownNow();
+        }
+    }
+
+    @Test
     void normalJwksRefreshFailureAllowsRecoveryAfterCooldown() throws Exception {
         AtomicInteger requests = new AtomicInteger();
         AtomicReference<String> response = new AtomicReference<>("not-json");
@@ -428,11 +490,13 @@ class JwtTokenValidatorTest {
 
             String token = createToken(ISSUER, AUDIENCE, futureDate(300), null);
 
-            assertThrows(OAuthException.class,
-                    () -> JwtTokenValidator.validate(
-                            token, endpoint, 1, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null));
+            // the failed refresh serves stale cached keys instead of failing the request
+            OAuthTokenValidationResult stale = JwtTokenValidator.validate(
+                    token, endpoint, 1, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null);
+            assertTrue(stale.isValid());
             assertEquals(1, requests.get());
 
+            // after the cooldown the refresh is re-attempted and succeeds against the recovered endpoint
             response.set(jwkSet.toString());
             now.addAndGet(31_000L);
             OAuthTokenValidationResult result = JwtTokenValidator.validate(
@@ -856,6 +920,15 @@ class JwtTokenValidatorTest {
         });
         server.start();
         return server;
+    }
+
+    private static void sendResponse(HttpExchange exchange, String response) throws IOException {
+        byte[] body = response.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        exchange.sendResponseHeaders(200, body.length);
+        try (var outputStream = exchange.getResponseBody()) {
+            outputStream.write(body);
+        }
     }
 
     private static String jwksEndpoint(HttpServer server) {

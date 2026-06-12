@@ -127,6 +127,12 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                 parameters, true, false);
     }
 
+    @Override
+    public boolean supportsOAuthProfile() {
+        // the oauthProfile endpoint option is enforced by the platform-http consumer
+        return true;
+    }
+
     /**
      * Adds a known http endpoint managed by this component.
      */
