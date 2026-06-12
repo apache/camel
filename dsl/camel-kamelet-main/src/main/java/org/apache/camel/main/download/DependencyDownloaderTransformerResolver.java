@@ -85,7 +85,12 @@ public final class DependencyDownloaderTransformerResolver extends DefaultTransf
             return true;
         }
 
-        boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
+        boolean stubbed = false;
+        for (String n : stubPattern.split(",")) {
+            if (n.startsWith("transformer:")) {
+                stubbed |= PatternHelper.matchPattern(name, n.substring(12));
+            }
+        }
         return !stubbed;
     }
 

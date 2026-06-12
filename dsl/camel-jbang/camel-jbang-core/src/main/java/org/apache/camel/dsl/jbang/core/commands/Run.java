@@ -706,8 +706,7 @@ public class Run extends CamelCommand {
             }
             main.addInitialProperty(EXPORT, "true");
             // enable stub in silent mode so we do not use real components
-            //we need i.e. transformers to not be stubbed since https://github.com/apache/camel/pull/21931
-            main.setStubPattern("component:*");
+            main.setStubPattern("*");
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "-1");

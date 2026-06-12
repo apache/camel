@@ -245,10 +245,10 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
             return null;
         }
 
-        String content = Files.readString(metadataFile, StandardCharsets.UTF_8);
-
-        // Detect format: JSON starts with '{', legacy Java serialization starts with binary
-        if (content.trim().startsWith("{")) {
+        // Detect the format from the raw bytes: a JSON document starts with '{', whereas a legacy
+        // Java-serialized file is binary (and not valid UTF-8), so it must not be read as a String first.
+        byte[] content = Files.readAllBytes(metadataFile);
+        if (isJsonContent(content)) {
             MetadataFileData data = objectMapper.readValue(content, MetadataFileData.class);
             KeyMetadata metadata = data.toKeyMetadata();
             metadataCache.put(keyId, metadata);
@@ -366,6 +366,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
         KeyPair keyPair;
         try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(legacyKeyFile)))) {
+            ois.setObjectInputFilter(KeyMetadataCodec.KEY_PAIR_FILTER);
             keyPair = (KeyPair) ois.readObject();
         }
 
@@ -392,6 +393,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
         KeyMetadata metadata;
         try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(metadataFile)))) {
+            ois.setObjectInputFilter(KeyMetadataCodec.METADATA_FILTER);
             metadata = (KeyMetadata) ois.readObject();
         }
 
@@ -439,6 +441,20 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
     private Path getLegacyKeyFile(String keyId) {
         return keyDirectory.resolve(keyId + ".key");
+    }
+
+    /**
+     * Detects whether the given file content is a JSON document (the current format) by inspecting the first
+     * non-whitespace byte, without decoding the bytes as text (a legacy Java-serialized file is binary).
+     */
+    private static boolean isJsonContent(byte[] content) {
+        for (byte b : content) {
+            if (b == ' ' || b == '\t' || b == '\n' || b == '\r') {
+                continue;
+            }
+            return b == '{';
+        }
+        return false;
     }
 
     private String determineProvider(String algorithm) {

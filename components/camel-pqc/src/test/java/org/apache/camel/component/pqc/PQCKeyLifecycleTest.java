@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.Security;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 import org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager;
@@ -343,6 +346,58 @@ public class PQCKeyLifecycleTest {
         // Age should be 0 days for just created key
         long age = metadata.getAgeInDays();
         assertEquals(0, age);
+    }
+
+    @Test
+    void testLegacyKeyPairMigration() throws Exception {
+        // Seed a real PQC key pair via the manager
+        FileBasedKeyLifecycleManager seedManager = new FileBasedKeyLifecycleManager(tempDir.toString());
+        KeyPair original = seedManager.generateKeyPair("DILITHIUM", "seed-key", DilithiumParameterSpec.dilithium2);
+
+        // Write it out in the legacy Java-serialized ".key" format under a fresh keyId
+        Path legacyKeyFile = tempDir.resolve("legacy-key.key");
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(legacyKeyFile))) {
+            oos.writeObject(original);
+        }
+
+        // A fresh manager must transparently migrate the legacy key (with the deserialization filter applied)
+        keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
+        KeyPair migrated = keyManager.getKey("legacy-key");
+
+        assertNotNull(migrated);
+        assertArrayEquals(original.getPublic().getEncoded(), migrated.getPublic().getEncoded());
+        assertArrayEquals(original.getPrivate().getEncoded(), migrated.getPrivate().getEncoded());
+
+        // Legacy file is replaced by the PKCS#8/X.509 JSON format
+        assertFalse(Files.exists(legacyKeyFile));
+        assertTrue(Files.exists(tempDir.resolve("legacy-key.private.json")));
+        assertTrue(Files.exists(tempDir.resolve("legacy-key.public.json")));
+    }
+
+    @Test
+    void testLegacyMetadataMigration() throws Exception {
+        // Write a legacy Java-serialized ".metadata" file
+        KeyMetadata original = new KeyMetadata("legacy-meta", "DILITHIUM", Instant.parse("2026-01-02T03:04:05Z"));
+        original.setStatus(KeyMetadata.KeyStatus.EXPIRED);
+        original.setUsageCount(11);
+        Path metadataFile = tempDir.resolve("legacy-meta.metadata");
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(metadataFile))) {
+            oos.writeObject(original);
+        }
+
+        // A fresh manager migrates legacy metadata to JSON (with the deserialization filter applied)
+        keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
+        KeyMetadata migrated = keyManager.getKeyMetadata("legacy-meta");
+
+        assertNotNull(migrated);
+        assertEquals("legacy-meta", migrated.getKeyId());
+        assertEquals("DILITHIUM", migrated.getAlgorithm());
+        assertEquals(KeyMetadata.KeyStatus.EXPIRED, migrated.getStatus());
+        assertEquals(11, migrated.getUsageCount());
+
+        // The file is now stored as JSON
+        String content = Files.readString(metadataFile);
+        assertTrue(content.stripLeading().startsWith("{"));
     }
 
     @Test
