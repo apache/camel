@@ -456,6 +456,22 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
+=== camel-elasticsearch / camel-elasticsearch-rest-client / camel-solr
+
+The `camel-elasticsearch`, `camel-elasticsearch-rest-client` and `camel-solr` components now support
+configuring TLS through `SSLContextParameters` (the JSSE utility), in addition to the existing
+`certificatePath` option. The new `sslContextParameters` option allows configuring named groups,
+signature schemes, cipher suites and protocols, for example post-quantum named groups such as
+`X25519MLKEM768` on JDK 25+. It can be set at the endpoint or component level, and the components also
+honor the context-wide global SSL configuration via `useGlobalSslContextParameters`. When configured,
+`SSLContextParameters` takes precedence over `certificatePath`.
+
+For `camel-elasticsearch` and `camel-elasticsearch-rest-client`, the HTTP client is now configured with
+the TLS settings regardless of whether basic authentication (`user`/`password`) is set. Previously the
+`certificatePath` option was silently ignored unless both `user` and `password` were configured. Routes
+that set `certificatePath` without credentials will now correctly use the configured TLS context where it
+was previously a no-op.
+
 === camel-stomp removal
 
 Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.
