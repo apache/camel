@@ -62,7 +62,9 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
+        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+        jms.setHeaderFilterStrategy(new ClassicJmsHeaderFilterStrategy());
+        camelContext.addComponent(componentName, jms);
 
         return camelContext;
     }

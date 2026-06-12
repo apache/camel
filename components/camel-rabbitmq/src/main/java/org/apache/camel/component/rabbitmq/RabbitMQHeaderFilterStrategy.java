@@ -25,6 +25,8 @@ public class RabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
+        setLowerCase(true);
+
         setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
         setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }

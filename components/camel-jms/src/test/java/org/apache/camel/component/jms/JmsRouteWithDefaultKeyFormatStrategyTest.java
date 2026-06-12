@@ -91,7 +91,9 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+        jms.setHeaderFilterStrategy(new ClassicJmsHeaderFilterStrategy());
+        camelContext.addComponent("activemq", jms);
 
         return camelContext;
     }

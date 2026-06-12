@@ -25,6 +25,7 @@ public class VertxKafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy 
     }
 
     protected void initialize() {
+        setLowerCase(true);
         // filter out kafka record metadata
         getInFilter().add("org.apache.kafka.clients.producer.RecordMetadata");
 

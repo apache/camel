@@ -59,7 +59,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     private boolean lowerCase;
     private boolean allowNullValues;
-    private boolean caseInsensitive;
+    private boolean caseInsensitive = true;
     private boolean filterOnMatch = true; // defaults to the previous behaviour
 
     @Override

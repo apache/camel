@@ -166,6 +166,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                jms.setHeaderFilterStrategy(new ClassicJmsHeaderFilterStrategy());
                 context.addComponent(componentName, jms);
                 return context;
             };
@@ -176,6 +177,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                jms.setHeaderFilterStrategy(new ClassicJmsHeaderFilterStrategy());
                 context.addComponent(componentName, jms);
                 return context;
             };

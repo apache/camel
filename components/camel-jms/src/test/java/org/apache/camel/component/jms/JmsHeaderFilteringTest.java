@@ -34,16 +34,56 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JmsHeaderFilteringTest extends CamelTestSupport {
 
     private static final String IN_FILTER_PATTERN = "(org_apache_camel)[_|a-z|A-Z|0-9]*(test)[_|a-z|A-Z|0-9]*";
-
     private final String componentName = "jms";
     private final String testQueueEndpointA = componentName + ":queue:test.a";
     private final String testQueueEndpointB = componentName + ":queue:test.b";
     private final String assertionReceiver = "mock:errors";
     private CountDownLatch latch = new CountDownLatch(2);
+
+    private final JmsHeaderFilterStrategy strategy = new JmsHeaderFilterStrategy();
+
+    @Test
+    void filtersMixedCaseCamelHeaders() {
+        assertTrue(strategy.applyFilterToCamelHeaders("CAmeLFileName", "test.txt", null));
+        assertTrue(strategy.applyFilterToCamelHeaders("CAMELHttpMethod", "GET", null));
+        assertTrue(strategy.applyFilterToCamelHeaders("cAmElVersion", "3.14", null));
+        assertTrue(strategy.applyFilterToCamelHeaders("ORg.Apache.Camel.", "value", null));
+    }
+
+    @Test
+    void inboundFiltersMixedCaseCamelHeaders() {
+        assertTrue(strategy.applyFilterToExternalHeaders("CAmeLFileName", "test.txt", null));
+        assertTrue(strategy.applyFilterToExternalHeaders("CAMELHttpMethod", "GET", null));
+        assertFalse(strategy.applyFilterToExternalHeaders("myHeader", "value", null));
+        assertTrue(strategy.applyFilterToExternalHeaders("ORg.Apache.Camel.", "value", null));
+    }
+
+    @Test
+    void inboundFiltersCamelPrefixedHeaders() {
+        assertTrue(strategy.applyFilterToExternalHeaders("CamelSqlQuery", "value", null));
+        assertTrue(strategy.applyFilterToExternalHeaders("CamelHttpUri", "value", null));
+        assertTrue(strategy.applyFilterToExternalHeaders("CamelFileName", "value", null));
+        assertTrue(strategy.applyFilterToExternalHeaders("camelfoo", "value", null));
+        assertTrue(strategy.applyFilterToExternalHeaders("CAMELFOO", "value", null));
+        assertTrue(strategy.applyFilterToExternalHeaders("org.apache.camel.", "value", null));
+    }
+
+    @Test
+    void inboundAllowsNonCamelHeaders() {
+        assertFalse(strategy.applyFilterToExternalHeaders("X-Custom", "value", null));
+        assertFalse(strategy.applyFilterToExternalHeaders("orderId", "12345", null));
+        assertFalse(strategy.applyFilterToExternalHeaders("orgapachecamel.", "value", null));
+    }
+
+    @Test
+    void outboundAllowsUserHeaders() {
+        assertFalse(strategy.applyFilterToCamelHeaders("X-Custom", "value", null));
+    }
 
     @Test
     public void testHeaderFilters() throws Exception {
@@ -51,8 +91,8 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
         errors.expectedMessageCount(0);
 
         template.send(testQueueEndpointA, ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader("org.apache.camel.jms", 10000);
-            exchange.getIn().setHeader("org.apache.camel.test.jms", 20000);
+            exchange.getIn().setHeader("org.foo.jms", 10000);
+            exchange.getIn().setHeader("org.foo.test.jms", 20000);
             exchange.getIn().setHeader("testheader", 1020);
             exchange.getIn().setHeader("anotherheader", 1030);
             exchange.getIn().setHeader("JMSXAppID", "myApp");
@@ -109,10 +149,10 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
             assertNull(message.getJmsMessage().getObjectProperty("anotherheader"));
 
             // notice dots are replaced by '_DOT_' when it is copied to the jms message properties
-            assertEquals(10000, message.getJmsMessage().getObjectProperty("org_DOT_apache_DOT_camel_DOT_jms"));
+            assertEquals(10000, message.getJmsMessage().getObjectProperty("org_DOT_foo_DOT_jms"));
 
             // like testheader, org.apache.camel.test.jms will be filtered by the "in" filter
-            assertEquals(20000, message.getJmsMessage().getObjectProperty("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
+            assertEquals(20000, message.getJmsMessage().getObjectProperty("org_DOT_foo_DOT_test_DOT_jms"));
 
             // should be filtered by default
             assertNull(message.getJmsMessage().getStringProperty("JMSXAppID"));
@@ -134,10 +174,10 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
             assertNull(exchange.getIn().getHeader("anotherheader"));
 
             // it should not been filtered out
-            assertEquals(10000, exchange.getIn().getHeader("org.apache.camel.jms"));
+            assertEquals(10000, exchange.getIn().getHeader("org.foo.jms"));
 
             // filtered out by "in" filter
-            assertNull(exchange.getIn().getHeader("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
+            assertNull(exchange.getIn().getHeader("org_DOT_foo_DOT_test_DOT_jms"));
 
             // should be filtered by default
             assertNull(exchange.getIn().getHeader("JMSXAppID"));

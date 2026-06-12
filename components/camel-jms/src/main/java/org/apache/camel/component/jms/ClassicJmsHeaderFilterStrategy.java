@@ -18,16 +18,14 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+public class ClassicJmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
-    public JmsHeaderFilterStrategy() {
+    public ClassicJmsHeaderFilterStrategy() {
         this(false);
     }
 
-    public JmsHeaderFilterStrategy(boolean includeAllJMSXProperties) {
+    public ClassicJmsHeaderFilterStrategy(boolean includeAllJMSXProperties) {
         setLowerCase(true);
-        setOutFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
         if (!includeAllJMSXProperties) {
             initialize();
         }
