@@ -823,14 +823,37 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
+         * Controls how hostname verification is performed during the TLS
+         * handshake. CLIENT (default) delegates entirely to the configured
+         * x509HostnameVerifier, preserving the behaviour of httpclient 5.5 and
+         * earlier; a NoopHostnameVerifier will disable verification. BUILTIN
+         * uses the JDK SSLParameters hostname check only, ignoring the
+         * configured verifier. BOTH runs the JDK built-in check first and then
+         * the configured verifier.
+         *
+         * The option is a:
+         * &lt;code&gt;org.apache.hc.client5.http.ssl.HostnameVerificationPolicy&lt;/code&gt; type.
+         *
+         * Default: CLIENT
+         * Group: security
+         *
+         * @param hostnameVerificationPolicy the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder hostnameVerificationPolicy(org.apache.hc.client5.http.ssl.HostnameVerificationPolicy hostnameVerificationPolicy) {
+            doSetProperty("hostnameVerificationPolicy", hostnameVerificationPolicy);
+            return this;
+        }
+
+        /**
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
          * or NoopHostnameVerifier.
-         * 
+         *
          * The option is a:
          * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
-         * 
+         *
          * Group: security
-         * 
+         *
          * @param x509HostnameVerifier the value to set
          * @return the dsl builder
          */
@@ -971,6 +994,7 @@ public interface HttpComponentBuilderFactory {
             case "proxyPort": ((HttpComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "sslContextParameters": ((HttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((HttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "hostnameVerificationPolicy": ((HttpComponent) component).setHostnameVerificationPolicy((org.apache.hc.client5.http.ssl.HostnameVerificationPolicy) value); return true;
             case "x509HostnameVerifier": ((HttpComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;
             case "connectionRequestTimeout": ((HttpComponent) component).setConnectionRequestTimeout((long) value); return true;
             case "connectTimeout": ((HttpComponent) component).setConnectTimeout((long) value); return true;

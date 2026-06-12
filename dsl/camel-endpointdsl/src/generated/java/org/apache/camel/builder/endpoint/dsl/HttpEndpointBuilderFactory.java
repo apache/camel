@@ -979,13 +979,57 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Controls how hostname verification is performed during the TLS
+         * handshake. CLIENT (default) delegates entirely to the configured
+         * x509HostnameVerifier, preserving the behaviour of httpclient 5.5 and
+         * earlier; a NoopHostnameVerifier will disable verification. BUILTIN
+         * uses the JDK SSLParameters hostname check only, ignoring the
+         * configured verifier. BOTH runs the JDK built-in check first and then
+         * the configured verifier.
+         *
+         * The option is a:
+         * <code>org.apache.hc.client5.http.ssl.HostnameVerificationPolicy</code> type.
+         *
+         * Default: CLIENT
+         * Group: security
+         *
+         * @param hostnameVerificationPolicy the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder hostnameVerificationPolicy(org.apache.hc.client5.http.ssl.HostnameVerificationPolicy hostnameVerificationPolicy) {
+            doSetProperty("hostnameVerificationPolicy", hostnameVerificationPolicy);
+            return this;
+        }
+        /**
+         * Controls how hostname verification is performed during the TLS
+         * handshake. CLIENT (default) delegates entirely to the configured
+         * x509HostnameVerifier, preserving the behaviour of httpclient 5.5 and
+         * earlier; a NoopHostnameVerifier will disable verification. BUILTIN
+         * uses the JDK SSLParameters hostname check only, ignoring the
+         * configured verifier. BOTH runs the JDK built-in check first and then
+         * the configured verifier.
+         *
+         * The option will be converted to a
+         * <code>org.apache.hc.client5.http.ssl.HostnameVerificationPolicy</code> type.
+         *
+         * Default: CLIENT
+         * Group: security
+         *
+         * @param hostnameVerificationPolicy the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder hostnameVerificationPolicy(String hostnameVerificationPolicy) {
+            doSetProperty("hostnameVerificationPolicy", hostnameVerificationPolicy);
+            return this;
+        }
+        /**
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
          * or NoopHostnameVerifier.
-         * 
+         *
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
+         *
          * Group: security
-         * 
+         *
          * @param x509HostnameVerifier the value to set
          * @return the dsl builder
          */
@@ -996,12 +1040,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
          * or NoopHostnameVerifier.
-         * 
+         *
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
+         *
          * Group: security
-         * 
+         *
          * @param x509HostnameVerifier the value to set
          * @return the dsl builder
          */
