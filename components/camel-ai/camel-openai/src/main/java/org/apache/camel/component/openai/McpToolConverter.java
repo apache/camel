@@ -49,14 +49,16 @@ final class McpToolConverter {
         if (tool.inputSchema() != null) {
             FunctionParameters.Builder paramsBuilder = FunctionParameters.builder();
             paramsBuilder.putAdditionalProperty("type",
-                    JsonValue.from(tool.inputSchema().type() != null ? tool.inputSchema().type() : "object"));
+                    JsonValue.from(tool.inputSchema().getOrDefault("type", "object")));
 
-            if (tool.inputSchema().properties() != null) {
-                paramsBuilder.putAdditionalProperty("properties", JsonValue.from(tool.inputSchema().properties()));
+            Object properties = tool.inputSchema().get("properties");
+            if (properties != null) {
+                paramsBuilder.putAdditionalProperty("properties", JsonValue.from(properties));
             }
 
-            if (tool.inputSchema().required() != null) {
-                paramsBuilder.putAdditionalProperty("required", JsonValue.from(tool.inputSchema().required()));
+            Object required = tool.inputSchema().get("required");
+            if (required != null) {
+                paramsBuilder.putAdditionalProperty("required", JsonValue.from(required));
             }
 
             funcBuilder.parameters(paramsBuilder.build());
