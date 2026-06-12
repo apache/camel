@@ -23,9 +23,11 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThrottlerRejectedExecutionException;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -35,10 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // time-bound that does not run well in shared environments
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
-             architectures = { "amd64", "aarch64", "ppc64le" },
-             disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+             architectures = { "amd64", "aarch64", "ppc64le", "s390x" },
+             disabledReason = "This test does not run reliably on all platforms (see CAMEL-21438)")
 public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
-    private static final int INTERVAL = 500;
     private static final int MESSAGE_COUNT = 9;
     private static final int CONCURRENT_REQUESTS = 2;
     protected static Semaphore semaphore;
@@ -140,14 +141,9 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
             }
 
             for (int i = 0; i < messageCount; i++) {
-                executor.execute(new Runnable() {
-                    public void run() {
-                        template.sendBody(endpointUri, "<message>payload</message>");
-                    }
-                });
+                executor.execute(() -> template.sendBody(endpointUri, "<message>payload</message>"));
             }
 
-            // let's wait for the exchanges to arrive
             if (receivingEndpoint != null) {
                 receivingEndpoint.assertIsSatisfied();
             }
@@ -163,15 +159,10 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
         semaphore = new Semaphore(throttle);
 
         for (int i = 0; i < messageCount; i++) {
-            executor.execute(new Runnable() {
-                public void run() {
-                    template.sendBodyAndHeader("direct:expressionHeader", "<message>payload</message>", "throttleValue",
-                            throttle);
-                }
-            });
+            executor.execute(() -> template.sendBodyAndHeader(
+                    "direct:expressionHeader", "<message>payload</message>", "throttleValue", throttle));
         }
 
-        // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -199,32 +190,59 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
 
                 from("direct:a").throttle(CONCURRENT_REQUESTS).concurrentRequestsMode()
                         .process(exchange -> {
-                            assertTrue(semaphore.tryAcquire(), "'direct:a' too many requests");
+                            Semaphore s = semaphore;
+                            assertTrue(s.tryAcquire(), "'direct:a' too many requests");
+                            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                @Override
+                                public void onComplete(Exchange ex) {
+                                    s.release();
+                                }
+
+                                @Override
+                                public void onFailure(Exchange ex) {
+                                    s.release();
+                                }
+                            });
                         })
                         .delay(100)
-                        .process(exchange -> {
-                            semaphore.release();
-                        })
                         .to("log:result", "mock:result");
 
                 from("direct:expressionConstant").throttle(constant(CONCURRENT_REQUESTS)).concurrentRequestsMode()
                         .process(exchange -> {
-                            assertTrue(semaphore.tryAcquire(), "'direct:expressionConstant' too many requests");
+                            Semaphore s = semaphore;
+                            assertTrue(s.tryAcquire(), "'direct:expressionConstant' too many requests");
+                            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                @Override
+                                public void onComplete(Exchange ex) {
+                                    s.release();
+                                }
+
+                                @Override
+                                public void onFailure(Exchange ex) {
+                                    s.release();
+                                }
+                            });
                         })
                         .delay(100)
-                        .process(exchange -> {
-                            semaphore.release();
-                        })
                         .to("log:result", "mock:result");
 
                 from("direct:expressionHeader").throttle(header("throttleValue")).concurrentRequestsMode()
                         .process(exchange -> {
-                            assertTrue(semaphore.tryAcquire(), "'direct:expressionHeader' too many requests");
+                            Semaphore s = semaphore;
+                            assertTrue(s.tryAcquire(), "'direct:expressionHeader' too many requests");
+                            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                @Override
+                                public void onComplete(Exchange ex) {
+                                    s.release();
+                                }
+
+                                @Override
+                                public void onFailure(Exchange ex) {
+                                    s.release();
+                                }
+                            });
                         })
                         .delay(100)
-                        .process(exchange -> {
-                            semaphore.release();
-                        })
                         .to("log:result", "mock:result");
 
                 from("direct:start").throttle(2).concurrentRequestsMode().rejectExecution(true).delay(1000).to("log:result",

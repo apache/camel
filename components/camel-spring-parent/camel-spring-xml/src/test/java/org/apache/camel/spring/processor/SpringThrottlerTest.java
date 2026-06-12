@@ -16,10 +16,13 @@
  */
 package org.apache.camel.spring.processor;
 
+import java.util.concurrent.Semaphore;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.throttle.concurrent.ConcurrentRequestsThrottlerTest;
+import org.apache.camel.support.SynchronizationAdapter;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,14 +38,19 @@ public class SpringThrottlerTest extends ConcurrentRequestsThrottlerTest {
     public static class IncrementProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
-            assertTrue(semaphore.tryAcquire(), "too many requests");
-        }
-    }
+            Semaphore s = semaphore;
+            assertTrue(s.tryAcquire(), "too many requests");
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onComplete(Exchange ex) {
+                    s.release();
+                }
 
-    public static class DecrementProcessor implements Processor {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            semaphore.release();
+                @Override
+                public void onFailure(Exchange ex) {
+                    s.release();
+                }
+            });
         }
     }
 
