@@ -42,6 +42,9 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
     public void testSortNestedFiles() throws Exception {
         prepareFolder("a");
 
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello Dublin", "Hello London", "Hello Paris", "Hello Copenhagen");
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -49,10 +52,6 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
                         .to("mock:result");
             }
         });
-        context.start();
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Dublin", "Hello London", "Hello Paris", "Hello Copenhagen");
 
         assertMockEndpointsSatisfied();
     }
@@ -61,6 +60,9 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
     public void testSortNestedFilesReverse() throws Exception {
         prepareFolder("b");
 
+        MockEndpoint reverse = getMockEndpoint("mock:reverse");
+        reverse.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Dublin", "Hello Copenhagen");
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -68,10 +70,6 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
                         .to("mock:reverse");
             }
         });
-        context.start();
-
-        MockEndpoint reverse = getMockEndpoint("mock:reverse");
-        reverse.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Dublin", "Hello Copenhagen");
 
         assertMockEndpointsSatisfied();
     }
