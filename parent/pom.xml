@@ -4137,6 +4137,19 @@
 
     <profiles>
 
+        <!-- CAMEL-23538: testcontainers 2.0.4+ does not work on ppc64le CI -->
+        <profile>
+            <id>ppc64le-testcontainers</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <properties>
+                <testcontainers-version>2.0.3</testcontainers-version>
+            </properties>
+        </profile>
+
         <profile>
             <id>nochecks</id>
             <activation>
