@@ -1370,6 +1370,53 @@ directions, aligning the component with the rest of the Camel component catalog.
 `Camel`-prefixed user-header names from Iggy messages can supply a custom `headerFilterStrategy`
 to restore the previous behaviour.
 
+=== camel-undertow - potential breaking change
+
+`UndertowHeaderFilterStrategy` now also filters the legacy `websocket.*`
+Exchange-header prefix (in addition to the `Camel*` / `camel*` /
+`org.apache.camel.*` prefixes it already filtered). This applies to both the
+in (wire -> exchange) and out (exchange -> wire) directions and follows the
+dedicated-filter-strategy shape used by CAMEL-23532 for
+`camel-vertx-websocket` / `camel-atmosphere-websocket` / `camel-iggy`.
+
+The constants in `UndertowConstants` (`CONNECTION_KEY`, `CONNECTION_KEY_LIST`,
+`SEND_TO_ALL`, `EVENT_TYPE`, `EVENT_TYPE_ENUM`, `CHANNEL`, `EXCHANGE`) keep
+their existing string values (`websocket.connectionKey`,
+`websocket.connectionKey.list`, `websocket.sendToAll`, etc.) because they are
+part of the undertow component's externally-visible API contract; routes
+referencing them (symbolically or by literal value) continue to work
+unchanged within an undertow route.
+
+The behaviour change applies at undertow's transport boundary:
+
+* Outbound (exchange -> wire): if an exchange ends up at an undertow producer
+  carrying an Exchange header whose name starts with `websocket.`, that
+  header will no longer be propagated onto the outbound HTTP/websocket
+  request as a wire-level header.
+* Inbound (wire -> exchange): if an undertow consumer receives a request
+  whose wire-level headers include a name starting with `websocket.`, that
+  header will no longer be mapped into the resulting Camel exchange.
+
+Note that the `HeaderFilterStrategy` only governs the transport boundary; it
+does not prevent cross-component header injection (for example, an
+`http -> undertow` route where the HTTP consumer maps an attacker-supplied
+`websocket.connectionKey` header into the exchange and the undertow producer
+then reads it via `in.getHeader(...)` to dispatch to a specific peer). For
+defence in depth at the trust boundary, route authors should explicitly strip
+these headers from untrusted inbound traffic, for example:
+
+[source,java]
+----
+from("jetty:http://0.0.0.0:8080/api")
+    .removeHeaders("websocket.*")
+    .to("undertow:ws://internal-broker/notifications");
+----
+
+Routes that intentionally relied on undertow mapping `websocket.*` wire
+headers in or out can supply a custom `headerFilterStrategy` endpoint option
+to restore the previous behaviour.
+
+
 === camel-aws2-sqs
 
 `Sqs2HeaderFilterStrategy` now also configures an inbound filter aligned with the existing
