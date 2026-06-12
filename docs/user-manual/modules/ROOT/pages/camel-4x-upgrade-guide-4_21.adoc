@@ -2329,6 +2329,17 @@ hostname verification. HttpClient 5.6 changed the default to `HostnameVerificati
 which enables the JDK check alongside the custom verifier — making `NoopHostnameVerifier` ineffective
 because the JDK check runs first and rejects mismatched certificates.
 
+The policy is now configurable via the `hostnameVerificationPolicy` option on both `HttpComponent`
+and `HttpEndpoint`, accepting `CLIENT` (default), `BUILTIN`, or `BOTH`:
+
+* `CLIENT` — only the configured `x509HostnameVerifier` decides. `NoopHostnameVerifier` disables verification. This is the default and preserves backward compatibility.
+* `BUILTIN` — only the JDK SSLParameters hostname check runs. The configured verifier is ignored.
+* `BOTH` — the JDK check runs first, then the configured verifier. A `NoopHostnameVerifier` cannot bypass the JDK check. Recommended where no custom verifier semantics are needed.
+
+Users who were affected by the `NoopHostnameVerifier` regression introduced in HttpClient 5.6 should
+keep the default `CLIENT` policy or set it explicitly. Users who want stronger out-of-the-box security
+and do not rely on a custom verifier can opt in to `BOTH`.
+
 The `CLIENT` policy is a deliberate choice: it preserves backward compatibility and allows
 `NoopHostnameVerifier` to work as documented. A future release may add an option to opt into the
 `BOTH` policy for defense-in-depth.

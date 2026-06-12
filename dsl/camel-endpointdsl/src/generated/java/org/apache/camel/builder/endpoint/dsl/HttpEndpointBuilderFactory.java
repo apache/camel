@@ -735,6 +735,54 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Controls how hostname verification is performed during the TLS
+         * handshake. CLIENT (default) delegates entirely to the configured
+         * x509HostnameVerifier, preserving the behaviour of httpclient 5.5 and
+         * earlier a NoopHostnameVerifier will disable verification. BUILTIN
+         * uses the JDK SSLParameters hostname check only, ignoring the
+         * configured verifier. BOTH runs the JDK built-in check first and then
+         * the configured verifier; a NoopHostnameVerifier cannot bypass the
+         * built-in check under BUILTIN or BOTH. Prefer BOTH when no custom
+         * verifier semantics are needed for stronger out-of-the-box security.
+         * 
+         * The option is a:
+         * <code>org.apache.hc.client5.http.ssl.HostnameVerificationPolicy</code> type.
+         * 
+         * Default: CLIENT
+         * Group: security
+         * 
+         * @param hostnameVerificationPolicy the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder hostnameVerificationPolicy(org.apache.hc.client5.http.ssl.HostnameVerificationPolicy hostnameVerificationPolicy) {
+            doSetProperty("hostnameVerificationPolicy", hostnameVerificationPolicy);
+            return this;
+        }
+        /**
+         * Controls how hostname verification is performed during the TLS
+         * handshake. CLIENT (default) delegates entirely to the configured
+         * x509HostnameVerifier, preserving the behaviour of httpclient 5.5 and
+         * earlier a NoopHostnameVerifier will disable verification. BUILTIN
+         * uses the JDK SSLParameters hostname check only, ignoring the
+         * configured verifier. BOTH runs the JDK built-in check first and then
+         * the configured verifier; a NoopHostnameVerifier cannot bypass the
+         * built-in check under BUILTIN or BOTH. Prefer BOTH when no custom
+         * verifier semantics are needed for stronger out-of-the-box security.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.hc.client5.http.ssl.HostnameVerificationPolicy</code> type.
+         * 
+         * Default: CLIENT
+         * Group: security
+         * 
+         * @param hostnameVerificationPolicy the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder hostnameVerificationPolicy(String hostnameVerificationPolicy) {
+            doSetProperty("hostnameVerificationPolicy", hostnameVerificationPolicy);
+            return this;
+        }
+        /**
          * Whether to use OAuth2 body authentication.
          * 
          * The option is a: <code>boolean</code> type.
