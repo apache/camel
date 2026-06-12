@@ -726,6 +726,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
         // suppress maven transfer progress
         args.add("-ntp");
+        args.add("-DskipTests");
         args.add("--file");
         args.add(new File(workingDir, "pom.xml").getAbsolutePath());
 
@@ -751,7 +752,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
             // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not generate the deployment.yml
             // apply the knative service manifest and specify the knative service.yml
             args.add("-Djkube.skip.resource=true");
-            args.add(prefix + ":build");
+            // run the "package" task instead of k8s:deploy
+            args.add("package");
             args.add(prefix + ":apply");
             if (isOpenshift) {
                 args.add("-Djkube.openshiftManifest=src/main/jkube/service.yml");
@@ -801,6 +803,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
             if (ClusterType.MINIKUBE == cluster) {
                 this.imageBuilder = "docker";
                 this.imagePush = false;
+            } else if (ClusterType.OPENSHIFT == cluster) {
+                if (ObjectHelper.isEmpty(imageGroup)) {
+                    this.imageGroup = client().getNamespace();
+                }
             }
             if (verbose) {
                 printer().println(this.clusterType);
