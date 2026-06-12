@@ -22,17 +22,13 @@ import java.nio.file.Path;
 
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
 
     private static final String EXPECTED_XML_CONSTANT = "<A>1</A>";
@@ -63,12 +59,7 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
     }
 
     private EntityResolver getCustomEntityResolver() {
-        return new EntityResolver() {
-            @Override
-            public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-                return new InputSource(new StringReader("<!ELEMENT A (#PCDATA)>"));
-            }
-        };
+        return (publicId, systemId) -> new InputSource(new StringReader("<!ELEMENT A (#PCDATA)>"));
     }
 
     @Override
