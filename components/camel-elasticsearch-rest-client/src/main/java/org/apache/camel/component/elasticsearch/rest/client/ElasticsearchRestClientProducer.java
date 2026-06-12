@@ -380,18 +380,27 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
                 .setConnectTimeout(this.endpoint.getConnectionTimeout()).setSocketTimeout(this.endpoint.getSocketTimeout()));
 
-        if (this.endpoint.getUser() != null && this.endpoint.getPassword() != null) {
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(this.endpoint.getUser(), this.endpoint.getPassword()));
-            builder.setHttpClientConfigCallback(httpClientBuilder -> {
+        builder.setHttpClientConfigCallback(httpClientBuilder -> {
+            if (this.endpoint.getUser() != null && this.endpoint.getPassword() != null) {
+                final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                credentialsProvider.setCredentials(AuthScope.ANY,
+                        new UsernamePasswordCredentials(this.endpoint.getUser(), this.endpoint.getPassword()));
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                if (this.endpoint.getCertificatePath() != null) {
-                    httpClientBuilder.setSSLContext(createSslContextFromCa());
+            }
+            if (this.endpoint.getSslContextParameters() != null) {
+                // Use SSLContextParameters (allows configuring named groups, signature schemes, cipher suites and
+                // protocols), e.g. for post-quantum readiness on JDK 25+
+                try {
+                    httpClientBuilder.setSSLContext(
+                            this.endpoint.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to create SSLContext from SSLContextParameters", e);
                 }
-                return httpClientBuilder;
-            });
-        }
+            } else if (this.endpoint.getCertificatePath() != null) {
+                httpClientBuilder.setSSLContext(createSslContextFromCa());
+            }
+            return httpClientBuilder;
+        });
         final RestClient restClient = builder.build();
 
         // initiate Sniffer
