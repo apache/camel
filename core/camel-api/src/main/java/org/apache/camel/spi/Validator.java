@@ -35,12 +35,13 @@ import org.jspecify.annotations.Nullable;
  * validator should throw a {@link org.apache.camel.ValidationException} to signal the failure.
  * <p/>
  * Validators are registered in the {@link ValidatorRegistry} keyed by their target {@link DataType}. Custom validators
- * extend this abstract class and are typically annotated with {@link DataTypeTransformer} to be picked up automatically
- * during route startup.
+ * extend this abstract class and are registered via the DSL (e.g., {@code inputType} / {@code outputType} with
+ * {@code validate = true}), which wires them through {@link org.apache.camel.model.ValidatorDefinition} during route
+ * startup.
  *
  * @see ValidatorRegistry
  * @see DataType
- * @see DataTypeTransformer
+ * @see org.apache.camel.model.ValidatorDefinition
  */
 public abstract class Validator extends ServiceSupport implements CamelContextAware {
 
