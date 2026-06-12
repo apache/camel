@@ -59,6 +59,12 @@ The default Key Cipher Algorithm is now
 that use RSA v1.5 as the key cipher algorithm will be rejected unless it
 has been explicitly configured as the key cipher algorithm.
 
+=== Data Cipher Algorithm
+
+The default data (payload) Cipher Algorithm is `XMLCipher.AES_256_GCM`.
+Usage of `XMLCipher.TRIPLEDES` (3DES) is discouraged as it is a legacy cipher; prefer an
+AES-GCM algorithm such as `XMLCipher.AES_256_GCM` (the default) or `XMLCipher.AES_128_GCM`.
+
 == Marshal
 
 To encrypt the payload, the `marshal` processor needs to be
@@ -95,7 +101,7 @@ from("direct:start")
 String tagXPATH = "//cheesesites/italy/cheese";
 boolean secureTagContent = true;
 ...
-String passPhrase = "Just another 24 Byte key";
+String passPhrase = "Just another 32 Byte key for AES";
 from("direct:start")
     .marshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase)
     .unmarshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase)
@@ -110,8 +116,8 @@ import org.apache.xml.security.encryption.XMLCipher;
 ....
 String tagXPATH = "//cheesesites/italy/cheese";
 boolean secureTagContent = true;
-String passPhrase = "Just another 24 Byte key";
-String algorithm= XMLCipher.TRIPLEDES;
+String passPhrase = "Just another 32 Byte key for AES";
+String algorithm = XMLCipher.AES_256_GCM;
 from("direct:start")
     .marshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase, algorithm)
     .unmarshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase, algorithm)
