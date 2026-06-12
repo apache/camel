@@ -101,6 +101,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "security",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
+    @Metadata(label = "security", defaultValue = "CLIENT", enums = "CLIENT,BUILTIN,BOTH",
+              description = "Controls how hostname verification is performed during the TLS handshake."
+                            + " CLIENT (default) delegates entirely to the configured x509HostnameVerifier, preserving the"
+                            + " behaviour of httpclient 5.5 and earlier — a NoopHostnameVerifier will disable verification."
+                            + " BUILTIN uses the JDK SSLParameters hostname check only, ignoring the configured verifier."
+                            + " BOTH runs the JDK built-in check first and then the configured verifier; a NoopHostnameVerifier"
+                            + " cannot bypass the built-in check under BUILTIN or BOTH."
+                            + " Prefer BOTH when no custom verifier semantics are needed for stronger out-of-the-box security.")
+    protected HostnameVerificationPolicy hostnameVerificationPolicy = HostnameVerificationPolicy.CLIENT;
     @Metadata(label = "advanced", defaultValue = "false",
               description = "To use System Properties as fallback for configuration for configuring HTTP Client")
     private boolean useSystemProperties;
@@ -539,13 +548,17 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         final HostnameVerifier resolvedHostnameVerifier
                 = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", HostnameVerifier.class);
         final HostnameVerifier hostnameVerifier = Optional.ofNullable(resolvedHostnameVerifier).orElse(x509HostnameVerifier);
+        final HostnameVerificationPolicy resolvedPolicy
+                = getAndRemoveParameter(parameters, "hostnameVerificationPolicy", HostnameVerificationPolicy.class,
+                        hostnameVerificationPolicy);
 
         // need to check the parameters of maxTotalConnections and connectionsPerRoute
         final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
         final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
         // do not remove as we set this later again
         final boolean sysProp = getParameter(parameters, "useSystemProperties", boolean.class, useSystemProperties);
-        final TlsSocketStrategy tlsStrategy = createTlsStrategy(hostnameVerifier, sslContextParameters, sysProp);
+        final TlsSocketStrategy tlsStrategy
+                = createTlsStrategy(hostnameVerifier, resolvedPolicy, sslContextParameters, sysProp);
 
         // allow the builder pattern
         httpConnectionOptions.putAll(PropertiesHelper.extractProperties(parameters, "httpConnection."));
@@ -603,20 +616,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     protected TlsSocketStrategy createTlsStrategy(
-            HostnameVerifier x509HostnameVerifier,
+            HostnameVerifier x509HostnameVerifier, HostnameVerificationPolicy hostnameVerificationPolicy,
             SSLContextParameters sslContextParams, boolean useSystemProperties)
             throws GeneralSecurityException, IOException {
         SSLContext sslContext = sslContextParams != null
                 ? sslContextParams.createSSLContext(getCamelContext())
                 : (useSystemProperties ? SSLContexts.createSystemDefault() : SSLContexts.createDefault());
-        // httpclient 5.6 changed DefaultClientTlsStrategy to use BOTH policy by default,
-        // which enables the JDK built-in hostname check via SSLParameters in addition to the
-        // custom verifier. Use CLIENT so only the configured verifier decides — this restores
-        // the 5.5.2 behavior where NoopHostnameVerifier actually disables verification.
         return ClientTlsStrategyBuilder.create()
                 .setSslContext(sslContext)
                 .setHostnameVerifier(x509HostnameVerifier)
-                .setHostVerificationPolicy(HostnameVerificationPolicy.CLIENT)
+                .setHostVerificationPolicy(hostnameVerificationPolicy)
                 .buildClassic();
     }
 
@@ -791,6 +800,19 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
+    }
+
+    public HostnameVerificationPolicy getHostnameVerificationPolicy() {
+        return hostnameVerificationPolicy;
+    }
+
+    /**
+     * Controls how hostname verification is performed during the TLS handshake. CLIENT (default) delegates entirely to
+     * the configured x509HostnameVerifier. BUILTIN uses only the JDK SSLParameters check. BOTH runs both; a
+     * NoopHostnameVerifier cannot bypass the built-in check under BUILTIN or BOTH.
+     */
+    public void setHostnameVerificationPolicy(HostnameVerificationPolicy hostnameVerificationPolicy) {
+        this.hostnameVerificationPolicy = hostnameVerificationPolicy;
     }
 
     public boolean isUseSystemProperties() {

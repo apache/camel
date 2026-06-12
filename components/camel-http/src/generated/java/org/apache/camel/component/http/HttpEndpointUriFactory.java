@@ -25,7 +25,7 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(68);
         props.add("authBearerToken");
         props.add("authDomain");
         props.add("authHost");
@@ -49,6 +49,7 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("followRedirects");
         props.add("getWithBody");
         props.add("headerFilterStrategy");
+        props.add("hostnameVerificationPolicy");
         props.add("httpActivityListener");
         props.add("httpClient");
         props.add("httpClientConfigurer");
