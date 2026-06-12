@@ -20,29 +20,36 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MainListenerTest {
 
     @Test
     public void testEventOrder() throws Exception {
         List<String> events = new ArrayList<>();
+        CountDownLatch started = new CountDownLatch(1);
         Main main = new Main();
         main.addMainListener((MainListener) Proxy.newProxyInstance(
                 MainListener.class.getClassLoader(),
                 new Class[] { MainListener.class },
                 (proxy, method, args) -> {
                     events.add(method.getName());
+                    if ("beforeInitialize".equals(method.getName())) {
+                        started.countDown();
+                    }
                     return null;
                 }));
         Thread thread = new Thread(() -> assertDoesNotThrow(() -> main.run()));
         thread.start();
-        Thread.sleep(100);
+        assertTrue(started.await(10, TimeUnit.SECONDS), "Main did not initialize within 10 seconds");
         main.completed();
         thread.join();
         assertEquals(Arrays.asList("beforeInitialize", "beforeConfigure", "afterConfigure",
