@@ -91,7 +91,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
             template.requestBody(endpoint, "test message");
         });
 
-        MockEndpoint.assertIsSatisfied(context);
+        mockExpiredAdvisory.assertIsSatisfied(10_000);
 
         assertEquals(0, service.countMessages(TEST_INOUT_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME);
@@ -104,7 +104,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
         String endpoint = String.format("sjms:queue:%s?timeToLive=1000", TEST_INONLY_DESTINATION_NAME);
         template.sendBody(endpoint, "test message");
 
-        MockEndpoint.assertIsSatisfied(context);
+        mockExpiredAdvisory.assertIsSatisfied(10_000);
 
         assertEquals(0, service.countMessages(TEST_INONLY_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME);
@@ -124,7 +124,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("sjms:topic:ExpiryQueue")
+                from("sjms:queue:ExpiryQueue")
                         .routeId(EXPIRED_MESSAGE_ROUTE_ID)
                         .log("Expired message")
                         .to(MOCK_EXPIRED_ADVISORY);
