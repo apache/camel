@@ -77,6 +77,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                             + "Camel may have to read the message content into memory to be able to convert the data into the "
                             + "configured charset, so do not use this if you have big messages.")
     protected String charset;
+    @UriParam(label = "advanced", defaultValue = "REPORT", enums = "REPORT,IGNORE,REPLACE",
+              description = "How to handle unmappable and malformed characters when reading or writing files with a charset. "
+                            + "REPORT (default) throws an exception on unmappable characters. "
+                            + "IGNORE silently drops unmappable characters. "
+                            + "REPLACE substitutes unmappable characters with the charset's replacement character.")
+    protected String charsetUnmappable = "REPORT";
     @UriParam(javaType = "java.lang.String", description = "Use Expression such as File Language to dynamically set "
                                                            + "the filename. For consumers, it's used as a filename filter. For producers, it's used to evaluate the "
                                                            + "filename to write. If an expression is set, it take precedence over the CamelFileName header. (Note: "
@@ -956,6 +962,19 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     public void setCharset(String charset) {
         IOHelper.validateCharset(charset);
         this.charset = charset;
+    }
+
+    public String getCharsetUnmappable() {
+        return charsetUnmappable;
+    }
+
+    /**
+     * How to handle unmappable and malformed characters when reading or writing files with a charset. REPORT (default)
+     * throws an exception on unmappable characters. IGNORE silently drops unmappable characters. REPLACE substitutes
+     * unmappable characters with the charset's replacement character.
+     */
+    public void setCharsetUnmappable(String charsetUnmappable) {
+        this.charsetUnmappable = charsetUnmappable;
     }
 
     protected boolean isIdempotentSet() {

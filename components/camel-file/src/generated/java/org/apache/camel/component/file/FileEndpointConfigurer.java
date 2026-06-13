@@ -50,6 +50,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "buffersize":
         case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
         case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
+        case "charsetunmappable":
+        case "charsetUnmappable": target.setCharsetUnmappable(property(camelContext, java.lang.String.class, value)); return true;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "checksumwritefile":
@@ -240,6 +242,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "buffersize":
         case "bufferSize": return int.class;
         case "charset": return java.lang.String.class;
+        case "charsetunmappable":
+        case "charsetUnmappable": return java.lang.String.class;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return java.lang.String.class;
         case "checksumwritefile":
@@ -431,6 +435,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "buffersize":
         case "bufferSize": return target.getBufferSize();
         case "charset": return target.getCharset();
+        case "charsetunmappable":
+        case "charsetUnmappable": return target.getCharsetUnmappable();
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
         case "checksumwritefile":

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
+import java.nio.charset.CodingErrorAction;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -123,7 +124,8 @@ public final class GenericFileConverter {
                 } else {
                     LOG.debug("Read file {} (no charset)", f);
                 }
-                InputStream inputStream = IOHelper.toInputStream(f, charset);
+                CodingErrorAction onError = IOHelper.toCodingErrorAction(file.getCharsetUnmappable());
+                InputStream inputStream = IOHelper.toInputStream(f, charset, onError);
                 inputStream.skip(file.getLastOffsetValue());
 
                 return inputStream;
@@ -193,13 +195,14 @@ public final class GenericFileConverter {
             // and use the charset if the file was explicit configured with a
             // charset
             String charset = file.getCharset();
+            CodingErrorAction onError = IOHelper.toCodingErrorAction(file.getCharsetUnmappable());
             Reader reader;
             if (charset != null) {
                 LOG.debug("Read file {} with charset {}", f, file.getCharset());
-                reader = IOHelper.toReader(f, charset);
+                reader = IOHelper.toReader(f, charset, onError);
             } else {
                 LOG.debug("Read file {} (no charset)", f);
-                reader = IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange));
+                reader = IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange), onError);
             }
 
             reader.skip(file.getLastOffsetValue());

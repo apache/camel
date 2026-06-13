@@ -113,7 +113,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
             // creates a generic file
             Supplier<GenericFile<File>> gf = Suppliers.memorize(
-                    () -> asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType()));
+                    () -> asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().getCharsetUnmappable(),
+                            getEndpoint().isProbeContentType()));
 
             if (resumeStrategy != null) {
                 final ResumeAdapter adapter = setupResumeStrategy(gf.get());
@@ -284,12 +285,14 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
      * @param  probeContentType whether to probe the content type of the file or not
      * @return                  wrapped as a GenericFile
      */
-    public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset, boolean probeContentType) {
+    public static GenericFile<File> asGenericFile(
+            String endpointPath, File file, String charset, String charsetUnmappable, boolean probeContentType) {
         GenericFile<File> answer = new GenericFile<>(probeContentType);
         // use file specific binding
         answer.setBinding(new FileBinding());
 
         answer.setCharset(charset);
+        answer.setCharsetUnmappable(charsetUnmappable);
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());

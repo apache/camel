@@ -24,7 +24,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(101);
+        Set<String> props = new HashSet<>(102);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -39,6 +39,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("browseLimit");
         props.add("bufferSize");
         props.add("charset");
+        props.add("charsetUnmappable");
         props.add("checksumFileAlgorithm");
         props.add("checksumWriteFile");
         props.add("chmod");

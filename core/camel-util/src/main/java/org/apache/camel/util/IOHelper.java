@@ -39,6 +39,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -733,8 +735,12 @@ public final class IOHelper {
         private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
 
         public EncodingInputStream(Path file, String charset) throws IOException {
+            this(file, charset, null);
+        }
+
+        public EncodingInputStream(Path file, String charset, CodingErrorAction onError) throws IOException {
             this.file = file;
-            reader = toReader(file, charset);
+            reader = toReader(file, charset, onError);
             defaultStreamCharset = defaultCharset.get();
         }
 
@@ -850,7 +856,11 @@ public final class IOHelper {
      * @return         the input stream with the JVM default charset
      */
     public static InputStream toInputStream(File file, String charset) throws IOException {
-        return toInputStream(file.toPath(), charset);
+        return toInputStream(file.toPath(), charset, null);
+    }
+
+    public static InputStream toInputStream(File file, String charset, CodingErrorAction onError) throws IOException {
+        return toInputStream(file.toPath(), charset, onError);
     }
 
     /**
@@ -861,31 +871,72 @@ public final class IOHelper {
      * @return         the input stream with the JVM default charset
      */
     public static InputStream toInputStream(Path file, String charset) throws IOException {
+        return toInputStream(file, charset, null);
+    }
+
+    public static InputStream toInputStream(Path file, String charset, CodingErrorAction onError) throws IOException {
         if (charset != null) {
-            return new EncodingInputStream(file, charset);
+            return new EncodingInputStream(file, charset, onError);
         } else {
             return buffered(Files.newInputStream(file));
         }
     }
 
     public static BufferedReader toReader(Path file, String charset) throws IOException {
-        return toReader(file, charset != null ? Charset.forName(charset) : null);
+        return toReader(file, charset, null);
+    }
+
+    public static BufferedReader toReader(Path file, String charset, CodingErrorAction onError) throws IOException {
+        return toReader(file, charset != null ? Charset.forName(charset) : null, onError);
     }
 
     public static BufferedReader toReader(File file, String charset) throws IOException {
-        return toReader(file, charset != null ? Charset.forName(charset) : null);
+        return toReader(file, charset, null);
+    }
+
+    public static BufferedReader toReader(File file, String charset, CodingErrorAction onError) throws IOException {
+        return toReader(file, charset != null ? Charset.forName(charset) : null, onError);
     }
 
     public static BufferedReader toReader(File file, Charset charset) throws IOException {
-        return toReader(file.toPath(), charset);
+        return toReader(file.toPath(), charset, null);
+    }
+
+    public static BufferedReader toReader(File file, Charset charset, CodingErrorAction onError) throws IOException {
+        return toReader(file.toPath(), charset, onError);
     }
 
     public static BufferedReader toReader(Path file, Charset charset) throws IOException {
+        return toReader(file, charset, null);
+    }
+
+    public static BufferedReader toReader(Path file, Charset charset, CodingErrorAction onError) throws IOException {
         if (charset != null) {
+            if (onError != null) {
+                CharsetDecoder decoder = charset.newDecoder()
+                        .onUnmappableCharacter(onError)
+                        .onMalformedInput(onError);
+                return new BufferedReader(new InputStreamReader(Files.newInputStream(file), decoder));
+            }
             return Files.newBufferedReader(file, charset);
         } else {
             return Files.newBufferedReader(file);
         }
+    }
+
+    /**
+     * Converts the charsetUnmappable string option (REPORT, IGNORE, REPLACE) to a {@link CodingErrorAction}. Returns
+     * {@code null} when the value is {@code null} or {@code "REPORT"} (the default Java behavior).
+     */
+    public static CodingErrorAction toCodingErrorAction(String charsetUnmappable) {
+        if (charsetUnmappable == null) {
+            return null;
+        }
+        return switch (charsetUnmappable.toUpperCase()) {
+            case "IGNORE" -> CodingErrorAction.IGNORE;
+            case "REPLACE" -> CodingErrorAction.REPLACE;
+            default -> null; // REPORT = default JVM behavior, no decoder customization needed
+        };
     }
 
     public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {

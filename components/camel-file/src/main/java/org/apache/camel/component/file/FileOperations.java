@@ -29,6 +29,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
@@ -560,8 +562,22 @@ public class FileOperations implements GenericFileOperations<File> {
 
     private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-        try (Writer out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), StandardOpenOption.WRITE,
-                append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+        CodingErrorAction onError = IOHelper.toCodingErrorAction(endpoint.getCharsetUnmappable());
+        Writer out;
+        if (onError != null) {
+            CharsetEncoder encoder = Charset.forName(charset).newEncoder()
+                    .onUnmappableCharacter(onError)
+                    .onMalformedInput(onError);
+            out = new java.io.OutputStreamWriter(
+                    Files.newOutputStream(target.toPath(), StandardOpenOption.WRITE,
+                            append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING,
+                            StandardOpenOption.CREATE),
+                    encoder);
+        } else {
+            out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), StandardOpenOption.WRITE,
+                    append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        }
+        try (out) {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);

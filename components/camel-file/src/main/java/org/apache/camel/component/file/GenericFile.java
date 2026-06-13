@@ -57,6 +57,7 @@ public class GenericFile<T> implements WrappedFile<T> {
     private boolean absolute;
     private boolean directory;
     private String charset;
+    private String charsetUnmappable;
     private Map<String, Object> extendedAttributes;
 
     public GenericFile() {
@@ -345,6 +346,14 @@ public class GenericFile<T> implements WrappedFile<T> {
 
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public String getCharsetUnmappable() {
+        return charsetUnmappable;
+    }
+
+    public void setCharsetUnmappable(String charsetUnmappable) {
+        this.charsetUnmappable = charsetUnmappable;
     }
 
     public Map<String, Object> getExtendedAttributes() {

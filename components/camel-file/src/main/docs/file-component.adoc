@@ -208,6 +208,33 @@ from("file:inbox?charset=utf-8")
   .to("file:outbox?charset=iso-8859-1")
 ----
 
+==== Handling unmappable characters
+
+When reading or writing files that contain characters that cannot be
+mapped in the configured charset, Camel throws an
+`UnmappableCharacterException` by default. You can control this
+behavior with the `charsetUnmappable` option:
+
+* `REPORT` (default) — throws an exception when an unmappable character is encountered.
+* `IGNORE` — silently drops unmappable characters.
+* `REPLACE` — substitutes unmappable characters with the charset's replacement character (typically `?`).
+
+For example, to silently ignore unmappable characters when reading files:
+
+[source,java]
+----
+from("file:inbox?charset=iso-8859-1&charsetUnmappable=IGNORE")
+  .to("mock:result");
+----
+
+Or to replace them with a substitution character when writing:
+
+[source,java]
+----
+from("file:inbox?charset=utf-8")
+  .to("file:outbox?charset=iso-8859-1&charsetUnmappable=REPLACE");
+----
+
 You can also use the `convertBodyTo` in the route. In the example below,
 we have still input files in utf-8 format, but we want to convert the
 file content to a byte array in iso-8859-1 format. And then let a bean
