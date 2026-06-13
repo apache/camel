@@ -497,6 +497,42 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
+=== camel-bindy
+
+Bindy can now keep going when an individual field fails to parse, instead of aborting the whole
+unmarshal. Two new opt-in annotation elements drive this:
+
+* `continueParseOnFailure` on `@CsvRecord`, `@FixedLengthRecord`, and `@Message` (record-level boolean,
+  default `false`). When `true`, every field on the record tolerates parse failures by default.
+* `continueParseOnFailure` on `@DataField` and `@KeyValuePairField` (field-level tri-state of type
+  `ContinueOnFailure`, default `INHERIT`). `TRUE` and `FALSE` override the record-level setting
+  for that one field; `INHERIT` defers to the record.
+
+When a parse fails and the field is tolerant, Bindy substitutes the field's existing `@DataField.defaultValue`
+(if set) by running it through the same `Format` instance — so the substitute is automatically the
+right Java type. If no `defaultValue` is set, the field gets the same fallback an unfilled field would
+get today: `null` for object types, and the primitive's `MIN_VALUE` sentinel (the existing
+`getDefaultValueForPrimitive` convention) for `int`, `long`, etc. `boolean` falls back to `false` and
+`String` to `""` (or `null` if `defaultValueStringAsNull` is enabled on the DataFormat).
+
+Everything is opt-in; default behavior is unchanged. `@KeyValuePairField` does not have a `defaultValue`
+element today, so KVP fields can only fall back to the type-appropriate default.
+
+[source,java]
+----
+@CsvRecord(separator = ",", continueParseOnFailure = true)
+public class Order {
+    @DataField(pos = 1)
+    private int id;
+
+    @DataField(pos = 2, pattern = "yyyy-MM-dd", defaultValue = "1970-01-01")
+    private Date orderDate;     // bad input -> 1970-01-01 instead of throwing
+
+    @DataField(pos = 3, continueParseOnFailure = ContinueOnFailure.FALSE)
+    private BigDecimal amount;  // this one field stays strict
+}
+----
+
 === camel-keycloak
 
 The `KeycloakSecurityPolicy` route policy now always verifies the access token when one is present - signature,
