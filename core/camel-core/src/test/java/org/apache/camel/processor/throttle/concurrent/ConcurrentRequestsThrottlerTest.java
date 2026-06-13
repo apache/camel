@@ -213,17 +213,12 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                             assertTrue(s.tryAcquire(), "'direct:expressionConstant' too many requests");
                             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
-                                public void onComplete(Exchange ex) {
-                                    s.release();
-                                }
-
+                            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
-                                public void onFailure(Exchange ex) {
+                                public void onDone(Exchange ex) {
                                     s.release();
                                 }
                             });
-                        })
-                        .delay(100)
                         .to("log:result", "mock:result");
 
                 from("direct:expressionHeader").throttle(header("throttleValue")).concurrentRequestsMode()
