@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Service;
 
@@ -37,6 +39,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -117,9 +120,11 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
         icp.setCalled(false);
         greeter.greetMeOneWay("call greetMe OneWay !");
         assertFalse(icp.isCalled(), "An unnecessary inbound message");
-        // wait a few seconds for the async oneway service to be invoked
-        Thread.sleep(3000);
-        assertEquals(++ic, implementor.getInvocationCount(), "The target service not invoked");
+        // wait for the async oneway service to be invoked
+        final int expectedCount = ++ic;
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(expectedCount, implementor.getInvocationCount(),
+                        "The target service not invoked"));
     }
 
     static class VerifyInboundInterceptor extends AbstractPhaseInterceptor<Message> {
