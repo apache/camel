@@ -78,6 +78,11 @@
             <artifactId>tamboui-markdown</artifactId>
             <version>${tamboui-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit6</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
