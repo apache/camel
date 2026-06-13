@@ -6,7 +6,7 @@
 [![Chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://camel.zulipchat.com/)
 [![Twitter](https://img.shields.io/twitter/follow/ApacheCamel.svg?label=Follow&style=social)](https://twitter.com/ApacheCamel)
 
-[Apache Camel](https://camel.apache.org/) is an open source integration framework with 300+ connectors for databases, APIs, message brokers, and cloud services. Write routes in Java, YAML, or XML. Run on [Spring Boot](https://camel.apache.org/camel-spring-boot/latest/), [Quarkus](https://camel.apache.org/camel-quarkus/latest/), or standalone with the [Camel CLI](https://camel.apache.org/manual/camel-jbang.html). In production since 2007 — used by thousands of companies worldwide. Apache License 2.0.
+[Apache Camel](https://camel.apache.org/) is an open source integration framework with 350+ connectors for databases, APIs, message brokers, and cloud services. Write routes in Java, YAML, or XML. Run on [Spring Boot](https://camel.apache.org/camel-spring-boot/latest/), [Quarkus](https://camel.apache.org/camel-quarkus/latest/), or standalone with the [Camel CLI](https://camel.apache.org/manual/camel-jbang.html). In production since 2007 — used by thousands of companies worldwide. Apache License 2.0.
 
 [What is Apache Camel?](https://camel.apache.org/what-is-apache-camel/) | [Getting Started](https://camel.apache.org/manual/getting-started.html) | [Components](https://camel.apache.org/components/latest/) | [Tooling](https://camel.apache.org/tooling/)
 
@@ -53,7 +53,7 @@ from("kafka:incoming-orders")
 
 | Runtime | What it does |
 |---------|-------------|
-| **[Camel Spring Boot](https://camel.apache.org/camel-spring-boot/latest/)** | Camel on Spring Boot with starters for 300+ connectors |
+| **[Camel Spring Boot](https://camel.apache.org/camel-spring-boot/latest/)** | Camel on Spring Boot with starters for 350+ connectors |
 | **[Camel Quarkus](https://camel.apache.org/camel-quarkus/latest/)** | Cloud-native Camel with fast startup, low memory, native compilation |
 | **[Camel CLI](https://camel.apache.org/manual/camel-jbang.html)** | Run, develop, test, and trace routes from the command line |
 
@@ -61,7 +61,7 @@ Other runtimes: [Camel K](https://camel.apache.org/camel-k/latest/) (Kubernetes)
 
 ## Components
 
-300+ connectors for connecting to anything — Kafka, REST, JDBC, AWS, Azure, GCP, Salesforce, and more:
+350+ connectors for connecting to anything — Kafka, REST, JDBC, AWS, Azure, GCP, Salesforce, and more:
 
 * [Components](https://camel.apache.org/components/latest/)
 * [Enterprise Integration Patterns (EIPs)](https://camel.apache.org/components/latest/eips/enterprise-integration-patterns.html)
