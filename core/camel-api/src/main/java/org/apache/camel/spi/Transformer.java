@@ -26,12 +26,21 @@ import org.apache.camel.util.ObjectHelper;
 import org.jspecify.annotations.Nullable;
 
 /**
- * <a href="https://camel.apache.org/transformer.html">Transformer</a> performs message transformation according to the
- * declared data type. {@link org.apache.camel.processor.ContractAdvice} looks for a required Transformer and apply if
- * input/output type declared on a route is different from current message type.
+ * Performs message body transformation between two {@link DataType}s as part of Camel's
+ * <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> contract mechanism.
+ * <p/>
+ * When a route declares an {@code inputType} or {@code outputType}, Camel's
+ * {@link org.apache.camel.processor.ContractAdvice} inspects the current message's {@link DataType} and looks up a
+ * matching {@code Transformer} in the {@link TransformerRegistry}. If the current type differs from the declared type,
+ * the transformer's {@link #transform(org.apache.camel.Message, DataType, DataType)} method is called automatically,
+ * without requiring the route developer to add an explicit conversion step.
+ * <p/>
+ * Transformers can be registered by annotating a subclass with {@link DataTypeTransformer} (the annotation drives
+ * automatic registration) or manually via {@link org.apache.camel.CamelContext#getTransformerRegistry()}.
  *
- * @see {@link org.apache.camel.processor.ContractAdvice} {@link DataType}
- *      {@link org.apache.camel.model.InputTypeDefinition} {@link org.apache.camel.model.OutputTypeDefinition}
+ * @see DataTypeTransformer
+ * @see TransformerRegistry
+ * @see DataType
  */
 public abstract class Transformer extends ServiceSupport implements CamelContextAware {
 

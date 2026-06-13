@@ -22,19 +22,23 @@ import org.apache.camel.StaticService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Registry to cache transformers in memory.
+ * Registry that stores and resolves {@link Transformer} instances for Camel's
+ * <a href="https://camel.apache.org/manual/transformer.html">data type contract</a> mechanism.
  * <p/>
- * The registry contains two caches:
+ * The registry maintains two separate caches to balance memory usage and lookup performance:
  * <ul>
- * <li>static - which keeps all the transformers in the cache for the entire lifecycle</li>
- * <li>dynamic - which keeps the transformers in a {@link org.apache.camel.support.LRUCache} and may evict transformers
- * which hasn't been requested recently</li>
+ * <li><b>static cache</b> — holds all transformers registered at route startup; no eviction, no size limit. Contains
+ * every transformer bound to a {@link DataType} pair when the {@link org.apache.camel.CamelContext} starts.</li>
+ * <li><b>dynamic cache</b> — holds transformers created or registered at runtime (for example, from custom Java code or
+ * hot-deployed routes); backed by an LRU cache with a configurable size limit (default 1000 entries) to prevent
+ * unbounded growth.</li>
  * </ul>
- * The static cache stores all the transformers that are created as part of setting up and starting routes. The static
- * cache has no upper limit.
- * <p/>
- * The dynamic cache stores the transformers that are created and used ad-hoc, such as from custom Java code that
- * creates new transformers etc. The dynamic cache has an upper limit, that by default is 1000 entries.
+ * Lookup is performed by {@link #resolveTransformer(TransformerKey)}, which searches both caches using the from/to
+ * {@link DataType} pair encoded in the {@link TransformerKey}.
+ *
+ * @see Transformer
+ * @see TransformerKey
+ * @see DataType
  */
 public interface TransformerRegistry extends Map<TransformerKey, Transformer>, StaticService {
 

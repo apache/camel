@@ -19,8 +19,17 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 
 /**
- * A plugin used to turn an {@link Exchange} into a String representation usually to be used for logging or tracing
- * purposes.
+ * Strategy for rendering an {@link Exchange} as a human-readable {@link String}, used primarily for logging and tracing
+ * output.
+ * <p/>
+ * Camel's built-in logging processor, the {@link BacklogTracer}, and the log component all delegate to an
+ * {@code ExchangeFormatter} to produce the text that appears in log lines. The default implementation
+ * ({@code DefaultExchangeFormatter} in {@code camel-support}) provides options to include/exclude headers, body
+ * content, and exchange properties, as well as to truncate large payloads. Callers can register a custom
+ * {@code ExchangeFormatter} bean in the registry to override the default rendering globally.
+ * <p/>
+ * Implementations must be thread-safe: a single instance is typically shared across all threads that process exchanges
+ * on a route.
  */
 public interface ExchangeFormatter {
 

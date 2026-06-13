@@ -22,19 +22,23 @@ import org.apache.camel.StaticService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Registry to cache validators in memory.
+ * Registry that stores and resolves {@link Validator} instances for Camel's
+ * <a href="https://camel.apache.org/manual/transformer.html">data type validation</a> mechanism.
  * <p/>
- * The registry contains two caches:
+ * The registry maintains two separate caches mirroring the design of {@link TransformerRegistry}:
  * <ul>
- * <li>static - which keeps all the validators in the cache for the entire lifecycle</li>
- * <li>dynamic - which keeps the validators in a {@link org.apache.camel.support.LRUCache} and may evict validators
- * which hasn't been requested recently</li>
+ * <li><b>static cache</b> — holds all validators registered at route startup; no eviction, no size limit. Contains
+ * every validator bound to a {@link DataType} when the {@link org.apache.camel.CamelContext} starts.</li>
+ * <li><b>dynamic cache</b> — holds validators created or registered at runtime (for example, from custom Java code or
+ * hot-deployed routes); backed by an LRU cache with a configurable size limit (default 1000 entries) to prevent
+ * unbounded growth.</li>
  * </ul>
- * The static cache stores all the validators that are created as part of setting up and starting routes. The static
- * cache has no upper limit.
- * <p/>
- * The dynamic cache stores the validators that are created and used ad-hoc, such as from custom Java code that creates
- * new validators etc. The dynamic cache has an upper limit, that by default is 1000 entries.
+ * Lookup is performed by {@link #resolveValidator(ValidatorKey)}, which searches both caches using the {@link DataType}
+ * encoded in the {@link ValidatorKey}.
+ *
+ * @see Validator
+ * @see ValidatorKey
+ * @see DataType
  */
 public interface ValidatorRegistry extends Map<ValidatorKey, Validator>, StaticService {
 
