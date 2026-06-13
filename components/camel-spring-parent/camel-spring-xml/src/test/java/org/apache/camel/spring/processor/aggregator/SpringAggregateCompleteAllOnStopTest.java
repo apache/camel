@@ -16,10 +16,13 @@
  */
 package org.apache.camel.spring.processor.aggregator;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.aggregator.AggregateCompleteAllOnStopTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.awaitility.Awaitility.await;
 
 public class SpringAggregateCompleteAllOnStopTest extends AggregateCompleteAllOnStopTest {
 
@@ -27,6 +30,18 @@ public class SpringAggregateCompleteAllOnStopTest extends AggregateCompleteAllOn
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/aggregator/SpringAggregateCompleteAllOnStopTest.xml");
+    }
+
+    @Override
+    protected void awaitLastMessageInAggregator() throws Exception {
+        // The Spring route uses its own internal MemoryAggregationRepository — the Java
+        // test's repo field is not wired here. By the time input.assertIsSatisfied() has
+        // returned (C passed mock:input) and mock:aggregated has received A+B, the single-
+        // threaded seda consumer is processing C between mock:input and the aggregator.
+        // stopRoute's graceful shutdown (DefaultShutdownStrategy) tracks in-flight exchanges
+        // and blocks until C completes, so completeAllOnStop will then flush C correctly.
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> getMockEndpoint("mock:aggregated").getReceivedCounter() >= 1);
     }
 
 }

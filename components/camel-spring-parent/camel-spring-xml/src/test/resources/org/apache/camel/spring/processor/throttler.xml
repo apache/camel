@@ -25,7 +25,6 @@
     ">
   <bean id="runtimeExceptionProcessor" class="org.apache.camel.spring.processor.SpringThrottlerTest$RuntimeExceptionProcessor"/>
   <bean id="incrementProcessor" class="org.apache.camel.spring.processor.SpringThrottlerTest$IncrementProcessor"/>
-  <bean id="decrementProcessor" class="org.apache.camel.spring.processor.SpringThrottlerTest$DecrementProcessor"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>
@@ -48,7 +47,7 @@
       <delay>
         <constant>100</constant>
       </delay>
-      <process ref="decrementProcessor"/>
+
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>
@@ -62,7 +61,7 @@
       <delay>
         <constant>100</constant>
       </delay>
-      <process ref="decrementProcessor"/>
+
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>
@@ -78,7 +77,7 @@
       <delay>
         <constant>100</constant>
       </delay>
-      <process ref="decrementProcessor"/>
+
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>

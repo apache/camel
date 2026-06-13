@@ -26,11 +26,11 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <jmxAgent id="jmx" disabled="true"/>
+        <jmxAgent id="jmx" disabled="true"/>
         <route id="foo">
             <from uri="seda:start"/>
             <to uri="mock:input"/>
-            <aggregate aggregationStrategy="aggregatorStrategy" completionSize="2" completionTimeout="100"
+            <aggregate aggregationStrategy="aggregatorStrategy" completionSize="2" completionTimeout="5000"
                        completionTimeoutCheckerInterval="10" completeAllOnStop="true">
                 <correlationExpression>
                     <simple>header.id</simple>
