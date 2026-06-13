@@ -578,7 +578,9 @@ public class MailBinding {
                     }
 
                     if (headerName.equalsIgnoreCase(MailConstants.MAIL_REPLY_TO)) {
-                        // skip Reply-To as it is handled specially
+                        if (configuration.isUseHeaderReplyTo()) {
+                            mimeMessage.setHeader(StringHelper.removeCRLF(headerName), asString(exchange, headerValue));
+                        }
                         continue;
                     }
 
