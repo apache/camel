@@ -114,14 +114,14 @@ public class MailConfiguration implements Cloneable {
     private boolean ignoreUnsupportedCharset;
     @UriParam(label = "producer,advanced,security", security = "insecure:ssl")
     private boolean useJavaMailSessionPropertiesFromHeaders;
-    @UriParam(defaultValue = "true", label = "producer")
-    private boolean useHeaderRecipients = true;
-    @UriParam(defaultValue = "true", label = "producer")
-    private boolean useHeaderFrom = true;
-    @UriParam(defaultValue = "true", label = "producer")
-    private boolean useHeaderSubject = true;
-    @UriParam(defaultValue = "true", label = "producer")
-    private boolean useHeaderReplyTo = true;
+    @UriParam(defaultValue = "false", label = "producer,security")
+    private boolean useHeaderRecipients;
+    @UriParam(defaultValue = "false", label = "producer,security")
+    private boolean useHeaderFrom;
+    @UriParam(defaultValue = "false", label = "producer,security")
+    private boolean useHeaderSubject;
+    @UriParam(defaultValue = "false", label = "producer,security")
+    private boolean useHeaderReplyTo;
     @UriParam
     @Metadata(label = "consumer")
     private boolean disconnect;

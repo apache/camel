@@ -48,7 +48,9 @@ public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
         map.put("Subject", "Camel rocks");
 
         String body = "Hello Riders.\nYes it does.\n\nRegards James.";
-        template.sendBodyAndHeaders(claus.uriPrefix(Protocol.smtp), body, map);
+        template.sendBodyAndHeaders(
+                claus.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true", body,
+                map);
         // END SNIPPET: e1
 
         Mailbox box = claus.getInbox();

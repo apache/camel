@@ -1877,18 +1877,35 @@ As a consequence, the generated Endpoint DSL header accessors on
 `MailHeaderNameBuilder` have been renamed: `copyTo()` -> `mailCopyTo()`,
 `moveTo()` -> `mailMoveTo()`, and `delete()` -> `mailDelete()`.
 
-**Header Override Options (Hardening)**
+**Header Override Options — secure by default (breaking change)**
 
-Added new configuration options to `camel-mail` to provide finer control over message header overrides for security and hardening purposes. 
+The `useHeaderRecipients`, `useHeaderFrom`, `useHeaderSubject`, and `useHeaderReplyTo` options
+introduced in CAMEL-23520 now default to `false`. Previously they defaulted to `true`, which
+allowed untrusted exchange headers to override the endpoint URI's pre-configured `To`, `From`,
+`Subject`, and `Reply-To` values. This was the same injection pattern addressed in
+CVE-2025-27636 and CAMEL-23522 (`useJavaMailSessionPropertiesFromHeaders`).
 
-The following options have been added to the mail endpoint:
+With the new defaults, the endpoint URI configuration always wins. Routes that set recipient or
+sender headers intentionally (for example via `.setHeader("To", ...)` in the route DSL) must
+now opt in explicitly:
 
-* `useHeaderRecipients`
-* `useHeaderFrom`
-* `useHeaderSubject`
-* `useHeaderReplyTo`
+[source,text]
+----
+smtp://mailserver?to=default@example.com&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true
+----
 
-These options default to `true` to maintain backward compatibility. Users who wish to prevent exchange headers from overriding pre-configured endpoint URI values can now set these to `false` to secure their routes against unintended header injection.
+Or globally for all mail endpoints, add to `application.properties`:
+
+[source,properties]
+----
+camel.component.smtp.useHeaderRecipients=true
+camel.component.smtp.useHeaderFrom=true
+camel.component.smtp.useHeaderSubject=true
+camel.component.smtp.useHeaderReplyTo=true
+----
+
+Routes that do not set these headers explicitly, or that consume from an untrusted upstream
+(such as an HTTP consumer), are now secure by default without any configuration change.
 
 === camel-milo - potential breaking change
 

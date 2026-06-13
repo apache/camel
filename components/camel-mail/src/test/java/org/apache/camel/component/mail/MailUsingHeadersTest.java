@@ -49,7 +49,9 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         map.put("CamelTest", "value");
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
-        template.sendBodyAndHeaders(davsclaus.uriPrefix(Protocol.smtp), body, map);
+        template.sendBodyAndHeaders(
+                davsclaus.uriPrefix(Protocol.smtp) + "&useHeaderRecipients=true&useHeaderFrom=true&useHeaderSubject=true", body,
+                map);
         // END SNIPPET: e1
 
         Mailbox box = davsclaus.getInbox();
@@ -71,7 +73,9 @@ public class MailUsingHeadersTest extends CamelTestSupport {
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
         template.sendBodyAndHeaders(
-                davsclaus.uriPrefix(Protocol.smtp) + "&from=James Strachan <jstrachan@apache.org>&to=davsclaus@localhost", body,
+                davsclaus.uriPrefix(Protocol.smtp)
+                                    + "&from=James Strachan <jstrachan@apache.org>&to=davsclaus@localhost&useHeaderSubject=true",
+                body,
                 map);
 
         Mailbox box = davsclaus.getInbox();
