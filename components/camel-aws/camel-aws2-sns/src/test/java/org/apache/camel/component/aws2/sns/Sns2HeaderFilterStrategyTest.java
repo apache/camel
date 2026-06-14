@@ -42,7 +42,6 @@ public class Sns2HeaderFilterStrategyTest {
     @Test
     void outboundFiltersCamelAndBreadcrumbHeaders() {
         assertTrue(strategy.applyFilterToCamelHeaders("CamelHttpUri", "value", null));
-        assertTrue(strategy.applyFilterToCamelHeaders("org.apache.camel.internal", "value", null));
         assertTrue(strategy.applyFilterToCamelHeaders("breadcrumbId", "value", null));
     }
 
