@@ -46,6 +46,7 @@ import org.apache.camel.dsl.jbang.core.commands.infra.InfraGet;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraList;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraLog;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraPs;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraRestart;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraRun;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraStop;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
@@ -187,6 +188,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("list", new CommandLine(new InfraList(this)))
                         .addSubcommand("log", new CommandLine(new InfraLog(this)))
                         .addSubcommand("ps", new CommandLine(new InfraPs(this)))
+                        .addSubcommand("restart", new CommandLine(new InfraRestart(this)))
                         .addSubcommand("run", new CommandLine(new InfraRun(this)))
                         .addSubcommand("stop", new CommandLine(new InfraStop(this))))
                 .addSubcommand("init", new CommandLine(new Init(this)))
