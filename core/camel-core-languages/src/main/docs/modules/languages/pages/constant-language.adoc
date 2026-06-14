@@ -33,6 +33,20 @@ include::partial$language-options.adoc[]
 The `setHeader` EIP can utilize a constant
 expression like:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("seda:a")
+  .setHeader("theHeader", constant("the value"))
+  .to("mock:b");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -44,18 +58,27 @@ expression like:
 </route>
 ----
 
-in this case, the message coming from the seda:a
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - setHeader:
+            name: theHeader
+            expression:
+              constant:
+                expression: the value
+        - to:
+            uri: mock:b
+----
+====
+
+In this case, the message coming from the seda:a
 endpoint will have the header with key `theHeader`
 set its value as `the value` (string type).
-
-And the same example using Java DSL:
-
-[source,java]
-----
-from("seda:a")
-  .setHeader("theHeader", constant("the value"))
-  .to("mock:b");
-----
 
 === Specifying type of value
 
@@ -64,6 +87,11 @@ as a `String` value, which happens when using XML or YAML DSL:
 
 For example to set a header with `int` type you can do:
 
+[tabs]
+====
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -74,6 +102,25 @@ For example to set a header with `int` type you can do:
   <to uri="mock:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - setHeader:
+            name: zipCode
+            expression:
+              constant:
+                resultType: int
+                expression: "90210"
+        - to:
+            uri: mock:b
+----
+====
 
 
 == Loading constant from external resource

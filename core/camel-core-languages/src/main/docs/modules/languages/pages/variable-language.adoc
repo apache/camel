@@ -25,6 +25,18 @@ include::partial$language-options.adoc[]
 
 The `recipientList` EIP can utilize a variable:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:a").recipientList(variable("myVar"));
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -35,15 +47,23 @@ The `recipientList` EIP can utilize a variable:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - recipientList:
+            expression:
+              variable:
+                expression: myVar
+----
+====
+
 In this case, the list of recipients are contained in the variable
 'myVar'.
-
-And the same example in Java DSL:
-
-[source,java]
-----
-from("direct:a").recipientList(variable("myVar"));
-----
 
 == Dependencies
 
