@@ -42,7 +42,7 @@ public class CamelDirectSender implements WebServiceMessageSender {
     }
 
     @Override
-    public boolean supports(URI uri) {
+    public boolean supports(URI uri, UriSource uriSource) {
         try {
             new CamelDirectConnection(camelContext, uri);
             return true;

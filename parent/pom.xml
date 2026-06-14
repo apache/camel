@@ -88,12 +88,12 @@
         <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
         <bytebuddy-version>1.17.8</bytebuddy-version>
         <c3p0-version>0.12.0</c3p0-version>
-        <caffeine-version>3.2.3</caffeine-version>
+        <caffeine-version>3.2.4</caffeine-version>
         <californium-version>3.14.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
         <camel-lsp-version>1.34.0</camel-lsp-version>
         <camunda-version>7.23.0</camunda-version>
-        <cassandra-driver-version>4.19.2</cassandra-driver-version>
+        <cassandra-driver-version>4.19.3</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
         <chicory-version>1.5.1</chicory-version>
@@ -179,14 +179,14 @@
         <jakarta-jms-api-version>3.1.0</jakarta-jms-api-version>
         <jakarta-persistence-api-version>3.2.0</jakarta-persistence-api-version>
         <jakarta-json-api-version>2.1.3</jakarta-json-api-version>
-        <jakarta-json-bind-api-version>3.0.1</jakarta-json-bind-api-version>
+        <jakarta-json-bind-api-version>3.0.2</jakarta-json-bind-api-version>
         <jakarta-transaction-api-version>2.0.1</jakarta-transaction-api-version>
         <jakarta-jws-api-version>3.0.0</jakarta-jws-api-version>
-        <jaxb-core-version>4.0.5</jaxb-core-version>
-        <jaxb-impl-version>4.0.5</jaxb-impl-version>
-        <jaxb-osgi-version>4.0.5</jaxb-osgi-version>
-        <jaxb-xjc-version>4.0.5</jaxb-xjc-version>
-        <jaxb-jxc-version>4.0.5</jaxb-jxc-version>
+        <jaxb-core-version>4.0.9</jaxb-core-version>
+        <jaxb-impl-version>4.0.9</jaxb-impl-version>
+        <jaxb-osgi-version>4.0.9</jaxb-osgi-version>
+        <jaxb-xjc-version>4.0.9</jaxb-xjc-version>
+        <jaxb-jxc-version>4.0.9</jaxb-jxc-version>
         <gmavenplus-plugin-version>4.2.1</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.39.1</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.8.1</google-api-client-version>
@@ -207,7 +207,7 @@
         <graphql-java-version>24.3</graphql-java-version>
         <greenmail-version>2.1.5</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
-        <groovy-version>4.0.31</groovy-version>
+        <groovy-version>4.0.32</groovy-version>
         <grpc-version>1.75.0</grpc-version>
         <grpc-google-auth-library-version>1.39.1</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.0</grpc-java-jwt-version>
@@ -273,11 +273,11 @@
         <jakarta-servlet-api-version>6.1.0</jakarta-servlet-api-version>
         <jakarta-enterprise-cdi-api-version>4.1.0</jakarta-enterprise-cdi-api-version>
         <jakarta-inject-version>2.0.1</jakarta-inject-version>
-        <jakarta-xml-bind-api-version>4.0.4</jakarta-xml-bind-api-version>
+        <jakarta-xml-bind-api-version>4.0.5</jakarta-xml-bind-api-version>
         <jakarta-xml-soap-api-version>3.0.2</jakarta-xml-soap-api-version>
         <jakarta-xml-ws-api-version>4.0.3</jakarta-xml-ws-api-version>
         <glassfish-javax-json>1.1.4</glassfish-javax-json>
-        <glassfish-jaxb-runtime-version>4.0.6</glassfish-jaxb-runtime-version>
+        <glassfish-jaxb-runtime-version>4.0.9</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>3.3.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
@@ -289,7 +289,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>6.1.0</jedis-client-version>
-        <jetty-version>12.0.34</jetty-version>
+        <jetty-version>12.0.36</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -307,7 +307,7 @@
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
         <!-- jooq 3.20 is Java 21+ only so we need to be 3.19.x -->
-        <jooq-version>3.19.30</jooq-version>
+        <jooq-version>3.19.35</jooq-version>
         <joor-version>0.9.15</joor-version>
         <jose4j-version>0.9.3</jose4j-version>
         <johnzon-version>2.0.2</johnzon-version>
@@ -348,7 +348,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.3</log4j2-version>
-        <logback-version>1.5.32</logback-version>
+        <logback-version>1.5.34</logback-version>
         <lucene-version>9.12.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.4.4</littleproxy-version>
@@ -363,7 +363,7 @@
         <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
         <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
-        <maven-javadoc-plugin-version>3.11.2</maven-javadoc-plugin-version>
+        <maven-javadoc-plugin-version>3.11.3</maven-javadoc-plugin-version>
         <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
         <maven-owasp-plugin-version>12.1.3</maven-owasp-plugin-version>
         <maven-plugin-plugin-version>3.15.1</maven-plugin-plugin-version>
@@ -374,14 +374,14 @@
         <maven-reporting-api-version>3.1.1</maven-reporting-api-version>
         <maven-reporting-impl-version>3.2.0</maven-reporting-impl-version>
         <maven-resolver-version>1.9.24</maven-resolver-version>
-        <maven-shade-plugin-version>3.6.0</maven-shade-plugin-version>
+        <maven-shade-plugin-version>3.6.2</maven-shade-plugin-version>
         <maven-shared-utils-plugin-version>3.4.2</maven-shared-utils-plugin-version>
         <maven-surefire-report-plugin-version>3.5.3</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.33</metrics-version>
-        <micrometer-version>1.15.10</micrometer-version>
-        <micrometer-tracing-version>1.5.10</micrometer-tracing-version>
+        <micrometer-version>1.15.12</micrometer-version>
+        <micrometer-tracing-version>1.5.12</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milvus-client-version>2.6.2</milvus-client-version>
         <mina-version>2.2.7</mina-version>
@@ -399,8 +399,8 @@
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <neo4j-version>5.28.10</neo4j-version>
-        <netty-version>4.1.132.Final</netty-version>
+        <neo4j-version>5.28.13</neo4j-version>
+        <netty-version>4.1.135.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.8</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.4.2</nimbus-jose-jwt>
@@ -424,7 +424,7 @@
         <parquet-common-version>1.15.2</parquet-common-version>
         <parquet-avro-version>1.15.2</parquet-avro-version>
         <pdfbox-version>3.0.5</pdfbox-version>
-        <pgjdbc-driver-version>42.7.7</pgjdbc-driver-version>
+        <pgjdbc-driver-version>42.7.11</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.7.7</picocli-version>
         <pinecone-client-version>3.1.0</pinecone-client-version>
@@ -442,7 +442,7 @@
         <protonpack-version>1.8</protonpack-version>
         <prowide-version>SRU2024-10.2.7</prowide-version>
         <pubnub-version>10.5.8</pubnub-version>
-        <pulsar-version>4.0.9</pulsar-version>
+        <pulsar-version>4.0.11</pulsar-version>
         <qdrant-client-version>1.15.0</qdrant-client-version>
         <qpid-broker-version>9.2.1</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
@@ -466,8 +466,8 @@
         <shiro-version>2.0.5</shiro-version>
         <sisu-maven-plugin-version>0.9.0.M4</sisu-maven-plugin-version>
         <slack-api-model-version>1.45.3</slack-api-model-version>
-        <slf4j-api-version>2.0.17</slf4j-api-version>
-        <slf4j-version>2.0.17</slf4j-version>
+        <slf4j-api-version>2.0.18</slf4j-api-version>
+        <slf4j-version>2.0.18</slf4j-version>
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.13.4</smallrye-config-version>
         <smallrye-health-version>4.2.0</smallrye-health-version>
@@ -482,14 +482,14 @@
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
-        <spring-batch-version>5.2.5</spring-batch-version>
+        <spring-batch-version>5.2.6</spring-batch-version>
         <spring-data-redis-version>3.5.9</spring-data-redis-version>
-        <spring-ldap-version>3.3.7</spring-ldap-version>
+        <spring-ldap-version>3.3.8</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
-        <spring-version>6.2.18</spring-version>
-        <spring-rabbitmq-version>3.2.10</spring-rabbitmq-version>
-        <spring-security-version>6.5.10</spring-security-version>
-        <spring-ws-version>4.1.3</spring-ws-version>
+        <spring-version>6.2.19</spring-version>
+        <spring-rabbitmq-version>3.2.11</spring-rabbitmq-version>
+        <spring-security-version>6.5.11</spring-security-version>
+        <spring-ws-version>4.1.4</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okhttp5-version>5.1.0</squareup-okhttp5-version>
@@ -534,7 +534,7 @@
         <xml-apis-ext-version>1.3.04</xml-apis-ext-version>
         <xml-resolver-version>1.2</xml-resolver-version>
         <xmlsec-version>4.0.4</xmlsec-version>
-        <xmlunit-version>2.10.3</xmlunit-version>
+        <xmlunit-version>2.10.4</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.4</yasson-version>
         <yetus-audience-annotations-version>0.15.1</yetus-audience-annotations-version>

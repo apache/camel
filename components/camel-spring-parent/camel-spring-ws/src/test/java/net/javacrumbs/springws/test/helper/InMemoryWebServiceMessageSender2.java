@@ -16,8 +16,11 @@
  */
 package net.javacrumbs.springws.test.helper;
 
+import java.net.URI;
+
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.transport.WebServiceMessageReceiver;
+import org.springframework.ws.transport.WebServiceMessageSender;
 
 /**
  * This class allows to spring to set the property webServiceMessageReceiver from the bean context. We have to use use
@@ -26,6 +29,11 @@ import org.springframework.ws.transport.WebServiceMessageReceiver;
 public class InMemoryWebServiceMessageSender2 extends InMemoryWebServiceMessageSender {
 
     private WebServiceMessageReceiver decorator;
+
+    @Override
+    public boolean supports(URI uri, WebServiceMessageSender.UriSource uriSource) {
+        return super.supports(uri);
+    }
 
     @Override
     public WebServiceMessageReceiver getWebServiceMessageReceiver() {
