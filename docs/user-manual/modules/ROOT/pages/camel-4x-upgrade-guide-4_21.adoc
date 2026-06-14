@@ -245,18 +245,6 @@ the downloader would always check remote repositories first. With the new defaul
 artifacts in the local Maven repository are used directly without contacting remote repositories.
 Use `--fresh` to force re-downloading from remote repositories when needed.
 
-==== camel-jbang infra restart
-
-A new `camel infra restart` command has been added. It stops any running instance of the named
-external service and starts a fresh one, making it easy to recover a service to a clean state
-without having to run `camel infra stop` and `camel infra run` separately.
-
-[source,bash]
-----
-camel infra restart kafka
-camel infra restart kafka --background
-----
-
 ==== camel-jbang-mcp
 
 The `camel_route_context` tool response no longer echoes the input route back to the caller. The
