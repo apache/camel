@@ -103,6 +103,8 @@ public abstract class InfraBaseCommand extends CamelCommand {
                     pids.put(Long.valueOf(pid), pidFile);
                 }
             }
+        } catch (IOException e) {
+            // ignore
         }
 
         return pids;

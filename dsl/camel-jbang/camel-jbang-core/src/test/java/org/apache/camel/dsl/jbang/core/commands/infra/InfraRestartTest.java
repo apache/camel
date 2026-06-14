@@ -16,10 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
@@ -27,12 +30,12 @@ import org.junit.jupiter.api.Test;
 public class InfraRestartTest extends CamelCommandBaseTestSupport {
 
     /**
-     * Restarting a service that is not currently running should simply start it. This also asserts that the restart
-     * command delegates to the (foreground) infra run, reusing the same reflection path as {@link InfraTest}.
+     * Asserts that restart delegates to the (foreground) infra run, reusing the same reflection path as
+     * {@link InfraTest}.
      */
     @Test
     public void restartService() throws Exception {
-        // infraRestart.doCall() delegates to the blocking infra run, so execute it on a new thread.
+        // doCall() delegates to the blocking infra run, so execute it on a new thread.
         Thread thread = new Thread(() -> {
             InfraRestart infraRestart = new InfraRestart(new CamelJBangMain().withPrinter(printer));
             infraRestart.setServiceName(List.of("ftp"));
@@ -47,6 +50,38 @@ public class InfraRestartTest extends CamelCommandBaseTestSupport {
 
         Awaitility.await().untilAsserted(() -> {
             List<String> lines = printer.getLines();
+            Assertions.assertThat(lines).anyMatch(l -> l.startsWith("Starting service ftp"));
+            Assertions.assertThat(lines).contains("Running (use camel infra stop ftp to stop the execution)");
+        });
+
+        thread.interrupt();
+    }
+
+    @Test
+    public void restartStopsExistingService() throws Exception {
+        // Long.MAX_VALUE exceeds OS PID limits so it cannot belong to a real process.
+        long fakePid = Long.MAX_VALUE;
+        Path camelDir = CommandLineHelper.getCamelDir();
+        Files.createDirectories(camelDir);
+        Path fakePidFile = camelDir.resolve("infra-ftp-" + fakePid + ".json");
+        Files.writeString(fakePidFile, "{}");
+
+        Thread thread = new Thread(() -> {
+            InfraRestart infraRestart = new InfraRestart(new CamelJBangMain().withPrinter(printer));
+            infraRestart.setServiceName(List.of("ftp"));
+            try {
+                infraRestart.doCall();
+            } catch (Exception e) {
+                printer.printErr(e);
+                throw new RuntimeException(e);
+            }
+        });
+        thread.start();
+
+        Awaitility.await().untilAsserted(() -> {
+            List<String> lines = printer.getLines();
+            Assertions.assertThat(lines)
+                    .anyMatch(l -> l.equals("Stopping external service ftp (PID: " + fakePid + ")"));
             Assertions.assertThat(lines).anyMatch(l -> l.startsWith("Starting service ftp"));
             Assertions.assertThat(lines).contains("Running (use camel infra stop ftp to stop the execution)");
         });
