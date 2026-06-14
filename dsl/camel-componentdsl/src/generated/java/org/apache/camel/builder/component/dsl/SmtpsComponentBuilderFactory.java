@@ -957,7 +957,8 @@ public interface SmtpsComponentBuilderFactory {
         }
     
         /**
-         * The password for login. See also setAuthenticator(MailAuthenticator).
+         * The password for login. See also
+         * setAuthenticator(MailAuthenticator).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1030,7 +1031,8 @@ public interface SmtpsComponentBuilderFactory {
         }
     
         /**
-         * The username for login. See also setAuthenticator(MailAuthenticator).
+         * The username for login. See also
+         * setAuthenticator(MailAuthenticator).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
