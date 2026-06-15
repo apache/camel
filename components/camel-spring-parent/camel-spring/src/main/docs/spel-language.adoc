@@ -55,6 +55,19 @@ You can use SpEL as an expression for xref:eips:recipientList-eip.adoc[Recipient
 List] or as a predicate inside a xref:eips:filter-eip.adoc[Message
 Filter]:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:foo")
+    .filter().spel("#{request.headers.foo == 'bar'}")
+    .to("direct:bar");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -66,14 +79,23 @@ Filter]:
 </route>
 ----
 
-And the equivalent in Java DSL:
-
-[source,java]
+YAML::
++
+[source,yaml]
 ----
-from("direct:foo")
-    .filter().spel("#{request.headers.foo == 'bar'}")
-    .to("direct:bar");
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - filter:
+            expression:
+              spel:
+                expression: "#{request.headers.foo == 'bar'}"
+            steps:
+              - to:
+                  uri: direct:bar
 ----
+====
 
 === Expression templating
 

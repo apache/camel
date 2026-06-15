@@ -80,13 +80,19 @@ include::partial$component-endpoint-headers.adoc[]
 In the route below we log the incoming orders at `DEBUG` level before
 the order is processed:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("activemq:orders").to("log:com.mycompany.order?level=DEBUG").to("bean:processOrder");
+from("activemq:orders")
+    .to("log:com.mycompany.order?level=DEBUG")
+    .to("bean:processOrder");
 ----
 
-Or using Spring XML to define the route:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -95,6 +101,23 @@ Or using Spring XML to define the route:
   <to uri="bean:processOrder"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:orders
+      steps:
+        - to:
+            uri: log:com.mycompany.order
+            parameters:
+              level: DEBUG
+        - to:
+            uri: bean:processOrder
+----
+====
 
 === Regular logger with formatter example
 

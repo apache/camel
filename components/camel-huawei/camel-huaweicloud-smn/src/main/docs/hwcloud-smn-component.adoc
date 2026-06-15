@@ -93,33 +93,72 @@ include::partial$component-endpoint-headers.adoc[]
 === Inline Configuration of route
 
 ==== publishAsTextMessage
-Java DSL
-[source,java]
---------------------------------------------------------------------------------
-from("direct:triggerRoute")
-.setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
-.setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME,constant(testConfiguration.getProperty("topic")))
-.setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
-.to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
---------------------------------------------------------------------------------
 
-XML DSL
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:triggerRoute")
+    .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
+    .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant("reji-test"))
+    .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
+    .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4");
+----
+
+XML::
++
 [source,xml]
---------------------------------------------------------------------------------
+----
 <route>
-   <from uri="direct:triggerRoute" />
-   <setProperty name="CamelHwCloudSmnSubject">
-      <constant>this is my subjectline</constant>
-   </setProperty>
-   <setProperty name="CamelHwCloudSmnTopic">
-      <constant>reji-test</constant>
-   </setProperty>
-   <setProperty name="CamelHwCloudSmnMessageTtl">
-      <constant>60</constant>
-   </setProperty>
-   <to uri="hwcloud-smn:publishMessageService?operation=publishAsTextMessage&amp;accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudSmnSubject">
+    <constant>this is my subjectline</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudSmnTopic">
+    <constant>reji-test</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudSmnMessageTtl">
+    <constant>60</constant>
+  </setProperty>
+  <to uri="hwcloud-smn:publishMessageService?operation=publishAsTextMessage&amp;accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4"/>
 </route>
---------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudSmnSubject
+            expression:
+              constant:
+                expression: this is my subjectline
+        - setProperty:
+            name: CamelHwCloudSmnTopic
+            expression:
+              constant:
+                expression: reji-test
+        - setProperty:
+            name: CamelHwCloudSmnMessageTtl
+            expression:
+              constant:
+                expression: "60"
+        - to:
+            uri: hwcloud-smn:publishMessageService
+            parameters:
+              operation: publishAsTextMessage
+              accessKey: "*********"
+              secretKey: "********"
+              projectId: 9071a38e7f6a4ba7b7bcbeb7d4ea6efc
+              region: cn-north-4
+----
+====
 
 
 

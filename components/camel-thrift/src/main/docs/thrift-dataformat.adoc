@@ -93,7 +93,7 @@ Camel will throw an exception on route creation if you attempt to tell
 the Data Format to use a class that does not implement 
 org.apache.thrift.TBase.
 
-== Java DSL
+== Examples
 
 You can use create the ThriftDataFormat instance and pass it to Camel
 DataFormat marshal and unmarshal API like this.
@@ -111,32 +111,56 @@ default instance class name like this.
 
 [source,java]
 ----
-   // You don't need to specify the default instance for the thrift marshaling               
+   // You don't need to specify the default instance for the thrift marshaling
    from("direct:marshal").marshal().thrift();
    from("direct:unmarshalA").unmarshal()
        .thrift("org.apache.camel.dataformat.thrift.generated.Work")
        .to("mock:reverse");
-                
+
    from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
 ----
 
-== Spring DSL
+The following example shows how to use Thrift to unmarshal:
 
-The following example shows how to use Thrift to unmarshal using Spring
-configuring the thrift data type
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work")
+    .to("mock:result");
+----
 
+XML::
++
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <unmarshal>
-      <thrift instanceClass="org.apache.camel.dataformat.thrift.generated.Work" />
-    </unmarshal>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
+<route>
+  <from uri="direct:start"/>
+  <unmarshal>
+    <thrift instanceClass="org.apache.camel.dataformat.thrift.generated.Work"/>
+  </unmarshal>
+  <to uri="mock:result"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - unmarshal:
+            thrift:
+              instanceClass: org.apache.camel.dataformat.thrift.generated.Work
+        - to:
+            uri: mock:result
+----
+====
 
 == Dependencies
 

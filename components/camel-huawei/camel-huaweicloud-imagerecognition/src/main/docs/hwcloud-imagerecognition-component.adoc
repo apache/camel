@@ -77,67 +77,137 @@ When using imageContent option, we suggest you use RAW(image_base64_value) to av
 
 ==== celebrityRecognition
 
-Java DSL
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
   .setProperty(ImageRecognitionProperties.IMAGE_URL, constant("https://xxxx"))
-  .setProperty(ImageRecognitionProperties.THRESHOLD,constant(0.5))
+  .setProperty(ImageRecognitionProperties.THRESHOLD, constant(0.5))
   .to("hwcloud-imagerecognition:celebrityRecognition?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 ----
 
-XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
-   <from uri="direct:triggerRoute" />
-   <setProperty name="CamelHwCloudImageUrl">
-      <constant>https://xxxx</constant>
-   </setProperty>
-   <setProperty name="CamelHwCloudImageThreshold">
-      <constant>0.5</constant>
-   </setProperty>
-   <to uri="hwcloud-imagerecognition:celebrityRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudImageUrl">
+    <constant>https://xxxx</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudImageThreshold">
+    <constant>0.5</constant>
+  </setProperty>
+  <to uri="hwcloud-imagerecognition:celebrityRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4"/>
 </route>
 ----
 
-=== tagRecognition
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudImageUrl
+            expression:
+              constant:
+                expression: https://xxxx
+        - setProperty:
+            name: CamelHwCloudImageThreshold
+            expression:
+              constant:
+                expression: "0.5"
+        - to:
+            uri: hwcloud-imagerecognition:celebrityRecognition
+            parameters:
+              accessKey: "*********"
+              secretKey: "********"
+              projectId: 9071a38e7f6a4ba7b7bcbeb7d4ea6efc
+              region: cn-north-4
+----
+====
 
-Java DSL
+==== tagRecognition
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:triggerRoute")
-  .setProperty(ImageRecognitionProperties.IMAGE_CONTENT, constant("/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//..."))
-  .setProperty(ImageRecognitionProperties.THRESHOLD,constant(60))
-  .setProperty(ImageRecognitionProperties.TAG_LANGUAGE,constant("en"))
-  .setProperty(ImageRecognitionProperties.TAG_LIMIT,constant(50))
+  .setProperty(ImageRecognitionProperties.IMAGE_CONTENT, constant("/9j/4AAQSkZJRgABAQEASABIAAD/..."))
+  .setProperty(ImageRecognitionProperties.THRESHOLD, constant(60))
+  .setProperty(ImageRecognitionProperties.TAG_LANGUAGE, constant("en"))
+  .setProperty(ImageRecognitionProperties.TAG_LIMIT, constant(50))
   .to("hwcloud-imagerecognition:tagRecognition?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 ----
 
-XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
-    <from uri="direct:triggerRoute" />
-    <setProperty name="CamelHwCloudImageContent">
-        <constant>/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//...</constant>
-    </setProperty>
-    <setProperty name="CamelHwCloudImageThreshold">
-        <constant>60</constant>
-    </setProperty>
-    <setProperty name="CamelHwCloudImageTagLanguage">
-        <constant>en</constant>
-    </setProperty>
-    <setProperty name="CamelHwCloudImageTagLimit">
-        <constant>50</constant>
-    </setProperty>
-    <to uri="hwcloud-imagerecognition:tagRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4" />
+  <from uri="direct:triggerRoute"/>
+  <setProperty name="CamelHwCloudImageContent">
+    <constant>/9j/4AAQSkZJRgABAQEASABIAAD/...</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudImageThreshold">
+    <constant>60</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudImageTagLanguage">
+    <constant>en</constant>
+  </setProperty>
+  <setProperty name="CamelHwCloudImageTagLimit">
+    <constant>50</constant>
+  </setProperty>
+  <to uri="hwcloud-imagerecognition:tagRecognition?accessKey=*********&amp;secretKey=********&amp;projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&amp;region=cn-north-4"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:triggerRoute
+      steps:
+        - setProperty:
+            name: CamelHwCloudImageContent
+            expression:
+              constant:
+                expression: "/9j/4AAQSkZJRgABAQEASABIAAD/..."
+        - setProperty:
+            name: CamelHwCloudImageThreshold
+            expression:
+              constant:
+                expression: "60"
+        - setProperty:
+            name: CamelHwCloudImageTagLanguage
+            expression:
+              constant:
+                expression: en
+        - setProperty:
+            name: CamelHwCloudImageTagLimit
+            expression:
+              constant:
+                expression: "50"
+        - to:
+            uri: hwcloud-imagerecognition:tagRecognition
+            parameters:
+              accessKey: "*********"
+              secretKey: "********"
+              projectId: 9071a38e7f6a4ba7b7bcbeb7d4ea6efc
+              region: cn-north-4
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

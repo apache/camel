@@ -70,6 +70,10 @@ The following Camel related variables are made available:
 For example, you could use MVEL inside a xref:eips:filter-eip.adoc[Message
 Filter]
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:foo")
@@ -77,8 +81,8 @@ from("seda:foo")
     .to("seda:bar");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -89,6 +93,24 @@ And in XML:
   </filter>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:foo
+      steps:
+        - filter:
+            expression:
+              mvel:
+                expression: headers.foo == 'bar'
+            steps:
+              - to:
+                  uri: seda:bar
+----
+====
 
 == Loading script from external resource
 

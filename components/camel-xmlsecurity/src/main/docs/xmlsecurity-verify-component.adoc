@@ -191,22 +191,50 @@ Elements):
 
 The following example shows the basic usage of the component.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:enveloping").to("xmlsecurity-sign://enveloping?keyAccessor=#accessor",
-                             "xmlsecurity-verify://enveloping?keySelector=#selector",
-                             "mock:result")
+from("direct:enveloping")
+    .to("xmlsecurity-sign://enveloping?keyAccessor=#accessor")
+    .to("xmlsecurity-verify://enveloping?keySelector=#selector")
+    .to("mock:result");
 ----
 
-In Spring XML:
-
+XML::
++
 [source,xml]
 ----
-<from uri="direct:enveloping" />
-    <to uri="xmlsecurity-sign://enveloping?keyAccessor=#accessor" />
-    <to uri="xmlsecurity-verify://enveloping?keySelector=#selector" />
-<to uri="mock:result" />
+<route>
+  <from uri="direct:enveloping"/>
+  <to uri="xmlsecurity-sign://enveloping?keyAccessor=#accessor"/>
+  <to uri="xmlsecurity-verify://enveloping?keySelector=#selector"/>
+  <to uri="mock:result"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:enveloping
+      steps:
+        - to:
+            uri: xmlsecurity-sign://enveloping
+            parameters:
+              keyAccessor: "#accessor"
+        - to:
+            uri: xmlsecurity-verify://enveloping
+            parameters:
+              keySelector: "#selector"
+        - to:
+            uri: mock:result
+----
+====
 
 For the signing process, a private key is necessary. You specify a key
 accessor bean which provides this private key. For the validation, the

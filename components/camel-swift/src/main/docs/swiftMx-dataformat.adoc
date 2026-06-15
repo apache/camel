@@ -61,6 +61,10 @@ inline as shown below:
 
 In this example, we marshal the messages read from a JMS queue in SWIFT format before storing the result into a file.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms://myqueue")
@@ -68,16 +72,33 @@ from("jms://myqueue")
     .to("file://data.bin");
 ----
 
-In Spring DSL:
-
+XML::
++
 [source,xml]
 ----
- <from uri="jms://myqueue">
- <marshal>
-     <swiftMx/>
- </marshal>
- <to uri="file://data.bin"/>
+<route>
+  <from uri="jms://myqueue"/>
+  <marshal>
+    <swiftMx/>
+  </marshal>
+  <to uri="file://data.bin"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms://myqueue
+      steps:
+        - marshal:
+            swiftMx: {}
+        - to:
+            uri: file://data.bin
+----
+====
 
 == Unmarshal
 
@@ -86,6 +107,10 @@ The unmarshaller converts the input data into the concrete class of type `com.pr
 In this example, we unmarshal the content of a file to get SWIFT MX
 objects before processing them with the `newOrder` processor.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://data.bin")
@@ -93,16 +118,33 @@ from("file://data.bin")
     .process("newOrder");
 ----
 
-In Spring DSL:
-
+XML::
++
 [source,xml]
 ----
- <from uri="file://data.bin">
- <unmarshal>
-     <swiftMx/>
- </unmarshal>
- <to uri="bean:newOrder"/> 
+<route>
+  <from uri="file://data.bin"/>
+  <unmarshal>
+    <swiftMx/>
+  </unmarshal>
+  <to uri="bean:newOrder"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://data.bin
+      steps:
+        - unmarshal:
+            swiftMx: {}
+        - to:
+            uri: bean:newOrder
+----
+====
 
 == Dependencies
 
