@@ -276,3 +276,68 @@ String diagram = renderer.renderDiagramAnsi(layoutRoutes, totalHeight, highlight
 RouteDiagramRenderer pngRenderer = new RouteDiagramRenderer(nodeWidth, fontSize);
 BufferedImage image = pngRenderer.renderDiagram(layoutRoutes, totalHeight, colors, highlightedNodes, style);
 ----
+
+== Embeddable Web Component
+
+`camel-diagram` ships a lightweight `<camel-route-diagram>` web component that renders
+interactive route diagrams as SVG directly in the browser.
+Any application with `camel-diagram` on the classpath automatically serves the component
+as a static resource — no extra server configuration needed.
+
+=== Usage
+
+Include the bundled script served from `META-INF/resources/camel/diagram/camel-route-diagram.js`
+(automatically exposed by Servlet 3 containers and Quarkus/Spring Boot static-resource mechanisms):
+
+[source,html]
+----
+<script type="module" src="/camel/diagram/camel-route-diagram.js"></script>
+
+<camel-route-diagram
+  src="/q/dev/route-structure"
+  refresh="5000"
+  filter="my-route">
+</camel-route-diagram>
+----
+
+The `src` attribute must point to an endpoint returning the `route-structure` dev console JSON
+(for example the Quarkus Dev UI endpoint `/q/dev/route-structure`).
+The component automatically appends `?metric=true` so that per-processor exchange statistics
+are included in the diagram.
+
+=== Attributes
+
+[width="100%",cols="2,5,2",options="header"]
+|===
+| Attribute | Description | Default
+| `src` | URL to fetch the route-structure JSON from (required) | —
+| `refresh` | Polling interval in milliseconds; `0` disables polling | `0`
+| `filter` | Route ID filter, forwarded as `?filter=` query parameter | (all routes)
+|===
+
+=== Theming
+
+The component is theme-agnostic.
+It respects `prefers-color-scheme` automatically for dark/light mode,
+and exposes CSS custom properties so the host application can override every visual aspect:
+
+[source,css]
+----
+camel-route-diagram {
+  --crd-bg:                   #ffffff;   /* canvas background */
+  --crd-fg:                   #1e293b;   /* text colour */
+  --crd-edge:                 #94a3b8;   /* edge/arrow colour */
+  --crd-stat:                 #64748b;   /* metric overlay text */
+  --crd-font:                 system-ui; /* font family */
+  --crd-font-size:            12px;      /* base font size */
+  --crd-color-from:           #0ea5e9;   /* "from" node */
+  --crd-color-to:             #0ea5e9;   /* "to" node */
+  --crd-color-log:            #64748b;   /* "log" node */
+  --crd-color-choice:         #f59e0b;   /* "choice" node */
+  --crd-color-when:           #fbbf24;   /* "when" branch */
+  --crd-color-otherwise:      #fbbf24;   /* "otherwise" branch */
+  --crd-color-multicast:      #8b5cf6;   /* "multicast" node */
+  --crd-color-circuitBreaker: #ef4444;   /* "circuitBreaker" node */
+  --crd-color-default:        #6366f1;   /* all other EIP nodes */
+}
+----
