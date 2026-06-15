@@ -1,0 +1,4 @@
+from("direct:start")
+    .routeId("myRoute")
+    .log("${body}")
+    .to("mock:result");
