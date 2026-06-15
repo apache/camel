@@ -56,6 +56,7 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 
 /**
  * Base class for the generated {@link JavaDslModelWriter}. Provides helper methods for building Java DSL source code
@@ -190,6 +191,8 @@ public abstract class JavaDslModelWriterSupport {
                 }
             } else if (value instanceof BatchResequencerConfig brc) {
                 writeBatchResequencerConfig(sb, brc);
+            } else if (value instanceof LangChain4jTokenizerDefinition ltd) {
+                writeTokenizerBuilder(sb, key, ltd);
             } else if (value instanceof DataFormatDefinition df) {
                 writeDataFormatBuilder(sb, key, df, writer);
             } else if (value instanceof LoadBalancerDefinition lb) {
@@ -340,6 +343,40 @@ public abstract class JavaDslModelWriterSupport {
         if (brc.getBatchTimeout() != null) {
             sb.append(NL).append(indent()).append("    .timeout(").append(brc.getBatchTimeout()).append(")");
         }
+    }
+
+    private void writeTokenizerBuilder(StringBuilder sb, String key, LangChain4jTokenizerDefinition def) {
+        // backtrack .tokenizer() → .tokenize(tokenizer().byXxx()...end())
+        String str = sb.toString();
+        if (str.endsWith(".tokenizer()")) {
+            sb.setLength(sb.length() - ".tokenizer()".length());
+        }
+        String builderMethod = switch (key) {
+            case "langChain4jWordTokenizer" -> "byWord";
+            case "langChain4jLineTokenizer" -> "byLine";
+            case "langChain4jSentenceTokenizer" -> "bySentence";
+            case "langChain4jParagraphTokenizer" -> "byParagraph";
+            case "langChain4jCharacterTokenizer" -> "byCharacter";
+            default -> throw new IllegalArgumentException("Unknown tokenizer type: " + key);
+        };
+        sb.append(".tokenize(tokenizer()").append(NL);
+        sb.append(indent()).append("        .").append(builderMethod).append("()");
+        if (def.getMaxTokens() != null) {
+            sb.append(NL).append(indent()).append("            .maxSegmentSize(").append(def.getMaxTokens()).append(")");
+        }
+        if (def.getMaxOverlap() != null) {
+            sb.append(NL).append(indent()).append("            .maxOverlap(").append(def.getMaxOverlap()).append(")");
+        }
+        if (def.getTokenizerType() != null) {
+            sb.append(NL).append(indent()).append("            .using(LangChain4jTokenizerDefinition.TokenizerType.")
+                    .append(def.getTokenizerType()).append(")");
+        }
+        sb.append(NL).append(indent()).append("            .end())");
+        // mark all attributes as handled so generated writer doesn't re-emit them
+        handledAttributes.add("maxTokens");
+        handledAttributes.add("maxOverlap");
+        handledAttributes.add("tokenizerType");
+        handledAttributes.add("modelName");
     }
 
     protected void writeLoadBalancerType(StringBuilder sb, LoadBalancerDefinition lb) {

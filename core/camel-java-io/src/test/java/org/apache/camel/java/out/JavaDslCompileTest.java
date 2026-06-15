@@ -70,8 +70,7 @@ public class JavaDslCompileTest {
 
     // Files that don't compile yet due to unsupported constructs in the writer.
     // Categorized by root cause — as the writer improves, move files out of this set.
-    private static final Set<String> KNOWN_FAILURES = Set.of(
-            "tokenizer.xml");                  // tokenizer EIP with langchain4j sub-element
+    private static final Set<String> KNOWN_FAILURES = Set.of();
 
     private static final Path XML_IO_RESOURCES = Paths.get("../camel-xml-io/src/test/resources");
     private static final Path LOCAL_RESOURCES = Paths.get("src/test/resources");
@@ -157,6 +156,7 @@ public class JavaDslCompileTest {
         sb.append("import org.apache.camel.LoggingLevel;\n");
         sb.append("import org.apache.camel.Predicate;\n");
         sb.append("import org.apache.camel.builder.RouteBuilder;\n");
+        sb.append("import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;\n");
         sb.append("import static org.apache.camel.builder.Builder.language;\n\n");
         sb.append("public class ").append(className).append(" extends RouteBuilder {\n");
         sb.append("    @Override\n");
