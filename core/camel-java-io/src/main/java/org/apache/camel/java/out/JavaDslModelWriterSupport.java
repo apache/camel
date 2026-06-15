@@ -38,8 +38,11 @@ import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.language.SingleInputTypedExpressionDefinition;
 import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.model.language.TypedExpressionDefinition;
 import org.apache.camel.model.language.VariableExpression;
+import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -262,6 +265,22 @@ public abstract class JavaDslModelWriterSupport {
         if (value == null) {
             value = "";
         }
+
+        // check for expression-specific options beyond just the expression text
+        String options = expressionBuilderOptions(expr);
+        if (!options.isEmpty()) {
+            // builder form: expression().langName("text").opt1("val").end()
+            String builderMethod = expressionBuilderMethod(expr);
+            if (builderMethod != null) {
+                return "expression()." + builderMethod + "(" + quote(value) + ")" + options + ".end()";
+            }
+        }
+
+        // compact form: langName("text") — no options
+        return compactExpressionDsl(expr, value);
+    }
+
+    private String compactExpressionDsl(ExpressionDefinition expr, String value) {
         String quotedValue = quote(value);
 
         if (expr instanceof SimpleExpression) {
@@ -312,12 +331,137 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof RefExpression) {
             return "ref(" + quotedValue + ")";
         }
-        // languages without RouteBuilder helpers use the generic language() factory
         String lang = expr.getLanguage();
         if (lang != null && !lang.isEmpty()) {
             return "language(" + quote(lang) + ", " + quotedValue + ")";
         }
         return "expression(" + quotedValue + ")";
+    }
+
+    private String expressionBuilderMethod(ExpressionDefinition expr) {
+        if (expr instanceof SimpleExpression) {
+            return "simple";
+        }
+        if (expr instanceof ConstantExpression) {
+            return "constant";
+        }
+        if (expr instanceof HeaderExpression) {
+            return "header";
+        }
+        if (expr instanceof VariableExpression) {
+            return "variable";
+        }
+        if (expr instanceof XPathExpression) {
+            return "xpath";
+        }
+        if (expr instanceof XQueryExpression) {
+            return "xquery";
+        }
+        if (expr instanceof JsonPathExpression) {
+            return "jsonpath";
+        }
+        if (expr instanceof JqExpression) {
+            return "jq";
+        }
+        if (expr instanceof JoorExpression) {
+            return "joor";
+        }
+        if (expr instanceof CSimpleExpression) {
+            return "csimple";
+        }
+        if (expr instanceof DatasonnetExpression) {
+            return "datasonnet";
+        }
+        if (expr instanceof TokenizerExpression) {
+            return "tokenize";
+        }
+        if (expr instanceof XMLTokenizerExpression) {
+            return "xtokenize";
+        }
+        if (expr instanceof MethodCallExpression) {
+            return "bean";
+        }
+        if (expr instanceof RefExpression) {
+            return "ref";
+        }
+        if (expr instanceof WasmExpression) {
+            return "wasm";
+        }
+        String lang = expr.getLanguage();
+        if (lang != null && !lang.isEmpty()) {
+            return "language";
+        }
+        return null;
+    }
+
+    private String expressionBuilderOptions(ExpressionDefinition expr) {
+        StringBuilder opts = new StringBuilder();
+
+        // common: resultType (on TypedExpressionDefinition)
+        if (expr instanceof TypedExpressionDefinition typed) {
+            appendOption(opts, "resultTypeName", typed.getResultTypeName());
+        }
+        // common: source (on SingleInputTypedExpressionDefinition)
+        if (expr instanceof SingleInputTypedExpressionDefinition single) {
+            appendOption(opts, "source", single.getSource());
+        }
+
+        // type-specific options
+        if (expr instanceof SimpleExpression se) {
+            appendNonDefaultOption(opts, "trimResult", se.getTrimResult(), "false");
+            appendNonDefaultOption(opts, "pretty", se.getPretty(), "false");
+            appendNonDefaultOption(opts, "nested", se.getNested(), "false");
+        } else if (expr instanceof JsonPathExpression jp) {
+            appendNonDefaultOption(opts, "suppressExceptions", jp.getSuppressExceptions(), "false");
+            appendNonDefaultOption(opts, "allowSimple", jp.getAllowSimple(), "true");
+            appendNonDefaultOption(opts, "allowEasyPredicate", jp.getAllowEasyPredicate(), "true");
+            appendNonDefaultOption(opts, "writeAsString", jp.getWriteAsString(), "false");
+            appendNonDefaultOption(opts, "unpackArray", jp.getUnpackArray(), "false");
+            appendOption(opts, "option", jp.getOption());
+        } else if (expr instanceof XPathExpression xp) {
+            appendOption(opts, "documentTypeName", xp.getDocumentTypeName());
+            appendNonDefaultOption(opts, "resultQName", xp.getResultQName(), "NODESET");
+            appendOption(opts, "saxon", xp.getSaxon());
+            appendOption(opts, "factoryRef", xp.getFactoryRef());
+            appendOption(opts, "objectModel", xp.getObjectModel());
+            appendOption(opts, "logNamespaces", xp.getLogNamespaces());
+            appendOption(opts, "threadSafety", xp.getThreadSafety());
+            appendNonDefaultOption(opts, "preCompile", xp.getPreCompile(), "true");
+        } else if (expr instanceof TokenizerExpression te) {
+            appendOption(opts, "endToken", te.getEndToken());
+            appendOption(opts, "inheritNamespaceTagName", te.getInheritNamespaceTagName());
+            appendOption(opts, "regex", te.getRegex());
+            appendOption(opts, "xml", te.getXml());
+            appendOption(opts, "includeTokens", te.getIncludeTokens());
+            appendOption(opts, "group", te.getGroup());
+            appendOption(opts, "groupDelimiter", te.getGroupDelimiter());
+            appendOption(opts, "skipFirst", te.getSkipFirst());
+        } else if (expr instanceof MethodCallExpression mc) {
+            appendOption(opts, "beanTypeName", mc.getBeanTypeName());
+            appendNonDefaultOption(opts, "scope", mc.getScope(), "Singleton");
+            appendNonDefaultOption(opts, "validate", mc.getValidate(), "true");
+        } else if (expr instanceof XQueryExpression xq) {
+            appendOption(opts, "configurationRef", xq.getConfigurationRef());
+        } else if (expr instanceof XMLTokenizerExpression xt) {
+            appendNonDefaultOption(opts, "mode", xt.getMode(), "i");
+            appendOption(opts, "group", xt.getGroup());
+        } else if (expr instanceof WasmExpression w) {
+            appendOption(opts, "module", w.getModule());
+        }
+
+        return opts.toString();
+    }
+
+    private void appendOption(StringBuilder sb, String name, String value) {
+        if (value != null && !value.isEmpty()) {
+            sb.append(".").append(name).append("(").append(quote(value)).append(")");
+        }
+    }
+
+    private void appendNonDefaultOption(StringBuilder sb, String name, String value, String defaultValue) {
+        if (value != null && !value.isEmpty() && !value.equals(defaultValue)) {
+            sb.append(".").append(name).append("(").append(quote(value)).append(")");
+        }
     }
 
     protected String indent() {
