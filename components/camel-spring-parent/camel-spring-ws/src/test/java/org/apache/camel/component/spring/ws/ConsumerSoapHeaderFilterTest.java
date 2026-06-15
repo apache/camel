@@ -79,6 +79,32 @@ public class ConsumerSoapHeaderFilterTest extends CamelSpringTestSupport {
                 "Internal Camel* header coming from an inbound SOAP header must be filtered");
     }
 
+    @Test
+    public void internalCamelAttributeFromInboundSoapHeaderIsFiltered() throws Exception {
+        result.expectedMessageCount(1);
+
+        Source source = new StreamSource(new StringReader(xmlRequest));
+        webServiceTemplate.sendSourceAndReceive(source, message -> {
+            SoapMessage soap = (SoapMessage) message;
+            soap.setSoapAction("http://www.stockquotes.edu/GetQuote");
+            SoapHeader soapHeader = soap.getSoapHeader();
+            // a regular application-level header attribute
+            soapHeader.addAttribute(new QName("http://example.com/test", "MessageId"), "1234567890");
+            // an attacker-supplied attribute whose local name lives in the internal Camel header namespace
+            soapHeader.addAttribute(new QName("http://example.com/test", "CamelFileName"), "../../etc/passwd");
+        }, NOOP_SOURCE_EXTRACTOR);
+
+        result.assertIsSatisfied();
+
+        Exchange consumed = result.getExchanges().get(0);
+        // a regular application-level SOAP header attribute is still mapped to an Exchange header
+        assertNotNull(consumed.getIn().getHeader("MessageId"),
+                "Application-level SOAP header attribute should be propagated");
+        // an attacker-supplied internal Camel* header name must be filtered out by the HeaderFilterStrategy
+        assertNull(consumed.getIn().getHeader("CamelFileName"),
+                "Internal Camel* header coming from an inbound SOAP header attribute must be filtered");
+    }
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(

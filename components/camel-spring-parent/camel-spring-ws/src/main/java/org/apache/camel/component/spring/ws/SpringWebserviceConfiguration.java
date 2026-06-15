@@ -430,7 +430,7 @@ public class SpringWebserviceConfiguration {
 
     /**
      * To use a custom HeaderFilterStrategy to filter headers mapped to and from the Camel message. By default the
-     * internal {@code Camel*} and {@code org.apache.camel.*} header namespace is filtered out from inbound SOAP
+     * internal {@code Camel} and {@code camel} header namespace (case-insensitive) is filtered out from inbound SOAP
      * headers.
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
