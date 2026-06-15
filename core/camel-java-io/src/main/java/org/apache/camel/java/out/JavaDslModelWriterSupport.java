@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.CSimpleExpression;
@@ -142,6 +143,8 @@ public abstract class JavaDslModelWriterSupport {
                 sb.append(NL).append(indent()).append(".").append(key).append("()");
                 writer.accept(sb, value);
                 indentLevel--;
+            } else if (value instanceof DataFormatDefinition) {
+                sb.append(".").append(key).append("()");
             } else {
                 writer.accept(sb, value);
             }

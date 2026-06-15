@@ -87,19 +87,13 @@ public class JavaDslCompileTest {
             "interceptFromAndSendTo.xml",       // interceptSendToEndpoint
             "resequencerBatch.xml",             // resequence batch config
             "routeInlinedErrorHandler.xml",     // inlined error handler
-            // Data format subtypes
-            "routeWithBindyDataFormat.xml",     // bindy data format
-            "routeWithCvsDataFormat.xml",       // csv data format
+            // Data formats without no-arg DataFormatClause methods
+            "routeWithBindyDataFormat.xml",     // bindy() requires BindyType + Class args
+            "routeWithFlatpackDataFormat.xml",  // flatpack has no DataFormatClause method
+            "routeWithXMLSecurityDataFormat.xml", // xmlSecurity() requires args
+            // Load balancer subtypes
             "routeWithFailoverLoadBalance.xml", // failover load balancer
-            "routeWithFlatpackDataFormat.xml",  // flatpack data format
-            "routeWithHL7DataFormat.xml",       // hl7 data format
-            "routeWithJSonDataFormat.xml",      // json data format
-            "routeWithJaxbDataFormat.xml",      // jaxb data format
-            "routeWithRSSDataFormat.xml",       // rss data format
-            "routeWithStickyLoadBalance.xml",   // sticky load balancer
-            "routeWithXMLSecurityDataFormat.xml", // xml security data format
-            "routeWithZipFileDataFormat.xml",   // zipFile data format
-            "unmarshal.xml");
+            "routeWithStickyLoadBalance.xml");  // sticky load balancer
 
     private static final Path XML_IO_RESOURCES = Paths.get("../camel-xml-io/src/test/resources");
     private static final Path LOCAL_RESOURCES = Paths.get("src/test/resources");
