@@ -1,0 +1,17 @@
+{
+  "name": "camel-route-diagram",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.2",
+    "vitest": "^2.1.8"
+  }
+}
