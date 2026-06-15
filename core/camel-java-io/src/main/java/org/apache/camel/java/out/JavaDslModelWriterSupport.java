@@ -27,7 +27,6 @@ import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
@@ -160,7 +159,7 @@ public abstract class JavaDslModelWriterSupport {
                     sb.append(expressionDsl(esd.getExpressionType())).append(")");
                 }
             } else if (value instanceof DataFormatDefinition df) {
-                writeDataFormatClause(sb, key, df);
+                writeDataFormatBuilder(sb, key, df, writer);
             } else if (value instanceof LoadBalancerDefinition lb) {
                 writeLoadBalancerType(sb, lb);
             } else {
@@ -209,31 +208,15 @@ public abstract class JavaDslModelWriterSupport {
         }
     }
 
-    private static final Set<String> BUILDER_ONLY_FORMATS = Set.of(
-            "bindy", "flatpack", "xmlSecurity");
-
-    protected void writeDataFormatClause(StringBuilder sb, String key, DataFormatDefinition df) {
-        if (BUILDER_ONLY_FORMATS.contains(key)) {
-            writeDataFormatBuilder(sb, key, df);
-        } else {
-            sb.append(".").append(key).append("()");
-        }
-    }
-
-    protected void writeDataFormatBuilder(StringBuilder sb, String key, DataFormatDefinition df) {
+    @SuppressWarnings("unchecked")
+    protected <T> void writeDataFormatBuilder(
+            StringBuilder sb, String key, DataFormatDefinition df, BiConsumer<StringBuilder, T> writer) {
         String str = sb.toString();
         if (str.endsWith(".marshal()") || str.endsWith(".unmarshal()")) {
             sb.setLength(sb.length() - 1);
             sb.append("dataFormat().").append(key).append("()");
-            if (df instanceof BindyDataFormat bindy) {
-                if (bindy.getType() != null) {
-                    sb.append(".type(").append(quote(bindy.getType())).append(")");
-                }
-                if (bindy.getClassTypeAsString() != null) {
-                    sb.append(".classType(").append(quote(bindy.getClassTypeAsString())).append(")");
-                }
-            }
-            sb.append(".end())");
+            writer.accept(sb, (T) df);
+            sb.append(NL).append(indent()).append("    .end())");
         }
     }
 
