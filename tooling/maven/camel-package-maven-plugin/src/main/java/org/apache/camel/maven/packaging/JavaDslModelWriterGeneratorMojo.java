@@ -304,7 +304,7 @@ public class JavaDslModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
         if ("log".equals(methodName)) {
             return new PrimaryArg("message", "getMessage", "string");
         }
-        if ("policy".equals(methodName)) {
+        if ("policy".equals(methodName) || "process".equals(methodName)) {
             return new PrimaryArg("ref", "getRef", "string");
         }
         if ("removeProperties".equals(methodName) || "removeHeaders".equals(methodName)) {

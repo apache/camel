@@ -4287,8 +4287,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "pollEnrich", v);
                 }
                 case "ProcessDefinition" -> {
-                    beginStep(sb, "process", v);
-                    doWriteProcessDefinition(sb, (ProcessDefinition) v);
+                    ProcessDefinition _d = (ProcessDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".process(");
+                    if (_d.getRef() != null) {
+                        sb.append(quote(_d.getRef()));
+                    }
+                    handledAttributes.add("ref");
+                    sb.append(")");
+                    doWriteProcessDefinition(sb, _d);
                     endStep(sb, "process", v);
                 }
                 case "RecipientListDefinition" -> {
@@ -5067,8 +5074,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "pollEnrich", v);
                 }
                 case "ProcessDefinition" -> {
-                    beginStep(sb, "process", v);
-                    doWriteProcessDefinition(sb, (ProcessDefinition) v);
+                    ProcessDefinition _d = (ProcessDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".process(");
+                    if (_d.getRef() != null) {
+                        sb.append(quote(_d.getRef()));
+                    }
+                    handledAttributes.add("ref");
+                    sb.append(")");
+                    doWriteProcessDefinition(sb, _d);
                     endStep(sb, "process", v);
                 }
                 case "RecipientListDefinition" -> {

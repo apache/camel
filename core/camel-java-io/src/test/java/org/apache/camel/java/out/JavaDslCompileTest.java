@@ -72,21 +72,12 @@ public class JavaDslCompileTest {
     // Categorized by root cause — as the writer improves, move files out of this set.
     private static final Set<String> KNOWN_FAILURES = Set.of(
             // Attributes rendered as chained calls that don't exist in the Java DSL
-            "aggregate.xml",                    // expression written as chained call
+            "aggregate.xml",                    // spurious .simple() call from expression child
             "multiline.xml",                    // loggingLevel chained call
             "poll.xml",                         // timeout chained call
-            "setExchangePattern.xml",           // ExchangePattern not imported
             "transformDataType.xml",            // fromType chained call
-            // Expression languages without RouteBuilder helper method
-            "processorWithFilter.xml",          // juel() expression
-            "processorWithGroovyFilter.xml",    // groovy() expression
-            "routeWithChoice.xml",              // ognl() expression
-            "script.xml",                       // groovy() expression
-            // process().ref() pattern
-            "barOnExceptionRoute.xml",          // onException + process().ref()
-            "processor.xml",                    // process().ref()
-            "processorWithHeaderFilter.xml",    // process().ref()
-            "processorWithSimpleFilter.xml",    // process().ref()
+            // onException + exception class as constructor arg
+            "barOnExceptionRoute.xml",          // onException(Exception.class) + handled
             // Top-level constructs (not chainable from from())
             "interceptFrom.xml",               // interceptFrom() is RouteBuilder-level
             "tokenizer.xml",                   // tokenizer() is RouteBuilder-level
@@ -96,8 +87,6 @@ public class JavaDslCompileTest {
             "interceptFromAndSendTo.xml",       // interceptSendToEndpoint
             "resequencerBatch.xml",             // resequence batch config
             "routeInlinedErrorHandler.xml",     // inlined error handler
-            "routeProperties.xml",              // route property()
-            "routeProperty.xml",                // route property()
             // Data format subtypes
             "routeWithBindyDataFormat.xml",     // bindy data format
             "routeWithCvsDataFormat.xml",       // csv data format
@@ -192,7 +181,9 @@ public class JavaDslCompileTest {
     private static String wrapInRouteBuilder(String className, List<String> routeSnippets) {
         StringBuilder sb = new StringBuilder();
         sb.append("package test.generated;\n\n");
-        sb.append("import org.apache.camel.builder.RouteBuilder;\n\n");
+        sb.append("import org.apache.camel.ExchangePattern;\n");
+        sb.append("import org.apache.camel.builder.RouteBuilder;\n");
+        sb.append("import static org.apache.camel.builder.Builder.language;\n\n");
         sb.append("public class ").append(className).append(" extends RouteBuilder {\n");
         sb.append("    @Override\n");
         sb.append("    public void configure() throws Exception {\n");

@@ -22,27 +22,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.model.language.MvelExpression;
-import org.apache.camel.model.language.OgnlExpression;
-import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.VariableExpression;
-import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -86,6 +80,15 @@ public abstract class JavaDslModelWriterSupport {
             handledAttributes.add("id");
         }
         handledAttributes.add("customId");
+        if (def.getRouteProperties() != null) {
+            for (PropertyDefinition prop : def.getRouteProperties()) {
+                sb.append(NL).append(indent()).append(".routeProperty(")
+                        .append(quote(prop.getKey())).append(", ")
+                        .append(quote(prop.getValue())).append(")");
+            }
+            handledAttributes.add("routeProperty");
+            handledAttributes.add("routeProperties");
+        }
         indentLevel--;
         doWriteRouteDefinition(sb, def);
         indentLevel++;
@@ -164,7 +167,7 @@ public abstract class JavaDslModelWriterSupport {
 
     protected <T> void doWriteChildList(
             StringBuilder sb, String key, List<T> list, BiConsumer<StringBuilder, T> writer) {
-        if (list != null && !list.isEmpty()) {
+        if (list != null && !list.isEmpty() && !handledAttributes.contains(key)) {
             indentLevel++;
             for (T item : list) {
                 writer.accept(sb, item);
@@ -219,32 +222,14 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof JqExpression) {
             return "jq(" + quotedValue + ")";
         }
-        if (expr instanceof GroovyExpression) {
-            return "groovy(" + quotedValue + ")";
-        }
-        if (expr instanceof PythonExpression) {
-            return "python(" + quotedValue + ")";
-        }
         if (expr instanceof JoorExpression) {
             return "joor(" + quotedValue + ")";
-        }
-        if (expr instanceof MvelExpression) {
-            return "mvel(" + quotedValue + ")";
-        }
-        if (expr instanceof OgnlExpression) {
-            return "ognl(" + quotedValue + ")";
-        }
-        if (expr instanceof SpELExpression) {
-            return "spel(" + quotedValue + ")";
         }
         if (expr instanceof CSimpleExpression) {
             return "csimple(" + quotedValue + ")";
         }
         if (expr instanceof DatasonnetExpression) {
             return "datasonnet(" + quotedValue + ")";
-        }
-        if (expr instanceof Hl7TerserExpression) {
-            return "hl7terser(" + quotedValue + ")";
         }
         if (expr instanceof TokenizerExpression) {
             return "tokenize(" + quotedValue + ")";
@@ -261,13 +246,10 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof RefExpression) {
             return "ref(" + quotedValue + ")";
         }
-        if (expr instanceof WasmExpression) {
-            return "wasm(" + quotedValue + ")";
-        }
-        // fallback: use the expression language name
+        // languages without RouteBuilder helpers use the generic language() factory
         String lang = expr.getLanguage();
         if (lang != null && !lang.isEmpty()) {
-            return lang + "(" + quotedValue + ")";
+            return "language(" + quote(lang) + ", " + quotedValue + ")";
         }
         return "expression(" + quotedValue + ")";
     }
