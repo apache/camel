@@ -102,15 +102,27 @@ Java::
 from("direct:start").to("dynamic-router:orders");
 ----
 
-Spring XML::
+XML::
 +
 .Example XML Route Definition
 [source,xml]
 ----
 <route>
    <from uri="direct:start"/>
-   <to uri="dynamic-router:nameOfYourChannel"/>
+   <to uri="dynamic-router:orders"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dynamic-router:orders
 ----
 ====
 

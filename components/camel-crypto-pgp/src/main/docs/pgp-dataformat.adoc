@@ -101,7 +101,7 @@ from("direct:pgp-encrypt")
     .unmarshal().pgp("file:secring.gpg", "alice@example.com", "letmein");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
@@ -110,6 +110,25 @@ Spring XML::
   <marshal><pgp keyFileName="file:pubring.gpg" keyUserid="alice@example.com"/></marshal>
   <unmarshal><pgp keyFileName="file:secring.gpg" keyUserid="alice@example.com" password="letmein"/></unmarshal>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:pgp-encrypt
+      steps:
+        - marshal:
+            pgp:
+              keyFileName: "file:pubring.gpg"
+              keyUserid: "alice@example.com"
+        - unmarshal:
+            pgp:
+              keyFileName: "file:secring.gpg"
+              keyUserid: "alice@example.com"
+              password: letmein
 ----
 
 ====

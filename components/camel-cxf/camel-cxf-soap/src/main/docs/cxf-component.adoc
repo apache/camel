@@ -747,6 +747,22 @@ XML::
     <process ref="InsertResponseOutHeaderProcessor" />
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: cxf:bean:routerRelayEndpointWithInsertion
+      steps:
+        - process:
+            ref: InsertRequestOutHeaderProcessor
+        - to:
+            uri: cxf:bean:serviceRelayEndpointWithInsertion
+        - process:
+            ref: InsertResponseOutHeaderProcessor
+----
 ====
 
 SOAP headers are propagated to and from Camel Message headers. The Camel

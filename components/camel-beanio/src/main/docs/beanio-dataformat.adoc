@@ -81,8 +81,37 @@ XML::
     <to uri="mock:beanio-marshal"/>
 </route>
 ----
-To use the BeanIO data format in XML, you need to configure it using the
-`<beanio>` XML tag as shown below. The routes are similar to the example above.
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:unmarshal
+      steps:
+        - unmarshal:
+            beanio:
+              mapping: org/apache/camel/dataformat/beanio/mappings.xml
+              streamName: employeeFile
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: mock:beanio-unmarshal
+- route:
+    from:
+      uri: direct:marshal
+      steps:
+        - marshal:
+            beanio:
+              mapping: org/apache/camel/dataformat/beanio/mappings.xml
+              streamName: employeeFile
+        - to:
+            uri: mock:beanio-marshal
+----
 ====
 
 The first route is for transforming CSV data into a `List<Employee>` Java objects.

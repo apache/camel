@@ -242,7 +242,7 @@ from("seda:orders")
   .to("seda:upper");
 ----
 
-XML DSL::
+XML::
 +
 [source,xml]
 ----
@@ -253,6 +253,22 @@ XML DSL::
    </transform>
    <to uri="seda:upper"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:orders
+      steps:
+        - transform:
+            expression:
+              joor:
+                expression: "message.getBody(String.class).toUpperCase()"
+        - to:
+            uri: seda:upper
 ----
 
 ====
@@ -314,6 +330,23 @@ In XML DSL it's easier because you can turn off pre-compilation in the `<joor>` 
     </transform>
     <to uri="jms:orders"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:incoming
+      steps:
+        - transform:
+            expression:
+              joor:
+                expression: "resource:file:src/main/resources/orders.joor"
+                preCompile: false
+        - to:
+            uri: jms:orders
 ----
 
 ====

@@ -60,13 +60,27 @@ XML::
 +
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="activemq:My.Queue"/>
-    <to uri="dataformat:jaxb:unmarshal?contextPath=com.acme.model"/>
-    <to uri="mqseries:Another.Queue"/>
-  </route>
-</camelContext>
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="dataformat:jaxb:unmarshal?contextPath=com.acme.model"/>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: dataformat:jaxb:unmarshal
+            parameters:
+              contextPath: com.acme.model
+        - to:
+            uri: mqseries:Another.Queue
 ----
 ====
 

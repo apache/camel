@@ -63,7 +63,7 @@ from("direct:processOrder")
     .to("activemq:queue:order.out");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
@@ -78,6 +78,32 @@ Spring XML::
  <to uri="bean:orderService?method=process"/>
  <to uri="activemq:queue:order.out"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:order.in
+      steps:
+        - to:
+            uri: bean:orderService
+            parameters:
+              method: validate
+        - to:
+            uri: direct:processOrder
+- route:
+    from:
+      uri: direct:processOrder
+      steps:
+        - to:
+            uri: bean:orderService
+            parameters:
+              method: process
+        - to:
+            uri: activemq:queue:order.out
 ----
 
 ====

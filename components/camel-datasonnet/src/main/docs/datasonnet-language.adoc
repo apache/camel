@@ -275,6 +275,23 @@ XML::
     <to uri="mock:camel"/>
 </route>
 -----------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setBody:
+            expression:
+              datasonnet:
+                expression: "'hello, ' + cml.properties('toGreet')"
+                resultType: java.lang.String
+        - to:
+            uri: mock:camel
+----
 ====
 
 === Loading script from external resource
@@ -317,6 +334,23 @@ XML::
     </filter>
 </route>
 -----------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - filter:
+            expression:
+              datasonnet:
+                expression: "ds.arrays.firstWith(body.lineItems, function(item) item > 100) != null"
+            steps:
+              - to:
+                  uri: queue:bar
+----
 ====
 
 
@@ -348,6 +382,25 @@ XML::
     </filter>
 </route>
 -----------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - transform:
+            expression:
+              datasonnet:
+                expression: "ds.filter(body.lineItems, function(item) item > 100)"
+                resultType: java.lang.String
+                bodyMediaType: application/xml
+                outputMediaType: application/json
+        - to:
+            uri: queue:bar
+----
 ====
 
 

@@ -59,6 +59,24 @@ XML::
   </filter>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:topic:OrdersTopic
+      steps:
+        - filter:
+            expression:
+              method:
+                ref: myBean
+                method: isGoldCustomer
+            steps:
+              - to:
+                  uri: activemq:BigSpendersQueue
+----
 ====
 
 The bean could be implemented as follows:

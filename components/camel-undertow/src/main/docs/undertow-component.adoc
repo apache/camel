@@ -255,6 +255,18 @@ XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: undertow:http://www.google.com
+----
+
 ====
 
 === HTTP Consumer Example

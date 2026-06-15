@@ -66,12 +66,24 @@ from("direct:hello")
 XML::
 +
 [source,xml]
-----------------------------
+----
 <route>
    <from uri="direct:hello"/>
    <to uri="bean:com.foo.MyBean"/>
 </route>
-----------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - to:
+            uri: bean:com.foo.MyBean
+----
 ====
 
 What happens is that when the exchange is routed to the MyBean, then Camel
