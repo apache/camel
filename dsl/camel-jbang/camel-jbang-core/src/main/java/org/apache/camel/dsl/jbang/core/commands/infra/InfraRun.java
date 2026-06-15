@@ -125,7 +125,18 @@ public class InfraRun extends InfraBaseCommand {
             cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
         } else {
             cmds = new ArrayList<>();
+            cmds.add("infra");
             cmds.add("run");
+            if (serviceName != null) {
+                cmds.addAll(serviceName);
+            }
+            if (port != null) {
+                cmds.add("--port");
+                cmds.add(String.valueOf(port));
+            }
+            if (logToStdout) {
+                cmds.add("--log");
+            }
         }
 
         cmds.remove("--background=true");
