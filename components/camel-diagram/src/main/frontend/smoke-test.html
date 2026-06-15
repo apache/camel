@@ -20,27 +20,19 @@
 <!--
   Local smoke test for the camel-route-diagram web component.
 
-  IMPORTANT: browsers block ES module imports from file:// URLs (CORS/null-origin).
-  Serve from the src/ directory so the relative JS path resolves correctly:
+  Browsers block ES module imports from file:// URLs (CORS/null-origin).
+  Serve from this directory:
 
-    cd components/camel-diagram/src
+    cd components/camel-diagram/src/
     python3 -m http.server 8080
-    open http://localhost:8080/test/resources/smoke-test.html
-
-  The page is at test/resources/smoke-test.html, and the relative import
-  ../../main/resources/... resolves to main/resources/... under the same server root.
+    open http://localhost:8080/main/frontend/smoke-test.html
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>camel-route-diagram smoke test</title>
-  <!--
-    Inline module import avoids the file:// CORS restriction that blocks
-    external <script type="module" src="..."> in Safari and some Chromium builds.
-    When served over HTTP this works identically to an external src= reference.
-  -->
   <script type="module">
-    import '../../main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js';
+    import '../resources/META-INF/resources/camel/diagram/camel-route-diagram.js';
   </script>
   <script>
     /* eslint-disable */
@@ -73,7 +65,7 @@
   <h1>camel-route-diagram smoke test</h1>
 
   <section>
-    <h2>Auto theme (follows OS color scheme — dark on dark OS, light on light OS)</h2>
+    <h2>Auto theme (follows OS color scheme)</h2>
     <camel-route-diagram src="/q/dev/route-structure"></camel-route-diagram>
   </section>
 

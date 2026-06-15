@@ -119,6 +119,8 @@
                                 <exclude>src/main/frontend/package.json</exclude>
                                 <exclude>src/main/frontend/package-lock.json</exclude>
                                 <exclude>src/main/frontend/node_modules/**</exclude>
+                                <!-- local-dev smoke test (not shipped) -->
+                                <exclude>src/main/frontend/smoke-test.html</exclude>
                                 <!-- generated and minified JS bundle -->
                                 <exclude>src/main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js</exclude>
                             </excludes>
