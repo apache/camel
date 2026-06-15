@@ -20,10 +20,15 @@
 <!--
   Local smoke test for the camel-route-diagram web component.
 
-  Serve this directory with a local HTTP server to avoid browser file:// restrictions:
-    cd components/camel-diagram/src/test/resources
+  IMPORTANT: browsers block ES module imports from file:// URLs (CORS/null-origin).
+  Serve from the src/ directory so the relative JS path resolves correctly:
+
+    cd components/camel-diagram/src
     python3 -m http.server 8080
-    open http://localhost:8080/smoke-test.html
+    open http://localhost:8080/test/resources/smoke-test.html
+
+  The page is at test/resources/smoke-test.html, and the relative import
+  ../../main/resources/... resolves to main/resources/... under the same server root.
 -->
 <html lang="en">
 <head>
