@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -26,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import picocli.CommandLine;
-
-import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLICommand;
 
 @CommandLine.Command(name = "restart",
                      description = "Restarts a running external service", sortOptions = false, showDefaultValues = true,
@@ -91,29 +88,11 @@ public class InfraRestart extends InfraBaseCommand {
     }
 
     private Integer startService(String service) throws Exception {
-        if (background) {
-            List<String> cmds = new ArrayList<>();
-            cmds.add("infra");
-            cmds.add("run");
-            cmds.addAll(serviceName);
-            if (port != null) {
-                cmds.add("--port");
-                cmds.add(String.valueOf(port));
-            }
-            if (logToStdout) {
-                cmds.add("--log");
-            }
-            addCamelCLICommand(cmds);
-
-            Process p = new ProcessBuilder(cmds).start();
-            printer().println("Restarted " + service + " in background with PID: " + p.pid());
-            return 0;
-        }
-
         InfraRun infraRun = new InfraRun(getMain());
         infraRun.setServiceName(serviceName);
         infraRun.port = port;
         infraRun.setLogToStdout(logToStdout);
+        infraRun.background = background;
         return infraRun.doCall();
     }
 
