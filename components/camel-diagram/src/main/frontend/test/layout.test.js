@@ -78,6 +78,24 @@ describe('computeSubtreeWidth', () => {
 });
 
 describe('assignPositions', () => {
+  it('linear chain: each node connects to its visual predecessor, not the tree root', () => {
+    const nodes = [
+      node('route', 'r1', 0),
+      node('from',  'f1', 1),
+      node('log',   'l1', 1),
+      node('to',    't1', 1),
+    ];
+    const tree = buildTree(nodes);
+    computeSubtreeWidth(tree);
+    const positions = {};
+    assignPositions(tree, 0, 0, tree.subtreeWidth, positions);
+
+    expect(positions['r1'].parentId).toBeNull();
+    expect(positions['f1'].parentId).toBe('r1');
+    expect(positions['l1'].parentId).toBe('f1'); // NOT 'r1'
+    expect(positions['t1'].parentId).toBe('l1'); // NOT 'r1'
+  });
+
   it('single-chain route assigns increasing y values', () => {
     const nodes = [
       node('route', 'r1', 0),

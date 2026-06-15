@@ -89,6 +89,39 @@ export function computeSubtreeWidth(node) {
 }
 
 /**
+ * Returns the id of the node that an edge should visually originate from when
+ * drawing a connection TO `node`. For non-first children of a linear (non-branching)
+ * parent this is the last node in the previous sibling's chain — not the shared
+ * tree parent — so edges don't pass through intermediate nodes.
+ * Ports RouteDiagramLayoutEngine.findLastLayoutNode().
+ */
+function visualParentId(node) {
+  if (!node.parent) return null;
+  const parent = node.parent;
+  if (BRANCHING_EIPS.has(parent.info.type)) {
+    // All branches of a branching EIP connect from the branching node.
+    return parent.info.id;
+  }
+  const idx = parent.children.indexOf(node);
+  if (idx === 0) {
+    return parent.info.id;
+  }
+  // Connect from the last node in the previous sibling's subtree chain.
+  return lastChainId(parent.children[idx - 1]);
+}
+
+/**
+ * Traverses the rightmost (last) chain of a subtree and returns its leaf id.
+ * Stops at branching EIPs (they have no single continuation point).
+ */
+function lastChainId(node) {
+  if (BRANCHING_EIPS.has(node.info.type) || !node.children.length) {
+    return node.info.id;
+  }
+  return lastChainId(node.children[node.children.length - 1]);
+}
+
+/**
  * Walks the tree and populates positions[id] with {x, y, w, h, parentId, type, code, ...}.
  * x, y are the top-left corner of the node box in SVG logical pixels.
  *
@@ -107,7 +140,7 @@ export function assignPositions(node, x, y, parentWidth, positions) {
     y,
     w: NODE_W,
     h: NODE_H,
-    parentId: node.parent ? node.parent.info.id : null,
+    parentId: visualParentId(node),
     type: node.info.type,
     code: node.info.code,
     description: node.info.description ?? null,
