@@ -111,6 +111,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-yaml-dsl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-java-joor-dsl</artifactId>
+        </dependency>
 
         <!-- Swagger/OpenAPI parser for contract-first OpenAPI tools -->
         <dependency>
