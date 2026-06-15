@@ -23,10 +23,18 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptFromDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.config.BatchResequencerConfig;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
@@ -80,6 +88,25 @@ public abstract class JavaDslModelWriterSupport {
     }
 
     protected void writeRoute(StringBuilder sb, RouteDefinition def) {
+        // extract intercepts from outputs — they are RouteBuilder-level in Java DSL
+        if (def.getOutputs() != null) {
+            for (ProcessorDefinition<?> output : def.getOutputs()) {
+                if (output instanceof InterceptFromDefinition ifd) {
+                    writeInterceptFrom(sb, ifd);
+                } else if (output instanceof InterceptSendToEndpointDefinition iste) {
+                    writeInterceptSendToEndpoint(sb, iste);
+                } else if (output instanceof InterceptDefinition id) {
+                    writeIntercept(sb, id);
+                }
+            }
+        }
+
+        // extract inlined error handler — RouteBuilder-level in Java DSL
+        if (def.getErrorHandler() != null) {
+            writeErrorHandler(sb, def.getErrorHandler());
+            handledAttributes.add("errorHandler");
+        }
+
         if (def.getInput() != null) {
             sb.append("from(").append(quote(def.getInput().getUri())).append(")");
         }
@@ -161,6 +188,8 @@ public abstract class JavaDslModelWriterSupport {
                     }
                     sb.append(expressionDsl(esd.getExpressionType())).append(")");
                 }
+            } else if (value instanceof BatchResequencerConfig brc) {
+                writeBatchResequencerConfig(sb, brc);
             } else if (value instanceof DataFormatDefinition df) {
                 writeDataFormatBuilder(sb, key, df, writer);
             } else if (value instanceof LoadBalancerDefinition lb) {
@@ -182,7 +211,9 @@ public abstract class JavaDslModelWriterSupport {
         if (list != null && !list.isEmpty()) {
             indentLevel++;
             for (T item : list) {
-                writer.accept(sb, item);
+                if (!isInterceptDefinition(item)) {
+                    writer.accept(sb, item);
+                }
             }
             indentLevel--;
         }
@@ -220,6 +251,94 @@ public abstract class JavaDslModelWriterSupport {
             sb.append("dataFormat().").append(key).append("()");
             writer.accept(sb, (T) df);
             sb.append(NL).append(indent()).append("    .end())");
+        }
+    }
+
+    private void writeInterceptFrom(StringBuilder sb, InterceptFromDefinition def) {
+        sb.append("interceptFrom(");
+        if (def.getUri() != null) {
+            sb.append(quote(def.getUri()));
+        }
+        sb.append(")");
+        if (def.getOutputs() != null) {
+            for (ProcessorDefinition<?> output : def.getOutputs()) {
+                writeInterceptOutput(sb, output);
+            }
+        }
+        sb.append(";").append(NL).append(NL);
+    }
+
+    private void writeIntercept(StringBuilder sb, InterceptDefinition def) {
+        sb.append("intercept()");
+        if (def.getOutputs() != null) {
+            for (ProcessorDefinition<?> output : def.getOutputs()) {
+                writeInterceptOutput(sb, output);
+            }
+        }
+        sb.append(";").append(NL).append(NL);
+    }
+
+    private void writeInterceptSendToEndpoint(StringBuilder sb, InterceptSendToEndpointDefinition def) {
+        sb.append("interceptSendToEndpoint(").append(quote(def.getUri())).append(")");
+        if (def.getOutputs() != null) {
+            for (ProcessorDefinition<?> output : def.getOutputs()) {
+                writeInterceptOutput(sb, output);
+            }
+        }
+        sb.append(";").append(NL).append(NL);
+    }
+
+    private void writeErrorHandler(StringBuilder sb, ErrorHandlerDefinition errorHandler) {
+        if (errorHandler.getErrorHandlerType() instanceof DeadLetterChannelDefinition dlc) {
+            sb.append("errorHandler(deadLetterChannel(").append(quote(dlc.getDeadLetterUri())).append(")");
+            appendErrorHandlerOptions(sb, dlc);
+            sb.append(");").append(NL).append(NL);
+        } else if (errorHandler.getErrorHandlerType() instanceof DefaultErrorHandlerDefinition deh) {
+            sb.append("errorHandler(defaultErrorHandler()");
+            appendErrorHandlerOptions(sb, deh);
+            sb.append(");").append(NL).append(NL);
+        } else {
+            sb.append("errorHandler(noErrorHandler());").append(NL).append(NL);
+        }
+    }
+
+    private void appendErrorHandlerOptions(StringBuilder sb, DefaultErrorHandlerDefinition def) {
+        if (def.getRedeliveryPolicy() != null) {
+            var rp = def.getRedeliveryPolicy();
+            appendTypedOption(sb, "maximumRedeliveries", rp.getMaximumRedeliveries());
+            appendTypedNonDefaultOption(sb, "redeliveryDelay", rp.getRedeliveryDelay(), "1000");
+            appendTypedNonDefaultOption(sb, "logStackTrace", rp.getLogStackTrace(), "true");
+            appendTypedNonDefaultOption(sb, "logRetryAttempted", rp.getLogRetryAttempted(), "true");
+            appendToggleOption(sb, "asyncDelayedRedelivery", rp.getAsyncDelayedRedelivery());
+            appendTypedNonDefaultOption(sb, "backOffMultiplier", rp.getBackOffMultiplier(), "2.0");
+            appendToggleOption(sb, "useExponentialBackOff", rp.getUseExponentialBackOff());
+            appendTypedNonDefaultOption(sb, "maximumRedeliveryDelay", rp.getMaximumRedeliveryDelay(), "60000");
+            appendOption(sb, "delayPattern", rp.getDelayPattern());
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected void writeInterceptOutput(StringBuilder sb, ProcessorDefinition<?> output) {
+        handledAttributes.clear();
+        doWriteProcessorDefinitionRef(sb, (ProcessorDefinition) output);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected abstract void doWriteProcessorDefinitionRef(StringBuilder sb, ProcessorDefinition v);
+
+    protected boolean isInterceptDefinition(Object def) {
+        return def instanceof InterceptDefinition
+                || def instanceof InterceptFromDefinition
+                || def instanceof InterceptSendToEndpointDefinition;
+    }
+
+    protected void writeBatchResequencerConfig(StringBuilder sb, BatchResequencerConfig brc) {
+        sb.append(NL).append(indent()).append("    .batch()");
+        if (brc.getBatchSize() != null) {
+            sb.append(NL).append(indent()).append("    .size(").append(brc.getBatchSize()).append(")");
+        }
+        if (brc.getBatchTimeout() != null) {
+            sb.append(NL).append(indent()).append("    .timeout(").append(brc.getBatchTimeout()).append(")");
         }
     }
 
@@ -461,6 +580,24 @@ public abstract class JavaDslModelWriterSupport {
     private void appendNonDefaultOption(StringBuilder sb, String name, String value, String defaultValue) {
         if (value != null && !value.isEmpty() && !value.equals(defaultValue)) {
             sb.append(".").append(name).append("(").append(quote(value)).append(")");
+        }
+    }
+
+    private void appendTypedOption(StringBuilder sb, String name, String value) {
+        if (value != null && !value.isEmpty()) {
+            sb.append(".").append(name).append("(").append(value).append(")");
+        }
+    }
+
+    private void appendTypedNonDefaultOption(StringBuilder sb, String name, String value, String defaultValue) {
+        if (value != null && !value.isEmpty() && !value.equals(defaultValue)) {
+            sb.append(".").append(name).append("(").append(value).append(")");
+        }
+    }
+
+    private void appendToggleOption(StringBuilder sb, String name, String value) {
+        if ("true".equals(value)) {
+            sb.append(".").append(name).append("()");
         }
     }
 

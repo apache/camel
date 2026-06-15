@@ -71,14 +71,7 @@ public class JavaDslCompileTest {
     // Files that don't compile yet due to unsupported constructs in the writer.
     // Categorized by root cause — as the writer improves, move files out of this set.
     private static final Set<String> KNOWN_FAILURES = Set.of(
-            // Top-level constructs (not chainable from from())
-            "interceptFrom.xml",               // interceptFrom() is RouteBuilder-level
-            "tokenizer.xml",                   // tokenizer() is RouteBuilder-level
-            // Complex nested constructs
-            "barInterceptorRoute.xml",          // intercept with nested outputs
-            "interceptFromAndSendTo.xml",       // interceptSendToEndpoint
-            "resequencerBatch.xml",             // resequence batch config
-            "routeInlinedErrorHandler.xml");    // inlined error handler
+            "tokenizer.xml");                  // tokenizer EIP with langchain4j sub-element
 
     private static final Path XML_IO_RESOURCES = Paths.get("../camel-xml-io/src/test/resources");
     private static final Path LOCAL_RESOURCES = Paths.get("src/test/resources");
