@@ -22,6 +22,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @Metadata(annotations = {
         "protocol=http",
 })
-public class SpringWebserviceEndpoint extends DefaultEndpoint {
+public class SpringWebserviceEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     @UriParam
     private SpringWebserviceConfiguration configuration;
@@ -64,6 +66,16 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     public SpringWebserviceConfiguration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return configuration.getHeaderFilterStrategy();
+    }
+
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        configuration.setHeaderFilterStrategy(headerFilterStrategy);
     }
 
 }
