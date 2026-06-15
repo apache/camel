@@ -46,6 +46,15 @@ Spring XML::
               deadLetterUri="log:dead?level=ERROR"/>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: "log:dead?level=ERROR"
+----
+
 ====
 
 Pay attention to Spring XML DSL. The type attribute is used to declare which error handler to use, here its `DeadLetterChannel`.
@@ -164,6 +173,18 @@ Spring XML::
 </errorHandler>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: jms:queue:dead
+      redeliveryPolicy:
+        maximumRedeliveries: 3
+        redeliveryDelay: "5000"
+----
+
 ====
 
 The Dead Letter error handler will clear the caused exception (`setException(null)`), by moving the caused exception to a property on the xref:manual::exchange.adoc[Exchange], with the key `Exchange.EXCEPTION_CAUGHT`.
@@ -224,6 +245,19 @@ And in XML, you set `useOriginalMessage=true` on the `<errorHandler>` as shown:
 </errorHandler>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: jms:queue:dead
+      useOriginalMessage: true
+      redeliveryPolicy:
+        maximumRedeliveries: 5
+        redeliveryDelay: "5000"
+----
+
 ====
 
 Then the messages routed to the `jms:queue:dead` is the original input.
@@ -271,6 +305,18 @@ And in XML DSL, you specify a bean id via `onRedeliveryRef` on the `<errorHandle
               deadLetterUri="jms:queue:dead">
   <redeliveryPolicy maximumRedeliveries="3"/>
 </errorHandler>
+----
+
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: jms:queue:dead
+      onRedeliveryRef: myRedeliveryProcessor
+      redeliveryPolicy:
+        maximumRedeliveries: 3
 ----
 
 ====
@@ -321,6 +367,16 @@ Configuring this from Spring XML is done with the `onPrepareFailureRef` to refer
 <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="jms:dead" onPrepareFailureRef="myPrepare"/>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: jms:dead
+      onPrepareFailureRef: myPrepare
+----
+
 ====
 
 === Calling a processor when an exception occurred
@@ -364,6 +420,16 @@ Configuring this from Spring XML is done with the `onExceptionOccurredRef` to re
 <bean id="myErrorLogger" class="com.foo.OnErrorLogger"/>
 
 <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="jms:dead" onExceptionOccurredRef="myErrorLogger"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: jms:dead
+      onExceptionOccurredRef: myErrorLogger
 ----
 ====
 

@@ -329,6 +329,27 @@ of the `<errorHandler>` as shown:
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    defaultErrorHandler:
+      redeliveryPolicy:
+        logExhaustedMessageHistory: false
+        logExhaustedMessageBody: true
+- route:
+    from:
+      uri: jms:cheese
+      steps:
+        - to:
+            uri: bean:validate
+        - to:
+            uri: bean:transform
+        - to:
+            uri: jms:wine
+----
+
 ====
 
 == MessageHistory API
