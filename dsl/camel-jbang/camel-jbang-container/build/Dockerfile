@@ -15,12 +15,16 @@
 # limitations under the License.
 #
 
-FROM eclipse-temurin:21-jdk
+ARG BASE_IMAGE=eclipse-temurin:21-jdk
 
-# Set Versions, JBang Path and commit ID of the specific version of dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java
-ENV JBANG_VERSION=0.138.0 \
-    CAMEL_VERSION=4.18.2 \
-    CAMEL_JBANG_COMMIT=c955dff71d90e5c5bc853edb11dd48782b588deb \
+FROM $BASE_IMAGE
+
+ARG IMAGE_ARCH
+ARG JBANG_VERSION
+ARG CAMEL_VERSION
+
+ENV JBANG_VERSION=$JBANG_VERSION \
+    CAMEL_VERSION=$CAMEL_VERSION \
     JBANG_PATH=/opt/jbang
 
 RUN mkdir $JBANG_PATH && chown ubuntu:ubuntu $JBANG_PATH
@@ -30,8 +34,16 @@ ENV PATH="$PATH:$JBANG_PATH"
 USER ubuntu
 
 # Download JBang, create camel exec, set JBang version, trust camel sources and download camel DEPS by running camel
-RUN bash -c set -o pipefail && wget -qc https://github.com/jbangdev/jbang/releases/download/v$JBANG_VERSION/jbang.tar -O - | tar xf - --strip-components=2 -C $JBANG_PATH jbang/bin/jbang jbang/bin/jbang.jar && \
-    echo '#!/bin/sh\nexec jbang run https://github.com/apache/camel/blob/'$CAMEL_JBANG_COMMIT'/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java "$@"' > $JBANG_PATH/camel && \
+RUN bash -c set -o pipefail && wget -qc https://github.com/jbangdev/jbang/releases/download/v$JBANG_VERSION/jbang.tar -O - | \
+    tar xf - --strip-components=2 -C $JBANG_PATH jbang/bin/jbang jbang/bin/jbang.jar
+RUN curl -L \
+    https://raw.githubusercontent.com/apache/camel/camel-${CAMEL_VERSION}/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java \
+    -o ${JBANG_PATH}/CamelJBang.java && \
+    sed -E -i \
+        "s/\\$\\{camel\\.jbang\\.version:[^}]+\\}/\\\${camel.jbang.version:${CAMEL_VERSION}}/g; \
+        s/\\$\\{camel-kamelets\\.version:[^}]+\\}/\\\${camel-kamelets.version:${CAMEL_VERSION}}/g" \
+        ${JBANG_PATH}/CamelJBang.java
+RUN echo '#!/bin/sh\nexec jbang run ${JBANG_PATH}/CamelJBang.java "$@"' > $JBANG_PATH/camel && \
     chmod +x $JBANG_PATH/camel && \
     mkdir -p $HOME/.jbang/cache && echo -n $JBANG_VERSION > $HOME/.jbang/cache/version.txt && \
     jbang trust add https://github.com/apache/camel && \
