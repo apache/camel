@@ -108,10 +108,6 @@
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
-                    <!-- treat .mjs like .js (SLASHSTAR_STYLE /* ... */) -->
-                    <mapping>
-                        <mjs>SLASHSTAR_STYLE</mjs>
-                    </mapping>
                     <licenseSets>
                         <licenseSet>
                             <excludes combine.children="append">
@@ -121,8 +117,15 @@
                                 <exclude>src/main/frontend/node_modules/**</exclude>
                                 <!-- local-dev smoke test (not shipped) -->
                                 <exclude>src/main/frontend/smoke-test.html</exclude>
-                                <!-- generated and minified JS bundle -->
-                                <exclude>src/main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js</exclude>
+                                <!-- generated and minified JS bundle and its sidecar -->
+                                <exclude>src/main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js
+                                </exclude>
+                                <exclude>
+                                    src/main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js.LEGAL.txt
+                                </exclude>
+                                <!-- third-party attribution notice (plain text, no license header) -->
+                                <exclude>src/main/resources/META-INF/resources/camel/diagram/THIRD-PARTY-NOTICES.txt
+                                </exclude>
                             </excludes>
                         </licenseSet>
                     </licenseSets>
@@ -149,7 +152,12 @@
                     </execution>
                     <execution>
                         <id>npm-install</id>
-                        <goals><goal>npm</goal></goals>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>ci</arguments>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>npm-build</id>
@@ -158,6 +166,17 @@
                         </goals>
                         <configuration>
                             <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run test</arguments>
+                            <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                 </executions>

@@ -28,6 +28,7 @@ await esbuild.build({
   bundle: true,
   minify: true,
   format: 'esm',
+  legalComments: 'external',
   outfile,
 });
 
