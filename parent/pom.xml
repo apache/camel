@@ -202,7 +202,7 @@
         <google-genai-version>1.58.0</google-genai-version>
         <graaljs-version>25.0.3</graaljs-version>
         <graphql-java-version>26.0</graphql-java-version>
-        <greenmail-version>2.1.8</greenmail-version>
+        <greenmail-version>2.1.9</greenmail-version>
         <groovy-version>5.0.6</groovy-version>
         <grpc-version>1.82.0</grpc-version>
         <grpc-google-auth-library-version>1.41.0</grpc-google-auth-library-version>
