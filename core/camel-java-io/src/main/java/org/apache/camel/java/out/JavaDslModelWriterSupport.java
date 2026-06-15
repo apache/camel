@@ -29,6 +29,7 @@ import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
+import org.apache.camel.model.OnWhenDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -188,6 +189,11 @@ public abstract class JavaDslModelWriterSupport {
                         sb.append("(Predicate) ");
                     }
                     sb.append(expressionDsl(esd.getExpressionType())).append(")");
+                }
+            } else if (value instanceof OnWhenDefinition owd) {
+                if (owd.getExpression() != null) {
+                    sb.append(NL).append(indent()).append("    .onWhen(")
+                            .append(expressionDsl(owd.getExpression())).append(")");
                 }
             } else if (value instanceof BatchResequencerConfig brc) {
                 writeBatchResequencerConfig(sb, brc);
