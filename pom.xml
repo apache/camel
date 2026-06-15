@@ -393,6 +393,7 @@
                                     <exclude>**/examples/**/*</exclude>
                                     <exclude>**/*.wav</exclude>
                                     <exclude>**/*.cast</exclude>
+                                    <exclude>**/Makefile</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
