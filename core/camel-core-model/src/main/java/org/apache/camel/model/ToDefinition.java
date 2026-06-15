@@ -41,7 +41,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     private String variableReceive;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
-    @DslArg(position = 1, renderType = "enumString", typeName = "ExchangePattern")
+    @DslArg(position = 0, renderType = "enumString", typeName = "ExchangePattern")
     private String pattern;
 
     public ToDefinition() {

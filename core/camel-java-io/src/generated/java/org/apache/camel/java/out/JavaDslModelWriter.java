@@ -4794,18 +4794,18 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".to(");
                     boolean _first = true;
-                    if (_d.getUri() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append(quote(_d.getUri()));
-                    }
-                    handledAttributes.add("uri");
                     if (_d.getPattern() != null) {
                         if (!_first) sb.append(", ");
                         _first = false;
                         sb.append("ExchangePattern.").append(_d.getPattern());
                     }
                     handledAttributes.add("pattern");
+                    if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getUri()));
+                    }
+                    handledAttributes.add("uri");
                     sb.append(")");
                     doWriteToDefinition(sb, _d);
                     endStep(sb, "to", v);
@@ -5731,18 +5731,18 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".to(");
                     boolean _first = true;
-                    if (_d.getUri() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append(quote(_d.getUri()));
-                    }
-                    handledAttributes.add("uri");
                     if (_d.getPattern() != null) {
                         if (!_first) sb.append(", ");
                         _first = false;
                         sb.append("ExchangePattern.").append(_d.getPattern());
                     }
                     handledAttributes.add("pattern");
+                    if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getUri()));
+                    }
+                    handledAttributes.add("uri");
                     sb.append(")");
                     doWriteToDefinition(sb, _d);
                     endStep(sb, "to", v);

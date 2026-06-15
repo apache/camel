@@ -43,7 +43,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
 
     @XmlAttribute
     @Metadata(required = true)
-    @DslArg
+    @DslArg(position = 1)
     protected String uri;
 
     protected SendDefinition() {
