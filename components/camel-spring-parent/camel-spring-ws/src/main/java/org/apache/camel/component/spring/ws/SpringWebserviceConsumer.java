@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
@@ -145,7 +146,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             swm.setWebServiceMessage(request);
         }
 
-        extractSourceFromSoapHeader(exchange.getIn().getHeaders(), request);
+        extractSourceFromSoapHeader(exchange, exchange.getIn().getHeaders(), request);
         extractAttachmentsFromRequest(request, exchange);
     }
 
@@ -169,11 +170,13 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
      * @param headers the Exchange Headers
      * @param request the WebService Request
      */
-    private void extractSourceFromSoapHeader(Map<String, Object> headers, WebServiceMessage request) {
+    private void extractSourceFromSoapHeader(Exchange exchange, Map<String, Object> headers, WebServiceMessage request) {
         if (request instanceof SoapMessage soapMessage) {
             SoapHeader soapHeader = soapMessage.getSoapHeader();
 
             if (soapHeader != null) {
+                HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+
                 //Set the raw soap header as a header in the exchange.
                 headers.put(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader.getSource());
 
@@ -181,7 +184,11 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                 Iterator<QName> attIter = soapHeader.getAllAttributes();
                 while (attIter.hasNext()) {
                     QName name = attIter.next();
-                    headers.put(name.getLocalPart(), soapHeader.getAttributeValue(name));
+                    Object value = soapHeader.getAttributeValue(name);
+                    if (headerFilterStrategy == null
+                            || !headerFilterStrategy.applyFilterToExternalHeaders(name.getLocalPart(), value, exchange)) {
+                        headers.put(name.getLocalPart(), value);
+                    }
                 }
 
                 //Set header values for the soap header elements
@@ -189,7 +196,10 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                 while (elementIter.hasNext()) {
                     SoapHeaderElement element = elementIter.next();
                     QName name = element.getName();
-                    headers.put(name.getLocalPart(), element);
+                    if (headerFilterStrategy == null
+                            || !headerFilterStrategy.applyFilterToExternalHeaders(name.getLocalPart(), element, exchange)) {
+                        headers.put(name.getLocalPart(), element);
+                    }
                 }
             }
         }
