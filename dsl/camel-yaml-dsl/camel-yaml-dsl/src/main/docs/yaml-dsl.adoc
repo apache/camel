@@ -437,15 +437,18 @@ as shown below:
               expression: "person.middlename"
               suppressExceptions: true
             steps:
-            - to: "mock:middle"
+            - to:
+                uri: mock:middle
           - jsonpath:
               expression: "person.lastname"
               suppressExceptions: true
             steps:
-            - to: "mock:last"
+            - to:
+                uri: mock:last
           otherwise:
             steps:
-              - to: "mock:other"
+              - to:
+                  uri: mock:other
 ----
 
 In the route above, the following message
