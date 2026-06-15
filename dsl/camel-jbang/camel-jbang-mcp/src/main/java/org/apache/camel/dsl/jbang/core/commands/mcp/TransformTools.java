@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -51,6 +53,8 @@ import org.apache.camel.yaml.out.YamlModelWriter;
  */
 @ApplicationScoped
 public class TransformTools {
+
+    private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("(?:public\\s+)?class\\s+(\\w+)");
 
     @Inject
     CatalogService catalogService;
@@ -158,7 +162,8 @@ public class TransformTools {
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Transform a Camel route between different DSL formats (YAML, XML). " +
-                        "Note: Java to YAML/XML transformation has limitations.")
+                        "Note: Java to YAML/XML transformation has limitations."
+                        + " Java DSL can only be used as source format, not as target format.")
     public TransformResult camel_transform_route(
             @ToolArg(description = "Route definition to transform") String route,
             @ToolArg(description = "Source format (yaml, xml, java)") String fromFormat,
@@ -181,19 +186,18 @@ public class TransformTools {
             return result;
         }
 
-        if ("java".equals(from)) {
-            result.supported = false;
-            result.note = "Java DSL to " + toFormat + " transformation is not supported. "
-                          + "There is no lightweight Java DSL parser available.";
-            return result;
-        }
-
         try {
             if ("xml".equals(from) && "yaml".equals(to)) {
                 result.result = transformXmlToYaml(route);
                 result.supported = true;
             } else if ("yaml".equals(from) && "xml".equals(to)) {
                 result.result = transformYamlToXml(route);
+                result.supported = true;
+            } else if ("java".equals(from) && "yaml".equals(to)) {
+                result.result = transformJavaToFormat(route, "yaml");
+                result.supported = true;
+            } else if ("java".equals(from) && "xml".equals(to)) {
+                result.result = transformJavaToFormat(route, "xml");
                 result.supported = true;
             } else {
                 result.supported = false;
@@ -262,6 +266,60 @@ public class TransformTools {
         } finally {
             ctx.stop();
         }
+    }
+
+    private String transformJavaToFormat(String java, String targetFormat) throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        try {
+            ctx.build();
+
+            String source = wrapSnippetIfNeeded(java);
+            String className = extractClassName(source);
+            Resource resource = ResourceHelper.fromString(className + ".java", source);
+            PluginHelper.getRoutesLoader(ctx).loadRoutes(resource);
+
+            List<RouteDefinition> routeDefs = ctx.getRouteDefinitions();
+            if (routeDefs == null || routeDefs.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Could not parse Java route. Ensure it contains a valid route definition.");
+            }
+
+            if ("yaml".equals(targetFormat)) {
+                YamlModelWriter writer = new YamlModelWriter();
+                List<JsonObject> roots = new ArrayList<>();
+                for (RouteDefinition route : routeDefs) {
+                    roots.add(writer.writeRouteDefinition(route));
+                }
+                return writer.printAsYaml(roots);
+            } else {
+                RoutesDefinition rd = new RoutesDefinition();
+                rd.setRoutes(routeDefs);
+
+                StringWriter sw = new StringWriter();
+                new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
+                return sw.toString();
+            }
+        } finally {
+            ctx.stop();
+        }
+    }
+
+    private static String wrapSnippetIfNeeded(String source) {
+        if (CLASS_NAME_PATTERN.matcher(source).find()) {
+            return source;
+        }
+        return "import org.apache.camel.builder.RouteBuilder;\n\n"
+               + "public class SnippetRoute extends RouteBuilder {\n"
+               + "    @Override\n"
+               + "    public void configure() {\n"
+               + "        " + source + "\n"
+               + "    }\n"
+               + "}\n";
+    }
+
+    private static String extractClassName(String source) {
+        Matcher m = CLASS_NAME_PATTERN.matcher(source);
+        return m.find() ? m.group(1) : "Route";
     }
 
     /**
