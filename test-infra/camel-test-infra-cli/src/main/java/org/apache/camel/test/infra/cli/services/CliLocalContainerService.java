@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -241,7 +243,10 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                         version = StringHelper.between(versionSummary, "camel-version = ", "\n").trim();
                     }
                     if (version == null) {
-                        version = StringHelper.between(versionSummary, "Camel CLI version:", "\n").trim();
+                        Matcher m = Pattern.compile("Camel (?:CLI|JBang) version:\\s*(.+)").matcher(versionSummary);
+                        if (m.find()) {
+                            version = m.group(1).trim();
+                        }
                     }
                     return version;
                 });
