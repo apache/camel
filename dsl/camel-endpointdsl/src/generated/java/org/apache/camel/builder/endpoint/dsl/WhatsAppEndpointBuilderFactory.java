@@ -60,6 +60,24 @@ public interface WhatsAppEndpointBuilderFactory {
             doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
+        /**
+         * The app secret used to verify the X-Hub-Signature-256 signature of
+         * inbound webhook event payloads (from the Meta/WhatsApp app
+         * dashboard). When set, event callbacks with a missing or invalid
+         * signature are rejected with HTTP 403; when not set, no signature
+         * verification is performed.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param webhookSecret the value to set
+         * @return the dsl builder
+         */
+        default WhatsAppEndpointBuilder webhookSecret(String webhookSecret) {
+            doSetProperty("webhookSecret", webhookSecret);
+            return this;
+        }
     }
 
     /**
