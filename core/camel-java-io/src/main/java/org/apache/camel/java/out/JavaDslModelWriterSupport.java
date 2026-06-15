@@ -19,6 +19,7 @@ package org.apache.camel.java.out;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -81,12 +82,46 @@ public abstract class JavaDslModelWriterSupport {
 
     private static final Set<String> SKIP_ATTRIBUTES = Set.of("customId");
 
+    // Builder methods that are no-arg toggles: .name() when "true", skip when "false"
+    private static final Set<String> TOGGLE_ATTRIBUTES = Set.of(
+            "aggregationStrategyMethodAllowNull", "completeAllOnStop", "completionFromBatchConsumer",
+            "completionOnNewCorrelationGroup", "copy", "deprecated",
+            "discardOnAggregationFailure", "discardOnCompletionTimeout",
+            "eagerCheckCompletion", "forceCompletionOnStop", "ignoreInvalidCorrelationKeys",
+            "ignoreInvalidEndpoint", "breakOnShutdown",
+            "onCompleteOnly", "onFailureOnly",
+            "optimisticLocking", "optimisticLockingSyncRetry",
+            "shareUnitOfWork", "skipSendToOriginalEndpoint", "streaming",
+            "useCollisionAvoidance", "useExponentialBackOff", "asyncDelayedRedelivery",
+            "useOriginalBody", "useOriginalMessage");
+
+    // Builder methods that take boolean (not String): .name(true/false) unquoted
+    private static final Set<String> BOOLEAN_ATTRIBUTES = Set.of(
+            "aggregateOnException", "allowNullBody",
+            "clientRequestValidation", "clientResponseValidation",
+            "completionEager", "deadLetterHandleNewException",
+            "eager", "enableCORS", "enableNoContentResponse",
+            "inheritErrorHandler", "intermittent",
+            "parallelProcessing", "precondition",
+            "removeOnFailure", "skipBindingOnErrorCode", "skipDuplicate",
+            "validate");
+
+    // Data format builder methods where the String setter name differs from the XML attribute name.
+    // The XML attribute is the Class<?> setter; the String setter appends "Name" or "AsString".
+    private static final Map<String, String> DATAFORMAT_ATTR_RENAMES = Map.of(
+            "unmarshalType", "unmarshalTypeName",
+            "collectionType", "collectionTypeName",
+            "jsonView", "jsonViewTypeName");
+
+    private boolean inDataFormatBuilder;
+
     protected int indentLevel = 1;
     protected final Set<String> handledAttributes = new HashSet<>();
 
     protected void resetState() {
         indentLevel = 1;
         handledAttributes.clear();
+        inDataFormatBuilder = false;
     }
 
     protected void writeRoute(StringBuilder sb, RouteDefinition def) {
@@ -161,7 +196,21 @@ public abstract class JavaDslModelWriterSupport {
         if (defaultValue != null && defaultValue.equals(value)) {
             return;
         }
-        sb.append(NL).append(indent()).append("    .").append(key).append("(").append(quote(value)).append(")");
+        String methodName = key;
+        if (inDataFormatBuilder) {
+            methodName = DATAFORMAT_ATTR_RENAMES.getOrDefault(key, key);
+        }
+        if (TOGGLE_ATTRIBUTES.contains(key)) {
+            if ("true".equals(value)) {
+                sb.append(NL).append(indent()).append("    .").append(methodName).append("()");
+            }
+            return;
+        }
+        if (BOOLEAN_ATTRIBUTES.contains(key)) {
+            sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(value).append(")");
+            return;
+        }
+        sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(quote(value)).append(")");
     }
 
     protected void doWriteValue(StringBuilder sb, String value) {
@@ -258,7 +307,9 @@ public abstract class JavaDslModelWriterSupport {
         if (str.endsWith(".marshal()") || str.endsWith(".unmarshal()")) {
             sb.setLength(sb.length() - 1);
             sb.append("dataFormat().").append(key).append("()");
+            inDataFormatBuilder = true;
             writer.accept(sb, (T) df);
+            inDataFormatBuilder = false;
             sb.append(NL).append(indent()).append("    .end())");
         }
     }
