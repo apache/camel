@@ -870,6 +870,17 @@ aligning the component with the rest of the Camel component catalog (`camel-kafk
 names from XMPP messages can supply a custom `headerFilterStrategy` to restore the previous
 behaviour.
 
+=== camel-spring-ws - potential breaking change
+
+The `spring-ws` consumer now applies a `HeaderFilterStrategy` to the SOAP headers it maps onto the
+Camel `Exchange`. The default `headerFilterStrategy` is a new `SpringWebserviceHeaderFilterStrategy`
+that filters header names starting with `Camel` / `camel` (case-insensitive) in both the inbound and
+outbound directions, aligning the component with the rest of the Camel component catalog
+(`camel-cxf`, `camel-mail`, `camel-coap`, ...). SOAP header element and attribute names that fall in
+that namespace are no longer propagated as `Exchange` headers. Routes that relied on receiving such
+header names from inbound SOAP headers can supply a custom `headerFilterStrategy` (via the new
+`headerFilterStrategy` endpoint option) to restore the previous behaviour.
+
 === camel-lucene
 
 The Exchange header values exposed by `LuceneConstants` have been renamed to follow the standard
