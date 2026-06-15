@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Sets the exchange pattern on the message exchange
@@ -34,6 +35,7 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
 
     @XmlAttribute(required = true)
     @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
+    @DslArg(renderType = "enumString", typeName = "ExchangePattern")
     private String pattern;
 
     public SetExchangePatternDefinition() {

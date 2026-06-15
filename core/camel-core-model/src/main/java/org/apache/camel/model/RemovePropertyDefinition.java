@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Removes a named property from the message exchange
@@ -32,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyDefinition> {
 
     @XmlAttribute(required = true)
+    @DslArg
     private String name;
 
     public RemovePropertyDefinition() {

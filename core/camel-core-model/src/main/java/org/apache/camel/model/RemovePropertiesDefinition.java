@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Removes message exchange properties whose name matches a specified pattern
@@ -38,6 +39,7 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
     private String[] excludePatterns;
 
     @XmlAttribute(required = true)
+    @DslArg
     private String pattern;
     @XmlAttribute
     @Metadata(label = "advanced")

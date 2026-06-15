@@ -367,6 +367,9 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                         }
                     }
                     handledAttributes.add("${arg.fieldName}");
+                    #if( $arg.fieldName.endsWith("s") )
+                    handledAttributes.add("${arg.fieldName.substring(0, $arg.fieldName.length() - 1)}");
+                    #end
                     #end
                 #end
                     sb.append(")");

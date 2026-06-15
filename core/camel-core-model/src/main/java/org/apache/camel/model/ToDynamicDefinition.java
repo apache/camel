@@ -27,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Sends the message to a dynamic endpoint
@@ -41,6 +42,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     @XmlAttribute
     @Metadata(required = true)
+    @DslArg
     private String uri;
     @XmlAttribute
     private String variableSend;

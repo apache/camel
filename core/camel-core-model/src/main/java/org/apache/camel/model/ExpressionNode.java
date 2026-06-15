@@ -29,6 +29,7 @@ import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * A base {@link ExpressionNode} which does <b>not</b> support any outputs.
@@ -42,6 +43,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         implements HasExpressionType {
 
     @XmlElementRef
+    @DslArg
     private ExpressionDefinition expression;
 
     protected ExpressionNode() {

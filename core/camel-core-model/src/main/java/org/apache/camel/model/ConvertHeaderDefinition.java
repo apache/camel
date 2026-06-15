@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Converts the message header to another type
@@ -36,8 +37,10 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
     private Class<?> typeClass;
 
     @XmlAttribute(required = true)
+    @DslArg(position = 0)
     private String name;
     @XmlAttribute(required = true)
+    @DslArg(position = 1, renderType = "class")
     private String type;
     @XmlAttribute
     private String toName;

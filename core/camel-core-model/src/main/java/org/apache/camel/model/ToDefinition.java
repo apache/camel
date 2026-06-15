@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Sends the message to a static endpoint
@@ -40,6 +41,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     private String variableReceive;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
+    @DslArg(position = 1, renderType = "enumString", typeName = "ExchangePattern")
     private String pattern;
 
     public ToDefinition() {

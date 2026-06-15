@@ -4027,6 +4027,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                             sb.append(classLiteral(_item));
                         }
                     }
+                    handledAttributes.add("exceptions");
                     handledAttributes.add("exception");
                     sb.append(")");
                     doWriteCatchDefinition(sb, _d);
@@ -4194,13 +4195,33 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "intercept", v);
                 }
                 case "InterceptFromDefinition" -> {
-                    beginStep(sb, "interceptFrom", v);
-                    doWriteInterceptFromDefinition(sb, (InterceptFromDefinition) v);
+                    InterceptFromDefinition _d = (InterceptFromDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".interceptFrom(");
+                    boolean _first = true;
+                    if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getUri()));
+                    }
+                    handledAttributes.add("uri");
+                    sb.append(")");
+                    doWriteInterceptFromDefinition(sb, _d);
                     endStep(sb, "interceptFrom", v);
                 }
                 case "InterceptSendToEndpointDefinition" -> {
-                    beginStep(sb, "interceptSendToEndpoint", v);
-                    doWriteInterceptSendToEndpointDefinition(sb, (InterceptSendToEndpointDefinition) v);
+                    InterceptSendToEndpointDefinition _d = (InterceptSendToEndpointDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".interceptSendToEndpoint(");
+                    boolean _first = true;
+                    if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getUri()));
+                    }
+                    handledAttributes.add("uri");
+                    sb.append(")");
+                    doWriteInterceptSendToEndpointDefinition(sb, _d);
                     endStep(sb, "interceptSendToEndpoint", v);
                 }
                 case "KameletDefinition" -> {
@@ -4287,6 +4308,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                             sb.append(classLiteral(_item));
                         }
                     }
+                    handledAttributes.add("exceptions");
                     handledAttributes.add("exception");
                     sb.append(")");
                     doWriteOnExceptionDefinition(sb, _d);
@@ -4470,19 +4492,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "removeVariable", v);
                 }
                 case "ResequenceDefinition" -> {
-                    ResequenceDefinition _d = (ResequenceDefinition) v;
-                    handledAttributes.clear();
-                    sb.append("\n").append(indent()).append(".resequence(");
-                    boolean _first = true;
-                    if (_d.getExpression() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append(expressionDsl(_d.getExpression()));
-                    }
-                    handledAttributes.add("expression");
-                    handledAttributes.add("expression");
-                    sb.append(")");
-                    doWriteResequenceDefinition(sb, _d);
+                    beginStep(sb, "resequence", v);
+                    doWriteResequenceDefinition(sb, (ResequenceDefinition) v);
                     endStep(sb, "resequence", v);
                 }
                 case "ResumableDefinition" -> {
@@ -4783,18 +4794,18 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".to(");
                     boolean _first = true;
-                    if (_d.getPattern() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append("ExchangePattern.").append(_d.getPattern());
-                    }
-                    handledAttributes.add("pattern");
                     if (_d.getUri() != null) {
                         if (!_first) sb.append(", ");
                         _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
+                    if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append("ExchangePattern.").append(_d.getPattern());
+                    }
+                    handledAttributes.add("pattern");
                     sb.append(")");
                     doWriteToDefinition(sb, _d);
                     endStep(sb, "to", v);
@@ -5018,6 +5029,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                             sb.append(classLiteral(_item));
                         }
                     }
+                    handledAttributes.add("exceptions");
                     handledAttributes.add("exception");
                     sb.append(")");
                     doWriteCatchDefinition(sb, _d);
@@ -5175,13 +5187,33 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "intercept", v);
                 }
                 case "InterceptFromDefinition" -> {
-                    beginStep(sb, "interceptFrom", v);
-                    doWriteInterceptFromDefinition(sb, (InterceptFromDefinition) v);
+                    InterceptFromDefinition _d = (InterceptFromDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".interceptFrom(");
+                    boolean _first = true;
+                    if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getUri()));
+                    }
+                    handledAttributes.add("uri");
+                    sb.append(")");
+                    doWriteInterceptFromDefinition(sb, _d);
                     endStep(sb, "interceptFrom", v);
                 }
                 case "InterceptSendToEndpointDefinition" -> {
-                    beginStep(sb, "interceptSendToEndpoint", v);
-                    doWriteInterceptSendToEndpointDefinition(sb, (InterceptSendToEndpointDefinition) v);
+                    InterceptSendToEndpointDefinition _d = (InterceptSendToEndpointDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".interceptSendToEndpoint(");
+                    boolean _first = true;
+                    if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getUri()));
+                    }
+                    handledAttributes.add("uri");
+                    sb.append(")");
+                    doWriteInterceptSendToEndpointDefinition(sb, _d);
                     endStep(sb, "interceptSendToEndpoint", v);
                 }
                 case "KameletDefinition" -> {
@@ -5268,6 +5300,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                             sb.append(classLiteral(_item));
                         }
                     }
+                    handledAttributes.add("exceptions");
                     handledAttributes.add("exception");
                     sb.append(")");
                     doWriteOnExceptionDefinition(sb, _d);
@@ -5431,19 +5464,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "removeVariable", v);
                 }
                 case "ResequenceDefinition" -> {
-                    ResequenceDefinition _d = (ResequenceDefinition) v;
-                    handledAttributes.clear();
-                    sb.append("\n").append(indent()).append(".resequence(");
-                    boolean _first = true;
-                    if (_d.getExpression() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append(expressionDsl(_d.getExpression()));
-                    }
-                    handledAttributes.add("expression");
-                    handledAttributes.add("expression");
-                    sb.append(")");
-                    doWriteResequenceDefinition(sb, _d);
+                    beginStep(sb, "resequence", v);
+                    doWriteResequenceDefinition(sb, (ResequenceDefinition) v);
                     endStep(sb, "resequence", v);
                 }
                 case "ResumableDefinition" -> {
@@ -5709,18 +5731,18 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".to(");
                     boolean _first = true;
-                    if (_d.getPattern() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append("ExchangePattern.").append(_d.getPattern());
-                    }
-                    handledAttributes.add("pattern");
                     if (_d.getUri() != null) {
                         if (!_first) sb.append(", ");
                         _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
+                    if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append("ExchangePattern.").append(_d.getPattern());
+                    }
+                    handledAttributes.add("pattern");
                     sb.append(")");
                     doWriteToDefinition(sb, _d);
                     endStep(sb, "to", v);

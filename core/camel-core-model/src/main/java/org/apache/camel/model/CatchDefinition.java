@@ -31,6 +31,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Catches exceptions as part of a try, catch, finally block
@@ -44,6 +45,7 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     private List<Class<? extends Throwable>> exceptionClasses;
 
     @XmlElement(name = "exception")
+    @DslArg(renderType = "classList")
     private List<String> exceptions = new ArrayList<>();
     @Metadata(description = "Used for triggering doCatch in specific situations")
     @XmlElement

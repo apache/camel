@@ -41,6 +41,7 @@ import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Aggregates many messages into a single message
@@ -68,6 +69,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
 
     @XmlElement(name = "correlationExpression", required = true)
+    @DslArg
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
     @AsPredicate

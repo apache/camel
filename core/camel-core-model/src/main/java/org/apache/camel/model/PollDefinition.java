@@ -25,6 +25,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -46,9 +47,11 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
     private String variableReceive;
     @XmlAttribute
     @Metadata(required = true)
+    @DslArg
     private String uri;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "20000")
+    @DslArg(position = 1, renderType = "long")
     private String timeout;
 
     public PollDefinition() {
