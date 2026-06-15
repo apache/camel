@@ -17,12 +17,28 @@
 
 -->
 <!DOCTYPE html>
+<!--
+  Local smoke test for the camel-route-diagram web component.
+
+  Serve this directory with a local HTTP server to avoid browser file:// restrictions:
+    cd components/camel-diagram/src/test/resources
+    python3 -m http.server 8080
+    open http://localhost:8080/smoke-test.html
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>camel-route-diagram smoke test</title>
-  <script type="module" src="../../main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js"></script>
+  <!--
+    Inline module import avoids the file:// CORS restriction that blocks
+    external <script type="module" src="..."> in Safari and some Chromium builds.
+    When served over HTTP this works identically to an external src= reference.
+  -->
+  <script type="module">
+    import '../../main/resources/META-INF/resources/camel/diagram/camel-route-diagram.js';
+  </script>
   <script>
+    /* eslint-disable */
     const mockData = {
       routes: [{
         routeId: 'demo-route',
@@ -43,7 +59,7 @@
     window.fetch = () => Promise.resolve({ ok: true, json: () => Promise.resolve(mockData) });
   </script>
   <style>
-    body { font-family: system-ui, sans-serif; padding: 1rem; }
+    body { font-family: system-ui, sans-serif; padding: 1rem; background: #fff; color: #000; }
     section { margin-bottom: 2rem; }
     h2 { margin-bottom: 0.5rem; }
   </style>
@@ -52,14 +68,21 @@
   <h1>camel-route-diagram smoke test</h1>
 
   <section>
-    <h2>Light mode (auto)</h2>
+    <h2>Auto theme (follows OS color scheme — dark on dark OS, light on light OS)</h2>
     <camel-route-diagram src="/q/dev/route-structure"></camel-route-diagram>
   </section>
 
   <section>
-    <h2>Dark mode (forced via CSS override)</h2>
+    <h2>Light theme (forced)</h2>
     <camel-route-diagram src="/q/dev/route-structure"
-      style="background:#1e293b; --crd-fg:#e2e8f0; --crd-bg:#1e293b; --crd-edge:#475569;">
+      style="--crd-bg:#ffffff; --crd-fg:#1e293b; --crd-edge:#94a3b8;">
+    </camel-route-diagram>
+  </section>
+
+  <section>
+    <h2>Dark theme (forced)</h2>
+    <camel-route-diagram src="/q/dev/route-structure"
+      style="--crd-bg:#0f172a; --crd-fg:#e2e8f0; --crd-edge:#475569;">
     </camel-route-diagram>
   </section>
 </body>

@@ -9,7 +9,10 @@ var M=globalThis,U=M.ShadowRoot&&(M.ShadyCSS===void 0||M.ShadyCSS.nativeShadow)&
       color: var(--crd-fg, #1e293b);
     }
     @media (prefers-color-scheme: dark) {
-      :host { color: var(--crd-fg, #e2e8f0); }
+      :host {
+        background: var(--crd-bg, #0f172a);
+        color: var(--crd-fg, #e2e8f0);
+      }
     }
     .error   { color: #ef4444; padding: 8px; }
     .loading { opacity: .6; padding: 8px; }
