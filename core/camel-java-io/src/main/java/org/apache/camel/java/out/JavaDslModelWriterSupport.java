@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.CSimpleExpression;
@@ -59,6 +60,8 @@ public abstract class JavaDslModelWriterSupport {
 
     private static final Set<String> BLOCK_CHILDREN = Set.of(
             "otherwise", "doFinally", "onFallback");
+
+    private static final Set<String> PREDICATE_CHILDREN = Set.of("handled", "continued", "retryWhile");
 
     private static final Set<String> SKIP_ATTRIBUTES = Set.of("customId");
 
@@ -143,6 +146,15 @@ public abstract class JavaDslModelWriterSupport {
                 sb.append(NL).append(indent()).append(".").append(key).append("()");
                 writer.accept(sb, value);
                 indentLevel--;
+            } else if (value instanceof ExpressionSubElementDefinition esd) {
+                if (esd.getExpressionType() != null) {
+                    boolean isPredicate = PREDICATE_CHILDREN.contains(key);
+                    sb.append(NL).append(indent()).append("    .").append(key).append("(");
+                    if (isPredicate) {
+                        sb.append("(Predicate) ");
+                    }
+                    sb.append(expressionDsl(esd.getExpressionType())).append(")");
+                }
             } else if (value instanceof DataFormatDefinition) {
                 sb.append(".").append(key).append("()");
             } else {
@@ -182,7 +194,7 @@ public abstract class JavaDslModelWriterSupport {
     @SuppressWarnings("unchecked")
     protected void doWriteStringList(StringBuilder sb, String wrapperKey, String itemKey, List<String> list) {
         // String lists are typically rendered as multiple method calls or comma-separated args
-        if (list != null && !list.isEmpty()) {
+        if (list != null && !list.isEmpty() && !handledAttributes.contains(itemKey)) {
             for (String s : list) {
                 if (s != null) {
                     sb.append(NL).append(indent()).append("    .").append(itemKey).append("(").append(quote(s)).append(")");
@@ -272,10 +284,11 @@ public abstract class JavaDslModelWriterSupport {
         if (typeName == null) {
             return "Object.class";
         }
-        String simple = typeName.contains(".")
-                ? typeName.substring(typeName.lastIndexOf('.') + 1)
-                : typeName;
-        return simple + ".class";
+        // java.lang classes use simple name (no import needed), others use FQN
+        if (typeName.startsWith("java.lang.")) {
+            return typeName.substring("java.lang.".length()) + ".class";
+        }
+        return typeName + ".class";
     }
 
     protected String enumLiteral(Enum<?> e) {

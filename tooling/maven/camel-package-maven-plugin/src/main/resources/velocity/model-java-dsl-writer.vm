@@ -358,6 +358,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                         sb.append(_d.${arg.getter}());
                     }
                     handledAttributes.add("${arg.fieldName}");
+                    #elseif( $arg.renderType == "classList" )
+                    if (_d.${arg.getter}() != null) {
+                        for (String _item : _d.${arg.getter}()) {
+                            if (!_first) sb.append(", ");
+                            _first = false;
+                            sb.append(classLiteral(_item));
+                        }
+                    }
+                    handledAttributes.add("${arg.fieldName}");
                     #end
                 #end
                     sb.append(")");

@@ -71,14 +71,11 @@ public class JavaDslCompileTest {
     // Files that don't compile yet due to unsupported constructs in the writer.
     // Categorized by root cause — as the writer improves, move files out of this set.
     private static final Set<String> KNOWN_FAILURES = Set.of(
-            // onException + exception class as constructor arg
-            "barOnExceptionRoute.xml",          // onException(Exception.class) + handled
             // Top-level constructs (not chainable from from())
             "interceptFrom.xml",               // interceptFrom() is RouteBuilder-level
             "tokenizer.xml",                   // tokenizer() is RouteBuilder-level
             // Complex nested constructs
             "barInterceptorRoute.xml",          // intercept with nested outputs
-            "doTryCatchFinally.xml",            // doTry/doCatch/doFinally blocks
             "interceptFromAndSendTo.xml",       // interceptSendToEndpoint
             "resequencerBatch.xml",             // resequence batch config
             "routeInlinedErrorHandler.xml",     // inlined error handler
@@ -172,6 +169,7 @@ public class JavaDslCompileTest {
         sb.append("package test.generated;\n\n");
         sb.append("import org.apache.camel.ExchangePattern;\n");
         sb.append("import org.apache.camel.LoggingLevel;\n");
+        sb.append("import org.apache.camel.Predicate;\n");
         sb.append("import org.apache.camel.builder.RouteBuilder;\n");
         sb.append("import static org.apache.camel.builder.Builder.language;\n\n");
         sb.append("public class ").append(className).append(" extends RouteBuilder {\n");

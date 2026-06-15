@@ -439,6 +439,14 @@ public class JavaDslModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
             }
         } catch (NoSuchMethodException ignored) {
         }
+        // check for exception list (CatchDefinition, OnExceptionDefinition)
+        try {
+            java.lang.reflect.Method m = defClass.getMethod("getExceptions");
+            if (java.util.List.class.isAssignableFrom(m.getReturnType())) {
+                return List.of(new PrimaryArg("exception", "getExceptions", "classList"));
+            }
+        } catch (NoSuchMethodException ignored) {
+        }
         return Collections.emptyList();
     }
 

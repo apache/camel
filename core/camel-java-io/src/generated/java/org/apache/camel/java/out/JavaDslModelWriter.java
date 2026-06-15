@@ -4016,8 +4016,20 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "bean", v);
                 }
                 case "CatchDefinition" -> {
-                    beginStep(sb, "doCatch", v);
-                    doWriteCatchDefinition(sb, (CatchDefinition) v);
+                    CatchDefinition _d = (CatchDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".doCatch(");
+                    boolean _first = true;
+                    if (_d.getExceptions() != null) {
+                        for (String _item : _d.getExceptions()) {
+                            if (!_first) sb.append(", ");
+                            _first = false;
+                            sb.append(classLiteral(_item));
+                        }
+                    }
+                    handledAttributes.add("exception");
+                    sb.append(")");
+                    doWriteCatchDefinition(sb, _d);
                     endStep(sb, "doCatch", v);
                 }
                 case "ChoiceDefinition" -> {
@@ -4264,8 +4276,20 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "onCompletion", v);
                 }
                 case "OnExceptionDefinition" -> {
-                    beginStep(sb, "onException", v);
-                    doWriteOnExceptionDefinition(sb, (OnExceptionDefinition) v);
+                    OnExceptionDefinition _d = (OnExceptionDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".onException(");
+                    boolean _first = true;
+                    if (_d.getExceptions() != null) {
+                        for (String _item : _d.getExceptions()) {
+                            if (!_first) sb.append(", ");
+                            _first = false;
+                            sb.append(classLiteral(_item));
+                        }
+                    }
+                    handledAttributes.add("exception");
+                    sb.append(")");
+                    doWriteOnExceptionDefinition(sb, _d);
                     endStep(sb, "onException", v);
                 }
                 case "OnFallbackDefinition" -> {
@@ -4983,8 +5007,20 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "bean", v);
                 }
                 case "CatchDefinition" -> {
-                    beginStep(sb, "doCatch", v);
-                    doWriteCatchDefinition(sb, (CatchDefinition) v);
+                    CatchDefinition _d = (CatchDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".doCatch(");
+                    boolean _first = true;
+                    if (_d.getExceptions() != null) {
+                        for (String _item : _d.getExceptions()) {
+                            if (!_first) sb.append(", ");
+                            _first = false;
+                            sb.append(classLiteral(_item));
+                        }
+                    }
+                    handledAttributes.add("exception");
+                    sb.append(")");
+                    doWriteCatchDefinition(sb, _d);
                     endStep(sb, "doCatch", v);
                 }
                 case "ChoiceDefinition" -> {
@@ -5221,8 +5257,20 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "onCompletion", v);
                 }
                 case "OnExceptionDefinition" -> {
-                    beginStep(sb, "onException", v);
-                    doWriteOnExceptionDefinition(sb, (OnExceptionDefinition) v);
+                    OnExceptionDefinition _d = (OnExceptionDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".onException(");
+                    boolean _first = true;
+                    if (_d.getExceptions() != null) {
+                        for (String _item : _d.getExceptions()) {
+                            if (!_first) sb.append(", ");
+                            _first = false;
+                            sb.append(classLiteral(_item));
+                        }
+                    }
+                    handledAttributes.add("exception");
+                    sb.append(")");
+                    doWriteOnExceptionDefinition(sb, _d);
                     endStep(sb, "onException", v);
                 }
                 case "PausableDefinition" -> {
