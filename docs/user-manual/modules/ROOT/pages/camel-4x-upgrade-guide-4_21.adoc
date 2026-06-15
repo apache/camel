@@ -2532,4 +2532,4 @@ periodic refresh.
 It is theme-agnostic, respects `prefers-color-scheme` for automatic dark/light mode, and
 exposes CSS custom properties for full visual control.
 
-See xref:components::diagram-component.adoc[Diagram] for usage instructions and theming options.
+See xref:components:others:diagram.adoc[Diagram] for usage instructions and theming options.
