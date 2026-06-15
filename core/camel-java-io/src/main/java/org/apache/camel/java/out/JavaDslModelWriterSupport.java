@@ -33,6 +33,7 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.OnWhenDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.model.PropertyExpressionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
@@ -106,6 +107,10 @@ public abstract class JavaDslModelWriterSupport {
             "removeOnFailure", "skipBindingOnErrorCode", "skipDuplicate",
             "validate");
 
+    // Child elements rendered as sub-builder: .name().option("val").end()
+    private static final Set<String> SUB_BUILDER_CHILDREN = Set.of(
+            "resilience4jConfiguration", "faultToleranceConfiguration");
+
     // Data format builder methods where the String setter name differs from the XML attribute name.
     // The XML attribute is the Class<?> setter; the String setter appends "Name" or "AsString".
     private static final Map<String, String> DATAFORMAT_ATTR_RENAMES = Map.of(
@@ -114,6 +119,7 @@ public abstract class JavaDslModelWriterSupport {
             "jsonView", "jsonViewTypeName");
 
     private boolean inDataFormatBuilder;
+    private boolean inSubBuilder;
 
     protected int indentLevel = 1;
     protected final Set<String> handledAttributes = new HashSet<>();
@@ -122,6 +128,7 @@ public abstract class JavaDslModelWriterSupport {
         indentLevel = 1;
         handledAttributes.clear();
         inDataFormatBuilder = false;
+        inSubBuilder = false;
     }
 
     protected void writeRoute(StringBuilder sb, RouteDefinition def) {
@@ -210,7 +217,23 @@ public abstract class JavaDslModelWriterSupport {
             sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(value).append(")");
             return;
         }
+        if (inSubBuilder && isPrimitiveLiteral(value)) {
+            sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(value).append(")");
+            return;
+        }
         sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(quote(value)).append(")");
+    }
+
+    private static boolean isPrimitiveLiteral(String value) {
+        if ("true".equals(value) || "false".equals(value)) {
+            return true;
+        }
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     protected void doWriteValue(StringBuilder sb, String value) {
@@ -244,6 +267,12 @@ public abstract class JavaDslModelWriterSupport {
                     sb.append(NL).append(indent()).append("    .onWhen(")
                             .append(expressionDsl(owd.getExpression())).append(")");
                 }
+            } else if (SUB_BUILDER_CHILDREN.contains(key)) {
+                sb.append(NL).append(indent()).append("    .").append(key).append("()");
+                inSubBuilder = true;
+                writer.accept(sb, value);
+                inSubBuilder = false;
+                sb.append(NL).append(indent()).append("    .end()");
             } else if (value instanceof BatchResequencerConfig brc) {
                 writeBatchResequencerConfig(sb, brc);
             } else if (value instanceof LangChain4jTokenizerDefinition ltd) {
@@ -280,11 +309,16 @@ public abstract class JavaDslModelWriterSupport {
     protected <T> void doWriteChildList(
             StringBuilder sb, String key, List<T> list, BiConsumer<StringBuilder, T> writer) {
         if (list != null && !list.isEmpty() && !handledAttributes.contains(key)) {
-            indentLevel++;
             for (T item : list) {
-                writer.accept(sb, item);
+                if (item instanceof PropertyExpressionDefinition ped) {
+                    sb.append(NL).append(indent()).append("    .option(").append(quote(ped.getKey()))
+                            .append(", ").append(expressionDsl(ped.getExpression())).append(")");
+                } else {
+                    indentLevel++;
+                    writer.accept(sb, item);
+                    indentLevel--;
+                }
             }
-            indentLevel--;
         }
     }
 

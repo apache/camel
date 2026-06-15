@@ -87,6 +87,14 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Configures the failure rate threshold in percentage. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition failureRateThreshold(String failureRateThreshold) {
+        setFailureRateThreshold(failureRateThreshold);
+        return this;
+    }
+
+    /**
      * Configures the number of permitted calls when the CircuitBreaker is half open.
      * <p>
      * The size must be greater than 0. Default size is 10.
@@ -94,6 +102,15 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     public Resilience4jConfigurationDefinition permittedNumberOfCallsInHalfOpenState(
             int permittedNumberOfCallsInHalfOpenState) {
         setPermittedNumberOfCallsInHalfOpenState(Integer.toString(permittedNumberOfCallsInHalfOpenState));
+        return this;
+    }
+
+    /**
+     * Configures the number of permitted calls when the CircuitBreaker is half open. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition permittedNumberOfCallsInHalfOpenState(
+            String permittedNumberOfCallsInHalfOpenState) {
+        setPermittedNumberOfCallsInHalfOpenState(permittedNumberOfCallsInHalfOpenState);
         return this;
     }
 
@@ -107,6 +124,15 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     public Resilience4jConfigurationDefinition throwExceptionWhenHalfOpenOrOpenState(
             boolean throwExceptionWhenHalfOpenOrOpenState) {
         setThrowExceptionWhenHalfOpenOrOpenState(Boolean.toString(throwExceptionWhenHalfOpenOrOpenState));
+        return this;
+    }
+
+    /**
+     * Whether to throw CallNotPermittedException when the call is rejected. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition throwExceptionWhenHalfOpenOrOpenState(
+            String throwExceptionWhenHalfOpenOrOpenState) {
+        setThrowExceptionWhenHalfOpenOrOpenState(throwExceptionWhenHalfOpenOrOpenState);
         return this;
     }
 
@@ -127,6 +153,14 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      */
     public Resilience4jConfigurationDefinition slidingWindowSize(int slidingWindowSize) {
         setSlidingWindowSize(Integer.toString(slidingWindowSize));
+        return this;
+    }
+
+    /**
+     * Configures the size of the sliding window. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition slidingWindowSize(String slidingWindowSize) {
+        setSlidingWindowSize(slidingWindowSize);
         return this;
     }
 
@@ -159,12 +193,29 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Configures the minimum number of calls required before the CircuitBreaker can calculate the error rate. Supports
+     * property placeholders.
+     */
+    public Resilience4jConfigurationDefinition minimumNumberOfCalls(String minimumNumberOfCalls) {
+        setMinimumNumberOfCalls(minimumNumberOfCalls);
+        return this;
+    }
+
+    /**
      * Enables writable stack traces. When set to false, Exception.getStackTrace returns a zero length array. This may
      * be used to reduce log spam when the circuit breaker is open as the cause of the exceptions is already known (the
      * circuit breaker is short-circuiting calls).
      */
     public Resilience4jConfigurationDefinition writableStackTraceEnabled(boolean writableStackTraceEnabled) {
         setWritableStackTraceEnabled(Boolean.toString(writableStackTraceEnabled));
+        return this;
+    }
+
+    /**
+     * Enables writable stack traces. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition writableStackTraceEnabled(String writableStackTraceEnabled) {
+        setWritableStackTraceEnabled(writableStackTraceEnabled);
         return this;
     }
 
@@ -178,11 +229,28 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Configures the wait duration in open state (seconds). Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition waitDurationInOpenState(String waitDurationInOpenState) {
+        setWaitDurationInOpenState(waitDurationInOpenState);
+        return this;
+    }
+
+    /**
      * Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed.
      */
     public Resilience4jConfigurationDefinition automaticTransitionFromOpenToHalfOpenEnabled(
             boolean automaticTransitionFromOpenToHalfOpenEnabled) {
         setAutomaticTransitionFromOpenToHalfOpenEnabled(Boolean.toString(automaticTransitionFromOpenToHalfOpenEnabled));
+        return this;
+    }
+
+    /**
+     * Enables automatic transition from OPEN to HALF_OPEN state. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition automaticTransitionFromOpenToHalfOpenEnabled(
+            String automaticTransitionFromOpenToHalfOpenEnabled) {
+        setAutomaticTransitionFromOpenToHalfOpenEnabled(automaticTransitionFromOpenToHalfOpenEnabled);
         return this;
     }
 
@@ -200,11 +268,28 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Configures a threshold in percentage for slow calls. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition slowCallRateThreshold(String slowCallRateThreshold) {
+        setSlowCallRateThreshold(slowCallRateThreshold);
+        return this;
+    }
+
+    /**
      * Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls
      * percentage. Default value is 60 seconds.
      */
     public Resilience4jConfigurationDefinition slowCallDurationThreshold(int slowCallDurationThreshold) {
         setSlowCallDurationThreshold(Integer.toString(slowCallDurationThreshold));
+        return this;
+    }
+
+    /**
+     * Configures the duration threshold (seconds) above which calls are considered as slow. Supports property
+     * placeholders.
+     */
+    public Resilience4jConfigurationDefinition slowCallDurationThreshold(String slowCallDurationThreshold) {
+        setSlowCallDurationThreshold(slowCallDurationThreshold);
         return this;
     }
 
@@ -217,10 +302,26 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Whether bulkhead is enabled or not on the circuit breaker. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition bulkheadEnabled(String bulkheadEnabled) {
+        setBulkheadEnabled(bulkheadEnabled);
+        return this;
+    }
+
+    /**
      * Configures the max amount of concurrent calls the bulkhead will support.
      */
     public Resilience4jConfigurationDefinition bulkheadMaxConcurrentCalls(int bulkheadMaxConcurrentCalls) {
         setBulkheadMaxConcurrentCalls(Integer.toString(bulkheadMaxConcurrentCalls));
+        return this;
+    }
+
+    /**
+     * Configures the max amount of concurrent calls the bulkhead will support. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition bulkheadMaxConcurrentCalls(String bulkheadMaxConcurrentCalls) {
+        setBulkheadMaxConcurrentCalls(bulkheadMaxConcurrentCalls);
         return this;
     }
 
@@ -239,10 +340,27 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Configures a maximum amount of time for the calling thread to wait to enter the bulkhead. Supports property
+     * placeholders.
+     */
+    public Resilience4jConfigurationDefinition bulkheadMaxWaitDuration(String bulkheadMaxWaitDuration) {
+        setBulkheadMaxWaitDuration(bulkheadMaxWaitDuration);
+        return this;
+    }
+
+    /**
      * Whether timeout is enabled or not on the circuit breaker. Default is false.
      */
     public Resilience4jConfigurationDefinition timeoutEnabled(boolean timeoutEnabled) {
         setTimeoutEnabled(Boolean.toString(timeoutEnabled));
+        return this;
+    }
+
+    /**
+     * Whether timeout is enabled or not on the circuit breaker. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition timeoutEnabled(String timeoutEnabled) {
+        setTimeoutEnabled(timeoutEnabled);
         return this;
     }
 
@@ -264,11 +382,27 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Configures the thread execution timeout (millis). Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition timeoutDuration(String timeoutDuration) {
+        setTimeoutDuration(timeoutDuration);
+        return this;
+    }
+
+    /**
      * Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR
      * to the classpath.
      */
     public Resilience4jConfigurationDefinition micrometerEnabled(boolean micrometerEnabled) {
         setMicrometerEnabled(Boolean.toString(micrometerEnabled));
+        return this;
+    }
+
+    /**
+     * Whether to enable collecting statistics using Micrometer. Supports property placeholders.
+     */
+    public Resilience4jConfigurationDefinition micrometerEnabled(String micrometerEnabled) {
+        setMicrometerEnabled(micrometerEnabled);
         return this;
     }
 
