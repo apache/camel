@@ -98,6 +98,9 @@ public class JavaDslCompileTest {
             "processor.xml",                    // process().ref()
             "processorWithHeaderFilter.xml",    // header filter expression + process().ref()
             "processorWithSimpleFilter.xml",    // process().ref()
+            // Top-level constructs (not chainable from from())
+            "interceptFrom.xml",               // interceptFrom() is RouteBuilder-level
+            "tokenizer.xml",                   // tokenizer() is RouteBuilder-level
             // Complex nested constructs
             "barInterceptorRoute.xml",          // intercept with nested outputs
             "doTryCatchFinally.xml",            // doTry/doCatch/doFinally blocks
@@ -124,21 +127,27 @@ public class JavaDslCompileTest {
             // Remove* pattern mismatch
             "removeHeadersAndProperties.xml");  // removeProperties() pattern argument
 
+    private static final Path XML_IO_RESOURCES = Paths.get("../camel-xml-io/src/test/resources");
+    private static final Path LOCAL_RESOURCES = Paths.get("src/test/resources");
+
     static Stream<String> xmlRouteFiles() throws Exception {
-        Path dir = Paths.get("../camel-xml-io/src/test/resources");
+        List<String> files = new ArrayList<>();
+        collectXmlRouteFiles(XML_IO_RESOURCES, files);
+        collectXmlRouteFiles(LOCAL_RESOURCES, files);
+        return files.stream().sorted();
+    }
+
+    private static void collectXmlRouteFiles(Path dir, List<String> result) throws Exception {
         if (!Files.isDirectory(dir)) {
-            return Stream.empty();
+            return;
         }
         try (Stream<Path> list = Files.list(dir)) {
-            return list
-                    .filter(Files::isRegularFile)
+            list.filter(Files::isRegularFile)
                     .map(p -> p.getFileName().toString())
                     .filter(n -> n.endsWith(".xml"))
                     .filter(n -> !n.startsWith("beans"))
                     .filter(n -> !NON_ROUTE_FILES.contains(n))
-                    .sorted()
-                    .toList()
-                    .stream();
+                    .forEach(result::add);
         }
     }
 
@@ -148,7 +157,10 @@ public class JavaDslCompileTest {
         assumeFalse(KNOWN_FAILURES.contains(xmlFile),
                 "Skipping known failure: " + xmlFile);
 
-        Path xmlPath = Paths.get("../camel-xml-io/src/test/resources", xmlFile);
+        Path xmlPath = LOCAL_RESOURCES.resolve(xmlFile);
+        if (!Files.exists(xmlPath)) {
+            xmlPath = XML_IO_RESOURCES.resolve(xmlFile);
+        }
 
         ModelParser parser = new ModelParser(Files.newInputStream(xmlPath), NAMESPACE);
         RoutesDefinition routesDef = parser.parseRoutesDefinition().orElse(null);
