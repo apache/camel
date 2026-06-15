@@ -3998,10 +3998,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     AggregateDefinition _d = (AggregateDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".aggregate(");
-                    if (_d.getExpression() != null) {
-                        sb.append(expressionDsl(_d.getExpression()));
+                    boolean _first = true;
+                    if (_d.getCorrelationExpression() != null && _d.getCorrelationExpression().getExpressionType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(expressionDsl(_d.getCorrelationExpression().getExpressionType()));
                     }
-                    handledAttributes.add("expression");
+                    handledAttributes.add("correlationExpression");
                     handledAttributes.add("expression");
                     sb.append(")");
                     doWriteAggregateDefinition(sb, _d);
@@ -4036,7 +4039,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ConvertBodyDefinition _d = (ConvertBodyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".convertBodyTo(");
+                    boolean _first = true;
                     if (_d.getType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.getType()));
                     }
                     handledAttributes.add("type");
@@ -4048,12 +4054,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ConvertHeaderDefinition _d = (ConvertHeaderDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".convertHeaderTo(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.getType()));
                     }
                     handledAttributes.add("type");
@@ -4065,12 +4075,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ConvertVariableDefinition _d = (ConvertVariableDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".convertVariableTo(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.getType()));
                     }
                     handledAttributes.add("type");
@@ -4082,7 +4096,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     DelayDefinition _d = (DelayDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".delay(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4095,7 +4112,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     DynamicRouterDefinition _d = (DynamicRouterDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".dynamicRouter(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4113,7 +4133,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     FilterDefinition _d = (FilterDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".filter(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4136,7 +4159,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     IdempotentConsumerDefinition _d = (IdempotentConsumerDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".idempotentConsumer(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4169,7 +4195,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     KameletDefinition _d = (KameletDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".kamelet(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
@@ -4186,7 +4215,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     LogDefinition _d = (LogDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".log(");
+                    boolean _first = true;
+                    if (_d.getLoggingLevel() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append("LoggingLevel.").append(_d.getLoggingLevel());
+                    }
+                    handledAttributes.add("loggingLevel");
                     if (_d.getMessage() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getMessage()));
                     }
                     handledAttributes.add("message");
@@ -4198,7 +4236,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     LoopDefinition _d = (LoopDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".loop(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4261,7 +4302,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     PolicyDefinition _d = (PolicyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".policy(");
+                    boolean _first = true;
                     if (_d.getRef() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getRef()));
                     }
                     handledAttributes.add("ref");
@@ -4273,10 +4317,19 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     PollDefinition _d = (PollDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".poll(");
+                    boolean _first = true;
                     if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
+                    if (_d.getTimeout() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(_d.getTimeout());
+                    }
+                    handledAttributes.add("timeout");
                     sb.append(")");
                     doWritePollDefinition(sb, _d);
                     endStep(sb, "poll", v);
@@ -4290,7 +4343,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ProcessDefinition _d = (ProcessDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".process(");
+                    boolean _first = true;
                     if (_d.getRef() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getRef()));
                     }
                     handledAttributes.add("ref");
@@ -4302,7 +4358,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RecipientListDefinition _d = (RecipientListDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".recipientList(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4315,7 +4374,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemoveHeaderDefinition _d = (RemoveHeaderDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeHeader(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
@@ -4327,7 +4389,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemoveHeadersDefinition _d = (RemoveHeadersDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeHeaders(");
+                    boolean _first = true;
                     if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getPattern()));
                     }
                     handledAttributes.add("pattern");
@@ -4339,7 +4404,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemovePropertiesDefinition _d = (RemovePropertiesDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeProperties(");
+                    boolean _first = true;
                     if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getPattern()));
                     }
                     handledAttributes.add("pattern");
@@ -4351,7 +4419,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemovePropertyDefinition _d = (RemovePropertyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeProperty(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
@@ -4363,7 +4434,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemoveVariableDefinition _d = (RemoveVariableDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeVariable(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
@@ -4375,7 +4449,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ResequenceDefinition _d = (ResequenceDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".resequence(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4393,7 +4470,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RollbackDefinition _d = (RollbackDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".rollback(");
+                    boolean _first = true;
                     if (_d.getMessage() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getMessage()));
                     }
                     handledAttributes.add("message");
@@ -4435,7 +4515,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RoutingSlipDefinition _d = (RoutingSlipDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".routingSlip(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4458,7 +4541,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ScriptDefinition _d = (ScriptDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".script(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4471,7 +4557,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetBodyDefinition _d = (SetBodyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setBody(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4484,7 +4573,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetExchangePatternDefinition _d = (SetExchangePatternDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setExchangePattern(");
+                    boolean _first = true;
                     if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append("ExchangePattern.").append(_d.getPattern());
                     }
                     handledAttributes.add("pattern");
@@ -4496,12 +4588,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetHeaderDefinition _d = (SetHeaderDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setHeader(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4519,12 +4615,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetPropertyDefinition _d = (SetPropertyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setProperty(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4537,12 +4637,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetVariableDefinition _d = (SetVariableDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setVariable(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4560,7 +4664,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SortDefinition _d = (SortDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".sort(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4573,7 +4680,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SplitDefinition _d = (SplitDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".split(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4611,7 +4721,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ThrottleDefinition _d = (ThrottleDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".throttle(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4624,12 +4737,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ThrowExceptionDefinition _d = (ThrowExceptionDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".throwException(");
+                    boolean _first = true;
                     if (_d.getExceptionType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.getExceptionType()));
                     }
                     handledAttributes.add("exceptionType");
-                    sb.append(", ");
                     if (_d.getMessage() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getMessage()));
                     }
                     handledAttributes.add("message");
@@ -4641,7 +4758,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ToDefinition _d = (ToDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".to(");
+                    boolean _first = true;
+                    if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append("ExchangePattern.").append(_d.getPattern());
+                    }
+                    handledAttributes.add("pattern");
                     if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
@@ -4653,7 +4779,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ToDynamicDefinition _d = (ToDynamicDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".toD(");
+                    boolean _first = true;
                     if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
@@ -4675,7 +4804,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     TransformDataTypeDefinition _d = (TransformDataTypeDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".transformDataType(");
+                    boolean _first = true;
+                    if (_d.getFromType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getFromType()));
+                    }
+                    handledAttributes.add("fromType");
                     if (_d.getToType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getToType()));
                     }
                     handledAttributes.add("toType");
@@ -4687,7 +4825,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     TransformDefinition _d = (TransformDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".transform(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4710,7 +4851,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ValidateDefinition _d = (ValidateDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".validate(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4723,7 +4867,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     WhenDefinition _d = (WhenDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".when(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4736,7 +4883,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     WireTapDefinition _d = (WireTapDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".wireTap(");
+                    boolean _first = true;
                     if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
@@ -4815,10 +4965,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     AggregateDefinition _d = (AggregateDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".aggregate(");
-                    if (_d.getExpression() != null) {
-                        sb.append(expressionDsl(_d.getExpression()));
+                    boolean _first = true;
+                    if (_d.getCorrelationExpression() != null && _d.getCorrelationExpression().getExpressionType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(expressionDsl(_d.getCorrelationExpression().getExpressionType()));
                     }
-                    handledAttributes.add("expression");
+                    handledAttributes.add("correlationExpression");
                     handledAttributes.add("expression");
                     sb.append(")");
                     doWriteAggregateDefinition(sb, _d);
@@ -4853,7 +5006,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ConvertBodyDefinition _d = (ConvertBodyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".convertBodyTo(");
+                    boolean _first = true;
                     if (_d.getType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.getType()));
                     }
                     handledAttributes.add("type");
@@ -4865,12 +5021,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ConvertHeaderDefinition _d = (ConvertHeaderDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".convertHeaderTo(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.getType()));
                     }
                     handledAttributes.add("type");
@@ -4882,12 +5042,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ConvertVariableDefinition _d = (ConvertVariableDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".convertVariableTo(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.getType()));
                     }
                     handledAttributes.add("type");
@@ -4899,7 +5063,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     DelayDefinition _d = (DelayDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".delay(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4912,7 +5079,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     DynamicRouterDefinition _d = (DynamicRouterDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".dynamicRouter(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4930,7 +5100,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     FilterDefinition _d = (FilterDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".filter(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4948,7 +5121,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     IdempotentConsumerDefinition _d = (IdempotentConsumerDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".idempotentConsumer(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -4976,7 +5152,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     KameletDefinition _d = (KameletDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".kamelet(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
@@ -4993,7 +5172,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     LogDefinition _d = (LogDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".log(");
+                    boolean _first = true;
+                    if (_d.getLoggingLevel() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append("LoggingLevel.").append(_d.getLoggingLevel());
+                    }
+                    handledAttributes.add("loggingLevel");
                     if (_d.getMessage() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getMessage()));
                     }
                     handledAttributes.add("message");
@@ -5005,7 +5193,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     LoopDefinition _d = (LoopDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".loop(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5048,7 +5239,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     PolicyDefinition _d = (PolicyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".policy(");
+                    boolean _first = true;
                     if (_d.getRef() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getRef()));
                     }
                     handledAttributes.add("ref");
@@ -5060,10 +5254,19 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     PollDefinition _d = (PollDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".poll(");
+                    boolean _first = true;
                     if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
+                    if (_d.getTimeout() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(_d.getTimeout());
+                    }
+                    handledAttributes.add("timeout");
                     sb.append(")");
                     doWritePollDefinition(sb, _d);
                     endStep(sb, "poll", v);
@@ -5077,7 +5280,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ProcessDefinition _d = (ProcessDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".process(");
+                    boolean _first = true;
                     if (_d.getRef() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getRef()));
                     }
                     handledAttributes.add("ref");
@@ -5089,7 +5295,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RecipientListDefinition _d = (RecipientListDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".recipientList(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5102,7 +5311,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemoveHeaderDefinition _d = (RemoveHeaderDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeHeader(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
@@ -5114,7 +5326,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemoveHeadersDefinition _d = (RemoveHeadersDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeHeaders(");
+                    boolean _first = true;
                     if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getPattern()));
                     }
                     handledAttributes.add("pattern");
@@ -5126,7 +5341,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemovePropertiesDefinition _d = (RemovePropertiesDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeProperties(");
+                    boolean _first = true;
                     if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getPattern()));
                     }
                     handledAttributes.add("pattern");
@@ -5138,7 +5356,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemovePropertyDefinition _d = (RemovePropertyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeProperty(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
@@ -5150,7 +5371,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RemoveVariableDefinition _d = (RemoveVariableDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".removeVariable(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
@@ -5162,7 +5386,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ResequenceDefinition _d = (ResequenceDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".resequence(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5180,7 +5407,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RollbackDefinition _d = (RollbackDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".rollback(");
+                    boolean _first = true;
                     if (_d.getMessage() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getMessage()));
                     }
                     handledAttributes.add("message");
@@ -5197,7 +5427,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     RoutingSlipDefinition _d = (RoutingSlipDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".routingSlip(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5220,7 +5453,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ScriptDefinition _d = (ScriptDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".script(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5233,7 +5469,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetBodyDefinition _d = (SetBodyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setBody(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5246,7 +5485,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetExchangePatternDefinition _d = (SetExchangePatternDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setExchangePattern(");
+                    boolean _first = true;
                     if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append("ExchangePattern.").append(_d.getPattern());
                     }
                     handledAttributes.add("pattern");
@@ -5258,12 +5500,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetHeaderDefinition _d = (SetHeaderDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setHeader(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5281,12 +5527,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetPropertyDefinition _d = (SetPropertyDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setProperty(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5299,12 +5549,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetVariableDefinition _d = (SetVariableDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setVariable(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5322,7 +5576,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SortDefinition _d = (SortDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".sort(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5335,7 +5592,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SplitDefinition _d = (SplitDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".split(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5363,7 +5623,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ThrottleDefinition _d = (ThrottleDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".throttle(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5376,12 +5639,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ThrowExceptionDefinition _d = (ThrowExceptionDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".throwException(");
+                    boolean _first = true;
                     if (_d.getExceptionType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.getExceptionType()));
                     }
                     handledAttributes.add("exceptionType");
-                    sb.append(", ");
                     if (_d.getMessage() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getMessage()));
                     }
                     handledAttributes.add("message");
@@ -5393,7 +5660,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ToDefinition _d = (ToDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".to(");
+                    boolean _first = true;
+                    if (_d.getPattern() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append("ExchangePattern.").append(_d.getPattern());
+                    }
+                    handledAttributes.add("pattern");
                     if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
@@ -5405,7 +5681,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ToDynamicDefinition _d = (ToDynamicDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".toD(");
+                    boolean _first = true;
                     if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
@@ -5427,7 +5706,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     TransformDataTypeDefinition _d = (TransformDataTypeDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".transformDataType(");
+                    boolean _first = true;
+                    if (_d.getFromType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getFromType()));
+                    }
+                    handledAttributes.add("fromType");
                     if (_d.getToType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getToType()));
                     }
                     handledAttributes.add("toType");
@@ -5439,7 +5727,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     TransformDefinition _d = (TransformDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".transform(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5462,7 +5753,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ValidateDefinition _d = (ValidateDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".validate(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5475,7 +5769,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     WireTapDefinition _d = (WireTapDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".wireTap(");
+                    boolean _first = true;
                     if (_d.getUri() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getUri()));
                     }
                     handledAttributes.add("uri");
@@ -5526,12 +5823,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetHeaderDefinition _d = (SetHeaderDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setHeader(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5550,12 +5851,16 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     SetVariableDefinition _d = (SetVariableDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".setVariable(");
+                    boolean _first = true;
                     if (_d.getName() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.getName()));
                     }
                     handledAttributes.add("name");
-                    sb.append(", ");
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");
@@ -5585,7 +5890,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     WhenDefinition _d = (WhenDefinition) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".when(");
+                    boolean _first = true;
                     if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.getExpression()));
                     }
                     handledAttributes.add("expression");

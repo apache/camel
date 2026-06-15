@@ -305,45 +305,60 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     ${t} _d = (${t}) v;
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".${n}(");
-                #set( $argIdx = 0 )
+                    boolean _first = true;
                 #foreach( $arg in $primaryArgs )
-                    #if( $argIdx > 0 )
-                    sb.append(", ");
-                    #end
                     #if( $arg.renderType == "string" )
                     if (_d.${arg.getter}() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(quote(_d.${arg.getter}()));
                     }
                     handledAttributes.add("${arg.fieldName}");
                     #elseif( $arg.renderType == "expression" )
                     if (_d.${arg.getter}() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.${arg.getter}()));
                     }
                     handledAttributes.add("${arg.fieldName}");
                     handledAttributes.add("expression");
                     #elseif( $arg.renderType == "expressionSub" )
                     if (_d.${arg.getter}() != null && _d.${arg.getter}().getExpressionType() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(expressionDsl(_d.${arg.getter}().getExpressionType()));
                     }
                     handledAttributes.add("${arg.fieldName}");
                     handledAttributes.add("expression");
                     #elseif( $arg.renderType == "class" )
                     if (_d.${arg.getter}() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(classLiteral(_d.${arg.getter}()));
                     }
                     handledAttributes.add("${arg.fieldName}");
                     #elseif( $arg.renderType == "enum" )
                     if (_d.${arg.getter}() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append(enumLiteral(_d.${arg.getter}()));
                     }
                     handledAttributes.add("${arg.fieldName}");
                     #elseif( $arg.renderType == "enumString" )
                     if (_d.${arg.getter}() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
                         sb.append("${arg.typeName}.").append(_d.${arg.getter}());
                     }
                     handledAttributes.add("${arg.fieldName}");
+                    #elseif( $arg.renderType == "long" )
+                    if (_d.${arg.getter}() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(_d.${arg.getter}());
+                    }
+                    handledAttributes.add("${arg.fieldName}");
                     #end
-                    #set( $argIdx = $argIdx + 1 )
                 #end
                     sb.append(")");
                     doWrite${t}(sb, _d);

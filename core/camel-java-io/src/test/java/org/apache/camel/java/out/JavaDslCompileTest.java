@@ -71,11 +71,6 @@ public class JavaDslCompileTest {
     // Files that don't compile yet due to unsupported constructs in the writer.
     // Categorized by root cause — as the writer improves, move files out of this set.
     private static final Set<String> KNOWN_FAILURES = Set.of(
-            // Attributes rendered as chained calls that don't exist in the Java DSL
-            "aggregate.xml",                    // spurious .simple() call from expression child
-            "multiline.xml",                    // loggingLevel chained call
-            "poll.xml",                         // timeout chained call
-            "transformDataType.xml",            // fromType chained call
             // onException + exception class as constructor arg
             "barOnExceptionRoute.xml",          // onException(Exception.class) + handled
             // Top-level constructs (not chainable from from())
@@ -176,6 +171,7 @@ public class JavaDslCompileTest {
         StringBuilder sb = new StringBuilder();
         sb.append("package test.generated;\n\n");
         sb.append("import org.apache.camel.ExchangePattern;\n");
+        sb.append("import org.apache.camel.LoggingLevel;\n");
         sb.append("import org.apache.camel.builder.RouteBuilder;\n");
         sb.append("import static org.apache.camel.builder.Builder.language;\n\n");
         sb.append("public class ").append(className).append(" extends RouteBuilder {\n");

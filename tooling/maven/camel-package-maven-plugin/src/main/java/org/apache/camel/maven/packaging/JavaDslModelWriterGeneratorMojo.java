@@ -124,14 +124,20 @@ public class JavaDslModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
         if (primaryArgsCache == null) {
             primaryArgsCache = buildPrimaryArgsMap();
         }
+        // fallback for EIPs whose DSL method is not on ProcessorDefinition
+        List<PrimaryArg> fallback = getFallbackPrimaryArgs(defClass);
+
         List<PrimaryArg> args = primaryArgsCache.get(xmlElementName);
         if (args == null) {
-            // fallback for EIPs whose DSL method is not on ProcessorDefinition
-            List<PrimaryArg> fallback = getFallbackPrimaryArgs(defClass);
             if (!fallback.isEmpty()) {
                 return fallback;
             }
             return Collections.emptyList();
+        }
+        // prefer fallback when it provides expressionSub (e.g., correlationExpression for aggregate)
+        // because the XML model uses a different field than what Jandex finds on ProcessorDefinition
+        if (!fallback.isEmpty() && fallback.stream().anyMatch(a -> "expressionSub".equals(a.renderType))) {
+            return fallback;
         }
         // verify that the getters exist on the definition class
         for (PrimaryArg arg : args) {
@@ -268,6 +274,8 @@ public class JavaDslModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
                 mapClassParam(method, paramIndex);
             case "org.apache.camel.ExchangePattern" ->
                 new PrimaryArg("pattern", "getPattern", "enumString", "ExchangePattern");
+            case "org.apache.camel.LoggingLevel" ->
+                new PrimaryArg("loggingLevel", "getLoggingLevel", "enumString", "LoggingLevel");
             case "boolean" ->
                 mapBooleanParam(method, paramIndex);
             case "long" ->
@@ -317,6 +325,10 @@ public class JavaDslModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
 
         // methods with name + type pattern (convertHeaderTo, convertVariableTo, setHeader, setProperty, setVariable)
         if (methodName.startsWith("convert") && methodName.endsWith("To")) {
+            if ("convertBodyTo".equals(methodName)) {
+                // convertBodyTo(Class, String charset) — charset is not stored in the model
+                return null;
+            }
             return stringIndex == 0
                     ? new PrimaryArg("name", "getName", "string")
                     : null;
@@ -373,6 +385,9 @@ public class JavaDslModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
     }
 
     private PrimaryArg mapLongParam(MethodInfo method, int paramIndex) {
+        if ("poll".equals(method.name())) {
+            return new PrimaryArg("timeout", "getTimeout", "long");
+        }
         return null;
     }
 
@@ -387,21 +402,11 @@ public class JavaDslModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
             if (!isModelCompatible(method) || method.parametersCount() != currentArgCount + 1) {
                 continue;
             }
-            // must have at least one String param (typically the name) alongside expression
-            boolean hasString = false;
-            boolean hasExpression = false;
-            for (int i = 0; i < method.parametersCount(); i++) {
-                String tn = method.parameterType(i).name().toString();
-                if ("java.lang.String".equals(tn)) {
-                    hasString = true;
-                }
-                if (tn.contains("Expression")) {
-                    hasExpression = true;
-                }
-            }
-            if (hasString && hasExpression) {
-                List<PrimaryArg> args = mapParametersToFields(method);
-                if (args.size() == method.parametersCount()) {
+            List<PrimaryArg> args = mapParametersToFields(method);
+            if (args.size() == method.parametersCount()) {
+                // reject overloads where multiple params map to the same field
+                long uniqueFields = args.stream().map(PrimaryArg::getFieldName).distinct().count();
+                if (uniqueFields == args.size()) {
                     return args;
                 }
             }
