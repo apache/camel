@@ -560,6 +560,17 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
+     * Enable delayer for this route.
+     *
+     * @param  delay delay in millis. Supports property placeholders.
+     * @return       the builder
+     */
+    public RouteDefinition delayer(String delay) {
+        setDelayer(delay);
+        return this;
+    }
+
+    /**
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
      *
      * @param  ref reference to existing error handler
