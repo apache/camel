@@ -156,6 +156,7 @@ public class JavaDslCompileTest {
         sb.append("import org.apache.camel.LoggingLevel;\n");
         sb.append("import org.apache.camel.Predicate;\n");
         sb.append("import org.apache.camel.builder.RouteBuilder;\n");
+        sb.append("import org.apache.camel.model.ClaimCheckOperation;\n");
         sb.append("import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;\n");
         sb.append("import static org.apache.camel.builder.Builder.language;\n\n");
         sb.append("public class ").append(className).append(" extends RouteBuilder {\n");

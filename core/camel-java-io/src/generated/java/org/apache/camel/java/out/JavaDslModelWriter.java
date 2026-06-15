@@ -4011,8 +4011,24 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "aggregate", v);
                 }
                 case "BeanDefinition" -> {
-                    beginStep(sb, "bean", v);
-                    doWriteBeanDefinition(sb, (BeanDefinition) v);
+                    BeanDefinition _d = (BeanDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".bean(");
+                    boolean _first = true;
+                    if (_d.getRef() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getRef()));
+                    }
+                    handledAttributes.add("ref");
+                    if (_d.getMethod() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getMethod()));
+                    }
+                    handledAttributes.add("method");
+                    sb.append(")");
+                    doWriteBeanDefinition(sb, _d);
                     endStep(sb, "bean", v);
                 }
                 case "CatchDefinition" -> {
@@ -4044,8 +4060,30 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "circuitBreaker", v);
                 }
                 case "ClaimCheckDefinition" -> {
-                    beginStep(sb, "claimCheck", v);
-                    doWriteClaimCheckDefinition(sb, (ClaimCheckDefinition) v);
+                    ClaimCheckDefinition _d = (ClaimCheckDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".claimCheck(");
+                    boolean _first = true;
+                    if (_d.getOperation() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append("ClaimCheckOperation.").append(_d.getOperation());
+                    }
+                    handledAttributes.add("operation");
+                    if (_d.getKey() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getKey()));
+                    }
+                    handledAttributes.add("key");
+                    if (_d.getFilter() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getFilter()));
+                    }
+                    handledAttributes.add("filter");
+                    sb.append(")");
+                    doWriteClaimCheckDefinition(sb, _d);
                     endStep(sb, "claimCheck", v);
                 }
                 case "ConvertBodyDefinition" -> {
@@ -4748,8 +4786,24 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "threadPoolProfile", v);
                 }
                 case "ThreadsDefinition" -> {
-                    beginStep(sb, "threads", v);
-                    doWriteThreadsDefinition(sb, (ThreadsDefinition) v);
+                    ThreadsDefinition _d = (ThreadsDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".threads(");
+                    boolean _first = true;
+                    if (_d.getPoolSize() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(_d.getPoolSize());
+                    }
+                    handledAttributes.add("poolSize");
+                    if (_d.getMaxPoolSize() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(_d.getMaxPoolSize());
+                    }
+                    handledAttributes.add("maxPoolSize");
+                    sb.append(")");
+                    doWriteThreadsDefinition(sb, _d);
                     endStep(sb, "threads", v);
                 }
                 case "ThrottleDefinition" -> {
@@ -5013,8 +5067,24 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "aggregate", v);
                 }
                 case "BeanDefinition" -> {
-                    beginStep(sb, "bean", v);
-                    doWriteBeanDefinition(sb, (BeanDefinition) v);
+                    BeanDefinition _d = (BeanDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".bean(");
+                    boolean _first = true;
+                    if (_d.getRef() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getRef()));
+                    }
+                    handledAttributes.add("ref");
+                    if (_d.getMethod() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getMethod()));
+                    }
+                    handledAttributes.add("method");
+                    sb.append(")");
+                    doWriteBeanDefinition(sb, _d);
                     endStep(sb, "bean", v);
                 }
                 case "CatchDefinition" -> {
@@ -5046,8 +5116,30 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "circuitBreaker", v);
                 }
                 case "ClaimCheckDefinition" -> {
-                    beginStep(sb, "claimCheck", v);
-                    doWriteClaimCheckDefinition(sb, (ClaimCheckDefinition) v);
+                    ClaimCheckDefinition _d = (ClaimCheckDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".claimCheck(");
+                    boolean _first = true;
+                    if (_d.getOperation() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append("ClaimCheckOperation.").append(_d.getOperation());
+                    }
+                    handledAttributes.add("operation");
+                    if (_d.getKey() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getKey()));
+                    }
+                    handledAttributes.add("key");
+                    if (_d.getFilter() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getFilter()));
+                    }
+                    handledAttributes.add("filter");
+                    sb.append(")");
+                    doWriteClaimCheckDefinition(sb, _d);
                     endStep(sb, "claimCheck", v);
                 }
                 case "ConvertBodyDefinition" -> {
@@ -5685,8 +5777,24 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "stop", v);
                 }
                 case "ThreadsDefinition" -> {
-                    beginStep(sb, "threads", v);
-                    doWriteThreadsDefinition(sb, (ThreadsDefinition) v);
+                    ThreadsDefinition _d = (ThreadsDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".threads(");
+                    boolean _first = true;
+                    if (_d.getPoolSize() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(_d.getPoolSize());
+                    }
+                    handledAttributes.add("poolSize");
+                    if (_d.getMaxPoolSize() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(_d.getMaxPoolSize());
+                    }
+                    handledAttributes.add("maxPoolSize");
+                    sb.append(")");
+                    doWriteThreadsDefinition(sb, _d);
                     endStep(sb, "threads", v);
                 }
                 case "ThrottleDefinition" -> {

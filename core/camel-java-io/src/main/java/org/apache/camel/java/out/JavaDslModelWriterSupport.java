@@ -64,6 +64,9 @@ import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 /**
  * Base class for the generated {@link JavaDslModelWriter}. Provides helper methods for building Java DSL source code
  * strings from Camel model definitions.
+ * <p>
+ * <b>Not thread-safe.</b> Instances use mutable state (indentLevel, handledAttributes) during writing and must not be
+ * shared across threads. Create one instance per thread or per conversion.
  */
 public abstract class JavaDslModelWriterSupport {
 
