@@ -69,25 +69,14 @@ public class JavaDslCompileTest {
             "errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
     // Files that don't compile yet due to unsupported constructs in the writer.
-    // Categorized by root cause:
-    //   - Attributes rendered as chained calls (log.loggingLevel, etc.)
-    //   - Missing primary arguments (convertBodyTo, policy, throwException)
-    //   - Expression languages without RouteBuilder helper (groovy, juel, ognl)
-    //   - process().ref() pattern
-    //   - Data format / load-balancer subtypes
+    // Categorized by root cause — as the writer improves, move files out of this set.
     private static final Set<String> KNOWN_FAILURES = Set.of(
-            // Attributes rendered as chained calls instead of method arguments
-            "aggregate.xml",                    // aggregate() completionSize chaining
-            "convertBody.xml",                  // convertBodyTo() needs type argument
-            "convertHeaderTo.xml",              // convertHeaderTo() needs name+type arguments
-            "convertVariableTo.xml",            // convertVariableTo() needs name+type arguments
-            "multiline.xml",                    // log().loggingLevel() attribute chaining
-            "poll.xml",                         // poll() needs uri argument
-            "rollback.xml",                     // rollback() needs message argument
-            "setExchangePattern.xml",           // setExchangePattern() needs pattern argument
-            "transformDataType.xml",            // transformDataType() needs type arguments
-            // Missing primary arguments in method calls
-            "barPolicyRoute.xml",               // policy() needs ref argument
+            // Attributes rendered as chained calls that don't exist in the Java DSL
+            "aggregate.xml",                    // expression written as chained call
+            "multiline.xml",                    // loggingLevel chained call
+            "poll.xml",                         // timeout chained call
+            "setExchangePattern.xml",           // ExchangePattern not imported
+            "transformDataType.xml",            // fromType chained call
             // Expression languages without RouteBuilder helper method
             "processorWithFilter.xml",          // juel() expression
             "processorWithGroovyFilter.xml",    // groovy() expression
@@ -96,7 +85,7 @@ public class JavaDslCompileTest {
             // process().ref() pattern
             "barOnExceptionRoute.xml",          // onException + process().ref()
             "processor.xml",                    // process().ref()
-            "processorWithHeaderFilter.xml",    // header filter expression + process().ref()
+            "processorWithHeaderFilter.xml",    // process().ref()
             "processorWithSimpleFilter.xml",    // process().ref()
             // Top-level constructs (not chainable from from())
             "interceptFrom.xml",               // interceptFrom() is RouteBuilder-level
@@ -104,13 +93,11 @@ public class JavaDslCompileTest {
             // Complex nested constructs
             "barInterceptorRoute.xml",          // intercept with nested outputs
             "doTryCatchFinally.xml",            // doTry/doCatch/doFinally blocks
-            "enrichAndPollEnrich.xml",          // enrich() expression argument
-            "interceptFromAndSendTo.xml",       // interceptSendToEndpoint uri
-            "resequencerBatch.xml",             // resequence batch config attributes
+            "interceptFromAndSendTo.xml",       // interceptSendToEndpoint
+            "resequencerBatch.xml",             // resequence batch config
             "routeInlinedErrorHandler.xml",     // inlined error handler
             "routeProperties.xml",              // route property()
             "routeProperty.xml",                // route property()
-            "routeWithCircuitBreaker.xml",      // throwException + onFallback
             // Data format subtypes
             "routeWithBindyDataFormat.xml",     // bindy data format
             "routeWithCvsDataFormat.xml",       // csv data format
@@ -123,9 +110,7 @@ public class JavaDslCompileTest {
             "routeWithStickyLoadBalance.xml",   // sticky load balancer
             "routeWithXMLSecurityDataFormat.xml", // xml security data format
             "routeWithZipFileDataFormat.xml",   // zipFile data format
-            "unmarshal.xml",                    // unmarshal json data format
-            // Remove* pattern mismatch
-            "removeHeadersAndProperties.xml");  // removeProperties() pattern argument
+            "unmarshal.xml");
 
     private static final Path XML_IO_RESOURCES = Paths.get("../camel-xml-io/src/test/resources");
     private static final Path LOCAL_RESOURCES = Paths.get("src/test/resources");

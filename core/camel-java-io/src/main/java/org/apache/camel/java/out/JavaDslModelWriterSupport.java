@@ -22,19 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import org.apache.camel.model.BasicExpressionNode;
-import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.LogDefinition;
-import org.apache.camel.model.RemoveHeaderDefinition;
-import org.apache.camel.model.RemoveHeadersDefinition;
-import org.apache.camel.model.RemovePropertyDefinition;
-import org.apache.camel.model.RemoveVariableDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.SetHeaderDefinition;
-import org.apache.camel.model.SetPropertyDefinition;
-import org.apache.camel.model.SetVariableDefinition;
-import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
@@ -107,70 +95,12 @@ public abstract class JavaDslModelWriterSupport {
     protected abstract void doWriteRouteDefinition(StringBuilder sb, RouteDefinition def);
 
     /**
-     * Begins a DSL step method call. Determines the primary argument from the definition type and renders the
-     * appropriate method call.
+     * Begins a DSL step method call. This is the fallback for EIPs that don't have Jandex-derived primary args
+     * generated in the dispatch code.
      */
     protected void beginStep(StringBuilder sb, String name, Object def) {
         handledAttributes.clear();
-        sb.append(NL).append(indent()).append(".").append(name).append("(");
-
-        if (def instanceof SetHeaderDefinition sh) {
-            sb.append(quote(sh.getName()));
-            handledAttributes.add("name");
-            if (sh.getExpression() != null) {
-                sb.append(", ").append(expressionDsl(sh.getExpression()));
-                handledAttributes.add("expression");
-            }
-        } else if (def instanceof SetPropertyDefinition sp) {
-            sb.append(quote(sp.getName()));
-            handledAttributes.add("name");
-            if (sp.getExpression() != null) {
-                sb.append(", ").append(expressionDsl(sp.getExpression()));
-                handledAttributes.add("expression");
-            }
-        } else if (def instanceof SetVariableDefinition sv) {
-            sb.append(quote(sv.getName()));
-            handledAttributes.add("name");
-            if (sv.getExpression() != null) {
-                sb.append(", ").append(expressionDsl(sv.getExpression()));
-                handledAttributes.add("expression");
-            }
-        } else if (def instanceof RemoveHeaderDefinition rh) {
-            sb.append(quote(rh.getName()));
-            handledAttributes.add("name");
-        } else if (def instanceof RemoveHeadersDefinition rhs) {
-            sb.append(quote(rhs.getPattern()));
-            handledAttributes.add("pattern");
-        } else if (def instanceof RemovePropertyDefinition rp) {
-            sb.append(quote(rp.getName()));
-            handledAttributes.add("name");
-        } else if (def instanceof RemoveVariableDefinition rv) {
-            sb.append(quote(rv.getName()));
-            handledAttributes.add("name");
-        } else if (def instanceof LogDefinition log) {
-            sb.append(quote(log.getMessage()));
-            handledAttributes.add("message");
-        } else if (def instanceof ToDynamicDefinition td) {
-            sb.append(quote(td.getUri()));
-            handledAttributes.add("uri");
-        } else if (def instanceof SendDefinition<?> sd) {
-            if (sd.getUri() != null) {
-                sb.append(quote(sd.getUri()));
-            }
-            handledAttributes.add("uri");
-        } else if (def instanceof ExpressionNode en) {
-            if (en.getExpression() != null) {
-                sb.append(expressionDsl(en.getExpression()));
-                handledAttributes.add("expression");
-            }
-        } else if (def instanceof BasicExpressionNode<?> ben) {
-            if (ben.getExpression() != null) {
-                sb.append(expressionDsl(ben.getExpression()));
-                handledAttributes.add("expression");
-            }
-        }
-
-        sb.append(")");
+        sb.append(NL).append(indent()).append(".").append(name).append("()");
     }
 
     /**
@@ -203,7 +133,7 @@ public abstract class JavaDslModelWriterSupport {
     }
 
     protected <T> void doWriteChildElement(StringBuilder sb, String key, T value, BiConsumer<StringBuilder, T> writer) {
-        if (value != null) {
+        if (value != null && !handledAttributes.contains(key)) {
             if (BLOCK_CHILDREN.contains(key)) {
                 indentLevel++;
                 sb.append(NL).append(indent()).append(".").append(key).append("()");
@@ -351,6 +281,23 @@ public abstract class JavaDslModelWriterSupport {
             return "null";
         }
         return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+    }
+
+    protected String classLiteral(String typeName) {
+        if (typeName == null) {
+            return "Object.class";
+        }
+        String simple = typeName.contains(".")
+                ? typeName.substring(typeName.lastIndexOf('.') + 1)
+                : typeName;
+        return simple + ".class";
+    }
+
+    protected String enumLiteral(Enum<?> e) {
+        if (e == null) {
+            return "null";
+        }
+        return e.getClass().getSimpleName() + "." + e.name();
     }
 
     protected String toString(Boolean b) {
