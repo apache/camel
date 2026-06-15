@@ -24,8 +24,10 @@ import java.util.function.BiConsumer;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
@@ -42,6 +44,8 @@ import org.apache.camel.model.language.VariableExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 
 /**
  * Base class for the generated {@link JavaDslModelWriter}. Provides helper methods for building Java DSL source code
@@ -155,8 +159,10 @@ public abstract class JavaDslModelWriterSupport {
                     }
                     sb.append(expressionDsl(esd.getExpressionType())).append(")");
                 }
-            } else if (value instanceof DataFormatDefinition) {
-                sb.append(".").append(key).append("()");
+            } else if (value instanceof DataFormatDefinition df) {
+                writeDataFormatClause(sb, key, df);
+            } else if (value instanceof LoadBalancerDefinition lb) {
+                writeLoadBalancerType(sb, lb);
             } else {
                 writer.accept(sb, value);
             }
@@ -200,6 +206,68 @@ public abstract class JavaDslModelWriterSupport {
                     sb.append(NL).append(indent()).append("    .").append(itemKey).append("(").append(quote(s)).append(")");
                 }
             }
+        }
+    }
+
+    private static final Set<String> BUILDER_ONLY_FORMATS = Set.of(
+            "bindy", "flatpack", "xmlSecurity");
+
+    protected void writeDataFormatClause(StringBuilder sb, String key, DataFormatDefinition df) {
+        if (BUILDER_ONLY_FORMATS.contains(key)) {
+            writeDataFormatBuilder(sb, key, df);
+        } else {
+            sb.append(".").append(key).append("()");
+        }
+    }
+
+    protected void writeDataFormatBuilder(StringBuilder sb, String key, DataFormatDefinition df) {
+        String str = sb.toString();
+        if (str.endsWith(".marshal()") || str.endsWith(".unmarshal()")) {
+            sb.setLength(sb.length() - 1);
+            sb.append("dataFormat().").append(key).append("()");
+            if (df instanceof BindyDataFormat bindy) {
+                if (bindy.getType() != null) {
+                    sb.append(".type(").append(quote(bindy.getType())).append(")");
+                }
+                if (bindy.getClassTypeAsString() != null) {
+                    sb.append(".classType(").append(quote(bindy.getClassTypeAsString())).append(")");
+                }
+            }
+            sb.append(".end())");
+        }
+    }
+
+    protected void writeLoadBalancerType(StringBuilder sb, LoadBalancerDefinition lb) {
+        if (lb instanceof FailoverLoadBalancerDefinition failover) {
+            sb.append(".failover(");
+            if (failover.getExceptions() != null && !failover.getExceptions().isEmpty()) {
+                boolean first = true;
+                for (String ex : failover.getExceptions()) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    first = false;
+                    sb.append(classLiteral(ex));
+                }
+            }
+            sb.append(")");
+            handledAttributes.add("exception");
+            handledAttributes.add("exceptions");
+        } else if (lb instanceof StickyLoadBalancerDefinition sticky) {
+            sb.append(".sticky(");
+            if (sticky.getCorrelationExpression() != null
+                    && sticky.getCorrelationExpression().getExpressionType() != null) {
+                sb.append(expressionDsl(sticky.getCorrelationExpression().getExpressionType()));
+            }
+            sb.append(")");
+            handledAttributes.add("correlationExpression");
+            handledAttributes.add("expression");
+        } else {
+            // Derive method name: strip "LoadBalancer" suffix, lowercase first char
+            String className = lb.getClass().getSimpleName();
+            String methodName = className.replace("LoadBalancerDefinition", "");
+            methodName = Character.toLowerCase(methodName.charAt(0)) + methodName.substring(1);
+            sb.append(".").append(methodName).append("()");
         }
     }
 

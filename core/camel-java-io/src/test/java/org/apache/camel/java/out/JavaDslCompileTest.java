@@ -78,14 +78,7 @@ public class JavaDslCompileTest {
             "barInterceptorRoute.xml",          // intercept with nested outputs
             "interceptFromAndSendTo.xml",       // interceptSendToEndpoint
             "resequencerBatch.xml",             // resequence batch config
-            "routeInlinedErrorHandler.xml",     // inlined error handler
-            // Data formats without no-arg DataFormatClause methods
-            "routeWithBindyDataFormat.xml",     // bindy() requires BindyType + Class args
-            "routeWithFlatpackDataFormat.xml",  // flatpack has no DataFormatClause method
-            "routeWithXMLSecurityDataFormat.xml", // xmlSecurity() requires args
-            // Load balancer subtypes
-            "routeWithFailoverLoadBalance.xml", // failover load balancer
-            "routeWithStickyLoadBalance.xml");  // sticky load balancer
+            "routeInlinedErrorHandler.xml");    // inlined error handler
 
     private static final Path XML_IO_RESOURCES = Paths.get("../camel-xml-io/src/test/resources");
     private static final Path LOCAL_RESOURCES = Paths.get("src/test/resources");
