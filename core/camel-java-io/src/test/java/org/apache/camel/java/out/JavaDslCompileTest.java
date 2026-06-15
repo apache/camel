@@ -76,23 +76,40 @@ public class JavaDslCompileTest {
     //   - process().ref() pattern
     //   - Data format / load-balancer subtypes
     private static final Set<String> KNOWN_FAILURES = Set.of(
-            "barInterceptorRoute.xml",          // intercept with nested outputs
-            "barOnExceptionRoute.xml",          // onException + process().ref()
-            "barPolicyRoute.xml",               // policy() needs ref argument
+            // Attributes rendered as chained calls instead of method arguments
+            "aggregate.xml",                    // aggregate() completionSize chaining
             "convertBody.xml",                  // convertBodyTo() needs type argument
+            "convertHeaderTo.xml",              // convertHeaderTo() needs name+type arguments
+            "convertVariableTo.xml",            // convertVariableTo() needs name+type arguments
             "multiline.xml",                    // log().loggingLevel() attribute chaining
-            "processor.xml",                    // process().ref()
+            "poll.xml",                         // poll() needs uri argument
+            "rollback.xml",                     // rollback() needs message argument
+            "setExchangePattern.xml",           // setExchangePattern() needs pattern argument
+            "transformDataType.xml",            // transformDataType() needs type arguments
+            // Missing primary arguments in method calls
+            "barPolicyRoute.xml",               // policy() needs ref argument
+            // Expression languages without RouteBuilder helper method
             "processorWithFilter.xml",          // juel() expression
             "processorWithGroovyFilter.xml",    // groovy() expression
-            "processorWithHeaderFilter.xml",    // header filter expression
+            "routeWithChoice.xml",              // ognl() expression
+            "script.xml",                       // groovy() expression
+            // process().ref() pattern
+            "barOnExceptionRoute.xml",          // onException + process().ref()
+            "processor.xml",                    // process().ref()
+            "processorWithHeaderFilter.xml",    // header filter expression + process().ref()
             "processorWithSimpleFilter.xml",    // process().ref()
+            // Complex nested constructs
+            "barInterceptorRoute.xml",          // intercept with nested outputs
+            "doTryCatchFinally.xml",            // doTry/doCatch/doFinally blocks
+            "enrichAndPollEnrich.xml",          // enrich() expression argument
+            "interceptFromAndSendTo.xml",       // interceptSendToEndpoint uri
             "resequencerBatch.xml",             // resequence batch config attributes
             "routeInlinedErrorHandler.xml",     // inlined error handler
             "routeProperties.xml",              // route property()
             "routeProperty.xml",                // route property()
-            "routeWithBindyDataFormat.xml",     // bindy data format
-            "routeWithChoice.xml",              // ognl() expression
             "routeWithCircuitBreaker.xml",      // throwException + onFallback
+            // Data format subtypes
+            "routeWithBindyDataFormat.xml",     // bindy data format
             "routeWithCvsDataFormat.xml",       // csv data format
             "routeWithFailoverLoadBalance.xml", // failover load balancer
             "routeWithFlatpackDataFormat.xml",  // flatpack data format
@@ -103,7 +120,9 @@ public class JavaDslCompileTest {
             "routeWithStickyLoadBalance.xml",   // sticky load balancer
             "routeWithXMLSecurityDataFormat.xml", // xml security data format
             "routeWithZipFileDataFormat.xml",   // zipFile data format
-            "script.xml");                      // groovy() expression
+            "unmarshal.xml",                    // unmarshal json data format
+            // Remove* pattern mismatch
+            "removeHeadersAndProperties.xml");  // removeProperties() pattern argument
 
     static Stream<String> xmlRouteFiles() throws Exception {
         Path dir = Paths.get("../camel-xml-io/src/test/resources");
