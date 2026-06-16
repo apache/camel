@@ -26,7 +26,24 @@ import org.apache.camel.Service;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Camel JMX service agent
+ * Low-level JMX bridge that registers and unregisters Camel managed objects in a {@link javax.management.MBeanServer}.
+ * <p/>
+ * {@link ManagementStrategy} is the high-level coordinator; it delegates all MBean lifecycle operations (register,
+ * unregister, lookup) to this agent. The agent wraps an {@link javax.management.MBeanServer} — by default the platform
+ * MBean server — and exposes a simplified API that hides the JMX plumbing from the rest of Camel.
+ * <p/>
+ * The agent is created by {@link ManagementStrategyFactory} and is available from a running
+ * {@link org.apache.camel.CamelContext} via {@link ManagementStrategy#getManagementAgent()}. Its configuration
+ * properties (domain name, statistics level, MBeans level, naming pattern, masking, etc.) map directly to the
+ * {@code camel.main.jmx-*} family of properties. The {@link ManagementObjectNameStrategy} and
+ * {@link ManagementObjectStrategy} work alongside the agent to determine the {@link javax.management.ObjectName} and
+ * managed-object wrapper for each Camel artifact before the agent registers it.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/jmx.html">JMX</a> in the Camel user manual.
+ *
+ * @see ManagementStrategy
+ * @see ManagementObjectNameStrategy
+ * @see ManagementObjectStrategy
  */
 public interface ManagementAgent extends Service {
 
