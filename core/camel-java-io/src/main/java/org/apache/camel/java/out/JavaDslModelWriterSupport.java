@@ -36,6 +36,7 @@ import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.PropertyExpressionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ValueDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
@@ -60,6 +61,7 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
+import org.apache.camel.model.rest.ResponseHeaderDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 
@@ -116,6 +118,14 @@ public abstract class JavaDslModelWriterSupport {
     private static final Set<String> SUB_BUILDER_CHILDREN = Set.of(
             "resilience4jConfiguration", "faultToleranceConfiguration");
 
+    // REST DSL sub-builder steps with custom end methods
+    private static final Map<String, String> REST_END_METHODS = Map.of(
+            "param", "endParam",
+            "responseMessage", "endResponseMessage");
+
+    // Attributes rendered as class literals: .name(com.example.Foo.class)
+    private static final Set<String> CLASS_LITERAL_ATTRIBUTES = Set.of("responseModel");
+
     // Data format builder methods where the String setter name differs from the XML attribute name.
     // The XML attribute is the Class<?> setter; the String setter appends "Name" or "AsString".
     private static final Map<String, String> DATAFORMAT_ATTR_RENAMES = Map.of(
@@ -125,6 +135,7 @@ public abstract class JavaDslModelWriterSupport {
 
     private boolean inDataFormatBuilder;
     private boolean inSubBuilder;
+    private boolean inRestParam;
 
     protected int indentLevel = 1;
     protected final Set<String> handledAttributes = new HashSet<>();
@@ -134,6 +145,7 @@ public abstract class JavaDslModelWriterSupport {
         handledAttributes.clear();
         inDataFormatBuilder = false;
         inSubBuilder = false;
+        inRestParam = false;
     }
 
     protected void writeRoute(StringBuilder sb, RouteDefinition def) {
@@ -205,14 +217,24 @@ public abstract class JavaDslModelWriterSupport {
      */
     protected void beginStep(StringBuilder sb, String name, Object def) {
         handledAttributes.clear();
+        if ("param".equals(name)) {
+            inRestParam = true;
+        }
         sb.append(NL).append(indent()).append(".").append(name).append("()");
     }
 
     /**
-     * Ends a DSL step. For block EIPs that have outputs, appends .end().
+     * Ends a DSL step. For block EIPs that have outputs, appends .end(). For REST sub-builders, appends the
+     * corresponding end method (e.g., .endParam(), .endResponseMessage()).
      */
     protected void endStep(StringBuilder sb, String name, Object def) {
-        if (BLOCK_EIPS.contains(name)) {
+        if ("param".equals(name)) {
+            inRestParam = false;
+        }
+        String restEnd = REST_END_METHODS.get(name);
+        if (restEnd != null) {
+            sb.append(NL).append(indent()).append(".").append(restEnd).append("()");
+        } else if (BLOCK_EIPS.contains(name)) {
             sb.append(NL).append(indent()).append(".end()");
         }
     }
@@ -227,6 +249,14 @@ public abstract class JavaDslModelWriterSupport {
         String methodName = key;
         if (inDataFormatBuilder) {
             methodName = DATAFORMAT_ATTR_RENAMES.getOrDefault(key, key);
+        }
+        if (CLASS_LITERAL_ATTRIBUTES.contains(key)) {
+            sb.append(NL).append(indent()).append("    .").append(methodName).append("(").append(value).append(".class)");
+            return;
+        }
+        if (inRestParam && "type".equals(key)) {
+            sb.append(NL).append(indent()).append("    .type(RestParamType.").append(value).append(")");
+            return;
         }
         if (TOGGLE_ATTRIBUTES.contains(key)) {
             if ("true".equals(value)) {
@@ -339,6 +369,14 @@ public abstract class JavaDslModelWriterSupport {
     protected <T> void doWriteChildList(
             StringBuilder sb, String key, List<T> list, BiConsumer<StringBuilder, T> writer) {
         if (list != null && !list.isEmpty() && !handledAttributes.contains(key)) {
+            if ("value".equals(key) && list.get(0) instanceof ValueDefinition) {
+                writeAllowableValues(sb, list);
+                return;
+            }
+            if ("header".equals(key) && list.get(0) instanceof ResponseHeaderDefinition) {
+                writeResponseHeaders(sb, list);
+                return;
+            }
             for (T item : list) {
                 if (item instanceof PropertyExpressionDefinition ped) {
                     sb.append(NL).append(indent()).append("    .option(").append(quote(ped.getKey()))
@@ -349,6 +387,47 @@ public abstract class JavaDslModelWriterSupport {
                     indentLevel--;
                 }
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> void writeAllowableValues(StringBuilder sb, List<T> list) {
+        sb.append(NL).append(indent()).append("    .allowableValues(");
+        boolean first = true;
+        for (T item : list) {
+            ValueDefinition vd = (ValueDefinition) item;
+            if (vd.getValue() != null) {
+                if (!first) {
+                    sb.append(", ");
+                }
+                first = false;
+                sb.append(quote(vd.getValue()));
+            }
+        }
+        sb.append(")");
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> void writeResponseHeaders(StringBuilder sb, List<T> list) {
+        for (T item : list) {
+            ResponseHeaderDefinition h = (ResponseHeaderDefinition) item;
+            sb.append(NL).append(indent()).append("    .header(").append(quote(h.getName())).append(")");
+            if (h.getDescription() != null) {
+                sb.append(NL).append(indent()).append("        .description(").append(quote(h.getDescription())).append(")");
+            }
+            if (h.getDataType() != null && !"string".equals(h.getDataType())) {
+                sb.append(NL).append(indent()).append("        .dataType(").append(quote(h.getDataType())).append(")");
+            }
+            if (h.getDataFormat() != null) {
+                sb.append(NL).append(indent()).append("        .dataFormat(").append(quote(h.getDataFormat())).append(")");
+            }
+            if (h.getAllowableValues() != null && !h.getAllowableValues().isEmpty()) {
+                writeAllowableValues(sb, h.getAllowableValues());
+            }
+            if (h.getExample() != null) {
+                sb.append(NL).append(indent()).append("        .example(").append(quote(h.getExample())).append(")");
+            }
+            sb.append(NL).append(indent()).append("    .endHeader()");
         }
     }
 
