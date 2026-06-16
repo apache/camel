@@ -116,7 +116,7 @@ public abstract class JavaDslModelWriterSupport {
 
     // Child elements rendered as sub-builder: .name().option("val").end()
     private static final Set<String> SUB_BUILDER_CHILDREN = Set.of(
-            "resilience4jConfiguration", "faultToleranceConfiguration");
+            "resilience4jConfiguration", "faultToleranceConfiguration", "openApi");
 
     // REST DSL sub-builder steps with custom end methods
     private static final Map<String, String> REST_END_METHODS = Map.of(

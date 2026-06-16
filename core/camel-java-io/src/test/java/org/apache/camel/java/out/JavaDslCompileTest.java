@@ -72,7 +72,7 @@ public class JavaDslCompileTest {
 
     // REST XML files to test (subset of NON_ROUTE_FILES that contain <rests>)
     private static final Set<String> REST_FILES = Set.of(
-            "barRest.xml", "simpleRest.xml", "restAllowedValues.xml");
+            "barRest.xml", "simpleRest.xml", "restAllowedValues.xml", "restOpenApi.xml");
 
     // Files that don't compile yet due to unsupported constructs in the writer.
     // Categorized by root cause — as the writer improves, move files out of this set.
@@ -145,7 +145,10 @@ public class JavaDslCompileTest {
     @ParameterizedTest(name = "rest:{0}")
     @MethodSource("xmlRestFiles")
     void xmlToRestJavaDslCompiles(String xmlFile) throws Exception {
-        Path xmlPath = XML_IO_RESOURCES.resolve(xmlFile);
+        Path xmlPath = LOCAL_RESOURCES.resolve(xmlFile);
+        if (!Files.exists(xmlPath)) {
+            xmlPath = XML_IO_RESOURCES.resolve(xmlFile);
+        }
 
         ModelParser parser = new ModelParser(Files.newInputStream(xmlPath), NAMESPACE);
         RestsDefinition restsDef = parser.parseRestsDefinition().orElse(null);
