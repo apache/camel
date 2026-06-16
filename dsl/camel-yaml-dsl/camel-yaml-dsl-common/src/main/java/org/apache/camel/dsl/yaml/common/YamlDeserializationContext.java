@@ -16,23 +16,22 @@
  */
 package org.apache.camel.dsl.yaml.common;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Ordered;
 import org.apache.camel.Service;
 import org.apache.camel.dsl.yaml.common.exception.DuplicateKeyException;
 import org.apache.camel.dsl.yaml.common.exception.UnknownNodeIdException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.snakeyaml.engine.v2.api.ConstructNode;
@@ -45,7 +44,7 @@ import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 public class YamlDeserializationContext extends StandardConstructor implements CamelContextAware, Service {
 
-    private final Set<YamlDeserializerResolver> resolvers;
+    private final List<YamlDeserializerResolver> resolvers;
     private final Map<String, ConstructNode> constructors;
     private CamelContext camelContext;
     private Resource resource;
@@ -54,12 +53,13 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     public YamlDeserializationContext(LoadSettings settings) {
         super(settings);
-        this.resolvers = new TreeSet<>(Comparator.comparing(Ordered::getOrder));
+        this.resolvers = new ArrayList<>();
         this.constructors = new HashMap<>();
     }
 
     public void addResolver(YamlDeserializerResolver resolver) {
         this.resolvers.add(resolver);
+        this.resolvers.sort(OrderedComparator.get());
     }
 
     public void addResolvers(YamlDeserializerResolver... resolvers) {
@@ -68,6 +68,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     public void addResolvers(Collection<YamlDeserializerResolver> resolvers) {
         this.resolvers.addAll(resolvers);
+        this.resolvers.sort(OrderedComparator.get());
     }
 
     public Resource getResource() {

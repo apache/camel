@@ -41,7 +41,8 @@ class ConstructorResolverTest extends Specification {
         when:
             def ctr = new YamlDeserializationContext(settings)
             ctr.setCamelContext(new DefaultCamelContext())
-            ctr.addResolver(new LocalResolver())
+            ctr.addResolver(new MyNodeResolver())
+            ctr.addResolver(new MyNestedResolver())
 
             def load = new Load(settings, ctr)
 
@@ -65,13 +66,22 @@ class ConstructorResolverTest extends Specification {
     }
 
 
-    static class LocalResolver implements YamlDeserializerResolver {
+    static class MyNodeResolver implements YamlDeserializerResolver {
         @Override
         ConstructNode resolve(String id) {
             switch (id) {
                 case 'my-node':
                 case 'org.apache.camel.dsl.yaml.common.ConstructorResolverTest$MyNode':
                     return new MyNodeConstructor()
+            }
+            return null
+        }
+    }
+
+    static class MyNestedResolver implements YamlDeserializerResolver {
+        @Override
+        ConstructNode resolve(String id) {
+            switch (id) {
                 case 'nested':
                 case 'org.apache.camel.dsl.yaml.common.ConstructorResolverTest$MyNested':
                     return new MyNestedConstructor()
