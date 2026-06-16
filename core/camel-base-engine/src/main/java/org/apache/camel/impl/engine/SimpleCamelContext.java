@@ -71,6 +71,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -550,6 +551,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 ModelToYAMLDumper.FACTORY,
                 ModelToYAMLDumper.class,
                 "camel-yaml-io");
+    }
+
+    @Override
+    protected ModelToJavaDumper createModelToJavaDumper() {
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
+                ModelToJavaDumper.FACTORY,
+                ModelToJavaDumper.class,
+                "camel-java-io");
     }
 
     @Override

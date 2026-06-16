@@ -4,7 +4,7 @@
     "group": "camel",
     "name": "route-dump",
     "title": "Route Dump",
-    "description": "Dump route in XML or YAML format",
+    "description": "Dump route in XML, YAML, or Java DSL format",
     "deprecated": false,
     "javaType": "org.apache.camel.impl.console.RouteDumpDevConsole",
     "groupId": "org.apache.camel",

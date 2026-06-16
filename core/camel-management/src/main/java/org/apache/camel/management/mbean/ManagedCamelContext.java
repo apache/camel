@@ -636,6 +636,24 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    public String dumpRoutesAsJava() throws Exception {
+        return dumpRoutesAsJava(false);
+    }
+
+    @Override
+    public String dumpRoutesAsJava(boolean resolvePlaceholders) throws Exception {
+        List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
+        if (routes.isEmpty()) {
+            return null;
+        }
+
+        RoutesDefinition def = new RoutesDefinition();
+        def.setRoutes(routes);
+
+        return PluginHelper.getModelToJavaDumper(context).dumpModelAsJava(context, def, resolvePlaceholders, true);
+    }
+
+    @Override
     public String dumpRouteTemplatesAsXml() throws Exception {
         List<RouteTemplateDefinition> templates
                 = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteTemplateDefinitions();
