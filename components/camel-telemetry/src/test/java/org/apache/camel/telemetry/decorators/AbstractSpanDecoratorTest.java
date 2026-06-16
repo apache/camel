@@ -60,6 +60,7 @@ public class AbstractSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(endpoint.toString()).thenReturn(TEST_URI);
+        Mockito.when(exchange.getFromRouteId()).thenReturn("myRouteId");
 
         SpanDecorator decorator = new AbstractSpanDecorator() {
             @Override
@@ -81,6 +82,7 @@ public class AbstractSpanDecoratorTest {
         assertEquals("test", span.tags().get(TagConstants.URL_SCHEME));
         assertEquals("uri", span.tags().get(TagConstants.URL_PATH));
         assertEquals("query=hello", span.tags().get(TagConstants.URL_QUERY));
+        assertEquals("myRouteId", span.tags().get(TagConstants.ROUTE_ID));
     }
 
     @Test
