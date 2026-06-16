@@ -33,7 +33,7 @@ public class LangChain4jAgentEndpointUriFactory extends org.apache.camel.support
         props.add("lazyStartProducer");
         props.add("mcpClients");
         props.add("mcpServer");
-        props.add("responseType");
+        props.add("outputClass");
         props.add("tags");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

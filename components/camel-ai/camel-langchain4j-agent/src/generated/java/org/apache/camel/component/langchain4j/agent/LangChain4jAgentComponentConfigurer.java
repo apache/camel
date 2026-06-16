@@ -46,8 +46,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "mcpClients": getOrCreateConfiguration(target).setMcpClients(property(camelContext, java.util.List.class, value)); return true;
         case "mcpserver":
         case "mcpServer": getOrCreateConfiguration(target).setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
-        case "responsetype":
-        case "responseType": getOrCreateConfiguration(target).setResponseType(property(camelContext, java.lang.Class.class, value)); return true;
+        case "outputclass":
+        case "outputClass": getOrCreateConfiguration(target).setOutputClass(property(camelContext, java.lang.Class.class, value)); return true;
         case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -77,8 +77,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "mcpClients": return java.util.List.class;
         case "mcpserver":
         case "mcpServer": return java.util.Map.class;
-        case "responsetype":
-        case "responseType": return java.lang.Class.class;
+        case "outputclass":
+        case "outputClass": return java.lang.Class.class;
         case "tags": return java.lang.String.class;
         default: return null;
         }
@@ -104,8 +104,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "mcpClients": return getOrCreateConfiguration(target).getMcpClients();
         case "mcpserver":
         case "mcpServer": return getOrCreateConfiguration(target).getMcpServer();
-        case "responsetype":
-        case "responseType": return getOrCreateConfiguration(target).getResponseType();
+        case "outputclass":
+        case "outputClass": return getOrCreateConfiguration(target).getOutputClass();
         case "tags": return getOrCreateConfiguration(target).getTags();
         default: return null;
         }
@@ -118,8 +118,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "mcpClients": return dev.langchain4j.mcp.client.McpClient.class;
         case "mcpserver":
         case "mcpServer": return java.lang.Object.class;
-        case "responsetype":
-        case "responseType": return java.lang.Object.class;
+        case "outputclass":
+        case "outputClass": return java.lang.Object.class;
         default: return null;
         }
     }

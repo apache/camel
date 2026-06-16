@@ -34,7 +34,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Integration test for responseType parameter with the langchain4j-agent component.
+ * Integration test for outputClass parameter with the langchain4j-agent component.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentResponseTypeIT extends CamelTestSupport {
@@ -129,20 +129,22 @@ public class LangChain4jAgentResponseTypeIT extends CamelTestSupport {
                 = new AgentConfiguration().withChatModel(chatModel).withChatMemoryProvider(chatMemoryProvider);
         context.getRegistry().bind("agentConfigWithMemory", agentConfigWithMemory);
 
-        String responseTypeFqcn = CarRentalRecommendation.class.getName();
+        String outputClassFqcn = CarRentalRecommendation.class.getName();
 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // Route with responseType (stateless)
+                // Route with outputClass (stateless): unmarshal the raw JSON response to a POJO
                 from("direct:responseType")
-                        .to("langchain4j-agent:test1?agentConfiguration=#agentConfig&responseType=" + responseTypeFqcn)
+                        .to("langchain4j-agent:test1?agentConfiguration=#agentConfig&outputClass=" + outputClassFqcn)
+                        .unmarshal().json(CarRentalRecommendation.class)
                         .to("mock:result");
 
-                // Route with responseType (stateful, with memory)
+                // Route with outputClass (stateful, with memory): unmarshal the raw JSON response to a POJO
                 from("direct:responseTypeWithMemory")
-                        .to("langchain4j-agent:test2?agentConfiguration=#agentConfigWithMemory&responseType="
-                            + responseTypeFqcn)
+                        .to("langchain4j-agent:test2?agentConfiguration=#agentConfigWithMemory&outputClass="
+                            + outputClassFqcn)
+                        .unmarshal().json(CarRentalRecommendation.class)
                         .to("mock:resultWithMemory");
             }
         };

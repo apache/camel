@@ -58,17 +58,18 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     @UriParam
     @Metadata(description = "JSON schema for structured output validation. "
-                            + "This option works only when using agentConfiguration (inline agent creation mode). "
-                            + "Mutually exclusive with responseType.",
+                            + "Only supported in inline agent creation mode: agentConfiguration must be set and neither agent nor agentFactory may be configured. "
+                            + "Mutually exclusive with outputClass.",
               supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String jsonSchema;
 
     @UriParam
-    @Metadata(description = "Java class to use as response format for structured outputs. "
-                            + "Camel will automatically derive the JSON schema from the class structure and unmarshal the response. "
-                            + "This option works only when using agentConfiguration (inline agent creation mode). "
+    @Metadata(description = "Java class to use for structured output. "
+                            + "Camel derives the JSON schema from the class and instructs the model to produce matching JSON; the response body is left as a raw JSON string. "
+                            + "Only supported in inline agent creation mode: agentConfiguration must be set and neither agent nor agentFactory may be configured. "
+                            + "The class must be a POJO with public fields or getters; simple types, enums, and collections are not supported. "
                             + "Mutually exclusive with jsonSchema.")
-    private Class<?> responseType;
+    private Class<?> outputClass;
 
     @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
                             + " Supported properties: transportType (stdio, http, streamableHttp, or sse, default: stdio),"
@@ -190,15 +191,15 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     }
 
     /**
-     * Java class to use as response format for structured outputs
+     * Java class to use for structured output
      *
-     * @return the response type class
+     * @return the output class
      */
-    public Class<?> getResponseType() {
-        return responseType;
+    public Class<?> getOutputClass() {
+        return outputClass;
     }
 
-    public void setResponseType(Class<?> responseType) {
-        this.responseType = responseType;
+    public void setOutputClass(Class<?> outputClass) {
+        this.outputClass = outputClass;
     }
 }

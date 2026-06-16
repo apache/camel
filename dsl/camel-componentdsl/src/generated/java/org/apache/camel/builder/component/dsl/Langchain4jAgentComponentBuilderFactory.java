@@ -118,9 +118,10 @@ public interface Langchain4jAgentComponentBuilderFactory {
         }
     
         /**
-         * JSON schema for structured output validation. This option works only
-         * when using agentConfiguration (inline agent creation mode). Mutually
-         * exclusive with responseType.
+         * JSON schema for structured output validation. Only supported in
+         * inline agent creation mode: agentConfiguration must be set and
+         * neither agent nor agentFactory may be configured. Mutually exclusive
+         * with outputClass.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -163,22 +164,24 @@ public interface Langchain4jAgentComponentBuilderFactory {
         }
     
         /**
-         * Java class to use as response format for structured outputs. Camel
-         * will automatically derive the JSON schema from the class structure
-         * and unmarshal the response. This option works only when using
-         * agentConfiguration (inline agent creation mode). Mutually exclusive
-         * with jsonSchema.
+         * Java class to use for structured output. Camel derives the JSON
+         * schema from the class and instructs the model to produce matching
+         * JSON; the response body is left as a raw JSON string. Only supported
+         * in inline agent creation mode: agentConfiguration must be set and
+         * neither agent nor agentFactory may be configured. The class must be a
+         * POJO with public fields or getters; simple types, enums, and
+         * collections are not supported. Mutually exclusive with jsonSchema.
          * 
          * The option is a:
          * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
          * 
-         * @param responseType the value to set
+         * @param outputClass the value to set
          * @return the dsl builder
          */
-        default Langchain4jAgentComponentBuilder responseType(java.lang.Class<java.lang.Object> responseType) {
-            doSetProperty("responseType", responseType);
+        default Langchain4jAgentComponentBuilder outputClass(java.lang.Class<java.lang.Object> outputClass) {
+            doSetProperty("outputClass", outputClass);
             return this;
         }
     
@@ -285,7 +288,7 @@ public interface Langchain4jAgentComponentBuilderFactory {
             case "configuration": ((LangChain4jAgentComponent) component).setConfiguration((org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) value); return true;
             case "jsonSchema": getOrCreateConfiguration((LangChain4jAgentComponent) component).setJsonSchema((java.lang.String) value); return true;
             case "lazyStartProducer": ((LangChain4jAgentComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "responseType": getOrCreateConfiguration((LangChain4jAgentComponent) component).setResponseType((java.lang.Class) value); return true;
+            case "outputClass": getOrCreateConfiguration((LangChain4jAgentComponent) component).setOutputClass((java.lang.Class) value); return true;
             case "tags": getOrCreateConfiguration((LangChain4jAgentComponent) component).setTags((java.lang.String) value); return true;
             case "autowiredEnabled": ((LangChain4jAgentComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "mcpClients": getOrCreateConfiguration((LangChain4jAgentComponent) component).setMcpClients((java.util.List) value); return true;

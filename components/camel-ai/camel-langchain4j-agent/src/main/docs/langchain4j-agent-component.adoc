@@ -1395,13 +1395,14 @@ The `jsonSchema` option accepts:
 
 
 
-==== Using the responseType endpoint option (Java Class-based Schema)
+==== Using the outputClass endpoint option (Java Class-based Schema)
 
-As an alternative to providing a JSON schema directly, you can use the `responseType` endpoint option to specify a Java class. The Camel LangChain4j agent will automatically:
+As an alternative to providing a JSON schema directly, you can use the `outputClass` endpoint option to specify a Java class. The Camel LangChain4j agent will automatically:
 
 1. Derive the JSON schema from the class structure
 2. Configure the AI model to return JSON matching that schema
-3. Unmarshal the JSON response directly to an instance of your Java class
+
+The response body is left as a raw JSON string, consistent with the `camel-openai` component. Use Camel's `.unmarshal().json()` in your route to convert it to a POJO.
 
 This approach is mutually exclusive with `jsonSchema` — you can use one or the other, but not both.
 
@@ -1431,7 +1432,7 @@ public class PersonInfo {
 }
 ----
 
-Then configure the endpoint to use this class as the response type. Use the fully qualified class name (FQCN) directly — no registry binding needed:
+Then configure the endpoint to use this class. Use the fully qualified class name (FQCN) directly — no registry binding needed. Add `.unmarshal().json()` to convert the raw JSON response to a POJO:
 
 [source,java]
 ----
@@ -1443,9 +1444,9 @@ context.getRegistry().bind("myAgentConfig", agentConfiguration);
 from("direct:extract-person-info")
     .setBody(constant("Extract information about John Smith, a 35-year-old software engineer"))
     .to("langchain4j-agent:structured?agentConfiguration=#myAgentConfig"
-            + "&responseType=com.example.PersonInfo")
+            + "&outputClass=com.example.PersonInfo")
+    .unmarshal().json(PersonInfo.class)
     .process(exchange -> {
-        // Response is automatically unmarshalled to PersonInfo
         PersonInfo person = exchange.getIn().getBody(PersonInfo.class);
         log.info("Name: {}, Age: {}, Occupation: {}",
             person.getName(), person.getAge(), person.getOccupation());
@@ -1454,10 +1455,10 @@ from("direct:extract-person-info")
 
 [NOTE]
 ====
-* Both `jsonSchema` and `responseType` only work when using `agentConfiguration` (inline agent creation mode)
+* Both `jsonSchema` and `outputClass` only work when using `agentConfiguration` (inline agent creation mode), without `agent` or `agentFactory` configured
 * You cannot use both options simultaneously — they are mutually exclusive
 * The AI model must support structured outputs (e.g., OpenAI GPT-4o, GPT-4o-mini, or Ollama models with JSON mode)
-* Complex nested objects and collections are fully supported with `responseType`
+* Complex nested objects and collections are fully supported with `outputClass`
 ====
 
 ==== Alternative: configuring ResponseFormat on the ChatModel
