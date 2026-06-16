@@ -655,6 +655,7 @@ class SourceViewer {
         root.put("action", "route-dump");
         root.put("filter", routeId);
         root.put("format", format);
+        root.put("uriAsParameters", "yaml".equals(format) ? "true" : "false");
 
         Path actionFile = ctx.getActionFile(pid);
         PathUtils.writeTextSafely(root.toJson(), actionFile);
