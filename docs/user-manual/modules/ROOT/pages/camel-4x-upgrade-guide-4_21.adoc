@@ -1036,6 +1036,12 @@ that namespace are no longer propagated as `Exchange` headers. Routes that relie
 header names from inbound SOAP headers can supply a custom `headerFilterStrategy` (via the new
 `headerFilterStrategy` endpoint option) to restore the previous behaviour.
 
+The transitive `org.opensaml` dependencies pulled in by `spring-ws-security` have been excluded.
+Camel's Spring-WS component does not use OpenSAML, and these artifacts are hosted on a third-party
+Maven repository (`build.shibboleth.net`) that has proven unreliable, causing intermittent CI and
+build failures. If your project depends on OpenSAML for SAML-based WS-Security, you will need to
+add the `org.opensaml` dependencies explicitly.
+
 === camel-lucene
 
 The Exchange header values exposed by `LuceneConstants` have been renamed to follow the standard
