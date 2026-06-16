@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.1 to 4.18.3
 
+=== camel-oauth
+
+`UserProfile` token verification now fails closed when no JWK set is available: a signed token can no
+longer be accepted when the configured JWK set is missing or empty, since its signature cannot be
+verified in that case. Deployments with a correctly resolved JWK set are unaffected; this aligns the
+legacy `UserProfile` path with the `JwtTokenValidator` SPI path.
+
 === camel-spring-ws - potential breaking change
 
 The `spring-ws` consumer now applies a `HeaderFilterStrategy` to the SOAP headers it maps onto the
