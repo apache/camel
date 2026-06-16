@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Converts the message body to another type
@@ -36,6 +37,7 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
     private Class<?> typeClass;
 
     @XmlAttribute(required = true)
+    @DslArg(renderType = "class")
     private String type;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")

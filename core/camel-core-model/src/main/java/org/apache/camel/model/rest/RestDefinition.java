@@ -48,6 +48,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -68,6 +69,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public static final String MISSING_VERB = "Must add verb first, such as get/post/delete";
 
     @XmlAttribute
+    @DslArg
     private String path;
     @XmlAttribute
     private String consumes;

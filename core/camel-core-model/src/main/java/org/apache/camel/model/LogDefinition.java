@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.slf4j.Logger;
 
 /**
@@ -37,9 +38,11 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     private Logger loggerBean;
 
     @XmlAttribute(required = true)
+    @DslArg(position = 1)
     private String message;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @DslArg(position = 0, renderType = "enumString", typeName = "LoggingLevel")
     private String loggingLevel;
     @XmlAttribute
     private String logName;

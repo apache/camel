@@ -114,4 +114,5 @@
 ** xref:dsl.adoc[Camel Domain Specific Language]
 ** xref:languages.adoc[Languages]
 ** xref:java-dsl.adoc[Java DSL]
+** xref:java-dsl-model-writer.adoc[Java DSL Model Writer]
 ** xref:spring.adoc[Spring support]

@@ -34,6 +34,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -58,6 +59,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     private boolean routeScoped = true;
 
     @XmlElement(name = "exception", required = true)
+    @DslArg(renderType = "classList")
     private List<String> exceptions = new ArrayList<>();
     @Metadata(description = "To use an expression to only trigger this in specific situations")
     @XmlElement

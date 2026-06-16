@@ -1,0 +1,7 @@
+from("direct:start")
+    .routeId("myRoute")
+    .split(simple("${body}"))
+        .streaming()
+        .to("mock:split")
+    .end()
+    .to("mock:result");

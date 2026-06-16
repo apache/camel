@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Throws an exception
@@ -38,8 +39,10 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     private Class<? extends Exception> exceptionClass;
 
     @XmlAttribute
+    @DslArg(position = 1)
     private String message;
     @XmlAttribute
+    @DslArg(position = 0, renderType = "class")
     private String exceptionType;
     @XmlAttribute
     @Metadata(label = "advanced")

@@ -28,6 +28,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Intercepts messages being sent to an endpoint
@@ -38,6 +39,7 @@ import org.apache.camel.spi.Metadata;
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {
 
     @XmlAttribute(required = true)
+    @DslArg
     private String uri;
     @XmlAttribute
     private String skipSendToOriginalEndpoint;

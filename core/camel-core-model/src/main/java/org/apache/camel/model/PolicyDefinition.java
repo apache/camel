@@ -28,6 +28,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.TransactedPolicy;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Defines a policy the route will use
@@ -43,6 +44,7 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
     private Policy policy;
 
     @XmlAttribute(required = true)
+    @DslArg
     private String ref;
 
     public PolicyDefinition() {

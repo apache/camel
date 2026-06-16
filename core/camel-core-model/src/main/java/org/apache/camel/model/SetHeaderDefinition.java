@@ -25,6 +25,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Sets the value of a message header
@@ -35,6 +36,7 @@ import org.apache.camel.spi.Metadata;
 public class SetHeaderDefinition extends ExpressionNode {
 
     @XmlAttribute(required = true)
+    @DslArg
     private String name;
 
     public SetHeaderDefinition() {

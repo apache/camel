@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -42,6 +43,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
 
     @XmlAttribute
     @Metadata(required = true)
+    @DslArg(position = 1)
     protected String uri;
 
     protected SendDefinition() {

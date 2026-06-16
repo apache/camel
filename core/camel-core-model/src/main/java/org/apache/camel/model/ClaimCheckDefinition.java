@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to
@@ -39,10 +40,13 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
 
     @XmlAttribute(required = true)
     @Metadata(enums = "Get,GetAndRemove,Set,Push,Pop", javaType = "org.apache.camel.model.ClaimCheckOperation")
+    @DslArg(position = 0, renderType = "enumString", typeName = "ClaimCheckOperation")
     private String operation;
     @XmlAttribute
+    @DslArg(position = 1)
     private String key;
     @XmlAttribute
+    @DslArg(position = 2)
     private String filter;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.AggregationStrategy")

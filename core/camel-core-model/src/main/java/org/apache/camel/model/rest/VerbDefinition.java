@@ -29,6 +29,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * A rest operation (such as GET, POST etc.)
@@ -48,6 +49,7 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private List<SecurityDefinition> security = new ArrayList<>();
 
     @XmlAttribute
+    @DslArg
     private String path;
     @XmlAttribute
     private String consumes;

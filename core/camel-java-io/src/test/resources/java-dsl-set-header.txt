@@ -1,0 +1,6 @@
+from("direct:start")
+    .routeId("myRoute")
+    .setHeader("myHeader", constant("myValue"))
+    .setVariable("myVar", simple("${body}"))
+    .transform(simple("Hello ${body}"))
+    .to("mock:result");

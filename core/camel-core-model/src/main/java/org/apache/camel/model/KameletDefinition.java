@@ -25,6 +25,7 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * To call Kamelets in special situations. By default, calling kamelets should be done as endpoints with the kamelet
@@ -39,6 +40,7 @@ import org.apache.camel.spi.Metadata;
 public class KameletDefinition extends OutputDefinition<KameletDefinition> {
 
     @XmlAttribute(required = true)
+    @DslArg
     private String name;
 
     public KameletDefinition() {

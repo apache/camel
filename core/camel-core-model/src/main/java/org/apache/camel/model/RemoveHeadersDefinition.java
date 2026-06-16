@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Removes message headers whose name matches a specified pattern
@@ -38,6 +39,7 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
     private String[] excludePatterns;
 
     @XmlAttribute(required = true)
+    @DslArg
     private String pattern;
     @XmlAttribute
     @Metadata(label = "advanced")

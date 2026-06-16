@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -38,6 +39,7 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     private Processor processor;
 
     @XmlAttribute(required = true)
+    @DslArg
     private String ref;
 
     public ProcessDefinition() {

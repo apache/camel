@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Intercepts incoming messages
@@ -32,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 public class InterceptFromDefinition extends InterceptDefinition {
 
     @XmlAttribute
+    @DslArg
     protected String uri;
 
     public InterceptFromDefinition() {

@@ -41,6 +41,7 @@ import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Aggregates many messages into a single message
@@ -68,6 +69,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
 
     @XmlElement(name = "correlationExpression", required = true)
+    @DslArg
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
     @AsPredicate
@@ -648,6 +650,19 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     }
 
     /**
+     * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key that
+     * has been closed, it will be defined and a ClosedCorrelationKeyException is thrown.
+     *
+     * @param  capacity the maximum capacity of the closed correlation key cache. Use <tt>0</tt> or negative value for
+     *                  unbounded capacity. Supports property placeholders.
+     * @return          builder
+     */
+    public AggregateDefinition closeCorrelationKeyOnCompletion(String capacity) {
+        setCloseCorrelationKeyOnCompletion(capacity);
+        return this;
+    }
+
+    /**
      * Discards the aggregated message on completion timeout.
      * <p/>
      * This means on timeout the aggregated message is dropped and not sent out of the aggregator.
@@ -840,6 +855,21 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      */
     public AggregateDefinition completionTimeoutCheckerInterval(long completionTimeoutCheckerInterval) {
         setCompletionTimeoutCheckerInterval(Long.toString(completionTimeoutCheckerInterval));
+        return this;
+    }
+
+    /**
+     * A background task which checks for timeouts (completionTimeout) at a given interval.
+     * <p/>
+     * By default the timeout checker runs every second. The timeout is an approximation and there is no guarantee that
+     * the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values
+     * or checker intervals.
+     *
+     * @param  completionTimeoutCheckerInterval the interval in millis. Supports property placeholders.
+     * @return                                  the builder
+     */
+    public AggregateDefinition completionTimeoutCheckerInterval(String completionTimeoutCheckerInterval) {
+        setCompletionTimeoutCheckerInterval(completionTimeoutCheckerInterval);
         return this;
     }
 
