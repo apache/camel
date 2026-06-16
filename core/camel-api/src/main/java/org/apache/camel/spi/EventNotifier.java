@@ -17,10 +17,22 @@
 package org.apache.camel.spi;
 
 /**
- * Notifier to send {@link CamelEvent} notifications.
+ * Observer that receives {@link CamelEvent} notifications fired by the Camel runtime.
+ * <p/>
+ * Notifiers are registered with {@link ManagementStrategy#addEventNotifier(EventNotifier)} and receive every event that
+ * {@link ManagementStrategy#notify(CamelEvent)} dispatches. Common uses include emitting metrics (Micrometer,
+ * Prometheus), publishing traces, audit logging, and driving test assertions.
+ * <p/>
+ * Each event category can be selectively suppressed via the {@code setIgnore*} methods, which avoids the overhead of
+ * dispatching events that the notifier does not care about. For example, a metrics-only notifier can ignore all route
+ * lifecycle events while still observing exchange sent/completed events. The {@link EventFactory} is the counterpart
+ * that constructs the actual event objects.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/event-notifier.html">Event Notifier</a> in the Camel user manual.
  *
  * @see CamelEvent
  * @see EventFactory
+ * @see ManagementStrategy
  */
 public interface EventNotifier {
 
