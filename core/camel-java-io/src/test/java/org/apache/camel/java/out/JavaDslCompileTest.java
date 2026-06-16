@@ -40,6 +40,8 @@ import javax.tools.ToolProvider;
 
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.xml.in.ModelParser;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -67,6 +69,10 @@ public class JavaDslCompileTest {
             "barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml",
             "barTemplate.xml", "barTemplatedRoute.xml", "barRestConfiguration.xml",
             "errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
+
+    // REST XML files to test (subset of NON_ROUTE_FILES that contain <rests>)
+    private static final Set<String> REST_FILES = Set.of(
+            "barRest.xml", "simpleRest.xml");
 
     // Files that don't compile yet due to unsupported constructs in the writer.
     // Categorized by root cause — as the writer improves, move files out of this set.
@@ -125,6 +131,40 @@ public class JavaDslCompileTest {
         String source = wrapInRouteBuilder(className, routeSnippets);
 
         LOG.debug("Generated Java DSL for {}:\n{}", xmlFile, source);
+
+        List<String> errors = compile(className, source);
+        assertTrue(errors.isEmpty(),
+                "Compilation failed for " + xmlFile + ":\n" + String.join("\n", errors)
+                                     + "\n\nGenerated source:\n" + source);
+    }
+
+    static Stream<String> xmlRestFiles() {
+        return REST_FILES.stream().sorted();
+    }
+
+    @ParameterizedTest(name = "rest:{0}")
+    @MethodSource("xmlRestFiles")
+    void xmlToRestJavaDslCompiles(String xmlFile) throws Exception {
+        Path xmlPath = XML_IO_RESOURCES.resolve(xmlFile);
+
+        ModelParser parser = new ModelParser(Files.newInputStream(xmlPath), NAMESPACE);
+        RestsDefinition restsDef = parser.parseRestsDefinition().orElse(null);
+        if (restsDef == null || restsDef.getRests() == null || restsDef.getRests().isEmpty()) {
+            LOG.info("Skipping {} - no rests parsed", xmlFile);
+            return;
+        }
+
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+        List<String> restSnippets = new ArrayList<>();
+        for (RestDefinition rest : restsDef.getRests()) {
+            String javaDsl = writer.writeRest(rest);
+            restSnippets.add(javaDsl);
+        }
+
+        String className = toClassName(xmlFile);
+        String source = wrapInRouteBuilder(className, restSnippets);
+
+        LOG.debug("Generated REST Java DSL for {}:\n{}", xmlFile, source);
 
         List<String> errors = compile(className, source);
         assertTrue(errors.isEmpty(),

@@ -4984,18 +4984,48 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "wireTap", v);
                 }
                 case "DeleteDefinition" -> {
-                    beginStep(sb, "delete", v);
-                    doWriteDeleteDefinition(sb, (DeleteDefinition) v);
+                    DeleteDefinition _d = (DeleteDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".delete(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWriteDeleteDefinition(sb, _d);
                     endStep(sb, "delete", v);
                 }
                 case "GetDefinition" -> {
-                    beginStep(sb, "get", v);
-                    doWriteGetDefinition(sb, (GetDefinition) v);
+                    GetDefinition _d = (GetDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".get(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWriteGetDefinition(sb, _d);
                     endStep(sb, "get", v);
                 }
                 case "HeadDefinition" -> {
-                    beginStep(sb, "head", v);
-                    doWriteHeadDefinition(sb, (HeadDefinition) v);
+                    HeadDefinition _d = (HeadDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".head(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWriteHeadDefinition(sb, _d);
                     endStep(sb, "head", v);
                 }
                 case "OpenApiDefinition" -> {
@@ -5004,18 +5034,48 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "openApi", v);
                 }
                 case "PatchDefinition" -> {
-                    beginStep(sb, "patch", v);
-                    doWritePatchDefinition(sb, (PatchDefinition) v);
+                    PatchDefinition _d = (PatchDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".patch(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWritePatchDefinition(sb, _d);
                     endStep(sb, "patch", v);
                 }
                 case "PostDefinition" -> {
-                    beginStep(sb, "post", v);
-                    doWritePostDefinition(sb, (PostDefinition) v);
+                    PostDefinition _d = (PostDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".post(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWritePostDefinition(sb, _d);
                     endStep(sb, "post", v);
                 }
                 case "PutDefinition" -> {
-                    beginStep(sb, "put", v);
-                    doWritePutDefinition(sb, (PutDefinition) v);
+                    PutDefinition _d = (PutDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".put(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWritePutDefinition(sb, _d);
                     endStep(sb, "put", v);
                 }
                 case "RestBindingDefinition" -> {
@@ -5024,8 +5084,18 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "restBinding", v);
                 }
                 case "RestDefinition" -> {
-                    beginStep(sb, "rest", v);
-                    doWriteRestDefinition(sb, (RestDefinition) v);
+                    RestDefinition _d = (RestDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".rest(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWriteRestDefinition(sb, _d);
                     endStep(sb, "rest", v);
                 }
                 case "RestsDefinition" -> {
@@ -6261,8 +6331,18 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
                 case "RestDefinition" -> {
-                    beginStep(sb, "rest", v);
-                    doWriteRestDefinition(sb, (RestDefinition) v);
+                    RestDefinition _d = (RestDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".rest(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWriteRestDefinition(sb, _d);
                     endStep(sb, "rest", v);
                 }
             }
@@ -6283,33 +6363,93 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
                 case "DeleteDefinition" -> {
-                    beginStep(sb, "delete", v);
-                    doWriteDeleteDefinition(sb, (DeleteDefinition) v);
+                    DeleteDefinition _d = (DeleteDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".delete(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWriteDeleteDefinition(sb, _d);
                     endStep(sb, "delete", v);
                 }
                 case "GetDefinition" -> {
-                    beginStep(sb, "get", v);
-                    doWriteGetDefinition(sb, (GetDefinition) v);
+                    GetDefinition _d = (GetDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".get(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWriteGetDefinition(sb, _d);
                     endStep(sb, "get", v);
                 }
                 case "HeadDefinition" -> {
-                    beginStep(sb, "head", v);
-                    doWriteHeadDefinition(sb, (HeadDefinition) v);
+                    HeadDefinition _d = (HeadDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".head(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWriteHeadDefinition(sb, _d);
                     endStep(sb, "head", v);
                 }
                 case "PatchDefinition" -> {
-                    beginStep(sb, "patch", v);
-                    doWritePatchDefinition(sb, (PatchDefinition) v);
+                    PatchDefinition _d = (PatchDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".patch(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWritePatchDefinition(sb, _d);
                     endStep(sb, "patch", v);
                 }
                 case "PostDefinition" -> {
-                    beginStep(sb, "post", v);
-                    doWritePostDefinition(sb, (PostDefinition) v);
+                    PostDefinition _d = (PostDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".post(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWritePostDefinition(sb, _d);
                     endStep(sb, "post", v);
                 }
                 case "PutDefinition" -> {
-                    beginStep(sb, "put", v);
-                    doWritePutDefinition(sb, (PutDefinition) v);
+                    PutDefinition _d = (PutDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".put(");
+                    boolean _first = true;
+                    if (_d.getPath() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(quote(_d.getPath()));
+                    }
+                    handledAttributes.add("path");
+                    sb.append(")");
+                    doWritePutDefinition(sb, _d);
                     endStep(sb, "put", v);
                 }
             }

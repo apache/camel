@@ -35,6 +35,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.PropertyExpressionDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
@@ -59,6 +60,7 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 
 /**
@@ -181,6 +183,22 @@ public abstract class JavaDslModelWriterSupport {
 
     protected abstract void doWriteRouteDefinition(StringBuilder sb, RouteDefinition def);
 
+    protected abstract void doWriteRestDefinition(StringBuilder sb, RestDefinition def);
+
+    public String writeRest(RestDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        sb.append("rest(");
+        if (def.getPath() != null) {
+            sb.append(quote(def.getPath()));
+        }
+        sb.append(")");
+        handledAttributes.add("path");
+        doWriteRestDefinition(sb, def);
+        sb.append(";");
+        return sb.toString();
+    }
+
     /**
      * Begins a DSL step method call. This is the fallback for EIPs that don't have Jandex-derived primary args
      * generated in the dispatch code.
@@ -284,6 +302,15 @@ public abstract class JavaDslModelWriterSupport {
                 writeDataFormatBuilder(sb, key, df, writer);
             } else if (value instanceof LoadBalancerDefinition lb) {
                 writeLoadBalancerType(sb, lb);
+            } else if (value instanceof ToDefinition td) {
+                sb.append(NL).append(indent()).append("    .to(");
+                if (td.getPattern() != null) {
+                    sb.append("ExchangePattern.").append(td.getPattern()).append(", ");
+                }
+                if (td.getUri() != null) {
+                    sb.append(quote(td.getUri()));
+                }
+                sb.append(")");
             } else {
                 writer.accept(sb, value);
             }
