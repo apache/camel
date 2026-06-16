@@ -12975,7 +12975,6 @@ The group name for this route. Multiple routes can belong to the same group.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="kamelet" type="xs:boolean"/>
         <xs:attribute name="logMask" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -13013,7 +13012,6 @@ or not.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="rest" type="xs:boolean"/>
         <xs:attribute name="routeConfigurationId" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -13070,7 +13068,6 @@ Whether stream caching is enabled on this route. Default value: false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="template" type="xs:boolean"/>
         <xs:attribute name="trace" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
