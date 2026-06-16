@@ -31,6 +31,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -76,8 +77,8 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
 
         String xml2 = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         log.info(xml2);
-        // and we should have rest in the routes that indicate its from a rest dsl
-        assertTrue(xml2.contains("rest=\"true\""));
+        // rest/template/kamelet are @XmlTransient so not in XML dump
+        assertFalse(xml2.contains("rest=\"true\""));
 
         // there should be 3 routes (inlined)
         assertEquals(3, context.getRouteDefinitions().size());
