@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
@@ -35,6 +36,10 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.PropertyExpressionDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
+import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ValueDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
@@ -211,6 +216,118 @@ public abstract class JavaDslModelWriterSupport {
         return sb.toString();
     }
 
+    protected abstract void doWriteTemplatedRouteDefinition(StringBuilder sb, TemplatedRouteDefinition def);
+
+    public String writeRouteTemplate(RouteTemplateDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        sb.append("routeTemplate(").append(quote(def.getId())).append(")");
+        handledAttributes.add("id");
+        handledAttributes.add("customId");
+
+        // template parameters — rendered manually since Java DSL uses positional args
+        if (def.getTemplateParameters() != null) {
+            for (RouteTemplateParameterDefinition param : def.getTemplateParameters()) {
+                writeTemplateParameter(sb, param);
+            }
+        }
+        handledAttributes.add("templateParameter");
+        handledAttributes.add("templateParameters");
+
+        // template beans — rendered as sub-builders
+        if (def.getTemplateBeans() != null && !def.getTemplateBeans().isEmpty()) {
+            writeBeanDefinitions(sb, def.getTemplateBeans());
+        }
+        handledAttributes.add("templateBean");
+        handledAttributes.add("templateBeans");
+
+        // embedded route — write from and route body inline
+        RouteDefinition route = def.getRoute();
+        if (route != null) {
+            handledAttributes.add("route");
+            if (route.getInput() != null) {
+                sb.append(NL).append(indent()).append(".from(").append(quote(route.getInput().getUri())).append(")");
+            }
+            handledAttributes.add("input");
+            handledAttributes.add("uri");
+            if (route.getRouteProperties() != null) {
+                for (PropertyDefinition prop : route.getRouteProperties()) {
+                    sb.append(NL).append(indent()).append(".routeProperty(")
+                            .append(quote(prop.getKey())).append(", ")
+                            .append(quote(prop.getValue())).append(")");
+                }
+            }
+            handledAttributes.add("routeProperty");
+            handledAttributes.add("routeProperties");
+            handledAttributes.add("errorHandler");
+            indentLevel--;
+            doWriteRouteDefinition(sb, route);
+            indentLevel++;
+        }
+
+        sb.append(";");
+        return sb.toString();
+    }
+
+    public String writeTemplatedRoute(TemplatedRouteDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        sb.append("templatedRoute(").append(quote(def.getRouteTemplateRef())).append(")");
+        handledAttributes.add("routeTemplateRef");
+        doWriteTemplatedRouteDefinition(sb, def);
+        sb.append(";");
+        return sb.toString();
+    }
+
+    private void writeTemplateParameter(StringBuilder sb, RouteTemplateParameterDefinition param) {
+        boolean hasDefault = param.getDefaultValue() != null;
+        boolean hasDescription = param.getDescription() != null;
+        boolean isOptional = Boolean.FALSE.equals(param.getRequired());
+
+        if (isOptional && !hasDefault) {
+            sb.append(NL).append(indent()).append(".templateOptionalParameter(").append(quote(param.getName()));
+            if (hasDescription) {
+                sb.append(", ").append(quote(param.getDescription()));
+            }
+            sb.append(")");
+        } else if (hasDefault || hasDescription) {
+            sb.append(NL).append(indent()).append(".templateParameter(").append(quote(param.getName()));
+            sb.append(", ").append(quote(param.getDefaultValue()));
+            if (hasDescription) {
+                sb.append(", ").append(quote(param.getDescription()));
+            }
+            sb.append(")");
+        } else {
+            sb.append(NL).append(indent()).append(".templateParameter(").append(quote(param.getName())).append(")");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> void writeBeanDefinitions(StringBuilder sb, List<T> list) {
+        for (T item : list) {
+            BeanFactoryDefinition<?> bean = (BeanFactoryDefinition<?>) item;
+            sb.append(NL).append(indent()).append("    .bean(").append(quote(bean.getName())).append(")");
+            if (bean.getType() != null) {
+                sb.append(NL).append(indent()).append("        .type(").append(quote(bean.getType())).append(")");
+            }
+            if (bean.getScriptLanguage() != null) {
+                sb.append(NL).append(indent()).append("        .scriptLanguage(")
+                        .append(quote(bean.getScriptLanguage())).append(")");
+            }
+            if (bean.getScript() != null) {
+                sb.append(NL).append(indent()).append("        .script(").append(quote(bean.getScript())).append(")");
+            }
+            if (bean.getProperties() != null) {
+                for (Map.Entry<String, Object> entry : bean.getProperties().entrySet()) {
+                    sb.append(NL).append(indent()).append("        .property(")
+                            .append(quote(entry.getKey())).append(", ")
+                            .append(quote(String.valueOf(entry.getValue()))).append(")");
+                }
+            }
+            sb.append(NL).append(indent()).append("    .end()");
+        }
+    }
+
     /**
      * Begins a DSL step method call. This is the fallback for EIPs that don't have Jandex-derived primary args
      * generated in the dispatch code.
@@ -377,6 +494,14 @@ public abstract class JavaDslModelWriterSupport {
                 writeResponseHeaders(sb, list);
                 return;
             }
+            if ("parameter".equals(key) && list.get(0) instanceof TemplatedRouteParameterDefinition) {
+                writeTemplatedRouteParameters(sb, list);
+                return;
+            }
+            if (("bean".equals(key) || "templateBean".equals(key)) && list.get(0) instanceof BeanFactoryDefinition) {
+                writeBeanDefinitions(sb, list);
+                return;
+            }
             for (T item : list) {
                 if (item instanceof PropertyExpressionDefinition ped) {
                     sb.append(NL).append(indent()).append("    .option(").append(quote(ped.getKey()))
@@ -428,6 +553,16 @@ public abstract class JavaDslModelWriterSupport {
                 sb.append(NL).append(indent()).append("        .example(").append(quote(h.getExample())).append(")");
             }
             sb.append(NL).append(indent()).append("    .endHeader()");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> void writeTemplatedRouteParameters(StringBuilder sb, List<T> list) {
+        for (T item : list) {
+            TemplatedRouteParameterDefinition param = (TemplatedRouteParameterDefinition) item;
+            sb.append(NL).append(indent()).append("    .parameter(")
+                    .append(quote(param.getName())).append(", ")
+                    .append(quote(param.getValue())).append(")");
         }
     }
 

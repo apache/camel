@@ -39,7 +39,11 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.ToolProvider;
 
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
+import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.xml.in.ModelParser;
@@ -73,6 +77,12 @@ public class JavaDslCompileTest {
     // REST XML files to test (subset of NON_ROUTE_FILES that contain <rests>)
     private static final Set<String> REST_FILES = Set.of(
             "barRest.xml", "simpleRest.xml", "restAllowedValues.xml", "restOpenApi.xml");
+
+    // Route template XML files to test
+    private static final Set<String> TEMPLATE_FILES = Set.of("barTemplate.xml");
+
+    // Templated route XML files to test
+    private static final Set<String> TEMPLATED_ROUTE_FILES = Set.of("simpleTemplatedRoute.xml");
 
     // Files that don't compile yet due to unsupported constructs in the writer.
     // Categorized by root cause — as the writer improves, move files out of this set.
@@ -168,6 +178,82 @@ public class JavaDslCompileTest {
         String source = wrapInRouteBuilder(className, restSnippets);
 
         LOG.debug("Generated REST Java DSL for {}:\n{}", xmlFile, source);
+
+        List<String> errors = compile(className, source);
+        assertTrue(errors.isEmpty(),
+                "Compilation failed for " + xmlFile + ":\n" + String.join("\n", errors)
+                                     + "\n\nGenerated source:\n" + source);
+    }
+
+    static Stream<String> xmlTemplateFiles() {
+        return TEMPLATE_FILES.stream().sorted();
+    }
+
+    @ParameterizedTest(name = "template:{0}")
+    @MethodSource("xmlTemplateFiles")
+    void xmlToTemplateJavaDslCompiles(String xmlFile) throws Exception {
+        Path xmlPath = LOCAL_RESOURCES.resolve(xmlFile);
+        if (!Files.exists(xmlPath)) {
+            xmlPath = XML_IO_RESOURCES.resolve(xmlFile);
+        }
+
+        ModelParser parser = new ModelParser(Files.newInputStream(xmlPath), NAMESPACE);
+        RouteTemplatesDefinition templatesDef = parser.parseRouteTemplatesDefinition().orElse(null);
+        if (templatesDef == null || templatesDef.getRouteTemplates() == null
+                || templatesDef.getRouteTemplates().isEmpty()) {
+            LOG.info("Skipping {} - no route templates parsed", xmlFile);
+            return;
+        }
+
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+        List<String> snippets = new ArrayList<>();
+        for (RouteTemplateDefinition template : templatesDef.getRouteTemplates()) {
+            String javaDsl = writer.writeRouteTemplate(template);
+            snippets.add(javaDsl);
+        }
+
+        String className = toClassName(xmlFile);
+        String source = wrapInRouteBuilder(className, snippets);
+
+        LOG.debug("Generated template Java DSL for {}:\n{}", xmlFile, source);
+
+        List<String> errors = compile(className, source);
+        assertTrue(errors.isEmpty(),
+                "Compilation failed for " + xmlFile + ":\n" + String.join("\n", errors)
+                                     + "\n\nGenerated source:\n" + source);
+    }
+
+    static Stream<String> xmlTemplatedRouteFiles() {
+        return TEMPLATED_ROUTE_FILES.stream().sorted();
+    }
+
+    @ParameterizedTest(name = "templated:{0}")
+    @MethodSource("xmlTemplatedRouteFiles")
+    void xmlToTemplatedRouteJavaDslCompiles(String xmlFile) throws Exception {
+        Path xmlPath = LOCAL_RESOURCES.resolve(xmlFile);
+        if (!Files.exists(xmlPath)) {
+            xmlPath = XML_IO_RESOURCES.resolve(xmlFile);
+        }
+
+        ModelParser parser = new ModelParser(Files.newInputStream(xmlPath), NAMESPACE);
+        TemplatedRoutesDefinition templatedDef = parser.parseTemplatedRoutesDefinition().orElse(null);
+        if (templatedDef == null || templatedDef.getTemplatedRoutes() == null
+                || templatedDef.getTemplatedRoutes().isEmpty()) {
+            LOG.info("Skipping {} - no templated routes parsed", xmlFile);
+            return;
+        }
+
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+        List<String> snippets = new ArrayList<>();
+        for (TemplatedRouteDefinition templated : templatedDef.getTemplatedRoutes()) {
+            String javaDsl = writer.writeTemplatedRoute(templated);
+            snippets.add(javaDsl);
+        }
+
+        String className = toClassName(xmlFile);
+        String source = wrapInRouteBuilder(className, snippets);
+
+        LOG.debug("Generated templated route Java DSL for {}:\n{}", xmlFile, source);
 
         List<String> errors = compile(className, source);
         assertTrue(errors.isEmpty(),
