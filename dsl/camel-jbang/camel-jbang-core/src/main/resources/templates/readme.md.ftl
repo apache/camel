@@ -22,6 +22,14 @@ This project was generated using [Camel Jbang](https://camel.apache.org/manual/c
 
 This is a brief guide explaining how to build, "containerize" and run your Camel application.
 
+## For AI coding assistants
+
+If you are an AI coding assistant working on this project, start from the Apache Camel LLM index at https://camel.apache.org/llms.txt.
+
+- Any Apache Camel documentation page is available as LLM-friendly Markdown by replacing `.html` with `.md` in its URL.
+- Use the Camel CLI and the Camel MCP server (linked from the index above) to look up components, their options and the catalog instead of guessing endpoint URIs and options.
+- See `AGENTS.md` in this directory for project-specific guidance.
+
 ## Build the Maven project
 
 ```bash

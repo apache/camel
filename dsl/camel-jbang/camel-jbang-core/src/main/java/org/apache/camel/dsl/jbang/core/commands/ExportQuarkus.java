@@ -357,6 +357,8 @@ class ExportQuarkus extends Export {
 
         String context = TemplateHelper.processTemplate("readme.native.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
+
+        copyAgents(buildDir);
     }
 
     private void createMavenPom(Path settings, Path pom, Set<String> deps) throws Exception {

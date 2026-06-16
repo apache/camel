@@ -348,5 +348,18 @@ public class Export extends ExportBaseCommand {
 
         String context = TemplateHelper.processTemplate("readme.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
+
+        copyAgents(buildDir);
+    }
+
+    // Copy the AGENTS.md into the same Maven project root directory to assist AI coding assistants.
+    protected void copyAgents(String buildDir) throws Exception {
+        String[] ids = gav.split(":");
+        Map<String, Object> model = new HashMap<>();
+        model.put("ArtifactId", ids[1]);
+        model.put("Version", ids[2]);
+
+        String context = TemplateHelper.processTemplate("agents.md.ftl", model);
+        Files.writeString(Path.of(buildDir).resolve("AGENTS.md"), context);
     }
 }

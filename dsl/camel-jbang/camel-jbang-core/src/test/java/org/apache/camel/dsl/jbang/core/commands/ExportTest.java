@@ -460,6 +460,8 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir + "/src/main/docker", "Dockerfile").exists(), "Missing Dockerfile");
         // Readme
         Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
+        // AGENTS.md
+        Assertions.assertTrue(new File(workingDir, "AGENTS.md").exists(), "Missing AGENTS.md");
     }
 
     // Each runtime may have a different logic
@@ -520,6 +522,8 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir + "/src/main/docker", "Dockerfile").exists(), "Missing Dockerfile");
         // Readme
         Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
+        // AGENTS.md
+        Assertions.assertTrue(new File(workingDir, "AGENTS.md").exists(), "Missing AGENTS.md");
     }
 
     @ParameterizedTest
