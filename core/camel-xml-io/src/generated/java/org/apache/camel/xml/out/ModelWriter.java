@@ -1588,9 +1588,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRouteDefinition(String name, RouteDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("template", toString(def.isTemplate()), null);
-        doWriteAttribute("kamelet", toString(def.isKamelet()), null);
-        doWriteAttribute("rest", toString(def.isRest()), null);
         doWriteAttribute("group", def.getGroup(), null);
         doWriteAttribute("nodePrefixId", def.getNodePrefixId(), null);
         doWriteAttribute("routeConfigurationId", def.getRouteConfigurationId(), null);
