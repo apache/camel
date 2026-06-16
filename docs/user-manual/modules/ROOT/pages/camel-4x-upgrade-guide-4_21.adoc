@@ -824,6 +824,28 @@ The same pattern applies to HTTP-based bridges (`platform-http`/`jetty`/`netty
 -http`/`http` -> `cxf:`) and any other transport whose default
 `HeaderFilterStrategy` filters `Camel*` headers.
 
+==== WS-Security dependency is now optional
+
+The `cxf-rt-ws-security` dependency in `camel-cxf-soap` is now **optional**. Most Camel CXF users do
+not need WS-Security / SAML support, yet the dependency transitively pulled in 13+ `org.opensaml`
+JARs hosted on a third-party Maven repository (`build.shibboleth.net`) that has proven unreliable,
+causing intermittent CI and build failures.
+
+If your project uses WS-Security features (signatures, encryption, username tokens, SAML), you will
+need to add `cxf-rt-ws-security` explicitly to your project's POM:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.cxf</groupId>
+    <artifactId>cxf-rt-ws-security</artifactId>
+</dependency>
+----
+
+If you also need OpenSAML (for SAML-based WS-Security), add the `org.opensaml` dependencies
+explicitly and configure the Shibboleth Maven repository (`https://build.shibboleth.net/nexus/content/repositories/releases`)
+in your project's POM or Maven `settings.xml`.
+
 === camel-dns - potential breaking change
 
 The Exchange header constants in `DnsConstants` have been renamed to follow the
