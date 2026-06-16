@@ -72,6 +72,13 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
+import org.apache.camel.model.transformer.CustomTransformerDefinition;
+import org.apache.camel.model.transformer.EndpointTransformerDefinition;
+import org.apache.camel.model.transformer.LoadTransformerDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.CustomValidatorDefinition;
+import org.apache.camel.model.validator.EndpointValidatorDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 
 /**
  * Base class for the generated {@link JavaDslModelWriter}. Provides helper methods for building Java DSL source code
@@ -315,6 +322,69 @@ public abstract class JavaDslModelWriterSupport {
         doWriteRouteConfigurationDefinition(sb, def);
         sb.append(";");
         return sb.toString();
+    }
+
+    public String writeTransformer(TransformerDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        sb.append("transformer()");
+        writeTransformerAttributes(sb, def);
+        if (def instanceof EndpointTransformerDefinition etd) {
+            if (etd.getUri() != null) {
+                sb.append(NL).append(indent()).append("    .withUri(").append(quote(etd.getUri())).append(")");
+            }
+        } else if (def instanceof CustomTransformerDefinition ctd) {
+            if (ctd.getRef() != null) {
+                sb.append(NL).append(indent()).append("    .withBean(").append(quote(ctd.getRef())).append(")");
+            } else if (ctd.getClassName() != null) {
+                sb.append(NL).append(indent()).append("    .withJava(").append(ctd.getClassName()).append(".class)");
+            }
+        } else if (def instanceof LoadTransformerDefinition ltd) {
+            if ("true".equals(ltd.getDefaults())) {
+                sb.append(NL).append(indent()).append("    .withDefaults()");
+            } else if (ltd.getPackageScan() != null) {
+                sb.append(NL).append(indent()).append("    .scan(").append(quote(ltd.getPackageScan())).append(")");
+            }
+        }
+        sb.append(";");
+        return sb.toString();
+    }
+
+    public String writeValidator(ValidatorDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        sb.append("validator()");
+        if (def.getType() != null) {
+            sb.append(NL).append(indent()).append("    .type(").append(quote(def.getType())).append(")");
+        }
+        if (def instanceof EndpointValidatorDefinition evd) {
+            if (evd.getUri() != null) {
+                sb.append(NL).append(indent()).append("    .withUri(").append(quote(evd.getUri())).append(")");
+            }
+        } else if (def instanceof CustomValidatorDefinition cvd) {
+            if (cvd.getRef() != null) {
+                sb.append(NL).append(indent()).append("    .withBean(").append(quote(cvd.getRef())).append(")");
+            } else if (cvd.getClassName() != null) {
+                sb.append(NL).append(indent()).append("    .withJava(").append(cvd.getClassName()).append(".class)");
+            }
+        }
+        sb.append(";");
+        return sb.toString();
+    }
+
+    private void writeTransformerAttributes(StringBuilder sb, TransformerDefinition def) {
+        if (def.getScheme() != null) {
+            sb.append(NL).append(indent()).append("    .scheme(").append(quote(def.getScheme())).append(")");
+        }
+        if (def.getName() != null) {
+            sb.append(NL).append(indent()).append("    .name(").append(quote(def.getName())).append(")");
+        }
+        if (def.getFromType() != null) {
+            sb.append(NL).append(indent()).append("    .fromType(").append(quote(def.getFromType())).append(")");
+        }
+        if (def.getToType() != null) {
+            sb.append(NL).append(indent()).append("    .toType(").append(quote(def.getToType())).append(")");
+        }
     }
 
     private void writeChainedErrorHandler(StringBuilder sb, ErrorHandlerDefinition errorHandler) {

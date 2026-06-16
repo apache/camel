@@ -50,7 +50,15 @@ import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.model.transformer.CustomTransformerDefinition;
+import org.apache.camel.model.transformer.EndpointTransformerDefinition;
+import org.apache.camel.model.transformer.LoadTransformerDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.CustomValidatorDefinition;
+import org.apache.camel.model.validator.EndpointValidatorDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.xml.in.ModelParser;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -346,6 +354,73 @@ public class JavaDslCompileTest {
         List<String> errors = compile(className, source);
         assertTrue(errors.isEmpty(),
                 "Compilation failed for " + xmlFile + ":\n" + String.join("\n", errors)
+                                     + "\n\nGenerated source:\n" + source);
+    }
+
+    @Test
+    void transformerJavaDslCompiles() throws Exception {
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+        List<TransformerDefinition> transformers = new ArrayList<>();
+
+        EndpointTransformerDefinition etd = new EndpointTransformerDefinition();
+        etd.setFromType("xml");
+        etd.setToType("json");
+        etd.setUri("direct:transform");
+        transformers.add(etd);
+
+        CustomTransformerDefinition ctdRef = new CustomTransformerDefinition();
+        ctdRef.setScheme("csv");
+        ctdRef.setRef("myTransformerBean");
+        transformers.add(ctdRef);
+
+        LoadTransformerDefinition ltdDefaults = new LoadTransformerDefinition();
+        ltdDefaults.setDefaults("true");
+        transformers.add(ltdDefaults);
+
+        LoadTransformerDefinition ltdScan = new LoadTransformerDefinition();
+        ltdScan.setPackageScan("com.example.transformers");
+        transformers.add(ltdScan);
+
+        List<String> snippets = new ArrayList<>();
+        for (TransformerDefinition def : transformers) {
+            snippets.add(writer.writeTransformer(def));
+        }
+
+        String source = wrapInRouteBuilder("Route_Transformers", snippets);
+        LOG.debug("Generated transformer Java DSL:\n{}", source);
+
+        List<String> errors = compile("Route_Transformers", source);
+        assertTrue(errors.isEmpty(),
+                "Compilation failed for transformers:\n" + String.join("\n", errors)
+                                     + "\n\nGenerated source:\n" + source);
+    }
+
+    @Test
+    void validatorJavaDslCompiles() throws Exception {
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+        List<ValidatorDefinition> validators = new ArrayList<>();
+
+        EndpointValidatorDefinition evd = new EndpointValidatorDefinition();
+        evd.setType("xml");
+        evd.setUri("direct:validate");
+        validators.add(evd);
+
+        CustomValidatorDefinition cvdRef = new CustomValidatorDefinition();
+        cvdRef.setType("json");
+        cvdRef.setRef("myValidatorBean");
+        validators.add(cvdRef);
+
+        List<String> snippets = new ArrayList<>();
+        for (ValidatorDefinition def : validators) {
+            snippets.add(writer.writeValidator(def));
+        }
+
+        String source = wrapInRouteBuilder("Route_Validators", snippets);
+        LOG.debug("Generated validator Java DSL:\n{}", source);
+
+        List<String> errors = compile("Route_Validators", source);
+        assertTrue(errors.isEmpty(),
+                "Compilation failed for validators:\n" + String.join("\n", errors)
                                      + "\n\nGenerated source:\n" + source);
     }
 
