@@ -263,6 +263,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Dumps the routes as Java DSL")
     String dumpRoutesAsJava(boolean resolvePlaceholders) throws Exception;
 
+    @ManagedOperation(description = "Dumps the routes as Java DSL")
+    String dumpRoutesAsJava(boolean resolvePlaceholders, boolean generatedIds) throws Exception;
+
     /**
      * Creates the endpoint by the given uri
      *
