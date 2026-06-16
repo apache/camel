@@ -35,6 +35,11 @@ github:
     - middleware
     - microservices
     - mcp
+  enabled_merge_buttons:
+    squash: true
+    squash_commit_message: PR_TITLE_AND_COMMIT_DETAILS
+    merge: true
+    rebase: true
   dependabot_alerts:  true
   dependabot_updates: true
   autolink_jira:
