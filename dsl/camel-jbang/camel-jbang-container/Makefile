@@ -80,9 +80,9 @@ images-push:
 	@echo "####### Pushing Camel JBang (CLI) $(IMAGE_PUSH) container image..."
 	for i in $(ARCH_VERSIONS); do \
 		docker push $(IMAGE_PUSH)-$$i ; \
-		docker manifest create $(IMAGE_PUSH) -a $(IMAGE_PUSH)-$$i; \
 	done
-	docker manifest push $(IMAGE_PUSH) --purge
+	docker buildx imagetools create -t $(IMAGE_PUSH) \
+		$(foreach arch,$(ARCH_VERSIONS),$(IMAGE_PUSH)-$(arch))
 
 images-release: images-build-all images-push-all images-check-all
 
