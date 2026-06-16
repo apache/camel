@@ -922,11 +922,8 @@ public class ModelParser extends BaseParser {
                 case "errorHandler": def.setErrorHandler(doParseErrorHandlerDefinition()); yield true;
                 case "from": def.setInput(doParseFromDefinition()); yield true;
                 case "inputType": def.setInputType(doParseInputTypeDefinition()); yield true;
-                case "kamelet": def.setKamelet(Boolean.valueOf(doParseText())); yield true;
                 case "outputType": def.setOutputType(doParseOutputTypeDefinition()); yield true;
-                case "rest": def.setRest(Boolean.valueOf(doParseText())); yield true;
                 case "routeProperty": doAdd(doParsePropertyDefinition(), def.getRouteProperties(), def::setRouteProperties); yield true;
-                case "template": def.setTemplate(Boolean.valueOf(doParseText())); yield true;
                 default: yield outputDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
     }
