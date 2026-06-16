@@ -47,8 +47,6 @@ import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.jline.builtins.InteractiveCommandGroup;
 import org.jline.builtins.PosixCommandGroup;
-import org.jline.builtins.ScreenTerminal;
-import org.jline.builtins.ScreenTerminalOutputStream;
 import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
 import org.jline.shell.Shell;
@@ -57,6 +55,8 @@ import org.jline.terminal.Size;
 import org.jline.terminal.impl.LineDisciplineTerminal;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
+import org.jline.utils.ScreenTerminal;
+import org.jline.utils.ScreenTerminalOutputStream;
 
 /**
  * Embeds a JLine interactive shell inside the TUI using a virtual terminal.
