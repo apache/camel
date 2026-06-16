@@ -41,9 +41,9 @@ class SyntaxHighlighterTest {
     void colorsKeySeparatorAndValue() {
         Line line = SyntaxHighlighter.highlightLine("camel.main.name=demo", SyntaxHighlighter.Language.PROPERTIES);
 
-        assertEquals(Color.YELLOW, fg(line, "camel.main.name"));
-        assertEquals(Color.WHITE, fg(line, "="));
-        assertEquals(Color.BLUE, fg(line, "demo"));
+        assertEquals(SyntaxHighlighter.MONOKAI_KEYWORD, fg(line, "camel.main.name"));
+        assertEquals(SyntaxHighlighter.MONOKAI_TEXT, fg(line, "="));
+        assertEquals(SyntaxHighlighter.MONOKAI_STRING, fg(line, "demo"));
         assertRoundTrip(line, "camel.main.name=demo");
     }
 
@@ -51,9 +51,9 @@ class SyntaxHighlighterTest {
     void colorsColonSeparatorWithSpaces() {
         Line line = SyntaxHighlighter.highlightLine("server.port : 8080", SyntaxHighlighter.Language.PROPERTIES);
 
-        assertEquals(Color.YELLOW, fg(line, "server.port"));
-        assertEquals(Color.WHITE, fg(line, ":"));
-        assertEquals(Color.BLUE, fg(line, "8080"));
+        assertEquals(SyntaxHighlighter.MONOKAI_KEYWORD, fg(line, "server.port"));
+        assertEquals(SyntaxHighlighter.MONOKAI_TEXT, fg(line, ":"));
+        assertEquals(SyntaxHighlighter.MONOKAI_STRING, fg(line, "8080"));
         assertRoundTrip(line, "server.port : 8080");
     }
 
@@ -61,7 +61,7 @@ class SyntaxHighlighterTest {
     void colorsComments() {
         for (String comment : new String[] { "# a hash comment", "! a bang comment" }) {
             Line line = SyntaxHighlighter.highlightLine(comment, SyntaxHighlighter.Language.PROPERTIES);
-            assertEquals(Color.LIGHT_BLUE, fg(line, comment));
+            assertEquals(SyntaxHighlighter.MONOKAI_COMMENT, fg(line, comment));
             assertRoundTrip(line, comment);
         }
     }
@@ -69,7 +69,7 @@ class SyntaxHighlighterTest {
     @Test
     void colorsKeyWithoutValue() {
         Line line = SyntaxHighlighter.highlightLine("enabled", SyntaxHighlighter.Language.PROPERTIES);
-        assertEquals(Color.YELLOW, fg(line, "enabled"));
+        assertEquals(SyntaxHighlighter.MONOKAI_KEYWORD, fg(line, "enabled"));
         assertRoundTrip(line, "enabled");
     }
 
@@ -78,8 +78,8 @@ class SyntaxHighlighterTest {
         Line line = SyntaxHighlighter.highlightLine("  camel.x=1", SyntaxHighlighter.Language.PROPERTIES);
         // the indentation is emitted as a raw (unstyled) span
         assertEquals(null, fg(line, "  "));
-        assertEquals(Color.YELLOW, fg(line, "camel.x"));
-        assertEquals(Color.BLUE, fg(line, "1"));
+        assertEquals(SyntaxHighlighter.MONOKAI_KEYWORD, fg(line, "camel.x"));
+        assertEquals(SyntaxHighlighter.MONOKAI_STRING, fg(line, "1"));
         assertRoundTrip(line, "  camel.x=1");
     }
 
