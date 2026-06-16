@@ -26,9 +26,22 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A profile which defines thread pool settings.
+ * A named, reusable configuration template for {@link java.util.concurrent.ThreadPoolExecutor} settings managed by the
+ * {@link ExecutorServiceManager}.
  * <p/>
- * See more details at <a href="https://camel.apache.org/threading-model.html">threading model</a>
+ * Rather than hard-coding pool parameters at each call site, Camel components and EIPs declare a profile id (or use the
+ * default profile). The {@link ExecutorServiceManager} looks up the profile and passes it to the
+ * {@link ThreadPoolFactory} to create the actual pool. The default profile provides baseline values (typically
+ * {@code poolSize=10, maxPoolSize=20, keepAlive=60s, maxQueueSize=1000}) that are applied whenever a parameter is not
+ * explicitly set on a custom profile.
+ * <p/>
+ * A profile is also the vehicle for configuring the rejected-execution policy via {@link #setRejectedPolicy}, which
+ * determines what happens when the work queue is full and all threads are busy.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/threading-model.html">Threading Model</a> in the Camel user manual.
+ *
+ * @see ExecutorServiceManager
+ * @see ThreadPoolFactory
  */
 public class ThreadPoolProfile implements Serializable, Cloneable {
 
