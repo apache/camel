@@ -2371,9 +2371,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteRouteDefinition(StringBuilder sb, RouteDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "template", toString(def.isTemplate()), null);
-        doWriteAttribute(sb, "kamelet", toString(def.isKamelet()), null);
-        doWriteAttribute(sb, "rest", toString(def.isRest()), null);
         doWriteAttribute(sb, "group", def.getGroup(), null);
         doWriteAttribute(sb, "nodePrefixId", def.getNodePrefixId(), null);
         doWriteAttribute(sb, "routeConfigurationId", def.getRouteConfigurationId(), null);
