@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -31,14 +32,11 @@ class McpToolConverterTest {
 
     @Test
     void convertFullSchema() {
-        McpSchema.Tool tool = McpSchema.Tool.builder()
-                .name("get_weather")
+        McpSchema.Tool tool = McpSchema.Tool.builder("get_weather",
+                Map.of("type", "object",
+                        "properties", Map.of("city", Map.of("type", "string", "description", "City name"),
+                                "required", List.of("city"))))
                 .description("Get the weather for a location")
-                .inputSchema(new McpSchema.JsonSchema(
-                        "object",
-                        Map.of("city", Map.of("type", "string", "description", "City name")),
-                        List.of("city"),
-                        null, null, null))
                 .build();
 
         List<ChatCompletionFunctionTool> result = McpToolConverter.convert(List.of(tool));
@@ -53,8 +51,7 @@ class McpToolConverterTest {
 
     @Test
     void convertWithoutInputSchema() {
-        McpSchema.Tool tool = McpSchema.Tool.builder()
-                .name("no_params_tool")
+        McpSchema.Tool tool = McpSchema.Tool.builder("no_params_tool", Collections.emptyMap())
                 .description("A tool with no parameters")
                 .build();
 
@@ -67,9 +64,8 @@ class McpToolConverterTest {
 
     @Test
     void convertWithoutDescription() {
-        McpSchema.Tool tool = McpSchema.Tool.builder()
+        McpSchema.Tool tool = McpSchema.Tool.builder("bare_tool", Map.of("type", "object"))
                 .name("bare_tool")
-                .inputSchema(new McpSchema.JsonSchema("object", null, null, null, null, null))
                 .build();
 
         List<ChatCompletionFunctionTool> result = McpToolConverter.convert(List.of(tool));
@@ -80,18 +76,13 @@ class McpToolConverterTest {
 
     @Test
     void convertMultipleTools() {
-        McpSchema.Tool tool1 = McpSchema.Tool.builder()
-                .name("tool_a")
+        McpSchema.Tool tool1 = McpSchema.Tool.builder("tool_a", Collections.emptyMap())
                 .description("First tool")
                 .build();
 
-        McpSchema.Tool tool2 = McpSchema.Tool.builder()
-                .name("tool_b")
+        McpSchema.Tool tool2 = McpSchema.Tool
+                .builder("tool_b", Map.of("type", "object", "properties", Map.of("x", Map.of("type", "number"))))
                 .description("Second tool")
-                .inputSchema(new McpSchema.JsonSchema(
-                        "object",
-                        Map.of("x", Map.of("type", "number")),
-                        null, null, null, null))
                 .build();
 
         List<ChatCompletionFunctionTool> result = McpToolConverter.convert(List.of(tool1, tool2));

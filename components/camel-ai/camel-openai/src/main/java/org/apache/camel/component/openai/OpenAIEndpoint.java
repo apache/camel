@@ -352,7 +352,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     }
 
     McpSchema.CallToolResult callTool(McpSyncClient mcpClient, String toolName, Map<String, Object> argsMap) {
-        McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(toolName, argsMap);
+        McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(toolName, argsMap, null);
         try {
             return mcpClient.callTool(request);
         } catch (McpTransportException e) {

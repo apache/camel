@@ -550,11 +550,11 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, mcpServer..command=
-         * (stdio), mcpServer..args= (stdio), mcpServer..url=
-         * (sse/streamableHttp), mcpServer..oauthProfile= (OAuth profile for
-         * HTTP auth, requires camel-oauth). This is a multi-value option with
-         * prefix: mcpServer.
+         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth). This is a multi-value
+         * option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -575,11 +575,11 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, mcpServer..command=
-         * (stdio), mcpServer..args= (stdio), mcpServer..url=
-         * (sse/streamableHttp), mcpServer..oauthProfile= (OAuth profile for
-         * HTTP auth, requires camel-oauth). This is a multi-value option with
-         * prefix: mcpServer.
+         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth). This is a multi-value
+         * option with prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
