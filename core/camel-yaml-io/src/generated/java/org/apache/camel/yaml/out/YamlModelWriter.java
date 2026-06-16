@@ -1583,9 +1583,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteRouteDefinition(RouteDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "template", toString(def.isTemplate()), null);
-        doWriteAttribute(jo, "kamelet", toString(def.isKamelet()), null);
-        doWriteAttribute(jo, "rest", toString(def.isRest()), null);
         doWriteAttribute(jo, "group", def.getGroup(), null);
         doWriteAttribute(jo, "nodePrefixId", def.getNodePrefixId(), null);
         doWriteAttribute(jo, "routeConfigurationId", def.getRouteConfigurationId(), null);
