@@ -35,6 +35,7 @@ import org.apache.camel.model.OnWhenDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.PropertyExpressionDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
@@ -67,7 +68,9 @@ import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.rest.ResponseHeaderDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 
 /**
@@ -277,6 +280,56 @@ public abstract class JavaDslModelWriterSupport {
         doWriteTemplatedRouteDefinition(sb, def);
         sb.append(";");
         return sb.toString();
+    }
+
+    protected abstract void doWriteRestConfigurationDefinition(StringBuilder sb, RestConfigurationDefinition def);
+
+    public String writeRestConfiguration(RestConfigurationDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        sb.append("restConfiguration()");
+        doWriteRestConfigurationDefinition(sb, def);
+        sb.append(";");
+        return sb.toString();
+    }
+
+    protected abstract void doWriteRouteConfigurationDefinition(StringBuilder sb, RouteConfigurationDefinition def);
+
+    public String writeRouteConfiguration(RouteConfigurationDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        sb.append("routeConfiguration(");
+        if (def.getId() != null) {
+            sb.append(quote(def.getId()));
+        }
+        sb.append(")");
+        handledAttributes.add("id");
+        handledAttributes.add("customId");
+
+        // error handler — rendered as chained .errorHandler(deadLetterChannel("uri")...)
+        if (def.getErrorHandler() != null) {
+            writeChainedErrorHandler(sb, def.getErrorHandler());
+            handledAttributes.add("errorHandler");
+        }
+
+        doWriteRouteConfigurationDefinition(sb, def);
+        sb.append(";");
+        return sb.toString();
+    }
+
+    private void writeChainedErrorHandler(StringBuilder sb, ErrorHandlerDefinition errorHandler) {
+        if (errorHandler.getErrorHandlerType() instanceof DeadLetterChannelDefinition dlc) {
+            sb.append(NL).append(indent()).append("    .errorHandler(deadLetterChannel(")
+                    .append(quote(dlc.getDeadLetterUri())).append(")");
+            appendErrorHandlerOptions(sb, dlc);
+            sb.append(")");
+        } else if (errorHandler.getErrorHandlerType() instanceof DefaultErrorHandlerDefinition deh) {
+            sb.append(NL).append(indent()).append("    .errorHandler(defaultErrorHandler()");
+            appendErrorHandlerOptions(sb, deh);
+            sb.append(")");
+        } else {
+            sb.append(NL).append(indent()).append("    .errorHandler(noErrorHandler())");
+        }
     }
 
     private void writeTemplateParameter(StringBuilder sb, RouteTemplateParameterDefinition param) {
@@ -498,6 +551,10 @@ public abstract class JavaDslModelWriterSupport {
                 writeTemplatedRouteParameters(sb, list);
                 return;
             }
+            if (list.get(0) instanceof RestPropertyDefinition) {
+                writeRestProperties(sb, key, list);
+                return;
+            }
             if (("bean".equals(key) || "templateBean".equals(key)) && list.get(0) instanceof BeanFactoryDefinition) {
                 writeBeanDefinitions(sb, list);
                 return;
@@ -563,6 +620,16 @@ public abstract class JavaDslModelWriterSupport {
             sb.append(NL).append(indent()).append("    .parameter(")
                     .append(quote(param.getName())).append(", ")
                     .append(quote(param.getValue())).append(")");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> void writeRestProperties(StringBuilder sb, String key, List<T> list) {
+        for (T item : list) {
+            RestPropertyDefinition prop = (RestPropertyDefinition) item;
+            sb.append(NL).append(indent()).append("    .").append(key).append("(")
+                    .append(quote(prop.getKey())).append(", ")
+                    .append(quote(prop.getValue())).append(")");
         }
     }
 

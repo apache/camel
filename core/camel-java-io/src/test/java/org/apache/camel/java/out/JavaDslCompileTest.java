@@ -38,12 +38,16 @@ import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.ToolProvider;
 
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
+import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.xml.in.ModelParser;
@@ -72,6 +76,7 @@ public class JavaDslCompileTest {
     private static final Set<String> NON_ROUTE_FILES = Set.of(
             "barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml",
             "barTemplate.xml", "barTemplatedRoute.xml", "barRestConfiguration.xml",
+            "simpleRestConfiguration.xml",
             "errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
     // REST XML files to test (subset of NON_ROUTE_FILES that contain <rests>)
@@ -83,6 +88,13 @@ public class JavaDslCompileTest {
 
     // Templated route XML files to test
     private static final Set<String> TEMPLATED_ROUTE_FILES = Set.of("simpleTemplatedRoute.xml");
+
+    // REST configuration XML files to test (inside <camel> root, parsed via parseBeansDefinition)
+    private static final Set<String> REST_CONFIGURATION_FILES = Set.of("simpleRestConfiguration.xml");
+
+    // Route configuration XML files to test (inside <routeConfigurations> root)
+    private static final Set<String> ROUTE_CONFIGURATION_FILES = Set.of(
+            "errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
     // Files that don't compile yet due to unsupported constructs in the writer.
     // Categorized by root cause — as the writer improves, move files out of this set.
@@ -261,6 +273,82 @@ public class JavaDslCompileTest {
                                      + "\n\nGenerated source:\n" + source);
     }
 
+    static Stream<String> xmlRestConfigurationFiles() {
+        return REST_CONFIGURATION_FILES.stream().sorted();
+    }
+
+    @ParameterizedTest(name = "restConfig:{0}")
+    @MethodSource("xmlRestConfigurationFiles")
+    void xmlToRestConfigurationJavaDslCompiles(String xmlFile) throws Exception {
+        Path xmlPath = LOCAL_RESOURCES.resolve(xmlFile);
+        if (!Files.exists(xmlPath)) {
+            xmlPath = XML_IO_RESOURCES.resolve(xmlFile);
+        }
+
+        ModelParser parser = new ModelParser(Files.newInputStream(xmlPath), NAMESPACE);
+        BeansDefinition beansDef = parser.parseBeansDefinition().orElse(null);
+        if (beansDef == null || beansDef.getRestConfigurations() == null
+                || beansDef.getRestConfigurations().isEmpty()) {
+            LOG.info("Skipping {} - no rest configurations parsed", xmlFile);
+            return;
+        }
+
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+        List<String> snippets = new ArrayList<>();
+        for (RestConfigurationDefinition restConfig : beansDef.getRestConfigurations()) {
+            String javaDsl = writer.writeRestConfiguration(restConfig);
+            snippets.add(javaDsl);
+        }
+
+        String className = toClassName(xmlFile);
+        String source = wrapInRouteBuilder(className, snippets);
+
+        LOG.debug("Generated restConfiguration Java DSL for {}:\n{}", xmlFile, source);
+
+        List<String> errors = compile(className, source);
+        assertTrue(errors.isEmpty(),
+                "Compilation failed for " + xmlFile + ":\n" + String.join("\n", errors)
+                                     + "\n\nGenerated source:\n" + source);
+    }
+
+    static Stream<String> xmlRouteConfigurationFiles() {
+        return ROUTE_CONFIGURATION_FILES.stream().sorted();
+    }
+
+    @ParameterizedTest(name = "routeConfig:{0}")
+    @MethodSource("xmlRouteConfigurationFiles")
+    void xmlToRouteConfigurationJavaDslCompiles(String xmlFile) throws Exception {
+        Path xmlPath = LOCAL_RESOURCES.resolve(xmlFile);
+        if (!Files.exists(xmlPath)) {
+            xmlPath = XML_IO_RESOURCES.resolve(xmlFile);
+        }
+
+        ModelParser parser = new ModelParser(Files.newInputStream(xmlPath), NAMESPACE);
+        RouteConfigurationsDefinition configsDef = parser.parseRouteConfigurationsDefinition().orElse(null);
+        if (configsDef == null || configsDef.getRouteConfigurations() == null
+                || configsDef.getRouteConfigurations().isEmpty()) {
+            LOG.info("Skipping {} - no route configurations parsed", xmlFile);
+            return;
+        }
+
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+        List<String> snippets = new ArrayList<>();
+        for (RouteConfigurationDefinition config : configsDef.getRouteConfigurations()) {
+            String javaDsl = writer.writeRouteConfiguration(config);
+            snippets.add(javaDsl);
+        }
+
+        String className = toClassName(xmlFile);
+        String source = wrapInRouteConfigurationBuilder(className, snippets);
+
+        LOG.debug("Generated routeConfiguration Java DSL for {}:\n{}", xmlFile, source);
+
+        List<String> errors = compile(className, source);
+        assertTrue(errors.isEmpty(),
+                "Compilation failed for " + xmlFile + ":\n" + String.join("\n", errors)
+                                     + "\n\nGenerated source:\n" + source);
+    }
+
     private static String toClassName(String xmlFile) {
         String base = xmlFile.replace(".xml", "");
         StringBuilder sb = new StringBuilder("Route_");
@@ -293,6 +381,23 @@ public class JavaDslCompileTest {
         sb.append("    @Override\n");
         sb.append("    public void configure() throws Exception {\n");
         for (String snippet : routeSnippets) {
+            sb.append("        ");
+            sb.append(snippet.replace("\n", "\n        "));
+            sb.append("\n\n");
+        }
+        sb.append("    }\n");
+        sb.append("}\n");
+        return sb.toString();
+    }
+
+    private static String wrapInRouteConfigurationBuilder(String className, List<String> snippets) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("package test.generated;\n\n");
+        sb.append("import org.apache.camel.builder.RouteConfigurationBuilder;\n\n");
+        sb.append("public class ").append(className).append(" extends RouteConfigurationBuilder {\n");
+        sb.append("    @Override\n");
+        sb.append("    public void configuration() throws Exception {\n");
+        for (String snippet : snippets) {
             sb.append("        ");
             sb.append(snippet.replace("\n", "\n        "));
             sb.append("\n\n");
