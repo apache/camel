@@ -944,6 +944,11 @@ behaviour.
 the refresh token grant instead of the incorrect `token` parameter.
 Custom test servers or identity-provider mocks that expected the old request body should be updated.
 
+`UserProfile` token verification now fails closed when no JWK set is available: a signed token can no
+longer be accepted when the configured JWK set is missing or empty, since its signature cannot be
+verified in that case. Deployments with a correctly resolved JWK set are unaffected; this aligns the
+legacy `UserProfile` path with the `JwtTokenValidator` SPI path.
+
 === camel-platform-http, camel-servlet, camel-jetty, camel-netty-http, and camel-undertow
 
 The `platform-http`, `servlet`, `jetty`, `netty-http`, and `undertow` HTTP consumer endpoints now have an
