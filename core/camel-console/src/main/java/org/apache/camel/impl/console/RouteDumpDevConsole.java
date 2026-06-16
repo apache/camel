@@ -84,7 +84,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 } else if ("yaml".equals(format)) {
                     dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
                 } else if ("java".equals(format)) {
-                    dump = mrb.dumpRouteAsJava(true);
+                    dump = mrb.dumpRouteAsJava(true, false);
                 }
             } catch (Exception e) {
                 // ignore
@@ -136,7 +136,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                     dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters), false, true);
                 } else if ("java".equals(format)) {
                     jo.put("format", "java");
-                    dump = mrb.dumpRouteAsJava(true);
+                    dump = mrb.dumpRouteAsJava(true, false);
                 }
                 if (dump != null) {
                     JsonArray code;

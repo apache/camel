@@ -76,8 +76,8 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
 
         String xml2 = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         log.info(xml2);
-        // and we should have rest in the routes that indicate its from a rest dsl
-        assertTrue(xml2.contains("rest=\"true\""));
+        // rest/template/kamelet are @XmlTransient so not in XML dump
+        assertFalse(xml2.contains("rest=\"true\""));
 
         // routes are inlined
         assertFalse(xml2.matches("[\\S\\s]* <to id=\"to[0-9]+\" uri=\"direct:hello\"/>[\\S\\s]*"));
