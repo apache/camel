@@ -139,6 +139,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -405,6 +406,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToYAMLDumper.class, this::createModelToYAMLDumper);
+        camelContextExtension.lazyAddContextPlugin(ModelToJavaDumper.class, this::createModelToJavaDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToStructureDumper.class, this::createModelToStructureDumper);
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
@@ -4591,6 +4593,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ModelToXMLDumper createModelToXMLDumper();
 
     protected abstract ModelToYAMLDumper createModelToYAMLDumper();
+
+    protected abstract ModelToJavaDumper createModelToJavaDumper();
 
     protected abstract ModelToStructureDumper createModelToStructureDumper();
 

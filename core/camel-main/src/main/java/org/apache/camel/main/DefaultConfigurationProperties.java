@@ -1540,12 +1540,14 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML, YAML, or Java DSL into the log. This is intended for trouble shooting or to assist during
+     * development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
      * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     * This requires to have camel-xml-io/camel-yaml-io/camel-java-io on the classpath to be able to dump the routes as
+     * XML/YAML/Java.
      *
      * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
      * useful for tooling to understand the structure of the routes and how EIPs are nested together.
@@ -2754,12 +2756,14 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML, YAML, or Java DSL into the log. This is intended for trouble shooting or to assist during
+     * development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
      * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     * This requires to have camel-xml-io/camel-yaml-io/camel-java-io on the classpath to be able to dump the routes as
+     * XML/YAML/Java.
      *
      * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
      * useful for tooling to understand the structure of the routes and how EIPs are nested together.

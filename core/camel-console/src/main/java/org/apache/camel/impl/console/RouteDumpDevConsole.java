@@ -40,7 +40,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole(name = "route-dump", description = "Dump route in XML or YAML format")
+@DevConsole(name = "route-dump", description = "Dump route in XML, YAML, or Java DSL format")
 public class RouteDumpDevConsole extends AbstractDevConsole {
 
     private static final Pattern XML_SOURCE_LOCATION_PATTERN = Pattern.compile("(\\ssourceLocation=\"(.*?)\")");
@@ -67,7 +67,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     public static final String URI_AS_PARAMETERS = "uriAsParameters";
 
     public RouteDumpDevConsole() {
-        super("camel", "route-dump", "Route Dump", "Dump route in XML or YAML format");
+        super("camel", "route-dump", "Route Dump", "Dump route in XML, YAML, or Java DSL format");
     }
 
     @Override
@@ -83,6 +83,8 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                     dump = mrb.dumpRouteAsXml(true);
                 } else if ("yaml".equals(format)) {
                     dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
+                } else if ("java".equals(format)) {
+                    dump = mrb.dumpRouteAsJava(true);
                 }
             } catch (Exception e) {
                 // ignore
@@ -132,13 +134,16 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 } else if ("yaml".equals(format)) {
                     jo.put("format", "yaml");
                     dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters), false, true);
+                } else if ("java".equals(format)) {
+                    jo.put("format", "java");
+                    dump = mrb.dumpRouteAsJava(true);
                 }
                 if (dump != null) {
                     JsonArray code;
                     if (format == null || "xml".equals(format)) {
                         code = xmlLoadSourceAsJson(new StringReader(dump));
                     } else {
-                        code = yamlLoadSourceAsJson(new StringReader(dump));
+                        code = javaOrYamlLoadSourceAsJson(new StringReader(dump));
                     }
                     if (code != null) {
                         jo.put("code", code);
@@ -226,7 +231,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         return code.isEmpty() ? null : code;
     }
 
-    private static JsonArray yamlLoadSourceAsJson(Reader reader) {
+    private static JsonArray javaOrYamlLoadSourceAsJson(Reader reader) {
         JsonArray code = new JsonArray();
         try {
             LineNumberReader lnr = new LineNumberReader(reader);

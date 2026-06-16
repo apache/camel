@@ -169,11 +169,11 @@ public class RuntimeTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Dump route definitions in XML or YAML format.")
+          description = "Dump route definitions in XML, YAML, or Java DSL format.")
     public JsonObject camel_runtime_route_dump(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
             @ToolArg(description = "Route ID to dump (use * for all routes)") String routeId,
-            @ToolArg(description = "Output format: xml or yaml (default: yaml)") String format) {
+            @ToolArg(description = "Output format: xml, yaml, or java (default: yaml)") String format) {
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
         return runtimeService.executeAction(p.pid(), "route-dump", root -> {
             root.put("id", routeId != null ? routeId : "*");

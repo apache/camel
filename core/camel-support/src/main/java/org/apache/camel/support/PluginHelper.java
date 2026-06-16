@@ -41,6 +41,7 @@ import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -564,10 +565,24 @@ public final class PluginHelper {
     }
 
     /**
-     * Gets the {@link ModelToXMLDumper} to be used.
+     * Gets the {@link ModelToYAMLDumper} to be used.
      */
     public static ModelToYAMLDumper getModelToYAMLDumper(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ModelToYAMLDumper.class);
+    }
+
+    /**
+     * Gets the {@link ModelToJavaDumper} to be used.
+     */
+    public static ModelToJavaDumper getModelToJavaDumper(CamelContext camelContext) {
+        return getModelToJavaDumper(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ModelToJavaDumper} to be used.
+     */
+    public static ModelToJavaDumper getModelToJavaDumper(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ModelToJavaDumper.class);
     }
 
     /**
