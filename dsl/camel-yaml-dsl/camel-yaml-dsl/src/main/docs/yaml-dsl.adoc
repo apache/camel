@@ -105,6 +105,136 @@ marshal:
 In case you want to use the data-format's default settings, you need to place an empty block as data format parameters, like `json: {}`
 ====
 
+=== Extending YAML route steps
+
+Optional Camel modules can contribute YAML route step deserializers without changing `camel-yaml-dsl`.
+This is useful when a module provides a custom route model definition, or wants to expose a short YAML step name that maps
+to a normal Camel route model definition.
+
+To contribute custom step deserializers, add a resource named:
+
+[source,text]
+----
+META-INF/services/org/apache/camel/YamlDeserializerResolver
+----
+
+The resource contains one `org.apache.camel.dsl.yaml.common.YamlDeserializerResolver` implementation class name per line.
+Blank lines and comments starting with `#` are ignored.
+When packaging an application as an uber JAR or shaded JAR, merge this service resource from all contributing modules.
+
+[source,text]
+----
+com.acme.camel.MyYamlStepResolver
+----
+
+The resolver returns a SnakeYAML `ConstructNode` for the step names, or model class names, it supports.
+The deserializer should create and configure the normal Camel model object that the custom YAML step represents:
+
+[source,java]
+----
+import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
+import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
+import org.apache.camel.model.StepDefinition;
+import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.Node;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+
+public final class MyYamlStepResolver implements YamlDeserializerResolver {
+    @Override
+    public int getOrder() {
+        return YamlDeserializerResolver.ORDER_DEFAULT + 1;
+    }
+
+    @Override
+    public ConstructNode resolve(String id) {
+        if ("myStep".equals(id)) {
+            return new MyStepDeserializer();
+        }
+        return null;
+    }
+}
+
+final class MyStepDeserializer extends YamlDeserializerBase<StepDefinition> {
+    public MyStepDeserializer() {
+        super(StepDefinition.class);
+    }
+
+    @Override
+    protected StepDefinition newInstance() {
+        return new StepDefinition();
+    }
+
+    @Override
+    protected boolean setProperty(StepDefinition target, String propertyKey, String propertyName, Node value) {
+        switch (propertyKey) {
+            case "id":
+                target.setId(asText(value));
+                return true;
+            case "steps":
+                setSteps(target, value);
+                return true;
+            default:
+                return false;
+        }
+    }
+}
+----
+
+This allows YAML such as:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - myStep:
+          id: "custom-step"
+          steps:
+            - to:
+                uri: "mock:result"
+----
+
+Resolvers are discovered when YAML routes are parsed. Camel loads the built-in YAML DSL resolvers first, then the
+classpath-discovered resolvers from `META-INF/services/org/apache/camel/YamlDeserializerResolver`, and then any
+`YamlDeserializerResolver` beans found in the Camel registry.
+Camel looks for resolver resources through the Camel class resolver, the application context classloader, and any
+classloaders registered with the Camel class resolver.
+
+All resolvers are ordered by `YamlDeserializerResolver#getOrder()`, where lower order values have higher precedence.
+Built-in YAML DSL resolvers win over classpath-discovered and registry-provided resolvers unless the external resolver
+uses an order lower than `YamlDeserializerResolver.ORDER_DEFAULT`.
+For external resolvers with the same order, registry-provided resolvers are tried before classpath-discovered resolvers.
+Within the same source and order, resolvers are ordered by fully qualified class name, and registry resolvers use the
+registry bean name as a final tie-breaker.
+If several resolvers can resolve the same step name, the first matching resolver wins.
+
+The built-in resolver for hand-written YAML DSL conveniences uses `YamlDeserializerResolver.ORDER_DEFAULT`, and the
+generated model resolver is also treated as a built-in resolver.
+Use an order lower than `ORDER_DEFAULT` only when a custom resolver intentionally needs to override any built-in YAML
+name.
+
+Resolver classes are instantiated through Camel's injector. If the resolver implements `CamelContextAware`, Camel sets
+the current `CamelContext` before the resolver is used.
+The same discovery mechanism is used by the YAML routes loader and the Kamelet routes loader, so custom route steps can
+be used in regular YAML routes and in Kamelet template step lists.
+
+When a custom step maps to a model definition that supports child outputs, the deserializer can parse nested YAML
+`steps` using `YamlDeserializerSupport.setSteps`.
+Nested `steps` are only meaningful for model definitions that can contain outputs, such as `Block` implementations.
+If the optional module that provides the resolver is not on the classpath, Camel does not load that resolver. YAML files
+that use the custom step name then fail with an unknown node error; YAML files that do not use the custom step are
+unaffected.
+
+Custom YAML step names are runtime extensions.
+The generated YAML DSL JSON schemas only describe the built-in DSL and do not validate module-provided step names.
+This also applies to IDE validation and schema-based tooling.
+
+YAML routes and resolver providers are trusted route-author and deployment inputs under Camel's security model.
+This SPI is not a sandbox for processing untrusted YAML documents.
+Resolver implementations should not fetch external resources, load classes named by route fields, or evaluate route
+fields as expressions while parsing YAML.
+
 == Defining endpoints
 
 To define an endpoint with the YAML dsl you have two options:
@@ -695,7 +825,7 @@ The warning is logged once per resource file and looks like:
 ----
 YAML DSL compact notation detected in: myroute.yaml.
 It is recommended to use canonical/normalized YAML DSL notation which is more tooling and AI friendly.
-Use Camel CLI to normalize: camel yaml normalize <file>
+Use Camel CLI to normalize: camel validate normalize <file>
 ----
 
 To disable this warning, set the following property in `application.properties`:
@@ -734,5 +864,3 @@ which demonstrate creating Camel Routes with YAML.
 
 Another way to find examples of YAML DSL is to look in https://github.com/apache/camel-kamelets[Camel Kamelets]
 where each Kamelet is defined using YAML.
-
-

@@ -35,7 +35,7 @@ class ConstructorResolverTest extends Specification {
 
     }
 
-    def "test"() {
+    def "preserves same order resolvers for different node ids"() {
         given:
             def settings = LoadSettings.builder().build()
         when:
@@ -65,6 +65,30 @@ class ConstructorResolverTest extends Specification {
 
     }
 
+    def "clears constructor cache when resolver list changes"() {
+        given:
+            def settings = LoadSettings.builder().build()
+            def ctr = new YamlDeserializationContext(settings)
+            ctr.setCamelContext(new DefaultCamelContext())
+            ctr.addResolver(new FixedMyNodeResolver('first', YamlDeserializerResolver.ORDER_DEFAULT + 1))
+
+            def load = new Load(settings, ctr)
+
+        when:
+            def first = load.loadFromString('''
+                - my-node: {}
+            '''.stripLeading())
+
+            ctr.addResolver(new FixedMyNodeResolver('second', YamlDeserializerResolver.ORDER_DEFAULT))
+            def second = load.loadFromString('''
+                - my-node: {}
+            '''.stripLeading())
+
+        then:
+            first[0].message == 'first'
+            second[0].message == 'second'
+    }
+
 
     static class MyNodeResolver implements YamlDeserializerResolver {
         @Override
@@ -87,6 +111,49 @@ class ConstructorResolverTest extends Specification {
                     return new MyNestedConstructor()
             }
             return null
+        }
+    }
+
+    static class FixedMyNodeResolver implements YamlDeserializerResolver {
+        private final String message
+        private final int order
+
+        FixedMyNodeResolver(String message, int order) {
+            this.message = message
+            this.order = order
+        }
+
+        @Override
+        int getOrder() {
+            return order
+        }
+
+        @Override
+        ConstructNode resolve(String id) {
+            switch (id) {
+                case 'my-node':
+                    return new FixedMyNodeConstructor(message)
+            }
+            return null
+        }
+    }
+
+    static class FixedMyNodeConstructor extends YamlDeserializerBase<MyNode> {
+        private final String message
+
+        FixedMyNodeConstructor(String message) {
+            super(MyNode.class)
+            this.message = message
+        }
+
+        @Override
+        protected MyNode newInstance() {
+            return new MyNode(message: message)
+        }
+
+        @Override
+        protected boolean setProperty(MyNode target, String propertyKey, String propertyName, Node value) {
+            return false
         }
     }
 

@@ -450,7 +450,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Whether to log a WARN when YAML DSL routes use compact (shorthand) notation instead of the canonical
      * (explicit/normalized) form. The canonical style is recommended as it is more tooling and AI friendly. Use Camel
-     * CLI to normalize existing routes: camel yaml normalize &lt;file&gt;
+     * CLI to normalize existing routes: camel validate normalize &lt;file&gt;
      */
     public void setYamlDslCompactNotationWarn(boolean yamlDslCompactNotationWarn) {
         this.yamlDslCompactNotationWarn = yamlDslCompactNotationWarn;

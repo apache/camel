@@ -1,0 +1,5 @@
+org.apache.camel.dsl.yaml.YamlDeserializerResolverDiscoveryTest$LowerPrecedenceCustomStepResolver
+org.apache.camel.dsl.yaml.YamlDeserializerResolverDiscoveryTest$CustomStepResolver
+org.apache.camel.dsl.yaml.YamlDeserializerResolverDiscoveryTest$BetaSameOrderStepResolver
+org.apache.camel.dsl.yaml.YamlDeserializerResolverDiscoveryTest$AlphaSameOrderStepResolver
+org.apache.camel.dsl.yaml.YamlDeserializerResolverDiscoveryTest$GeneratedToCollisionResolver
