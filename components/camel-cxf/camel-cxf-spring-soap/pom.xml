@@ -192,6 +192,12 @@
             <artifactId>cxf-rt-ws-security</artifactId>
             <version>${cxf-version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
