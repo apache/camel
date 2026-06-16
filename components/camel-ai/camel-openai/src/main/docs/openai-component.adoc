@@ -954,7 +954,7 @@ from("direct:chat")
         + "&mcpServer.api.url=http://localhost:9090/mcp");
 ----
 
-==== SSE Transport
+==== SSE Transport (Deprecated)
 
 [source,java]
 ----

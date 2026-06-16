@@ -118,7 +118,7 @@ public class OpenAIConfiguration implements Cloneable {
 
     @UriParam(prefix = "mcpServer.", multiValue = true)
     @Metadata(description = "MCP (Model Context Protocol) server configurations. "
-                            + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, "
+                            + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, (Note that sse is deprecated) "
                             + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
                             + "mcpServer.<name>.url=<url> (sse/streamableHttp), "
                             + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth)")

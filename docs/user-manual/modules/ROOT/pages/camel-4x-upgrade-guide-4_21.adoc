@@ -573,6 +573,8 @@ fail to detect the type on some platforms. A `byte[]` or `InputStream` body whos
 sent to the model as a base64-encoded image instead of being converted to text; bodies without image MIME type metadata
 keep the previous text behavior. XML and JSON files (`application/xml`, `application/json`) are treated as text prompts.
 
+The `sse` `transportType` is deprecated. it is recommended to switch to `streamableHttp`.
+
 === camel-stomp removal
 
 Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.

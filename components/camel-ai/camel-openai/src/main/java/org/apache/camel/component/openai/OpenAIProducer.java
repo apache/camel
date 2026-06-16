@@ -153,7 +153,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             paramsBuilder.topP(topP);
         }
         if (maxTokens != null) {
-            paramsBuilder.maxTokens(maxTokens.longValue());
+            paramsBuilder.maxCompletionTokens(maxTokens.longValue());
         }
 
         // Structured output handling
