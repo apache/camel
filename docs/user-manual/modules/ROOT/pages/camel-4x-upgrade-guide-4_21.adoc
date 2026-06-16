@@ -205,6 +205,9 @@ auto-disables `contentCache` on resource-based components (such as `xslt`) whose
 the route. Set `camel.component.<name>.contentCache=true` (or pass `?contentCache=true` on the
 URI) to opt back in to caching during dev mode.
 
+The `camel get route-dump` command has been moved to `camel cmd route-dump`, grouping it with the other
+route action commands (`route-diagram`, `route-structure`, `route-topology`).
+
 ==== Container-optimized layered Docker packaging for `camel export`
 
 The `camel export` command now generates Dockerfiles optimized for container image layer caching
