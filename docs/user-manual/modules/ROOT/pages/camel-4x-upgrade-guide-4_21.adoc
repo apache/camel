@@ -25,6 +25,15 @@ When `fromRouteId` is not available (for example, on Exchanges created by `Produ
 This ensures Prometheus-compatible metric export when Route triggered and ProducerTemplate Exchanges are mixed.
 Dashboards or alerts that assumed the `routeId` label was absent must be updated to treat `routeId=""` accordingly.
 
+=== camel-dataformat
+
+The `dataformat:` component now applies the global `camel.dataformat.<name>.*` configuration (for example from
+`application.properties`) when it creates the data format instance. Previously a `dataformat:` endpoint such as
+`to("dataformat:beanio:unmarshal")` ignored this global configuration and used only the options provided on the
+endpoint URI, which could leave the data format incompletely configured. This aligns the component with the
+`marshal()` / `unmarshal()` DSL, which already honors the global configuration. Options specified on the endpoint URI
+continue to take precedence over the global configuration.
+
 === camel-core
 
 ==== Simple language: internal builder classes reorganized
