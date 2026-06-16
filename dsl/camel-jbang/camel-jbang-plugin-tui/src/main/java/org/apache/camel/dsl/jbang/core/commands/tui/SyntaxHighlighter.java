@@ -65,35 +65,44 @@ class SyntaxHighlighter {
     private static final Pattern XML_ATTR_NAME = Pattern.compile("\\s([\\w:.-]+)=");
     private static final Pattern XML_ENTITY = Pattern.compile("&[^;]+;");
 
+    // Monokai color palette
+    static final Color MONOKAI_COMMENT = Color.rgb(117, 113, 94);
+    static final Color MONOKAI_STRING = Color.rgb(230, 219, 116);
+    static final Color MONOKAI_KEYWORD = Color.rgb(249, 38, 114);
+    static final Color MONOKAI_FUNCTION = Color.rgb(166, 226, 46);
+    static final Color MONOKAI_TYPE = Color.rgb(102, 217, 239);
+    static final Color MONOKAI_CONSTANT = Color.rgb(174, 129, 255);
+    static final Color MONOKAI_TEXT = Color.rgb(248, 248, 242);
+
     // Java styles
-    private static final Style JAVA_COMMENT_STYLE = Style.EMPTY.fg(Color.LIGHT_BLUE);
-    private static final Style JAVA_STRING_STYLE = Style.EMPTY.fg(Color.RED);
-    private static final Style JAVA_ANNOTATION_STYLE = Style.EMPTY.fg(Color.MAGENTA);
-    private static final Style JAVA_MODIFIER_STYLE = Style.EMPTY.fg(Color.CYAN);
-    private static final Style JAVA_KEYWORD_STYLE = Style.EMPTY.fg(Color.RED);
-    private static final Style JAVA_TYPE_STYLE = Style.EMPTY.fg(Color.GREEN);
-    private static final Style JAVA_BOOLEAN_STYLE = Style.EMPTY.fg(Color.YELLOW);
-    private static final Style JAVA_NUMBER_STYLE = Style.EMPTY.fg(Color.YELLOW);
+    private static final Style JAVA_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
+    private static final Style JAVA_STRING_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
+    private static final Style JAVA_ANNOTATION_STYLE = Style.EMPTY.fg(MONOKAI_FUNCTION);
+    private static final Style JAVA_MODIFIER_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style JAVA_KEYWORD_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style JAVA_TYPE_STYLE = Style.EMPTY.fg(MONOKAI_TYPE);
+    private static final Style JAVA_BOOLEAN_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
+    private static final Style JAVA_NUMBER_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
 
     // YAML styles
-    private static final Style YAML_COMMENT_STYLE = Style.EMPTY.fg(Color.LIGHT_BLUE);
-    private static final Style YAML_KEY_STYLE = Style.EMPTY.fg(Color.RED);
-    private static final Style YAML_VALUE_STYLE = Style.EMPTY.fg(Color.GREEN);
-    private static final Style YAML_SPECIAL_STYLE = Style.EMPTY.fg(Color.YELLOW);
-    private static final Style YAML_SEPARATOR_STYLE = Style.EMPTY.fg(Color.WHITE).bold();
+    private static final Style YAML_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
+    private static final Style YAML_KEY_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style YAML_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
+    private static final Style YAML_SPECIAL_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
+    private static final Style YAML_SEPARATOR_STYLE = Style.EMPTY.fg(MONOKAI_TEXT).bold();
 
     // XML styles
-    private static final Style XML_COMMENT_STYLE = Style.EMPTY.fg(Color.YELLOW);
-    private static final Style XML_TAG_STYLE = Style.EMPTY.fg(Color.CYAN);
-    private static final Style XML_ATTR_NAME_STYLE = Style.EMPTY.fg(Color.MAGENTA);
-    private static final Style XML_ATTR_VALUE_STYLE = Style.EMPTY.fg(Color.GREEN);
-    private static final Style XML_ENTITY_STYLE = Style.EMPTY.fg(Color.RED);
+    private static final Style XML_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
+    private static final Style XML_TAG_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style XML_ATTR_NAME_STYLE = Style.EMPTY.fg(MONOKAI_FUNCTION);
+    private static final Style XML_ATTR_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
+    private static final Style XML_ENTITY_STYLE = Style.EMPTY.fg(MONOKAI_CONSTANT);
 
     // Properties styles
-    private static final Style PROPERTIES_COMMENT_STYLE = Style.EMPTY.fg(Color.LIGHT_BLUE);
-    private static final Style PROPERTIES_KEY_STYLE = Style.EMPTY.fg(Color.YELLOW);
-    private static final Style PROPERTIES_SEPARATOR_STYLE = Style.EMPTY.fg(Color.WHITE).bold();
-    private static final Style PROPERTIES_VALUE_STYLE = Style.EMPTY.fg(Color.BLUE);
+    private static final Style PROPERTIES_COMMENT_STYLE = Style.EMPTY.fg(MONOKAI_COMMENT);
+    private static final Style PROPERTIES_KEY_STYLE = Style.EMPTY.fg(MONOKAI_KEYWORD);
+    private static final Style PROPERTIES_SEPARATOR_STYLE = Style.EMPTY.fg(MONOKAI_TEXT).bold();
+    private static final Style PROPERTIES_VALUE_STYLE = Style.EMPTY.fg(MONOKAI_STRING);
 
     private SyntaxHighlighter() {
     }

@@ -42,7 +42,6 @@ camel get [options]
 | xref:jbang-commands/camel-jbang-get-rest.adoc[rest] | Get REST services of Camel integrations
 | xref:jbang-commands/camel-jbang-get-route.adoc[route] | Get status of Camel routes
 | xref:jbang-commands/camel-jbang-get-route-controller.adoc[route-controller] | List status of route controller
-| xref:jbang-commands/camel-jbang-get-route-dump.adoc[route-dump] | Dump Camel route in XML, YAML, or Java DSL format
 | xref:jbang-commands/camel-jbang-get-service.adoc[service] | Get services of Camel integrations
 | xref:jbang-commands/camel-jbang-get-source.adoc[source] | Display Camel route source code
 | xref:jbang-commands/camel-jbang-get-startup-recorder.adoc[startup-recorder] | Display startup recording
