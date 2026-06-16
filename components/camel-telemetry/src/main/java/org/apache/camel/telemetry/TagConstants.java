@@ -21,6 +21,7 @@ public class TagConstants {
     public static final String ERROR = "error";
     public static final String COMPONENT = "component";
     public static final String EXCHANGE_ID = "exchangeId";
+    public static final String ROUTE_ID = "camel.route.id";
 
     public static final String OP = "op";
 
