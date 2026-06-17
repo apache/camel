@@ -330,12 +330,16 @@ camel-route-diagram {
   --crd-stat:                 #64748b;   /* metric overlay text */
   --crd-font:                 system-ui; /* font family */
   --crd-font-size:            12px;      /* base font size */
+  --crd-color-route:          #6366f1;   /* "route" node */
   --crd-color-from:           #0ea5e9;   /* "from" node */
   --crd-color-to:             #0ea5e9;   /* "to" node */
   --crd-color-log:            #64748b;   /* "log" node */
   --crd-color-choice:         #f59e0b;   /* "choice" node */
   --crd-color-when:           #fbbf24;   /* "when" branch */
   --crd-color-otherwise:      #fbbf24;   /* "otherwise" branch */
+  --crd-color-doTry:          #f59e0b;   /* "doTry" scope */
+  --crd-color-doCatch:        #fbbf24;   /* "doCatch" clause */
+  --crd-color-doFinally:      #fbbf24;   /* "doFinally" clause */
   --crd-color-multicast:      #8b5cf6;   /* "multicast" node */
   --crd-color-circuitBreaker: #ef4444;   /* "circuitBreaker" node */
   --crd-color-default:        #6366f1;   /* all other EIP nodes */

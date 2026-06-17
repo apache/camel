@@ -39,6 +39,8 @@ export function buildTree(nodes) {
 
   for (let i = 1; i < nodes.length; i++) {
     const ni = nodes[i];
+    // Skip nodes without an id — they would collide on positions[undefined].
+    if (!ni.id) continue;
     const tn = { info: ni, children: [], parent: null, subtreeWidth: 0 };
 
     if (ni.level > current.info.level) {
@@ -83,7 +85,11 @@ export function computeSubtreeWidth(node) {
     });
     node.subtreeWidth = Math.max(NODE_W, total);
   } else {
-    node.subtreeWidth = Math.max(NODE_W, ...node.children.map(computeSubtreeWidth));
+    // Use reduce instead of spread to avoid RangeError on very large child arrays.
+    node.subtreeWidth = node.children.reduce(
+      (max, c) => Math.max(max, computeSubtreeWidth(c)),
+      NODE_W,
+    );
   }
   return node.subtreeWidth;
 }
@@ -125,13 +131,19 @@ function lastChainId(node) {
  * Walks the tree and populates positions[id] with {x, y, w, h, parentId, type, code, ...}.
  * x, y are the top-left corner of the node box in SVG logical pixels.
  *
+ * Returns the bottom-most Y coordinate of the entire subtree rooted at `node`,
+ * which the caller uses to position the next sibling without re-traversing the tree.
+ *
  * @param {{info, children, parent, subtreeWidth}} node
  * @param {number} x  left edge of the available horizontal band
  * @param {number} y  top of this node
  * @param {number} parentWidth  width of the parent's horizontal band
  * @param {Object} positions   output map: id → position record
+ * @returns {number} bottom Y of this subtree (y + h of the deepest node placed)
  */
 export function assignPositions(node, x, y, parentWidth, positions) {
+  if (!node.info.id) return y + NODE_H;
+
   const available = Math.max(node.subtreeWidth, parentWidth);
   const nodeX = x + (available - NODE_W) / 2;
 
@@ -148,32 +160,27 @@ export function assignPositions(node, x, y, parentWidth, positions) {
     statistics: node.info.statistics ?? null,
   };
 
-  if (!node.children.length) return;
+  if (!node.children.length) return y + NODE_H;
 
   const childY = y + NODE_H + V_GAP;
 
   if (BRANCHING_EIPS.has(node.info.type)) {
     let childX = x + (available - node.subtreeWidth) / 2;
+    let maxBottom = childY;
     for (const child of node.children) {
-      assignPositions(child, childX, childY, child.subtreeWidth, positions);
+      const bottom = assignPositions(child, childX, childY, child.subtreeWidth, positions);
+      if (bottom > maxBottom) maxBottom = bottom;
       childX += child.subtreeWidth + H_GAP;
     }
+    return maxBottom;
   } else {
     let curY = childY;
     for (const child of node.children) {
-      assignPositions(child, x, curY, available, positions);
-      curY = subtreeMaxY(child, positions) + V_GAP;
+      // assignPositions returns the bottom of this child's full subtree — O(n) total.
+      curY = assignPositions(child, x, curY, available, positions) + V_GAP;
     }
+    return curY - V_GAP;
   }
-}
-
-function subtreeMaxY(node, positions) {
-  const pos = positions[node.info.id];
-  let my = pos ? pos.y + pos.h : 0;
-  for (const child of node.children) {
-    my = Math.max(my, subtreeMaxY(child, positions));
-  }
-  return my;
 }
 
 /**

@@ -19,6 +19,7 @@ package org.apache.camel.diagram;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
@@ -39,6 +40,19 @@ class WebComponentBundleTest {
                 .getResourceAsStream("META-INF/resources/camel/diagram/camel-route-diagram.js")) {
             assertThat(is).isNotNull();
             assertThat(is.readAllBytes().length).isGreaterThan(1000);
+        }
+    }
+
+    @Test
+    void bundledJsContainsCustomElementRegistration() throws IOException {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/resources/camel/diagram/camel-route-diagram.js")) {
+            assertThat(is).isNotNull();
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content)
+                    .as("bundle must register the camel-route-diagram custom element")
+                    .contains("customElements.define")
+                    .contains("camel-route-diagram");
         }
     }
 }

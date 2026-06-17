@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import { describe, it, expect } from 'vitest';
-import { buildTree, computeSubtreeWidth, assignPositions, NODE_W, H_GAP } from '../src/layout.js';
+import { buildTree, computeSubtreeWidth, assignPositions, NODE_W, NODE_H, V_GAP, H_GAP } from '../src/layout.js';
 
 const node = (type, id, level, code = type) => ({ type, id, level, code });
 
@@ -56,6 +56,17 @@ describe('buildTree', () => {
     expect(choice.children[0].children[0].info.type).toBe('to');
     expect(choice.children[1].info.type).toBe('otherwise');
   });
+
+  it('nodes without an id are silently skipped', () => {
+    const nodes = [
+      node('route', 'r1', 0),
+      { type: 'log', level: 1 },          // no id
+      node('to', 't1', 1),
+    ];
+    const tree = buildTree(nodes);
+    expect(tree.children).toHaveLength(1);
+    expect(tree.children[0].info.id).toBe('t1');
+  });
 });
 
 describe('computeSubtreeWidth', () => {
@@ -74,6 +85,18 @@ describe('computeSubtreeWidth', () => {
     const tree = buildTree(nodes);
     computeSubtreeWidth(tree);
     expect(tree.subtreeWidth).toBe(NODE_W * 2 + H_GAP);
+  });
+
+  it('non-branching node width is max of child subtree widths', () => {
+    // A route with two linear siblings; non-branching, so width = max child width = NODE_W.
+    const nodes = [
+      node('route', 'r1', 0),
+      node('from',  'f1', 1),
+      node('to',    't1', 1),
+    ];
+    const tree = buildTree(nodes);
+    computeSubtreeWidth(tree);
+    expect(tree.subtreeWidth).toBe(NODE_W);
   });
 });
 
@@ -96,7 +119,7 @@ describe('assignPositions', () => {
     expect(positions['t1'].parentId).toBe('l1'); // NOT 'r1'
   });
 
-  it('single-chain route assigns increasing y values', () => {
+  it('single-chain route assigns strictly increasing y values', () => {
     const nodes = [
       node('route', 'r1', 0),
       node('from',  'f1', 1),
@@ -125,7 +148,64 @@ describe('assignPositions', () => {
     const positions = {};
     assignPositions(tree, 0, 0, tree.subtreeWidth, positions);
 
-    expect(Math.abs(positions['w1'].x - positions['ow'].x)).toBeGreaterThan(0);
+    // when must be to the LEFT of otherwise
+    expect(positions['w1'].x).toBeLessThan(positions['ow'].x);
     expect(positions['w1'].y).toBe(positions['ow'].y);
+  });
+
+  it('next sibling is placed below the deepest descendant of the previous sibling', () => {
+    // route -> [choice -> [when -> log_a, otherwise -> log_b], log_after]
+    // log_after must be below BOTH log_a and log_b.
+    const nodes = [
+      node('route',     'r1', 0),
+      node('choice',    'ch', 1),
+      node('when',      'wh', 2),
+      node('log',       'la', 3),
+      node('otherwise', 'ow', 2),
+      node('log',       'lb', 3),
+      node('log',       'lafter', 1),
+    ];
+    const tree = buildTree(nodes);
+    computeSubtreeWidth(tree);
+    const positions = {};
+    assignPositions(tree, 0, 0, tree.subtreeWidth, positions);
+
+    const lafterY = positions['lafter'].y;
+    expect(lafterY).toBeGreaterThan(positions['la'].y + NODE_H);
+    expect(lafterY).toBeGreaterThan(positions['lb'].y + NODE_H);
+  });
+
+  it('linear chain after a branching EIP connects from the branching EIP, not its descendants', () => {
+    // route -> [choice -> [when, otherwise], log_after]
+    // log_after.parentId should be 'ch' (the branching EIP), not 'when' or 'otherwise'.
+    const nodes = [
+      node('route',     'r1', 0),
+      node('choice',    'ch', 1),
+      node('when',      'wh', 2),
+      node('otherwise', 'ow', 2),
+      node('log',       'lafter', 1),
+    ];
+    const tree = buildTree(nodes);
+    computeSubtreeWidth(tree);
+    const positions = {};
+    assignPositions(tree, 0, 0, tree.subtreeWidth, positions);
+
+    expect(positions['lafter'].parentId).toBe('ch');
+  });
+
+  it('assignPositions returns the bottom Y of the entire subtree', () => {
+    const nodes = [
+      node('route', 'r1', 0),
+      node('from',  'f1', 1),
+      node('log',   'l1', 1),
+    ];
+    const tree = buildTree(nodes);
+    computeSubtreeWidth(tree);
+    const positions = {};
+    const bottom = assignPositions(tree, 0, 0, tree.subtreeWidth, positions);
+
+    // bottom must equal the y + h of the deepest node (l1)
+    const deepestY = positions['l1'].y + NODE_H;
+    expect(bottom).toBe(deepestY);
   });
 });

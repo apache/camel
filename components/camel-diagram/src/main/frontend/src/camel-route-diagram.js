@@ -59,7 +59,7 @@ function formatStat(stats) {
  *
  * CSS custom properties (all optional):
  *   --crd-bg, --crd-fg, --crd-edge, --crd-font, --crd-font-size, --crd-stat
- *   --crd-color-{route,from,to,log,choice,when,otherwise,...,default}
+ *   --crd-color-{route,from,to,log,choice,when,otherwise,doTry,doCatch,doFinally,...,default}
  *
  * @since 4.21
  */
@@ -99,6 +99,7 @@ class CamelRouteDiagram extends LitElement {
 
   #timer = null;
   #uid = Math.random().toString(36).slice(2);
+  #controller = null;
 
   constructor() {
     super();
@@ -111,30 +112,61 @@ class CamelRouteDiagram extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.#doFetch();
-    if (this.refresh > 0) {
-      this.#timer = setInterval(() => this.#doFetch(), this.refresh);
-    }
+    // On reconnect (hasUpdated is true) the reactive properties haven't changed,
+    // so updated() won't fire automatically — force it with requestUpdate().
+    // On first connect, super.connectedCallback() already schedules the update;
+    // this requestUpdate() coalesces harmlessly.
+    this.requestUpdate();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     clearInterval(this.#timer);
     this.#timer = null;
+    this.#controller?.abort();
+  }
+
+  updated(changedProperties) {
+    // React to src/filter/refresh changes and to reconnect (changedProperties is
+    // empty when requestUpdate() was called with no property change on reconnect).
+    const srcOrFilterChanged = changedProperties.has('src') || changedProperties.has('filter');
+    const refreshChanged = changedProperties.has('refresh');
+    const isReconnect = changedProperties.size === 0;
+
+    if (refreshChanged || isReconnect) {
+      clearInterval(this.#timer);
+      this.#timer = null;
+      if (this.refresh > 0) {
+        this.#timer = setInterval(() => this.#doFetch(), this.refresh);
+      }
+    }
+    if (srcOrFilterChanged || isReconnect) {
+      this.#doFetch();
+    }
   }
 
   async #doFetch() {
-    if (!this.src) return;
+    const src = this.src?.trim();
+    if (!src) return;
+    // Cancel any in-flight request so the last-sent response always wins.
+    this.#controller?.abort();
+    this.#controller = new AbortController();
     try {
-      const url = new URL(this.src, location.href);
+      const url = new URL(src, location.href);
       if (this.filter) url.searchParams.set('filter', this.filter);
       url.searchParams.set('metric', 'true');
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: this.#controller.signal });
       if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      this._data = await res.json();
+      const data = await res.json();
+      if (!Array.isArray(data?.routes)) {
+        throw new Error('Unexpected response: missing routes array');
+      }
+      this._data = data;
       this._error = null;
     } catch (e) {
-      this._error = e.message;
+      if (e.name !== 'AbortError') {
+        this._error = e.message;
+      }
     }
   }
 
@@ -142,27 +174,26 @@ class CamelRouteDiagram extends LitElement {
     if (this._error) return html`<p class="error">⚠ ${this._error}</p>`;
     if (!this._data) return html`<p class="loading">Loading diagram…</p>`;
 
+    return html`${this._data.routes.map(r => this.#renderRoute(r))}`;
+  }
+
+  #renderRoute(route) {
+    const { positions, width, height } = layoutRoute(route);
+    const ids = Object.keys(positions);
     const markerId = `arrow-${this.#uid}`;
+    // The <marker> is defined inside the same <svg> it is used in so that
+    // url(#id) paint-server references resolve correctly in all browsers,
+    // including Firefox which does not resolve them across sibling <svg> elements.
     return html`
-      <svg width="0" height="0" style="position:absolute;overflow:hidden">
+      <div class="route-label">${route.routeId}</div>
+      <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
+           aria-label="Route diagram for ${route.routeId}">
         <defs>
           <marker id="${markerId}" markerWidth="8" markerHeight="8"
                   refX="6" refY="3" orient="auto">
             <path d="M0,0 L0,6 L8,3 z" fill="var(--crd-edge, #94a3b8)"/>
           </marker>
         </defs>
-      </svg>
-      ${(this._data.routes ?? []).map(r => this.#renderRoute(r, markerId))}
-    `;
-  }
-
-  #renderRoute(route, markerId) {
-    const { positions, width, height } = layoutRoute(route);
-    const ids = Object.keys(positions);
-    return html`
-      <div class="route-label">${route.routeId}</div>
-      <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
-           aria-label="Route diagram for ${route.routeId}">
         ${ids.map(id => this.#renderEdge(id, positions, markerId))}
         ${ids.map(id => this.#renderNode(id, positions[id]))}
       </svg>

@@ -35,6 +35,9 @@
     <properties>
         <firstVersion>4.21.0</firstVersion>
         <label>tooling</label>
+        <!-- Set -DskipFrontendBuild=true to skip npm install + build + test entirely.
+             Automatically set to true by the maven-test-skip profile below. -->
+        <skipFrontendBuild>false</skipFrontendBuild>
     </properties>
 
     <dependencies>
@@ -102,6 +105,22 @@
 
     </dependencies>
 
+    <profiles>
+        <!-- -Dmaven.test.skip=true skips Java test compilation; mirror that for npm. -->
+        <profile>
+            <id>maven-test-skip</id>
+            <activation>
+                <property>
+                    <name>maven.test.skip</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <skipFrontendBuild>true</skipFrontendBuild>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -157,6 +176,8 @@
                         </goals>
                         <configuration>
                             <arguments>ci</arguments>
+                            <!-- skip when the caller explicitly opts out of the frontend build -->
+                            <skip>${skipFrontendBuild}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -166,6 +187,7 @@
                         </goals>
                         <configuration>
                             <arguments>run build</arguments>
+                            <skip>${skipFrontendBuild}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -176,6 +198,8 @@
                         </goals>
                         <configuration>
                             <arguments>run test</arguments>
+                            <!-- skipTests is set by -DskipTests; skipFrontendBuild covers
+                                 -Dmaven.test.skip=true via the profile below -->
                             <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
