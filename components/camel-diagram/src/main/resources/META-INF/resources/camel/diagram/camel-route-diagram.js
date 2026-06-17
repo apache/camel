@@ -1,66 +1,451 @@
-var k=globalThis,R=k.ShadowRoot&&(k.ShadyCSS===void 0||k.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,G=Symbol(),ht=new WeakMap,S=class{constructor(t,e,s){if(this._$cssResult$=!0,s!==G)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o,e=this.t;if(R&&t===void 0){let s=e!==void 0&&e.length===1;s&&(t=ht.get(e)),t===void 0&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),s&&ht.set(e,t))}return t}toString(){return this.cssText}},lt=r=>new S(typeof r=="string"?r:r+"",void 0,G),F=(r,...t)=>{let e=r.length===1?r[0]:t.reduce((s,i,n)=>s+(o=>{if(o._$cssResult$===!0)return o.cssText;if(typeof o=="number")return o;throw Error("Value passed to 'css' function must be a 'css' function result: "+o+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+r[n+1],r[0]);return new S(e,r,G)},ct=(r,t)=>{if(R)r.adoptedStyleSheets=t.map(e=>e instanceof CSSStyleSheet?e:e.styleSheet);else for(let e of t){let s=document.createElement("style"),i=k.litNonce;i!==void 0&&s.setAttribute("nonce",i),s.textContent=e.cssText,r.appendChild(s)}},q=R?r=>r:r=>r instanceof CSSStyleSheet?(t=>{let e="";for(let s of t.cssRules)e+=s.cssText;return lt(e)})(r):r;var{is:Ot,defineProperty:Tt,getOwnPropertyDescriptor:Ht,getOwnPropertyNames:Dt,getOwnPropertySymbols:Ut,getPrototypeOf:kt}=Object,I=globalThis,dt=I.trustedTypes,Rt=dt?dt.emptyScript:"",It=I.reactiveElementPolyfillSupport,w=(r,t)=>r,Y={toAttribute(r,t){switch(t){case Boolean:r=r?Rt:null;break;case Object:case Array:r=r==null?r:JSON.stringify(r)}return r},fromAttribute(r,t){let e=r;switch(t){case Boolean:e=r!==null;break;case Number:e=r===null?null:Number(r);break;case Object:case Array:try{e=JSON.parse(r)}catch{e=null}}return e}},ut=(r,t)=>!Ot(r,t),pt={attribute:!0,type:String,converter:Y,reflect:!1,useDefault:!1,hasChanged:ut};Symbol.metadata??=Symbol("metadata"),I.litPropertyMetadata??=new WeakMap;var f=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=pt){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){let s=Symbol(),i=this.getPropertyDescriptor(t,s,e);i!==void 0&&Tt(this.prototype,t,i)}}static getPropertyDescriptor(t,e,s){let{get:i,set:n}=Ht(this.prototype,t)??{get(){return this[e]},set(o){this[e]=o}};return{get:i,set(o){let h=i?.call(this);n?.call(this,o),this.requestUpdate(t,h,s)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??pt}static _$Ei(){if(this.hasOwnProperty(w("elementProperties")))return;let t=kt(this);t.finalize(),t.l!==void 0&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(w("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(w("properties"))){let e=this.properties,s=[...Dt(e),...Ut(e)];for(let i of s)this.createProperty(i,e[i])}let t=this[Symbol.metadata];if(t!==null){let e=litPropertyMetadata.get(t);if(e!==void 0)for(let[s,i]of e)this.elementProperties.set(s,i)}this._$Eh=new Map;for(let[e,s]of this.elementProperties){let i=this._$Eu(e,s);i!==void 0&&this._$Eh.set(i,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){let e=[];if(Array.isArray(t)){let s=new Set(t.flat(1/0).reverse());for(let i of s)e.unshift(q(i))}else t!==void 0&&e.push(q(t));return e}static _$Eu(t,e){let s=e.attribute;return s===!1?void 0:typeof s=="string"?s:typeof t=="string"?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),this.renderRoot!==void 0&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){let t=new Map,e=this.constructor.elementProperties;for(let s of e.keys())this.hasOwnProperty(s)&&(t.set(s,this[s]),delete this[s]);t.size>0&&(this._$Ep=t)}createRenderRoot(){let t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return ct(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,s){this._$AK(t,s)}_$ET(t,e){let s=this.constructor.elementProperties.get(t),i=this.constructor._$Eu(t,s);if(i!==void 0&&s.reflect===!0){let n=(s.converter?.toAttribute!==void 0?s.converter:Y).toAttribute(e,s.type);this._$Em=t,n==null?this.removeAttribute(i):this.setAttribute(i,n),this._$Em=null}}_$AK(t,e){let s=this.constructor,i=s._$Eh.get(t);if(i!==void 0&&this._$Em!==i){let n=s.getPropertyOptions(i),o=typeof n.converter=="function"?{fromAttribute:n.converter}:n.converter?.fromAttribute!==void 0?n.converter:Y;this._$Em=i;let h=o.fromAttribute(e,n.type);this[i]=h??this._$Ej?.get(i)??h,this._$Em=null}}requestUpdate(t,e,s,i=!1,n){if(t!==void 0){let o=this.constructor;if(i===!1&&(n=this[t]),s??=o.getPropertyOptions(t),!((s.hasChanged??ut)(n,e)||s.useDefault&&s.reflect&&n===this._$Ej?.get(t)&&!this.hasAttribute(o._$Eu(t,s))))return;this.C(t,e,s)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(t,e,{useDefault:s,reflect:i,wrapped:n},o){s&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,o??e??this[t]),n!==!0||o!==void 0)||(this._$AL.has(t)||(this.hasUpdated||s||(e=void 0),this._$AL.set(t,e)),i===!0&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(e){Promise.reject(e)}let t=this.scheduleUpdate();return t!=null&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[i,n]of this._$Ep)this[i]=n;this._$Ep=void 0}let s=this.constructor.elementProperties;if(s.size>0)for(let[i,n]of s){let{wrapped:o}=n,h=this[i];o!==!0||this._$AL.has(i)||h===void 0||this.C(i,void 0,n,h)}}let t=!1,e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(s=>s.hostUpdate?.()),this.update(e)):this._$EM()}catch(s){throw t=!1,this._$EM(),s}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(e=>e.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(e=>this._$ET(e,this[e])),this._$EM()}updated(t){}firstUpdated(t){}};f.elementStyles=[],f.shadowRootOptions={mode:"open"},f[w("elementProperties")]=new Map,f[w("finalized")]=new Map,It?.({ReactiveElement:f}),(I.reactiveElementVersions??=[]).push("2.1.2");var et=globalThis,ft=r=>r,L=et.trustedTypes,$t=L?L.createPolicy("lit-html",{createHTML:r=>r}):void 0,vt="$lit$",m=`lit$${Math.random().toFixed(9).slice(2)}$`,bt="?"+m,Lt=`<${bt}>`,v=document,P=()=>v.createComment(""),N=r=>r===null||typeof r!="object"&&typeof r!="function",st=Array.isArray,Wt=r=>st(r)||typeof r?.[Symbol.iterator]=="function",K=`[ 	
-\f\r]`,C=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_t=/-->/g,mt=/>/g,y=RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`,"g"),gt=/'/g,yt=/"/g,Et=/^(?:script|style|textarea|title)$/i,rt=r=>(t,...e)=>({_$litType$:r,strings:t,values:e}),T=rt(1),W=rt(2),se=rt(3),$=Symbol.for("lit-noChange"),d=Symbol.for("lit-nothing"),At=new WeakMap,A=v.createTreeWalker(v,129);function xt(r,t){if(!st(r)||!r.hasOwnProperty("raw"))throw Error("invalid template strings array");return $t!==void 0?$t.createHTML(t):t}var zt=(r,t)=>{let e=r.length-1,s=[],i,n=t===2?"<svg>":t===3?"<math>":"",o=C;for(let h=0;h<e;h++){let a=r[h],l,p,c=-1,u=0;for(;u<a.length&&(o.lastIndex=u,p=o.exec(a),p!==null);)u=o.lastIndex,o===C?p[1]==="!--"?o=_t:p[1]!==void 0?o=mt:p[2]!==void 0?(Et.test(p[2])&&(i=RegExp("</"+p[2],"g")),o=y):p[3]!==void 0&&(o=y):o===y?p[0]===">"?(o=i??C,c=-1):p[1]===void 0?c=-2:(c=o.lastIndex-p[2].length,l=p[1],o=p[3]===void 0?y:p[3]==='"'?yt:gt):o===yt||o===gt?o=y:o===_t||o===mt?o=C:(o=y,i=void 0);let _=o===y&&r[h+1].startsWith("/>")?" ":"";n+=o===C?a+Lt:c>=0?(s.push(l),a.slice(0,c)+vt+a.slice(c)+m+_):a+m+(c===-2?h:_)}return[xt(r,n+(r[e]||"<?>")+(t===2?"</svg>":t===3?"</math>":"")),s]},M=class r{constructor({strings:t,_$litType$:e},s){let i;this.parts=[];let n=0,o=0,h=t.length-1,a=this.parts,[l,p]=zt(t,e);if(this.el=r.createElement(l,s),A.currentNode=this.el.content,e===2||e===3){let c=this.el.content.firstChild;c.replaceWith(...c.childNodes)}for(;(i=A.nextNode())!==null&&a.length<h;){if(i.nodeType===1){if(i.hasAttributes())for(let c of i.getAttributeNames())if(c.endsWith(vt)){let u=p[o++],_=i.getAttribute(c).split(m),U=/([.?@])?(.*)/.exec(u);a.push({type:1,index:n,name:U[2],strings:_,ctor:U[1]==="."?Z:U[1]==="?"?J:U[1]==="@"?Q:x}),i.removeAttribute(c)}else c.startsWith(m)&&(a.push({type:6,index:n}),i.removeAttribute(c));if(Et.test(i.tagName)){let c=i.textContent.split(m),u=c.length-1;if(u>0){i.textContent=L?L.emptyScript:"";for(let _=0;_<u;_++)i.append(c[_],P()),A.nextNode(),a.push({type:2,index:++n});i.append(c[u],P())}}}else if(i.nodeType===8)if(i.data===bt)a.push({type:2,index:n});else{let c=-1;for(;(c=i.data.indexOf(m,c+1))!==-1;)a.push({type:7,index:n}),c+=m.length-1}n++}}static createElement(t,e){let s=v.createElement("template");return s.innerHTML=t,s}};function E(r,t,e=r,s){if(t===$)return t;let i=s!==void 0?e._$Co?.[s]:e._$Cl,n=N(t)?void 0:t._$litDirective$;return i?.constructor!==n&&(i?._$AO?.(!1),n===void 0?i=void 0:(i=new n(r),i._$AT(r,e,s)),s!==void 0?(e._$Co??=[])[s]=i:e._$Cl=i),i!==void 0&&(t=E(r,i._$AS(r,t.values),i,s)),t}var X=class{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){let{el:{content:e},parts:s}=this._$AD,i=(t?.creationScope??v).importNode(e,!0);A.currentNode=i;let n=A.nextNode(),o=0,h=0,a=s[0];for(;a!==void 0;){if(o===a.index){let l;a.type===2?l=new O(n,n.nextSibling,this,t):a.type===1?l=new a.ctor(n,a.name,a.strings,this,t):a.type===6&&(l=new tt(n,this,t)),this._$AV.push(l),a=s[++h]}o!==a?.index&&(n=A.nextNode(),o++)}return A.currentNode=v,i}p(t){let e=0;for(let s of this._$AV)s!==void 0&&(s.strings!==void 0?(s._$AI(t,s,e),e+=s.strings.length-2):s._$AI(t[e])),e++}},O=class r{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,s,i){this.type=2,this._$AH=d,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=s,this.options=i,this._$Cv=i?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode,e=this._$AM;return e!==void 0&&t?.nodeType===11&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=E(this,t,e),N(t)?t===d||t==null||t===""?(this._$AH!==d&&this._$AR(),this._$AH=d):t!==this._$AH&&t!==$&&this._(t):t._$litType$!==void 0?this.$(t):t.nodeType!==void 0?this.T(t):Wt(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==d&&N(this._$AH)?this._$AA.nextSibling.data=t:this.T(v.createTextNode(t)),this._$AH=t}$(t){let{values:e,_$litType$:s}=t,i=typeof s=="number"?this._$AC(t):(s.el===void 0&&(s.el=M.createElement(xt(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===i)this._$AH.p(e);else{let n=new X(i,this),o=n.u(this.options);n.p(e),this.T(o),this._$AH=n}}_$AC(t){let e=At.get(t.strings);return e===void 0&&At.set(t.strings,e=new M(t)),e}k(t){st(this._$AH)||(this._$AH=[],this._$AR());let e=this._$AH,s,i=0;for(let n of t)i===e.length?e.push(s=new r(this.O(P()),this.O(P()),this,this.options)):s=e[i],s._$AI(n),i++;i<e.length&&(this._$AR(s&&s._$AB.nextSibling,i),e.length=i)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){let s=ft(t).nextSibling;ft(t).remove(),t=s}}setConnected(t){this._$AM===void 0&&(this._$Cv=t,this._$AP?.(t))}},x=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,s,i,n){this.type=1,this._$AH=d,this._$AN=void 0,this.element=t,this.name=e,this._$AM=i,this.options=n,s.length>2||s[0]!==""||s[1]!==""?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=d}_$AI(t,e=this,s,i){let n=this.strings,o=!1;if(n===void 0)t=E(this,t,e,0),o=!N(t)||t!==this._$AH&&t!==$,o&&(this._$AH=t);else{let h=t,a,l;for(t=n[0],a=0;a<n.length-1;a++)l=E(this,h[s+a],e,a),l===$&&(l=this._$AH[a]),o||=!N(l)||l!==this._$AH[a],l===d?t=d:t!==d&&(t+=(l??"")+n[a+1]),this._$AH[a]=l}o&&!i&&this.j(t)}j(t){t===d?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}},Z=class extends x{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===d?void 0:t}},J=class extends x{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==d)}},Q=class extends x{constructor(t,e,s,i,n){super(t,e,s,i,n),this.type=5}_$AI(t,e=this){if((t=E(this,t,e,0)??d)===$)return;let s=this._$AH,i=t===d&&s!==d||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,n=t!==d&&(s===d||i);i&&this.element.removeEventListener(this.name,this,s),n&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}},tt=class{constructor(t,e,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=s}get _$AU(){return this._$AM._$AU}_$AI(t){E(this,t)}};var Bt=et.litHtmlPolyfillSupport;Bt?.(M,O),(et.litHtmlVersions??=[]).push("3.3.3");var St=(r,t,e)=>{let s=e?.renderBefore??t,i=s._$litPart$;if(i===void 0){let n=e?.renderBefore??null;s._$litPart$=i=new O(t.insertBefore(P(),n),n,void 0,e??{})}return i._$AI(r),i};var it=globalThis,g=class extends f{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){let e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=St(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return $}};g._$litElement$=!0,g.finalized=!0,it.litElementHydrateSupport?.({LitElement:g});var Vt=it.litElementPolyfillSupport;Vt?.({LitElement:g});(it.litElementVersions??=[]).push("4.2.2");var wt={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},B=r=>(...t)=>({_$litDirective$:r,values:t}),z=class{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,s){this._$Ct=t,this._$AM=e,this._$Ci=s}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}};var b=class extends z{constructor(t){if(super(t),this.it=d,t.type!==wt.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(t){if(t===d||t==null)return this._t=void 0,this.it=t;if(t===$)return t;if(typeof t!="string")throw Error(this.constructor.directiveName+"() called with a non-string value");if(t===this.it)return this._t;this.it=t;let e=[t];return e.raw=e,this._t={_$litType$:this.constructor.resultType,strings:e,values:[]}}};b.directiveName="unsafeHTML",b.resultType=1;var ge=B(b);var H=class extends b{};H.directiveName="unsafeSVG",H.resultType=2;var Ct=B(H);var V=new Set(["choice","multicast","doTry","loadBalance","recipientList","circuitBreaker"]);function jt(r){if(!r.length)return null;let t={info:r[0],children:[],parent:null,subtreeWidth:0},e=t;for(let s=1;s<r.length;s++){let i=r[s];if(!i.id)continue;let n={info:i,children:[],parent:null,subtreeWidth:0};if(i.level>e.info.level)e.children.push(n),n.parent=e;else if(i.level===e.info.level){let o=e.parent??t;o.children.push(n),n.parent=o}else{let o=e.parent;for(;o&&o.info.level>=i.level;)o=o.parent;let h=o??t;h.children.push(n),n.parent=h}e=n}return t}function nt(r){if(!r.children.length)return r.subtreeWidth=180,180;if(V.has(r.info.type)){let t=0;r.children.forEach((e,s)=>{s>0&&(t+=90),t+=nt(e)}),r.subtreeWidth=Math.max(180,t)}else r.subtreeWidth=r.children.reduce((t,e)=>Math.max(t,nt(e)),180);return r.subtreeWidth}function Gt(r){if(!r.parent)return null;let t=r.parent;if(V.has(t.info.type))return t.info.id;let e=t.children.indexOf(r);return e===0?t.info.id:Pt(t.children[e-1])}function Pt(r){return V.has(r.info.type)||!r.children.length?r.info.id:Pt(r.children[r.children.length-1])}function ot(r,t,e,s,i){if(!r.info.id)return e+36;let n=Math.max(r.subtreeWidth,s),o=t+(n-180)/2;if(i[r.info.id]={x:o,y:e,w:180,h:36,parentId:Gt(r),type:r.info.type,code:r.info.code,description:r.info.description??null,uri:r.info.uri??null,statistics:r.info.statistics??null},!r.children.length)return e+36;let h=e+36+40;if(V.has(r.info.type)){let a=t+(n-r.subtreeWidth)/2,l=h;for(let p of r.children){let c=ot(p,a,h,p.subtreeWidth,i);c>l&&(l=c),a+=p.subtreeWidth+90}return l}else{let a=h;for(let l of r.children)a=ot(l,t,a,n,i)+40;return a-40}}function Nt(r){let t=r.code??[];if(!t.length)return{positions:{},width:180+30*2,height:36+30*2};let e=jt(t);nt(e);let s={};ot(e,30,30,e.subtreeWidth,s);let i=0,n=0;for(let o of Object.values(s))i=Math.max(i,o.x+o.w),n=Math.max(n,o.y+o.h);return{positions:s,width:i+30,height:n+30}}var Ft={route:"var(--crd-color-route,          #6366f1)",from:"var(--crd-color-from,           #0ea5e9)",to:"var(--crd-color-to,             #0ea5e9)",log:"var(--crd-color-log,            #64748b)",choice:"var(--crd-color-choice,         #f59e0b)",when:"var(--crd-color-when,           #fbbf24)",otherwise:"var(--crd-color-otherwise,      #fbbf24)",doTry:"var(--crd-color-doTry,          #f59e0b)",doCatch:"var(--crd-color-doCatch,        #fbbf24)",doFinally:"var(--crd-color-doFinally,      #fbbf24)",multicast:"var(--crd-color-multicast,      #8b5cf6)",circuitBreaker:"var(--crd-color-circuitBreaker, #ef4444)"},Mt={workflow:'<rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/>',"log-in":'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/>',"log-out":'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>',"file-text":'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',"git-branch":'<line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',"corner-down-right":'<polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>',split:'<path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/>',shield:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',"alert-triangle":'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',zap:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',box:'<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>'},qt={route:"workflow",from:"log-in",to:"log-out",log:"file-text",choice:"git-branch",when:"corner-down-right",otherwise:"corner-down-right",doTry:"shield",doCatch:"alert-triangle",doFinally:"flag",multicast:"split",circuitBreaker:"zap"},Yt=r=>Mt[qt[r]]??Mt.box;function Kt(r){return Ft[r]??"var(--crd-color-default, #6366f1)"}function Xt(r,t=28){if(!r)return"";let e=r.replace(/^\.+/,"");return e.length>t?e.slice(0,t-1)+"\u2026":e}function Zt(r){if(!r)return null;let t=r.exchangesTotal??0,e=r.exchangesFailed??0;return`\u2713${t} \u2717${e}`}var at=class extends g{static properties={src:{type:String},refresh:{type:Number},filter:{type:String},_data:{state:!0},_error:{state:!0}};static styles=F`
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// ─── Layout engine (ported from RouteDiagramLayoutEngine.java) ───────────────
+
+const NODE_W = 180;
+const NODE_H = 36;
+const H_GAP = NODE_W / 2;
+const V_GAP = 40;
+const PADDING = 30;
+
+const BRANCHING_EIPS = new Set([
+    'choice', 'multicast', 'doTry', 'loadBalance', 'recipientList', 'circuitBreaker',
+]);
+
+function buildTree(nodes) {
+    if (!nodes.length) return null;
+    const root = { info: nodes[0], children: [], parent: null, subtreeWidth: 0 };
+    let current = root;
+
+    for (let i = 1; i < nodes.length; i++) {
+        const ni = nodes[i];
+        if (!ni.id) continue;
+        const tn = { info: ni, children: [], parent: null, subtreeWidth: 0 };
+
+        if (ni.level > current.info.level) {
+            current.children.push(tn);
+            tn.parent = current;
+        } else if (ni.level === current.info.level) {
+            const parent = current.parent ?? root;
+            parent.children.push(tn);
+            tn.parent = parent;
+        } else {
+            let ancestor = current.parent;
+            while (ancestor && ancestor.info.level >= ni.level) {
+                ancestor = ancestor.parent;
+            }
+            const target = ancestor ?? root;
+            target.children.push(tn);
+            tn.parent = target;
+        }
+        current = tn;
+    }
+    return root;
+}
+
+function computeSubtreeWidth(node) {
+    if (!node.children.length) {
+        node.subtreeWidth = NODE_W;
+        return NODE_W;
+    }
+    if (BRANCHING_EIPS.has(node.info.type)) {
+        let total = 0;
+        node.children.forEach((c, i) => {
+            if (i > 0) total += H_GAP;
+            total += computeSubtreeWidth(c);
+        });
+        node.subtreeWidth = Math.max(NODE_W, total);
+    } else {
+        node.subtreeWidth = node.children.reduce(
+            (max, c) => Math.max(max, computeSubtreeWidth(c)),
+            NODE_W,
+        );
+    }
+    return node.subtreeWidth;
+}
+
+function visualParentId(node) {
+    if (!node.parent) return null;
+    const parent = node.parent;
+    if (BRANCHING_EIPS.has(parent.info.type)) {
+        return parent.info.id;
+    }
+    const idx = parent.children.indexOf(node);
+    if (idx === 0) {
+        return parent.info.id;
+    }
+    return lastChainId(parent.children[idx - 1]);
+}
+
+function lastChainId(node) {
+    if (BRANCHING_EIPS.has(node.info.type) || !node.children.length) {
+        return node.info.id;
+    }
+    return lastChainId(node.children[node.children.length - 1]);
+}
+
+function assignPositions(node, x, y, parentWidth, positions) {
+    if (!node.info.id) return y + NODE_H;
+
+    const available = Math.max(node.subtreeWidth, parentWidth);
+    const nodeX = x + (available - NODE_W) / 2;
+
+    positions[node.info.id] = {
+        x: nodeX,
+        y,
+        w: NODE_W,
+        h: NODE_H,
+        parentId: visualParentId(node),
+        type: node.info.type,
+        code: node.info.code,
+        description: node.info.description ?? null,
+        uri: node.info.uri ?? null,
+        statistics: node.info.statistics ?? null,
+    };
+
+    if (!node.children.length) return y + NODE_H;
+
+    const childY = y + NODE_H + V_GAP;
+
+    if (BRANCHING_EIPS.has(node.info.type)) {
+        let childX = x + (available - node.subtreeWidth) / 2;
+        let maxBottom = childY;
+        for (const child of node.children) {
+            const bottom = assignPositions(child, childX, childY, child.subtreeWidth, positions);
+            if (bottom > maxBottom) maxBottom = bottom;
+            childX += child.subtreeWidth + H_GAP;
+        }
+        return maxBottom;
+    } else {
+        let curY = childY;
+        for (const child of node.children) {
+            curY = assignPositions(child, x, curY, available, positions) + V_GAP;
+        }
+        return curY - V_GAP;
+    }
+}
+
+function layoutRoute(route) {
+    const nodes = route.code ?? [];
+    if (!nodes.length) {
+        return { positions: {}, width: NODE_W + PADDING * 2, height: NODE_H + PADDING * 2 };
+    }
+
+    const tree = buildTree(nodes);
+    computeSubtreeWidth(tree);
+
+    const positions = {};
+    assignPositions(tree, PADDING, PADDING, tree.subtreeWidth, positions);
+
+    let maxX = 0;
+    let maxYVal = 0;
+    for (const p of Object.values(positions)) {
+        maxX = Math.max(maxX, p.x + p.w);
+        maxYVal = Math.max(maxYVal, p.y + p.h);
+    }
+
+    return { positions, width: maxX + PADDING, height: maxYVal + PADDING };
+}
+
+// ─── Web component ────────────────────────────────────────────────────────────
+
+const TYPE_COLORS = {
+    route:          'var(--crd-color-route,          #6366f1)',
+    from:           'var(--crd-color-from,           #0ea5e9)',
+    to:             'var(--crd-color-to,             #0ea5e9)',
+    log:            'var(--crd-color-log,            #64748b)',
+    choice:         'var(--crd-color-choice,         #f59e0b)',
+    when:           'var(--crd-color-when,           #fbbf24)',
+    otherwise:      'var(--crd-color-otherwise,      #fbbf24)',
+    doTry:          'var(--crd-color-doTry,          #f59e0b)',
+    doCatch:        'var(--crd-color-doCatch,        #fbbf24)',
+    doFinally:      'var(--crd-color-doFinally,      #fbbf24)',
+    multicast:      'var(--crd-color-multicast,      #8b5cf6)',
+    circuitBreaker: 'var(--crd-color-circuitBreaker, #ef4444)',
+};
+
+// SVG icon paths from Lucide (https://lucide.dev) — ISC License
+// Copyright (c) Lucide Contributors 2022; portions © Cole Bemis 2013-2022 (Feather, MIT)
+const ICONS = {
+    workflow:            '<rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/>',
+    'log-in':            '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/>',
+    'log-out':           '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>',
+    'file-text':         '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',
+    'git-branch':        '<line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+    'corner-down-right': '<polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>',
+    split:               '<path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/>',
+    shield:              '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+    'alert-triangle':    '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+    flag:                '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',
+    zap:                 '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+    box:                 '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+};
+
+const TYPE_ICON = {
+    route: 'workflow', from: 'log-in', to: 'log-out', log: 'file-text',
+    choice: 'git-branch', when: 'corner-down-right', otherwise: 'corner-down-right',
+    doTry: 'shield', doCatch: 'alert-triangle', doFinally: 'flag',
+    multicast: 'split', circuitBreaker: 'zap',
+};
+
+function iconFor(type) {
+    return ICONS[TYPE_ICON[type]] ?? ICONS.box;
+}
+
+function nodeColor(type) {
+    return TYPE_COLORS[type] ?? 'var(--crd-color-default, #6366f1)';
+}
+
+function truncate(text, maxLen = 28) {
+    if (!text) return '';
+    const clean = text.replace(/^\.+/, '');
+    return clean.length > maxLen ? clean.slice(0, maxLen - 1) + '…' : clean;
+}
+
+function formatStat(stats) {
+    if (!stats) return null;
+    const total = stats.exchangesTotal ?? 0;
+    const failed = stats.exchangesFailed ?? 0;
+    return `✓${total} ✗${failed}`;
+}
+
+function esc(s) {
+    return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+const COMPONENT_STYLE = `
+  :host {
+    display: block;
+    font-family: var(--crd-font, system-ui, sans-serif);
+    font-size: var(--crd-font-size, 12px);
+    background: var(--crd-bg, transparent);
+    color: var(--crd-fg, #1e293b);
+  }
+  @media (prefers-color-scheme: dark) {
     :host {
-      display: block;
-      font-family: var(--crd-font, system-ui, sans-serif);
-      font-size: var(--crd-font-size, 12px);
-      background: var(--crd-bg, transparent);
-      color: var(--crd-fg, #1e293b);
+      background: var(--crd-bg, #0f172a);
+      color: var(--crd-fg, #e2e8f0);
     }
-    @media (prefers-color-scheme: dark) {
-      :host {
-        background: var(--crd-bg, #0f172a);
-        color: var(--crd-fg, #e2e8f0);
-      }
+  }
+  .error   { color: #ef4444; padding: 8px; }
+  .loading { opacity: .6; padding: 8px; }
+  .route-label {
+    font-weight: 600;
+    font-size: 0.9em;
+    padding: 4px 0 2px 0;
+    opacity: .8;
+  }
+  svg { display: block; overflow: visible; }
+`;
+
+/**
+ * A web component that renders Apache Camel route diagrams as interactive SVG.
+ *
+ * Attributes:
+ *   src     - URL of the route-structure dev console endpoint (required)
+ *   refresh - polling interval in ms; 0 = disabled (default: 0)
+ *   filter  - route ID filter, forwarded as ?filter= query param (default: all routes)
+ *
+ * CSS custom properties (all optional):
+ *   --crd-bg, --crd-fg, --crd-edge, --crd-font, --crd-font-size, --crd-stat
+ *   --crd-color-{route,from,to,log,choice,when,otherwise,doTry,doCatch,doFinally,...,default}
+ *
+ * @since 4.21
+ */
+class CamelRouteDiagram extends HTMLElement {
+    static observedAttributes = ['src', 'refresh', 'filter'];
+
+    #src = '';
+    #refresh = 0;
+    #filter = '';
+    #timer = null;
+    #uid = Math.random().toString(36).slice(2);
+    #controller = null;
+    #data = null;
+    #error = null;
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
     }
-    .error   { color: #ef4444; padding: 8px; }
-    .loading { opacity: .6; padding: 8px; }
-    .route-label {
-      font-weight: 600;
-      font-size: 0.9em;
-      padding: 4px 0 2px 0;
-      opacity: .8;
+
+    connectedCallback() {
+        this.#scheduleRefresh();
+        this.#render();
+        this.#doFetch();
     }
-    svg { display: block; overflow: visible; }
-  `;#t=null;#r=Math.random().toString(36).slice(2);#e=null;constructor(){super(),this.src="",this.refresh=0,this.filter="",this._data=null,this._error=null}connectedCallback(){super.connectedCallback(),this.requestUpdate()}disconnectedCallback(){super.disconnectedCallback(),clearInterval(this.#t),this.#t=null,this.#e?.abort()}updated(t){let e=t.has("src")||t.has("filter"),s=t.has("refresh"),i=t.size===0;(s||i)&&(clearInterval(this.#t),this.#t=null,this.refresh>0&&(this.#t=setInterval(()=>this.#s(),this.refresh))),(e||i)&&this.#s()}async#s(){let t=this.src?.trim();if(t){this.#e?.abort(),this.#e=new AbortController;try{let e=new URL(t,location.href);this.filter&&e.searchParams.set("filter",this.filter),e.searchParams.set("metric","true");let s=await fetch(e,{signal:this.#e.signal});if(!s.ok){this._error=`HTTP ${s.status} ${s.statusText}`,this._data=null;return}let i=await s.json();if(!Array.isArray(i?.routes)){this._error="Unexpected response: missing routes array",this._data=null;return}this._data=i,this._error=null}catch(e){e.name!=="AbortError"&&(this._error=e.message)}}}render(){return this._error?T`<p class="error">⚠ ${this._error}</p>`:this._data?T`${this._data.routes.map(t=>this.#i(t))}`:T`<p class="loading">Loading diagram…</p>`}#i(t){let{positions:e,width:s,height:i}=Nt(t),n=Object.keys(e),o=`arrow-${this.#r}`;return T`
-      <div class="route-label">${t.routeId}</div>
-      <svg width="${s}" height="${i}" viewBox="0 0 ${s} ${i}"
-           aria-label="Route diagram for ${t.routeId}">
+
+    disconnectedCallback() {
+        clearInterval(this.#timer);
+        this.#timer = null;
+        this.#controller?.abort();
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+        switch (name) {
+            case 'src':
+                this.#src = newValue ?? '';
+                if (this.isConnected) this.#doFetch();
+                break;
+            case 'filter':
+                this.#filter = newValue ?? '';
+                if (this.isConnected) this.#doFetch();
+                break;
+            case 'refresh':
+                this.#refresh = Number(newValue) || 0;
+                if (this.isConnected) this.#scheduleRefresh();
+                break;
+        }
+    }
+
+    #scheduleRefresh() {
+        clearInterval(this.#timer);
+        this.#timer = null;
+        if (this.#refresh > 0) {
+            this.#timer = setInterval(() => this.#doFetch(), this.#refresh);
+        }
+    }
+
+    async #doFetch() {
+        const src = this.#src?.trim();
+        if (!src) return;
+        // Cancel any in-flight request so the last-sent response always wins.
+        this.#controller?.abort();
+        this.#controller = new AbortController();
+        try {
+            const url = new URL(src, location.href);
+            if (this.#filter) url.searchParams.set('filter', this.#filter);
+            url.searchParams.set('metric', 'true');
+            const res = await fetch(url, { signal: this.#controller.signal });
+            if (!res.ok) {
+                this.#error = `HTTP ${res.status} ${res.statusText}`;
+                this.#data = null;
+                this.#render();
+                return;
+            }
+            const data = await res.json();
+            if (!Array.isArray(data?.routes)) {
+                this.#error = 'Unexpected response: missing routes array';
+                this.#data = null;
+                this.#render();
+                return;
+            }
+            this.#data = data;
+            this.#error = null;
+            this.#render();
+        } catch (e) {
+            if (e.name !== 'AbortError') {
+                this.#error = e.message;
+                this.#render();
+            }
+        }
+    }
+
+    #render() {
+        this.shadowRoot.innerHTML = this.#buildHTML();
+    }
+
+    #buildHTML() {
+        const style = `<style>${COMPONENT_STYLE}</style>`;
+        if (this.#error) return `${style}<p class="error">⚠ ${esc(this.#error)}</p>`;
+        if (!this.#data) return `${style}<p class="loading">Loading diagram…</p>`;
+        return style + this.#data.routes.map(r => this.#routeHTML(r)).join('');
+    }
+
+    #routeHTML(route) {
+        const { positions, width, height } = layoutRoute(route);
+        const ids = Object.keys(positions);
+        // The <marker> is defined inside the same <svg> it is used in so that
+        // url(#id) paint-server references resolve correctly in all browsers,
+        // including Firefox which does not resolve them across sibling <svg> elements.
+        const markerId = `arrow-${this.#uid}`;
+        return `
+      <div class="route-label">${esc(route.routeId)}</div>
+      <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
+           aria-label="Route diagram for ${esc(route.routeId)}">
         <defs>
-          <marker id="${o}" markerWidth="8" markerHeight="8"
+          <marker id="${markerId}" markerWidth="8" markerHeight="8"
                   refX="6" refY="3" orient="auto">
             <path d="M0,0 L0,6 L8,3 z" fill="var(--crd-edge, #94a3b8)"/>
           </marker>
         </defs>
-        ${n.map(h=>this.#n(h,e,o))}
-        ${n.map(h=>this.#o(h,e[h]))}
-      </svg>
-    `}#n(t,e,s){let i=e[t];if(!i.parentId)return d;let n=e[i.parentId];if(!n)return d;let o=n.x+180/2,h=n.y+36,a=i.x+180/2,l=i.y,p=(h+l)/2;return W`<path
-      d="M${o},${h} C${o},${p} ${a},${p} ${a},${l}"
+        ${ids.map(id => this.#edgeHTML(id, positions, markerId)).join('')}
+        ${ids.map(id => this.#nodeHTML(positions[id])).join('')}
+      </svg>`;
+    }
+
+    #edgeHTML(id, positions, markerId) {
+        const pos = positions[id];
+        if (!pos.parentId) return '';
+        const parent = positions[pos.parentId];
+        if (!parent) return '';
+
+        const x1 = parent.x + NODE_W / 2;
+        const y1 = parent.y + NODE_H;
+        const x2 = pos.x + NODE_W / 2;
+        const y2 = pos.y;
+        const my = (y1 + y2) / 2;
+
+        return `<path
+      d="M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}"
       fill="none"
       stroke="var(--crd-edge, #94a3b8)"
       stroke-width="1.5"
-      marker-end="url(#${s})"/>`}#o(t,e){let s=Xt(e.description??e.code),i=Zt(e.statistics),n=Kt(e.type),h=e.x+180/2+9,a=e.y+36/2+4;return W`
-      <g role="img" aria-label="${e.type}: ${s}">
-        <rect x="${e.x}" y="${e.y}" width="${180}" height="${36}"
+      marker-end="url(#${markerId})"/>`;
+    }
+
+    #nodeHTML(pos) {
+        const label = truncate(pos.description ?? pos.code);
+        const stat  = formatStat(pos.statistics);
+        const fill  = nodeColor(pos.type);
+        const cx    = pos.x + NODE_W / 2;
+        const tx    = cx + 9;                   // shift label clear of the icon
+        const textY = pos.y + NODE_H / 2 + 4;
+
+        return `
+      <g role="img" aria-label="${esc(pos.type)}: ${esc(label)}">
+        <rect x="${pos.x}" y="${pos.y}" width="${NODE_W}" height="${NODE_H}"
               rx="6" ry="6"
-              fill="${n}" fill-opacity="0.15"
-              stroke="${n}" stroke-width="1.5"/>
-        <g transform="translate(${e.x+12},${e.y+22/2}) scale(0.5833)"
-              fill="none" stroke="${n}" stroke-width="2.4"
+              fill="${fill}" fill-opacity="0.15"
+              stroke="${fill}" stroke-width="1.5"/>
+        <g transform="translate(${pos.x + 12},${pos.y + (NODE_H - 14) / 2}) scale(0.5833)"
+              fill="none" stroke="${fill}" stroke-width="2.4"
               stroke-linecap="round" stroke-linejoin="round" pointer-events="none">
-          ${Ct(Yt(e.type))}
+          ${iconFor(pos.type)}
         </g>
-        <text x="${h}" y="${i?a-4:a}"
+        <text x="${tx}" y="${stat ? textY - 4 : textY}"
               text-anchor="middle" fill="currentColor"
               font-size="11">
-          ${s}
+          ${esc(label)}
         </text>
-        ${i?W`
-          <text x="${h}" y="${e.y+36-3}"
-                text-anchor="middle"
-                fill="var(--crd-stat, #64748b)" font-size="9">
-            ${i}
-          </text>`:d}
-      </g>`}};customElements.define("camel-route-diagram",at);
+        ${stat ? `
+        <text x="${tx}" y="${pos.y + NODE_H - 3}"
+              text-anchor="middle"
+              fill="var(--crd-stat, #64748b)" font-size="9">
+          ${esc(stat)}
+        </text>` : ''}
+      </g>`;
+    }
+}
+
+customElements.define('camel-route-diagram', CamelRouteDiagram);

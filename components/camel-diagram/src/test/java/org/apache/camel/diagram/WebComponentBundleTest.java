@@ -55,4 +55,17 @@ class WebComponentBundleTest {
                     .contains("camel-route-diagram");
         }
     }
+
+    @Test
+    void thirdPartyNoticesMentionsLucide() throws IOException {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/resources/camel/diagram/THIRD-PARTY-NOTICES.txt")) {
+            assertThat(is).isNotNull();
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content)
+                    .as("THIRD-PARTY-NOTICES.txt must attribute Lucide with ISC license")
+                    .contains("Lucide")
+                    .contains("ISC");
+        }
+    }
 }
