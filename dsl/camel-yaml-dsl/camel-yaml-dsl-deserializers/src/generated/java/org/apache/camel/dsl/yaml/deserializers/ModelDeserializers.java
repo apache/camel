@@ -11,6 +11,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerEndpointAwareBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.model.A2ASubTaskDefinition;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.BeanFactoryDefinition;
@@ -265,6 +266,92 @@ import org.snakeyaml.engine.v2.nodes.Node;
 @Generated("org.apache.camel.maven.dsl.yaml.GenerateYamlDeserializersMojo")
 public final class ModelDeserializers extends YamlDeserializerSupport {
     private ModelDeserializers() {
+    }
+
+    @YamlType(
+            nodes = "a2aSubTask",
+            types = org.apache.camel.model.A2ASubTaskDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "A2A Sub Task",
+            description = "Groups route steps and emits A2A progress events before, after, or when the grouped work fails.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Disables this EIP from the route.", displayName = "Disabled"),
+                    @YamlProperty(name = "emitAfter", type = "string", description = "Simple expression template to emit after the nested steps complete successfully", displayName = "Emit After"),
+                    @YamlProperty(name = "emitBefore", type = "string", description = "Simple expression template to emit before the nested steps run", displayName = "Emit Before"),
+                    @YamlProperty(name = "emitOnError", type = "string", description = "Simple expression template to emit when the nested steps fail", displayName = "Emit On Error"),
+                    @YamlProperty(name = "failIfNoTaskContext", type = "boolean", defaultValue = "false", description = "Whether to fail if the current Exchange does not have an active A2A task context", displayName = "Fail If No Task Context"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
+                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
+            }
+    )
+    public static class A2ASubTaskDefinitionDeserializer extends YamlDeserializerBase<A2ASubTaskDefinition> {
+        public A2ASubTaskDefinitionDeserializer() {
+            super(A2ASubTaskDefinition.class);
+        }
+
+        @Override
+        protected A2ASubTaskDefinition newInstance() {
+            return new A2ASubTaskDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(A2ASubTaskDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "emitAfter": {
+                    String val = asText(node);
+                    target.setEmitAfter(val);
+                    break;
+                }
+                case "emitBefore": {
+                    String val = asText(node);
+                    target.setEmitBefore(val);
+                    break;
+                }
+                case "emitOnError": {
+                    String val = asText(node);
+                    target.setEmitOnError(val);
+                    break;
+                }
+                case "failIfNoTaskContext": {
+                    String val = asText(node);
+                    target.setFailIfNoTaskContext(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "note": {
+                    String val = asText(node);
+                    target.setNote(val);
+                    break;
+                }
+                case "steps": {
+                    setSteps(target, node);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     @YamlType(

@@ -70,6 +70,49 @@ public class ModelParser extends BaseParser {
         super(reader, namespace);
     }
 
+    protected A2ASubTaskDefinition doParseA2ASubTaskDefinition() throws IOException, XmlPullParserException {
+        return doParse(new A2ASubTaskDefinition(), (def, key, val) -> switch (key) {
+                case "emitAfter": def.setEmitAfter(val); yield true;
+                case "emitBefore": def.setEmitBefore(val); yield true;
+                case "emitOnError": def.setEmitOnError(val); yield true;
+                case "failIfNoTaskContext": def.setFailIfNoTaskContext(val); yield true;
+                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
+            }, outputDefinitionElementHandler(), noValueHandler());
+    }
+    protected <T extends OutputDefinition> ElementHandler<T> outputDefinitionElementHandler() {
+        return (def, key) -> {
+            ProcessorDefinition v = doParseProcessorDefinitionRef(key);
+            if (v != null) {
+                doAdd(v, def.getOutputs(), def::setOutputs);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        };
+    }
+    protected OutputDefinition doParseOutputDefinition() throws IOException, XmlPullParserException {
+        return doParse(new OutputDefinition(), processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
+    }
+    protected <T extends ProcessorDefinition> AttributeHandler<T> processorDefinitionAttributeHandler() {
+        return (def, key, val) -> switch (key) {
+            case "disabled": def.setDisabled(val); yield true;
+            default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
+        };
+    }
+    protected <T extends OptionalIdentifiedDefinition> AttributeHandler<T> optionalIdentifiedDefinitionAttributeHandler() {
+        return (def, key, val) -> switch (key) {
+            case "customId": def.setCustomId(Boolean.valueOf(val)); yield true;
+            case "description": def.setDescription(val); yield true;
+            case "id": def.setId(val); yield true;
+            case "note": def.setNote(val); yield true;
+            default: yield false;
+        };
+    }
+    protected <T extends OptionalIdentifiedDefinition> ElementHandler<T> optionalIdentifiedDefinitionElementHandler() {
+        return (def, key) -> switch (key) {
+            case "generatedId": def.setGeneratedId(doParseText()); yield true;
+            default: yield false;
+        };
+    }
     protected AggregateDefinition doParseAggregateDefinition() throws IOException, XmlPullParserException {
         return doParse(new AggregateDefinition(), (def, key, val) -> switch (key) {
                 case "aggregateController": def.setAggregateController(val); yield true;
@@ -124,40 +167,6 @@ public class ModelParser extends BaseParser {
                 case "retryDelay": def.setRetryDelay(val); yield true;
                 default: yield false;
             }, noElementHandler(), noValueHandler());
-    }
-    protected <T extends OutputDefinition> ElementHandler<T> outputDefinitionElementHandler() {
-        return (def, key) -> {
-            ProcessorDefinition v = doParseProcessorDefinitionRef(key);
-            if (v != null) {
-                doAdd(v, def.getOutputs(), def::setOutputs);
-                return true;
-            }
-            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
-        };
-    }
-    protected OutputDefinition doParseOutputDefinition() throws IOException, XmlPullParserException {
-        return doParse(new OutputDefinition(), processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
-    }
-    protected <T extends ProcessorDefinition> AttributeHandler<T> processorDefinitionAttributeHandler() {
-        return (def, key, val) -> switch (key) {
-            case "disabled": def.setDisabled(val); yield true;
-            default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
-        };
-    }
-    protected <T extends OptionalIdentifiedDefinition> AttributeHandler<T> optionalIdentifiedDefinitionAttributeHandler() {
-        return (def, key, val) -> switch (key) {
-            case "customId": def.setCustomId(Boolean.valueOf(val)); yield true;
-            case "description": def.setDescription(val); yield true;
-            case "id": def.setId(val); yield true;
-            case "note": def.setNote(val); yield true;
-            default: yield false;
-        };
-    }
-    protected <T extends OptionalIdentifiedDefinition> ElementHandler<T> optionalIdentifiedDefinitionElementHandler() {
-        return (def, key) -> switch (key) {
-            case "generatedId": def.setGeneratedId(doParseText()); yield true;
-            default: yield false;
-        };
     }
     protected BeanDefinition doParseBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new BeanDefinition(), (def, key, val) -> switch (key) {
@@ -2725,6 +2734,7 @@ public class ModelParser extends BaseParser {
     }
     protected ProcessorDefinition doParseProcessorDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
+            case "a2aSubTask": return doParseA2ASubTaskDefinition();
             case "aggregate": return doParseAggregateDefinition();
             case "bean": return doParseBeanDefinition();
             case "doCatch": return doParseCatchDefinition();

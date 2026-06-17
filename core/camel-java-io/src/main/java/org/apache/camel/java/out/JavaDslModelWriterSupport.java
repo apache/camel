@@ -124,6 +124,7 @@ public abstract class JavaDslModelWriterSupport {
             "clientRequestValidation", "clientResponseValidation",
             "completionEager", "deadLetterHandleNewException",
             "eager", "enableCORS", "enableNoContentResponse",
+            "failIfNoTaskContext",
             "inheritErrorHandler", "intermittent",
             "parallelProcessing", "precondition",
             "removeOnFailure", "skipBindingOnErrorCode", "skipDuplicate",

@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.model.A2ASubTaskDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -271,6 +272,35 @@ public class YamlModelWriterTest {
         String out = writer.printAsYaml(List.of(jo));
         String expected = stripLineComments(Paths.get("src/test/resources/yaml-route-wiretap.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testA2ASubTask() throws Exception {
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        A2ASubTaskDefinition subTask = new A2ASubTaskDefinition();
+        subTask.setEmitBefore("Before ${body}");
+        subTask.setEmitAfter("After ${body}");
+        subTask.setEmitOnError("Failed ${exception.message}");
+        subTask.setFailIfNoTaskContext("true");
+        subTask.addOutput(new ToDefinition("mock:result"));
+        route.addOutput(subTask);
+
+        JsonObject jo = writer.writeRouteDefinition(route);
+        String out = writer.printAsYaml(List.of(jo));
+
+        Assertions.assertTrue(out.contains("- a2aSubTask:"));
+        Assertions.assertTrue(out.contains("emitBefore:"));
+        Assertions.assertTrue(out.contains("Before ${body}"));
+        Assertions.assertTrue(out.contains("emitAfter:"));
+        Assertions.assertTrue(out.contains("After ${body}"));
+        Assertions.assertTrue(out.contains("emitOnError:"));
+        Assertions.assertTrue(out.contains("Failed ${exception.message}"));
+        Assertions.assertTrue(out.contains("failIfNoTaskContext: true"));
     }
 
     @Test

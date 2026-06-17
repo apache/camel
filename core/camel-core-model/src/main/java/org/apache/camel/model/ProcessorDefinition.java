@@ -1457,6 +1457,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Creates an A2A Sub Task EIP.
+     * <p/>
+     * This requires having camel-a2a on the classpath.
+     *
+     * @return the builder
+     */
+    public A2ASubTaskDefinition a2aSubTask() {
+        A2ASubTaskDefinition answer = new A2ASubTaskDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * Creates a Kamelet EIP.
      * <p/>
      * This requires having camel-kamelet on the classpath.

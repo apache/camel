@@ -471,6 +471,69 @@ You can also emit with an explicit state:
 
 NOTE: Use `script` EIP (not `setBody`) for `${a2a:emit()}` calls — `script` evaluates the expression for its side effect without changing the message body. Use `setBody` only for the final response.
 
+=== Scoped progress updates with `a2aSubTask`
+
+Camel routes can group related work with the `a2aSubTask` EIP and emit progress updates before, after, or when the grouped steps fail.
+This is a regular Camel route step, not a YAML-only extension, and it can be used from Camel's model-based DSLs when `camel-a2a` is on the classpath.
+The `emitBefore`, `emitAfter`, and `emitOnError` fields are optional and are evaluated as Simple expressions against the current Exchange.
+The nested `steps` behave like normal Camel route steps: in YAML they are configured under `steps`, and in Java DSL they are added after `.a2aSubTask()` until `.end()`.
+If the nested steps fail, `emitOnError` can access the original exception, for example with `$\{exception.message}`, and the original exception continues to propagate through the route.
+Failures while evaluating the `emitBefore`, `emitAfter`, or `emitOnError` Simple expressions are route failures.
+Failures while storing or notifying the resulting A2A progress event are best-effort: they are logged at debug level and do not stop nested work, fail an otherwise successful exchange, or replace the original nested-step exception.
+By default, emitting progress outside an active A2A task context is a no-op.
+Set `failIfNoTaskContext=true` when a route should fail instead if the current Exchange does not carry an active A2A task.
+An active task context is normally created by an A2A consumer while it is processing a task.
+Use stable `id` values on long-lived sub-tasks so route tracing and route-structure views keep stable node names.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: a2a:classpath:agent-card.json
+      parameters:
+        protocolBinding: JSONRPC
+        httpServerComponent: undertow
+        validateAuth: false
+      steps:
+        - a2aSubTask:
+            id: search-docs-progress
+            emitBefore: "Searching docs..."
+            emitAfter: "Docs found: ${body.size()}"
+            emitOnError: "Error searching docs: ${exception.message}"
+            failIfNoTaskContext: true
+            steps:
+              - to:
+                  uri: "elasticsearch:docs?operation=Search"
+        - a2aSubTask:
+            id: draft-answer-progress
+            emitBefore: "Drafting answer..."
+            emitAfter: "Answer drafted: ${body}"
+            emitOnError: "Error drafting answer: ${exception.message}"
+            steps:
+              - bean:
+                  ref: answerDraftingService
+                  method: draft
+        - setBody:
+            simple: "Final answer: ${body}"
+----
+
+The route examples in this section are local-only because they disable operation auth. Keep `validateAuth=true` and configure a card security scheme for network-exposed agents.
+
+The same route step is also available from Java DSL:
+
+[source,java]
+----
+from("a2a:classpath:agent-card.json?protocolBinding=JSONRPC&httpServerComponent=undertow&validateAuth=false")
+    .a2aSubTask()
+        .id("search-docs-progress")
+        .emitBefore("Searching docs...")
+        .emitAfter("Docs found: ${body.size()}")
+        .emitOnError("Error searching docs: ${exception.message}")
+        .failIfNoTaskContext(true)
+        .to("elasticsearch:docs?operation=Search")
+    .end();
+----
+
 For advanced use cases, `A2AProgress` also supports emitting structured artifacts and intermediate messages:
 
 ._Java-only: emitting structured artifacts and intermediate messages with A2AProgress_

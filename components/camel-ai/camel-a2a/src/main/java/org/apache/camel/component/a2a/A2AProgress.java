@@ -58,14 +58,24 @@ public final class A2AProgress {
      * @param message  human-readable progress message
      */
     public static void emit(Exchange exchange, TaskState state, String message) {
-        String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
-        A2ATaskStore store = findStore(exchange, taskId);
-        if (store == null || taskId == null) {
+        TaskContext taskContext = resolveTaskContext(exchange);
+        if (taskContext == null) {
             return;
         }
 
         TaskStatus status = buildStatus(state, message);
-        store.updateStatusAndNotify(taskId, status);
+        taskContext.store.updateStatusAndNotify(taskContext.taskId, status);
+    }
+
+    /**
+     * Whether the exchange has an active A2A task context that can receive progress updates.
+     *
+     * @param  exchange the current exchange
+     * @return          true if a task id and matching task store entry are available
+     */
+    public static boolean hasTaskContext(Exchange exchange) {
+        TaskContext taskContext = resolveTaskContext(exchange);
+        return taskContext != null && taskContext.store.get(taskContext.taskId) != null;
     }
 
     /**
@@ -77,24 +87,23 @@ public final class A2AProgress {
      * @param lastChunk whether this is the final chunk
      */
     public static void emitArtifact(Exchange exchange, Artifact artifact, Boolean append, Boolean lastChunk) {
-        String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
-        A2ATaskStore store = findStore(exchange, taskId);
-        if (store == null || taskId == null) {
+        TaskContext taskContext = resolveTaskContext(exchange);
+        if (taskContext == null) {
             return;
         }
 
-        synchronized (store) {
-            Task task = store.get(taskId);
+        synchronized (taskContext.store) {
+            Task task = taskContext.store.get(taskContext.taskId);
             if (task != null) {
                 List<Artifact> artifacts = task.artifacts() != null ? new ArrayList<>(task.artifacts()) : new ArrayList<>();
                 artifacts.add(artifact);
                 Task updated = Task.builder(task).artifacts(artifacts).build();
-                store.put(taskId, updated);
+                taskContext.store.put(taskContext.taskId, updated);
 
                 TaskArtifactUpdateEvent event = TaskArtifactUpdateEvent.builder()
-                        .taskId(taskId).contextId(task.contextId())
+                        .taskId(taskContext.taskId).contextId(task.contextId())
                         .artifact(artifact).append(append).lastChunk(lastChunk).build();
-                store.notifySubscribers(taskId, StreamResponse.ofArtifactUpdate(event));
+                taskContext.store.notifySubscribers(taskContext.taskId, StreamResponse.ofArtifactUpdate(event));
             }
         }
     }
@@ -106,22 +115,33 @@ public final class A2AProgress {
      * @param message  the message to emit
      */
     public static void emitMessage(Exchange exchange, Message message) {
-        String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
-        A2ATaskStore store = findStore(exchange, taskId);
-        if (store == null || taskId == null) {
+        TaskContext taskContext = resolveTaskContext(exchange);
+        if (taskContext == null) {
             return;
         }
 
-        synchronized (store) {
-            Task task = store.get(taskId);
+        synchronized (taskContext.store) {
+            Task task = taskContext.store.get(taskContext.taskId);
             if (task != null) {
                 List<Message> history = task.history() != null ? new ArrayList<>(task.history()) : new ArrayList<>();
                 history.add(message);
                 Task updated = Task.builder(task).history(history).build();
-                store.put(taskId, updated);
-                store.notifySubscribers(taskId, StreamResponse.ofMessage(message));
+                taskContext.store.put(taskContext.taskId, updated);
+                taskContext.store.notifySubscribers(taskContext.taskId, StreamResponse.ofMessage(message));
             }
         }
+    }
+
+    private static TaskContext resolveTaskContext(Exchange exchange) {
+        String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+        if (taskId == null) {
+            return null;
+        }
+        A2ATaskStore store = findStore(exchange, taskId);
+        if (store == null) {
+            return null;
+        }
+        return new TaskContext(taskId, store);
     }
 
     /**
@@ -137,7 +157,6 @@ public final class A2AProgress {
                 return store;
             }
         }
-        // Fallback: scan component endpoints
         try {
             if (taskId != null) {
                 for (Endpoint ep : exchange.getContext().getEndpoints()) {
@@ -150,7 +169,7 @@ public final class A2AProgress {
                 }
             }
         } catch (Exception e) {
-            // Component not found
+            // Preserve best-effort progress emission behavior for routes that call A2A functions outside a task context.
         }
         return null;
     }
@@ -164,5 +183,15 @@ public final class A2AProgress {
             return new TaskStatus(state, msg);
         }
         return new TaskStatus(state);
+    }
+
+    private static final class TaskContext {
+        private final String taskId;
+        private final A2ATaskStore store;
+
+        private TaskContext(String taskId, A2ATaskStore store) {
+            this.taskId = taskId;
+            this.store = store;
+        }
     }
 }

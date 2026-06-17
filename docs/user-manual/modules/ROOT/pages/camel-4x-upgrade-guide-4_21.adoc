@@ -378,6 +378,13 @@ See xref:components:others:yaml-dsl.adoc[YAML DSL] for details.
 A new `camel-a2a` component has been added providing support for the Agent-to-Agent (A2A) protocol.
 The component scheme is `a2a`. As a consumer, it exposes Camel routes as A2A-compliant agents;
 as a producer, it calls remote A2A agents. This component has **Preview** support level.
+The component also provides an `a2aSubTask` route step for scoped progress updates around nested route steps in Camel's model-based DSLs.
+This is a generated Camel route model step available to DSLs such as Java, XML, and YAML; it is not a component-provided YAML deserializer extension.
+Routes that use it need `camel-a2a` on the classpath for runtime processor creation.
+The progress expressions are route semantics, so expression evaluation failures fail the route.
+Failures while storing or notifying the resulting progress event are best-effort and do not replace the route outcome.
+Progress emission outside an active A2A task context is a no-op by default; set `failIfNoTaskContext=true` on
+`a2aSubTask` when such use should fail route processing.
 
 Consumer routes require an HTTP server component on the classpath. Use `camel-platform-http-vertx` for JSON-RPC agents, or use `camel-undertow` / `camel-jetty` when serving REST custom-method routes such as `/message:send` or real-time SSE streaming. The default Vert.x/platform-http transport treats colons as path-parameter delimiters and buffers `InputStream` streaming responses.
 

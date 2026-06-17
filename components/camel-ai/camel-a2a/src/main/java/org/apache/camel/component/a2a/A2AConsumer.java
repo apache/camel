@@ -1175,11 +1175,12 @@ public class A2AConsumer extends DefaultConsumer {
         messageSendOperation.parseRequest(processorExchange, request,
                 getEndpoint().getConfiguration().getDataFormat());
 
+        A2ATaskStore store = getEndpoint().getTaskStore();
         String taskId = request.getMessage().taskId();
         String contextId = request.getMessage().contextId();
+        boolean createdTask = false;
 
         if (taskId != null && !taskId.isEmpty()) {
-            A2ATaskStore store = getEndpoint().getTaskStore();
             Task existing = store.get(taskId);
             if (existing == null) {
                 throw new TaskNotFoundException("Task not found: " + taskId);
@@ -1190,6 +1191,7 @@ public class A2AConsumer extends DefaultConsumer {
             }
         } else {
             taskId = UUID.randomUUID().toString();
+            createdTask = true;
         }
         rememberTaskOwner(taskId, exchange);
 
@@ -1208,12 +1210,20 @@ public class A2AConsumer extends DefaultConsumer {
                                           + getEndpoint().getConfiguration().getMaxConcurrentTasks() + " concurrent tasks");
         }
         try {
+            if (createdTask) {
+                Task submittedTask = newSubmittedTask(taskId, contextId);
+                store.put(taskId, submittedTask);
+                store.notifySubscribers(taskId, StreamResponse.ofStatusUpdate(buildStatusEvent(submittedTask)));
+            }
             invokeExtensionHandlersBeforeRoute(processorExchange);
             getProcessor().process(processorExchange);
             if (processorExchange.getException() != null) {
                 throw processorExchange.getException();
             }
             invokeExtensionHandlersAfterRoute(processorExchange);
+        } catch (Exception e) {
+            store.updateStatusAndNotify(taskId, new TaskStatus(TaskState.FAILED));
+            throw e;
         } finally {
             releasePermit();
         }
@@ -1224,12 +1234,14 @@ public class A2AConsumer extends DefaultConsumer {
 
         if (response.isTaskResponse()) {
             Task task = response.getTask();
-            A2ATaskStore store = getEndpoint().getTaskStore();
             store.put(task.id(), task);
             if (task.status() != null) {
                 store.notifySubscribers(task.id(),
                         StreamResponse.ofStatusUpdate(buildStatusEvent(task)));
             }
+        } else if (createdTask) {
+            store.delete(taskId);
+            forgetTaskOwner(taskId);
         }
 
         return response;

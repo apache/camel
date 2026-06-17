@@ -1231,6 +1231,44 @@ https://jsoup.org/cookbook/cleaning-html/safelist-sanitizer[sanitize untrusted H
 The `${htmlParse()`} is used to parse the HTML into a Java `org.jsoup.nodes.Document` structure which is similar to `org.w3c.Document`
 but uses the JSoup API instead.
 
+=== A2A Functions
+
+From *Camel 4.21* onwards, Camel has built-in Agent-to-Agent (A2A) functions to emit task progress and extract data
+from A2A messages, tasks, and agent cards.
+
+This requires having `camel-a2a` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`a2a:emit(message)` | `String` |Emits an A2A task progress update with `WORKING` state. Requires an active A2A task context.
+|`a2a:emit(state,message)` | `String` |Emits an A2A task progress update with the given task state, such as `WORKING`, `INPUT_REQUIRED`, `COMPLETED`, `FAILED`, `CANCELED`, `REJECTED`, or `AUTH_REQUIRED`.
+|`a2a:text` | `String` |Extracts `TextPart` content from an A2A Task or Message in the message body.
+|`a2a:text(expression)` | `String` |Extracts `TextPart` content from an A2A Task or Message returned by the expression.
+|`a2a:data` | `String` |Extracts `DataPart` content as a JSON string from an A2A Task or Message in the message body.
+|`a2a:data(expression)` | `String` |Extracts `DataPart` content as a JSON string from an A2A Task or Message returned by the expression.
+|`a2a:file` | `String` |Extracts `FilePart` content from an A2A Task or Message in the message body.
+|`a2a:file(expression)` | `String` |Extracts `FilePart` content from an A2A Task or Message returned by the expression.
+|`a2a:card` | `String` |Returns the resolved A2A agent card as a JSON string.
+|`a2a:card.name` | `String` |Returns the resolved A2A agent card name.
+|`a2a:card.description` | `String` |Returns the resolved A2A agent card description.
+|`a2a:card.url` | `String` |Returns the resolved A2A agent card URL.
+|`a2a:card.version` | `String` |Returns the resolved A2A agent card version.
+|`a2a:card.skills` | `String` |Returns the resolved A2A agent card skills as human-readable text.
+|`a2a:card.skills.json` | `String` |Returns the resolved A2A agent card skills as a JSON array string.
+|`a2a:card.iconUrl` | `String` |Returns the resolved A2A agent card icon URL.
+|`a2a:card.documentationUrl` | `String` |Returns the resolved A2A agent card documentation URL.
+|`a2a:card.provider` | `String` |Returns the resolved A2A agent card provider as a JSON string.
+|`a2a:card.capabilities` | `String` |Returns the resolved A2A agent card capabilities as a JSON string.
+|`a2a:card.supportedInterfaces` | `String` |Returns the resolved A2A agent card supported interfaces as a JSON array string.
+|`a2a:card.securitySchemes` | `String` |Returns the resolved A2A agent card security schemes as a JSON object string.
+|`a2a:card.securityRequirements` | `String` |Returns the resolved A2A agent card security requirements as a JSON array string.
+|`a2a:card.security` | `String` |Returns the resolved A2A agent card legacy security field as a JSON array string.
+|====
+
+For example, `${a2a:emit('Searching documents')}` emits a `WORKING` progress event for the current A2A task.
+Use `${a2a:emit(INPUT_REQUIRED,'Please provide your address')}` to emit progress with an explicit task state.
+
 == Built-in Symbols
 
 The following special symbols can be used when escaped with `\` as below:

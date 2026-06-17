@@ -98,6 +98,19 @@ class A2AProgressTest {
         assertThat(A2AProgress.findStore(exchange, "t1")).isNull();
     }
 
+    @Test
+    void hasTaskContextReturnsFalseWithoutTaskId() {
+        Exchange exchange = new DefaultExchange(context);
+        assertThat(A2AProgress.hasTaskContext(exchange)).isFalse();
+    }
+
+    @Test
+    void hasTaskContextReturnsFalseWithoutTaskStore() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(A2AConstants.TASK_ID, "t1");
+        assertThat(A2AProgress.hasTaskContext(exchange)).isFalse();
+    }
+
     // ---- Positive-path tests ----
 
     private A2AEndpoint createEndpointWithTask(String taskId) throws Exception {
@@ -144,6 +157,16 @@ class A2AProgressTest {
         assertThat(received).hasSize(1);
         assertThat(received.get(0).getStatusUpdate()).isNotNull();
         assertThat(received.get(0).getStatusUpdate().status().state()).isEqualTo(TaskState.WORKING);
+    }
+
+    @Test
+    void hasTaskContextReturnsTrueWhenTaskStoreHasTask() throws Exception {
+        String taskId = "task-context";
+        A2AEndpoint endpoint = createEndpointWithTask(taskId);
+
+        Exchange exchange = createExchangeWithEndpoint(endpoint, taskId);
+
+        assertThat(A2AProgress.hasTaskContext(exchange)).isTrue();
     }
 
     @Test
