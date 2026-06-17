@@ -214,6 +214,7 @@ class ExportCamelMain extends Export {
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", buildDependencyList(deps));
+        model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
 
         // kubernetes/docker properties
         enrichKubernetesModel(model, settings, profile);
@@ -254,7 +255,6 @@ class ExportCamelMain extends Export {
         model.put("hasJib", jib || jkube);
         model.put("hasJkube", jkube);
         if (jib || jkube) {
-            model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
             model.put("hasJibFromAuth",
                     prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth.")));
             model.put("hasJibToAuth",

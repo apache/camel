@@ -210,6 +210,7 @@ class TemplateHelperTest {
         model.put("KubernetesProperties", List.of());
         model.put("hasJib", false);
         model.put("hasJkube", false);
+        model.put("JibMavenPluginVersion", "3.5.1");
 
         List<Map<String, Object>> deps = new ArrayList<>();
         Map<String, Object> dep = new HashMap<>();
@@ -240,8 +241,7 @@ class TemplateHelperTest {
         // lib dependency should use system scope with ${project.basedir}
         assertTrue(result.contains("${project.basedir}"), "Lib dep should have project.basedir system path");
         assertTrue(result.contains("<scope>system</scope>"));
-        // No jib/jkube plugins
-        assertFalse(result.contains("jib-maven-plugin"));
+        // No jkube plugins
         assertFalse(result.contains("kubernetes-maven-plugin"));
     }
 
@@ -260,6 +260,7 @@ class TemplateHelperTest {
         model.put("hasJib", false);
         model.put("hasJkube", false);
         model.put("Dependencies", List.of());
+        model.put("JibMavenPluginVersion", "3.5.1");
 
         List<Map<String, Object>> repos = new ArrayList<>();
         repos.add(Map.of("id", "custom1", "url", "https://repo.example.com/snapshots", "isSnapshot", true));
@@ -286,6 +287,7 @@ class TemplateHelperTest {
         model.put("BuildProperties", "");
         model.put("Repositories", List.of());
         model.put("Dependencies", List.of());
+        model.put("JibMavenPluginVersion", "3.5.1");
 
         String result = TemplateHelper.processTemplate("spring-boot-pom.ftl", model);
 
@@ -311,6 +313,7 @@ class TemplateHelperTest {
         model.put("BuildProperties", "");
         model.put("Repositories", List.of());
         model.put("Dependencies", List.of());
+        model.put("JibMavenPluginVersion", "3.5.1");
 
         String result = TemplateHelper.processTemplate("quarkus-pom.ftl", model);
 
