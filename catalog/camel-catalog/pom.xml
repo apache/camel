@@ -35,6 +35,7 @@
         <!-- use by camel-catalog -->
         <firstVersion>2.15.0</firstVersion>
         <label>tooling</label>
+        <argLine></argLine>
     </properties>
 
     <dependencies>
@@ -202,6 +203,18 @@
                         <delimiter>@</delimiter>
                     </delimiters>
                 </configuration>
+            </plugin>
+            <!-- Workaround: redeclaring without argLine to avoid error with Mockito specified as an agent -->
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none
+                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

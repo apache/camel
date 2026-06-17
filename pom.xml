@@ -217,6 +217,17 @@
                     </execution>
                 </executions>
             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-dependency-plugin</artifactId>
+                 <executions>
+                     <execution>
+                         <goals>
+                            <goal>properties</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -225,6 +236,9 @@
                         <id>default-test</id>
                         <phase>none
                         </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <configuration>
+                            <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

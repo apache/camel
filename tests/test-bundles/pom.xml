@@ -120,6 +120,7 @@
                         <goals>
                             <goal>process</goal>
                         </goals>
+                        <phase>process-resources</phase>
                         <configuration>
                             <resourceBundles>
                                 <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
