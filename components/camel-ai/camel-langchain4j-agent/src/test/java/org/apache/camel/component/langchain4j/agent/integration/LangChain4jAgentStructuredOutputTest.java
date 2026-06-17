@@ -107,7 +107,7 @@ public class LangChain4jAgentStructuredOutputTest {
     }
 
     @Test
-    void testJsonSchemaAndResponseTypeMutuallyExclusiveThrowsIllegalArgumentException() throws Exception {
+    void testJsonSchemaAndOutputClassMutuallyExclusiveThrowsIllegalArgumentException() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             AgentConfiguration config = new AgentConfiguration();
             context.getRegistry().bind("myConfig", config);
@@ -129,12 +129,12 @@ public class LangChain4jAgentStructuredOutputTest {
     }
 
     @Test
-    void testResponseTypeWithoutAgentConfigurationThrowsIllegalArgumentException() throws Exception {
+    void testOutputClassWithoutAgentConfigurationThrowsIllegalArgumentException() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    // responseType without agentConfiguration — should fail at startup
+                    // outputClass without agentConfiguration — should fail at startup
                     from("direct:test")
                             .to("langchain4j-agent:myAgent?outputClass=" + CarRentalRecommendation.class.getName());
                 }
@@ -147,7 +147,7 @@ public class LangChain4jAgentStructuredOutputTest {
     }
 
     @Test
-    void testNonExistentResponseTypeClassThrowsException() throws Exception {
+    void testNonExistentOutputClassThrowsException() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             AgentConfiguration config = new AgentConfiguration();
             context.getRegistry().bind("myConfig", config);
@@ -166,7 +166,7 @@ public class LangChain4jAgentStructuredOutputTest {
     }
 
     @Test
-    void testNonPojoResponseTypeThrowsIllegalArgumentException() throws Exception {
+    void testNonPojoOutputClassThrowsIllegalArgumentException() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             AgentConfiguration config = new AgentConfiguration();
             context.getRegistry().bind("myConfig", config);
@@ -187,7 +187,7 @@ public class LangChain4jAgentStructuredOutputTest {
     }
 
     @Test
-    void testResponseTypeWithUserProvidedAgentThrowsIllegalArgumentException() throws Exception {
+    void testOutputClassWithUserProvidedAgentThrowsIllegalArgumentException() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             AgentConfiguration config = new AgentConfiguration();
             Agent stubAgent = (aiAgentBody, toolProvider) -> "stub";
@@ -210,7 +210,7 @@ public class LangChain4jAgentStructuredOutputTest {
     }
 
     @Test
-    void testResponseTypeWithAgentFactoryThrowsIllegalArgumentException() throws Exception {
+    void testOutputClassWithAgentFactoryThrowsIllegalArgumentException() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             AgentConfiguration config = new AgentConfiguration();
             Agent stubAgent = (aiAgentBody, toolProvider) -> "stub";
