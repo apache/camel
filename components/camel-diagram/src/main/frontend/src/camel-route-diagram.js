@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import { LitElement, html, svg, css, nothing } from 'lit';
+import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import { layoutRoute, NODE_W, NODE_H } from './layout.js';
 
 const TYPE_COLORS = {
@@ -31,6 +32,31 @@ const TYPE_COLORS = {
   multicast:      'var(--crd-color-multicast,      #8b5cf6)',
   circuitBreaker: 'var(--crd-color-circuitBreaker, #ef4444)',
 };
+
+// SVG icon paths from Lucide (https://lucide.dev) — ISC License
+// Copyright (c) Lucide Contributors 2022; portions © Cole Bemis 2013-2022 (Feather, MIT)
+const ICONS = {
+  workflow:          '<rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/>',
+  'log-in':          '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/>',
+  'log-out':         '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>',
+  'file-text':       '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',
+  'git-branch':      '<line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+  'corner-down-right':'<polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>',
+  split:             '<path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/>',
+  shield:            '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+  'alert-triangle':  '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  flag:              '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',
+  zap:               '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  box:               '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+};
+
+const TYPE_ICON = {
+  route: 'workflow', from: 'log-in', to: 'log-out', log: 'file-text',
+  choice: 'git-branch', when: 'corner-down-right', otherwise: 'corner-down-right',
+  doTry: 'shield', doCatch: 'alert-triangle', doFinally: 'flag',
+  multicast: 'split', circuitBreaker: 'zap',
+};
+const iconFor = (type) => ICONS[TYPE_ICON[type]] ?? ICONS.box;
 
 function nodeColor(type) {
   return TYPE_COLORS[type] ?? 'var(--crd-color-default, #6366f1)';
@@ -156,10 +182,16 @@ class CamelRouteDiagram extends LitElement {
       if (this.filter) url.searchParams.set('filter', this.filter);
       url.searchParams.set('metric', 'true');
       const res = await fetch(url, { signal: this.#controller.signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      if (!res.ok) {
+        this._error = `HTTP ${res.status} ${res.statusText}`;
+        this._data = null;
+        return;
+      }
       const data = await res.json();
       if (!Array.isArray(data?.routes)) {
-        throw new Error('Unexpected response: missing routes array');
+        this._error = 'Unexpected response: missing routes array';
+        this._data = null;
+        return;
       }
       this._data = data;
       this._error = null;
@@ -225,6 +257,7 @@ class CamelRouteDiagram extends LitElement {
     const stat  = formatStat(pos.statistics);
     const fill  = nodeColor(pos.type);
     const cx    = pos.x + NODE_W / 2;
+    const tx    = cx + 9;                       // shift label clear of the icon
     const textY = pos.y + NODE_H / 2 + 4;
 
     return svg`
@@ -233,13 +266,18 @@ class CamelRouteDiagram extends LitElement {
               rx="6" ry="6"
               fill="${fill}" fill-opacity="0.15"
               stroke="${fill}" stroke-width="1.5"/>
-        <text x="${cx}" y="${textY}"
-              text-anchor="middle" dominant-baseline="auto"
-              fill="currentColor" font-size="11">
+        <g transform="translate(${pos.x + 12},${pos.y + (NODE_H - 14) / 2}) scale(0.5833)"
+              fill="none" stroke="${fill}" stroke-width="2.4"
+              stroke-linecap="round" stroke-linejoin="round" pointer-events="none">
+          ${unsafeSVG(iconFor(pos.type))}
+        </g>
+        <text x="${tx}" y="${stat ? textY - 4 : textY}"
+              text-anchor="middle" fill="currentColor"
+              font-size="11">
           ${label}
         </text>
         ${stat ? svg`
-          <text x="${cx}" y="${pos.y + NODE_H - 3}"
+          <text x="${tx}" y="${pos.y + NODE_H - 3}"
                 text-anchor="middle"
                 fill="var(--crd-stat, #64748b)" font-size="9">
             ${stat}

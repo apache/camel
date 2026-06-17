@@ -34,3 +34,34 @@ lit-html/is-server.js:
    * Copyright 2022 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
+
+lit-html/directive.js:
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+
+lit-html/directives/unsafe-html.js:
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+
+lit-html/directives/unsafe-svg.js:
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+
+Lucide (icon SVG paths inlined in camel-route-diagram.js):
+  /**
+   * @license
+   * ISC License
+   * Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT).
+   * All other copyright (c) for Lucide are held by Lucide Contributors 2022.
+   * SPDX-License-Identifier: ISC
+   * https://lucide.dev
+   */
