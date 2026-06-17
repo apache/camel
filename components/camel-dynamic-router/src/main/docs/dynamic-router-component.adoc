@@ -145,6 +145,8 @@ For the purpose of this example, the exact steps that each service carries out a
 each service needs to be notified that it needs to do something under the right condition(s).  So, each service will
 subscribe to participate in routing:
 
+._Java-only: DynamicRouterControlMessage builder API_
+
 .Orders processing service subscription
 [source,java]
 ----
@@ -159,6 +161,8 @@ DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuil
 producerTemplate.sendBody("dynamic-router-control:subscribe", controlMessage);
 ----
 
+._Java-only: DynamicRouterControlMessage builder API_
+
 .Inventory service subscription
 [source,java]
 ----
@@ -172,6 +176,8 @@ DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuil
     .build();
 producerTemplate.sendBody("dynamic-router-control:subscribe", controlMessage);
 ----
+
+._Java-only: DynamicRouterControlMessage builder API_
 
 .Returns processing service subscription
 [source,java]
@@ -196,12 +202,43 @@ will be notified.
 The order messages get sent to the dynamic router:
 
 .Routing order/return request messages
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .process(myOrderProcessor)
     .to("dynamic-router:orders");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="bean:myOrderProcessor"/>
+  <to uri="dynamic-router:orders"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: bean:myOrderProcessor
+        - to:
+            uri: dynamic-router:orders
+----
+====
 
 Note the `.process(myOrderProcessor)` step.  If incoming messages need to be validated, enriched, transformed, or
 otherwise augmented, that can be done before the Dynamic Router receives the message.  Then, when the Dynamic Router
@@ -231,6 +268,8 @@ their own microservice (application).  Similar to the single-JVM example, all se
 need to send their subscriptions through a transport that can communicate to another JVM.  Their subscriptions might
 look like:
 
+._Java-only: DynamicRouterControlMessage builder with ProducerTemplate/Kafka_
+
 .Orders processing service subscription
 [source,java]
 ----
@@ -246,6 +285,8 @@ ObjectMapper mapper = new ObjectMapper(new JsonFactory());
 producerTemplate.sendBody("kafka://subscriptions", mapper.writeValueAsString(controlMessage));
 ----
 
+._Java-only: DynamicRouterControlMessage builder with ProducerTemplate/Kafka_
+
 .Inventory service subscription
 [source,java]
 ----
@@ -260,6 +301,8 @@ DynamicRouterControlMessage controlMessage = DynamicRouterControlMessage.newBuil
 ObjectMapper mapper = new ObjectMapper(new JsonFactory());
 producerTemplate.sendBody("kafka://subscriptions", mapper.writeValueAsString(controlMessage));
 ----
+
+._Java-only: DynamicRouterControlMessage builder with ProducerTemplate/Kafka_
 
 .Returns processing service subscription
 [source,java]
@@ -280,19 +323,47 @@ In another module, additional routing will serve as a bridge to get the message 
 Dynamic Router:
 
 .Bridge from Kafka to the Dynamic Router control channel
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-RouteBuilder subscriptionRouter() {
-    return new RouteBuilder(camelContext) {
-        @Override
-        public void configure() {
-            from("kafka:subscriptions")
-                .unmarshal().json(DynamicRouterControlMessage.class)
-                .to("dynamic-router-control:subscribe");
-        }
-    };
-}
+from("kafka:subscriptions")
+    .unmarshal().json(DynamicRouterControlMessage.class)
+    .to("dynamic-router-control:subscribe");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:subscriptions"/>
+  <unmarshal>
+    <json library="Jackson" unmarshalType="org.apache.camel.component.dynamicrouter.control.DynamicRouterControlMessage"/>
+  </unmarshal>
+  <to uri="dynamic-router-control:subscribe"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:subscriptions
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+              unmarshalType: org.apache.camel.component.dynamicrouter.control.DynamicRouterControlMessage
+        - to:
+            uri: dynamic-router-control:subscribe
+----
+====
 
 Order requests or return requests might also arrive via Kafka.  The route is essentially the same as the route in the
 single-JVM example.  Instead of forwarding the incoming message, as-is, from the "direct" component to the router,
@@ -300,6 +371,11 @@ the messages are deserialized from a String, and converted to an instance of the
 to the Dynamic Router for evaluation and distribution to the appropriate subscribing recipients:
 
 .Routing order/return request messages from Kafka to the Dynamic Router
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka://orders")
@@ -307,6 +383,39 @@ from("kafka://orders")
     .process(myOrderProcessor)
     .to("dynamic-router:orders");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka://orders"/>
+  <unmarshal>
+    <json library="Jackson" unmarshalType="com.example.MyOrderMessage"/>
+  </unmarshal>
+  <to uri="bean:myOrderProcessor"/>
+  <to uri="dynamic-router:orders"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka://orders
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+              unmarshalType: com.example.MyOrderMessage
+        - to:
+            uri: bean:myOrderProcessor
+        - to:
+            uri: dynamic-router:orders
+----
+====
 
 Note the `.process(myOrderProcessor)` step.  If incoming messages need to be validated, enriched, transformed, or
 otherwise augmented, that can be done before the Dynamic Router receives the message.  Then, when the Dynamic Router
