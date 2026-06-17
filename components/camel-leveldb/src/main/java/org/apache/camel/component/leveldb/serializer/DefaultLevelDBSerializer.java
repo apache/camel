@@ -30,6 +30,12 @@ import org.apache.camel.util.ClassLoadingAwareObjectInputStream;
 
 public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
 
+    // Keys are always serialized as a java.lang.String (see serializeKey). Restrict key deserialization
+    // to String only and apply JEP-290 graph-shape limits as defense-in-depth, consistent with the
+    // ObjectInputFilter applied on the exchange deserialization path.
+    private static final String KEY_DESERIALIZATION_FILTER
+            = "java.lang.String;maxdepth=2;maxrefs=100;maxbytes=1048576;!*";
+
     @Override
     public byte[] serializeKey(String key) throws IOException {
         try (final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -42,6 +48,7 @@ public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
     @Override
     public String deserializeKey(byte[] buffer) throws IOException {
         try (final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(buffer))) {
+            ois.setObjectInputFilter(ObjectInputFilter.Config.createFilter(KEY_DESERIALIZATION_FILTER));
             return (String) ois.readObject();
         } catch (ClassNotFoundException e) {
             //this should not happen because serialized content should be String
