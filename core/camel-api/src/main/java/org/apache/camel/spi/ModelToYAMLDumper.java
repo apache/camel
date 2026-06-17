@@ -23,8 +23,22 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 
 /**
- * SPI for dumping model definitions into YAML representation.
+ * SPI that serialises Camel route model definitions to their YAML DSL representation.
+ * <p/>
+ * The implementation is provided by {@code camel-yaml-io} and discovered via the service key {@link #FACTORY}. Callers
+ * supply a {@link org.apache.camel.CamelContext} and a {@link org.apache.camel.NamedNode} route definition; the dumper
+ * returns a formatted YAML string. The overloaded
+ * {@link #dumpModelAsYaml(org.apache.camel.CamelContext, org.apache.camel.NamedNode, boolean, boolean, boolean, boolean)
+ * dumpModelAsYaml} variant adds control over placeholder resolution, URI expansion into key-value parameters,
+ * auto-generated ID inclusion, and source-location metadata. Separate methods handle bean definitions and global
+ * data-format definitions. The primary consumers are {@code camel-jbang} export commands, the developer console, and
+ * {@link org.apache.camel.CamelContext} route-dump helpers.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/camel-jbang.html">Camel CLI (camel-jbang)</a> for the export commands
+ * that use this dumper.
  *
+ * @see   ModelToXMLDumper
+ * @see   ModelToJavaDumper
  * @since 4.0
  */
 public interface ModelToYAMLDumper {
