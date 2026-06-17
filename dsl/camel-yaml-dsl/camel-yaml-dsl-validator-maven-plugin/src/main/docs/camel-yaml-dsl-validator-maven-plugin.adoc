@@ -6,12 +6,12 @@ The Camel YAML DSL Validator Maven Plugin supports the following goals
 
 == camel-yaml-dsl-validator:validate
 
-For validating the YAML routes for syntax errors according to the spec.
+For validating YAML routes against the generated YAML DSL JSON Schema.
 
-The validator uses the generated YAML DSL JSON Schema.
 Runtime extensions such as custom `YamlDeserializerResolver` implementations are not added to this schema, so the
-validator does not accept module-provided custom YAML step names. For those routes, use runtime route loading tests in
-addition to this schema validation.
+`validate` goal does not accept module-provided custom YAML step names. The Maven plugin does not run Camel's YAML route
+loader and does not load custom resolvers. For those routes, use runtime route loading tests in addition to this schema
+validation.
 
 Then you can run the `validate` goal from the command line or from within your Java editor such as IDEA or Eclipse.
 

@@ -16,22 +16,13 @@
  */
 package org.apache.camel.dsl.yaml.common;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -151,119 +142,59 @@ public class YamlDeserializationContext extends StandardConstructor implements C
             return;
         }
 
-        addResolverEntries(loadResolversFromClasspath());
-        addResolverEntries(loadResolversFromRegistry());
+        List<ResolverEntry> resolverEntries = new ArrayList<>();
+        resolverEntries.addAll(loadResolversFromProvider());
+        resolverEntries.addAll(loadResolversFromRegistry());
+
+        addResolverEntries(resolverEntries);
         resolversLoaded = true;
     }
 
     @Override
     public void stop() {
         this.constructors.clear();
-        this.resolvers.removeIf(entry -> entry.source == ResolverSource.CLASSPATH || entry.source == ResolverSource.REGISTRY);
+        this.resolvers.removeIf(entry -> entry.source == ResolverSource.PROVIDER || entry.source == ResolverSource.REGISTRY);
         this.resolversLoaded = false;
     }
 
-    private List<ResolverEntry> loadResolversFromClasspath() {
-        List<String> resolverClassNames;
-        resolverClassNames = findResolverClassNames();
+    private List<ResolverEntry> loadResolversFromProvider() {
+        YamlDeserializerResolverProvider provider = getResolverProvider();
+        return loadResolverEntries(provider.findResolvers(getCamelContext()), ResolverSource.PROVIDER);
+    }
 
-        List<ResolverEntry> discoveredResolvers = new ArrayList<>(resolverClassNames.size());
-        for (String resolverClassName : resolverClassNames) {
-            discoveredResolvers
-                    .add(new ResolverEntry(newResolver(resolverClassName), ResolverSource.CLASSPATH, resolverClassName));
-        }
-        discoveredResolvers.sort(this::compareResolverEntries);
-        return discoveredResolvers;
+    private YamlDeserializerResolverProvider getResolverProvider() {
+        YamlDeserializerResolverProvider provider = getCamelContext().getCamelContextExtension()
+                .getContextPlugin(YamlDeserializerResolverProvider.class);
+        return provider != null ? provider : new DefaultYamlDeserializerResolverProvider();
     }
 
     private List<ResolverEntry> loadResolversFromRegistry() {
-        Map<String, YamlDeserializerResolver> resolvers
-                = getCamelContext().getRegistry().findByTypeWithName(YamlDeserializerResolver.class);
-        List<ResolverEntry> answer = new ArrayList<>(resolvers.size());
+        return loadResolverEntries(getCamelContext().getRegistry().findByTypeWithName(YamlDeserializerResolver.class),
+                ResolverSource.REGISTRY);
+    }
+
+    private List<ResolverEntry> loadResolverEntries(
+            Map<String, YamlDeserializerResolver> resolvers, ResolverSource source) {
+        if (resolvers == null) {
+            throw new YamlDeserializationException(
+                    "YAML deserializer resolver " + source + " returned a null resolver map");
+        }
+
+        List<ResolverEntry> resolverEntries = new ArrayList<>(resolvers.size());
         for (Map.Entry<String, YamlDeserializerResolver> entry : resolvers.entrySet()) {
-            answer.add(new ResolverEntry(entry.getValue(), ResolverSource.REGISTRY, entry.getKey()));
-        }
-        answer.sort(this::compareResolverEntries);
-        return answer;
-    }
-
-    private YamlDeserializerResolver newResolver(String resolverClassName) {
-        try {
-            Class<YamlDeserializerResolver> type
-                    = getCamelContext().getClassResolver().resolveMandatoryClass(resolverClassName,
-                            YamlDeserializerResolver.class);
-            YamlDeserializerResolver resolver = getCamelContext().getInjector().newInstance(type, false);
-            CamelContextAware.trySetCamelContext(resolver, getCamelContext());
-            return resolver;
-        } catch (Exception e) {
-            String message = "Error loading YAML deserializer resolver " + resolverClassName + " from "
-                             + YamlDeserializerResolver.RESOURCE_PATH;
-            throw new YamlDeserializationException(
-                    message,
-                    e);
-        }
-    }
-
-    private List<String> findResolverClassNames() {
-        Set<String> resolverClassNames = new LinkedHashSet<>();
-
-        for (URL url : findResolverResources()) {
-            try (BufferedReader reader
-                    = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    int comment = line.indexOf('#');
-                    if (comment != -1) {
-                        line = line.substring(0, comment);
-                    }
-                    line = line.trim();
-                    if (!line.isEmpty() && !line.startsWith("#")) {
-                        resolverClassNames.add(line);
-                    }
-                }
-            } catch (IOException e) {
+            if (entry.getKey() == null) {
                 throw new YamlDeserializationException(
-                        "Error reading YAML deserializer resolver resource " + url + " from "
-                                                       + YamlDeserializerResolver.RESOURCE_PATH,
-                        e);
+                        "YAML deserializer resolver " + source + " returned a null resolver name");
             }
-        }
-
-        List<String> sortedResolverClassNames = new ArrayList<>(resolverClassNames);
-        Collections.sort(sortedResolverClassNames);
-        return sortedResolverClassNames;
-    }
-
-    private Set<URL> findResolverResources() {
-        Set<URL> answer = new LinkedHashSet<>();
-
-        try {
-            addResolverResources(answer,
-                    getCamelContext().getClassResolver().loadAllResourcesAsURL(YamlDeserializerResolver.RESOURCE_PATH));
-            addResolverResources(answer, getCamelContext().getApplicationContextClassLoader());
-            for (ClassLoader classLoader : getCamelContext().getClassResolver().getClassLoaders()) {
-                addResolverResources(answer, classLoader);
+            YamlDeserializerResolver resolver = entry.getValue();
+            if (resolver == null) {
+                throw new YamlDeserializationException(
+                        "YAML deserializer resolver " + source + " returned a null resolver for " + entry.getKey());
             }
-        } catch (IOException e) {
-            throw new YamlDeserializationException(
-                    "Error locating YAML deserializer resolvers from " + YamlDeserializerResolver.RESOURCE_PATH, e);
+            CamelContextAware.trySetCamelContext(resolver, getCamelContext());
+            resolverEntries.add(new ResolverEntry(resolver, source, entry.getKey()));
         }
-
-        return answer;
-    }
-
-    private static void addResolverResources(Set<URL> answer, ClassLoader classLoader) throws IOException {
-        if (classLoader != null) {
-            addResolverResources(answer, classLoader.getResources(YamlDeserializerResolver.RESOURCE_PATH));
-        }
-    }
-
-    private static void addResolverResources(Set<URL> answer, Enumeration<URL> resources) {
-        if (resources != null) {
-            while (resources.hasMoreElements()) {
-                answer.add(resources.nextElement());
-            }
-        }
+        return resolverEntries;
     }
 
     private void addResolver(YamlDeserializerResolver resolver, ResolverSource source, String name) {
@@ -282,36 +213,36 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         this.resolvers.sort(this::compareResolverEntries);
     }
 
-    private int compareResolverEntries(ResolverEntry entry1, ResolverEntry entry2) {
-        int result = compareBuiltInBoundary(entry1, entry2);
+    private int compareResolverEntries(ResolverEntry first, ResolverEntry second) {
+        int result = compareBuiltInBoundary(first, second);
         if (result != 0) {
             return result;
         }
 
-        result = OrderedComparator.get().compare(entry1.resolver, entry2.resolver);
+        result = OrderedComparator.get().compare(first.resolver, second.resolver);
         if (result != 0) {
             return result;
         }
 
-        result = Integer.compare(entry1.source.rank, entry2.source.rank);
+        result = Integer.compare(first.source.rank, second.source.rank);
         if (result != 0) {
             return result;
         }
 
-        result = entry1.resolver.getClass().getName().compareTo(entry2.resolver.getClass().getName());
+        result = first.resolver.getClass().getName().compareTo(second.resolver.getClass().getName());
         if (result != 0) {
             return result;
         }
 
-        return entry1.name.compareTo(entry2.name);
+        return first.name.compareTo(second.name);
     }
 
-    private int compareBuiltInBoundary(ResolverEntry entry1, ResolverEntry entry2) {
-        if (entry1.source == ResolverSource.BUILT_IN && entry2.source != ResolverSource.BUILT_IN) {
-            return entry2.resolver.getOrder() < YamlDeserializerResolver.ORDER_DEFAULT ? 1 : -1;
+    private int compareBuiltInBoundary(ResolverEntry first, ResolverEntry second) {
+        if (first.isBuiltIn() && !second.isBuiltIn()) {
+            return second.overridesBuiltIns() ? 1 : -1;
         }
-        if (entry1.source != ResolverSource.BUILT_IN && entry2.source == ResolverSource.BUILT_IN) {
-            return entry1.resolver.getOrder() < YamlDeserializerResolver.ORDER_DEFAULT ? -1 : 1;
+        if (!first.isBuiltIn() && second.isBuiltIn()) {
+            return first.overridesBuiltIns() ? -1 : 1;
         }
         return 0;
     }
@@ -326,13 +257,21 @@ public class YamlDeserializationContext extends StandardConstructor implements C
             this.source = source;
             this.name = name != null ? name : resolver.getClass().getName();
         }
+
+        private boolean isBuiltIn() {
+            return source == ResolverSource.BUILT_IN;
+        }
+
+        private boolean overridesBuiltIns() {
+            return resolver.getOrder() < YamlDeserializerResolver.ORDER_DEFAULT;
+        }
     }
 
     private enum ResolverSource {
         BUILT_IN(0),
         MANUAL(1),
         REGISTRY(2),
-        CLASSPATH(3);
+        PROVIDER(3);
 
         private final int rank;
 
@@ -387,8 +326,8 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                             YamlDeserializationContext.class.getName(),
                             YamlDeserializationContext.this);
 
-                    final ConstructNode answer = resolve(n, type.getName());
-                    return answer.construct(newNode);
+                    final ConstructNode constructor = resolve(n, type.getName());
+                    return construct(newNode, type.getName(), constructor);
                 },
                 camelContext);
     }
@@ -420,7 +359,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         }
 
         final String id = ((ScalarNode) key).getValue();
-        final ConstructNode answer = resolve(node, id);
+        final ConstructNode constructor = resolve(node, id);
 
         return CamelContextAware.trySetCamelContext(
                 (Node n) -> {
@@ -429,28 +368,46 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                             YamlDeserializationContext.class.getName(),
                             YamlDeserializationContext.this);
 
-                    return answer.construct(
-                            ((MappingNode) n).getValue().get(0).getValueNode());
+                    Node valueNode = ((MappingNode) n).getValue().get(0).getValueNode();
+                    return construct(valueNode, id, constructor);
                 },
                 camelContext);
     }
 
     public ConstructNode resolve(Node node, String id) {
-        return constructors.computeIfAbsent(id, (String s) -> {
-            ConstructNode answer = null;
+        return constructors.computeIfAbsent(id, nodeId -> resolveConstructor(node, nodeId));
+    }
 
-            for (ResolverEntry entry : resolvers) {
-                answer = entry.resolver.resolve(id);
-                if (answer != null) {
-                    break;
-                }
+    private ConstructNode resolveConstructor(Node node, String id) {
+        for (ResolverEntry entry : resolvers) {
+            ConstructNode constructor;
+            try {
+                constructor = entry.resolver.resolve(id);
+            } catch (YamlDeserializationException e) {
+                throw e;
+            } catch (RuntimeException e) {
+                throw new YamlDeserializationException(
+                        node,
+                        "Error resolving YAML node id: " + id + " using YAML deserializer resolver " + entry.name,
+                        e);
             }
-
-            if (answer == null) {
-                throw new UnknownNodeIdException(node, id);
+            if (constructor != null) {
+                return constructor;
             }
+        }
 
-            return answer;
-        });
+        throw new UnknownNodeIdException(node, id);
+    }
+
+    private Object construct(Node node, String id, ConstructNode constructor) {
+        try {
+            return constructor.construct(node);
+        } catch (DuplicateKeyException | UnknownNodeIdException e) {
+            throw e;
+        } catch (YamlDeserializationException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new YamlDeserializationException(node, "Error constructing YAML node id: " + id, e);
+        }
     }
 }
