@@ -56,6 +56,13 @@ in the other HTTP server components. Routes using `transferException=true` on th
 components must now also set `muteException=false` for the serialized exception to be
 returned in the response.
 
+=== camel-whatsapp
+
+The `camel-whatsapp` webhook consumer now supports optional verification of inbound webhook event
+callbacks via the new `webhookSecret` endpoint option. When set, event callbacks whose
+`X-Hub-Signature-256` HMAC-SHA256 signature is missing or invalid are rejected with HTTP 403; when
+the option is not set, behaviour is unchanged.
+
 === camel-core
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
