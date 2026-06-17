@@ -187,23 +187,24 @@ users to get access to the original Netty request/response instances if
 needed, as shown below. Mind that the original response may not be
 accessible at all times.
 
+._Java-only: accessing the underlying Netty HTTP request object_
 [source,java]
-----------------------------------------------------------------------------------------------------------
+----
 io.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
-----------------------------------------------------------------------------------------------------------
+----
 
 === Using HTTP Basic Authentication
 
 The Netty HTTP consumer supports HTTP basic authentication by specifying
 the security realm name to use, as shown below
 
-[source,java]
-------------------------------------------------------------------------------------------
+[source,xml]
+----
 <route>
    <from uri="netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=someRealm"/>
    ...
 </route>
-------------------------------------------------------------------------------------------
+----
 
 The realm name is mandatory to enable basic authentication. By default,
 the JAAS based authenticator is used, which will use the realm name
@@ -304,11 +305,12 @@ YAML::
 And we can call this HTTP server using Camel also, with the
 ProducerTemplate as shown below:
 
+._Java-only: ProducerTemplate test API_
 [source,java]
-------------------------------------------------------------------------------------------------------------
-    String out = template.requestBody("netty-http:http://0.0.0.0:8080/foo", "Hello World", String.class);
-    System.out.println(out);
-------------------------------------------------------------------------------------------------------------
+----
+String out = template.requestBody("netty-http:http://0.0.0.0:8080/foo", "Hello World", String.class);
+System.out.println(out);
+----
 
 And we get _"Bye World"_ as the output.
 
@@ -450,16 +452,63 @@ Here is an example with two routes that share the same port.
 
 *Two routes sharing the same port*
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------
+----
 from("netty-http:http://0.0.0.0:{{port}}/foo")
-  .to("mock:foo")
-  .transform().constant("Bye World");
+    .to("mock:foo")
+    .transform().constant("Bye World");
 
 from("netty-http:http://0.0.0.0:{{port}}/bar")
-  .to("mock:bar")
-  .transform().constant("Bye Camel");
------------------------------------------------
+    .to("mock:bar")
+    .transform().constant("Bye Camel");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty-http:http://0.0.0.0:{{port}}/foo"/>
+  <to uri="mock:foo"/>
+  <transform>
+    <constant>Bye World</constant>
+  </transform>
+</route>
+<route>
+  <from uri="netty-http:http://0.0.0.0:{{port}}/bar"/>
+  <to uri="mock:bar"/>
+  <transform>
+    <constant>Bye Camel</constant>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:{{port}}/foo
+      steps:
+        - to:
+            uri: mock:foo
+        - transform:
+            constant: "Bye World"
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:{{port}}/bar
+      steps:
+        - to:
+            uri: mock:bar
+        - transform:
+            constant: "Bye Camel"
+----
+====
 
 And here is an example of a mis-configured second route that does not have
 identical
@@ -529,8 +578,9 @@ URL received on the request line of the HTTP request.
 Here's an example of an HTTP proxy that simply transforms the response
 from the origin server to uppercase.
 
+._Java-only: reverse proxy with dynamic `toD` and Netty response processing_
 [source,java]
-------------------------------------------------------------------------------------------
+----
 from("netty-http:proxy://0.0.0.0:8080")
     .toD("netty-http:"
         + "${headers." + Exchange.HTTP_SCHEME + "}://"
@@ -548,7 +598,7 @@ void processResponse(final Exchange exchange) {
     buf.resetWriterIndex();
     ByteBufUtil.writeUtf8(buf, string.toUpperCase(Locale.US));
 }
-------------------------------------------------------------------------------------------
+----
 
 
 
