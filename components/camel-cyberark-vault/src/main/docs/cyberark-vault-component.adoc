@@ -29,17 +29,7 @@ cyberark-vault:label[?options]
 
 Where `label` is a logical name for the endpoint.
 
-You can specify the secret ID either as a URI parameter or via message header:
-
-[source,java]
-----
-// Using URI parameter
-.to("cyberark-vault:secret?secretId=db/password&...")
-
-// Using message header
-.setHeader(CyberArkVaultConstants.SECRET_ID, constant("db/password"))
-.to("cyberark-vault:secret?...")
-----
+You can specify the secret ID either as a URI parameter or via a message header (`CamelCyberArkVaultSecretId`).
 
 You can append query options to the URI in the following format:
 
@@ -111,17 +101,7 @@ The component supports the following operations:
 * **getSecret** (default) - Retrieve a secret value from CyberArk Conjur
 * **createSecret** - Create or update a secret in CyberArk Conjur
 
-You can specify the operation either as a URI parameter or via message header:
-
-[source,java]
-----
-// Using URI parameter
-.to("cyberark-vault:secret?operation=getSecret&secretId=db/password&...")
-
-// Using message header
-.setHeader(CyberArkVaultConstants.OPERATION, constant(CyberArkVaultOperations.createSecret))
-.to("cyberark-vault:secret?...")
-----
+You can specify the operation either as a URI parameter or via a message header (`CamelCyberArkVaultOperation`).
 
 === Examples
 
@@ -129,39 +109,149 @@ You can specify the operation either as a URI parameter or via message header:
 
 At this point, you can access secrets using property placeholders in your routes:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .setHeader("DatabasePassword", simple("{{cyberark:db/password}}"))
-    .to("...");
+    .to("direct:next");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="DatabasePassword">
+    <simple>{{cyberark:db/password}}</simple>
+  </setHeader>
+  <to uri="direct:next"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: DatabasePassword
+            simple: "{{cyberark:db/password}}"
+        - to:
+            uri: direct:next
+----
+====
 
 You can also specify a default value in case the secret doesn't exist:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .setHeader("Password", simple("{{cyberark:db/password:defaultPassword}}"))
-    .to("...");
+    .to("direct:next");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="Password">
+    <simple>{{cyberark:db/password:defaultPassword}}</simple>
+  </setHeader>
+  <to uri="direct:next"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: Password
+            simple: "{{cyberark:db/password:defaultPassword}}"
+        - to:
+            uri: direct:next
+----
+====
 
 ==== Retrieve JSON Field from Secret
 
 If your secret contains JSON data, you can extract specific fields:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .setHeader("Username", simple("{{cyberark:database#username}}"))
     .setHeader("Password", simple("{{cyberark:database#password}}"))
-    .to("...");
+    .to("direct:next");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="Username">
+    <simple>{{cyberark:database#username}}</simple>
+  </setHeader>
+  <setHeader name="Password">
+    <simple>{{cyberark:database#password}}</simple>
+  </setHeader>
+  <to uri="direct:next"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: Username
+            simple: "{{cyberark:database#username}}"
+        - setHeader:
+            name: Password
+            simple: "{{cyberark:database#password}}"
+        - to:
+            uri: direct:next
+----
+====
 
 ==== Retrieve a Secret (getSecret)
 
 You can retrieve a secret using the component endpoint:
 
 Using URI parameter:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -169,7 +259,45 @@ from("direct:start")
     .log("Retrieved secret: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="cyberark-vault:secret?operation=getSecret&amp;secretId=db/password&amp;url=https://conjur.example.com&amp;account=myaccount&amp;username=admin&amp;password=secretpass"/>
+  <log message="Retrieved secret: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: cyberark-vault:secret
+            parameters:
+              operation: getSecret
+              secretId: db/password
+              url: "https://conjur.example.com"
+              account: myaccount
+              username: admin
+              password: secretpass
+        - log:
+            message: "Retrieved secret: ${body}"
+----
+====
+
 Using message header for dynamic secret retrieval:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -178,7 +306,50 @@ from("direct:start")
     .log("Retrieved secret: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelCyberArkVaultSecretId">
+    <simple>${header.secretName}</simple>
+  </setHeader>
+  <to uri="cyberark-vault:secret?operation=getSecret&amp;url=https://conjur.example.com&amp;account=myaccount&amp;username=admin&amp;password=secretpass"/>
+  <log message="Retrieved secret: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelCyberArkVaultSecretId
+            simple: "${header.secretName}"
+        - to:
+            uri: cyberark-vault:secret
+            parameters:
+              operation: getSecret
+              url: "https://conjur.example.com"
+              account: myaccount
+              username: admin
+              password: secretpass
+        - log:
+            message: "Retrieved secret: ${body}"
+----
+====
+
 Retrieve a specific version of a secret:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -187,11 +358,54 @@ from("direct:start")
     .log("Retrieved secret version 3: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelCyberArkVaultSecretVersion">
+    <constant>3</constant>
+  </setHeader>
+  <to uri="cyberark-vault:secret?secretId=db/password&amp;url=https://conjur.example.com&amp;account=myaccount&amp;username=admin&amp;apiKey=3ahx8dy3..."/>
+  <log message="Retrieved secret version 3: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelCyberArkVaultSecretVersion
+            constant: "3"
+        - to:
+            uri: cyberark-vault:secret
+            parameters:
+              secretId: db/password
+              url: "https://conjur.example.com"
+              account: myaccount
+              username: admin
+              apiKey: "3ahx8dy3..."
+        - log:
+            message: "Retrieved secret version 3: ${body}"
+----
+====
+
 ==== Create or Update a Secret (createSecret)
 
 To create or update a secret, use the createSecret operation with the secret value in the message body or header:
 
 Using message body:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -200,7 +414,50 @@ from("direct:start")
     .log("Secret created/updated");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>mySecretValue123</constant>
+  </setBody>
+  <to uri="cyberark-vault:secret?operation=createSecret&amp;secretId=app/apikey&amp;url=https://conjur.example.com&amp;account=myaccount&amp;username=admin&amp;apiKey=3ahx8dy3..."/>
+  <log message="Secret created/updated"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: mySecretValue123
+        - to:
+            uri: cyberark-vault:secret
+            parameters:
+              operation: createSecret
+              secretId: app/apikey
+              url: "https://conjur.example.com"
+              account: myaccount
+              username: admin
+              apiKey: "3ahx8dy3..."
+        - log:
+            message: "Secret created/updated"
+----
+====
+
 Using message header:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -210,7 +467,56 @@ from("direct:start")
     .log("Secret created/updated");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelCyberArkVaultSecretValue">
+    <constant>myNewPassword</constant>
+  </setHeader>
+  <setHeader name="CamelCyberArkVaultSecretId">
+    <constant>db/password</constant>
+  </setHeader>
+  <to uri="cyberark-vault:secret?operation=createSecret&amp;url=https://conjur.example.com&amp;account=myaccount&amp;username=admin&amp;apiKey=3ahx8dy3..."/>
+  <log message="Secret created/updated"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelCyberArkVaultSecretValue
+            constant: myNewPassword
+        - setHeader:
+            name: CamelCyberArkVaultSecretId
+            constant: db/password
+        - to:
+            uri: cyberark-vault:secret
+            parameters:
+              operation: createSecret
+              url: "https://conjur.example.com"
+              account: myaccount
+              username: admin
+              apiKey: "3ahx8dy3..."
+        - log:
+            message: "Secret created/updated"
+----
+====
+
 Dynamic secret creation:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -219,6 +525,49 @@ from("direct:start")
     .to("cyberark-vault:secret?operation=createSecret&url=https://conjur.example.com&account=myaccount&username=admin&apiKey=3ahx8dy3...")
     .log("Secret ${header.secretPath} created/updated");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <simple>${header.newSecretValue}</simple>
+  </setBody>
+  <setHeader name="CamelCyberArkVaultSecretId">
+    <simple>${header.secretPath}</simple>
+  </setHeader>
+  <to uri="cyberark-vault:secret?operation=createSecret&amp;url=https://conjur.example.com&amp;account=myaccount&amp;username=admin&amp;apiKey=3ahx8dy3..."/>
+  <log message="Secret ${header.secretPath} created/updated"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            simple: "${header.newSecretValue}"
+        - setHeader:
+            name: CamelCyberArkVaultSecretId
+            simple: "${header.secretPath}"
+        - to:
+            uri: cyberark-vault:secret
+            parameters:
+              operation: createSecret
+              url: "https://conjur.example.com"
+              account: myaccount
+              username: admin
+              apiKey: "3ahx8dy3..."
+        - log:
+            message: "Secret ${header.secretPath} created/updated"
+----
+====
 
 === SSL Certificate Verification
 
