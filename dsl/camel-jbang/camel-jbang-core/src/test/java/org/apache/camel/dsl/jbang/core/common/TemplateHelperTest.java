@@ -130,6 +130,7 @@ class TemplateHelperTest {
         assertNoLicenseHeader(result);
         assertNoUnresolvedInterpolations(result);
         assertTrue(result.contains("my-app"));
+        assertTrue(result.contains("https://camel.apache.org/llms.txt"));
     }
 
     @Test
@@ -144,6 +145,21 @@ class TemplateHelperTest {
         assertNoLicenseHeader(result);
         assertNoUnresolvedInterpolations(result);
         assertTrue(result.contains("my-app"));
+        assertTrue(result.contains("https://camel.apache.org/llms.txt"));
+    }
+
+    @Test
+    void testAgentsTemplate() throws IOException {
+        Map<String, Object> model = new HashMap<>();
+        model.put("ArtifactId", "my-app");
+
+        String result = TemplateHelper.processTemplate("agents.md.ftl", model);
+
+        assertNoLicenseHeader(result);
+        assertNoUnresolvedInterpolations(result);
+        assertTrue(result.contains("my-app"));
+        assertTrue(result.contains("https://camel.apache.org/llms.txt"));
+        assertTrue(result.contains("canonical YAML DSL"));
     }
 
     @Test

@@ -18,6 +18,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The library used for Camel Grok component has been migrated from no more maintained `io.krakens:java-grok` to its fork `io.github.whatap:java-grok`.
 It implies small differences listed https://github.com/whatap/java-grok#what-is-different-from-iokrakensjava-grok[here].
 
+=== camel-jbang
+
+The project exported by `camel export` now includes additional guidance for AI coding assistants. The generated
+`readme.md` gained a _For AI coding assistants_ section linking to the Apache Camel LLM index
+(`https://camel.apache.org/llms.txt`), and a new `AGENTS.md` file is generated at the project root. This applies to
+all runtimes (Camel Main, Spring Boot and Quarkus).
+
 === camel-micrometer
 
 The `MicrometerExchangeEventNotifier` now always includes the `routeId` tag on exchange event metrics.
