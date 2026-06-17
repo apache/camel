@@ -18,8 +18,15 @@ package org.apache.camel.component.whatsapp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.Map;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -36,6 +43,7 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
     private static final String MODE_QUERY_PARAM = "hub.mode";
     private static final String VERIFY_TOKEN_QUERY_PARAM = "hub.verify_token";
     private static final String CHALLENGE_QUERY_PARAM = "hub.challenge";
+    private static final String HUB_SIGNATURE_HEADER = "X-Hub-Signature-256";
 
     private final WhatsAppConfiguration configuration;
 
@@ -72,15 +80,26 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
             }
         } else {
-            InputStream body = exchange.getIn().getBody(InputStream.class);
-
-            try {
-                content = new String(body.readAllBytes());
+            byte[] requestBody;
+            try (InputStream body = exchange.getIn().getBody(InputStream.class)) {
+                requestBody = body.readAllBytes();
             } catch (IOException e) {
                 exchange.setException(e);
                 callback.done(true);
                 return true;
             }
+
+            // When a webhook secret is configured, verify the X-Hub-Signature-256 payload signature
+            String webhookSecret = configuration.getWebhookSecret();
+            if (webhookSecret != null && !isValidSignature(requestBody,
+                    exchange.getIn().getHeader(HUB_SIGNATURE_HEADER, String.class), webhookSecret)) {
+                LOG.warn("Rejecting WhatsApp webhook event with missing or invalid {} signature", HUB_SIGNATURE_HEADER);
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
+                callback.done(true);
+                return true;
+            }
+
+            content = new String(requestBody, StandardCharsets.UTF_8);
         }
 
         exchange.getMessage().setBody(content);
@@ -90,6 +109,26 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
 
             callback.done(doneSync);
         });
+    }
+
+    /**
+     * Verifies the {@code X-Hub-Signature-256} header against an HMAC-SHA256 of the raw request body keyed by the
+     * configured webhook secret, using a constant-time comparison.
+     */
+    static boolean isValidSignature(byte[] payload, String signatureHeader, String secret) {
+        if (signatureHeader == null) {
+            return false;
+        }
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            String expected = "sha256=" + HexFormat.of().formatHex(mac.doFinal(payload));
+            return MessageDigest.isEqual(
+                    expected.getBytes(StandardCharsets.UTF_8),
+                    signatureHeader.getBytes(StandardCharsets.UTF_8));
+        } catch (GeneralSecurityException e) {
+            return false;
+        }
     }
 
     private Map<String, String> parseQueryParam(Exchange exchange) {

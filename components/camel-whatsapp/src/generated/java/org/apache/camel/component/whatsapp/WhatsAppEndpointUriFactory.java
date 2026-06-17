@@ -23,7 +23,7 @@ public class WhatsAppEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(10);
         props.add("apiVersion");
         props.add("authorizationToken");
         props.add("baseUri");
@@ -31,11 +31,13 @@ public class WhatsAppEndpointUriFactory extends org.apache.camel.support.compone
         props.add("lazyStartProducer");
         props.add("phoneNumberId");
         props.add("webhookPath");
+        props.add("webhookSecret");
         props.add("webhookVerifyToken");
         props.add("whatsappService");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
+        Set<String> secretProps = new HashSet<>(2);
         secretProps.add("authorizationToken");
+        secretProps.add("webhookSecret");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
