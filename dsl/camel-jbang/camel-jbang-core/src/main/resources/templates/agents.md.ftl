@@ -26,6 +26,10 @@ Guidance for AI coding assistants working on this Apache Camel project, which wa
 - Any Apache Camel documentation page is available as LLM-friendly Markdown by replacing `.html` with `.md` in its URL.
 - Prefer the Camel CLI and the Camel MCP server (linked from the index above) to inspect components, their endpoint options and the catalog. Do not invent component URIs or options — verify them against the catalog or documentation.
 
+## Routes
+
+- If this project uses the YAML DSL, write routes in the canonical YAML DSL format, and use the Camel MCP server to validate their structure.
+
 ## Project layout
 
 - `src/main/java` — Java route builders and beans.

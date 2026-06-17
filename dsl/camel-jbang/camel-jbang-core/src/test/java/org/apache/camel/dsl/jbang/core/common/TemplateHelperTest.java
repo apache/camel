@@ -152,7 +152,6 @@ class TemplateHelperTest {
     void testAgentsTemplate() throws IOException {
         Map<String, Object> model = new HashMap<>();
         model.put("ArtifactId", "my-app");
-        model.put("Version", "1.0.0");
 
         String result = TemplateHelper.processTemplate("agents.md.ftl", model);
 
@@ -160,6 +159,7 @@ class TemplateHelperTest {
         assertNoUnresolvedInterpolations(result);
         assertTrue(result.contains("my-app"));
         assertTrue(result.contains("https://camel.apache.org/llms.txt"));
+        assertTrue(result.contains("canonical YAML DSL"));
     }
 
     @Test

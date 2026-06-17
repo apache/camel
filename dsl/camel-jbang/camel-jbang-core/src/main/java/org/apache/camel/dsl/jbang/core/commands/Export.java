@@ -357,7 +357,6 @@ public class Export extends ExportBaseCommand {
         String[] ids = gav.split(":");
         Map<String, Object> model = new HashMap<>();
         model.put("ArtifactId", ids[1]);
-        model.put("Version", ids[2]);
 
         String context = TemplateHelper.processTemplate("agents.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("AGENTS.md"), context);
