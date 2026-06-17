@@ -66,11 +66,41 @@ You can append query options to the URI in the following format: `?options=value
 
 For example, to read file `hello.txt` from bucket `myCamelBucket`, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&objectName=hello.txt")
-  .to("file:/var/downloaded");
---------------------------------------------------------------------------------
+    .to("file:/var/downloaded");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;objectName=hello.txt"/>
+  <to uri="file:/var/downloaded"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-storage://myCamelBucket
+      parameters:
+        serviceAccountKey: /home/user/Downloads/my-key.json
+        objectName: hello.txt
+      steps:
+        - to:
+            uri: file:/var/downloaded
+----
+====
 
 
 // component options: START
@@ -100,11 +130,40 @@ If you don't specify an operation explicitly, the producer will a file upload.
 
 If you need to have more control over the `storageClient` instance configuration, you can create your own instance and refer to it in your Camel google-storage component configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("google-storage://myCamelBucket?storageClient=#client")
-.to("mock:result");
---------------------------------------------------------------------------------
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-storage://myCamelBucket?storageClient=#client"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-storage://myCamelBucket
+      parameters:
+        storageClient: "#client"
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 === Google Storage Producer Operation examples
 
@@ -158,34 +217,133 @@ This operation will delete the object from the bucket myCamelBucket.
 
 - `ListBuckets`: this operation lists the buckets for this account in this region
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listBuckets")
-.to("mock:result");
---------------------------------------------------------------------------------
+    .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listBuckets")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;operation=listBuckets"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: google-storage://myCamelBucket
+          parameters:
+            serviceAccountKey: /home/user/Downloads/my-key.json
+            operation: listBuckets
+      - to:
+          uri: mock:result
+----
+====
 
 This operation will list the buckets for this account.
 
 - `DeleteBucket`: this operation deletes the bucket specified as URI parameter or header
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteBucket")
-.to("mock:result");
---------------------------------------------------------------------------------
+    .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteBucket")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;operation=deleteBucket"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: google-storage://myCamelBucket
+          parameters:
+            serviceAccountKey: /home/user/Downloads/my-key.json
+            operation: deleteBucket
+      - to:
+          uri: mock:result
+----
+====
 
 This operation will delete the bucket myCamelBucket.
 
 - `ListObjects`: this operation list object in a specific bucket
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listObjects")
-.to("mock:result");
---------------------------------------------------------------------------------
+    .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=listObjects")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;operation=listObjects"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: google-storage://myCamelBucket
+          parameters:
+            serviceAccountKey: /home/user/Downloads/my-key.json
+            operation: listObjects
+      - to:
+          uri: mock:result
+----
+====
 
 This operation will list the objects in the myCamelBucket bucket.
 

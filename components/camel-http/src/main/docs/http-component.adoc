@@ -148,21 +148,38 @@ You can set the HTTP producer's URI directly from the endpoint URI. In
 the route below, Camel will call out to the external server, `oldhost`,
 using HTTP.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
+----
 from("direct:start")
     .to("http://oldhost");
--------------------------------
+----
 
-And the equivalent XML DSL:
-
+XML::
++
 [source,xml]
----------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <to uri="http://oldhost"/>
 </route>
----------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: http://oldhost
+----
+====
 
 You can override the HTTP endpoint URI by adding a header with the key
 `Exchange.HTTP_URI` on the message.
@@ -185,11 +202,41 @@ The *http* producer supports URI parameters to be sent to the HTTP
 server. The URI parameters can either be set directly on the endpoint
 URI or as a header with the key `Exchange.HTTP_QUERY` on the message.
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------
+----
 from("direct:start")
   .to("http://oldhost?order=123&detail=short");
-------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="http://oldhost?order=123&amp;detail=short"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: http://oldhost
+            parameters:
+              order: 123
+              detail: short
+----
+====
 
 Or options provided in a header:
 
@@ -244,11 +291,41 @@ unit test.
 
 The HTTP component provides a way to configure a proxy.
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------
+----
 from("direct:start")
   .to("http://oldhost?proxyAuthHost=www.myproxy.com&proxyAuthPort=80");
-------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="http://oldhost?proxyAuthHost=www.myproxy.com&amp;proxyAuthPort=80"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: http://oldhost
+            parameters:
+              proxyAuthHost: www.myproxy.com
+              proxyAuthPort: 80
+----
+====
 
 There is also support for proxy authentication via the
 `proxyAuthUsername` and `proxyAuthPassword` options.

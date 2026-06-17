@@ -63,14 +63,58 @@ from("direct:start")
 
 Similarly, running the query and returning a path to the results in S3:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .setBody(constant("SELECT 1"))
     .to("aws2-athena://label?waitTimeout=60000&outputLocation=s3://bucket/path/")
     .to("aws2-athena://label?operation=getQueryResults&outputType=S3Pointer")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>SELECT 1</constant>
+  </setBody>
+  <to uri="aws2-athena://label?waitTimeout=60000&amp;outputLocation=s3://bucket/path/"/>
+  <to uri="aws2-athena://label?operation=getQueryResults&amp;outputType=S3Pointer"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: SELECT 1
+        - to:
+            uri: aws2-athena://label
+            parameters:
+              waitTimeout: "60000"
+              outputLocation: s3://bucket/path/
+        - to:
+            uri: aws2-athena://label
+            parameters:
+              operation: getQueryResults
+              outputType: S3Pointer
+        - to:
+            uri: mock:result
+----
+====
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
@@ -133,12 +177,45 @@ Will cause the output location to be `s3://other/location/`.
 
 - getQueryExecution: this operation returns information about a query given its query execution ID
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("aws2-athena://label?operation=getQueryExecution&queryExecutionId=11111111-1111-1111-1111-111111111111")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="aws2-athena://label?operation=getQueryExecution&amp;queryExecutionId=11111111-1111-1111-1111-111111111111"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: aws2-athena://label
+          parameters:
+            operation: getQueryExecution
+            queryExecutionId: 11111111-1111-1111-1111-111111111111
+      - to:
+          uri: mock:result
+----
+====
 
 The preceding example will yield an
 https://docs.aws.amazon.com/athena/latest/APIReference/API_QueryExecution.html[Athena QueryExecution] in the body.
@@ -245,12 +322,44 @@ S3 path (e.g. `s3://bucket/path/`) in the body pointing to the results.  The pat
 
 - listQueryExecutions: this operation returns a list of query execution IDs
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("aws2-athena://label?operation=listQueryExecutions")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="aws2-athena://label?operation=listQueryExecutions"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: aws2-athena://label
+          parameters:
+            operation: listQueryExecutions
+      - to:
+          uri: mock:result
+----
+====
 
 The preceding example will return a list of query executions in the body, plus the NextToken value as a
 header (`CamelAwsAthenaNextToken`) than can be used for manual pagination of results.
@@ -258,13 +367,51 @@ header (`CamelAwsAthenaNextToken`) than can be used for manual pagination of res
 - startQueryExecution: this operation starts the execution of a query.  It supports waiting for the query to
 complete before proceeding, and retrying the query based on a set of configurable failure conditions:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .setBody(constant("SELECT 1"))
     .to("aws2-athena://label?operation=startQueryExecution&outputLocation=s3://bucket/path/")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <setBody>
+        <constant>SELECT 1</constant>
+    </setBody>
+    <to uri="aws2-athena://label?operation=startQueryExecution&amp;outputLocation=s3://bucket/path/"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setBody:
+          constant: SELECT 1
+      - to:
+          uri: aws2-athena://label
+          parameters:
+            operation: startQueryExecution
+            outputLocation: "s3://bucket/path/"
+      - to:
+          uri: mock:result
+----
+====
 
 The preceding example will start the query `SELECT 1` and configure the
 results to be saved to `s3://bucket/path/`, but will not wait for the query

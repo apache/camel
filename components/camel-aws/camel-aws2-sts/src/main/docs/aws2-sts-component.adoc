@@ -88,30 +88,138 @@ Camel-AWS STS component provides the following operation on the producer side:
 
 - assumeRole: this operation will make an AWS user assume a different role temporary
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:assumeRole")
     .setHeader(STS2Constants.ROLE_ARN, constant("arn:123"))
     .setHeader(STS2Constants.ROLE_SESSION_NAME, constant("groot"))
-    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=assumeRole")
---------------------------------------------------------------------------------
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=assumeRole");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:assumeRole"/>
+    <setHeader name="CamelAwsStsRoleArn">
+        <constant>arn:123</constant>
+    </setHeader>
+    <setHeader name="CamelAwsStsRoleSessionName">
+        <constant>groot</constant>
+    </setHeader>
+    <to uri="aws2-sts://test?stsClient=#amazonSTSClient&amp;operation=assumeRole"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:assumeRole
+    steps:
+      - setHeader:
+          name: CamelAwsStsRoleArn
+          constant: "arn:123"
+      - setHeader:
+          name: CamelAwsStsRoleSessionName
+          constant: groot
+      - to:
+          uri: aws2-sts://test
+          parameters:
+            stsClient: "#amazonSTSClient"
+            operation: assumeRole
+----
+====
 
 - getSessionToken: this operation will return a temporary session token
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:getSessionToken")
-    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
---------------------------------------------------------------------------------
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:getSessionToken"/>
+  <to uri="aws2-sts://test?stsClient=#amazonSTSClient&amp;operation=getSessionToken"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getSessionToken
+      steps:
+        - to:
+            uri: aws2-sts://test
+            parameters:
+              stsClient: "#amazonSTSClient"
+              operation: getSessionToken
+----
+====
 
 - getFederationToken: this operation will return a temporary federation token
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:getFederationToken")
     .setHeader(STS2Constants.FEDERATED_NAME, constant("federation-account"))
-    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
---------------------------------------------------------------------------------
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getFederationToken");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:getFederationToken"/>
+    <setHeader name="CamelAwsStsFederatedName">
+        <constant>federation-account</constant>
+    </setHeader>
+    <to uri="aws2-sts://test?stsClient=#amazonSTSClient&amp;operation=getFederationToken"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getFederationToken
+    steps:
+      - setHeader:
+          name: CamelAwsStsFederatedName
+          constant: federation-account
+      - to:
+          uri: aws2-sts://test
+          parameters:
+            stsClient: "#amazonSTSClient"
+            operation: getFederationToken
+----
+====
 
 === Using a POJO as body
 

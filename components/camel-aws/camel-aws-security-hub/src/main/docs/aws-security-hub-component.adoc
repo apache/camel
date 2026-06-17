@@ -162,12 +162,44 @@ from("direct:updateFindings")
 
 Get information about the Security Hub configuration in your account.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:describeHub")
     .to("aws-security-hub://hub?operation=describeHub")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:describeHub"/>
+  <to uri="aws-security-hub://hub?operation=describeHub"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:describeHub
+      steps:
+        - to:
+            uri: aws-security-hub://hub
+            parameters:
+              operation: describeHub
+        - to:
+            uri: mock:result
+----
+====
 
 === OCSF Integration
 

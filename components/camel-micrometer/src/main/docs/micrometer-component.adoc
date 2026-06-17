@@ -171,6 +171,10 @@ If neither `increment` or `decrement` is defined then value of the counter will
 be incremented by one. If `increment` and `decrement` are both defined
 only increment operation is called.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // update counter simple.counter by 7
@@ -179,6 +183,38 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:counter:simple.counter?increment=7"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:counter:simple.counter
+            parameters:
+              increment: 7
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // increment counter simple.counter by 1
@@ -187,9 +223,39 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:counter:simple.counter"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:counter:simple.counter
+        - to:
+            uri: direct:out
+----
+====
+
 Both `increment` and `decrement` values are evaluated as `Simple` expressions with a Double result, e.g.,
 if header `X` contains a value that evaluates to 3.0, the `simple.counter` counter is decremented by 3.0:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // decrement counter simple.counter by 3
@@ -197,6 +263,34 @@ from("direct:in")
     .to("micrometer:counter:simple.counter?decrement=${header.X}")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:counter:simple.counter?decrement=${header.X}"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:counter:simple.counter
+            parameters:
+              decrement: "${header.X}"
+        - to:
+            uri: direct:out
+----
+====
 
 ==== Headers
 
@@ -247,6 +341,10 @@ micrometer:summary:metricname[?options]
 If no `value` is not set, nothing is added to histogram and warning is
 logged.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // adds value 9923 to simple.histogram
@@ -255,25 +353,113 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:summary:simple.histogram?value=9923"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:summary:simple.histogram
+            parameters:
+              value: 9923
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // nothing is added to simple.histogram; warning is logged
 from("direct:in")
     .to("micrometer:summary:simple.histogram")
     .to("direct:out");
-
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:summary:simple.histogram"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:summary:simple.histogram
+        - to:
+            uri: direct:out
+----
+====
 
 `value` is evaluated as `Simple` expressions with a Double result, e.g.,
 if header `X` contains a value that evaluates to 3.0, this value is registered with the `simple.histogram`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:in")
     .to("micrometer:summary:simple.histogram?value=${header.X}")
     .to("direct:out");
-
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:summary:simple.histogram?value=${header.X}"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:summary:simple.histogram
+            parameters:
+              value: "${header.X}"
+        - to:
+            uri: direct:out
+----
+====
 
 ==== Headers
 
@@ -317,6 +503,10 @@ without any timer update. If action `start` is called on an already running
 timer or `stop` is called on an unknown timer, nothing is updated
 and warning is logged.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // measure time spent in route "direct:calculate"
@@ -325,6 +515,39 @@ from("direct:in")
     .to("direct:calculate")
     .to("micrometer:timer:simple.timer?action=stop");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="micrometer:timer:simple.timer?action=start"/>
+  <to uri="direct:calculate"/>
+  <to uri="micrometer:timer:simple.timer?action=stop"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: micrometer:timer:simple.timer
+            parameters:
+              action: start
+        - to:
+            uri: direct:calculate
+        - to:
+            uri: micrometer:timer:simple.timer
+            parameters:
+              action: stop
+----
+====
 
 `Timer.Sample` objects are stored as Exchange properties between
 different Metrics component calls.

@@ -149,19 +149,99 @@ Content-Based Router.
 Then, you should use Stream Caching or convert the message body to
 a `String` prior, which is safe to be re-read multiple times.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("queue:foo").
-  filter().xpath("//foo").
-  to("queue:bar")
+from("queue:foo")
+  .filter().xpath("//foo")
+  .to("queue:bar");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="queue:foo"/>
+  <filter>
+    <xpath>//foo</xpath>
+    <to uri="queue:bar"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: //foo
+            steps:
+              - to:
+                  uri: queue:bar
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("queue:foo").
-  choice().xpath("//foo").to("queue:bar").
-  otherwise().to("queue:others");
+from("queue:foo")
+  .choice().when(xpath("//foo")).to("queue:bar")
+  .otherwise().to("queue:others");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="queue:foo"/>
+  <choice>
+    <when>
+      <xpath>//foo</xpath>
+      <to uri="queue:bar"/>
+    </when>
+    <otherwise>
+      <to uri="queue:others"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - choice:
+            when:
+              - expression:
+                  xpath:
+                    expression: //foo
+                steps:
+                  - to:
+                      uri: queue:bar
+            otherwise:
+              steps:
+                - to:
+                    uri: queue:others
+----
+====
 
 == Setting a result type
 
@@ -220,6 +300,10 @@ xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
 Here is a simple example using an XPath expression as a predicate in a
 xref:eips:filter-eip.adoc[Message Filter]:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -227,8 +311,8 @@ from("direct:start")
         .to("mock:result");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -239,6 +323,24 @@ And in XML
   </filter>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/person[@name='James']"
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
 
 == Using namespaces
 

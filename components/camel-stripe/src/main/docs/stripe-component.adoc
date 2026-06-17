@@ -147,11 +147,40 @@ stripe.setApiKey("sk_test_...");
 
 ==== Option 2: Endpoint Level with Property Placeholder
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("stripe:customers?apiKey={{stripe.apiKey}}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="stripe:customers?apiKey={{stripe.apiKey}}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: stripe:customers
+            parameters:
+              apiKey: "{{stripe.apiKey}}"
+----
+====
 
 Then in `application.properties`:
 ----
@@ -160,11 +189,40 @@ stripe.apiKey=sk_test_...
 
 ==== Option 3: System Property (Recommended for Production)
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("stripe:customers?apiKey={{STRIPE_API_KEY}}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="stripe:customers?apiKey={{STRIPE_API_KEY}}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: stripe:customers
+            parameters:
+              apiKey: "{{STRIPE_API_KEY}}"
+----
+====
 
 Set via system property:
 ----

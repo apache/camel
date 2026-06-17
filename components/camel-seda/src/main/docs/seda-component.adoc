@@ -98,12 +98,55 @@ The xref:seda-component.adoc[SEDA] component supports using
 Request Reply, where the caller will wait for
 the Async route to complete. For instance:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mina:tcp://0.0.0.0:9876?textline=true&sync=true").to("seda:input");
 
 from("seda:input").to("bean:processInput").to("bean:createResponse");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina:tcp://0.0.0.0:9876?textline=true&amp;sync=true"/>
+  <to uri="seda:input"/>
+</route>
+<route>
+  <from uri="seda:input"/>
+  <to uri="bean:processInput"/>
+  <to uri="bean:createResponse"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://0.0.0.0:9876
+      parameters:
+        textline: true
+        sync: true
+      steps:
+        - to:
+            uri: seda:input
+- route:
+    from:
+      uri: seda:input
+      steps:
+        - to:
+            uri: bean:processInput
+        - to:
+            uri: bean:createResponse
+----
+====
 
 In the route above, we have a TCP listener on port 9876 that accepts
 incoming requests. The request is routed to the `seda:input` queue. As

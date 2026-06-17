@@ -77,11 +77,40 @@ NOTE: for Java, you can configure this using Java code.
 
 You can now use a token to send a message instead of WebhookUrl
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------------------------------
+----
 from("direct:test")
     .to("slack:#random?token=RAW(<YOUR_TOKEN>)");
----------------------------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:test"/>
+  <to uri="slack:#random?token=RAW(&lt;YOUR_TOKEN&gt;)"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:test
+      steps:
+        - to:
+            uri: "slack:#random"
+            parameters:
+              token: "<YOUR_TOKEN>"
+----
+====
 
 You can now use the Slack API model to create blocks. You can read more about it here https://api.slack.com/block-kit
 
@@ -122,11 +151,41 @@ For User tokens, you'll need the following permissions:
 
 You can also use a consumer for messages in a channel
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------------------------------
+----
 from("slack://general?token=RAW(<YOUR_TOKEN>)&maxResults=1")
     .to("mock:result");
----------------------------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="slack://general?token=RAW(&lt;YOUR_TOKEN&gt;)&amp;maxResults=1"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: slack://general
+      parameters:
+        token: "<YOUR_TOKEN>"
+        maxResults: 1
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 This way you'll get the last message from `general` channel.
 The consumer will track the timestamp of the last message consumed,

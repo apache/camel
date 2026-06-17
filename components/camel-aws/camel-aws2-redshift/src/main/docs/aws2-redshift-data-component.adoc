@@ -93,11 +93,41 @@ Camel-AWS Redshift Data component provides the following operation on the produc
 
 - listDatabases: this operation will list redshift databases
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listDatabases")
-    .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases")
---------------------------------------------------------------------------------
+    .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listDatabases"/>
+  <to uri="aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&amp;operation=listDatabases"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listDatabases
+      steps:
+        - to:
+            uri: aws2-redshift-data://test
+            parameters:
+              awsRedshiftDataClient: "#awsRedshiftDataClient"
+              operation: listDatabases
+----
+====
 
 === Using a POJO as body
 

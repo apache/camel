@@ -56,12 +56,42 @@ Since Camel 4.8, the component is capable of doing simple document conversions. 
 suppose you are receiving a PDF byte as a byte array:
 
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("pdf:extractText")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="pdf:extractText"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: pdf:extractText
+        - to:
+            uri: mock:result
+----
+====
 
 
 It is now possible to get the body as a PD Document by using `PDDocument doc = exchange.getIn().getBody(PDDocument.class);`,

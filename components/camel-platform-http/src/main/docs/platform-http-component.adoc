@@ -107,19 +107,40 @@ If this property is set, the referenced bean must exist and implement `OAuthToke
 Otherwise, Camel looks for a single `OAuthTokenValidationFactory` in the registry before falling back
 to the classpath provider.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("platform-http:/secure?oauthProfile=myprofile")
     .to("direct:businessLogic");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="platform-http:/secure?oauthProfile=myprofile"/>
+  <to uri="direct:businessLogic"/>
+</route>
+----
+
+YAML::
++
 [source,yaml]
 ----
-- from:
-    uri: "platform-http:/secure?oauthProfile=myprofile"
-    steps:
-      - to: "direct:businessLogic"
+- route:
+    from:
+      uri: platform-http:/secure
+      parameters:
+        oauthProfile: myprofile
+      steps:
+        - to:
+            uri: direct:businessLogic
 ----
+====
 
 [source,properties]
 ----

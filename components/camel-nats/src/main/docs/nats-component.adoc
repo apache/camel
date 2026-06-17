@@ -62,10 +62,39 @@ Notice how you can specify multiple servers separated by comma.
 
 Or you can specify the servers in the endpoint URI
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:send").to("nats:test?servers=localhost:4222");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <to uri="nats:test?servers=localhost:4222"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: nats:test
+            parameters:
+              servers: localhost:4222
+----
+====
 
 The endpoint configuration will override any server configuration on the component level.
 
@@ -95,35 +124,150 @@ The consumer will, when routing the message is complete, send back the message a
 
 === Producer example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:send")
   .to("nats:mytopic");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <to uri="nats:mytopic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: nats:mytopic
+----
+====
+
 In case of using authorization, you can directly specify your credentials in the server URL
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:send")
   .to("nats:mytopic?servers=username:password@localhost:4222");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <to uri="nats:mytopic?servers=username:password@localhost:4222"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: nats:mytopic
+            parameters:
+              servers: "username:password@localhost:4222"
+----
+====
+
 or your token
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:send")
-  .to("nats:mytopic?servers=token@localhost:4222);
+  .to("nats:mytopic?servers=token@localhost:4222");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:send"/>
+  <to uri="nats:mytopic?servers=token@localhost:4222"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: nats:mytopic
+            parameters:
+              servers: "token@localhost:4222"
+----
+====
 
 === Consumer example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("nats:mytopic?maxMessages=5&queueName=myqueue")
   .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="nats:mytopic?maxMessages=5&amp;queueName=myqueue"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: nats:mytopic
+      parameters:
+        maxMessages: 5
+        queueName: myqueue
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 === Manual Acknowledgment (JetStream)
 

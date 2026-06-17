@@ -137,21 +137,79 @@ The consumer can poll documents from a collection or listen for real-time update
 
 To enable real-time updates:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("google-firestore://myCollection?realtimeUpdates=true")
     .to("log:changes");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-firestore://myCollection?realtimeUpdates=true"/>
+  <to uri="log:changes"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-firestore://myCollection
+      parameters:
+        realtimeUpdates: true
+      steps:
+        - to:
+            uri: log:changes
+----
+====
 
 === Advanced Component Configuration
 
 If you need more control over the `Firestore` client instance configuration, you can create your own instance and refer to it in your Camel google-firestore component configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("google-firestore://myCollection?firestoreClient=#myFirestoreClient")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-firestore://myCollection?firestoreClient=#myFirestoreClient"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-firestore://myCollection
+      parameters:
+        firestoreClient: "#myFirestoreClient"
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 == Producer Operation Examples
 
@@ -210,13 +268,51 @@ from("direct:start")
 
 This operation retrieves a document by its ID:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
     .to("google-firestore://users?operation=getDocumentById")
     .log("Document data: ${body}");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <setHeader name="CamelGoogleFirestoreDocumentId">
+        <constant>user123</constant>
+    </setHeader>
+    <to uri="google-firestore://users?operation=getDocumentById"/>
+    <log message="Document data: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelGoogleFirestoreDocumentId
+          constant: user123
+      - to:
+          uri: google-firestore://users
+          parameters:
+            operation: getDocumentById
+      - log:
+          message: "Document data: ${body}"
+----
+====
 
 The response body will contain a `Map<String, Object>` with the document data, or `null` if the document doesn't exist.
 
@@ -241,24 +337,93 @@ from("direct:start")
 
 This operation deletes a document:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
     .to("google-firestore://users?operation=deleteDocument")
     .log("Document deleted: ${body}");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <setHeader name="CamelGoogleFirestoreDocumentId">
+        <constant>user123</constant>
+    </setHeader>
+    <to uri="google-firestore://users?operation=deleteDocument"/>
+    <log message="Document deleted: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelGoogleFirestoreDocumentId
+          constant: user123
+      - to:
+          uri: google-firestore://users
+          parameters:
+            operation: deleteDocument
+      - log:
+          message: "Document deleted: ${body}"
+----
+====
 
 === List Documents
 
 This operation lists all documents in a collection:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("google-firestore://users?operation=listDocuments")
     .log("Found ${body.size()} documents");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-firestore://users?operation=listDocuments"/>
+  <log message="Found ${body.size()} documents"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-firestore://users
+            parameters:
+              operation: listDocuments
+        - log: "Found ${body.size()} documents"
+----
+====
 
 The response body will contain a `List<Map<String, Object>>` with each document's data.
 Each document includes `_id` and `_path` fields with the document ID and path.
@@ -267,8 +432,12 @@ Each document includes `_id` and `_path` fields with the document ID and path.
 
 This operation queries documents with filters:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .setHeader("CamelGoogleFirestoreQueryField", constant("age"))
     .setHeader("CamelGoogleFirestoreQueryOperator", constant(">="))
@@ -277,7 +446,65 @@ from("direct:start")
     .setHeader("CamelGoogleFirestoreQueryOrderBy", constant("age"))
     .to("google-firestore://users?operation=queryCollection")
     .log("Found ${body.size()} matching documents");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <setHeader name="CamelGoogleFirestoreQueryField">
+        <constant>age</constant>
+    </setHeader>
+    <setHeader name="CamelGoogleFirestoreQueryOperator">
+        <constant>&gt;=</constant>
+    </setHeader>
+    <setHeader name="CamelGoogleFirestoreQueryValue">
+        <constant>21</constant>
+    </setHeader>
+    <setHeader name="CamelGoogleFirestoreQueryLimit">
+        <constant>10</constant>
+    </setHeader>
+    <setHeader name="CamelGoogleFirestoreQueryOrderBy">
+        <constant>age</constant>
+    </setHeader>
+    <to uri="google-firestore://users?operation=queryCollection"/>
+    <log message="Found ${body.size()} matching documents"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelGoogleFirestoreQueryField
+          constant: age
+      - setHeader:
+          name: CamelGoogleFirestoreQueryOperator
+          constant: ">="
+      - setHeader:
+          name: CamelGoogleFirestoreQueryValue
+          constant: "21"
+      - setHeader:
+          name: CamelGoogleFirestoreQueryLimit
+          constant: "10"
+      - setHeader:
+          name: CamelGoogleFirestoreQueryOrderBy
+          constant: age
+      - to:
+          uri: google-firestore://users
+          parameters:
+            operation: queryCollection
+      - log:
+          message: "Found ${body.size()} matching documents"
+----
+====
 
 Supported query operators:
 
@@ -296,12 +523,43 @@ Supported query operators:
 
 This operation lists all collections in the database:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("google-firestore://anyCollection?operation=listCollections")
     .log("Collections: ${body}");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-firestore://anyCollection?operation=listCollections"/>
+  <log message="Collections: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-firestore://anyCollection
+            parameters:
+              operation: listCollections
+        - log: "Collections: ${body}"
+----
+====
 
 To list subcollections under a specific document:
 
@@ -319,26 +577,94 @@ from("direct:start")
 
 Poll all documents from a collection every 30 seconds:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("google-firestore://users?delay=30000")
     .log("Document ID: ${header.CamelGoogleFirestoreResponseDocumentId}")
     .log("Document data: ${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-firestore://users?delay=30000"/>
+  <log message="Document ID: ${header.CamelGoogleFirestoreResponseDocumentId}"/>
+  <log message="Document data: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-firestore://users
+      parameters:
+        delay: 30000
+      steps:
+        - log: "Document ID: ${header.CamelGoogleFirestoreResponseDocumentId}"
+        - log: "Document data: ${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 === Real-time Updates
 
 Listen for document changes in real-time:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("google-firestore://users?realtimeUpdates=true")
     .log("Change type: ${header.CamelGoogleFirestoreChangeType}")
     .log("Document ID: ${header.CamelGoogleFirestoreResponseDocumentId}")
     .log("Document data: ${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-firestore://users?realtimeUpdates=true"/>
+  <log message="Change type: ${header.CamelGoogleFirestoreChangeType}"/>
+  <log message="Document ID: ${header.CamelGoogleFirestoreResponseDocumentId}"/>
+  <log message="Document data: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-firestore://users
+      parameters:
+        realtimeUpdates: true
+      steps:
+        - log: "Change type: ${header.CamelGoogleFirestoreChangeType}"
+        - log: "Document ID: ${header.CamelGoogleFirestoreResponseDocumentId}"
+        - log: "Document data: ${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 The `CamelGoogleFirestoreChangeType` header indicates the type of change: `ADDED`, `MODIFIED`, or `REMOVED`.
 

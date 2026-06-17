@@ -48,12 +48,47 @@ key name *foo* then it is added as *foo*.
 
 == Example
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------
+----
 from("queue:foo")
   .filter().xquery("//foo")
-  .to("queue:bar")
----------------------------
+  .to("queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="queue:foo"/>
+  <filter>
+    <xquery>//foo</xquery>
+    <to uri="queue:bar"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - filter:
+            expression:
+              xquery:
+                expression: //foo
+            steps:
+              - to:
+                  uri: queue:bar
+----
+====
 
 You can also use functions inside your query, in which case you need an
 explicit type conversion, or you will get an `org.w3c.dom.DOMException:

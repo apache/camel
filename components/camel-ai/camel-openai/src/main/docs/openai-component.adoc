@@ -79,11 +79,41 @@ camel.oauth.azure.token-endpoint=https://login.microsoftonline.com/tenant/oauth2
 camel.oauth.azure.scope=https://cognitiveservices.azure.com/.default
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
     .to("openai:chat-completion?model=gpt-4&oauthProfile=azure");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;oauthProfile=azure"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              oauthProfile: azure
+----
+====
 
 MCP servers can also use OAuth independently via per-server `oauthProfile`:
 
@@ -109,6 +139,20 @@ from("direct:chat")
     .setBody(constant("What is Apache Camel?"))
     .to("openai:chat-completion")
     .log("Response: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <setBody>
+    <constant>What is Apache Camel?</constant>
+  </setBody>
+  <to uri="openai:chat-completion"/>
+  <log message="Response: ${body}"/>
+</route>
 ----
 
 YAML::

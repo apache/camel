@@ -31,27 +31,122 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Recursive watch all events (file creation, file deletion, file modification):
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file-watch://some-directory")
     .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file-watch://some-directory"/>
+  <log message="File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file-watch://some-directory
+      steps:
+        - log:
+            message: "File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}"
+----
+====
+
 === Recursive watch for creation and deletion of txt files:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file-watch://some-directory?events=DELETE,CREATE&antInclude=**/*.txt")
     .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file-watch://some-directory?events=DELETE,CREATE&amp;antInclude=**/*.txt"/>
+  <log message="File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file-watch://some-directory
+      parameters:
+        events: "DELETE,CREATE"
+        antInclude: "**/*.txt"
+      steps:
+        - log:
+            message: "File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}"
+----
+====
+
 === Create a snapshot of file when modified:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file-watch://some-directory?events=MODIFY&recursive=false")
     .setHeader(Exchange.FILE_NAME, simple("${header.CamelFileName}.${header.CamelFileLastModified}"))
     .to("file:some-directory/snapshots");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file-watch://some-directory?events=MODIFY&amp;recursive=false"/>
+  <setHeader name="CamelFileName">
+    <simple>${header.CamelFileName}.${header.CamelFileLastModified}</simple>
+  </setHeader>
+  <to uri="file:some-directory/snapshots"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file-watch://some-directory
+      parameters:
+        events: MODIFY
+        recursive: false
+      steps:
+        - setHeader:
+            name: CamelFileName
+            expression:
+              simple:
+                expression: "${header.CamelFileName}.${header.CamelFileLastModified}"
+        - to:
+            uri: file:some-directory/snapshots
+----
+====
 
 include::spring-boot:partial$starter.adoc[]

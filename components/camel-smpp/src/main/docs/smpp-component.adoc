@@ -214,44 +214,85 @@ specification] for the complete list of error codes and their meanings.
 
 == Examples
 
-A route which sends an SMS using the Java DSL:
+A route which sends an SMS:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------
+----
 from("direct:start")
-  .to("smpp://smppclient@localhost:2775?
-      password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producer");
-------------------------------------------------------------------------------------------
+    .to("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producer");
+----
 
-A route which sends an SMS using the Spring XML DSL:
-
+XML::
++
 [source,xml]
------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
-  <to uri="smpp://smppclient@localhost:2775?
-           password=password&amp;enquireLinkTimer=3000&amp;transactionTimer=5000&amp;systemType=producer"/>
+  <to uri="smpp://smppclient@localhost:2775?password=password&amp;enquireLinkTimer=3000&amp;transactionTimer=5000&amp;systemType=producer"/>
 </route>
------------------------------------------------------------------------------------------------------------
+----
 
-A route which receives an SMS using the Java DSL:
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: smpp://smppclient@localhost:2775
+            parameters:
+              password: password
+              enquireLinkTimer: 3000
+              transactionTimer: 5000
+              systemType: producer
+----
+====
 
+A route which receives an SMS:
+
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
+----
 from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer")
-  .to("bean:foo");
---------------------------------------------------------------------------------------------------------------------------
+    .to("bean:foo");
+----
 
-A route which receives an SMS using the Spring XML DSL:
-
+XML::
++
 [source,xml]
-----------------------------------------------------------------------------------------------------------------
-  <route>
-     <from uri="smpp://smppclient@localhost:2775?
-                password=password&amp;enquireLinkTimer=3000&amp;transactionTimer=5000&amp;systemType=consumer"/>
-     <to uri="bean:foo"/>
-  </route>
-----------------------------------------------------------------------------------------------------------------
+----
+<route>
+  <from uri="smpp://smppclient@localhost:2775?password=password&amp;enquireLinkTimer=3000&amp;transactionTimer=5000&amp;systemType=consumer"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: smpp://smppclient@localhost:2775
+      parameters:
+        password: password
+        enquireLinkTimer: 3000
+        transactionTimer: 5000
+        systemType: consumer
+      steps:
+        - to:
+            uri: bean:foo
+----
+====
 
 An example of using transceiver (TRX) binding type:
 

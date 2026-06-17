@@ -60,11 +60,40 @@ include::partial$component-endpoint-headers.adoc[]
 
 For example, you could write a test case as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("seda:someEndpoint").
-  to("dataset-test:file://data/expectedOutput?noop=true");
+from("seda:someEndpoint")
+    .to("dataset-test:file://data/expectedOutput?noop=true");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="seda:someEndpoint"/>
+  <to uri="dataset-test:file://data/expectedOutput?noop=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:someEndpoint
+      steps:
+        - to:
+            uri: dataset-test:file://data/expectedOutput
+            parameters:
+              noop: true
+----
+====
 
 If your test then invokes the
 https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#assertIsSatisfied-org.apache.camel.CamelContext-[MockEndpoint.assertIsSatisfied(camelContext)

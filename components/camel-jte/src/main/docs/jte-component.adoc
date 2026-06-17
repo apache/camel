@@ -90,11 +90,38 @@ resource. This allows you to provide a dynamic template at runtime.
 
 For example, you could use something like:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------
-from("rest:get:item/{id}").
-  to("jte:com/acme/response.jte");
--------------------------------------------
+----
+from("rest:get:item/{id}")
+    .to("jte:com/acme/response.jte");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:item/{id}"/>
+  <to uri="jte:com/acme/response.jte"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:item/{id}
+      steps:
+        - to:
+            uri: jte:com/acme/response.jte
+----
+====
 
 To use a JTE template to formulate a response to the REST get call:
 

@@ -79,11 +79,47 @@ SplunkEvent.  See comment under message body.
 
 *Example*
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
-      from("direct:start").convertBodyTo(SplunkEvent.class)
-          .to("splunk://submit?username=user&password=123&index=myindex&sourceType=someSourceType&source=mySource")...
-----------------------------------------------------------------------------------------------------------------------
+----
+from("direct:start").convertBodyTo(SplunkEvent.class)
+    .to("splunk://submit?username=user&password=123&index=myindex&sourceType=someSourceType&source=mySource");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <convertBodyTo type="SplunkEvent"/>
+  <to uri="splunk://submit?username=user&amp;password=123&amp;index=myindex&amp;sourceType=someSourceType&amp;source=mySource"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - convertBodyTo:
+            type: SplunkEvent
+        - to:
+            uri: splunk://submit
+            parameters:
+              username: user
+              password: "123"
+              index: myindex
+              sourceType: someSourceType
+              source: mySource
+----
+====
 
 In this example, a converter is required to convert to a SplunkEvent
 class.
@@ -104,11 +140,44 @@ name of the query in the savedSearch option.
 
 *Example*
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------
-      from("splunk://normal?delay=5000&username=user&password=123&initEarliestTime=-10s&search=search index=myindex sourcetype=someSourcetype")
-          .to("direct:search-result");
----------------------------------------------------------------------------------------------------------------------------------------------
+----
+from("splunk://normal?delay=5000&username=user&password=123&initEarliestTime=-10s&search=search index=myindex sourcetype=someSourcetype")
+    .to("direct:search-result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="splunk://normal?delay=5000&amp;username=user&amp;password=123&amp;initEarliestTime=-10s&amp;search=search index=myindex sourcetype=someSourcetype"/>
+  <to uri="direct:search-result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: splunk://normal
+      parameters:
+        delay: 5000
+        username: user
+        password: "123"
+        initEarliestTime: "-10s"
+        search: "search index=myindex sourcetype=someSourcetype"
+      steps:
+        - to:
+            uri: direct:search-result
+----
+====
 
 Camel Splunk component creates a route exchange per search result with a
 SplunkEvent in the body.
@@ -129,12 +198,56 @@ other payloads where Splunk has built in support.
 
 Search Twitter for tweets with music and publish events to Splunk
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------------------------------------------------------
-      from("twitter://search?type=polling&keywords=music&delay=10&consumerKey=abc&consumerSecret=def&accessToken=hij&accessTokenSecret=xxx")
-          .convertBodyTo(SplunkEvent.class)
-          .to("splunk://submit?username=foo&password=bar&index=camel-tweets&sourceType=twitter&source=music-tweets");
---------------------------------------------------------------------------------------------------------------------------------------------
+----
+from("twitter://search?type=polling&keywords=music&delay=10&consumerKey=abc&consumerSecret=def&accessToken=hij&accessTokenSecret=xxx")
+    .convertBodyTo(SplunkEvent.class)
+    .to("splunk://submit?username=foo&password=bar&index=camel-tweets&sourceType=twitter&source=music-tweets");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="twitter://search?type=polling&amp;keywords=music&amp;delay=10&amp;consumerKey=abc&amp;consumerSecret=def&amp;accessToken=hij&amp;accessTokenSecret=xxx"/>
+  <convertBodyTo type="SplunkEvent"/>
+  <to uri="splunk://submit?username=foo&amp;password=bar&amp;index=camel-tweets&amp;sourceType=twitter&amp;source=music-tweets"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: twitter://search
+      parameters:
+        type: polling
+        keywords: music
+        delay: 10
+        consumerKey: abc
+        consumerSecret: def
+        accessToken: hij
+        accessTokenSecret: xxx
+      steps:
+        - convertBodyTo:
+            type: SplunkEvent
+        - to:
+            uri: splunk://submit
+            parameters:
+              username: foo
+              password: bar
+              index: camel-tweets
+              sourceType: twitter
+              source: music-tweets
+----
+====
 
 To convert a Tweet to a `SplunkEvent`, you could use a converter like:
 
@@ -168,11 +281,43 @@ public class Tweet2SplunkEvent {
 
 Search Splunk for tweets:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------------------------------------------
-      from("splunk://normal?username=foo&password=bar&initEarliestTime=-2m&search=search index=camel-tweets sourcetype=twitter")
-          .log("${body}");
---------------------------------------------------------------------------------------------------------------------------------
+----
+from("splunk://normal?username=foo&password=bar&initEarliestTime=-2m&search=search index=camel-tweets sourcetype=twitter")
+    .log("${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="splunk://normal?username=foo&amp;password=bar&amp;initEarliestTime=-2m&amp;search=search index=camel-tweets sourcetype=twitter"/>
+  <log message="${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: splunk://normal
+      parameters:
+        username: foo
+        password: bar
+        initEarliestTime: "-2m"
+        search: "search index=camel-tweets sourcetype=twitter"
+      steps:
+        - log:
+            message: "${body}"
+----
+====
 
 === Other comments
 

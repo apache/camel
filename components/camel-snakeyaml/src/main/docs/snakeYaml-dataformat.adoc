@@ -35,12 +35,42 @@ WARNING: SnakeYAML can load any class from YAML definition which may lead to sec
 
 - Turn Object messages into yaml then send to MQSeries
 +
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------
+----
 from("activemq:My.Queue")
-  .marshal().yaml()
-  .to("mqseries:Another.Queue");
-------------------------------------------------------------
+    .marshal().yaml()
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <marshal><yaml/></marshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - marshal:
+            yaml: {}
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
 +
 [source,java]
 ------------------------------------------------------------

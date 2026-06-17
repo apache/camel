@@ -76,11 +76,40 @@ To use this component, you have multiple options to provide the required Azure a
 For example, to get a message content from the queue `messageQueue`
 in the `storageAccount` storage account and, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey").
-to("file://queuedirectory");
---------------------------------------------------------------------------------
+----
+from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey")
+    .to("file://queuedirectory");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey"/>
+    <to uri="file://queuedirectory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-queue://storageAccount/messageQueue
+      parameters:
+        accessKey: yourAccessKey
+    steps:
+      - to:
+          uri: file://queuedirectory
+----
+====
 
 === Advanced Azure Storage Queue configuration
 If your Camel Application is running behind a firewall or if you need to
@@ -102,11 +131,43 @@ context.getRegistry().bind("client", client);
 
 Then refer to this instance in your Camel `azure-storage-queue` component configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("azure-storage-queue://cameldev/queue1?serviceClient=#client")
-.to("file://outputFolder?fileName=output.txt&fileExist=Append");
------------------------------------------------------------------------
+    .to("file://outputFolder?fileName=output.txt&fileExist=Append");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="azure-storage-queue://cameldev/queue1?serviceClient=#client"/>
+  <to uri="file://outputFolder?fileName=output.txt&amp;fileExist=Append"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-queue://cameldev/queue1
+      parameters:
+        serviceClient: "#client"
+      steps:
+        - to:
+            uri: file://outputFolder
+            parameters:
+              fileName: output.txt
+              fileExist: Append
+----
+====
 
 === Automatic detection of QueueServiceClient client in registry
 
@@ -152,11 +213,44 @@ Refer to the example section in this page to learn how to use these operations i
 === Consumer Examples
 To consume a queue into a file component with maximum five messages in one batch, this can be done like this:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("azure-storage-queue://cameldev/queue1?serviceClient=#client&maxMessages=5")
-.to("file://outputFolder?fileName=output.txt&fileExist=Append");
------------------------------------------------------------------------
+    .to("file://outputFolder?fileName=output.txt&fileExist=Append");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-queue://cameldev/queue1?serviceClient=#client&amp;maxMessages=5"/>
+    <to uri="file://outputFolder?fileName=output.txt&amp;fileExist=Append"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-queue://cameldev/queue1
+      parameters:
+        serviceClient: "#client"
+        maxMessages: 5
+    steps:
+      - to:
+          uri: file://outputFolder
+          parameters:
+            fileName: output.txt
+            fileExist: Append
+----
+====
 
 === Producer Operations Examples
 - `listQueues`:

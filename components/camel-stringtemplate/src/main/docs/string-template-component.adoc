@@ -120,11 +120,38 @@ exchange.getIn().setHeader("CamelStringTemplateVariableMap", variableMap);
 For example, you could use a string template as follows in order to
 formulate a response to a message:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------
-from("activemq:My.Queue").
-  to("string-template:com/acme/MyResponse.tm");
------------------------------------------------
+----
+from("activemq:My.Queue")
+    .to("string-template:com/acme/MyResponse.tm");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="string-template:com/acme/MyResponse.tm"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: string-template:com/acme/MyResponse.tm
+----
+====
 
 === The Email Example
 

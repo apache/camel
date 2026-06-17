@@ -82,18 +82,76 @@ other data types are converted to Strings.
 
 Triggering the Spring Batch job execution:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------
-from("direct:startBatch").to("spring-batch:myJob");
----------------------------------------------------
+----
+from("direct:startBatch")
+    .to("spring-batch:myJob");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:startBatch"/>
+  <to uri="spring-batch:myJob"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:startBatch
+      steps:
+        - to:
+            uri: spring-batch:myJob
+----
+====
 
 Triggering the Spring Batch job execution with the `JobLauncher` set
 explicitly.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:startBatch").to("spring-batch:myJob?jobLauncherRef=myJobLauncher");
---------------------------------------------------------------------------------
+----
+from("direct:startBatch")
+    .to("spring-batch:myJob?jobLauncherRef=myJobLauncher");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:startBatch"/>
+  <to uri="spring-batch:myJob?jobLauncherRef=myJobLauncher"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:startBatch
+      steps:
+        - to:
+            uri: spring-batch:myJob
+            parameters:
+              jobLauncherRef: myJobLauncher
+----
+====
 
 A `JobExecution` instance returned by the
 `JobLauncher` is forwarded by the `SpringBatchProducer` as the output

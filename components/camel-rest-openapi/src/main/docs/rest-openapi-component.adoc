@@ -126,11 +126,41 @@ For direct `rest-openapi` consumer routes, pass the delegate endpoint option dir
 consumer endpoint URI. Consumer URIs identify the OpenAPI specification and do not include an
 `#operationId` fragment.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rest-openapi:petstore-v3.json?consumerComponentName=platform-http&oauthProfile=myprofile")
     .to("direct:businessLogic");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest-openapi:petstore-v3.json?consumerComponentName=platform-http&amp;oauthProfile=myprofile"/>
+  <to uri="direct:businessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest-openapi:petstore-v3.json
+      parameters:
+        consumerComponentName: platform-http
+        oauthProfile: myprofile
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
 
 The selected delegate component must support the `oauthProfile` endpoint option. The built-in
 `platform-http` delegate supports this option. An `OAuthTokenValidationFactory` must be available, for example from

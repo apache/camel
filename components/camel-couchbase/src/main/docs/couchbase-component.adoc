@@ -63,12 +63,44 @@ The simplest way to consume documents is to just use the existing endpoint optio
 auto-generates a SQL++ query from `bucket`, `collection`, `limit`, `skip`, `descending`,
 `rangeStartKey`, and `rangeEndKey`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// Consumes up to 10 documents in descending order
 from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass&limit=10&descending=true")
     .to("direct:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="couchbase:http://localhost?bucket=myBucket&amp;username=user&amp;password=pass&amp;limit=10&amp;descending=true"/>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: couchbase:http://localhost
+      parameters:
+        bucket: myBucket
+        username: user
+        password: pass
+        limit: 10
+        descending: true
+      steps:
+        - to:
+            uri: direct:result
+----
+====
 
 This generates: `SELECT META().id AS \__id, * FROM \`myBucket\` ORDER BY META().id DESC LIMIT 10`
 

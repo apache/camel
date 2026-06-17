@@ -104,6 +104,10 @@ from("pubnub:eon-map-geolocation-output?subscribeKey=mysubkey)
 The following snippet listens for events on the iot channel.
 If you can add the option withPresence, you will also receive channel Join, Leave asf events.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("pubnub:iot?subscribeKey=mySubscribeKey")
@@ -111,11 +115,43 @@ from("pubnub:iot?subscribeKey=mySubscribeKey")
     .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="pubnub:iot?subscribeKey=mySubscribeKey"/>
+  <log message="${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: pubnub:iot
+      parameters:
+        subscribeKey: mySubscribeKey
+      steps:
+        - log:
+            message: "${body}"
+        - to:
+            uri: mock:result
+----
+====
+
 === Performing operations
 
 
 - `herenow`: obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count of the channel:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:control")
@@ -123,14 +159,79 @@ from("direct:control")
     .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:control"/>
+  <to uri="pubnub:myChannel?publishKey=mypublishKey&amp;subscribeKey=mySubscribeKey&amp;operation=herenow"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:control
+      steps:
+        - to:
+            uri: pubnub:myChannel
+            parameters:
+              publishKey: mypublishKey
+              subscribeKey: mySubscribeKey
+              operation: herenow
+        - to:
+            uri: mock:result
+----
+====
+
 - `wherenow`: obtain information about the current list of channels to which a uuid is subscribed:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:control")
     .to("pubnub:myChannel?publishKey=mypublishKey&subscribeKey=mySubscribeKey&operation=wherenow&uuid=spyonme")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:control"/>
+  <to uri="pubnub:myChannel?publishKey=mypublishKey&amp;subscribeKey=mySubscribeKey&amp;operation=wherenow&amp;uuid=spyonme"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:control
+      steps:
+        - to:
+            uri: pubnub:myChannel
+            parameters:
+              publishKey: mypublishKey
+              subscribeKey: mySubscribeKey
+              operation: wherenow
+              uuid: spyonme
+        - to:
+            uri: mock:result
+----
+====
 
 - `setstate`: used to set key/value pairs specific to a subscriber uuid:
 
@@ -143,11 +244,42 @@ from("direct:control")
 
 - `gethistory`: Fetches historical messages of a channel:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:control")
     .to("pubnub:myChannel?publishKey=mypublishKey&subscribeKey=mySubscribeKey&operation=gethistory");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:control"/>
+  <to uri="pubnub:myChannel?publishKey=mypublishKey&amp;subscribeKey=mySubscribeKey&amp;operation=gethistory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:control
+      steps:
+        - to:
+            uri: pubnub:myChannel
+            parameters:
+              publishKey: mypublishKey
+              subscribeKey: mySubscribeKey
+              operation: gethistory
+----
+====
 
 There are a couple of examples in the test directory that show some of the PubNub features.
 They require a PubNub account, from where you can obtain a publish/subscribe key.

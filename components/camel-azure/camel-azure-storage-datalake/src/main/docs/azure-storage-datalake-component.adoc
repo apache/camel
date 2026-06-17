@@ -69,11 +69,41 @@ The default is `CLIENT_SECRET`.
 
 For example, to download content from file `test.txt` located on the `filesystem` in `camelTesting` storage account, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("azure-storage-datalake:camelTesting/filesystem?fileName=test.txt&accountKey=key").
-to("file://fileDirectory");
+from("azure-storage-datalake:camelTesting/filesystem?fileName=test.txt&accountKey=key")
+    .to("file://fileDirectory");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-datalake:camelTesting/filesystem?fileName=test.txt&amp;accountKey=key"/>
+    <to uri="file://fileDirectory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-datalake:camelTesting/filesystem
+      parameters:
+        fileName: test.txt
+        accountKey: key
+    steps:
+      - to:
+          uri: file://fileDirectory
+----
+====
 
 === Automatic detection of a service client
 
@@ -245,6 +275,10 @@ from("direct:start")
 
 -  `deleteFile`
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -252,14 +286,79 @@ from("direct:start")
     .to("mock:results");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="azure-storage-datalake:cameltesting/filesystem?operation=deleteFile&amp;fileName=test.txt&amp;serviceClient=#serviceClient"/>
+    <to uri="mock:results"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: azure-storage-datalake:cameltesting/filesystem
+          parameters:
+            operation: deleteFile
+            fileName: test.txt
+            serviceClient: "#serviceClient"
+      - to:
+          uri: mock:results
+----
+====
+
 - `downloadToFile`
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("azure-storage-datalake:cameltesting/filesystem?operation=downloadToFile&fileName=test.txt&fileDir=/test/mydir&serviceClient=#serviceClient")
     .to("mock:results");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="azure-storage-datalake:cameltesting/filesystem?operation=downloadToFile&amp;fileName=test.txt&amp;fileDir=/test/mydir&amp;serviceClient=#serviceClient"/>
+    <to uri="mock:results"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: azure-storage-datalake:cameltesting/filesystem
+          parameters:
+            operation: downloadToFile
+            fileName: test.txt
+            fileDir: /test/mydir
+            serviceClient: "#serviceClient"
+      - to:
+          uri: mock:results
+----
+====
 
 -  `downloadLink`
 

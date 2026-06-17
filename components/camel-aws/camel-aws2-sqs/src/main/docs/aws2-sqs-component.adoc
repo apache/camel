@@ -156,12 +156,48 @@ instruct Camel to send the DeleteMessage, if being filtered.
 
 === Send Message
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
-  .setBody(constant("Camel rocks!"))
-  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
-------------------------------------------------------------------------------------------------------
+    .setBody(constant("Camel rocks!"))
+    .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>Camel rocks!</constant>
+  </setBody>
+  <to uri="aws2-sqs://camel-1?accessKey=RAW(xxx)&amp;secretKey=RAW(xxx)&amp;region=eu-west-1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: "Camel rocks!"
+        - to:
+            uri: aws2-sqs://camel-1
+            parameters:
+              accessKey: RAW(xxx)
+              secretKey: RAW(xxx)
+              region: eu-west-1
+----
+====
 
 === Send Batch Message
 
@@ -192,13 +228,56 @@ The id set on each message of the batch will be a Random UUID.
 
 Use deleteMessage operation to delete a single message. You'll need to set a receipt handle header for the message you want to delete.
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
-  .setHeader(SqsConstants.SQS_OPERATION, constant("deleteMessage"))
-  .setHeader(SqsConstants.RECEIPT_HANDLE, constant("123456"))
-  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
-------------------------------------------------------------------------------------------------------
+    .setHeader(SqsConstants.SQS_OPERATION, constant("deleteMessage"))
+    .setHeader(SqsConstants.RECEIPT_HANDLE, constant("123456"))
+    .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <setHeader name="CamelAwsSqsOperation">
+        <constant>deleteMessage</constant>
+    </setHeader>
+    <setHeader name="CamelAwsSqsReceiptHandle">
+        <constant>123456</constant>
+    </setHeader>
+    <to uri="aws2-sqs://camel-1?accessKey=RAW(xxx)&amp;secretKey=RAW(xxx)&amp;region=eu-west-1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelAwsSqsOperation
+          constant: deleteMessage
+      - setHeader:
+          name: CamelAwsSqsReceiptHandle
+          constant: "123456"
+      - to:
+          uri: aws2-sqs://camel-1
+          parameters:
+            accessKey: RAW(xxx)
+            secretKey: RAW(xxx)
+            region: eu-west-1
+----
+====
 
 As result, you'll get an exchange containing a `DeleteMessageResponse` instance, that you can use to check if the message was deleted or not.
 
@@ -206,12 +285,49 @@ As result, you'll get an exchange containing a `DeleteMessageResponse` instance,
 
 Use listQueues operation to list queues.
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
-  .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues"))
-  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
-------------------------------------------------------------------------------------------------------
+    .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues"))
+    .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <setHeader name="CamelAwsSqsOperation">
+        <constant>listQueues</constant>
+    </setHeader>
+    <to uri="aws2-sqs://camel-1?accessKey=RAW(xxx)&amp;secretKey=RAW(xxx)&amp;region=eu-west-1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelAwsSqsOperation
+          constant: listQueues
+      - to:
+          uri: aws2-sqs://camel-1
+          parameters:
+            accessKey: RAW(xxx)
+            secretKey: RAW(xxx)
+            region: eu-west-1
+----
+====
 
 As result, you'll get an exchange containing a `ListQueuesResponse` instance, that you can examine to check the actual queues.
 
@@ -219,12 +335,49 @@ As result, you'll get an exchange containing a `ListQueuesResponse` instance, th
 
 Use purgeQueue operation to purge queue.
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
-  .setHeader(SqsConstants.SQS_OPERATION, constant("purgeQueue"))
-  .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
-------------------------------------------------------------------------------------------------------
+    .setHeader(SqsConstants.SQS_OPERATION, constant("purgeQueue"))
+    .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <setHeader name="CamelAwsSqsOperation">
+        <constant>purgeQueue</constant>
+    </setHeader>
+    <to uri="aws2-sqs://camel-1?accessKey=RAW(xxx)&amp;secretKey=RAW(xxx)&amp;region=eu-west-1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelAwsSqsOperation
+          constant: purgeQueue
+      - to:
+          uri: aws2-sqs://camel-1
+          parameters:
+            accessKey: RAW(xxx)
+            secretKey: RAW(xxx)
+            region: eu-west-1
+----
+====
 
 As result you'll get an exchange containing a `PurgeQueueResponse` instance.
 

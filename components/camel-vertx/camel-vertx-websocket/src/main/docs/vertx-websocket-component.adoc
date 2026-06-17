@@ -46,6 +46,10 @@ include::partial$component-endpoint-headers.adoc[]
 == Usage
 The following example shows how to expose a WebSocket on http://localhost:8080/echo and returns an '_echo_' response back to the same channel:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("vertx-websocket:localhost:8080/echo")
@@ -53,24 +57,108 @@ from("vertx-websocket:localhost:8080/echo")
     .to("vertx-websocket:localhost:8080/echo");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="vertx-websocket:localhost:8080/echo"/>
+  <transform>
+    <simple>Echo: ${body}</simple>
+  </transform>
+  <to uri="vertx-websocket:localhost:8080/echo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: vertx-websocket:localhost:8080/echo
+      steps:
+        - transform:
+            simple: "Echo: ${body}"
+        - to:
+            uri: vertx-websocket:localhost:8080/echo
+----
+====
+
 It's also possible to configure the consumer to connect as a WebSocket client on a remote address with the `consumeAsClient` option:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("vertx-websocket:my.websocket.com:8080/chat?consumeAsClient=true")
     .log("Got WebSocket message ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="vertx-websocket:my.websocket.com:8080/chat?consumeAsClient=true"/>
+  <log message="Got WebSocket message ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: vertx-websocket:my.websocket.com:8080/chat
+      parameters:
+        consumeAsClient: true
+      steps:
+        - log:
+            message: "Got WebSocket message ${body}"
+----
+====
+
 === Path & query parameters
 
 The WebSocket server consumer supports the configuration of parameterized paths. The path parameter value will be set
 as a Camel exchange header:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("vertx-websocket:localhost:8080/chat/{user}")
     .log("New message from ${header.user} >>> ${body}")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="vertx-websocket:localhost:8080/chat/{user}"/>
+  <log message="New message from ${header.user} >>> ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: vertx-websocket:localhost:8080/chat/{user}
+      steps:
+        - log:
+            message: "New message from ${header.user} >>> ${body}"
+----
+====
 
 Similarly, you can retrieve any query parameter values used by the WebSocket client to connect to the server endpoint:
 

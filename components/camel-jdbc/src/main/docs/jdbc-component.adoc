@@ -86,14 +86,60 @@ Camel will then look up these parameters from the message headers.
 Notice in the example above we set two headers with constant value
  for the named parameters:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-  from("direct:projects")
-     .setHeader("lic", constant("ASF"))
-     .setHeader("min", constant(123))
-     .setBody("select * from projects where license = :?lic and id > :?min order by id")
-     .to("jdbc:myDataSource?useHeadersAsParameters=true")
+from("direct:projects")
+    .setHeader("lic", constant("ASF"))
+    .setHeader("min", constant(123))
+    .setBody("select * from projects where license = :?lic and id > :?min order by id")
+    .to("jdbc:myDataSource?useHeadersAsParameters=true");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:projects"/>
+    <setHeader name="lic">
+        <constant>ASF</constant>
+    </setHeader>
+    <setHeader name="min">
+        <constant>123</constant>
+    </setHeader>
+    <setBody>
+        <constant>select * from projects where license = :?lic and id &gt; :?min order by id</constant>
+    </setBody>
+    <to uri="jdbc:myDataSource?useHeadersAsParameters=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:projects
+    steps:
+      - setHeader:
+          name: lic
+          constant: ASF
+      - setHeader:
+          name: min
+          constant: "123"
+      - setBody:
+          constant: "select * from projects where license = :?lic and id > :?min order by id"
+      - to:
+          uri: jdbc:myDataSource
+          parameters:
+            useHeadersAsParameters: true
+----
+====
 
 You can also store the header values in a `java.util.Map` and store the
 map on the headers with the key `CamelJdbcParameters`.
@@ -116,11 +162,38 @@ Then we configure a route that routes to the JDBC component, so the SQL
 will be executed. Note how we refer to the `testdb` datasource that was
 bound in the previous step:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
     .to("jdbc:testdb");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <to uri="jdbc:testdb"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+      steps:
+        - to:
+            uri: jdbc:testdb
+----
+====
 
 We create an endpoint, add the SQL query to the body of the IN message,
 and then send the exchange. The result of the query is returned in the
@@ -159,13 +232,50 @@ combine it with a polling scheduler such as the xref:timer-component.adoc[Timer]
 or xref:quartz-component.adoc[Quartz] etc. In the following example, we retrieve
 data from the database every 60 seconds:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("timer://foo?period=60000")
-  .setBody(constant("select * from customer"))
-  .to("jdbc:testdb")
-  .to("activemq:queue:customers");
+    .setBody(constant("select * from customer"))
+    .to("jdbc:testdb")
+    .to("activemq:queue:customers");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="timer://foo?period=60000"/>
+    <setBody>
+        <constant>select * from customer</constant>
+    </setBody>
+    <to uri="jdbc:testdb"/>
+    <to uri="activemq:queue:customers"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer://foo
+      parameters:
+        period: "60000"
+    steps:
+      - setBody:
+          constant: "select * from customer"
+      - to:
+          uri: jdbc:testdb
+      - to:
+          uri: activemq:queue:customers
+----
+====
 
 === Move Data Between Data Sources
 

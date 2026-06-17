@@ -252,59 +252,254 @@ sub-interface for additional details.
 
 Subscribe to route started and stopped events:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("event:RouteStarted,RouteStopped")
     .log("Route ${header.CamelEventRouteId} event: ${header.CamelEventType}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:RouteStarted,RouteStopped"/>
+  <log message="Route ${header.CamelEventRouteId} event: ${header.CamelEventType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:RouteStarted,RouteStopped
+      steps:
+        - log:
+            message: "Route ${header.CamelEventRouteId} event: ${header.CamelEventType}"
+----
+====
+
 Subscribe to all route events using a wildcard:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("event:Route*")
     .log("Route ${header.CamelEventRouteId} event: ${header.CamelEventType}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:Route*"/>
+  <log message="Route ${header.CamelEventRouteId} event: ${header.CamelEventType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "event:Route*"
+      steps:
+        - log:
+            message: "Route ${header.CamelEventRouteId} event: ${header.CamelEventType}"
+----
+====
+
 Subscribe to exchange completed events for a specific route:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("event:ExchangeCompleted?include=myRoute")
     .log("Exchange completed on route myRoute");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:ExchangeCompleted?include=myRoute"/>
+  <log message="Exchange completed on route myRoute"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:ExchangeCompleted
+      parameters:
+        include: myRoute
+      steps:
+        - log:
+            message: "Exchange completed on route myRoute"
+----
+====
+
 Monitor exchange failures with error details:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("event:ExchangeFailed")
     .log("Exchange ${header.CamelEventExchangeId} failed on route ${header.CamelEventRouteId}: ${header.CamelEventException}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:ExchangeFailed"/>
+  <log message="Exchange ${header.CamelEventExchangeId} failed on route ${header.CamelEventRouteId}: ${header.CamelEventException}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:ExchangeFailed
+      steps:
+        - log:
+            message: "Exchange ${header.CamelEventExchangeId} failed on route ${header.CamelEventRouteId}: ${header.CamelEventException}"
+----
+====
+
 Monitor exchange latency using ExchangeSent events:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("event:ExchangeSent")
     .log("Exchange sent to ${header.CamelEventEndpointUri} took ${header.CamelEventDuration}ms");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:ExchangeSent"/>
+  <log message="Exchange sent to ${header.CamelEventEndpointUri} took ${header.CamelEventDuration}ms"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:ExchangeSent
+      steps:
+        - log:
+            message: "Exchange sent to ${header.CamelEventEndpointUri} took ${header.CamelEventDuration}ms"
+----
+====
+
 Exclude internal routes from monitoring:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("event:ExchangeCompleted?exclude=internalRoute1,internalRoute2")
     .log("Exchange completed on route ${header.CamelEventRouteId}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:ExchangeCompleted?exclude=internalRoute1,internalRoute2"/>
+  <log message="Exchange completed on route ${header.CamelEventRouteId}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:ExchangeCompleted
+      parameters:
+        exclude: "internalRoute1,internalRoute2"
+      steps:
+        - log:
+            message: "Exchange completed on route ${header.CamelEventRouteId}"
+----
+====
+
 Subscribe to specific custom events:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("event:Custom?customEventClass=com.example.MyCustomEvent")
     .log("Custom event received: ${body}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:Custom?customEventClass=com.example.MyCustomEvent"/>
+  <log message="Custom event received: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:Custom
+      parameters:
+        customEventClass: com.example.MyCustomEvent
+      steps:
+        - log:
+            message: "Custom event received: ${body}"
+----
+====
 
 == Async Processing
 

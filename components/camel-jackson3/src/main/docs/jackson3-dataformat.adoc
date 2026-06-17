@@ -14,12 +14,42 @@
 Jackson 3 is a Data Format that uses the
 https://github.com/FasterXML/jackson[Jackson 3 Library]
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("activemq:My.Queue").
-  marshal().jackson().
-  to("mqseries:Another.Queue");
--------------------------------
+----
+from("activemq:My.Queue")
+    .marshal().jackson()
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <marshal><jackson/></marshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - marshal:
+            jackson: {}
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
 
 == Jackson 3 Options
 

@@ -69,24 +69,86 @@ practice with REST.
 
 The following is a Camel route using a path only
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rest:get:hello")
   .transform().constant("Bye World");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello"/>
+  <transform>
+    <constant>Bye World</constant>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello
+      steps:
+        - transform:
+            constant: "Bye World"
+----
+====
+
 And the following route uses a parameter which is mapped to a Camel
 header with the key "me".
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rest:get:hello/{me}")
   .transform().simple("Bye ${header.me}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello/{me}"/>
+  <transform>
+    <simple>Bye ${header.me}</simple>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello/{me}
+      steps:
+        - transform:
+            simple: "Bye ${header.me}"
+----
+====
+
 The following examples have configured a base path as "hello" and then
 have two REST services configured using uriTemplates.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rest:get:hello:/{me}")
@@ -96,6 +158,43 @@ from("rest:get:hello:/french/{me}")
   .transform().simple("Bonjour ${header.me}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rest:get:hello:/{me}"/>
+  <transform>
+    <simple>Hi ${header.me}</simple>
+  </transform>
+</route>
+<route>
+  <from uri="rest:get:hello:/french/{me}"/>
+  <transform>
+    <simple>Bonjour ${header.me}</simple>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest:get:hello:/{me}
+      steps:
+        - transform:
+            simple: "Hi ${header.me}"
+- route:
+    from:
+      uri: rest:get:hello:/french/{me}
+      steps:
+        - transform:
+            simple: "Bonjour ${header.me}"
+----
+====
+
 == Examples
 
 === Rest producer examples
@@ -104,11 +203,38 @@ You can use the REST component to call REST services like any other Camel compon
 
 For example, to call a REST service on using `hello/\{me}` you can do
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
   .to("rest:get:hello/{me}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="rest:get:hello/{me}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: rest:get:hello/{me}
+----
+====
 
 And then the dynamic value `\{me}` is mapped to a header or variable with the same name.
 So to call this REST service, you can send an empty message body and a header as shown:
@@ -128,11 +254,40 @@ String response = template.withVariable("me", "Donald Duck").to("direct:start").
 The Rest producer needs to know the hostname and port of the REST service, which you can configure
 using the host option as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
   .to("rest:get:hello/{me}?host=myserver:8080/foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="rest:get:hello/{me}?host=myserver:8080/foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: rest:get:hello/{me}
+            parameters:
+              host: "myserver:8080/foo"
+----
+====
 
 Instead of using the host option, you can configure the host on the `restConfiguration` as shown:
 

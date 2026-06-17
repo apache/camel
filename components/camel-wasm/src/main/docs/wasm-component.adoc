@@ -158,31 +158,39 @@ pub extern fn process(ptr: u32, len: u32) -> u64 {
 
 Supposing we have compiled a Wasm module containing the function above, then it can be called in a Camel Route by its name and module resource location:
 
-
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------
- try (CamelContext cc = new DefaultCamelContext()) {
-    FluentProducerTemplate pt = cc.createFluentProducerTemplate();
+----
+from("direct:in")
+    .to("wasm:process?module=classpath://functions.wasm");
+----
 
-    cc.addRoutes(new RouteBuilder() {
-        @Override
-        public void configure() throws Exception {
-            from("direct:in")
-                    .toF("wasm:process?module=classpath://functions.wasm");
-        }
-    });
-    cc.start();
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="wasm:process?module=classpath://functions.wasm"/>
+</route>
+----
 
-    Exchange out = pt.to("direct:in")
-            .withHeader("foo", "bar")
-            .withBody("hello")
-            .request(Exchange.class);
-
-    assertThat(out.getMessage().getHeaders())
-            .containsEntry("foo", "bar");
-    assertThat(out.getMessage().getBody(String.class))
-            .isEqualTo("HELLO");
-}
----------------------------------------
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: wasm:process
+            parameters:
+              module: classpath://functions.wasm
+----
+====
 
 include::spring-boot:partial$starter.adoc[]

@@ -74,11 +74,40 @@ If `oauthProfile` is set but no `OAuthTokenValidationFactory` is available, the 
 Add `camel-oauth` for the default provider or include a runtime-specific provider from the platform integration.
 ====
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("servlet:secure?oauthProfile=myprofile")
     .to("direct:businessLogic");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="servlet:secure?oauthProfile=myprofile"/>
+  <to uri="direct:businessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: servlet:secure
+      parameters:
+        oauthProfile: myprofile
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
 
 When `oauthProfile` is set, static profile configuration is resolved and validated at route startup.
 Updates to OAuth profile properties require restarting the route or Camel context before they take effect.

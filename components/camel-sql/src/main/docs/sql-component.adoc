@@ -165,12 +165,45 @@ headers, it provides a concise syntax for querying a sequence or some
 other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms:order.inbox")
     .to("sql:select order_seq.nextval from dual?outputHeader=OrderId&outputType=SelectOne")
     .to("jms:order.booking");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:order.inbox"/>
+  <to uri="sql:select order_seq.nextval from dual?outputHeader=OrderId&amp;outputType=SelectOne"/>
+  <to uri="jms:order.booking"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:order.inbox
+      steps:
+        - to:
+            uri: "sql:select order_seq.nextval from dual"
+            parameters:
+              outputHeader: OrderId
+              outputType: SelectOne
+        - to:
+            uri: jms:order.booking
+----
+====
 
 === Using StreamList
 
@@ -225,6 +258,10 @@ message headers and exchange variables.
 Notice in the example above we set two headers with
 constant value for the named parameters:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:projects")
@@ -233,14 +270,76 @@ from("direct:projects")
     .to("sql:select * from projects where license = :#lic and id > :#min order by id")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:projects"/>
+  <setHeader name="lic">
+    <constant>ASF</constant>
+  </setHeader>
+  <setHeader name="min">
+    <constant>123</constant>
+  </setHeader>
+  <to uri="sql:select * from projects where license = :#lic and id > :#min order by id"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:projects
+      steps:
+        - setHeader:
+            name: lic
+            constant: "ASF"
+        - setHeader:
+            name: min
+            constant: 123
+        - to:
+            uri: "sql:select * from projects where license = :#lic and id > :#min order by id"
+----
+====
+
 Though if the message body is a `java.util.Map` then the named
 parameters will be taken from the body.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:projects")
     .to("sql:select * from projects where license = :#lic and id > :#min order by id")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:projects"/>
+  <to uri="sql:select * from projects where license = :#lic and id > :#min order by id"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:projects
+      steps:
+        - to:
+            uri: "sql:select * from projects where license = :#lic and id > :#min order by id"
+----
+====
 
 === Using expression parameters in producers
 
@@ -248,13 +347,51 @@ In the given route below, we want to get all the projects from the
 database. It uses the body of the exchange for defining the license and
 uses the value of a property as the second parameter.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:projects")
-  .setBody(constant("ASF"))
-  .setProperty("min", constant(123))
-  .to("sql:select * from projects where license = :#${body} and id > :#${exchangeProperty.min} order by id")
+    .setBody(constant("ASF"))
+    .setProperty("min", constant(123))
+    .to("sql:select * from projects where license = :#${body} and id > :#${exchangeProperty.min} order by id");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:projects"/>
+    <setBody>
+        <constant>ASF</constant>
+    </setBody>
+    <setProperty name="min">
+        <constant>123</constant>
+    </setProperty>
+    <to uri="sql:select * from projects where license = :#${body} and id &gt; :#${exchangeProperty.min} order by id"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:projects
+    steps:
+      - setBody:
+          constant: ASF
+      - setProperty:
+          name: min
+          constant: "123"
+      - to:
+          uri: "sql:select * from projects where license = :#${body} and id > :#${exchangeProperty.min} order by id"
+----
+====
 
 ==== Using expression parameters in consumers
 
@@ -263,11 +400,38 @@ to build dynamic query parameters, such as calling a method on a bean to retriev
 
 For example, in the sample below we call the nextId method on the bean myIdGenerator:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("sql:select * from projects where id = :#${bean:myIdGenerator.nextId}")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sql:select * from projects where id = :#${bean:myIdGenerator.nextId}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "sql:select * from projects where id = :#${bean:myIdGenerator.nextId}"
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 And the bean has the following method:
 
@@ -311,6 +475,10 @@ order by id
 
 In the following route:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:query")
@@ -318,6 +486,35 @@ from("direct:query")
     .to("log:query")
     .to("mock:query");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:query"/>
+  <to uri="sql:classpath:sql/selectProjectsIn.sql"/>
+  <to uri="log:query"/>
+  <to uri="mock:query"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:query
+      steps:
+        - to:
+            uri: sql:classpath:sql/selectProjectsIn.sql
+        - to:
+            uri: log:query
+        - to:
+            uri: mock:query
+----
+====
 
 Then the IN query can use a header with the key names with the dynamic
 values such as:
@@ -342,6 +539,10 @@ The query can also be specified in the endpoint instead of being
 externalized (notice that externalizing makes maintaining the SQL
 queries easier)
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:query")
@@ -349,6 +550,35 @@ from("direct:query")
     .to("log:query")
     .to("mock:query");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:query"/>
+  <to uri="sql:select * from projects where project in (:#in:names) order by id"/>
+  <to uri="log:query"/>
+  <to uri="mock:query"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:query
+      steps:
+        - to:
+            uri: "sql:select * from projects where project in (:#in:names) order by id"
+        - to:
+            uri: log:query
+        - to:
+            uri: mock:query
+----
+====
 
 If the dynamic list of values is stored in the message body, you can use `(:#in:$\{body\})` to
 refer to the message body, such as:

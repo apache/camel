@@ -39,10 +39,40 @@ include::partial$component-endpoint-headers.adoc[]
 In the route below, we insert a `browse:` component to be able to browse
 the Exchanges that are passing through:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:order.in").to("browse:orderReceived").to("bean:processOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:order.in"/>
+  <to uri="browse:orderReceived"/>
+  <to uri="bean:processOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:order.in
+      steps:
+        - to:
+            uri: browse:orderReceived
+        - to:
+            uri: bean:processOrder
+----
+====
 
 We can now inspect the received exchanges from within the Java code:
 

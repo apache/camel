@@ -248,24 +248,93 @@ from("direct:start")
 
 - `secret` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .to("dapr:secret?secretStore=myStore&key=mySecret")
   .log("Received secret from Dapr: ${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dapr:secret?secretStore=myStore&amp;key=mySecret"/>
+  <log message="Received secret from Dapr: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dapr:secret
+            parameters:
+              secretStore: myStore
+              key: mySecret
+        - log: "Received secret from Dapr: ${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `secret: bulk` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   // when no secret key is passed, bulk retrieval is performed on secret store
   .to("dapr:secret?secretStore=myStore")
   .log("Received bulk secrets from Dapr: ${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="dapr:secret?secretStore=myStore"/>
+  <log message="Received bulk secrets from Dapr: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: dapr:secret
+            parameters:
+              secretStore: myStore
+        - log: "Received bulk secrets from Dapr: ${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `configuration` -
 
@@ -461,19 +530,83 @@ from("direct:start")
 
 - `pubSub` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
   .log("Received message from Dapr pubsub: ${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="dapr:pubSub?pubSubName=myPubSub&amp;topic=myTopic"/>
+  <log message="Received message from Dapr pubsub: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: dapr:pubSub
+      parameters:
+        pubSubName: myPubSub
+        topic: myTopic
+      steps:
+        - log: "Received message from Dapr pubsub: ${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `configuration` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("dapr:configuration?configStore=myStore&configKeys=k1,k2")
   .log("Received config updates from Dapr: ${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="dapr:configuration?configStore=myStore&amp;configKeys=k1,k2"/>
+  <log message="Received config updates from Dapr: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: dapr:configuration
+      parameters:
+        configStore: myStore
+        configKeys: "k1,k2"
+      steps:
+        - log: "Received config updates from Dapr: ${body}"
+        - to:
+            uri: mock:result
+----
+====
 include::spring-boot:partial$starter.adoc[]

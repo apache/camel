@@ -17,12 +17,42 @@ https://github.com/FasterXML/jackson-dataformats-binary/tree/master/cbor[CBOR ex
 to unmarshal a CBOR payload into Java objects or to marshal Java objects
 into a CBOR payload.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
+----
 from("activemq:My.Queue")
     .unmarshal().cbor()
     .to("mqseries:Another.Queue");
--------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <unmarshal><cbor/></unmarshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - unmarshal:
+            cbor: {}
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
 
 == Usage
 

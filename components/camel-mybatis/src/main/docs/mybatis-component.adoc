@@ -71,11 +71,40 @@ the header with the key `CamelMyBatisResult`.
 For example, if you wish to consume beans from a JMS queue and insert
 them into a database, you could do the following:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:queue:newAccount")
-  .to("mybatis:insertAccount?statementType=Insert");
+    .to("mybatis:insertAccount?statementType=Insert");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:queue:newAccount"/>
+  <to uri="mybatis:insertAccount?statementType=Insert"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:newAccount
+      steps:
+        - to:
+            uri: mybatis:insertAccount
+            parameters:
+              statementType: Insert
+----
+====
 
 Notice we have to specify the `statementType`, as we need to instruct
 Camel which kind of operation to invoke.
@@ -106,12 +135,44 @@ control so you can control whether the SQL statement to be executed is a
 to route to an MyBatis endpoint in which the IN body contains parameters
 to a `SELECT` statement we can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-        .to("mybatis:selectAccountById?statementType=SelectOne")
-        .to("mock:result");
+    .to("mybatis:selectAccountById?statementType=SelectOne")
+    .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:selectAccountById?statementType=SelectOne"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:selectAccountById
+            parameters:
+              statementType: SelectOne
+        - to:
+            uri: mock:result
+----
+====
 
 In the code above we can invoke the MyBatis statement
 `selectAccountById` and the IN body should contain the account id we
@@ -120,22 +181,86 @@ want to retrieve, such as an `Integer` type.
 We can do the same for some of the other operations, such as
 `SelectList`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-        .to("mybatis:selectAllAccounts?statementType=SelectList")
-        .to("mock:result");
+    .to("mybatis:selectAllAccounts?statementType=SelectList")
+    .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:selectAllAccounts?statementType=SelectList"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:selectAllAccounts
+            parameters:
+              statementType: SelectList
+        - to:
+            uri: mock:result
+----
+====
 
 And the same for `UPDATE`, where we can send an `Account` object as the
 IN body to MyBatis:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-        .to("mybatis:updateAccount?statementType=Update")
-        .to("mock:result");
+    .to("mybatis:updateAccount?statementType=Update")
+    .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:updateAccount?statementType=Update"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:updateAccount
+            parameters:
+              statementType: Update
+        - to:
+            uri: mock:result
+----
+====
 
 === Using InsertList StatementType
 
@@ -165,12 +290,44 @@ Then you can insert multiple rows, by sending a Camel message to the
 `mybatis` endpoint which uses the `InsertList` statement type, as shown
 below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-        .to("mybatis:batchInsertAccount?statementType=InsertList")
-        .to("mock:result");
+    .to("mybatis:batchInsertAccount?statementType=InsertList")
+    .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:batchInsertAccount?statementType=InsertList"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:batchInsertAccount
+            parameters:
+              statementType: InsertList
+        - to:
+            uri: mock:result
+----
+====
 
 === Using UpdateList StatementType
 
@@ -195,12 +352,44 @@ Then you can update multiple rows, by sending a Camel message to the
 mybatis endpoint which uses the UpdateList statement type, as shown
 below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("mybatis:batchUpdateAccount?statementType=UpdateList")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:batchUpdateAccount?statementType=UpdateList"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:batchUpdateAccount
+            parameters:
+              statementType: UpdateList
+        - to:
+            uri: mock:result
+----
+====
 
 === Using DeleteList StatementType
 
@@ -224,12 +413,44 @@ Then you can delete multiple rows, by sending a Camel message to the
 mybatis endpoint which uses the DeleteList statement type, as shown
 below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("mybatis:batchDeleteAccount?statementType=DeleteList")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="mybatis:batchDeleteAccount?statementType=DeleteList"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mybatis:batchDeleteAccount
+            parameters:
+              statementType: DeleteList
+        - to:
+            uri: mock:result
+----
+====
 
 === Notice on InsertList, UpdateList and DeleteList StatementTypes
 
@@ -243,11 +464,40 @@ This component supports scheduled polling and can therefore be used as
 a Polling Consumer. For example, to poll the
 database every minute:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mybatis:selectAllAccounts?delay=60000")
-  .to("activemq:queue:allAccounts");
+    .to("activemq:queue:allAccounts");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mybatis:selectAllAccounts?delay=60000"/>
+  <to uri="activemq:queue:allAccounts"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mybatis:selectAllAccounts
+      parameters:
+        delay: 60000
+      steps:
+        - to:
+            uri: activemq:queue:allAccounts
+----
+====
 
 Alternatively you can use another mechanism for triggering the scheduled
 polls, such as the xref:timer-component.adoc[Timer] or xref:timer-component.adoc[Quartz]
@@ -255,12 +505,44 @@ components. In the sample below we poll the database, every 30 seconds
 using the xref:timer-component.adoc[Timer] component and send the data to the JMS
 queue:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("timer://pollTheDatabase?delay=30000")
-  .to("mybatis:selectAllAccounts")
-  .to("activemq:queue:allAccounts");
+    .to("mybatis:selectAllAccounts")
+    .to("activemq:queue:allAccounts");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer://pollTheDatabase?delay=30000"/>
+  <to uri="mybatis:selectAllAccounts"/>
+  <to uri="activemq:queue:allAccounts"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:pollTheDatabase
+      parameters:
+        delay: 30000
+      steps:
+        - to:
+            uri: mybatis:selectAllAccounts
+        - to:
+            uri: activemq:queue:allAccounts
+----
+====
 
 And the MyBatis SQL mapping file used:
 
@@ -284,11 +566,40 @@ The route below illustrates we execute the *consumeAccount* statement
 data is processed. This allows us to change the status of the row in the
 database to process, so we avoid consuming it twice or more.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mybatis:selectUnprocessedAccounts?onConsume=consumeAccount")
     .to("mock:results");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mybatis:selectUnprocessedAccounts?onConsume=consumeAccount"/>
+  <to uri="mock:results"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mybatis:selectUnprocessedAccounts
+      parameters:
+        onConsume: consumeAccount
+      steps:
+        - to:
+            uri: mock:results
+----
+====
 
 And the statements in the sqlmap file:
 

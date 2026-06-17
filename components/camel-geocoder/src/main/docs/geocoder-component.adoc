@@ -71,11 +71,41 @@ Exchange.
 
 In the example below, we get the latitude and longitude for Paris, France
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------
+----
 from("direct:start")
-    .to("geocoder:address:Paris, France?type=NOMINATIM&serverUrl=https://nominatim.openstreetmap.org")
------------------------------------------
+    .to("geocoder:address:Paris, France?type=NOMINATIM&serverUrl=https://nominatim.openstreetmap.org");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="geocoder:address:Paris, France?type=NOMINATIM&amp;serverUrl=https://nominatim.openstreetmap.org"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "geocoder:address:Paris, France"
+            parameters:
+              type: NOMINATIM
+              serverUrl: "https://nominatim.openstreetmap.org"
+----
+====
 
 If you provide a header with the `CamelGeoCoderAddress` then that
 overrides the endpoint configuration, so to get the location of
@@ -88,12 +118,42 @@ template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, "
 
 To get the address for a latitude and longitude we can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("geocoder:latlng:40.714224,-73.961452")
-    .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} and in country ${header.CamelGeoCoderCountryShort}")
----------------------------------------------------------------------------------------------------------------------------------------------------
+    .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} and in country ${header.CamelGeoCoderCountryShort}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="geocoder:latlng:40.714224,-73.961452"/>
+  <log message="Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} and in country ${header.CamelGeoCoderCountryShort}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "geocoder:latlng:40.714224,-73.961452"
+        - log:
+            message: "Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} and in country ${header.CamelGeoCoderCountryShort}"
+----
+====
 
 Which will log
 
@@ -104,11 +164,38 @@ Location 285 Bedford Avenue, Brooklyn, NY 11211, USA is at lat/lng: 40.71412890,
 To get the current location using the Google GeoCoder,
 you can use "current" as the address as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------
+----
 from("direct:start")
-    .to("geocoder:address:current")
------------------------------------
+    .to("geocoder:address:current");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="geocoder:address:current"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: geocoder:address:current
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

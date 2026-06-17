@@ -111,11 +111,41 @@ Camel-AWS Rekognition component provides the following operation on the producer
 
 - createCollection: this operation will create a collection
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:createCollection")
-    .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=createCollection")
---------------------------------------------------------------------------------
+    .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=createCollection");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createCollection"/>
+  <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=createCollection"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createCollection
+      steps:
+        - to:
+            uri: aws2-rekognition://test
+            parameters:
+              awsRekognitionClient: "#awsRekognitionClient"
+              operation: createCollection
+----
+====
 
 === Using a POJO as body
 

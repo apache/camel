@@ -136,6 +136,10 @@ also make it XML or plain text based:
 
 For example, you can use JQ in a xref:manual::predicate.adoc[Predicate] with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("queue:books.new")
@@ -147,6 +151,57 @@ from("queue:books.new")
     .otherwise()
       .to("jms:queue:book.expensive");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="queue:books.new"/>
+  <choice>
+    <when>
+      <jq>.store.book.price &lt; 10</jq>
+      <to uri="jms:queue:book.cheap"/>
+    </when>
+    <when>
+      <jq>.store.book.price &lt; 30</jq>
+      <to uri="jms:queue:book.average"/>
+    </when>
+    <otherwise>
+      <to uri="jms:queue:book.expensive"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:books.new
+      steps:
+        - choice:
+            when:
+              - expression:
+                  jq:
+                    expression: ".store.book.price < 10"
+                steps:
+                  - to:
+                      uri: jms:queue:book.cheap
+              - expression:
+                  jq:
+                    expression: ".store.book.price < 30"
+                steps:
+                  - to:
+                      uri: jms:queue:book.average
+            otherwise:
+              steps:
+                - to:
+                    uri: jms:queue:book.expensive
+----
+====
 
 == Dependencies
 

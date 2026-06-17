@@ -90,11 +90,42 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
 
 You then have to reference the FirehoseClient in the `amazonKinesisFirehoseClient` URI option.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------------------------------
+----
 from("aws2-kinesis-firehose://mykinesisdeliverystream?amazonKinesisFirehoseClient=#kinesisClient")
-  .to("log:out?showAll=true");
---------------------------------------------------------------------------------------------------------------------
+    .to("log:out?showAll=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws2-kinesis-firehose://mykinesisdeliverystream?amazonKinesisFirehoseClient=#kinesisClient"/>
+  <to uri="log:out?showAll=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-kinesis-firehose://mykinesisdeliverystream
+      parameters:
+        amazonKinesisFirehoseClient: "#kinesisClient"
+      steps:
+        - to:
+            uri: log:out
+            parameters:
+              showAll: true
+----
+====
 
 === Providing AWS Credentials
 

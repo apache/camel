@@ -112,11 +112,40 @@ If `oauthProfile` is set but no `OAuthTokenValidationFactory` is available, the 
 Add `camel-oauth` for the default provider or include a runtime-specific provider from the platform integration.
 ====
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("netty-http:http://0.0.0.0:8080/secure?oauthProfile=myprofile")
     .to("direct:businessLogic");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty-http:http://0.0.0.0:8080/secure?oauthProfile=myprofile"/>
+  <to uri="direct:businessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:8080/secure
+      parameters:
+        oauthProfile: myprofile
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
 
 When `oauthProfile` is set, static profile configuration is resolved and validated at route startup.
 Updates to OAuth profile properties require restarting the route or Camel context before they take effect.
@@ -237,11 +266,40 @@ below:
 
 In the route below, we use Netty HTTP as an HTTP server, which returns a hardcoded _"Bye World"_ message.
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------
-    from("netty-http:http://0.0.0.0:8080/foo")
-      .transform().constant("Bye World");
------------------------------------------------
+----
+from("netty-http:http://0.0.0.0:8080/foo")
+  .transform().constant("Bye World");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty-http:http://0.0.0.0:8080/foo"/>
+  <transform>
+    <constant>Bye World</constant>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:8080/foo
+      steps:
+        - transform:
+            constant: "Bye World"
+----
+====
 
 And we can call this HTTP server using Camel also, with the
 ProducerTemplate as shown below:
@@ -259,10 +317,37 @@ And we get _"Bye World"_ as the output.
 By default, Netty HTTP will only match on exact uri's. But you can
 instruct Netty to match prefixes. For example
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------
+----
 from("netty-http:http://0.0.0.0:8123/foo").to("mock:foo");
------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty-http:http://0.0.0.0:8123/foo"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:8123/foo
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
 
 In the route above Netty HTTP will only match if the uri is an exact
 match, so it will match if you enter +
@@ -271,19 +356,77 @@ match, so it will match if you enter +
 
 So if you want to enable wildcard matching, you do as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------
+----
 from("netty-http:http://0.0.0.0:8123/foo?matchOnUriPrefix=true").to("mock:foo");
----------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty-http:http://0.0.0.0:8123/foo?matchOnUriPrefix=true"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:8123/foo
+      parameters:
+        matchOnUriPrefix: true
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
 
 So now Netty matches any endpoints with starts with `foo`.
 
 To match *any* endpoint, you can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------
+----
 from("netty-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty-http:http://0.0.0.0:8123?matchOnUriPrefix=true"/>
+  <to uri="mock:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:8123
+      parameters:
+        matchOnUriPrefix: true
+      steps:
+        - to:
+            uri: mock:foo
+----
+====
 
 === Using multiple routes with same port
 

@@ -132,16 +132,40 @@ The `maxDeliveryAttempts` value is resolved as follows:
    disabled and a warning is logged.
 4. A value of `0` disables enforcement.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// Explicit configuration
 from("google-pubsub:{{project.name}}:{{subscription.name}}?maxDeliveryAttempts=5")
     .to("direct:process");
-
-// Auto-fetch from subscription dead-letter policy (default behavior when not set)
-from("google-pubsub:{{project.name}}:{{subscription.name}}")
-    .to("direct:process");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-pubsub:{{project.name}}:{{subscription.name}}?maxDeliveryAttempts=5"/>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-pubsub:{{project.name}}:{{subscription.name}}
+      parameters:
+        maxDeliveryAttempts: 5
+      steps:
+        - to:
+            uri: direct:process
+----
+====
 
 === Message Body
 

@@ -168,22 +168,87 @@ Refer to the example section in this page to learn how to use these operations i
 
 For example, to consume records from a specific container in a specific database to a file, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("azure-cosmosdb://camelDb/myContainer?accountKey=MyaccountKey&databaseEndpoint=https//myazure.com:443&leaseDatabaseName=myLeaseDB&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true").
-to("file://directory");
---------------------------------------------------------------------------------
+----
+from("azure-cosmosdb://camelDb/myContainer?accountKey=MyaccountKey&databaseEndpoint=https//myazure.com:443&leaseDatabaseName=myLeaseDB&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true")
+    .to("file://directory");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-cosmosdb://camelDb/myContainer?accountKey=MyaccountKey&amp;databaseEndpoint=https//myazure.com:443&amp;leaseDatabaseName=myLeaseDB&amp;createLeaseDatabaseIfNotExists=true&amp;createLeaseContainerIfNotExists=true"/>
+    <to uri="file://directory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-cosmosdb://camelDb/myContainer
+      parameters:
+        accountKey: MyaccountKey
+        databaseEndpoint: "https//myazure.com:443"
+        leaseDatabaseName: myLeaseDB
+        createLeaseDatabaseIfNotExists: true
+        createLeaseContainerIfNotExists: true
+    steps:
+      - to:
+          uri: file://directory
+----
+====
 
 === Operations
 
 - `listDatabases`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .to("azure-cosmosdb://?operation=listDatabases")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .to("azure-cosmosdb://?operation=listDatabases")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="azure-cosmosdb://?operation=listDatabases"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: listDatabases
+        - to:
+            uri: mock:result
+----
+====
 
 - `createDatabase`:
 
@@ -360,11 +425,42 @@ The consumer will set `List<Map<String,>>` in exchange message body which reflec
 
 For example, to listen to the events in `myContainer` container in `myDb`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("azure-cosmosdb://myDb/myContainer?leaseDatabaseName=myLeaseDb&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-cosmosdb://myDb/myContainer?leaseDatabaseName=myLeaseDb&amp;createLeaseDatabaseIfNotExists=true&amp;createLeaseContainerIfNotExists=true"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-cosmosdb://myDb/myContainer
+      parameters:
+        leaseDatabaseName: myLeaseDb
+        createLeaseDatabaseIfNotExists: true
+        createLeaseContainerIfNotExists: true
+    steps:
+      - to:
+          uri: mock:result
+----
+====
 
 
 == Important Development Notes

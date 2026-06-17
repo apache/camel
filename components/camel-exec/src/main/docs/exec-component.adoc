@@ -112,20 +112,79 @@ from("direct:exec")
 The example below executes `java` with two arguments: `-server` and
 `-version`, if `java` is in the system path.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------
+----
 from("direct:exec")
-.to("exec:java?args=-server -version")
---------------------------------------
+    .to("exec:java?args=-server -version");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:java?args=-server -version"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: exec:java
+            parameters:
+              args: "-server -version"
+----
+====
 
 The example below executes `java` in `c:\temp` with three arguments:
 `-server`, `-version` and the system property `user.name`.
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------------------------------------
+----
 from("direct:exec")
-.to("exec:c:/program files/jdk/bin/java?args=-server -version -Duser.name=Camel&workingDir=c:/temp")
-----------------------------------------------------------------------------------------------------
+    .to("exec:c:/program files/jdk/bin/java?args=-server -version -Duser.name=Camel&workingDir=c:/temp");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:c:/program files/jdk/bin/java?args=-server -version -Duser.name=Camel&amp;workingDir=c:/temp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: "exec:c:/program files/jdk/bin/java"
+            parameters:
+              args: "-server -version -Duser.name=Camel"
+              workingDir: "c:/temp"
+----
+====
 
 === Executing Ant scripts
 
@@ -134,11 +193,40 @@ The following example executes http://ant.apache.org/[Apache Ant]
 that `ant.bat` is in the system path, and that `CamelExecBuildFile.xml`
 is in the current directory.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------
+----
 from("direct:exec")
-.to("exec:ant.bat?args=-f CamelExecBuildFile.xml")
---------------------------------------------------
+    .to("exec:ant.bat?args=-f CamelExecBuildFile.xml");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:ant.bat?args=-f CamelExecBuildFile.xml"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: exec:ant.bat
+            parameters:
+              args: "-f CamelExecBuildFile.xml"
+----
+====
 
 In the next example, the `ant.bat` command redirects its output to
 `CamelExecOutFile.txt` with `-l`. The file `CamelExecOutFile.txt` is
@@ -165,10 +253,40 @@ Commands such as `echo` and `dir` can be executed only with the command
 interpreter of the operating system. This example shows how to execute
 such a command - `echo` - in Windows.
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------
-from("direct:exec").to("exec:cmd?args=/C echo echoString")
-----------------------------------------------------------
+----
+from("direct:exec")
+    .to("exec:cmd?args=/C echo echoString");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:exec"/>
+  <to uri="exec:cmd?args=/C echo echoString"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:exec
+      steps:
+        - to:
+            uri: exec:cmd
+            parameters:
+              args: "/C echo echoString"
+----
+====
 
 
 

@@ -79,11 +79,40 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
 If you need more control over the `SnsClient` instance configuration you
 can create your own instance and refer to it from the URI:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------
+----
 from("direct:start")
-.to("aws2-sns://MyTopic?amazonSNSClient=#client");
--------------------------------------------------
+    .to("aws2-sns://MyTopic?amazonSNSClient=#client");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="aws2-sns://MyTopic?amazonSNSClient=#client"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: aws2-sns://MyTopic
+            parameters:
+              amazonSNSClient: "#client"
+----
+====
 
 The `#client` refers to a `AmazonSNS` in the
 Registry.
@@ -92,11 +121,42 @@ Registry.
 
 You can create a subscription of an SQS Queue to an SNS Topic in this way:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------
+----
 from("direct:start")
-.to("aws2-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:eu-central-1:123456789012:test_camel");
--------------------------------------------------
+    .to("aws2-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:eu-central-1:123456789012:test_camel");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="aws2-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&amp;subscribeSNStoSQS=true&amp;queueArn=arn:aws:sqs:eu-central-1:123456789012:test_camel"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: aws2-sns://test-camel-sns1
+          parameters:
+            amazonSNSClient: "#amazonSNSClient"
+            subscribeSNStoSQS: true
+            queueArn: "arn:aws:sqs:eu-central-1:123456789012:test_camel"
+----
+====
 
 The `#amazonSNSClient` refers to a `SnsClient` in the Registry.
 By specifying `subscribeSNStoSQS` to true and a `queueArn` of an existing SQS Queue,
@@ -177,11 +237,41 @@ This behavior ensures compatibility with AWS SNS constraints while allowing seam
 
 Sending to a topic
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .to("aws2-sns://camel-topic?subject=The+subject+message&autoCreateTopic=true");
---------------------------------------------------------------------------------
+    .to("aws2-sns://camel-topic?subject=The+subject+message&autoCreateTopic=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="aws2-sns://camel-topic?subject=The+subject+message&amp;autoCreateTopic=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: aws2-sns://camel-topic
+          parameters:
+            subject: "The+subject+message"
+            autoCreateTopic: true
+----
+====
 
 Sending batch to a topic
 

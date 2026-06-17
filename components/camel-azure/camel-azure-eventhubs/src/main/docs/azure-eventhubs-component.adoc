@@ -114,11 +114,44 @@ This may be really useful for smarter configuration of the endpoint.
 
 To consume events:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("azure-eventhubs:/camel/camelHub?sharedAccessName=SASaccountName&sharedAccessKey=SASaccessKey&blobAccountName=accountName&blobAccessKey=accessKey&blobContainerName=containerName")
     .to("file://queuedirectory");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="azure-eventhubs:/camel/camelHub?sharedAccessName=SASaccountName&amp;sharedAccessKey=SASaccessKey&amp;blobAccountName=accountName&amp;blobAccessKey=accessKey&amp;blobContainerName=containerName"/>
+  <to uri="file://queuedirectory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-eventhubs:/camel/camelHub
+      parameters:
+        sharedAccessName: SASaccountName
+        sharedAccessKey: SASaccessKey
+        blobAccountName: accountName
+        blobAccessKey: accessKey
+        blobContainerName: containerName
+      steps:
+        - to:
+            uri: file://queuedirectory
+----
+====
 
 === Producer Example
 

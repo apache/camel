@@ -335,11 +335,42 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 === Kafka Transaction
 
 You need to add `transactionalId=<tx-id>` or `transacted=true` to enable kafka transaction with the producer.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:transaction")
 .to("kafka:my_topic?transacted=true");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:transaction"/>
+  <to uri="kafka:my_topic?transacted=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transaction
+      steps:
+        - to:
+            uri: kafka:my_topic
+            parameters:
+              transacted: true
+----
+====
+
 At the end of exchange routing, the kafka producer would commit the transaction or abort it if there is an Exception throwing or the exchange is `RollbackOnly`. Since Kafka does not support transactions in multi threads, it will throw `ProducerFencedException` if there is another producer with the same `transaction.id` to make the transactional request.
 
 It would work with JTA `camel-jta` by using `transacted()` and if it involves some resources (SQL or JMS), which supports XA, then they would work in tandem, where they both will either commit or rollback at the end of the exchange routing. In some cases, if the JTA transaction manager fails to commit (during the 2PC processing), but kafka transaction has been committed before and there is no chance to roll back the changes since the kafka transaction does not support JTA/XA spec. There is still a risk with the data consistency.
@@ -384,11 +415,43 @@ The following authentication types are supported:
 
 *SCRAM Authentication Example*
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:my-topic?brokers=localhost:9092&saslAuthType=SCRAM_SHA_512&saslUsername=myuser&saslPassword=mypassword")
     .to("log:received");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:my-topic?brokers=localhost:9092&amp;saslAuthType=SCRAM_SHA_512&amp;saslUsername=myuser&amp;saslPassword=mypassword"/>
+  <to uri="log:received"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:my-topic
+      parameters:
+        brokers: "localhost:9092"
+        saslAuthType: SCRAM_SHA_512
+        saslUsername: myuser
+        saslPassword: mypassword
+      steps:
+        - to:
+            uri: log:received
+----
+====
 
 Or using Spring Boot configuration:
 
@@ -415,11 +478,41 @@ from("kafka:my-topic?brokers=localhost:9092" +
 
 When using AWS MSK with IAM authentication, ensure the `aws-msk-iam-auth` library is on the classpath:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:my-topic?brokers=b-1.mycluster.kafka.us-east-1.amazonaws.com:9098&saslAuthType=AWS_MSK_IAM")
     .to("log:received");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:my-topic?brokers=b-1.mycluster.kafka.us-east-1.amazonaws.com:9098&amp;saslAuthType=AWS_MSK_IAM"/>
+  <to uri="log:received"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:my-topic
+      parameters:
+        brokers: "b-1.mycluster.kafka.us-east-1.amazonaws.com:9098"
+        saslAuthType: AWS_MSK_IAM
+      steps:
+        - to:
+            uri: log:received
+----
+====
 
 The simplified configuration is optional. If you need more control or are using a custom JAAS login module, you can still use the traditional approach with explicit `securityProtocol`, `saslMechanism`, and `saslJaasConfig` properties as shown below.
 
@@ -942,6 +1035,10 @@ NOTE: the downside of this approach is an increased number of in-flight exchange
 
 Here is the minimal route you need to read messages from Kafka.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:test?brokers=localhost:9092")
@@ -952,8 +1049,44 @@ from("kafka:test?brokers=localhost:9092")
     .log("    with the key ${headers[CamelKafkaKey]}")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:test?brokers=localhost:9092"/>
+  <log message="Message received from Kafka : ${body}"/>
+  <log message="    on the topic ${headers[CamelKafkaTopic]}"/>
+  <log message="    on the partition ${headers[CamelKafkaPartition]}"/>
+  <log message="    with the offset ${headers[CamelKafkaOffset]}"/>
+  <log message="    with the key ${headers[CamelKafkaKey]}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:test
+      parameters:
+        brokers: "localhost:9092"
+      steps:
+        - log: "Message received from Kafka : ${body}"
+        - log: "    on the topic ${headers[CamelKafkaTopic]}"
+        - log: "    on the partition ${headers[CamelKafkaPartition]}"
+        - log: "    with the offset ${headers[CamelKafkaOffset]}"
+        - log: "    with the key ${headers[CamelKafkaKey]}"
+----
+====
+
 If you need to consume messages from multiple topics, you can use a comma separated list of topic names.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:test,test1,test2?brokers=localhost:9092")
@@ -964,8 +1097,44 @@ from("kafka:test,test1,test2?brokers=localhost:9092")
     .log("    with the key ${headers[CamelKafkaKey]}")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:test,test1,test2?brokers=localhost:9092"/>
+  <log message="Message received from Kafka : ${body}"/>
+  <log message="    on the topic ${headers[CamelKafkaTopic]}"/>
+  <log message="    on the partition ${headers[CamelKafkaPartition]}"/>
+  <log message="    with the offset ${headers[CamelKafkaOffset]}"/>
+  <log message="    with the key ${headers[CamelKafkaKey]}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "kafka:test,test1,test2"
+      parameters:
+        brokers: "localhost:9092"
+      steps:
+        - log: "Message received from Kafka : ${body}"
+        - log: "    on the topic ${headers[CamelKafkaTopic]}"
+        - log: "    on the partition ${headers[CamelKafkaPartition]}"
+        - log: "    with the offset ${headers[CamelKafkaOffset]}"
+        - log: "    with the key ${headers[CamelKafkaKey]}"
+----
+====
+
 It's also possible to subscribe to multiple topics giving a pattern as the topic name and using the `topicIsPattern` option.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:test.*?brokers=localhost:9092&topicIsPattern=true")
@@ -975,6 +1144,39 @@ from("kafka:test.*?brokers=localhost:9092&topicIsPattern=true")
     .log("    with the offset ${headers[CamelKafkaOffset]}")
     .log("    with the key ${headers[CamelKafkaKey]}")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:test.*?brokers=localhost:9092&amp;topicIsPattern=true"/>
+  <log message="Message received from Kafka : ${body}"/>
+  <log message="    on the topic ${headers[CamelKafkaTopic]}"/>
+  <log message="    on the partition ${headers[CamelKafkaPartition]}"/>
+  <log message="    with the offset ${headers[CamelKafkaOffset]}"/>
+  <log message="    with the key ${headers[CamelKafkaKey]}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "kafka:test.*"
+      parameters:
+        brokers: "localhost:9092"
+        topicIsPattern: true
+      steps:
+        - log: "Message received from Kafka : ${body}"
+        - log: "    on the topic ${headers[CamelKafkaTopic]}"
+        - log: "    on the partition ${headers[CamelKafkaPartition]}"
+        - log: "    with the offset ${headers[CamelKafkaOffset]}"
+        - log: "    with the key ${headers[CamelKafkaKey]}"
+----
+====
 
 When consuming messages from Kafka, you can use your own offset management and not delegate this management to Kafka.
 To keep the offsets, the component needs a `StateRepository` implementation such as `FileStateRepository`.

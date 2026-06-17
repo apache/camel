@@ -115,12 +115,46 @@ http://bsonspec.org/spec.html[http://bsonspec.org/spec.html]
 and
 http://www.mongodb.org/display/DOCS/Java+Types[http://www.mongodb.org/display/DOCS/Java+Types].
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------
+----
 from("direct:findById")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
     .to("mock:resultFindById");
-------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:findById"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=findById"/>
+  <to uri="mock:resultFindById"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findById
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: findById
+        - to:
+            uri: mock:resultFindById
+----
+====
 
 Please note that the default _id is treated by Mongo as and `ObjectId` type, so you may need to convert it properly.
 
@@ -152,12 +186,46 @@ Create query selectors using the `Filters` provided by the MongoDB Driver.
 
 ====== Example without a query selector (returns the first document in a collection)
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:findOneByQuery")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery")
     .to("mock:resultFindOneByQuery");
-------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:findOneByQuery"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=findOneByQuery"/>
+  <to uri="mock:resultFindOneByQuery"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findOneByQuery
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: findOneByQuery
+        - to:
+            uri: mock:resultFindOneByQuery
+----
+====
 
 ====== Example with a query selector (returns the first matching document in a collection):
 
@@ -189,12 +257,46 @@ See <<Type conversions>> for more info.
 
 ====== Example without a query selector (returns all documents in a collection)
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:findAll")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll")
     .to("mock:resultFindAll");
------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:findAll"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=findAll"/>
+  <to uri="mock:resultFindAll"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findAll
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: findAll
+        - to:
+            uri: mock:resultFindAll
+----
+====
 
 ====== Example with a query selector (returns all matching documents in a collection)
 
@@ -335,11 +437,42 @@ of objects of any type, as long as they are - or can be converted to -
 `Document`.
 Example:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:insert")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=insert");
------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:insert"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=insert"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: insert
+----
+====
 
 The operation will return a WriteResult, and depending on the
 `WriteConcern` or the value of the `invokeGetLastError` option,
@@ -397,11 +530,42 @@ If the document to be saved does not contain the `_id` attribute, the operation 
 
 For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------
+----
 from("direct:insert")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=save");
----------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:insert"/>
+  <to uri="mongodb:myDb?database=flights&amp;collection=tickets&amp;operation=save"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: flights
+              collection: tickets
+              operation: save
+----
+====
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------

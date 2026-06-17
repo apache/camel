@@ -166,6 +166,10 @@ If neither `increment` or `decrement` is defined then the value of the counter w
 be incremented by one. If `increment` and `decrement` are both defined
 only increment operation is called.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // update counter simple.counter by 7
@@ -174,6 +178,38 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:counter:simple.counter?increment=7"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:counter:simple.counter
+            parameters:
+              increment: 7
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // increment counter simple.counter by 1
@@ -182,6 +218,36 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:counter:simple.counter"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:counter:simple.counter
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // decrement counter simple.counter by 3
@@ -189,6 +255,34 @@ from("direct:in")
     .to("metrics:counter:simple.counter?decrement=3")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:counter:simple.counter?decrement=3"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:counter:simple.counter
+            parameters:
+              decrement: 3
+        - to:
+            uri: direct:out
+----
+====
 
 ==== Headers
 
@@ -239,6 +333,10 @@ metrics:histogram:metricname[?options]
 If `value` is not set, nothing is added to histogram and warning is
 logged.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // adds value 9923 to simple.histogram
@@ -247,14 +345,71 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:histogram:simple.histogram?value=9923"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:histogram:simple.histogram
+            parameters:
+              value: 9923
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // nothing is added to simple.histogram; warning is logged
 from("direct:in")
     .to("metrics:histogram:simple.histogram")
     .to("direct:out");
-
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:histogram:simple.histogram"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:histogram:simple.histogram
+        - to:
+            uri: direct:out
+----
+====
 
 ==== Headers
 
@@ -294,6 +449,10 @@ metrics:meter:metricname[?options]
 
 If `mark` is not set then `meter.mark()` is called without argument.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // marks simple.meter without value
@@ -302,6 +461,36 @@ from("direct:in")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:simple.meter"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:simple.meter
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // marks simple.meter with value 81
@@ -309,6 +498,34 @@ from("direct:in")
     .to("metrics:meter:simple.meter?mark=81")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:meter:simple.meter?mark=81"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:meter:simple.meter
+            parameters:
+              mark: 81
+        - to:
+            uri: direct:out
+----
+====
 
 ==== Headers
 
@@ -350,6 +567,10 @@ without any timer update. If action `start` is called on already running
 timer or `stop` is called on not running timer then nothing is updated
 and warning is logged.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // measure time taken by route "calculate"
@@ -358,6 +579,39 @@ from("direct:in")
     .to("direct:calculate")
     .to("metrics:timer:simple.timer?action=stop");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:timer:simple.timer?action=start"/>
+  <to uri="direct:calculate"/>
+  <to uri="metrics:timer:simple.timer?action=stop"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:timer:simple.timer
+            parameters:
+              action: start
+        - to:
+            uri: direct:calculate
+        - to:
+            uri: metrics:timer:simple.timer
+            parameters:
+              action: stop
+----
+====
 
 `TimerContext` objects are stored as Exchange properties between
 different Metrics component calls.
@@ -400,6 +654,10 @@ metrics:gauge:metricname[?options]
 
 If `subject` is not defined it's simply ignored, i.e., the gauge is not registered.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // update gauge "simple.gauge" by a bean "mySubjectBean"
@@ -407,6 +665,34 @@ from("direct:in")
     .to("metrics:gauge:simple.gauge?subject=#mySubjectBean")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <to uri="metrics:gauge:simple.gauge?subject=#mySubjectBean"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: metrics:gauge:simple.gauge
+            parameters:
+              subject: "#mySubjectBean"
+        - to:
+            uri: direct:out
+----
+====
 
 ==== Headers
 

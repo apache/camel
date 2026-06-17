@@ -173,11 +173,40 @@ To let the *Kamelet* component wiring the materialized route to the caller proce
 
 Then the template can be instantiated and invoked as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:setMyBody")
     .to("kamelet:setMyBody?bodyValue=myKamelet");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:setMyBody"/>
+  <to uri="kamelet:setMyBody?bodyValue=myKamelet"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:setMyBody
+      steps:
+        - to:
+            uri: kamelet:setMyBody
+            parameters:
+              bodyValue: myKamelet
+----
+====
 
 
 Behind the scenes, the *Kamelet* component does the following things:

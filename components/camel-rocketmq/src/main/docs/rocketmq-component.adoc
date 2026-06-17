@@ -84,11 +84,44 @@ from("rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1")
 
 Receive messages from a topic named `from_topic`, route to `to_topic`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rocketmq:FROM_TOPIC?namesrvAddr=localhost:9876&consumerGroup=consumer")
     .to("rocketmq:TO_TOPIC?namesrvAddr=localhost:9876&producerGroup=producer");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rocketmq:FROM_TOPIC?namesrvAddr=localhost:9876&amp;consumerGroup=consumer"/>
+  <to uri="rocketmq:TO_TOPIC?namesrvAddr=localhost:9876&amp;producerGroup=producer"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rocketmq:FROM_TOPIC
+      parameters:
+        namesrvAddr: "localhost:9876"
+        consumerGroup: consumer
+      steps:
+        - to:
+            uri: rocketmq:TO_TOPIC
+            parameters:
+              namesrvAddr: "localhost:9876"
+              producerGroup: producer
+----
+====
 
 Setting specific headers can change routing behaviour. For example, if header `RocketMQConstants.OVERRIDE_TOPIC_NAME` was set,
 the message will be sent to `ACTUAL_TARGET` instead of `ORIGIN_TARGET`.

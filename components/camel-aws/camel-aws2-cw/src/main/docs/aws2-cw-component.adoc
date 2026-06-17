@@ -76,11 +76,40 @@ If you need more control over the `CloudWatchClient` instance
 configuration you can create your own instance and refer to it from the
 URI:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------
+----
 from("direct:start")
-.to("aws2-cw://namespace?amazonCwClient=#client");
--------------------------------------------------
+    .to("aws2-cw://namespace?amazonCwClient=#client");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="aws2-cw://namespace?amazonCwClient=#client"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: aws2-cw://namespace
+            parameters:
+              amazonCwClient: "#client"
+----
+====
 
 The `#client` refers to a `CloudWatchClient` in the
 Registry.
@@ -106,11 +135,38 @@ where `${camel-version`} must be replaced by the actual version of Camel.
 
 === Producer Example
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
+----
 from("direct:start")
   .to("aws2-cw://http://camel.apache.org/aws-cw");
--------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="aws2-cw://http://camel.apache.org/aws-cw"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: aws2-cw://http://camel.apache.org/aws-cw
+----
+====
 
 and sends something like
 

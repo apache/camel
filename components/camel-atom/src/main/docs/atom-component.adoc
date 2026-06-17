@@ -113,10 +113,37 @@ a MemoryIdempotentRepository, but the repository can be changes to any subclass 
 
 In this sample, we poll James Strachan's blog.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------------
+----
 from("atom://http://macstrac.blogspot.com/feeds/posts/default").to("seda:feeds");
----------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="atom://http://macstrac.blogspot.com/feeds/posts/default"/>
+  <to uri="seda:feeds"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: atom://http://macstrac.blogspot.com/feeds/posts/default
+      steps:
+        - to:
+            uri: seda:feeds
+----
+====
 
 In this sample, we want to filter only good blogs we like to a SEDA
 queue.

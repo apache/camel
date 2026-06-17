@@ -62,11 +62,38 @@ the header with the key `CamelMyBatisResult`.
 For example, if you wish to consume beans from a JMS queue and insert
 them into a database, you could do the following:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:queue:newAccount")
-  .to("mybatis-bean:AccountService:insertBeanAccount");
+    .to("mybatis-bean:AccountService:insertBeanAccount");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:queue:newAccount"/>
+  <to uri="mybatis-bean:AccountService:insertBeanAccount"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:newAccount
+      steps:
+        - to:
+            uri: mybatis-bean:AccountService:insertBeanAccount
+----
+====
 
 Notice we have to specify the bean name and method name, as we need to instruct
 Camel which kind of operation to invoke.

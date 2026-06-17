@@ -52,18 +52,40 @@ include::partial$component-endpoint-headers.adoc[]
 
 Below is an example route that stores a point into the db (taking the db name from the URI) specific key:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-        .to("influxdb2://connectionBean?org=<org>&bucket=<bucket>");
+        .to("influxdb2://connectionBean?org=myOrg&bucket=myBucket");
 ----
 
-[source,java]
+XML::
++
+[source,xml]
 ----
-from("direct:start")
-        .setHeader(InfluxDbConstants.ORG, "myTestOrg")
-        .setHeader(InfluxDbConstants.BUCKET, "myTestBucket")
-        .to("influxdb2://connectionBean?");
+<route>
+  <from uri="direct:start"/>
+  <to uri="influxdb2://connectionBean?org=myOrg&amp;bucket=myBucket"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: influxdb2://connectionBean
+            parameters:
+              org: myOrg
+              bucket: myBucket
+----
+====
 
 include::spring-boot:partial$starter.adoc[]

@@ -85,11 +85,41 @@ Camel-AWS EKS component provides the following operation on the producer side:
 
 - listClusters: this operation will list the available clusters in EKS
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listClusters")
-    .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters")
---------------------------------------------------------------------------------
+    .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:listClusters"/>
+  <to uri="aws2-eks://test?eksClient=#amazonEksClient&amp;operation=listClusters"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listClusters
+      steps:
+        - to:
+            uri: aws2-eks://test
+            parameters:
+              eksClient: "#amazonEksClient"
+              operation: listClusters
+----
+====
 
 === Using a POJO as body
 

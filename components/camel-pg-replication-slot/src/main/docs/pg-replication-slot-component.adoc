@@ -60,11 +60,44 @@ instead of `INSERT`, etc). This will make sure repeated messages won't affect yo
 == Examples
 
 .Example route
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("pg-replication-slot://localhost:5432/finance/sync_slot:test_decoding?user={{username}}&password={{password}}&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="pg-replication-slot://localhost:5432/finance/sync_slot:test_decoding?user={{username}}&amp;password={{password}}&amp;slotOptions.skip-empty-xacts=true&amp;slotOptions.include-xids=false"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: pg-replication-slot://localhost:5432/finance/sync_slot:test_decoding
+      parameters:
+        user: "{{username}}"
+        password: "{{password}}"
+        slotOptions.skip-empty-xacts: true
+        slotOptions.include-xids: false
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 
 

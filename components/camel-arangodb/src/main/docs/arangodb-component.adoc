@@ -49,11 +49,41 @@ include::partial$component-endpoint-headers.adoc[]
 
 ==== Save document on a collection
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:insert")
-  .to("arangodb:testDb?documentCollection=collection&operation=SAVE_DOCUMENT");
---------------------------------------------------------------------------------
+    .to("arangodb:testDb?documentCollection=collection&operation=SAVE_DOCUMENT");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:insert"/>
+  <to uri="arangodb:testDb?documentCollection=collection&amp;operation=SAVE_DOCUMENT"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - to:
+            uri: arangodb:testDb
+            parameters:
+              documentCollection: collection
+              operation: SAVE_DOCUMENT
+----
+====
 
 And you can set as body a BaseDocument class 
 
