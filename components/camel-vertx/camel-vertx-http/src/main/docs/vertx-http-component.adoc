@@ -145,6 +145,7 @@ You can upload text or binary files by setting the message body as a https://ver
 When finer control of the Vert.x Web Client configuration is required, you can bind a custom https://vertx.io/docs/apidocs/io/vertx/ext/web/client/WebClientOptions.html[WebClientOptions]
 instance to the registry.
 
+._Java-only: programmatic `WebClientOptions` configuration and registry binding_
 [source,java]
 ---------------------------
 WebClientOptions options = new WebClientOptions().setMaxRedirects(5)
@@ -156,11 +157,40 @@ camelContext.getRegistry.bind("clientOptions", options);
 
 Then reference the options on the `vertx-http` producer.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------
+----
 from("direct:start")
-    .to("vertx-http:http://localhost:8080?webClientOptions=#clientOptions")
----------------------------
+    .to("vertx-http:http://localhost:8080?webClientOptions=#clientOptions");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="vertx-http:http://localhost:8080?webClientOptions=#clientOptions"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: vertx-http:http://localhost:8080
+            parameters:
+              webClientOptions: "#clientOptions"
+----
+====
 
 === SSL
 
