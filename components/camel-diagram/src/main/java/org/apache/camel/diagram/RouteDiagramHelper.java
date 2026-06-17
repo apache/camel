@@ -36,6 +36,8 @@ import org.apache.camel.util.json.Jsoner;
  */
 public final class RouteDiagramHelper {
 
+    static final int MAX_WRAP_LINES = 3;
+
     private RouteDiagramHelper() {
     }
 
@@ -52,12 +54,10 @@ public final class RouteDiagramHelper {
             return routes;
         }
 
-        for (int i = 0; i < arr.size(); i++) {
-            Object item = arr.get(i);
-            if (!(item instanceof JsonObject)) {
+        for (Object item : arr) {
+            if (!(item instanceof JsonObject o)) {
                 continue;
             }
-            JsonObject o = (JsonObject) item;
             RouteInfo route = new RouteInfo();
             route.routeId = o.getString("routeId");
             String source = o.getString("source");
@@ -118,6 +118,50 @@ public final class RouteDiagramHelper {
             routes.add(route);
         }
         return routes;
+    }
+
+    static List<String> wrapText(String text, int maxWidth) {
+        if (maxWidth <= 0 || text.length() <= maxWidth) {
+            return List.of(text);
+        }
+
+        List<String> lines = new ArrayList<>();
+        String remaining = text;
+
+        while (!remaining.isEmpty() && lines.size() < MAX_WRAP_LINES) {
+            if (remaining.length() <= maxWidth) {
+                lines.add(remaining);
+                remaining = "";
+                break;
+            }
+
+            int breakAt = -1;
+            for (int i = 0; i < maxWidth && i < remaining.length(); i++) {
+                char c = remaining.charAt(i);
+                if (c == ' ' || c == ':' || c == '/' || c == '.' || c == ',' || c == '&' || c == '?') {
+                    breakAt = i + 1;
+                }
+            }
+            if (breakAt <= 0) {
+                breakAt = maxWidth;
+            }
+
+            lines.add(remaining.substring(0, breakAt).stripTrailing());
+            remaining = remaining.substring(breakAt).stripLeading();
+        }
+
+        if (!remaining.isEmpty()) {
+            int lastIdx = lines.size() - 1;
+            String lastLine = lines.get(lastIdx);
+            if (lastLine.length() + remaining.length() <= maxWidth) {
+                lines.set(lastIdx, lastLine + remaining);
+            } else {
+                String combined = lastLine + remaining;
+                lines.set(lastIdx, combined.substring(0, Math.max(1, maxWidth - 3)) + "...");
+            }
+        }
+
+        return lines;
     }
 
     public enum HighlightStyle {

@@ -25,6 +25,8 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 
+import static org.apache.camel.diagram.RouteDiagramHelper.wrapText;
+
 /**
  * Renders topology diagrams as ASCII art or Unicode box-drawing text.
  */
@@ -33,7 +35,7 @@ public class TopologyAsciiRenderer {
     private static final int Y_SCALE = 20;
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
-    private static final int MAX_WRAP_LINES = 3;
+    private static final int MAX_WRAP_LINES = RouteDiagramHelper.MAX_WRAP_LINES;
 
     private static final char UNI_H = '─';
     private static final char UNI_V = '│';
@@ -151,8 +153,7 @@ public class TopologyAsciiRenderer {
             line1 = node.routeId;
         }
 
-        List<String> lines = new ArrayList<>();
-        lines.addAll(wrapText(line1, boxWidth - 4));
+        List<String> lines = new ArrayList<>(wrapText(line1, boxWidth - 4));
         if (!isExternalNode(node) && !showDescription) {
             String line2 = "(" + node.from + ")";
             List<String> fromLines = wrapText(line2, boxWidth - 4);
@@ -329,46 +330,6 @@ public class TopologyAsciiRenderer {
             lines++;
         }
         return 2 + Math.min(lines, MAX_WRAP_LINES + 1);
-    }
-
-    static List<String> wrapText(String text, int maxWidth) {
-        if (maxWidth <= 0 || text.length() <= maxWidth) {
-            return new ArrayList<>(List.of(text));
-        }
-
-        List<String> lines = new ArrayList<>();
-        String remaining = text;
-
-        while (!remaining.isEmpty() && lines.size() < MAX_WRAP_LINES) {
-            if (remaining.length() <= maxWidth) {
-                lines.add(remaining);
-                remaining = "";
-                break;
-            }
-
-            int breakAt = -1;
-            for (int i = 0; i < maxWidth && i < remaining.length(); i++) {
-                char c = remaining.charAt(i);
-                if (c == ' ' || c == ':' || c == '/' || c == '.' || c == ',' || c == '&' || c == '?') {
-                    breakAt = i + 1;
-                }
-            }
-            if (breakAt <= 0) {
-                breakAt = maxWidth;
-            }
-
-            lines.add(remaining.substring(0, breakAt).stripTrailing());
-            remaining = remaining.substring(breakAt).stripLeading();
-        }
-
-        if (!remaining.isEmpty()) {
-            int lastIdx = lines.size() - 1;
-            String lastLine = lines.get(lastIdx);
-            String combined = lastLine + remaining;
-            lines.set(lastIdx, combined.substring(0, Math.max(1, maxWidth - 3)) + "...");
-        }
-
-        return lines;
     }
 
     private String applyAnsiColors(String plain) {

@@ -339,14 +339,12 @@ class CamelRouteDiagram extends HTMLElement {
             const res = await fetch(url, { signal: this.#controller.signal });
             if (!res.ok) {
                 this.#error = `HTTP ${res.status} ${res.statusText}`;
-                this.#data = null;
                 this.#render();
                 return;
             }
             const data = await res.json();
             if (!Array.isArray(data?.routes)) {
                 this.#error = 'Unexpected response: missing routes array';
-                this.#data = null;
                 this.#render();
                 return;
             }
@@ -369,16 +367,16 @@ class CamelRouteDiagram extends HTMLElement {
         const style = `<style>${COMPONENT_STYLE}</style>`;
         if (this.#error) return `${style}<p class="error">⚠ ${esc(this.#error)}</p>`;
         if (!this.#data) return `${style}<p class="loading">Loading diagram…</p>`;
-        return style + this.#data.routes.map(r => this.#routeHTML(r)).join('');
+        return style + this.#data.routes.map((r, i) => this.#routeHTML(r, i)).join('');
     }
 
-    #routeHTML(route) {
+    #routeHTML(route, routeIdx) {
         const { positions, width, height } = layoutRoute(route);
         const ids = Object.keys(positions);
-        // The <marker> is defined inside the same <svg> it is used in so that
-        // url(#id) paint-server references resolve correctly in all browsers,
-        // including Firefox which does not resolve them across sibling <svg> elements.
-        const markerId = `arrow-${this.#uid}`;
+        // Each route gets its own markerId so that <svg> elements sharing a shadow root
+        // do not carry duplicate IDs. The route index makes each ID unique within the
+        // component while keeping url(#id) resolution local to each <svg> element.
+        const markerId = `arrow-${this.#uid}-${routeIdx}`;
         return `
       <div class="route-label">${esc(route.routeId)}</div>
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
