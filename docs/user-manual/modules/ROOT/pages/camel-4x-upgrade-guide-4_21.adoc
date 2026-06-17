@@ -1102,6 +1102,13 @@ Maven repository (`build.shibboleth.net`) that has proven unreliable, causing in
 build failures. If your project depends on OpenSAML for SAML-based WS-Security, you will need to
 add the `org.opensaml` dependencies explicitly.
 
+=== camel-whatsapp
+
+The `camel-whatsapp` webhook consumer now supports optional verification of inbound webhook event
+callbacks via the new `webhookSecret` endpoint option. When set, event callbacks whose
+`X-Hub-Signature-256` HMAC-SHA256 signature is missing or invalid are rejected with HTTP 403; when
+the option is not set, behaviour is unchanged.
+
 === camel-lucene
 
 The Exchange header values exposed by `LuceneConstants` have been renamed to follow the standard

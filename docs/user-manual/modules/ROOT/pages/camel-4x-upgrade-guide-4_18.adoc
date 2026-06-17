@@ -67,6 +67,13 @@ Routes that attach a `KeycloakSecurityPolicy` without any roles or permissions a
 unverified or invalid token will now have such requests rejected with a `CamelAuthorizationException`. Provide a
 valid, verifiable token (or configure `requiredRoles` / `requiredPermissions`) for these routes.
 
+=== camel-whatsapp
+
+The `camel-whatsapp` webhook consumer now supports optional verification of inbound webhook event
+callbacks via the new `webhookSecret` endpoint option. When set, event callbacks whose
+`X-Hub-Signature-256` HMAC-SHA256 signature is missing or invalid are rejected with HTTP 403; when
+the option is not set, behaviour is unchanged.
+
 === camel-core
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
