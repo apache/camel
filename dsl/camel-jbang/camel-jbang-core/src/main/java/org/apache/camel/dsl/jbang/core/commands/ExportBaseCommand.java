@@ -1213,7 +1213,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "3.4.5";
+        return answer != null ? answer : "3.5.1";
     }
 
     protected static String jkubeMavenPluginVersion(Path settings, Properties props) {

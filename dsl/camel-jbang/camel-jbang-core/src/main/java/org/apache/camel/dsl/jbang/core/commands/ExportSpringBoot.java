@@ -225,6 +225,7 @@ class ExportSpringBoot extends Export {
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", depList);
+        model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
 
         String context = TemplateHelper.processTemplate(pomTemplateName, model);
         IOHelper.writeText(context, Files.newOutputStream(pom));

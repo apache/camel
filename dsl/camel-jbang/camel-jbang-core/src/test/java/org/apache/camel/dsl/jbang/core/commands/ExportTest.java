@@ -914,4 +914,20 @@ class ExportTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldContainJibProfile(RuntimeType rt) throws Exception {
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "src/test/resources/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        File f = new File(workingDir, "pom.xml");
+        String content = IOHelper.loadText(new FileInputStream(f));
+        Assertions.assertTrue(content.contains("<id>jib</id>"),
+                "Jib profile not exported!");
+    }
+
 }

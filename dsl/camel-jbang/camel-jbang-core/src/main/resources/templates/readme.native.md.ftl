@@ -56,6 +56,25 @@ Once the application is published, you can run it directly from the container:
 docker run -it [=ArtifactId]:[=Version]
 ```
 
+## Create a container with Jib plugin (JVM mode)
+
+If you don't want to deal with Docker resources, you can use the `jib` profile. This tool works inside Maven and is in charge to build and push a container
+out of the box. The profile is configured to produce an executable jar (regardless of the runtime chosen). You can provide any argument expected by the plugin:
+
+```bash
+mvn clean package jib:build -Pjib \
+    -Djib.to.image=my-registry.io/my-registry-org/my-container:latest \
+    -Djib.from.image=eclipse-temurin:21-jdk \
+    -Djib.container.user=1000
+```
+
+You can use any base image with a compatible JVM which provides a `java` executable in the path. Once the application is published,
+you can run it directly from the container:
+
+```bash
+docker run my-registry.io/my-registry-org/my-container:latest
+```
+
 ## Build the Maven project (Native mode)
 
 ```bash
@@ -80,4 +99,22 @@ Once the application is published, you can run it directly from the container:
 
 ```bash
 docker run -it native-[=ArtifactId]:[=Version]
+```
+
+## Create a container with Jib plugin (Native mode)
+
+If you don't want to deal with Docker resources, you can use the `jib` profile. This tool works inside Maven and is in charge to build and push a container
+out of the box. The profile is configured to produce a native executable. You can provide any argument expected by the plugin:
+
+```bash
+mvn clean package jib:build -Pnative \
+    -Djib.to.image=my-registry.io/my-registry-org/my-container:latest \
+    -Djib.from.image=eclipse-temurin:21-jdk \
+    -Djib.container.user=1000
+```
+
+You can use any base image (even non JVM one) as the Quarkus native is an executable. Once the application is published, you can run it directly from the container:
+
+```bash
+docker run my-registry.io/my-registry-org/my-container:latest
 ```

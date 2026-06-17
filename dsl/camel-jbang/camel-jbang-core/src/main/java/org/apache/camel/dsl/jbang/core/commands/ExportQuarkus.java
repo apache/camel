@@ -392,6 +392,7 @@ class ExportQuarkus extends Export {
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));
         model.put("Dependencies", depList);
+        model.put("JibMavenPluginVersion", jibMavenPluginVersion(settings, prop));
 
         String context = TemplateHelper.processTemplate(pomTemplateName, model);
         Files.writeString(pom, context);

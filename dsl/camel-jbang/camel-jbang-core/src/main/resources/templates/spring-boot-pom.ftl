@@ -202,6 +202,49 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>jib</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <version>[=JibMavenPluginVersion]</version>
+                        <configuration>
+                            <allowInsecureRegistries>true</allowInsecureRegistries>
+                            <extraDirectories>
+                                <paths>
+                                    <path>
+                                        <from>${project.build.directory}</from>
+                                        <into>/deployments</into>
+                                        <includes>
+                                            <include>${project.build.finalName}.jar</include>
+                                        </includes>
+                                    </path>
+                                </paths>
+                                <permissions>
+                                    <permission>
+                                        <file>/deployments/${project.build.finalName}.jar</file>
+                                        <mode>644</mode>
+                                    </permission>
+                                </permissions>
+                            </extraDirectories>
+                            <container>
+                               <entrypoint>
+                                    <arg>java</arg>
+                                    <arg>-jar</arg>
+                                    <arg>/deployments/${project.build.finalName}.jar</arg>
+                                </entrypoint>
+                            </container>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 </project>
