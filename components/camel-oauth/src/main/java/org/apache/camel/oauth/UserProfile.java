@@ -162,17 +162,18 @@ public class UserProfile {
             var signedJWT = SignedJWT.parse(token);
             var keyID = signedJWT.getHeader().getKeyID();
 
-            // Fetch Keycloak public key
+            // Resolve the signing key from the configured JWK set and verify the token signature
             var jwkSet = config.getJWKSet();
-            if (!jwkSet.isEmpty()) {
-                var rsaKey = (RSAKey) jwkSet.getKeyByKeyId(keyID);
-                if (rsaKey == null) {
-                    throw new OAuthException("No matching key found for: " + keyID);
-                }
-                RSAPublicKey publicKey = rsaKey.toRSAPublicKey();
-                if (!signedJWT.verify(new RSASSAVerifier(publicKey))) {
-                    throw new OAuthException("Invalid token signature");
-                }
+            if (jwkSet == null || jwkSet.isEmpty()) {
+                throw new OAuthException("Cannot verify token signature: no JWK set available");
+            }
+            var rsaKey = (RSAKey) jwkSet.getKeyByKeyId(keyID);
+            if (rsaKey == null) {
+                throw new OAuthException("No matching key found for: " + keyID);
+            }
+            RSAPublicKey publicKey = rsaKey.toRSAPublicKey();
+            if (!signedJWT.verify(new RSASSAVerifier(publicKey))) {
+                throw new OAuthException("Invalid token signature");
             }
 
             // Decode the payload into a JsonObject
