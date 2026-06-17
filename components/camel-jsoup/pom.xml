@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.22.2</version>
+            <version>${jsoup-version}</version>
         </dependency>
 
         <!-- testing -->
