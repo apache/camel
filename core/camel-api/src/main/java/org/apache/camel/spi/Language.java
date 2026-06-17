@@ -20,10 +20,23 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 
 /**
- * Represents a language to be used for creating {@link Expression} or {@link Predicate} instances.
+ * SPI base for every Camel expression and predicate language.
  * <p/>
- * Languages are resolved by name via the {@link org.apache.camel.CamelContext#resolveLanguage(String)} method.
- * Implementations must be thread-safe as expressions and predicates may be evaluated concurrently.
+ * Implementations include {@code simple}, {@code groovy}, {@code jexl}, {@code mvel}, {@code xpath}, {@code jsonpath},
+ * {@code spel}, and many others. They are resolved by name via
+ * {@link org.apache.camel.CamelContext#resolveLanguage(String)}, which first checks the Camel registry and then falls
+ * back to the classpath service loader at
+ * {@link LanguageResolver#resolveLanguage(String, org.apache.camel.CamelContext)}. The two core factory methods —
+ * {@link #createExpression(String)} and {@link #createPredicate(String)} — accept a text expression and return a
+ * thread-safe, reusable instance. The overloaded {@code Object[]} variants allow passing pre-parsed language-specific
+ * options (e.g., XPath namespace maps or tokenizer delimiters) to avoid repeated parsing overhead. All implementations
+ * must be thread-safe because expressions and predicates are evaluated concurrently on multiple exchanges.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/languages.html">Languages</a> in the Camel user manual.
+ *
+ * @see LanguageResolver
+ * @see org.apache.camel.Expression
+ * @see org.apache.camel.Predicate
  */
 public interface Language {
 
