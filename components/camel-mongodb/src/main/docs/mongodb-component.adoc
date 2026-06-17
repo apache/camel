@@ -794,7 +794,7 @@ from("direct:aggregate")
     .split(body())
     .streaming()
     .to("mock:resultAggregate");
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 Note that calling `.split(body())` is enough to send the entries down the route one-by-one, however it would still load all the entries into memory first.
 Calling `.streaming()` is thus required to load data into memory by batches.
