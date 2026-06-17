@@ -34,6 +34,18 @@ endpoint URI, which could leave the data format incompletely configured. This al
 `marshal()` / `unmarshal()` DSL, which already honors the global configuration. Options specified on the endpoint URI
 continue to take precedence over the global configuration.
 
+=== camel-langchain4j-tools
+
+When the LLM requests multiple tool invocations within a single request, each tool is now invoked on its
+own independent copy of the exchange (similar to the multicast/splitter patterns) instead of sharing a single
+exchange across all tools. This guarantees complete isolation: the message body, argument headers, and any
+exception produced by one tool no longer leak into subsequent tool invocations of the same request.
+
+As a consequence, a tool route no longer receives the previous tool's output as its message body, nor the
+previous tool's argument headers. Each tool route starts from the original incoming exchange and only sees
+its own declared arguments as headers. Routes that (intentionally or accidentally) relied on this leaked state
+between tools must be adjusted to carry such data explicitly.
+
 === camel-core
 
 ==== Simple language: internal builder classes reorganized
