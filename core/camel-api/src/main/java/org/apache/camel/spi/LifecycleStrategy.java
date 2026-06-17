@@ -29,7 +29,21 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Strategy for lifecycle notifications.
+ * Observer SPI that receives callbacks for every significant lifecycle event in a
+ * {@link org.apache.camel.CamelContext}.
+ * <p/>
+ * Callbacks cover the full lifecycle of the context itself (initializing, starting, started, stopping, stopped), plus
+ * every {@link org.apache.camel.Component}, {@link org.apache.camel.Endpoint}, {@link org.apache.camel.Route}, and
+ * {@link org.apache.camel.Service} that is added, started, stopped, or removed. Thread pool creation and shutdown are
+ * also notified. Multiple strategies can be registered via
+ * {@link org.apache.camel.CamelContext#addLifecycleStrategy(LifecycleStrategy)}. The JMX management layer
+ * ({@link ManagementStrategy}) is the primary built-in implementor; it registers and unregisters MBeans in response to
+ * lifecycle events. Implementations may throw {@link org.apache.camel.VetoCamelContextStartException} from
+ * {@link #onContextInitializing} to prevent context startup.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/lifecycle.html">Lifecycle</a> in the Camel user manual.
+ *
+ * @see ManagementStrategy
  */
 public interface LifecycleStrategy {
 
