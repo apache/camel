@@ -69,11 +69,41 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 If the URL for the RSS feed uses query parameters, this component will
 resolve them. For example, if the feed uses `alt=rss`, then the following example will be resolved:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&delay=1000")
     .to("bean:rss");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rss:http://someserver.com/feeds/posts/default?alt=rss&amp;splitEntries=false&amp;delay=1000"/>
+  <to uri="bean:rss"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "rss:http://someserver.com/feeds/posts/default?alt=rss"
+      parameters:
+        splitEntries: false
+        delay: 1000
+      steps:
+        - to:
+            uri: bean:rss
+----
+====
 
 === Filtering entries
 
@@ -83,12 +113,50 @@ Bean Integration to implement your own
 conditions. For instance, a filter equivalent to the XPath example above
 would be:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
     .filter().method("myFilterBean", "titleContainsCamel")
         .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="rss:file:src/test/data/rss20.xml?splitEntries=true&amp;delay=100"/>
+  <filter>
+    <method ref="myFilterBean" method="titleContainsCamel"/>
+    <to uri="mock:result"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rss:file:src/test/data/rss20.xml
+      parameters:
+        splitEntries: true
+        delay: 100
+      steps:
+        - filter:
+            method:
+              ref: myFilterBean
+              method: titleContainsCamel
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
 
 The custom bean for this would be:
 

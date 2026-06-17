@@ -61,11 +61,40 @@ It is meant for high-volume ingestion of machine data.
 By default, the index time for an event is when the event makes it to the Splunk
 server.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
+----
 from("direct:start")
-        .to("splunk-hec://localhost:8080?token=token");
--------------------------------
+    .to("splunk-hec://localhost:8080?token=token");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="splunk-hec://localhost:8080?token=token"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: splunk-hec://localhost:8080
+            parameters:
+              token: token
+----
+====
 
 If you are ingesting a large enough dataset with a big enough lag, then the time
 the event hits the server and when that event actually happened could be skewed. If

@@ -101,18 +101,79 @@ You can configure additional options on the `ftpClient` and
 For example, to set the `setDataTimeout` on the `FTPClient` to 30 seconds
 you can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("ftp://foo@myserver?password=secret&ftpClient.dataTimeout=30000").to("bean:foo");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ftp://foo@myserver?password=secret&amp;ftpClient.dataTimeout=30000"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp://foo@myserver
+      parameters:
+        password: secret
+        ftpClient.dataTimeout: 30000
+      steps:
+        - to:
+            uri: bean:foo
+----
+====
+
 You can mix and match and use both prefixes, for example, to
 configure date format or timezones.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("ftp://foo@myserver?password=secret&ftpClient.dataTimeout=30000&ftpClientConfig.serverLanguageCode=fr").to("bean:foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ftp://foo@myserver?password=secret&amp;ftpClient.dataTimeout=30000&amp;ftpClientConfig.serverLanguageCode=fr"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp://foo@myserver
+      parameters:
+        password: secret
+        ftpClient.dataTimeout: 30000
+        ftpClientConfig.serverLanguageCode: fr
+      steps:
+        - to:
+            uri: bean:foo
+----
+====
 
 You can have as many of these options as you like.
 
@@ -137,10 +198,40 @@ For example:
 And then let Camel look up this bean when you use the # notation in the
 url.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ftp://foo@myserver?password=secret&amp;ftpClientConfig=#myConfig"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp://foo@myserver
+      parameters:
+        password: secret
+        ftpClientConfig: "#myConfig"
+      steps:
+        - to:
+            uri: bean:foo
+----
+====
 
 === Concurrency
 
@@ -222,10 +313,40 @@ the local file is deleted.
 So if you want to download files from a remote FTP server and store it
 as files, then you need to route to a file endpoint such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("ftp://someone@someserver.com?password=secret&localWorkDirectory=/tmp").to("file://inbox");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ftp://someone@someserver.com?password=secret&amp;localWorkDirectory=/tmp"/>
+  <to uri="file://inbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp://someone@someserver.com
+      parameters:
+        password: secret
+        localWorkDirectory: /tmp
+      steps:
+        - to:
+            uri: file://inbox
+----
+====
 
 [TIP]
 ====
@@ -523,11 +644,45 @@ setting `ignoreFileNotFoundOrPermissionError=true`.
 For example, to have a Camel route that picks up a single file, and delete
 it after use you can do
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true")
   .to("activemq:queue:report");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ftp://admin@localhost:21/nolist/?password=admin&amp;stepwise=false&amp;useList=false&amp;ignoreFileNotFoundOrPermissionError=true&amp;fileName=report.txt&amp;delete=true"/>
+  <to uri="activemq:queue:report"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp://admin@localhost:21/nolist/
+      parameters:
+        password: admin
+        stepwise: false
+        useList: false
+        ignoreFileNotFoundOrPermissionError: true
+        fileName: report.txt
+        delete: true
+      steps:
+        - to:
+            uri: activemq:queue:report
+----
+====
 
 Notice that we have used all the options we talked above.
 
@@ -555,15 +710,42 @@ In the sample below, we set up Camel to download all the reports from the
 FTP server once every hour (60 min) as BINARY content and store it as
 files on the local file system.
 
-And the route using XML DSL:
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ftp://scott@localhost/public/reports?password=tiger&binary=true&delay=60000")
+    .to("file://target/test-reports");
+----
 
+XML::
++
 [source,xml]
 ----
-  <route>
-     <from uri="ftp://scott@localhost/public/reports?password=tiger&amp;binary=true&amp;delay=60000"/>
-     <to uri="file://target/test-reports"/>
-  </route>
+<route>
+  <from uri="ftp://scott@localhost/public/reports?password=tiger&amp;binary=true&amp;delay=60000"/>
+  <to uri="file://target/test-reports"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp://scott@localhost/public/reports
+      parameters:
+        password: tiger
+        binary: true
+        delay: "60000"
+      steps:
+        - to:
+            uri: file://target/test-reports
+----
+====
 
 === Consuming a remote FTPS server (implicit SSL) and client authentication
 

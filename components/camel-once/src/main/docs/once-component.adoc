@@ -88,11 +88,42 @@ And then route to call the bean.
 You can also specify headers and variables using _multivalue_, where each header is prefixed with `header.<key>`.
 In the sample below we set 2 headers as follows: `foo=abc` and `bar=123`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("once:tick?body=world&header.foo=abc&header.bar=123")
-  .to("bean:myBean");
+    .to("bean:myBean");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="once:tick?body=world&amp;header.foo=abc&amp;header.bar=123"/>
+  <to uri="bean:myBean"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: once:tick
+      parameters:
+        body: world
+        header.foo: abc
+        header.bar: "123"
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
 
 You can do the same for variables with `variable.<key>`.
 
@@ -131,11 +162,41 @@ on data from the variables and headers.
 
 For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("once:tick?body=language:groovy:file:src/test/resources/calc.groovy&variable.amount=123")
         .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="once:tick?body=language:groovy:file:src/test/resources/calc.groovy&amp;variable.amount=123"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: once:tick
+      parameters:
+        body: "language:groovy:file:src/test/resources/calc.groovy"
+        variable.amount: "123"
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 You must use `language:groovy:` as prefix when using languages. And you can combine this with loading from file.
 The `calc.groovy` file is as follows:

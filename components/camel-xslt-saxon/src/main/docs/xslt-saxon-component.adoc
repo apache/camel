@@ -58,22 +58,79 @@ include::partial$component-endpoint-headers.adoc[]
 The following format is an example of using an XSLT template to formulate a response for a message for InOut
 message exchanges (where there is a `JMSReplyTo` header) 
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("activemq:My.Queue").
-  to("xslt-saxon:com/acme/mytransform.xsl");
+from("activemq:My.Queue")
+    .to("xslt-saxon:com/acme/mytransform.xsl");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="xslt-saxon:com/acme/mytransform.xsl"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: xslt-saxon:com/acme/mytransform.xsl
+----
+====
 
 
 If you want to use InOnly and consume the message and send it to another
 destination, you could use the following route:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("activemq:My.Queue").
-  to("xslt-saxon:com/acme/mytransform.xsl").
-  to("activemq:Another.Queue");
+from("activemq:My.Queue")
+    .to("xslt-saxon:com/acme/mytransform.xsl")
+    .to("activemq:Another.Queue");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="xslt-saxon:com/acme/mytransform.xsl"/>
+  <to uri="activemq:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: xslt-saxon:com/acme/mytransform.xsl
+        - to:
+            uri: activemq:Another.Queue
+----
+====
 
 === Getting Usable Parameters into the XSLT
 
@@ -207,12 +264,47 @@ To provide a dynamic stylesheet at runtime, you can either:
 When using a header for dynamic stylesheet, then you can either refer to the stylesheet as a `file` or `classpath`
 with the header `CamelXsltResourceUri`, such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:transform")
     .setHeader("CamelXsltResourceUri", simple("file:styles/${header.region}.xsl"))
     .to("xslt-saxon:template.xsl?allowTemplateFromHeader=true");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:transform"/>
+  <setHeader name="CamelXsltResourceUri">
+    <simple>file:styles/${header.region}.xsl</simple>
+  </setHeader>
+  <to uri="xslt-saxon:template.xsl?allowTemplateFromHeader=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transform
+      steps:
+        - setHeader:
+            name: CamelXsltResourceUri
+            simple: "file:styles/${header.region}.xsl"
+        - to:
+            uri: xslt-saxon:template.xsl
+            parameters:
+              allowTemplateFromHeader: true
+----
+====
 
 Here we set the `CamelXsltResourceUri` header to refer to a stylesheet to be loaded from the file system,
 with a dynamic name that is computed from another header (`region`).
@@ -262,11 +354,40 @@ key `Exchange.XSLT_WARNING.`
 
 By default, the input body is assumed as XML. You can set `useJsonBody=true` to consume JSON data from Camel Message body.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:transform")
     .to("xslt-saxon:template.xsl?useJsonBody=true");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:transform"/>
+  <to uri="xslt-saxon:template.xsl?useJsonBody=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transform
+      steps:
+        - to:
+            uri: xslt-saxon:template.xsl
+            parameters:
+              useJsonBody: true
+----
+====
 
 If `useJsonBody=true` is set, the JSON body is transformed into XML representation of JSON https://www.w3.org/TR/xslt-30/#json-to-xml-mapping[defined in XSLT 3.0 specification].
 

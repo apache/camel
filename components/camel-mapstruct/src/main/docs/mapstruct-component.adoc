@@ -58,11 +58,38 @@ are then introspected to discover the mapping methods. These mapping methods are
 into the Camel xref:manual::type-converter.adoc[Type Converter] registry. This means that you can
 also use type converter to convert the POJOs with MapStruct, such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:foo")
-  .convertBodyTo(MyFooDto.class);
+    .convertBodyTo(MyFooDto.class);
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:foo"/>
+  <convertBodyTo type="MyFooDto"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - convertBodyTo:
+            type: MyFooDto
+----
+====
 
 Where `MyFooDto` is a POJO that MapStruct is able to convert to/from.
 

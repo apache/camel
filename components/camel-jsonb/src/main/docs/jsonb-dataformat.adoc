@@ -13,12 +13,43 @@
 
 JSON-B is a Data Format that uses the standard (javax) JSON-B library.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("activemq:My.Queue").
-  marshal().json(JsonLibrary.Jsonb).
-  to("mqseries:Another.Queue");
--------------------------------
+----
+from("activemq:My.Queue")
+    .marshal().json(JsonLibrary.Jsonb)
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <marshal><json library="Jsonb"/></marshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - marshal:
+            json:
+              library: Jsonb
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
 
 == JSON-B Options
 

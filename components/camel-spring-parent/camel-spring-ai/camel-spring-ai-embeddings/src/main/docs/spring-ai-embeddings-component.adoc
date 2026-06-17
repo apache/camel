@@ -55,12 +55,42 @@ The embedding vectors are returned in the message body, with additional metadata
 
 === Single Text Example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("spring-ai-embeddings:myEmbedding")
     .log("Embedding vector: ${body}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="spring-ai-embeddings:myEmbedding"/>
+  <log message="Embedding vector: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: spring-ai-embeddings:myEmbedding
+        - log:
+            message: "Embedding vector: ${body}"
+----
+====
 
 When processing a single String, the component returns:
 

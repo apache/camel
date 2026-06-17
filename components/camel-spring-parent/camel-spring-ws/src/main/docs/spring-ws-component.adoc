@@ -92,10 +92,37 @@ include::partial$component-endpoint-headers.adoc[]
 
 To call a web service at `\http://foo.com/bar` simply define a route:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
-from("direct:example").to("spring-ws:http://foo.com/bar")
----------------------------------------------------------
+----
+from("direct:example").to("spring-ws:http://foo.com/bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:example"/>
+  <to uri="spring-ws:http://foo.com/bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:example
+      steps:
+        - to:
+            uri: spring-ws:http://foo.com/bar
+----
+====
 
 And sent a message:
 
@@ -112,11 +139,41 @@ SOAP tags. Spring-WS will perform the XML-to-SOAP marshaling.
 When a remote web service requires a SOAP action or use of the
 WS-Addressing standard, you define your route as:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------------------------
+----
 from("direct:example")
-.to("spring-ws:http://foo.com/bar?soapAction=http://foo.com&wsAddressingAction=http://bar.com")
------------------------------------------------------------------------------------------------
+  .to("spring-ws:http://foo.com/bar?soapAction=http://foo.com&wsAddressingAction=http://bar.com");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:example"/>
+  <to uri="spring-ws:http://foo.com/bar?soapAction=http://foo.com&amp;wsAddressingAction=http://bar.com"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:example
+      steps:
+        - to:
+            uri: spring-ws:http://foo.com/bar
+            parameters:
+              soapAction: "http://foo.com"
+              wsAddressingAction: "http://bar.com"
+----
+====
 
 Optionally, you can override the endpoint options with header values:
 

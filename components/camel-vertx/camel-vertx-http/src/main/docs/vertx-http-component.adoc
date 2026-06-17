@@ -49,11 +49,38 @@ The following example shows how to send a request to an HTTP endpoint.
 
 You can override the URI configured on the `vertx-http` producer via headers `Exchange.HTTP_URI` and `Exchange.HTTP_PATH`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("vertx-http:https://camel.apache.org");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="vertx-http:https://camel.apache.org"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: vertx-http:https://camel.apache.org
+----
+====
 
 === URI Parameters
 

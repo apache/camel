@@ -105,22 +105,84 @@ with the following Camel route, only the *@NotNull* constraints on the
 attributes `manufacturer` and `licensePlate` will be validated (Camel uses
 the default group `jakarta.validation.groups.Default`).
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------
+----
 from("direct:start")
-.to("bean-validator://x")
-.to("mock:end")
--------------------------
+    .to("bean-validator://x")
+    .to("mock:end");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="bean-validator://x"/>
+  <to uri="mock:end"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: bean-validator://x
+        - to:
+            uri: mock:end
+----
+====
 
 If you want to check the constraints from the group `OptionalChecks`,
 you have to define the route like this
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------
+----
 from("direct:start")
-.to("bean-validator://x?group=OptionalChecks")
-.to("mock:end")
-----------------------------------------------
+    .to("bean-validator://x?group=OptionalChecks")
+    .to("mock:end");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="bean-validator://x?group=OptionalChecks"/>
+  <to uri="mock:end"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: bean-validator://x
+            parameters:
+              group: OptionalChecks
+        - to:
+            uri: mock:end
+----
+====
 
 If you want to check the constraints from both groups, you have to
 define a new interface first:
@@ -136,12 +198,44 @@ public interface AllChecks {
 
 And then your route definition should look like this:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------
+----
 from("direct:start")
-.to("bean-validator://x?group=AllChecks")
-.to("mock:end")
------------------------------------------
+    .to("bean-validator://x?group=AllChecks")
+    .to("mock:end");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="bean-validator://x?group=AllChecks"/>
+  <to uri="mock:end"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: bean-validator://x
+            parameters:
+              group: AllChecks
+        - to:
+            uri: mock:end
+----
+====
 
 And if you have to provide your own message interpolator, traversable
 resolver and constraint validator factory, you have to write a route

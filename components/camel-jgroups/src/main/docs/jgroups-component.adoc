@@ -55,22 +55,73 @@ forward them to the Camel route. JGroups consumer processes incoming
 messages
 http://camel.apache.org/asynchronous-routing-engine.html[asynchronously].
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------
-// Capture messages from cluster named
-// 'clusterName' and send them to Camel route.
+----
 from("jgroups:clusterName").to("seda:queue");
-----------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jgroups:clusterName"/>
+  <to uri="seda:queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jgroups:clusterName
+      steps:
+        - to:
+            uri: seda:queue
+----
+====
 
 Using `jgroups` component on the producer side of the route will forward
 body of the Camel exchanges to the `JChannel` instance managed by the
 endpoint.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------
-// Send a message to the cluster named 'clusterName'
+----
 from("direct:start").to("jgroups:clusterName");
---------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="jgroups:clusterName"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: jgroups:clusterName
+----
+====
 
 === Predefined filters
 

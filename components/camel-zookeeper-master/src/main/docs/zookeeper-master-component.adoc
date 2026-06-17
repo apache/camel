@@ -25,10 +25,38 @@ consumption or due to commercial or stability reasons, you can only have a singl
 Prefix any camel endpoint with **zookeeper-master:someName:** where _someName_ is a logical name and is
 used to acquire the master lock. e.g.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("zookeeper-master:cheese:jms:foo").to("activemq:wine");
+from("zookeeper-master:cheese:jms:foo")
+    .to("activemq:wine");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="zookeeper-master:cheese:jms:foo"/>
+  <to uri="activemq:wine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: zookeeper-master:cheese:jms:foo
+      steps:
+        - to:
+            uri: activemq:wine
+----
+====
 
 The above simulates the [Exclusive Consumers](http://activemq.apache.org/exclusive-consumer.html) type feature in
 ActiveMQ; but on any third party JMS provider that maybe doesn't support exclusive consumers.

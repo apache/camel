@@ -58,38 +58,119 @@ include::partial$component-endpoint-headers.adoc[]
 
 === URI and path syntax
 
-The following example shows how to invoke the schematron processor in
-Java DSL. The schematron rules file is sourced from the class path:
+The following example shows how to invoke the schematron processor.
+The schematron rules file is sourced from the class path:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------------
-from("direct:start").to("schematron://sch/schematron.sch").to("mock:result")
-----------------------------------------------------------------------------
+----
+from("direct:start").to("schematron://sch/schematron.sch").to("mock:result");
+----
 
-The following example shows how to invoke the schematron processor in
-XML DSL. The schematron rules file is sourced from the file system:
-
+XML::
++
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
-   <from uri="direct:start" />
-   <to uri="schematron:///usr/local/sch/schematron.sch" />
-   <log message="Schematron validation status: ${in.header.CamelSchematronValidationStatus}" />
-   <choice>
-      <when>
-         <simple>${in.header.CamelSchematronValidationStatus} == 'SUCCESS'</simple>
-         <to uri="mock:success" />
-      </when>
-      <otherwise>
-         <log message="Failed schematron validation" />
-         <setBody>
-            <header>CamelSchematronValidationReport</header>
-         </setBody>
-         <to uri="mock:failure" />
-      </otherwise>
-   </choice>
+  <from uri="direct:start"/>
+  <to uri="schematron://sch/schematron.sch"/>
+  <to uri="mock:result"/>
 </route>
------------------------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: schematron://sch/schematron.sch
+        - to:
+            uri: mock:result
+----
+====
+
+The following example shows a more advanced route with validation and error handling.
+The schematron rules file is sourced from the file system:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("schematron:///usr/local/sch/schematron.sch")
+    .log("Schematron validation status: ${in.header.CamelSchematronValidationStatus}")
+    .choice()
+        .when(simple("${in.header.CamelSchematronValidationStatus} == 'SUCCESS'"))
+            .to("mock:success")
+        .otherwise()
+            .log("Failed schematron validation")
+            .setBody(header("CamelSchematronValidationReport"))
+            .to("mock:failure");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="schematron:///usr/local/sch/schematron.sch"/>
+  <log message="Schematron validation status: ${in.header.CamelSchematronValidationStatus}"/>
+  <choice>
+    <when>
+      <simple>${in.header.CamelSchematronValidationStatus} == 'SUCCESS'</simple>
+      <to uri="mock:success"/>
+    </when>
+    <otherwise>
+      <log message="Failed schematron validation"/>
+      <setBody>
+        <header>CamelSchematronValidationReport</header>
+      </setBody>
+      <to uri="mock:failure"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: schematron:///usr/local/sch/schematron.sch
+        - log:
+            message: "Schematron validation status: ${in.header.CamelSchematronValidationStatus}"
+        - choice:
+            when:
+              - simple: "${in.header.CamelSchematronValidationStatus} == 'SUCCESS'"
+                steps:
+                  - to:
+                      uri: mock:success
+            otherwise:
+              steps:
+                - log:
+                    message: Failed schematron validation
+                - setBody:
+                    expression:
+                      header:
+                        expression: CamelSchematronValidationReport
+                - to:
+                    uri: mock:failure
+----
+====
 
 [TIP]
 ====

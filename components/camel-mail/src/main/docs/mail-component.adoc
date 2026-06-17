@@ -201,10 +201,43 @@ http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeM
 can be configured using a header property on the IN message. The code
 below demonstrates this:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------------
+----
 from("direct:a").setHeader("subject", constant(subject)).to("smtp://james2@localhost");
-------------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:a"/>
+  <setHeader name="subject">
+    <constant>some subject</constant>
+  </setHeader>
+  <to uri="smtp://james2@localhost"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setHeader:
+            name: subject
+            constant: "some subject"
+        - to:
+            uri: smtp://james2@localhost
+----
+====
 
 The same applies for other MimeMessage headers such as recipients, so
 you can use a header property as `To`:
@@ -343,18 +376,78 @@ We start with a simple route that sends the messages received from a JMS
 queue as emails. The email account is the `admin` account on
 `mymailserver.com`.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------------
+----
 from("jms://queue:subscription").to("smtp://admin@mymailserver.com?password=secret");
--------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms://queue:subscription"/>
+  <to uri="smtp://admin@mymailserver.com?password=secret"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms://queue:subscription
+      steps:
+        - to:
+            uri: smtp://admin@mymailserver.com
+            parameters:
+              password: secret
+----
+====
 
 In the next sample, we poll a mailbox for new emails once every minute.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------
+----
 from("imap://admin@mymailserver.com?password=secret&unseen=true&delay=60000")
     .to("seda://mails");
--------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="imap://admin@mymailserver.com?password=secret&amp;unseen=true&amp;delay=60000"/>
+  <to uri="seda://mails"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: imap://admin@mymailserver.com
+      parameters:
+        password: secret
+        unseen: true
+        delay: 60000
+      steps:
+        - to:
+            uri: seda://mails
+----
+====
 
 === Sending mail with attachment
 

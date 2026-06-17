@@ -480,18 +480,76 @@ More information about https://docs.djl.ai/engines/mxnet/index.html[MXNet engine
 == Examples
 
 .MNIST image classification from file
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:/data/mnist/0/10.png"/>
+  <to uri="djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:/data/mnist/0/10.png"
+      steps:
+        - to:
+            uri: djl:cv/image_classification
+            parameters:
+              artifactId: "ai.djl.mxnet:mlp:0.0.1"
+----
+====
+
 .Object detection
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:/data/mnist/0/10.png"/>
+  <to uri="djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:/data/mnist/0/10.png"
+      steps:
+        - to:
+            uri: djl:cv/image_classification
+            parameters:
+              artifactId: "ai.djl.mxnet:mlp:0.0.1"
+----
+====
 
 .Custom deep learning model
 [source,java]

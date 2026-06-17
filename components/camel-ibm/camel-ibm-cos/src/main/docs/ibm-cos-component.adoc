@@ -83,11 +83,43 @@ If you don't specify an operation explicitly, the producer will do:
 
 For example, to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("ibm-cos://helloBucket?apiKey=yourApiKey&serviceInstanceId=yourServiceInstanceId&endpointUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&prefix=hello.txt")
   .to("file:/var/downloaded");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ibm-cos://helloBucket?apiKey=yourApiKey&amp;serviceInstanceId=yourServiceInstanceId&amp;endpointUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&amp;prefix=hello.txt"/>
+  <to uri="file:/var/downloaded"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ibm-cos://helloBucket
+      parameters:
+        apiKey: yourApiKey
+        serviceInstanceId: yourServiceInstanceId
+        endpointUrl: "https://s3.us-south.cloud-object-storage.appdomain.cloud"
+        prefix: hello.txt
+      steps:
+        - to:
+            uri: file:/var/downloaded
+----
+====
 
 === Advanced IBM COS Client configuration
 
@@ -95,11 +127,42 @@ If your Camel Application is running behind a firewall or if you need to
 have more control over the `AmazonS3` client instance configuration, you can
 create your own instance and refer to it in your Camel ibm-cos component configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("ibm-cos://MyBucket?cosClient=#client&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ibm-cos://MyBucket?cosClient=#client&amp;delay=5000&amp;maxMessagesPerPoll=5"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ibm-cos://MyBucket
+      parameters:
+        cosClient: "#client"
+        delay: 5000
+        maxMessagesPerPoll: 5
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 === IBM COS Authentication
 
@@ -225,23 +288,89 @@ This operation will delete the objects file1.txt, file2.txt, and file3.txt from 
 
 - ListBuckets: this operation lists the buckets for this account in this region
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start")
+----
+from("direct:start")
   .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=listBuckets")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="ibm-cos://mycamelbucket?cosClient=#cosClient&amp;operation=listBuckets"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: ibm-cos://mycamelbucket
+            parameters:
+              cosClient: "#cosClient"
+              operation: listBuckets
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will list the buckets for this account.
 
 - DeleteBucket: this operation deletes the bucket specified as URI parameter or header
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start")
+----
+from("direct:start")
   .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=deleteBucket")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="ibm-cos://mycamelbucket?cosClient=#cosClient&amp;operation=deleteBucket"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: ibm-cos://mycamelbucket
+            parameters:
+              cosClient: "#cosClient"
+              operation: deleteBucket
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will delete the bucket _mycamelbucket_.
 
@@ -264,12 +393,45 @@ This operation will create a new bucket named _newBucket_.
 
 - ListObjects: this operation lists objects in a specific bucket
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start")
+----
+from("direct:start")
   .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=listObjects")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="ibm-cos://mycamelbucket?cosClient=#cosClient&amp;operation=listObjects"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: ibm-cos://mycamelbucket
+            parameters:
+              cosClient: "#cosClient"
+              operation: listObjects
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will list the objects in the _mycamelbucket_ bucket.
 
@@ -328,12 +490,45 @@ This operation will return an InputStream with the content of the camelKey objec
 
 - HeadBucket: this operation checks if a bucket exists and you have permission to access it
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start")
+----
+from("direct:start")
   .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=headBucket")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="ibm-cos://mycamelbucket?cosClient=#cosClient&amp;operation=headBucket"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: ibm-cos://mycamelbucket
+            parameters:
+              cosClient: "#cosClient"
+              operation: headBucket
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will check if the bucket _mycamelbucket_ exists and is accessible. The result (true/false) will be in the message body.
 
@@ -341,11 +536,43 @@ This operation will check if the bucket _mycamelbucket_ exists and is accessible
 
 The IBM COS consumer will poll a bucket for new objects and process them.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("ibm-cos://mycamelbucket?cosClient=#cosClient&delay=5000&maxMessagesPerPoll=10&deleteAfterRead=true")
   .to("file:/var/downloaded");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ibm-cos://mycamelbucket?cosClient=#cosClient&amp;delay=5000&amp;maxMessagesPerPoll=10&amp;deleteAfterRead=true"/>
+  <to uri="file:/var/downloaded"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ibm-cos://mycamelbucket
+      parameters:
+        cosClient: "#cosClient"
+        delay: 5000
+        maxMessagesPerPoll: 10
+        deleteAfterRead: true
+      steps:
+        - to:
+            uri: file:/var/downloaded
+----
+====
 
 This route will poll the _mycamelbucket_ bucket every 5 seconds, processing up to 10 objects per poll, and deleting each object after it's been successfully processed.
 
@@ -353,11 +580,44 @@ This route will poll the _mycamelbucket_ bucket every 5 seconds, processing up t
 
 Instead of deleting objects after reading, you can move them to a different bucket or prefix:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("ibm-cos://mycamelbucket?cosClient=#cosClient&deleteAfterRead=false&moveAfterRead=true&destinationBucket=processed-bucket&destinationBucketPrefix=done-")
   .to("direct:process");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ibm-cos://mycamelbucket?cosClient=#cosClient&amp;deleteAfterRead=false&amp;moveAfterRead=true&amp;destinationBucket=processed-bucket&amp;destinationBucketPrefix=done-"/>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ibm-cos://mycamelbucket
+      parameters:
+        cosClient: "#cosClient"
+        deleteAfterRead: false
+        moveAfterRead: true
+        destinationBucket: processed-bucket
+        destinationBucketPrefix: "done-"
+      steps:
+        - to:
+            uri: direct:process
+----
+====
 
 This route will move processed objects from _mycamelbucket_ to _processed-bucket_, prefixing each object key with "done-".
 
@@ -365,11 +625,42 @@ This route will move processed objects from _mycamelbucket_ to _processed-bucket
 
 You can filter which objects to consume by using a prefix:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("ibm-cos://mycamelbucket?cosClient=#cosClient&prefix=inbox/&deleteAfterRead=true")
   .to("direct:process");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ibm-cos://mycamelbucket?cosClient=#cosClient&amp;prefix=inbox/&amp;deleteAfterRead=true"/>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ibm-cos://mycamelbucket
+      parameters:
+        cosClient: "#cosClient"
+        prefix: "inbox/"
+        deleteAfterRead: true
+      steps:
+        - to:
+            uri: direct:process
+----
+====
 
 This route will only consume objects whose keys start with "inbox/".
 

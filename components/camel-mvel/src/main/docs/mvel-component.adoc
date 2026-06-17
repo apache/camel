@@ -88,11 +88,38 @@ resource. This allows you to provide a dynamic template at runtime.
 
 For example, you could use something like
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------
-from("activemq:My.Queue").
-  to("mvel:com/acme/MyResponse.mvel");
---------------------------------------
+----
+from("activemq:My.Queue")
+    .to("mvel:com/acme/MyResponse.mvel");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <to uri="mvel:com/acme/MyResponse.mvel"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - to:
+            uri: mvel:com/acme/MyResponse.mvel
+----
+====
 
 To use a MVEL template to formulate a response to a message for InOut
 message exchanges (where there is a `JMSReplyTo` header).
@@ -100,22 +127,96 @@ message exchanges (where there is a `JMSReplyTo` header).
 To specify what template the component should use dynamically via a
 header, so for example:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------
-from("direct:in").
-  setHeader("CamelMvelResourceUri").constant("path/to/my/template.mvel").
-  to("mvel:dummy?allowTemplateFromHeader=true");
--------------------------------------------------------------------------
+----
+from("direct:in")
+    .setHeader("CamelMvelResourceUri").constant("path/to/my/template.mvel")
+    .to("mvel:dummy?allowTemplateFromHeader=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMvelResourceUri">
+    <constant>path/to/my/template.mvel</constant>
+  </setHeader>
+  <to uri="mvel:dummy?allowTemplateFromHeader=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMvelResourceUri
+            expression:
+              constant:
+                expression: path/to/my/template.mvel
+        - to:
+            uri: mvel:dummy
+            parameters:
+              allowTemplateFromHeader: true
+----
+====
 
 To specify a template directly as a header, the component should use
 dynamically via a header, so for example:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------
-from("direct:in").
-  setHeader("CamelMvelTemplate").constant("@{\"The result is \" + request.body * 3}\" }").
-  to("velocity:dummy?allowTemplateFromHeader=true");
-------------------------------------------------------------------------------------------
+----
+from("direct:in")
+    .setHeader("CamelMvelTemplate").constant("@{\"The result is \" + request.body * 3}\" }")
+    .to("mvel:dummy?allowTemplateFromHeader=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMvelTemplate">
+    <constant>@{"The result is " + request.body * 3}" }</constant>
+  </setHeader>
+  <to uri="mvel:dummy?allowTemplateFromHeader=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMvelTemplate
+            expression:
+              constant:
+                expression: "@{\"The result is \" + request.body * 3}\" }"
+        - to:
+            uri: mvel:dummy
+            parameters:
+              allowTemplateFromHeader: true
+----
+====
 
 
 

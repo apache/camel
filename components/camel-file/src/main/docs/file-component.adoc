@@ -74,10 +74,39 @@ relative to the directory where the file was consumed.
 
 If you want to delete the file after processing, the route should be:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?delete=true").to("bean:handleOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?delete=true"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 [NOTE]
 ====
@@ -91,10 +120,39 @@ So, during processing of the `Exchange` the file is still located in the inbox f
 
 Let's illustrate this with an example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?move=.done").to("bean:handleOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?move=.done"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        move: .done
+      steps:
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 When a file is dropped in the `inbox` folder, the file consumer notices
 this and creates a new `FileExchange` that is routed to the
@@ -124,17 +182,76 @@ We have introduced a `preMove` operation to move files *before* they
 are processed. This allows you to mark which files have been scanned as
 they are moved to this subfolder before being processed.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?preMove=inprogress").to("bean:handleOrder");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?preMove=inprogress"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        preMove: inprogress
+      steps:
+        - to:
+            uri: bean:handleOrder
+----
+====
+
 You can combine the `preMove` and the regular `move`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?preMove=inprogress&move=.done").to("bean:handleOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?preMove=inprogress&amp;move=.done"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        preMove: inprogress
+        move: .done
+      steps:
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 So in this situation, the file is in the `inprogress` folder when being
 processed, and after it's processed, it's moved to the `.done` folder.
@@ -202,11 +319,42 @@ The `charset` option allows configuring the encoding of the files on
 both the consumer and producer endpoints. For example, if you read utf-8
 files and want to convert the files to iso-8859-1, you can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox?charset=utf-8")
   .to("file:outbox?charset=iso-8859-1")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?charset=utf-8"/>
+  <to uri="file:outbox?charset=iso-8859-1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        charset: utf-8
+      steps:
+        - to:
+            uri: file:outbox
+            parameters:
+              charset: iso-8859-1
+----
+====
 
 You can also use the `convertBodyTo` in the route. In the example below,
 we have still input files in utf-8 format, but we want to convert the
@@ -214,6 +362,10 @@ file content to a byte array in iso-8859-1 format. And then let a bean
 process the data. Before writing the content to the outbox folder using
 the current charset.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox?charset=utf-8")
@@ -221,6 +373,38 @@ from("file:inbox?charset=utf-8")
   .to("bean:myBean")
   .to("file:outbox");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?charset=utf-8"/>
+  <convertBodyTo type="byte[]" charset="iso-8859-1"/>
+  <to uri="bean:myBean"/>
+  <to uri="file:outbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        charset: utf-8
+      steps:
+        - convertBodyTo:
+            type: "byte[]"
+            charset: iso-8859-1
+        - to:
+            uri: bean:myBean
+        - to:
+            uri: file:outbox
+----
+====
 
 If you omit the charset on the consumer endpoint, then Camel does not
 know the charset of the file, and would by default use `UTF-8`. However,
@@ -234,6 +418,10 @@ In this example when writing the files, the content has already been
 converted to a byte array, and thus would write the content directly as
 is (without any further encodings).
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -241,6 +429,36 @@ from("file:inbox")
   .to("bean:myBean")
   .to("file:outbox");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <convertBodyTo type="byte[]" charset="iso-8859-1"/>
+  <to uri="bean:myBean"/>
+  <to uri="file:outbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - convertBodyTo:
+            type: "byte[]"
+            charset: iso-8859-1
+        - to:
+            uri: bean:myBean
+        - to:
+            uri: file:outbox
+----
+====
 
 You can also override and control the encoding dynamic when writing
 files, by setting a property on the exchange with the key
@@ -269,11 +487,42 @@ If you have some issues then you can enable DEBUG logging on
 file using a specific charset.
 For example, the route below will log the following:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox?charset=utf-8")
   .to("file:outbox?charset=iso-8859-1")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?charset=utf-8"/>
+  <to uri="file:outbox?charset=iso-8859-1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        charset: utf-8
+      steps:
+        - to:
+            uri: file:outbox
+            parameters:
+              charset: iso-8859-1
+----
+====
 
 And the logs:
 
@@ -295,10 +544,37 @@ header. The constant, `Exchange.FILE_NAME`, can also be used.
 The sample code below produces files using the message ID as the
 filename:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:report").to("file:target/reports");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:report"/>
+  <to uri="file:target/reports"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - to:
+            uri: file:target/reports
+----
+====
 
 To use `report.txt` as the filename you have to do:
 
@@ -309,18 +585,80 @@ from("direct:report").setHeader(Exchange.FILE_NAME, constant("report.txt")).to( 
 
 ... the same as above, but with `CamelFileName`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:report").setHeader("CamelFileName", constant("report.txt")).to( "file:target/reports");
+from("direct:report").setHeader("CamelFileName", constant("report.txt")).to("file:target/reports");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:report"/>
+  <setHeader name="CamelFileName">
+    <constant>report.txt</constant>
+  </setHeader>
+  <to uri="file:target/reports"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - setHeader:
+            name: CamelFileName
+            constant: report.txt
+        - to:
+            uri: file:target/reports
+----
+====
 
 And a syntax where we set the filename on the endpoint with the
 `fileName` URI option.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:report").to("file:target/reports/?fileName=report.txt");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:report"/>
+  <to uri="file:target/reports/?fileName=report.txt"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - to:
+            uri: file:target/reports/
+            parameters:
+              fileName: report.txt
+----
+====
 
 === Filename Expression
 
@@ -472,10 +810,42 @@ directory, disregarding the source directory layout (e.g., to flatten out
 the path), you add the `flatten=true` option on the file producer
 side:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inputdir/?recursive=true&delete=true").to("file://outputdir?flatten=true")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?recursive=true&amp;delete=true"/>
+  <to uri="file://outputdir?flatten=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        recursive: true
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+            parameters:
+              flatten: true
+----
+====
 
 It will result in the following output layout:
 
@@ -524,11 +894,40 @@ files will be written to the  `/var/myapp/filesInProgress` directory and
 after data transfer is done, they will be atomically moved to
 the` /var/myapp/finalDirectory `directory.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start").
   to("file:///var/myapp/finalDirectory?tempPrefix=/../filesInProgress/");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="file:///var/myapp/finalDirectory?tempPrefix=/../filesInProgress/"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: file:///var/myapp/finalDirectory
+            parameters:
+              tempPrefix: "/../filesInProgress/"
+----
+====
 
 === Avoiding reading the same file more than once (idempotent consumer)
 

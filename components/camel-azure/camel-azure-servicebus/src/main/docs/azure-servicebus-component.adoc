@@ -143,18 +143,83 @@ from("direct:start")
 
 - `receiveMessages`
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("azure-servicebus:test//?connectionString=test")
   .log("${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="azure-servicebus:test//?connectionString=test"/>
+  <log message="${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-servicebus:test//
+      parameters:
+        connectionString: test
+      steps:
+        - log:
+            message: "${body}"
+        - to:
+            uri: mock:result
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("azure-servicebus:test//?connectionString=test&sessionEnabled=true")
   .log("${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="azure-servicebus:test//?connectionString=test&amp;sessionEnabled=true"/>
+  <log message="${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-servicebus:test//
+      parameters:
+        connectionString: test
+        sessionEnabled: true
+      steps:
+        - log:
+            message: "${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 include::spring-boot:partial$starter.adoc[]

@@ -42,12 +42,45 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listEvents`: this operation lists the events
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("direct:list").
-    to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=listEvents").
-    to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:list")
+    .to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=listEvents")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-events:///?kubernetesClient=#kubernetesClient&amp;operation=listEvents"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: kubernetes-events:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listEvents
+        - to:
+            uri: mock:result
+----
+====
 
 This operation returns a list of events from your cluster. The type of the events is `io.fabric8.kubernetes.api.model.events.v1.Event`.
 

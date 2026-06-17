@@ -54,21 +54,74 @@ change in JGroups-raft role and forward them to the Camel route.
 JGroups-raft consumer processes incoming messages
 http://camel.apache.org/asynchronous-routing-engine.html[asynchronously].
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------
-// Capture raft role changes from cluster named
-// 'clusterName' and send them to Camel route.
+----
 from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to("seda:queue");
-----------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jgroups-raft:clusterName?enableRoleChangeEvents=true"/>
+  <to uri="seda:queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jgroups-raft:clusterName
+      parameters:
+        enableRoleChangeEvents: true
+      steps:
+        - to:
+            uri: seda:queue
+----
+====
 
 Using `jgroups-raft` component on the producer side of the route will use the body of the camel exchange (which must be a `byte[]`)
 to perform a setX() operation on the raftHandle associated with the endpoint.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------
-// perform a setX() operation to the cluster named 'clusterName' shared state machine
+----
 from("direct:start").to("jgroups-raft:clusterName");
---------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="jgroups-raft:clusterName"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: jgroups-raft:clusterName
+----
+====
 
 == Examples
 

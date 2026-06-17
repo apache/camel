@@ -121,12 +121,47 @@ Lucky Luke, 120, capturing the Daltons
 
 We can now use the CSV component to unmarshal this file:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------
+----
 from("file:src/test/resources/?fileName=daltons.csv&noop=true")
     .unmarshal().csv()
     .to("mock:daltons");
----------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:src/test/resources/?fileName=daltons.csv&amp;noop=true"/>
+    <unmarshal>
+        <csv/>
+    </unmarshal>
+    <to uri="mock:daltons"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:src/test/resources/
+      parameters:
+        fileName: daltons.csv
+        noop: true
+    steps:
+      - unmarshal:
+          csv: {}
+      - to:
+          uri: mock:daltons
+----
+====
 
 The resulting message will contain a `List<List<String>>` like...
 

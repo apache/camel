@@ -74,11 +74,42 @@ can be used to retrieve lower level clients.
 For example, to download a blob content from the block blob `hello.txt`
 located on the `container1` in the `camelazure` storage account, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialType=SHARED_ACCOUNT_KEY&accessKey=RAW(yourAccessKey)").
-to("file://blobdirectory");
---------------------------------------------------------------------------------
+----
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialType=SHARED_ACCOUNT_KEY&accessKey=RAW(yourAccessKey)")
+    .to("file://blobdirectory");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-blob://camelazure/container1?blobName=hello.txt&amp;credentialType=SHARED_ACCOUNT_KEY&amp;accessKey=RAW(yourAccessKey)"/>
+    <to uri="file://blobdirectory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-blob://camelazure/container1
+      parameters:
+        blobName: hello.txt
+        credentialType: SHARED_ACCOUNT_KEY
+        accessKey: RAW(yourAccessKey)
+    steps:
+      - to:
+          uri: file://blobdirectory
+----
+====
 
 === Advanced Azure Storage Blob configuration
 
@@ -101,11 +132,41 @@ context.getRegistry().bind("client", client);
 
 Then refer to this instance in your Camel `azure-storage-blob` component configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
 -----------------------------------------------------------------------
 from("azure-storage-blob://cameldev/container1?blobName=myblob&serviceClient=#client")
-.to("mock:result");
+    .to("mock:result");
 -----------------------------------------------------------------------
+
+XML::
++
+[source,xml]
+-----------------------------------------------------------------------
+<route>
+    <from uri="azure-storage-blob://cameldev/container1?blobName=myblob&amp;serviceClient=#client"/>
+    <to uri="mock:result"/>
+</route>
+-----------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+-----------------------------------------------------------------------
+- route:
+    from:
+      uri: azure-storage-blob://cameldev/container1
+      parameters:
+        blobName: myblob
+        serviceClient: "#client"
+    steps:
+      - to:
+          uri: mock:result
+-----------------------------------------------------------------------
+====
 
 === Automatic detection of BlobServiceClient client in registry
 
@@ -182,28 +243,122 @@ Refer to the example section in this page to learn how to use these operations i
 === Consumer Examples
 
 To consume a blob into a file using the file component, this can be done like this:
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey").
-to("file://blobdirectory");
---------------------------------------------------------------------------------
+----
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey")
+    .to("file://blobdirectory");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-blob://camelazure/container1?blobName=hello.txt&amp;accountName=yourAccountName&amp;accessKey=yourAccessKey"/>
+    <to uri="file://blobdirectory"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-blob://camelazure/container1
+      parameters:
+        blobName: hello.txt
+        accountName: yourAccountName
+        accessKey: yourAccessKey
+    steps:
+      - to:
+          uri: file://blobdirectory
+----
+====
 
 However, you can also write to file directly without using the file component, you will need to specify `fileDir` folder path to save your blob in your machine.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
-to("mock:results");
---------------------------------------------------------------------------------
+----
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir")
+    .to("mock:results");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-blob://camelazure/container1?blobName=hello.txt&amp;accountName=yourAccountName&amp;accessKey=yourAccessKey&amp;fileDir=/var/to/awesome/dir"/>
+    <to uri="mock:results"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-blob://camelazure/container1
+      parameters:
+        blobName: hello.txt
+        accountName: yourAccountName
+        accessKey: yourAccessKey
+        fileDir: /var/to/awesome/dir
+    steps:
+      - to:
+          uri: mock:results
+----
+====
 
 Also, the component supports batch consumer, hence you can consume multiple blobs with only specifying the container name, the consumer will
 return multiple exchanges depending on the number of the blobs in the container. Example:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-from("azure-storage-blob://camelazure/container1?accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
-to("mock:results");
---------------------------------------------------------------------------------
+----
+from("azure-storage-blob://camelazure/container1?accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir")
+    .to("mock:results");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="azure-storage-blob://camelazure/container1?accountName=yourAccountName&amp;accessKey=yourAccessKey&amp;fileDir=/var/to/awesome/dir"/>
+    <to uri="mock:results"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-storage-blob://camelazure/container1
+      parameters:
+        accountName: yourAccountName
+        accessKey: yourAccessKey
+        fileDir: /var/to/awesome/dir
+    steps:
+      - to:
+          uri: mock:results
+----
+====
 
 ==== Delete After Read
 
@@ -351,7 +506,7 @@ The following options control the move behavior:
 - `listBlobContainers`:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .process(exchange -> {
     // set the header you want the producer to evaluate, refer to the previous
@@ -361,12 +516,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure?operation=listBlobContainers&client&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `createBlobContainer`:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .process(exchange -> {
     // set the header you want the producer to evaluate, refer to the previous
@@ -376,12 +531,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?operation=createBlobContainer&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `deleteBlobContainer`:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .process(exchange -> {
     // set the header you want the producer to evaluate, refer to the previous
@@ -391,12 +546,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?operation=deleteBlobContainer&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `listBlobs`:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .process(exchange -> {
     // set the header you want the producer to evaluate, refer to the previous
@@ -406,7 +561,7 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?operation=listBlobs&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 
 - `listBlobVersions`:
@@ -416,7 +571,7 @@ account. Each `BlobItem` in the result carries its own `versionId` and `isCurren
 The `prefix` and `regex` options can be used to narrow the result down to a single blob name.
 
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .setHeader(BlobConstants.PREFIX, constant("invoice.pdf"))
   .to("azure-storage-blob://camelazure/container1?operation=listBlobVersions&serviceClient=#client")
@@ -429,14 +584,14 @@ from("direct:start")
       }
   })
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 
 - `getBlob`:
 
 We can either set an `outputStream` in the exchange body and write the data to it. E.g.:
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -450,12 +605,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 If we don't set a body, then this operation will give us an `InputStream` instance which can proceeded further downstream:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlob&serviceClient=#client")
@@ -466,12 +621,12 @@ from("direct:start")
       System.out.println(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
   })
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `deleteBlob`:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -482,12 +637,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=deleteBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `downloadBlobToFile`:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -498,12 +653,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=downloadBlobToFile&fileDir=/var/mydir&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `downloadLink`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=downloadLink&serviceClient=#client")
@@ -512,12 +667,12 @@ from("direct:start")
       System.out.println("My link " + link);
   })
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `uploadBlockBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -529,7 +684,7 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=uploadBlockBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `uploadBlockBlobChunked`
 
@@ -589,7 +744,7 @@ The `blockSize` and `maxConcurrency` options control memory usage and upload spe
 - `stageBlockBlobList`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -602,12 +757,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=stageBlockBlobList&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `commitBlockBlobList`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -621,34 +776,34 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=commitBlockBlobList&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `getBlobBlockList`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getBlobBlockList&serviceClient=#client")
   .log("${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 
 - `createAppendBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=createAppendBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `commitAppendBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -661,22 +816,22 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=commitAppendBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `createPageBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=createPageBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `uploadPageBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -690,12 +845,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=uploadPageBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `resizePageBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -705,12 +860,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=resizePageBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `clearPageBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -720,12 +875,12 @@ from("direct:start")
   })
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=clearPageBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `getPageBlobRanges`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:start")
   .process(exchange -> {
@@ -736,12 +891,12 @@ from("direct:start")
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=getPageBlobRanges&serviceClient=#client")
   .log("${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `copyBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:copyBlob")
   .process(exchange -> {
@@ -751,20 +906,20 @@ from("direct:copyBlob")
   })
   .to("azure-storage-blob://account/containerblob2?operation=copyBlob&sourceBlobAccessKey=RAW(accessKey)")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 In this way the `file.txt` in the container `containerblob1` of the account `account`, will be copied to the container `containerblob2` of the same account.
 
 - `createBlobSnapshot`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:createBlobSnapshot")
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=createBlobSnapshot&serviceClient=#client")
   .log("Snapshot ID: ${header.CamelAzureStorageBlobSnapshotId}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 === Reading a specific blob snapshot
 
@@ -773,13 +928,13 @@ The `getBlob`, `downloadBlobToFile` and `downloadLink` operations can target a s
 to the snapshot version of the blob instead of the live one. The header takes precedence over the URI parameter.
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:readSnapshot")
   .process(exchange -> exchange.getIn().setHeader(BlobConstants.BLOB_SNAPSHOT_ID, "2026-04-15T10:00:00.0000000Z"))
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 === Reading a specific blob version
 
@@ -789,52 +944,52 @@ operations can target a specific version by setting the `versionId` URI paramete
 of the live one. The header takes precedence over the URI parameter.
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:readVersion")
   .setHeader(BlobConstants.BLOB_VERSION_ID, constant("2026-04-15T10:00:00.0000000Z"))
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `setBlobTags`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:setBlobTags")
   .setHeader(BlobConstants.BLOB_TAGS, constant(Map.of("status", "quarantine", "category", "document")))
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobTags&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `getBlobTags`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:getBlobTags")
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlobTags&serviceClient=#client")
   .log("Tags: ${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `findBlobsByTags`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:findBlobsByTags")
   .setHeader(BlobConstants.BLOB_TAG_FILTER, constant("\"Environment\" = 'Production' AND \"Status\" = 'Active'"))
   .to("azure-storage-blob://camelazure?operation=findBlobsByTags&serviceClient=#client")
   .log("Matching blobs: ${body}")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `setBlobLegalHold`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 // place a legal hold on the blob (e.g. for compliance / quarantine workflows)
 from("direct:setLegalHold")
@@ -847,12 +1002,12 @@ from("direct:clearLegalHold")
   .setHeader(BlobConstants.BLOB_LEGAL_HOLD, constant(false))
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobLegalHold&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `setBlobImmutabilityPolicy`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 // apply a 7-day unlocked time-based retention policy (can be modified or deleted)
 from("direct:setImmutabilityPolicy")
@@ -860,23 +1015,23 @@ from("direct:setImmutabilityPolicy")
   .setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE, constant(BlobImmutabilityPolicyMode.UNLOCKED))
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobImmutabilityPolicy&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `undeleteBlob`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 // restore a soft-deleted blob (requires soft delete to be enabled on the storage account)
 from("direct:undeleteBlob")
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=undeleteBlob&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `setBlobTier`
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 // move a blob to the COOL tier for less frequent access
 from("direct:moveToCool")
@@ -890,7 +1045,7 @@ from("direct:rehydrate")
   .setHeader(BlobConstants.REHYDRATE_PRIORITY, constant(RehydratePriority.HIGH))
   .to("azure-storage-blob://camelazure/container1?blobName=archived.txt&operation=setBlobTier&serviceClient=#client")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 === Blob modification during download (ConditionNotMet)
 
@@ -913,7 +1068,7 @@ Workarounds:
 SAS Blob Container tokens can be generated programmatically or via Azure UI. To generate the token with java code, the following can be done:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 BlobContainerClient blobClient = new BlobContainerClientBuilder()
             .endpoint(String.format("https://%s.blob.core.windows.net/%s", accountName, accessKey))
@@ -936,22 +1091,22 @@ BlobContainerClient blobClient = new BlobContainerClientBuilder()
         BlobServiceSasSignatureValues sasSignatureValues = new BlobServiceSasSignatureValues(expiryTime, blobContainerSasPermission);
 
         return blobClient.generateSas(sasSignatureValues);
---------------------------------------------------------------------------------
+----
 
 The generated SAS token can be then stored to an application.properties file so that it can be loaded by the camel route, for example:
 
 [source,properties]
---------------------------------------------------------------------------------
+----
 
 camel.component.azure-storage-blob.sas-token=MY_TOKEN_HERE
---------------------------------------------------------------------------------
+----
 
 [source,java]
---------------------------------------------------------------------------------
+----
 
 from("direct:copyBlob")
   .to("azure-storage-blob://account/containerblob2?operation=uploadBlockBlob&credentialType=AZURE_SAS")
---------------------------------------------------------------------------------
+----
 
 == Important Development Notes
 

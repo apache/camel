@@ -188,12 +188,42 @@ For example, the following route shows how you can compute a destination
 at run time and use it to override the exchange appearing in the endpoint
 URL:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox")
-  .to("bean:computeDestination")
-  .to("spring-rabbitmq:dummy");
+    .to("bean:computeDestination")
+    .to("spring-rabbitmq:dummy");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <to uri="bean:computeDestination"/>
+  <to uri="spring-rabbitmq:dummy"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - to:
+            uri: bean:computeDestination
+        - to:
+            uri: spring-rabbitmq:dummy
+----
+====
 
 The exchange name, `dummy`, is just a placeholder. It must be provided as
 part of the RabbitMQ endpoint URL, but it will be ignored in this example.

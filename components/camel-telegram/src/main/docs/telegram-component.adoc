@@ -219,27 +219,48 @@ Supported types for incoming messages are
 The reactive chatbot mode is a simple way of using the Camel component to build a simple
 chatbot that replies directly to chat messages received from the Telegram users.
 
-The following is a basic configuration of the chatbot in Java DSL
+The following is a basic configuration of the chatbot:
 
-.Telegram reactive example in Java
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
+----
 from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
-.bean(ChatBotLogic.class)
-.to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
----------------------------------------------------------
+    .bean(ChatBotLogic.class)
+    .to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
+----
 
-.Telegram reactive example in Spring XML
+XML::
++
 [source,xml]
----------------------------------------------
+----
 <route>
-    <from uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
-    <bean ref="chatBotLogic" />
-    <to uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
-<route>
+  <from uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
+  <bean ref="chatBotLogic"/>
+  <to uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
+</route>
+----
 
-<bean id="chatBotLogic" class="com.example.ChatBotLogic"/>
----------------------------------------------
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: telegram:bots
+      parameters:
+        authorizationToken: "123456789:insertYourAuthorizationTokenHere"
+      steps:
+        - bean:
+            ref: chatBotLogic
+        - to:
+            uri: telegram:bots
+            parameters:
+              authorizationToken: "123456789:insertYourAuthorizationTokenHere"
+----
+====
 
 
 The `ChatBotLogic` is a simple bean that implements a generic String-to-String method.
@@ -271,23 +292,89 @@ but you can obtain it using a simple route.
 
 First, add the bot to the chat where you want to push messages, then run a route like the following one.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
+----
 from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
-.to("log:INFO?showHeaders=true");
----------------------------------------------------------
+    .to("log:INFO?showHeaders=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
+  <to uri="log:INFO?showHeaders=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: telegram:bots
+      parameters:
+        authorizationToken: "123456789:insertYourAuthorizationTokenHere"
+      steps:
+        - to:
+            uri: log:INFO
+            parameters:
+              showHeaders: true
+----
+====
 
 Any message received by the bot will be dumped to your log together with information about the chat (`CamelTelegramChatId`
 header).
 
 Once you get the chat ID, you can use the following sample route to push a message to it.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
+----
 from("timer:tick")
-.setBody().constant("Hello")
-to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere&chatId=123456")
----------------------------------------------------------
+    .setBody().constant("Hello")
+    .to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere&chatId=123456");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="timer:tick"/>
+    <setBody>
+        <constant>Hello</constant>
+    </setBody>
+    <to uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere&amp;chatId=123456"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:tick
+    steps:
+      - setBody:
+          constant: Hello
+      - to:
+          uri: telegram:bots
+          parameters:
+            authorizationToken: "123456789:insertYourAuthorizationTokenHere"
+            chatId: "123456"
+----
+====
 
 Note that the corresponding URI parameter is simply `chatId`.
 
@@ -369,12 +456,42 @@ Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 Once done, you need to prepend the webhook URI to the telegram URI you want to use.
 
-In Java DSL:
+In the route below:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
-from("webhook:telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere").to("log:info");
----------------------------------------------------------
+----
+from("webhook:telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
+    .to("log:info");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="webhook:telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
+    <to uri="log:info"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: webhook:telegram:bots
+      parameters:
+        authorizationToken: "123456789:insertYourAuthorizationTokenHere"
+    steps:
+      - to:
+          uri: log:info
+----
+====
 
 Some endpoints will be exposed by your application and Telegram will be configured to send messages to them.
 You need to ensure that your server is exposed to the internet and to pass the right value of the

@@ -164,35 +164,149 @@ public class Jt400RouteBuilder extends RouteBuilder {
 
 === Writing to keyed data queues
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------
+----
 from("jms:queue:input")
-.to("jt400://username:password@system/lib.lib/MSGINDQ.DTAQ?keyed=true");
-------------------------------------------------------------------------
+    .to("jt400://username:password@system/lib.lib/MSGINDQ.DTAQ?keyed=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:input"/>
+    <to uri="jt400://username:password@system/lib.lib/MSGINDQ.DTAQ?keyed=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:input
+    steps:
+      - to:
+          uri: jt400://username:password@system/lib.lib/MSGINDQ.DTAQ
+          parameters:
+            keyed: true
+----
+====
 
 === Reading from keyed data queues
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------------------------------
+----
 from("jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&searchKey=MYKEY&searchType=GE")
-.to("jms:queue:output");
--------------------------------------------------------------------------------------------------------
+    .to("jms:queue:output");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&amp;searchKey=MYKEY&amp;searchType=GE"/>
+    <to uri="jms:queue:output"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ
+      parameters:
+        keyed: true
+        searchKey: MYKEY
+        searchType: GE
+    steps:
+      - to:
+          uri: jms:queue:output
+----
+====
 
 === Writing to message queues
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------
+----
 from("jms:queue:input")
-.to("jt400://username:password@system/lib.lib/MSGINQ.MSGQ");
-------------------------------------------------------------------------
+    .to("jt400://username:password@system/lib.lib/MSGINQ.MSGQ");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:input"/>
+    <to uri="jt400://username:password@system/lib.lib/MSGINQ.MSGQ"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:input
+    steps:
+      - to:
+          uri: jt400://username:password@system/lib.lib/MSGINQ.MSGQ
+----
+====
 
 === Reading from a message queue
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------------------------------
+----
 from("jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ")
-.to("jms:queue:output");
--------------------------------------------------------------------------------------------------------
+    .to("jms:queue:output");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ"/>
+    <to uri="jms:queue:output"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ
+    steps:
+      - to:
+          uri: jms:queue:output
+----
+====
 
 === Replying to an inquiry message on a message queue
 

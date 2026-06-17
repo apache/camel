@@ -58,18 +58,40 @@ include::partial$component-endpoint-headers.adoc[]
 Below is an example route that stores a point into the db (taking the db name from the URI)
 specific key:
 
-[source,java]
-----
-from("direct:start")
-        .setHeader(InfluxDbConstants.DBNAME_HEADER, constant("myTimeSeriesDB"))
-        .to("influxdb://connectionBean);
-----
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
         .to("influxdb://connectionBean?databaseName=myTimeSeriesDB");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="influxdb://connectionBean?databaseName=myTimeSeriesDB"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: influxdb://connectionBean
+            parameters:
+              databaseName: myTimeSeriesDB
+----
+====
 
 
 

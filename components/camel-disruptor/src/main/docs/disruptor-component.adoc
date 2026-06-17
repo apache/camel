@@ -118,12 +118,54 @@ The Disruptor component supports using xref:eips:requestReply-eip.adoc[Request/R
 where the caller will wait for the Async route to complete.
 For instance:
 
-.Request/Reply example with disruptor
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------
+----
 from("mina:tcp://0.0.0.0:9876?textline=true&sync=true").to("disruptor:input");
 from("disruptor:input").to("bean:processInput").to("bean:createResponse");
-------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="mina:tcp://0.0.0.0:9876?textline=true&amp;sync=true"/>
+  <to uri="disruptor:input"/>
+</route>
+<route>
+  <from uri="disruptor:input"/>
+  <to uri="bean:processInput"/>
+  <to uri="bean:createResponse"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://0.0.0.0:9876
+      parameters:
+        textline: true
+        sync: true
+      steps:
+        - to:
+            uri: disruptor:input
+- route:
+    from:
+      uri: disruptor:input
+      steps:
+        - to:
+            uri: bean:processInput
+        - to:
+            uri: bean:createResponse
+----
+====
 
 In the route above, we have a TCP listener on port 9876 that accepts
 incoming requests. The request is routed to the _disruptor:input_

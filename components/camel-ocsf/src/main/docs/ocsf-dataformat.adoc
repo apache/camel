@@ -50,6 +50,10 @@ All event classes extend `OcsfEvent` which provides common attributes like `time
 
 === Marshalling OCSF Events
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -57,14 +61,74 @@ from("direct:start")
     .to("kafka:security-events");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <marshal>
+    <ocsf/>
+  </marshal>
+  <to uri="kafka:security-events"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            ocsf: {}
+        - to:
+            uri: kafka:security-events
+----
+====
+
 === Unmarshalling OCSF Events
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:security-events")
     .unmarshal().ocsf()
     .to("direct:process");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:security-events"/>
+  <unmarshal>
+    <ocsf/>
+  </unmarshal>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:security-events
+      steps:
+        - unmarshal:
+            ocsf: {}
+        - to:
+            uri: direct:process
+----
+====
 
 === Unmarshalling to a Specific Event Class
 

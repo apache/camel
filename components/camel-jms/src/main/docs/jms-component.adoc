@@ -220,47 +220,58 @@ provide a few samples below to get started.
 In the following sample, we configure a route that receives JMS messages
 and routes the message to a POJO:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------
-from("jms:queue:foo").
-   to("bean:myBusinessLogic");
---------------------------------
+----
+from("jms:queue:foo")
+  .to("bean:myBusinessLogic");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:queue:foo"/>
+  <to uri="bean:myBusinessLogic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:foo
+      steps:
+        - to:
+            uri: bean:myBusinessLogic
+----
+====
 
 You can use any of the EIP patterns so the route can be
 context based. For example, here's how to filter an order topic for the
 big spenders:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------
-from("jms:topic:OrdersTopic").
-  filter().method("myBean", "isGoldCustomer").
-  to("jms:queue:BigSpendersQueue");
-----------------------------------------------
+----
+from("jms:topic:OrdersTopic")
+  .filter().method("myBean", "isGoldCustomer")
+  .to("jms:queue:BigSpendersQueue");
+----
 
-=== Sending to JMS
-
-In the sample below, we poll a file folder and send the file content to a
-JMS topic. As we want the content of the file as a `TextMessage` instead
-of a `BytesMessage`, we need to convert the body to a `String`:
-
-[source,java]
-------------------------------
-from("file://orders").
-  convertBodyTo(String.class).
-  to("jms:topic:OrdersTopic");
-------------------------------
-
-=== Using Annotations
-
-Camel also has annotations, so you can use xref:manual::pojo-consuming.adoc[POJO Consuming] and xref:manual::pojo-producing.adoc[POJO Producing].
-
-=== Spring DSL Example
-
-The preceding examples use the Java DSL. Camel also supports Spring XML
-DSL. Here is the big spender sample using Spring DSL:
-
+XML::
++
 [source,xml]
----------------------------------------------------
+----
 <route>
   <from uri="jms:topic:OrdersTopic"/>
   <filter>
@@ -268,7 +279,72 @@ DSL. Here is the big spender sample using Spring DSL:
     <to uri="jms:queue:BigSpendersQueue"/>
   </filter>
 </route>
----------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:topic:OrdersTopic
+      steps:
+        - filter:
+            method:
+              ref: myBean
+              method: isGoldCustomer
+            steps:
+              - to:
+                  uri: jms:queue:BigSpendersQueue
+----
+====
+
+=== Sending to JMS
+
+In the sample below, we poll a file folder and send the file content to a
+JMS topic. As we want the content of the file as a `TextMessage` instead
+of a `BytesMessage`, we need to convert the body to a `String`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://orders")
+  .convertBodyTo(String.class)
+  .to("jms:topic:OrdersTopic");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://orders"/>
+  <convertBodyTo type="String"/>
+  <to uri="jms:topic:OrdersTopic"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://orders
+      steps:
+        - convertBodyTo:
+            type: String
+        - to:
+            uri: jms:topic:OrdersTopic
+----
+====
+
+=== Using Annotations
+
+Camel also has annotations, so you can use xref:manual::pojo-consuming.adoc[POJO Consuming] and xref:manual::pojo-producing.adoc[POJO Producing].
 
 === Other Examples
 
@@ -395,10 +471,39 @@ class.
 For example, in the route below, we use a custom message converter when
 sending a message to the JMS order queue:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------------------------
+----
 from("file://inbox/order").to("jms:queue:order?messageConverter=#myMessageConverter");
-----------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox/order"/>
+  <to uri="jms:queue:order?messageConverter=#myMessageConverter"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox/order
+      steps:
+        - to:
+            uri: jms:queue:order
+            parameters:
+              messageConverter: "#myMessageConverter"
+----
+====
 
 You can also use a custom message converter when consuming from a JMS
 destination.
@@ -412,10 +517,39 @@ In the route below, we poll files from a folder and send them as
 `javax.jms.TextMessage` as we have forced the JMS producer endpoint to
 use text messages:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("file://inbox/order").to("jms:queue:order?jmsMessageType=Text");
------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox/order"/>
+  <to uri="jms:queue:order?jmsMessageType=Text"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox/order
+      steps:
+        - to:
+            uri: jms:queue:order
+            parameters:
+              jmsMessageType: Text
+----
+====
 
 You can also specify the message type to use for each message by setting
 the header with the key `CamelJmsMessageType`. For example:
@@ -607,12 +741,42 @@ For example, the following route shows how you can compute a destination
 at run time and use it to override the destination appearing in the JMS
 URL:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------
+----
 from("file://inbox")
   .to("bean:computeDestination")
   .to("activemq:queue:dummy");
---------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox"/>
+  <to uri="bean:computeDestination"/>
+  <to uri="activemq:queue:dummy"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      steps:
+        - to:
+            uri: bean:computeDestination
+        - to:
+            uri: activemq:queue:dummy
+----
+====
 
 The queue name, `dummy`, is just a placeholder. It must be provided as
 part of the JMS endpoint URL, but it will be ignored in this example.
@@ -927,12 +1091,45 @@ You can provide a header in the message
 to override and use as the request timeout value instead of the endpoint
 configured value. For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------
-   from("direct:someWhere")
-     .to("jms:queue:foo?replyTo=bar&requestTimeout=30s")
-     .to("bean:processReply");
---------------------------------------------------------
+----
+from("direct:someWhere")
+  .to("jms:queue:foo?replyTo=bar&requestTimeout=30s")
+  .to("bean:processReply");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:someWhere"/>
+  <to uri="jms:queue:foo?replyTo=bar&amp;requestTimeout=30s"/>
+  <to uri="bean:processReply"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:someWhere
+      steps:
+        - to:
+            uri: jms:queue:foo
+            parameters:
+              replyTo: bar
+              requestTimeout: 30s
+        - to:
+            uri: bean:processReply
+----
+====
 
 In the route above we have an endpoint configured `requestTimeout` of 30
 seconds. So Camel will wait up till 30 seconds for that reply message to

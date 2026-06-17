@@ -107,12 +107,42 @@ For example, the following route shows how you can compute a destination
 at run time and use it to override the destination appearing in the JMS
 URL:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------
+----
 from("file://inbox")
   .to("bean:computeDestination")
   .to("sjms2:queue:dummy");
---------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox"/>
+  <to uri="bean:computeDestination"/>
+  <to uri="sjms2:queue:dummy"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      steps:
+        - to:
+            uri: bean:computeDestination
+        - to:
+            uri: sjms2:queue:dummy
+----
+====
 
 The queue name, `dummy`, is just a placeholder. It must be provided as
 part of the JMS endpoint URL, but it will be ignored in this example.
@@ -166,6 +196,10 @@ before the active JMS Session will commit or rollback.
 You can combine consumer and producer, such as:
 
 .Example transacted SJMS2 route with consumer and producer
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("sjms2:cheese?transacted=true")
@@ -173,6 +207,39 @@ from("sjms2:cheese?transacted=true")
   .to("sjms2:foo?transacted=true")
   .to("bean:bar");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sjms2:cheese?transacted=true"/>
+  <to uri="bean:foo"/>
+  <to uri="sjms2:foo?transacted=true"/>
+  <to uri="bean:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sjms2:cheese
+      parameters:
+        transacted: true
+      steps:
+        - to:
+            uri: bean:foo
+        - to:
+            uri: sjms2:foo
+            parameters:
+              transacted: true
+        - to:
+            uri: bean:bar
+----
+====
 
 Here the consumer and producer are both transacted, which means that only at the end of processing the message,
 then both the consumer and the producer will commit (or rollback in case of an exception during routing).

@@ -349,12 +349,45 @@ Standard `ScheduledPollConsumer` options (`delay`, `initialDelay`, `greedy`, etc
 
 === Consumer Example — Auto-Created Queue
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("aws2-eventbridge://default?ruleName=my-rule&delay=5000")
     .log("Received EventBridge event: ${body}")
     .to("direct:process");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="aws2-eventbridge://default?ruleName=my-rule&amp;delay=5000"/>
+    <log message="Received EventBridge event: ${body}"/>
+    <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-eventbridge://default
+      parameters:
+        ruleName: my-rule
+        delay: 5000
+    steps:
+      - log:
+          message: "Received EventBridge event: ${body}"
+      - to:
+          uri: direct:process
+----
+====
 
 The consumer auto-creates an SQS queue, wires it to the `my-rule` EventBridge rule, and polls every 5 seconds.
 

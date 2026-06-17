@@ -130,11 +130,38 @@ Flowable.fromPublisher(files)
 When an external library needs to push events into a Camel route, the Reactive Streams
 endpoint must be set as consumer.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
+----
 from("reactive-streams:elements")
-.to("log:INFO");
----------------------------------------------------------
+  .to("log:INFO");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="reactive-streams:elements"/>
+  <to uri="log:INFO"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: reactive-streams:elements
+      steps:
+        - to:
+            uri: log:INFO
+----
+====
 
 A handle to the `elements` stream can be obtained from the `CamelReactiveStreams` utility class.
 

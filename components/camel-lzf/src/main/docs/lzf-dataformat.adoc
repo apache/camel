@@ -32,10 +32,40 @@ In this example, we marshal a regular text/XML payload to a compressed
 payload employing LZF compression format and send it an ActiveMQ queue
 called MY_QUEUE.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------
+----
 from("direct:start").marshal().lzf().to("activemq:queue:MY_QUEUE");
--------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <marshal><lzf/></marshal>
+  <to uri="activemq:queue:MY_QUEUE"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            lzf: {}
+        - to:
+            uri: activemq:queue:MY_QUEUE
+----
+====
 
 == Unmarshal
 

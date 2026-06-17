@@ -52,11 +52,38 @@ override the API call. See xref:manual::security-model.adoc[the Camel security m
 
 == Examples
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct://GENERATE")
-    .to("braintree://sclientToken/generate");
+    .to("braintree://clientToken/generate");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct://GENERATE"/>
+  <to uri="braintree://clientToken/generate"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:GENERATE
+      steps:
+        - to:
+            uri: braintree:clientToken/generate
+----
+====
 
 == More Information
 

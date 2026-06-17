@@ -42,10 +42,43 @@ This one has to contain a `Map<String,Serializable>`.
 
 The following example starts a new case in Bonita:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------
-from("direct:start").to("bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install");
-----------------------------------------------------------------------
+----
+from("direct:start").to("bonita:startCase?hostname=localhost&port=8080&processName=TestProcess&username=install&password=install");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: bonita:startCase
+            parameters:
+              hostname: localhost
+              port: 8080
+              processName: TestProcess
+              username: install
+              password: install
+----
+====
 
 == Dependencies
 

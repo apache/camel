@@ -111,13 +111,52 @@ Common language codes: `en` (English), `es` (Spanish), `fr` (French), `de` (Germ
 
 Automatically detect the language of the input text:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:detectLanguage")
     .setBody(constant("This is a sample text written in English."))
     .to("aws2-comprehend://test?operation=detectDominantLanguage&useDefaultCredentialsProvider=true&region=us-east-1")
     .log("Detected language: ${header.CamelAwsComprehendDetectedLanguage}");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:detectLanguage"/>
+  <setBody>
+    <constant>This is a sample text written in English.</constant>
+  </setBody>
+  <to uri="aws2-comprehend://test?operation=detectDominantLanguage&amp;useDefaultCredentialsProvider=true&amp;region=us-east-1"/>
+  <log message="Detected language: ${header.CamelAwsComprehendDetectedLanguage}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:detectLanguage
+      steps:
+        - setBody:
+            constant: "This is a sample text written in English."
+        - to:
+            uri: aws2-comprehend://test
+            parameters:
+              operation: detectDominantLanguage
+              useDefaultCredentialsProvider: true
+              region: us-east-1
+        - log:
+            message: "Detected language: ${header.CamelAwsComprehendDetectedLanguage}"
+----
+====
 
 The result body will contain a list of `DominantLanguage` objects with language codes and confidence scores.
 The detected language code and score are also set as message headers.
@@ -126,15 +165,64 @@ The detected language code and score are also set as message headers.
 
 Extract named entities from text:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:detectEntities")
     .setBody(constant("Amazon was founded by Jeff Bezos in Seattle, Washington in 1994."))
     .to("aws2-comprehend://test?operation=detectEntities&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
     .log("Found ${body.size()} entities")
     .split(body())
         .log("Entity: ${body.text} - Type: ${body.type} - Score: ${body.score}");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:detectEntities"/>
+  <setBody>
+    <constant>Amazon was founded by Jeff Bezos in Seattle, Washington in 1994.</constant>
+  </setBody>
+  <to uri="aws2-comprehend://test?operation=detectEntities&amp;languageCode=en&amp;useDefaultCredentialsProvider=true&amp;region=us-east-1"/>
+  <log message="Found ${body.size()} entities"/>
+  <split>
+    <simple>${body}</simple>
+    <log message="Entity: ${body.text} - Type: ${body.type} - Score: ${body.score}"/>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:detectEntities
+      steps:
+        - setBody:
+            constant: "Amazon was founded by Jeff Bezos in Seattle, Washington in 1994."
+        - to:
+            uri: aws2-comprehend://test
+            parameters:
+              operation: detectEntities
+              languageCode: en
+              useDefaultCredentialsProvider: true
+              region: us-east-1
+        - log:
+            message: "Found ${body.size()} entities"
+        - split:
+            simple: "${body}"
+            steps:
+              - log:
+                  message: "Entity: ${body.text} - Type: ${body.type} - Score: ${body.score}"
+----
+====
 
 This will detect entities like:
 * Jeff Bezos (PERSON)
@@ -147,14 +235,57 @@ This will detect entities like:
 
 Analyze the sentiment of text:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:analyzeSentiment")
     .setBody(constant("I love this product! It works perfectly and exceeded my expectations."))
     .to("aws2-comprehend://test?operation=detectSentiment&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
     .log("Sentiment: ${header.CamelAwsComprehendDetectedSentiment}")
     .log("Sentiment scores: ${header.CamelAwsComprehendDetectedSentimentScore}");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:analyzeSentiment"/>
+  <setBody>
+    <constant>I love this product! It works perfectly and exceeded my expectations.</constant>
+  </setBody>
+  <to uri="aws2-comprehend://test?operation=detectSentiment&amp;languageCode=en&amp;useDefaultCredentialsProvider=true&amp;region=us-east-1"/>
+  <log message="Sentiment: ${header.CamelAwsComprehendDetectedSentiment}"/>
+  <log message="Sentiment scores: ${header.CamelAwsComprehendDetectedSentimentScore}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:analyzeSentiment
+      steps:
+        - setBody:
+            constant: "I love this product! It works perfectly and exceeded my expectations."
+        - to:
+            uri: aws2-comprehend://test
+            parameters:
+              operation: detectSentiment
+              languageCode: en
+              useDefaultCredentialsProvider: true
+              region: us-east-1
+        - log:
+            message: "Sentiment: ${header.CamelAwsComprehendDetectedSentiment}"
+        - log:
+            message: "Sentiment scores: ${header.CamelAwsComprehendDetectedSentimentScore}"
+----
+====
 
 The sentiment will be one of: POSITIVE, NEGATIVE, NEUTRAL, or MIXED.
 
@@ -162,27 +293,119 @@ The sentiment will be one of: POSITIVE, NEGATIVE, NEUTRAL, or MIXED.
 
 Extract key phrases from text:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:detectKeyPhrases")
     .setBody(constant("Apache Camel is an open source integration framework that provides rule-based routing and mediation."))
     .to("aws2-comprehend://test?operation=detectKeyPhrases&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
     .split(body())
         .log("Key phrase: ${body.text} (score: ${body.score})");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:detectKeyPhrases"/>
+  <setBody>
+    <constant>Apache Camel is an open source integration framework that provides rule-based routing and mediation.</constant>
+  </setBody>
+  <to uri="aws2-comprehend://test?operation=detectKeyPhrases&amp;languageCode=en&amp;useDefaultCredentialsProvider=true&amp;region=us-east-1"/>
+  <split>
+    <simple>${body}</simple>
+    <log message="Key phrase: ${body.text} (score: ${body.score})"/>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:detectKeyPhrases
+      steps:
+        - setBody:
+            constant: "Apache Camel is an open source integration framework that provides rule-based routing and mediation."
+        - to:
+            uri: aws2-comprehend://test
+            parameters:
+              operation: detectKeyPhrases
+              languageCode: en
+              useDefaultCredentialsProvider: true
+              region: us-east-1
+        - split:
+            simple: "${body}"
+            steps:
+              - log:
+                  message: "Key phrase: ${body.text} (score: ${body.score})"
+----
+====
 
 === Detect PII Entities
 
 Identify personally identifiable information in text:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:detectPii")
     .setBody(constant("Contact John at john.doe@example.com or call 555-123-4567. His SSN is 123-45-6789."))
     .to("aws2-comprehend://test?operation=detectPiiEntities&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
     .split(body())
         .log("PII found: ${body.type} at position ${body.beginOffset}-${body.endOffset}");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:detectPii"/>
+  <setBody>
+    <constant>Contact John at john.doe@example.com or call 555-123-4567. His SSN is 123-45-6789.</constant>
+  </setBody>
+  <to uri="aws2-comprehend://test?operation=detectPiiEntities&amp;languageCode=en&amp;useDefaultCredentialsProvider=true&amp;region=us-east-1"/>
+  <split>
+    <simple>${body}</simple>
+    <log message="PII found: ${body.type} at position ${body.beginOffset}-${body.endOffset}"/>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:detectPii
+      steps:
+        - setBody:
+            constant: "Contact John at john.doe@example.com or call 555-123-4567. His SSN is 123-45-6789."
+        - to:
+            uri: aws2-comprehend://test
+            parameters:
+              operation: detectPiiEntities
+              languageCode: en
+              useDefaultCredentialsProvider: true
+              region: us-east-1
+        - split:
+            simple: "${body}"
+            steps:
+              - log:
+                  message: "PII found: ${body.type} at position ${body.beginOffset}-${body.endOffset}"
+----
+====
 
 This detects PII types such as EMAIL, PHONE, SSN, CREDIT_DEBIT_NUMBER, etc.
 
@@ -190,14 +413,60 @@ This detects PII types such as EMAIL, PHONE, SSN, CREDIT_DEBIT_NUMBER, etc.
 
 Analyze the grammatical structure of text:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:detectSyntax")
     .setBody(constant("The quick brown fox jumps over the lazy dog."))
     .to("aws2-comprehend://test?operation=detectSyntax&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
     .split(body())
         .log("Token: ${body.text} - POS: ${body.partOfSpeech.tag}");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:detectSyntax"/>
+  <setBody>
+    <constant>The quick brown fox jumps over the lazy dog.</constant>
+  </setBody>
+  <to uri="aws2-comprehend://test?operation=detectSyntax&amp;languageCode=en&amp;useDefaultCredentialsProvider=true&amp;region=us-east-1"/>
+  <split>
+    <simple>${body}</simple>
+    <log message="Token: ${body.text} - POS: ${body.partOfSpeech.tag}"/>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:detectSyntax
+      steps:
+        - setBody:
+            constant: "The quick brown fox jumps over the lazy dog."
+        - to:
+            uri: aws2-comprehend://test
+            parameters:
+              operation: detectSyntax
+              languageCode: en
+              useDefaultCredentialsProvider: true
+              region: us-east-1
+        - split:
+            simple: "${body}"
+            steps:
+              - log:
+                  message: "Token: ${body.text} - POS: ${body.partOfSpeech.tag}"
+----
+====
 
 Returns part-of-speech tags like NOUN, VERB, ADJ (adjective), DET (determiner), etc.
 
@@ -205,13 +474,53 @@ Returns part-of-speech tags like NOUN, VERB, ADJ (adjective), DET (determiner), 
 
 Analyze text for toxic content:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:detectToxic")
     .setBody(constant("This is a friendly and polite message."))
     .to("aws2-comprehend://test?operation=detectToxicContent&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
     .log("Toxicity analysis: ${body}");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:detectToxic"/>
+  <setBody>
+    <constant>This is a friendly and polite message.</constant>
+  </setBody>
+  <to uri="aws2-comprehend://test?operation=detectToxicContent&amp;languageCode=en&amp;useDefaultCredentialsProvider=true&amp;region=us-east-1"/>
+  <log message="Toxicity analysis: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:detectToxic
+      steps:
+        - setBody:
+            constant: "This is a friendly and polite message."
+        - to:
+            uri: aws2-comprehend://test
+            parameters:
+              operation: detectToxicContent
+              languageCode: en
+              useDefaultCredentialsProvider: true
+              region: us-east-1
+        - log:
+            message: "Toxicity analysis: ${body}"
+----
+====
 
 Returns toxicity scores for categories like PROFANITY, HATE_SPEECH, THREAT, INSULT, etc.
 
@@ -248,13 +557,53 @@ from("direct:dynamicOperation")
 
 If you need to use explicit credentials:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:withCredentials")
     .setBody(constant("Bonjour, comment allez-vous?"))
     .to("aws2-comprehend://test?operation=detectDominantLanguage&accessKey=YOUR_ACCESS_KEY&secretKey=YOUR_SECRET_KEY&region=eu-west-1")
     .log("Detected language: ${header.CamelAwsComprehendDetectedLanguage}");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:withCredentials"/>
+  <setBody>
+    <constant>Bonjour, comment allez-vous?</constant>
+  </setBody>
+  <to uri="aws2-comprehend://test?operation=detectDominantLanguage&amp;accessKey=YOUR_ACCESS_KEY&amp;secretKey=YOUR_SECRET_KEY&amp;region=eu-west-1"/>
+  <log message="Detected language: ${header.CamelAwsComprehendDetectedLanguage}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:withCredentials
+      steps:
+        - setBody:
+            constant: "Bonjour, comment allez-vous?"
+        - to:
+            uri: aws2-comprehend://test
+            parameters:
+              operation: detectDominantLanguage
+              accessKey: YOUR_ACCESS_KEY
+              secretKey: YOUR_SECRET_KEY
+              region: eu-west-1
+        - log:
+            message: "Detected language: ${header.CamelAwsComprehendDetectedLanguage}"
+----
+====
 
 === Content Moderation Pipeline Example
 

@@ -33,11 +33,42 @@ You can append query options to the URI in the following format: `?options=value
 
 For example, to read file `hello.txt` from the bucket `helloBucket`, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&objectName=hello.txt")
   .to("file:/var/downloaded");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="minio://helloBucket?accessKey=yourAccessKey&amp;secretKey=yourSecretKey&amp;objectName=hello.txt"/>
+  <to uri="file:/var/downloaded"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: minio://helloBucket
+      parameters:
+        accessKey: yourAccessKey
+        secretKey: yourSecretKey
+        objectName: hello.txt
+      steps:
+        - to:
+            uri: file:/var/downloaded
+----
+====
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -80,11 +111,42 @@ If your Camel Application is running behind a firewall or if you need to
 have more control over the `MinioClient` instance configuration, you can
 create your own instance and refer to it in your Camel minio component configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("minio://MyBucket?minioClient=#client&delay=5000&maxMessagesPerPoll=5")
-.to("mock:result");
---------------------------------------------------------------------------------
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="minio://MyBucket?minioClient=#client&amp;delay=5000&amp;maxMessagesPerPoll=5"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: minio://MyBucket
+      parameters:
+        minioClient: "#client"
+        delay: 5000
+        maxMessagesPerPoll: 5
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 === Minio Producer Operation examples
 
@@ -126,34 +188,133 @@ This operation will delete the object camelKey from the bucket mycamelbucket.
 
 - `ListBuckets`: this operation lists the buckets for this account in this region
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start")
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=listBuckets")
-  .to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:start")
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=listBuckets")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=listBuckets"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: minio://mycamelbucket
+          parameters:
+            minioClient: "#minioClient"
+            operation: listBuckets
+      - to:
+          uri: mock:result
+----
+====
 
 This operation will list the buckets for this account
 
 - `DeleteBucket`: this operation deletes the bucket specified as URI parameter or header
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start")
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=deleteBucket")
-  .to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:start")
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=deleteBucket")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=deleteBucket"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: minio://mycamelbucket
+          parameters:
+            minioClient: "#minioClient"
+            operation: deleteBucket
+      - to:
+          uri: mock:result
+----
+====
 
 This operation will delete the bucket mycamelbucket
 
 - `ListObjects`: this operation list object in a specific bucket
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start")
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=listObjects")
-  .to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:start")
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=listObjects")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=listObjects"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: minio://mycamelbucket
+          parameters:
+            minioClient: "#minioClient"
+            operation: listObjects
+      - to:
+          uri: mock:result
+----
+====
 
 This operation will list the objects in the mycamelbucket bucket
 
@@ -249,11 +410,42 @@ In addition to `deleteAfterRead`, it has been added another option, `moveAfterRe
 With this option enabled, the consumed object will be moved to a target `destinationBucket` instead of being only deleted.
 This will require specifying the destinationBucket option. As example:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("minio://mycamelbucket?minioClient=#minioClient&moveAfterRead=true&destinationBucketName=myothercamelbucket")
+----
+from("minio://mycamelbucket?minioClient=#minioClient&moveAfterRead=true&destinationBucketName=myothercamelbucket")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="minio://mycamelbucket?minioClient=#minioClient&amp;moveAfterRead=true&amp;destinationBucketName=myothercamelbucket"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: minio://mycamelbucket
+      parameters:
+        minioClient: "#minioClient"
+        moveAfterRead: true
+        destinationBucketName: myothercamelbucket
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 In this case, the objects consumed will be moved to `myothercamelbucket` bucket and deleted from the original one (because of `deleteAfterRead` set to true as default).
 

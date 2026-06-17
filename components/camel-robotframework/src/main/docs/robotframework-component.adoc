@@ -57,11 +57,38 @@ include::partial$component-endpoint-headers.adoc[]
 
 For example, you could use something like:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:setVariableCamelBody")
-    .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot")
+    .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:setVariableCamelBody"/>
+  <to uri="robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:setVariableCamelBody
+      steps:
+        - to:
+            uri: robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot
+----
+====
 
 To use a robot test case to execute and collect the results
 and pass them to generate a custom report if such need happens

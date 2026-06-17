@@ -103,11 +103,41 @@ Camel-AWS Step Functions component provides the following operation on the produ
 
 - createStateMachine: this operation will create a state machine
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:createStateMachine")
-    .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createMachine")
---------------------------------------------------------------------------------
+    .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createMachine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createStateMachine"/>
+  <to uri="aws2-step-functions://test?awsSfnClient=#awsSfnClient&amp;operation=createMachine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createStateMachine
+      steps:
+        - to:
+            uri: aws2-step-functions://test
+            parameters:
+              awsSfnClient: "#awsSfnClient"
+              operation: createMachine
+----
+====
 
 === Using a POJO as body
 

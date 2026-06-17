@@ -82,11 +82,40 @@ WebSearchEngine tavilyWebSearchEngine = TavilyWebSearchEngine.builder()
 The web search engine will be autowired automatically if its bound name is `web-search-engine`. Otherwise, it should be added as a configured parameter to the Camel route.
 
 .Example:
+[tabs]
+====
+Java::
++
 [source,java]
 ----
- from("direct:web-search")
-      .to("langchain4j-web-search:test?webSearchEngine=#web-search-engine-test")
+from("direct:web-search")
+    .to("langchain4j-web-search:test?webSearchEngine=#web-search-engine-test");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:web-search"/>
+  <to uri="langchain4j-web-search:test?webSearchEngine=#web-search-engine-test"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:web-search
+      steps:
+        - to:
+            uri: langchain4j-web-search:test
+            parameters:
+              webSearchEngine: "#web-search-engine-test"
+----
+====
 
 [NOTE]
 ====

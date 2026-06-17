@@ -46,10 +46,40 @@ from("direct:start").marshal().zipDeflater(Deflater.BEST_COMPRESSION).to("active
 Alternatively, if you would like to use the default setting, you could
 send it as
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start").marshal().zipDeflater().to("activemq:queue:MY_QUEUE");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <marshal><zipDeflater/></marshal>
+  <to uri="activemq:queue:MY_QUEUE"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            zipDeflater: {}
+        - to:
+            uri: activemq:queue:MY_QUEUE
+----
+====
 
 == Unmarshal
 

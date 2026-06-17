@@ -130,6 +130,10 @@ Returns the content of a file at a specific commit.
 
 === Example: Consuming commits
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("github2:commit/main?repoOwner=apache&repoName=camel&oauthToken=mytoken")
@@ -137,8 +141,42 @@ from("github2:commit/main?repoOwner=apache&repoName=camel&oauthToken=mytoken")
     .to("direct:processCommit");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="github2:commit/main?repoOwner=apache&amp;repoName=camel&amp;oauthToken=mytoken"/>
+  <log message="New commit: ${header.CamelGitHubCommitSha} by ${header.CamelGitHubCommitAuthor}"/>
+  <to uri="direct:processCommit"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: github2:commit/main
+      parameters:
+        repoOwner: apache
+        repoName: camel
+        oauthToken: mytoken
+    steps:
+      - log:
+          message: "New commit: ${header.CamelGitHubCommitSha} by ${header.CamelGitHubCommitAuthor}"
+      - to:
+          uri: direct:processCommit
+----
+====
+
 === Example: Creating an issue
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:createIssue")
@@ -146,6 +184,44 @@ from("direct:createIssue")
     .setBody(constant("This is the issue description"))
     .to("github2:createIssue?repoOwner=apache&repoName=camel&oauthToken=mytoken");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createIssue"/>
+  <setHeader name="CamelGitHubIssueTitle">
+    <constant>Bug Report</constant>
+  </setHeader>
+  <setBody>
+    <constant>This is the issue description</constant>
+  </setBody>
+  <to uri="github2:createIssue?repoOwner=apache&amp;repoName=camel&amp;oauthToken=mytoken"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createIssue
+    steps:
+      - setHeader:
+          name: CamelGitHubIssueTitle
+          constant: Bug Report
+      - setBody:
+          constant: This is the issue description
+      - to:
+          uri: github2:createIssue
+          parameters:
+            repoOwner: apache
+            repoName: camel
+            oauthToken: mytoken
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]
