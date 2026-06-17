@@ -146,7 +146,7 @@ public abstract class AbstractAgent<S> implements Agent {
             builder.outputGuardrailClasses((List) configuration.getOutputGuardrailClasses());
         }
 
-        // Response Format (structured output / JSON schema)
+        // Response Format (structured output): set once at startup via setResponseFormat(), used here per request
         if (responseFormat != null) {
             builder.chatRequestTransformer(chatRequest -> chatRequest.toBuilder().responseFormat(responseFormat).build());
         }

@@ -32,6 +32,7 @@ import dev.langchain4j.model.chat.request.ResponseFormatType;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.request.json.JsonRawSchema;
 import dev.langchain4j.model.chat.request.json.JsonSchema;
+import dev.langchain4j.service.output.JsonSchemas;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
@@ -72,6 +73,31 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     protected void doInit() throws Exception {
         super.doInit();
 
+        boolean hasStructuredOutput = endpoint.getConfiguration().getOutputClass() != null
+                || ObjectHelper.isNotEmpty(endpoint.getConfiguration().getJsonSchema());
+        if (hasStructuredOutput) {
+            if (endpoint.getConfiguration().getAgentConfiguration() == null) {
+                throw new IllegalArgumentException(
+                        "outputClass and jsonSchema require agentConfiguration to be set "
+                                                   + "(inline agent creation mode). They cannot be used with a user-provided agent bean or agentFactory.");
+            }
+            if (endpoint.getConfiguration().getAgent() != null) {
+                throw new IllegalArgumentException(
+                        "outputClass and jsonSchema cannot be combined with a user-provided agent bean. "
+                                                   + "They only work in inline agent creation mode (agentConfiguration without agent or agentFactory).");
+            }
+            if (endpoint.getConfiguration().getAgentFactory() != null) {
+                throw new IllegalArgumentException(
+                        "outputClass and jsonSchema cannot be combined with agentFactory. "
+                                                   + "They only work in inline agent creation mode (agentConfiguration without agent or agentFactory).");
+            }
+            if (ObjectHelper.isNotEmpty(endpoint.getConfiguration().getJsonSchema())
+                    && endpoint.getConfiguration().getOutputClass() != null) {
+                throw new IllegalArgumentException(
+                        "jsonSchema and outputClass are mutually exclusive. Please specify only one.");
+            }
+        }
+
         if (endpoint.getConfiguration().getAgent() != null) {
             agent = endpoint.getConfiguration().getAgent();
         } else if (endpoint.getConfiguration().getAgentConfiguration() != null) {
@@ -79,8 +105,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             agent = agentConfiguration.getChatMemoryProvider() != null
                     ? new AgentWithMemory(agentConfiguration)
                     : new AgentWithoutMemory(agentConfiguration);
-            // Apply jsonSchema only when Camel creates the agent internally — we cannot modify user-provided agents
-            resolveAndApplyJsonSchema();
+            resolveAndApplyStructuredOutput();
         } else {
             agent = endpoint.getCamelContext().getRegistry().lookupByNameAndType(endpoint.getAgentId(), Agent.class);
         }
@@ -94,9 +119,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         // tags for Camel Routes as Tools
         String tags = endpoint.getConfiguration().getTags();
 
-        if (agentFactory != null) {
-            agent = agentFactory.createAgent(exchange);
-        }
+        Agent agent = agentFactory != null ? agentFactory.createAgent(exchange) : this.agent;
 
         AiAgentBody<?> aiAgentBody = exchange.getMessage().getMandatoryBody(AiAgentBody.class);
 
@@ -305,40 +328,57 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     }
 
     /**
-     * Resolves the jsonSchema endpoint property: loads from classpath/filesystem if it is a resource URI, otherwise
-     * treats it as inline JSON. Converts the raw JSON string into a langchain4j ResponseFormat and sets it on the
-     * agent. Only called when the agent is created internally from agentConfiguration.
+     * Resolves and applies structured output configuration (jsonSchema or outputClass) to the agent. Only called when
+     * the agent is created internally from agentConfiguration.
      */
-    private void resolveAndApplyJsonSchema() throws Exception {
+    private void resolveAndApplyStructuredOutput() throws Exception {
         String jsonSchema = endpoint.getConfiguration().getJsonSchema();
-        if (ObjectHelper.isEmpty(jsonSchema)) {
+        Class<?> outputClass = endpoint.getConfiguration().getOutputClass();
+
+        if (ObjectHelper.isEmpty(jsonSchema) && outputClass == null) {
             return;
         }
 
-        String resolved = endpoint.getCamelContext().resolvePropertyPlaceholders(jsonSchema);
+        JsonSchema schema;
+        if (outputClass != null) {
+            // JsonSchemas.jsonSchemaFrom() uses rawClass.getSimpleName() as schema name; rename to camel_schema
+            // for consistency with the jsonSchema branch and cross-component portability with camel-openai.
+            JsonSchema derived = JsonSchemas.jsonSchemaFrom(outputClass)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot derive JSON schema from outputClass: " + outputClass.getName()
+                                                                    + ". outputClass must be a POJO class with public fields or getters."
+                                                                    + " Simple types, enums, and collections are not supported."));
+            schema = JsonSchema.builder()
+                    .name("camel_schema")
+                    .rootElement(derived.rootElement())
+                    .build();
+            LOG.debug("Configured structured output with output class: {}", outputClass.getName());
+        } else {
+            String resolved = endpoint.getCamelContext().resolvePropertyPlaceholders(jsonSchema);
 
-        String content = resolveResourceContent(resolved);
-        if (content != null) {
-            resolved = content;
+            String content = resolveResourceContent(resolved);
+            if (content != null) {
+                resolved = content;
+            }
+
+            // Validates that resolved is valid JSON (whether loaded from a resource or used as inline content)
+            try {
+                objectMapper.readTree(resolved);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(
+                        "jsonSchema endpoint property does not contain valid JSON. Provided value: " + jsonSchema, e);
+            }
+            // Use a fixed name consistent with camel-openai for cross-component portability
+            schema = JsonSchema.builder()
+                    .name("camel_schema")
+                    .rootElement(JsonRawSchema.from(resolved))
+                    .build();
         }
 
-        // Validates that resolved is valid JSON (whether loaded from a resource or used as inline content)
-        try {
-            objectMapper.readTree(resolved);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    "jsonSchema endpoint property does not contain valid JSON. Provided value: " + jsonSchema, e);
-        }
-        JsonRawSchema jsonRawSchema = JsonRawSchema.from(resolved);
-        // Use a fixed name consistent with camel-openai for cross-component portability
         ResponseFormat responseFormat = ResponseFormat.builder()
                 .type(ResponseFormatType.JSON)
-                .jsonSchema(JsonSchema.builder()
-                        .name("camel_schema")
-                        .rootElement(jsonRawSchema)
-                        .build())
+                .jsonSchema(schema)
                 .build();
-
         ((AbstractAgent<?>) agent).setResponseFormat(responseFormat);
     }
 

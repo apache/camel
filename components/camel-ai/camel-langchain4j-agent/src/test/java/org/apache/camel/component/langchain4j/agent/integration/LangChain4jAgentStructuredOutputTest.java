@@ -18,8 +18,13 @@ package org.apache.camel.component.langchain4j.agent.integration;
 
 import java.io.FileNotFoundException;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
+import org.apache.camel.component.langchain4j.agent.pojos.CarRentalRecommendation;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
@@ -96,6 +101,147 @@ public class LangChain4jAgentStructuredOutputTest {
             });
 
             // FailedToStartRouteException -> RuntimeCamelException -> IllegalArgumentException
+            Exception ex = assertThrows(Exception.class, context::start);
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause().getCause());
+        }
+    }
+
+    @Test
+    void testJsonSchemaAndOutputClassMutuallyExclusiveThrowsIllegalArgumentException() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            AgentConfiguration config = new AgentConfiguration();
+            context.getRegistry().bind("myConfig", config);
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:test")
+                            .to("langchain4j-agent:test?agentConfiguration=#myConfig"
+                                + "&jsonSchema=RAW({\"type\":\"object\"})"
+                                + "&outputClass=" + CarRentalRecommendation.class.getName());
+                }
+            });
+
+            // FailedToStartRouteException -> RuntimeCamelException -> IllegalArgumentException
+            Exception ex = assertThrows(Exception.class, context::start);
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause().getCause());
+        }
+    }
+
+    @Test
+    void testOutputClassWithoutAgentConfigurationThrowsIllegalArgumentException() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    // outputClass without agentConfiguration — should fail at startup
+                    from("direct:test")
+                            .to("langchain4j-agent:myAgent?outputClass=" + CarRentalRecommendation.class.getName());
+                }
+            });
+
+            // FailedToStartRouteException -> RuntimeCamelException -> IllegalArgumentException
+            Exception ex = assertThrows(Exception.class, context::start);
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause().getCause());
+        }
+    }
+
+    @Test
+    void testNonExistentOutputClassThrowsException() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            AgentConfiguration config = new AgentConfiguration();
+            context.getRegistry().bind("myConfig", config);
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:test")
+                            .to("langchain4j-agent:test?agentConfiguration=#myConfig"
+                                + "&outputClass=com.nonexistent.DoesNotExist");
+                }
+            });
+
+            assertThrows(Exception.class, context::start);
+        }
+    }
+
+    @Test
+    void testNonPojoOutputClassThrowsIllegalArgumentException() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            AgentConfiguration config = new AgentConfiguration();
+            context.getRegistry().bind("myConfig", config);
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:test")
+                            .to("langchain4j-agent:test?agentConfiguration=#myConfig"
+                                + "&outputClass=java.lang.String");
+                }
+            });
+
+            // JsonSchemas.jsonSchemaFrom(String.class) returns empty -> orElseThrow fires
+            Exception ex = assertThrows(Exception.class, context::start);
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause().getCause());
+        }
+    }
+
+    @Test
+    void testOutputClassWithUserProvidedAgentThrowsIllegalArgumentException() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            AgentConfiguration config = new AgentConfiguration();
+            Agent stubAgent = (aiAgentBody, toolProvider) -> "stub";
+            context.getRegistry().bind("myConfig", config);
+            context.getRegistry().bind("myAgent", stubAgent);
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:test")
+                            .to("langchain4j-agent:test?agentConfiguration=#myConfig"
+                                + "&agent=#myAgent"
+                                + "&outputClass=" + CarRentalRecommendation.class.getName());
+                }
+            });
+
+            Exception ex = assertThrows(Exception.class, context::start);
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause().getCause());
+        }
+    }
+
+    @Test
+    void testOutputClassWithAgentFactoryThrowsIllegalArgumentException() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            AgentConfiguration config = new AgentConfiguration();
+            Agent stubAgent = (aiAgentBody, toolProvider) -> "stub";
+            AgentFactory stubFactory = new AgentFactory() {
+                @Override
+                public Agent createAgent(Exchange exchange) {
+                    return stubAgent;
+                }
+
+                @Override
+                public void setCamelContext(CamelContext camelContext) {
+                }
+
+                @Override
+                public CamelContext getCamelContext() {
+                    return null;
+                }
+            };
+            context.getRegistry().bind("myConfig", config);
+            context.getRegistry().bind("myFactory", stubFactory);
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:test")
+                            .to("langchain4j-agent:test?agentConfiguration=#myConfig"
+                                + "&agentFactory=#myFactory"
+                                + "&outputClass=" + CarRentalRecommendation.class.getName());
+                }
+            });
+
             Exception ex = assertThrows(Exception.class, context::start);
             assertInstanceOf(IllegalArgumentException.class, ex.getCause().getCause());
         }
