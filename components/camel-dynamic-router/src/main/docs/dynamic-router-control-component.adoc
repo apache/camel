@@ -39,12 +39,51 @@ Subscribing can be achieved by using query parameters in the control endpoint UR
 
 === URI examples
 
-.Example Java URI `RouteBuilder` Subscription
+.Example URI `RouteBuilder` Subscription
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// Send a subscribe request to the dynamic router that will match every exchange and route messages to the URI: "direct:myDestination"
-from("direct:subscribe").to("dynamic-router-control:subscribe?subscribeChannel=myChannel&subscriptionId=mySubId&destinationUri=direct:myDestination&priority=5&predicate=true&expressionLanguage=simple");
+// Send a subscribe request to the dynamic router that will match every exchange
+// and route messages to the URI: "direct:myDestination"
+from("direct:subscribe")
+    .to("dynamic-router-control:subscribe?subscribeChannel=myChannel&subscriptionId=mySubId&destinationUri=direct:myDestination&priority=5&predicate=true&expressionLanguage=simple");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:subscribe"/>
+  <to uri="dynamic-router-control:subscribe?subscribeChannel=myChannel&amp;subscriptionId=mySubId&amp;destinationUri=direct:myDestination&amp;priority=5&amp;predicate=true&amp;expressionLanguage=simple"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:subscribe
+      steps:
+        - to:
+            uri: dynamic-router-control:subscribe
+            parameters:
+              subscribeChannel: myChannel
+              subscriptionId: mySubId
+              destinationUri: direct:myDestination
+              priority: 5
+              predicate: "true"
+              expressionLanguage: simple
+----
+====
+
+._Java-only: ProducerTemplate API_
 
 .Example Java URI `ProducerTemplate` Subscription
 [source,java]
@@ -81,6 +120,8 @@ deliberately.
 
 === DynamicRouterControlMessage example
 
+._Java-only: DynamicRouterControlMessage builder API_
+
 .Example Java `DynamicRouterControlMessage` Subscription
 [source,java]
 ----
@@ -103,11 +144,45 @@ achieved by using either one or two parameters.
 
 === URI examples
 
-.Example Java URI `RouteBuilder` Unsubscribe
+.Example URI `RouteBuilder` Unsubscribe
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:subscribe").to("dynamic-router-control:unsubscribe?subscribeChannel=myChannel&subscriptionId=mySubId");
+from("direct:subscribe")
+    .to("dynamic-router-control:unsubscribe?subscribeChannel=myChannel&subscriptionId=mySubId");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:subscribe"/>
+  <to uri="dynamic-router-control:unsubscribe?subscribeChannel=myChannel&amp;subscriptionId=mySubId"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:subscribe
+      steps:
+        - to:
+            uri: dynamic-router-control:unsubscribe
+            parameters:
+              subscribeChannel: myChannel
+              subscriptionId: mySubId
+----
+====
+
+._Java-only: ProducerTemplate API_
 
 .Example Java URI `ProducerTemplate` Unsubscribe
 [source,java]
@@ -130,6 +205,8 @@ Above, because the control URI is dynamic, we have to send it from a `ProducerTe
 dynamic-aware endpoint uses headers, rather than URI params, so we set the headers deliberately.
 
 === DynamicRouterControlMessage example
+
+._Java-only: DynamicRouterControlMessage builder API_
 
 .Example Java `DynamicRouterControlMessage` Unsubscribe
 [source,java]
