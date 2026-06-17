@@ -22,6 +22,7 @@ const NODE_H = 36;
 const H_GAP = NODE_W / 2;
 const V_GAP = 40;
 const PADDING = 30;
+const ARROW_SIZE = 6;
 
 const BRANCHING_EIPS = new Set([
     'choice', 'multicast', 'doTry', 'loadBalance', 'recipientList', 'circuitBreaker',
@@ -288,18 +289,21 @@ class CamelRouteDiagram extends HTMLElement {
         this.attachShadow({ mode: 'open' });
     }
 
+    //noinspection JSUnusedGlobalSymbols
     connectedCallback() {
         this.#scheduleRefresh();
         this.#render();
         this.#doFetch();
     }
 
+    //noinspection JSUnusedGlobalSymbols
     disconnectedCallback() {
         clearInterval(this.#timer);
         this.#timer = null;
         this.#controller?.abort();
     }
 
+    //noinspection JSUnusedGlobalSymbols
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue === newValue) return;
         switch (name) {
@@ -373,26 +377,16 @@ class CamelRouteDiagram extends HTMLElement {
     #routeHTML(route, routeIdx) {
         const { positions, width, height } = layoutRoute(route);
         const ids = Object.keys(positions);
-        // Each route gets its own markerId so that <svg> elements sharing a shadow root
-        // do not carry duplicate IDs. The route index makes each ID unique within the
-        // component while keeping url(#id) resolution local to each <svg> element.
-        const markerId = `arrow-${this.#uid}-${routeIdx}`;
         return `
       <div class="route-label">${esc(route.routeId)}</div>
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
            aria-label="Route diagram for ${esc(route.routeId)}">
-        <defs>
-          <marker id="${markerId}" markerWidth="8" markerHeight="8"
-                  refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill="var(--crd-edge, #94a3b8)"/>
-          </marker>
-        </defs>
-        ${ids.map(id => this.#edgeHTML(id, positions, markerId)).join('')}
+        ${ids.map(id => this.#edgeHTML(id, positions)).join('')}
         ${ids.map(id => this.#nodeHTML(positions[id])).join('')}
       </svg>`;
     }
 
-    #edgeHTML(id, positions, markerId) {
+    #edgeHTML(id, positions) {
         const pos = positions[id];
         if (!pos.parentId) return '';
         const parent = positions[pos.parentId];
@@ -402,14 +396,22 @@ class CamelRouteDiagram extends HTMLElement {
         const y1 = parent.y + NODE_H;
         const x2 = pos.x + NODE_W / 2;
         const y2 = pos.y;
-        const my = (y1 + y2) / 2;
+        const endY = y2 - ARROW_SIZE / 2;
+        const edge = x1 === x2
+            ? `M${x1},${y1} L${x2},${endY}`
+            : `M${x1},${y1} L${x1},${(y1 + y2) / 2} L${x2},${(y1 + y2) / 2} L${x2},${endY}`;
 
-        return `<path
-      d="M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}"
-      fill="none"
-      stroke="var(--crd-edge, #94a3b8)"
-      stroke-width="1.5"
-      marker-end="url(#${markerId})"/>`;
+        return `
+      <path
+        d="${edge}"
+        fill="none"
+        stroke="var(--crd-edge, #94a3b8)"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+      <polygon
+        points="${x2 - ARROW_SIZE},${y2 - ARROW_SIZE} ${x2},${y2} ${x2 + ARROW_SIZE},${y2 - ARROW_SIZE}"
+        fill="var(--crd-edge, #94a3b8)"/>`;
     }
 
     #nodeHTML(pos) {

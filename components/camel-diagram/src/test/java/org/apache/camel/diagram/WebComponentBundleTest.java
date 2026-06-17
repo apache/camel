@@ -57,6 +57,20 @@ class WebComponentBundleTest {
     }
 
     @Test
+    void bundledJsUsesArrowMarkerGeometryThatAnchorsAtTheTip() throws IOException {
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("META-INF/resources/camel/diagram/camel-route-diagram.js")) {
+            assertThat(is).isNotNull();
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content)
+                    .as("branch connectors must render an explicit arrowhead at the path endpoint")
+                    .contains("const ARROW_SIZE = 6")
+                    .contains("<polygon")
+                    .contains("stroke-linecap=\"round\"");
+        }
+    }
+
+    @Test
     void thirdPartyNoticesMentionsLucide() throws IOException {
         try (InputStream is = getClass().getClassLoader()
                 .getResourceAsStream("META-INF/resources/camel/diagram/THIRD-PARTY-NOTICES.txt")) {
