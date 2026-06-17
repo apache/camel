@@ -20,7 +20,20 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
 
 /**
- * A Camel MDC service is a factory for Mapped Diagnostic Context service.
+ * SPI that plugs a Mapped Diagnostic Context (MDC) propagation implementation into Camel's exchange processing
+ * pipeline.
+ * <p/>
+ * SLF4J's MDC is thread-local, which means MDC values set on the originating thread are not automatically visible on
+ * continuation threads used by Camel's async routing engine. Implementations of this service are responsible for
+ * capturing the current MDC state when an exchange begins processing and restoring it on each continuation thread, so
+ * that log entries produced across async boundaries carry the same contextual key-value pairs (e.g.,
+ * {@code camel.exchangeId}, {@code camel.routeId}, custom breadcrumb values).
+ * <p/>
+ * Camel discovers the implementation via the service registry; the default implementation is {@code MDCService} in
+ * {@code camel-mdc}. The {@link org.apache.camel.CamelContext} starts and stops this service as part of its normal
+ * lifecycle.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/mdc-logging.html">MDC Logging</a> in the Camel user manual.
  *
  * @since 4.15
  */
