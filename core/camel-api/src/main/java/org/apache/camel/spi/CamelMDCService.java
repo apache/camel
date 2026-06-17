@@ -29,9 +29,9 @@ import org.apache.camel.Service;
  * that log entries produced across async boundaries carry the same contextual key-value pairs (e.g.,
  * {@code camel.exchangeId}, {@code camel.routeId}, custom breadcrumb values).
  * <p/>
- * Camel discovers the implementation via the service registry; the default implementation is
- * {@code DefaultCamelMDCService} in {@code camel-core-engine}. The {@link org.apache.camel.CamelContext} starts and
- * stops this service as part of its normal lifecycle.
+ * Camel discovers the implementation via the service registry; the default implementation is {@code MDCService} in
+ * {@code camel-mdc}. The {@link org.apache.camel.CamelContext} starts and stops this service as part of its normal
+ * lifecycle.
  * <p/>
  * See <a href="https://camel.apache.org/manual/mdc-logging.html">MDC Logging</a> in the Camel user manual.
  *
