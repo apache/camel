@@ -20,8 +20,18 @@ import org.apache.camel.CamelContext;
 import org.jspecify.annotations.Nullable;
 
 /**
- * SPI for setting up XML data format (JAXB) for rest-dsl.
+ * SPI that configures a JAXB {@link DataFormat} pair for XML binding in the Camel REST DSL.
+ * <p/>
+ * When a REST-DSL route uses a binding mode that includes XML (e.g. {@link RestConfiguration.RestBindingMode#xml} or
+ * {@link RestConfiguration.RestBindingMode#json_xml}), the REST binding processor calls {@link #setupJaxb setupJaxb()}
+ * to obtain configured {@link DataFormat} instances for the input and output types. This interface decouples the REST
+ * binding layer in {@code camel-core} from the {@code camel-jaxb} module: the factory is discovered via the service key
+ * {@link #FACTORY} and is only invoked when JAXB binding is actually needed, so routes that use JSON-only binding do
+ * not require {@code camel-jaxb} on the classpath.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
  *
+ * @see   RestConfiguration
  * @since 3.2
  */
 public interface RestBindingJaxbDataFormatFactory {
