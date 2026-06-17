@@ -30,6 +30,7 @@
 const FUNCTIONS = {
   'abs': true,
   'assert': true,
+  'a2a': true,
   'attachment': true,
   'attachments': true,
   'attachmentsContent': true,

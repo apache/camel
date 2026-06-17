@@ -10,6 +10,9 @@
         "maxProperties" : 1,
         "additionalProperties" : false,
         "properties" : {
+          "a2aSubTask" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.A2ASubTaskDefinition"
+          },
           "aggregate" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.AggregateDefinition"
           },
@@ -357,6 +360,62 @@
           }
         },
         "required" : [ "steps", "uri" ]
+      },
+      "org.apache.camel.model.A2ASubTaskDefinition" : {
+        "title" : "A2A Sub Task",
+        "description" : "Groups route steps and emits A2A progress events before, after, or when the grouped work fails.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Disables this EIP from the route.",
+            "default" : false
+          },
+          "emitAfter" : {
+            "type" : "string",
+            "title" : "Emit After",
+            "description" : "Simple expression template to emit after the nested steps complete successfully"
+          },
+          "emitBefore" : {
+            "type" : "string",
+            "title" : "Emit Before",
+            "description" : "Simple expression template to emit before the nested steps run"
+          },
+          "emitOnError" : {
+            "type" : "string",
+            "title" : "Emit On Error",
+            "description" : "Simple expression template to emit when the nested steps fail"
+          },
+          "failIfNoTaskContext" : {
+            "type" : "boolean",
+            "title" : "Fail If No Task Context",
+            "description" : "Whether to fail if the current Exchange does not have an active A2A task context",
+            "default" : false
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          }
+        }
       },
       "org.apache.camel.model.AggregateDefinition" : {
         "title" : "Aggregate",

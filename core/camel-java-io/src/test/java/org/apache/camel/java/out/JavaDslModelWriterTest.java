@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.apache.camel.model.A2ASubTaskDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.FromDefinition;
@@ -224,6 +225,30 @@ public class JavaDslModelWriterTest {
 
         String out = writer.writeRouteDefinition(route);
         Assertions.assertTrue(out.contains(".removeHeader(\"CamelHttpPath\")"));
+    }
+
+    @Test
+    public void testA2ASubTask() throws Exception {
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute");
+        route.setInput(new FromDefinition("direct:start"));
+
+        A2ASubTaskDefinition subTask = new A2ASubTaskDefinition();
+        subTask.setEmitBefore("Before ${body}");
+        subTask.setEmitAfter("After ${body}");
+        subTask.setEmitOnError("Failed ${exception.message}");
+        subTask.setFailIfNoTaskContext("true");
+        subTask.addOutput(new ToDefinition("mock:result"));
+        route.addOutput(subTask);
+
+        String out = writer.writeRouteDefinition(route);
+        Assertions.assertTrue(out.contains(".a2aSubTask()"));
+        Assertions.assertTrue(out.contains(".emitBefore(\"Before ${body}\")"));
+        Assertions.assertTrue(out.contains(".emitAfter(\"After ${body}\")"));
+        Assertions.assertTrue(out.contains(".emitOnError(\"Failed ${exception.message}\")"));
+        Assertions.assertTrue(out.contains(".failIfNoTaskContext(true)"));
     }
 
     @Test

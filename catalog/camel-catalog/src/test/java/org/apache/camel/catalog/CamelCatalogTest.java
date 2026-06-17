@@ -198,15 +198,26 @@ public class CamelCatalogTest {
         assertNotNull(schema);
         schema = catalog.modelJSonSchema("bean");
         assertNotNull(schema);
+
+        schema = catalog.modelJSonSchema("a2aSubTask");
+        assertNotNull(schema);
+        assertTrue(schema.contains("\"name\": \"a2aSubTask\""));
+        assertTrue(schema.contains("\"failIfNoTaskContext\""));
     }
 
     @Test
     public void testXmlSchema() {
         String schema = catalog.springSchemaAsXml();
         assertNotNull(schema, "Spring XML Schema");
+        assertTrue(schema.contains("targetNamespace=\"http://camel.apache.org/schema/spring\""));
+        assertTrue(schema.contains("name=\"a2aSubTask\""));
+        assertTrue(schema.contains("name=\"failIfNoTaskContext\""));
 
         schema = catalog.xmlIoSchemaAsXml();
         assertNotNull(schema, "XML-IO XML Schema");
+        assertTrue(schema.contains("targetNamespace=\"http://camel.apache.org/schema/xml-io\""));
+        assertTrue(schema.contains("name=\"a2aSubTask\""));
+        assertTrue(schema.contains("name=\"failIfNoTaskContext\""));
     }
 
     @Test
