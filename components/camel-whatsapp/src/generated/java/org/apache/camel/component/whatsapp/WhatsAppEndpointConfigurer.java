@@ -35,6 +35,8 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "webhookpath":
         case "webhookPath": target.getConfiguration().setWebhookPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "webhooksecret":
+        case "webhookSecret": target.getConfiguration().setWebhookSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "webhookverifytoken":
         case "webhookVerifyToken": target.getConfiguration().setWebhookVerifyToken(property(camelContext, java.lang.String.class, value)); return true;
         case "whatsappservice":
@@ -58,6 +60,8 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return boolean.class;
         case "webhookpath":
         case "webhookPath": return java.lang.String.class;
+        case "webhooksecret":
+        case "webhookSecret": return java.lang.String.class;
         case "webhookverifytoken":
         case "webhookVerifyToken": return java.lang.String.class;
         case "whatsappservice":
@@ -82,6 +86,8 @@ public class WhatsAppEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "webhookpath":
         case "webhookPath": return target.getConfiguration().getWebhookPath();
+        case "webhooksecret":
+        case "webhookSecret": return target.getConfiguration().getWebhookSecret();
         case "webhookverifytoken":
         case "webhookVerifyToken": return target.getConfiguration().getWebhookVerifyToken();
         case "whatsappservice":
