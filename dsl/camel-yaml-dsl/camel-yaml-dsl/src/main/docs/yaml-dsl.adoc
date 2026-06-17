@@ -130,6 +130,11 @@ com.acme.camel.MyYamlStepResolver
 The resolver returns a SnakeYAML `ConstructNode` for the step names, or model class names, it supports.
 The deserializer should create and configure the normal Camel model object that the custom YAML step represents:
 
+This SPI only controls YAML deserialization. It does not add route execution behavior.
+The returned object must be a Camel route model definition that Camel can already execute through existing model reifier
+or `ProcessorFactory` support, or the optional module must provide that runtime support using the normal Camel extension
+mechanisms.
+
 [source,java]
 ----
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
@@ -195,16 +200,21 @@ This allows YAML such as:
                 uri: "mock:result"
 ----
 
-Resolvers are discovered when YAML routes are parsed. Camel loads the built-in YAML DSL resolvers first, then the
-classpath-discovered resolvers from `META-INF/services/org/apache/camel/YamlDeserializerResolver`, and then any
-`YamlDeserializerResolver` beans found in the Camel registry.
-Camel looks for resolver resources through the Camel class resolver, the application context classloader, and any
+Resolvers are discovered when YAML routes are parsed. Camel starts with the built-in YAML DSL resolvers, then adds the
+resolvers returned by the active `YamlDeserializerResolverProvider` and any `YamlDeserializerResolver` beans found in
+the Camel registry.
+When no custom provider is registered as a Camel context plugin, the default provider discovers resolver class names from
+`META-INF/services/org/apache/camel/YamlDeserializerResolver`.
+It looks for resolver resources through the Camel class resolver, the application context classloader, and any
 classloaders registered with the Camel class resolver.
+Runtime integrations that perform build-time discovery, such as native-image runtimes, can register their own
+`YamlDeserializerResolverProvider` as a Camel context plugin to supply the automatically available resolvers instead of
+using the default runtime classpath resource scanning provider.
 
 All resolvers are ordered by `YamlDeserializerResolver#getOrder()`, where lower order values have higher precedence.
-Built-in YAML DSL resolvers win over classpath-discovered and registry-provided resolvers unless the external resolver
+Built-in YAML DSL resolvers win over provider-discovered and registry-provided resolvers unless the external resolver
 uses an order lower than `YamlDeserializerResolver.ORDER_DEFAULT`.
-For external resolvers with the same order, registry-provided resolvers are tried before classpath-discovered resolvers.
+For external resolvers with the same order, registry-provided resolvers are tried before provider-discovered resolvers.
 Within the same source and order, resolvers are ordered by fully qualified class name, and registry resolvers use the
 registry bean name as a final tie-breaker.
 If several resolvers can resolve the same step name, the first matching resolver wins.
@@ -214,8 +224,14 @@ generated model resolver is also treated as a built-in resolver.
 Use an order lower than `ORDER_DEFAULT` only when a custom resolver intentionally needs to override any built-in YAML
 name.
 
-Resolver classes are instantiated through Camel's injector. If the resolver implements `CamelContextAware`, Camel sets
-the current `CamelContext` before the resolver is used.
+Resolver classes found through the default provider are instantiated through Camel's injector.
+If a provider-discovered or registry-provided resolver implements `CamelContextAware`, Camel sets the current
+`CamelContext` before the resolver is used.
+Resolver discovery and resolver execution are fail-fast: a broken service entry, provider error, or resolver exception
+aborts YAML route loading instead of being silently skipped.
+Resolver implementations should be lightweight and should not rely on Camel `Service` lifecycle callbacks from the YAML
+deserialization context. Registry resolvers are owned by the registry, and custom providers own the lifecycle of any
+resolver instances they return.
 The same discovery mechanism is used by the YAML routes loader and the Kamelet routes loader, so custom route steps can
 be used in regular YAML routes and in Kamelet template step lists.
 
@@ -224,11 +240,17 @@ When a custom step maps to a model definition that supports child outputs, the d
 Nested `steps` are only meaningful for model definitions that can contain outputs, such as `Block` implementations.
 If the optional module that provides the resolver is not on the classpath, Camel does not load that resolver. YAML files
 that use the custom step name then fail with an unknown node error; YAML files that do not use the custom step are
-unaffected.
+unaffected. If the service file names a resolver class that cannot be loaded, YAML route parsing fails when resolver
+discovery runs.
 
 Custom YAML step names are runtime extensions.
 The generated YAML DSL JSON schemas only describe the built-in DSL and do not validate module-provided step names.
-This also applies to IDE validation and schema-based tooling.
+This also applies to IDE validation and schema-based tooling, including the YAML DSL validator Maven plugin.
+Runtime route-loading parsers can use custom resolvers that are available on their classpath, but schema validation
+remains limited to the generated built-in DSL schema.
+Modules that provide custom YAML steps should include route-loading tests that put the resolver service resource on the
+test classpath, load a YAML route using the custom step, and assert that Camel created the expected model definition or
+that the route executes as expected. For output-aware custom steps, include at least one nested `steps` entry.
 
 YAML routes and resolver providers are trusted route-author and deployment inputs under Camel's security model.
 This SPI is not a sandbox for processing untrusted YAML documents.

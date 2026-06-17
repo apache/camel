@@ -19,6 +19,12 @@ package org.apache.camel.dsl.yaml.common;
 import org.apache.camel.Ordered;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 
+/**
+ * Resolves YAML node ids to SnakeYAML constructors.
+ * <p/>
+ * Optional Camel modules should implement this SPI to contribute custom YAML route steps. Runtime integrations that
+ * need to control how resolver implementations are discovered can provide a {@link YamlDeserializerResolverProvider}.
+ */
 public interface YamlDeserializerResolver extends Ordered {
 
     /**
