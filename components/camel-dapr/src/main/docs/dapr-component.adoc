@@ -112,139 +112,312 @@ To configure the consumer, the configStore name and configKeys must be provided.
 === Producer Operations Examples
 - `invokeService` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.VERB, "GET");
-  })
-  .to("dapr:invokeService?serviceToInvoke=myService&methodToInvoke=myMethod")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprVerb", constant("GET"))
+    .to("dapr:invokeService?serviceToInvoke=myService&methodToInvoke=myMethod")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprVerb">
+    <constant>GET</constant>
+  </setHeader>
+  <to uri="dapr:invokeService?serviceToInvoke=myService&amp;methodToInvoke=myMethod"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprVerb
+            constant: "GET"
+        - to:
+            uri: dapr:invokeService
+            parameters:
+              serviceToInvoke: myService
+              methodToInvoke: myMethod
+        - to:
+            uri: mock:result
+----
+====
 
 - `state: save` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the payload you want to save as state
-    exchange.getIn().setBody("myValue");
-  })
-  .to("dapr:state?stateOperation=save&stateStore=myStore&key=myKey")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setBody(constant("myValue"))
+    .to("dapr:state?stateOperation=save&stateStore=myStore&key=myKey")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>myValue</constant>
+  </setBody>
+  <to uri="dapr:state?stateOperation=save&amp;stateStore=myStore&amp;key=myKey"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: "myValue"
+        - to:
+            uri: dapr:state
+            parameters:
+              stateOperation: save
+              stateStore: myStore
+              key: myKey
+        - to:
+            uri: mock:result
+----
+====
 
 - `state: saveBulk` -
 
+._Java-only: uses Dapr SDK `State` types and `List.of()` to set bulk states_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the list of states you want to save
-    State<String> state1 = new State<>("key1", "val1", "etag1");
-    State<String> state2 = new State<>("key2", "val1", "etag2");
-    List<State<?>> states = List.of(state1, state2);
-    exchange.getMessage().setHeader(DaprConstants.STATES, states);
-  })
-  .to("dapr:state?stateOperation=saveBulk&stateStore=myStore")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .process(exchange -> {
+        State<String> state1 = new State<>("key1", "val1", "etag1");
+        State<String> state2 = new State<>("key2", "val1", "etag2");
+        List<State<?>> states = List.of(state1, state2);
+        exchange.getMessage().setHeader("CamelDaprStates", states);
+    })
+    .to("dapr:state?stateOperation=saveBulk&stateStore=myStore")
+    .to("mock:result");
+----
 
 - `state: get` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.CONCURRENCY, "FIRST_WRITE");
-    exchange.getIn().setHeader(DaprConstants.CONSISTENCY, "EVENTUAL");
-  })
-  .to("dapr:state?stateOperation=get&stateStore=myStore&key=myKey")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprConcurrency", constant("FIRST_WRITE"))
+    .setHeader("CamelDaprConsistency", constant("EVENTUAL"))
+    .to("dapr:state?stateOperation=get&stateStore=myStore&key=myKey")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprConcurrency">
+    <constant>FIRST_WRITE</constant>
+  </setHeader>
+  <setHeader name="CamelDaprConsistency">
+    <constant>EVENTUAL</constant>
+  </setHeader>
+  <to uri="dapr:state?stateOperation=get&amp;stateStore=myStore&amp;key=myKey"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprConcurrency
+            constant: "FIRST_WRITE"
+        - setHeader:
+            name: CamelDaprConsistency
+            constant: "EVENTUAL"
+        - to:
+            uri: dapr:state
+            parameters:
+              stateOperation: get
+              stateStore: myStore
+              key: myKey
+        - to:
+            uri: mock:result
+----
+====
 
 - `state: getBulk` -
 
+._Java-only: uses `List.of()` to set bulk key list_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.KEYS, List.of("key1", "key2"));
-  })
-  .to("dapr:state?stateOperation=getBulk&stateStore=myStore")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprKeys", List.of("key1", "key2"));
+    })
+    .to("dapr:state?stateOperation=getBulk&stateStore=myStore")
+    .to("mock:result");
+----
 
 - `state: delete` -
 
+._Java-only: uses `Map.of()` to set metadata_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.METADATA, Map.of("partitionKey", "myPartitionKey"));
-  })
-  .to("dapr:state?stateOperation=delete&stateStore=myStore&key=myKey")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprMetadata", Map.of("partitionKey", "myPartitionKey"));
+    })
+    .to("dapr:state?stateOperation=delete&stateStore=myStore&key=myKey")
+    .to("mock:result");
+----
 
 - `state: executeTransaction` -
 
+._Java-only: uses Dapr SDK `TransactionalStateOperation` and `State` types_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
-    List<TransactionalStateOperation<?>> transactions = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
-    exchange.getIn().setHeader(DaprConstants.TRANSACTIONS, transactions);
-  })
-  .to("dapr:state?stateOperation=executeTransaction&stateStore=myStore")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .process(exchange -> {
+        TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
+        List<TransactionalStateOperation<?>> transactions = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
+        exchange.getIn().setHeader("CamelDaprTransactions", transactions);
+    })
+    .to("dapr:state?stateOperation=executeTransaction&stateStore=myStore")
+    .to("mock:result");
+----
 
 - `pubSub` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.CONTENT_TYPE, "application/json");
-  })
-  .to("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprContentType", constant("application/json"))
+    .to("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprContentType">
+    <constant>application/json</constant>
+  </setHeader>
+  <to uri="dapr:pubSub?pubSubName=myPubSub&amp;topic=myTopic"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprContentType
+            constant: "application/json"
+        - to:
+            uri: dapr:pubSub
+            parameters:
+              pubSubName: myPubSub
+              topic: myTopic
+        - to:
+            uri: mock:result
+----
+====
 
 - `invokeBinding` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the message body to the payload to send to the output binding
-    // e.g.:
-    exchange.getMessage().setBody("myBody");
-  })
-  .to("dapr:invokeBinding?bindingName=myBinding&bindingOperation=myOperation")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setBody(constant("myBody"))
+    .to("dapr:invokeBinding?bindingName=myBinding&bindingOperation=myOperation")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>myBody</constant>
+  </setBody>
+  <to uri="dapr:invokeBinding?bindingName=myBinding&amp;bindingOperation=myOperation"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: "myBody"
+        - to:
+            uri: dapr:invokeBinding
+            parameters:
+              bindingName: myBinding
+              bindingOperation: myOperation
+        - to:
+            uri: mock:result
+----
+====
 
 - `secret` -
 
@@ -338,193 +511,499 @@ YAML::
 
 - `configuration` -
 
+._Java-only: uses `List.of()` to set configuration key list_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.CONFIG_KEYS, List.of("k1", "k2"));
-  })
-  .to("dapr:configuration?configStore=myStore")
-  .log("Received config updates from Dapr: ${body}")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprConfigKeys", List.of("k1", "k2"));
+    })
+    .to("dapr:configuration?configStore=myStore")
+    .log("Received config updates from Dapr: ${body}")
+    .to("mock:result");
+----
 
 - `lock: tryLock` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.RESOURCE_ID, "myResource");
-    exchange.getIn().setHeader(DaprConstants.STORE_NAME, "myStore");
-  })
-  .to("dapr:lock?lockOperation=tryLock&storeName=myStore&expiryInSeconds=100")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprResourceId", constant("myResource"))
+    .to("dapr:lock?lockOperation=tryLock&storeName=myStore&expiryInSeconds=100")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprResourceId">
+    <constant>myResource</constant>
+  </setHeader>
+  <to uri="dapr:lock?lockOperation=tryLock&amp;storeName=myStore&amp;expiryInSeconds=100"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprResourceId
+            constant: "myResource"
+        - to:
+            uri: dapr:lock
+            parameters:
+              lockOperation: tryLock
+              storeName: myStore
+              expiryInSeconds: 100
+        - to:
+            uri: mock:result
+----
+====
 
 - `lock: unlock` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.RESOURCE_ID, "myResource");
-    exchange.getIn().setHeader(DaprConstants.STORE_NAME, "myStore");
-  })
-  .to("dapr:lock?lockOperation=unlock&storeName=myStore")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprResourceId", constant("myResource"))
+    .to("dapr:lock?lockOperation=unlock&storeName=myStore")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprResourceId">
+    <constant>myResource</constant>
+  </setHeader>
+  <to uri="dapr:lock?lockOperation=unlock&amp;storeName=myStore"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprResourceId
+            constant: "myResource"
+        - to:
+            uri: dapr:lock
+            parameters:
+              lockOperation: unlock
+              storeName: myStore
+        - to:
+            uri: mock:result
+----
+====
 
 - `workflow: scheduleNew` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .setBody(input)
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_CLASS, "my.package.MyWorkflow");
-  })
-  .to("dapr:workflow?workflowOperation=scheduleNew")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprWorkflowClass", constant("my.package.MyWorkflow"))
+    .to("dapr:workflow?workflowOperation=scheduleNew")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowClass">
+    <constant>my.package.MyWorkflow</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=scheduleNew"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowClass
+            constant: "my.package.MyWorkflow"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: scheduleNew
+        - to:
+            uri: mock:result
+----
+====
 
 - `workflow: terminate` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .setBody(ouput)
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
-  })
-  .to("dapr:workflow?workflowOperation=terminate")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .to("dapr:workflow?workflowOperation=terminate")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=terminate"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: terminate
+        - to:
+            uri: mock:result
+----
+====
 
 - `workflow: purge` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
-  })
-  .to("dapr:workflow?workflowOperation=purge")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .to("dapr:workflow?workflowOperation=purge")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=purge"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: purge
+        - to:
+            uri: mock:result
+----
+====
 
 - `workflow: suspend` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
-    exchange.getIn().setHeader(DaprConstants.REASON, "Suspended for maintenance.");
-  })
-  .to("dapr:workflow?workflowOperation=suspend")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .setHeader("CamelDaprSuspendReason", constant("Suspended for maintenance."))
+    .to("dapr:workflow?workflowOperation=suspend")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <setHeader name="CamelDaprSuspendReason">
+    <constant>Suspended for maintenance.</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=suspend"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - setHeader:
+            name: CamelDaprSuspendReason
+            constant: "Suspended for maintenance."
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: suspend
+        - to:
+            uri: mock:result
+----
+====
 
 - `workflow: resume` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
-    exchange.getIn().setHeader(DaprConstants.REASON, "Maintenance complete.");
-  })
-  .to("dapr:workflow?workflowOperation=resume")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .setHeader("CamelDaprSuspendReason", constant("Maintenance complete."))
+    .to("dapr:workflow?workflowOperation=resume")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <setHeader name="CamelDaprSuspendReason">
+    <constant>Maintenance complete.</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=resume"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - setHeader:
+            name: CamelDaprSuspendReason
+            constant: "Maintenance complete."
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: resume
+        - to:
+            uri: mock:result
+----
+====
 
 - `workflow: state` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
-  })
-  .to("dapr:workflow?workflowOperation=state")
-  .log("Workflow state: ${body}")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .to("dapr:workflow?workflowOperation=state")
+    .log("Workflow state: ${body}")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=state"/>
+  <log message="Workflow state: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: state
+        - log:
+            message: "Workflow state: ${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `workflow: waitForInstanceStart` -
 
+._Java-only: uses `Duration.ofSeconds()` to set timeout_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
-    exchange.getIn().setHeader(DaprConstants.TIMEOUT, Duration.ofSeconds(30));
-  })
-  .to("dapr:workflow?workflowOperation=waitForInstanceStart")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprWorkflowInstanceId", "myWorkflowInstanceId");
+        exchange.getIn().setHeader("CamelDaprTimeout", Duration.ofSeconds(30));
+    })
+    .to("dapr:workflow?workflowOperation=waitForInstanceStart")
+    .to("mock:result");
+----
 
 - `workflow: waitForInstanceCompletion` -
 
+._Java-only: uses `Duration.ofSeconds()` to set timeout_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
-    exchange.getIn().setHeader(DaprConstants.TIMEOUT, Duration.ofSeconds(30));
-  })
-  .to("dapr:workflow?workflowOperation=waitForInstanceCompletion")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelDaprWorkflowInstanceId", "myWorkflowInstanceId");
+        exchange.getIn().setHeader("CamelDaprTimeout", Duration.ofSeconds(30));
+    })
+    .to("dapr:workflow?workflowOperation=waitForInstanceCompletion")
+    .to("mock:result");
+----
 
 - `workflow: raiseEvent` -
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .process(exchange -> {
-    // set the header you want the producer to evaluate, refer to the previous
-    // section to learn about the headers that can be set
-    // e.g.:
-    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
-  })
-  .to("dapr:workflow?workflowOperation=raiseEvent&eventName=MyEvent")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelDaprWorkflowInstanceId", constant("myWorkflowInstanceId"))
+    .to("dapr:workflow?workflowOperation=raiseEvent&eventName=MyEvent")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprWorkflowInstanceId">
+    <constant>myWorkflowInstanceId</constant>
+  </setHeader>
+  <to uri="dapr:workflow?workflowOperation=raiseEvent&amp;eventName=MyEvent"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprWorkflowInstanceId
+            constant: "myWorkflowInstanceId"
+        - to:
+            uri: dapr:workflow
+            parameters:
+              workflowOperation: raiseEvent
+              eventName: MyEvent
+        - to:
+            uri: mock:result
+----
+====
 
 === Consumer Operations Examples
 
