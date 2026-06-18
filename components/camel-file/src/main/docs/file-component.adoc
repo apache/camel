@@ -1424,10 +1424,40 @@ problems.
 By default, Camel will move any processed file into a `.camel`
 subdirectory in the directory the file was consumed from.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
+from("file://inputdir/?recursive=true&delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?recursive=true&amp;delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        recursive: true
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 Affects the layout as follows: +
 *before*
@@ -1448,17 +1478,77 @@ outputdir/sub/bar.txt
 
 === Read from a directory and write to another directory
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?delete=true").to("file://outputdir")
+from("file://inputdir/?delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 === Read from a directory and write to another directory using a dynamic name
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}")
+from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="file://outputdir?fileName=copy-of-${file:name}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+            parameters:
+              fileName: "copy-of-${file:name}"
+----
+====
 
 Listen to a directory and create a message for each file dropped there.
 Copy the contents to the `outputdir` and delete the file in the
@@ -1466,10 +1556,40 @@ Copy the contents to the `outputdir` and delete the file in the
 
 === Reading recursively from a directory and writing to another
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
+from("file://inputdir/?recursive=true&delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?recursive=true&amp;delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        recursive: true
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 Listen to a directory and create a message for each file dropped there.
 Copy the contents to the `outputdir` and delete the file in the
@@ -1492,6 +1612,8 @@ outputdir/sub/bar.txt
 
 === Read from a directory and process the message in java
 
+._Java-only: inline Processor implementation_
+
 [source,java]
 ----
 from("file://inputdir/").process(new Processor() {
@@ -1510,10 +1632,39 @@ dropped into the `inputdir` directory.
 In this sample, we want to move consumed files to a backup folder using
 today's date as a subfolder name:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}"/>
+  <to uri="..."/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        move: "backup/${date:now:yyyyMMdd}/${file:name}"
+      steps:
+        - to:
+            uri: "..."
+----
+====
 
 See xref:languages:file-language.adoc[File Language] for more samples.
 
