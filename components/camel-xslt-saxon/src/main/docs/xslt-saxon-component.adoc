@@ -320,14 +320,8 @@ SimpleRegistry registry = new SimpleRegistry();
 registry.put("function1", new MyExtensionFunction1());
 registry.put("function2", new MyExtensionFunction2());
 
-CamelContext context = new DefaultCamelContext(registry);
-context.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("direct:start")
-            .to("xslt-saxon:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2");
-    }
-});
+from("direct:start")
+    .to("xslt-saxon:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2");
 ----
 
 

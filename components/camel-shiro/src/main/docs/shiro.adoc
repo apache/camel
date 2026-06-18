@@ -165,31 +165,21 @@ further following proper authentication. The SecurityToken object
 contains a Username/Password details that are used to determine where
 the user is a valid user.
 
-._Java-only: Java RouteBuilder with security policy_
+._Java-only: route with Shiro security policy_
 [source,java]
 ----
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        final ShiroSecurityPolicy securityPolicy = 
-            new ShiroSecurityPolicy("classpath:shiro.ini", passPhrase);
-        
-        return new RouteBuilder() {
-            public void configure() {
-                onException(UnknownAccountException.class).
-                    to("mock:authenticationException");
-                onException(IncorrectCredentialsException.class).
-                    to("mock:authenticationException");
-                onException(LockedAccountException.class).
-                    to("mock:authenticationException");
-                onException(AuthenticationException.class).
-                    to("mock:authenticationException");
-                
-                from("direct:secureEndpoint").
-                    to("log:incoming payload").
-                    policy(securityPolicy).
-                    to("mock:success");
-            }
-        };
-    }
+final ShiroSecurityPolicy securityPolicy =
+    new ShiroSecurityPolicy("classpath:shiro.ini", passPhrase);
+
+onException(UnknownAccountException.class).to("mock:authenticationException");
+onException(IncorrectCredentialsException.class).to("mock:authenticationException");
+onException(LockedAccountException.class).to("mock:authenticationException");
+onException(AuthenticationException.class).to("mock:authenticationException");
+
+from("direct:secureEndpoint")
+    .to("log:incoming payload")
+    .policy(securityPolicy)
+    .to("mock:success");
 ----
 
 [[ShiroSecurity-ApplyingShiroAuthorizationonaCamelRoute]]
@@ -201,31 +191,21 @@ specifies the permissions necessary for the user to proceed with the
 execution of the route segment. If the user does not have the proper
 permission set, the request is not authorized to continue any further.
 
-._Java-only: Java RouteBuilder with security policy_
+._Java-only: route with Shiro security policy and permissions_
 [source,java]
 ----
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        final ShiroSecurityPolicy securityPolicy = 
-            new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase);
-        
-        return new RouteBuilder() {
-            public void configure() {
-                onException(UnknownAccountException.class).
-                    to("mock:authenticationException");
-                onException(IncorrectCredentialsException.class).
-                    to("mock:authenticationException");
-                onException(LockedAccountException.class).
-                    to("mock:authenticationException");
-                onException(AuthenticationException.class).
-                    to("mock:authenticationException");
-                
-                from("direct:secureEndpoint").
-                    to("log:incoming payload").
-                    policy(securityPolicy).
-                    to("mock:success");
-            }
-        };
-    }
+final ShiroSecurityPolicy securityPolicy =
+    new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase);
+
+onException(UnknownAccountException.class).to("mock:authenticationException");
+onException(IncorrectCredentialsException.class).to("mock:authenticationException");
+onException(LockedAccountException.class).to("mock:authenticationException");
+onException(AuthenticationException.class).to("mock:authenticationException");
+
+from("direct:secureEndpoint")
+    .to("log:incoming payload")
+    .policy(securityPolicy)
+    .to("mock:success");
 ----
 
 [[ShiroSecurity-CreatingaShiroSecurityTokenandinjectingitintoaMessageExchange]]

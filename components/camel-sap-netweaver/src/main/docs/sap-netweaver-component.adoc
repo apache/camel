@@ -83,25 +83,13 @@ Service] format.
 
 We have the following Camel route
 
-._Java-only: route using toF() string formatting_
 [source,java]
 ----
 from("direct:start")
-    .setHeader("CamelNetWeaverCommand", constant(command))
-    .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
+    .setHeader("CamelNetWeaverCommand", constant("FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')"))
+    .to("sap-netweaver:https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT?username=P1909969254&password=TODO")
     .to("log:response")
-    .to("velocity:flight-info.vm")
-----
-
-Where `url`, `username`, `password` and `command` are defined as:
-
-._Java-only: Java field definitions_
-[source,java]
-----
-private String username = "P1909969254";
-private String password = "TODO";
-private String url = "https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT";
-private String command = "FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')";
+    .to("velocity:flight-info.vm");
 ----
 
 The password is invalid. You would need to create an account at SAP

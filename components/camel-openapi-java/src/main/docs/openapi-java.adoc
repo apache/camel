@@ -38,38 +38,26 @@ the REST components (without the need for servlet)
 You can enable the OpenApi api from the rest-dsl by configuring the
 `apiContextPath` dsl as shown below:
 
-._Java-only: RouteBuilder with Rest DSL configuration and class literals_
+._Java-only: Rest DSL configuration with class literals_
 [source,java]
 ----
-public class UserRouteBuilder extends RouteBuilder {
-    @Override
-    public void configure() throws Exception {
-        // configure we want to use servlet as the component for the rest DSL,
-        // and we enable json binding mode
-        restConfiguration().component("netty-http").bindingMode(RestBindingMode.json)
-            // and output using pretty print
-            .dataFormatProperty("prettyPrint", "true")
-            // setup context path and port number that netty will use
-            .contextPath("/").port(8080)
-            // add OpenApi api-doc out of the box
-            .apiContextPath("/api-doc")
-                .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
-                // and enable CORS
-                .apiProperty("cors", "true");
+restConfiguration().component("netty-http").bindingMode(RestBindingMode.json)
+    .dataFormatProperty("prettyPrint", "true")
+    .contextPath("/").port(8080)
+    .apiContextPath("/api-doc")
+        .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
+        .apiProperty("cors", "true");
 
-        // this user REST service is json only
-        rest("/user").description("User rest service")
-            .consumes("application/json").produces("application/json")
-            .get("/{id}").description("Find user by id").outType(User.class)
-                .param().name("id").type(path).description("The id of the user to get").dataType("int").endParam()
-                .to("bean:userService?method=getUser(${header.id})")
-            .put().description("Updates or create a user").type(User.class)
-                .param().name("body").type(body).description("The user to update or create").endParam()
-                .to("bean:userService?method=updateUser")
-            .get("/findAll").description("Find all users").outType(User[].class)
-                .to("bean:userService?method=listUsers");
-    }
-}
+rest("/user").description("User rest service")
+    .consumes("application/json").produces("application/json")
+    .get("/{id}").description("Find user by id").outType(User.class)
+        .param().name("id").type(path).description("The id of the user to get").dataType("int").endParam()
+        .to("bean:userService?method=getUser(${header.id})")
+    .put().description("Updates or create a user").type(User.class)
+        .param().name("body").type(body).description("The user to update or create").endParam()
+        .to("bean:userService?method=updateUser")
+    .get("/findAll").description("Find all users").outType(User[].class)
+        .to("bean:userService?method=listUsers");
 ----
  
 

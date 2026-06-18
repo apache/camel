@@ -382,22 +382,8 @@ and instantiated/utilized on a Camel route in the following way
 Registry registry = camelContext.getRegistry();
 ServerInitializerFactory factory = new TestServerInitializerFactory();
 registry.bind("spf", factory);
-context.addRoutes(new RouteBuilder() {
-  public void configure() {
-      String netty_ssl_endpoint =
-         "netty:tcp://0.0.0.0:5150?serverInitializerFactory=#spf"
-      String return_string =
-         "When You Go Home, Tell Them Of Us And Say,"
-         + "For Your Tomorrow, We Gave Our Today.";
-
-      from(netty_ssl_endpoint)
-       .process(new Processor() {
-          public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(return_string);
-          }
-       }
-  }
-});
+from("netty:tcp://0.0.0.0:5150?serverInitializerFactory=#spf")
+    .setBody(constant("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today."));
 ----
 
 === Reusing Netty boss and worker thread pools
@@ -604,31 +590,16 @@ public ChannelHandler getDecoder() throws Exception {
     };
 }
 
-RouteBuilder builder = new RouteBuilder() {
-  public void configure() {
-    from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
-      .process(new Processor() {
-         public void process(Exchange exchange) throws Exception {
-           Poetry poetry = (Poetry) exchange.getIn().getBody();
-           // Process poetry in some way
-           exchange.getOut().setBody("Message received);
-         }
-       }
-    }
-};
+from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
+    .to("bean:poetryProcessor");
 ----
 
 === A TCP-based Netty consumer endpoint using One-way communication
 
-._Java-only: Java RouteBuilder class_
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-  public void configure() {
-       from("netty:tcp://0.0.0.0:5150")
-           .to("mock:result");
-  }
-};
+from("netty:tcp://0.0.0.0:5150")
+    .to("mock:result");
 ----
 
 === An SSL/TCP-based Netty consumer endpoint using Request-Reply communication
@@ -686,26 +657,11 @@ Spring DSL based configuration of endpoint
 [[Netty-UsingBasicSSLTLSconfigurationontheJettyComponent]]
 Using Basic SSL/TLS configuration on the Jetty Component
 
-._Java-only: Java programmatic SSL route configuration_
+._Java-only: SSL route configuration_
 [source,java]
 ----
-context.addRoutes(new RouteBuilder() {
-  public void configure() {
-      String netty_ssl_endpoint =
-         "netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=changeit"
-         + "&keyStoreResource=file:src/test/resources/keystore.jks&trustStoreResource=file:src/test/resources/keystore.jks";
-      String return_string =
-         "When You Go Home, Tell Them Of Us And Say,"
-         + "For Your Tomorrow, We Gave Our Today.";
-
-      from(netty_ssl_endpoint)
-       .process(new Processor() {
-          public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(return_string);
-          }
-       }
-  }
-});
+from("netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=changeit&keyStoreResource=file:src/test/resources/keystore.jks&trustStoreResource=file:src/test/resources/keystore.jks")
+    .setBody(constant("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today."));
 ----
 
 [[Netty-GettingaccesstoSSLSessionandtheclientcertificate]]
