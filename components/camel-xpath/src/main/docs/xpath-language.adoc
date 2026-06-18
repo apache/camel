@@ -255,6 +255,8 @@ XPath which result type to use.
 
 In Java DSL:
 
+._Java-only: XPath expression builder API_
+
 [source,java]
 ----
 xpath("/foo:person/@id", String.class)
@@ -293,6 +295,8 @@ header's value, you can do this by defining the 'headerName' attribute.
 ----
 
 And in Java DSL you specify the headerName as the second parameter as shown:
+
+._Java-only: XPath expression builder API_
 
 [source,java]
 ----
@@ -616,6 +620,8 @@ scopes. For each discovered prefix, all associated URIs are listed.
 You can enable this option in Java DSL and XML DSL:
 
 Java DSL:
+
+._Java-only: XPathBuilder API_
 
 [source,java]
 ----
