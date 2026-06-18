@@ -409,11 +409,21 @@ Java::
 [source,java]
 ----
 from("camunda://worker?jobType=myJobType&timeout=20")
-    .process(exchange -> {
-        Map<String, Object> result = new HashMap<>();
-        result.put("approved", true);
-        exchange.getIn().setBody(result);
-    });
+    .setBody(simple("${map('approved',true)}"))
+    .to("camunda://completeJob");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
+  <setBody>
+    <simple>${map('approved',true)}</simple>
+  </setBody>
+  <to uri="camunda://completeJob"/>
+</route>
 ----
 
 YAML::
@@ -426,21 +436,11 @@ YAML::
       parameters:
         jobType: myJobType
         timeout: 20
-      steps:
-        - setBody:
-            constant:
-              resultType: "java.util.Map"
-              expression: ""
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
-  <process ref="myJobProcessor"/>
-</route>
+    steps:
+      - setBody:
+          simple: "${map('approved',true)}"
+      - to:
+          uri: camunda://completeJob
 ----
 ====
 
