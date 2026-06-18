@@ -297,7 +297,7 @@ Java::
 ----
 from("direct:deploy")
     .process(exchange -> {
-        exchange.getIn().setHeader(CamundaConstants.RESOURCE_NAME, "process.bpmn");
+        exchange.getIn().setHeader("CamelCamundaResourceName", "process.bpmn");
         exchange.getIn().setBody(content.getBytes());
     })
     .to("camunda://deployResource");
@@ -460,8 +460,8 @@ Java::
 ----
 from("camunda://worker?jobType=myJobType&timeout=20")
     .process(exchange -> {
-        exchange.getIn().setHeader(CamundaConstants.ERROR_CODE, "INVALID_DATA");
-        exchange.getIn().setHeader(CamundaConstants.ERROR_MESSAGE, "Data validation failed");
+        exchange.getIn().setHeader("CamelCamundaErrorCode", "INVALID_DATA");
+        exchange.getIn().setHeader("CamelCamundaErrorMessage", "Data validation failed");
     })
     .to("camunda://throwError");
 ----

@@ -61,7 +61,7 @@ from("direct:listByLabels").process(new Processor() {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, labels);
+                exchange.getIn().setHeader("CamelKubernetesBuildConfigsLabels", labels);
             }
         });
     toF("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigsByLabels").

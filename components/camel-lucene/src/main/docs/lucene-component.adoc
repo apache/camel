@@ -116,7 +116,7 @@ registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
        from("direct:start").
-          setHeader(LuceneConstants.HEADER_QUERY, constant("Seinfeld")).
+          setHeader("CamelLuceneQuery", constant("Seinfeld")).
           to("lucene:searchIndex:query?
              analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20").
           to("direct:next");
@@ -149,7 +149,7 @@ RouteBuilder builder = new RouteBuilder() {
     public void configure() {
         try {
             from("direct:start").
-                setHeader(LuceneConstants.HEADER_QUERY, constant("Rodney Dangerfield")).
+                setHeader("CamelLuceneQuery", constant("Rodney Dangerfield")).
                 process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20)).
                 to("direct:next");
         } catch (Exception e) {

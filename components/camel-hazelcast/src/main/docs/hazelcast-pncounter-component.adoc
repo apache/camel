@@ -49,8 +49,8 @@ Java::
 [source,java]
 ----
 from("direct:increment")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.INCREMENT))
-    .toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("increment"))
+    .to("hazelcast-pncounter:foo");
 ----
 
 XML::
@@ -93,8 +93,8 @@ Java::
 [source,java]
 ----
 from("direct:decrement")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DECREMENT))
-    .toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("decrement"))
+    .to("hazelcast-pncounter:foo");
 ----
 
 XML::
@@ -137,8 +137,8 @@ Java::
 [source,java]
 ----
 from("direct:get")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
-    .toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("get"))
+    .to("hazelcast-pncounter:foo");
 ----
 
 XML::
@@ -182,8 +182,8 @@ Java::
 [source,java]
 ----
 from("direct:getAndAdd")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_AND_ADD))
-    .toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("getAndAdd"))
+    .to("hazelcast-pncounter:foo");
 ----
 
 XML::
@@ -229,8 +229,8 @@ Java::
 [source,java]
 ----
 from("direct:destroy")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DESTROY))
-    .toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("destroy"))
+    .to("hazelcast-pncounter:foo");
 ----
 
 XML::

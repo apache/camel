@@ -185,7 +185,7 @@ import org.apache.camel.spi.OAuthTokenValidationResult;
 from("platform-http:/secure?oauthProfile=myprofile")
     .process(exchange -> {
         OAuthTokenValidationResult result = exchange.getProperty(
-                PlatformHttpConstants.OAUTH_TOKEN_VALIDATION_RESULT,
+                "CamelOAuthTokenValidationResult",
                 OAuthTokenValidationResult.class);
         exchange.getMessage().setHeader("X-Principal", result.getName());
     });

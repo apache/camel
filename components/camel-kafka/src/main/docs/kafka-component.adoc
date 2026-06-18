@@ -49,7 +49,7 @@ For more information about Producer/Consumer configuration:
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
-If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as it is used as a one-time header that is not sent along the message, and actually is removed in the producer.
+If you want to send a message to a dynamic topic then use the `CamelKafkaOverrideTopic` header as it is used as a one-time header that is not sent along the message, and actually is removed in the producer.
 
 == Usage
 
@@ -299,7 +299,7 @@ public void process(Exchange exchange) {
 }
 ----
 
-TIP: The header name `CamelKafkaManualCommit` is also available as the constant `KafkaConstants.MANUAL_COMMIT`.
+TIP: The header name is `CamelKafkaManualCommit`.
 
 The `KafkaManualCommit` will force a synchronous commit which will block until the commit is acknowledged on Kafka, or if it fails an exception is thrown.
 You can use an asynchronous commit as well by configuring the `KafkaManualCommitFactory` with the `DefaultKafkaManualAsyncCommitFactory` implementation.
@@ -1498,7 +1498,7 @@ YAML::
 ----
 ====
 
-TIP: In Java, you can use the constant `KafkaConstants.KEY` instead of the string `"CamelKafkaKey"`.
+TIP: The header name is `CamelKafkaKey`.
 
 === SSL configuration
 

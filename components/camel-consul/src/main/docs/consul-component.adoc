@@ -68,7 +68,7 @@ As an example, we will show how to use the `ConsulAgentProducer` to register a s
 
 Registering and unregistering are examples for possible actions against the Consul agent api.
 
-The desired action can be defined by setting the header `ConsulConstants.CONSUL_ACTION` to a value from the `ConsulXXXActions` interface of the respective Consul api. E.g.  `ConsulAgentActions` contains the actions for the agent api.
+The desired action can be defined by setting the header `CamelConsulAction` to a value from the respective Consul api.
 
 If you set `CONSUL_ACTION` to `ConsulAgentActions.REGISTER`, the agent action `REGISTER` will be executed.
 
@@ -88,7 +88,7 @@ from("direct:registerFooService")
         .address("localhost")
         .port(80)
         .build())
-    .setHeader(ConsulConstants.CONSUL_ACTION, constant(ConsulAgentActions.REGISTER))
+    .setHeader("CamelConsulAction", constant("REGISTER"))
     .to("consul:agent");
 ----
 

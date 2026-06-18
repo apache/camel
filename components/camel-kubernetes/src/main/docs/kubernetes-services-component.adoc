@@ -54,7 +54,7 @@ This operation returns a List of services from your cluster
 
 - `listServicesByLabels`: this operation lists the deployments by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with KubernetesConstants and HashMap_
+._Java-only: uses inline Processor with HashMap_
 [source,java]
 ----
 from("direct:listByLabels").process(new Processor() {
@@ -63,7 +63,7 @@ from("direct:listByLabels").process(new Processor() {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+                exchange.getIn().setHeader("CamelKubernetesServiceLabels", labels);
             }
         });
     toF("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels").
@@ -74,7 +74,7 @@ This operation returns a list of services from your cluster using a label select
 
 === Kubernetes Services Consumer Example
 
-._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
+._Java-only: uses fromF(), inline Processor class, and string concatenation_
 [source,java]
 ----
 fromF("kubernetes-services://%s?oauthToken=%s", host, authToken)
@@ -85,7 +85,7 @@ fromF("kubernetes-services://%s?oauthToken=%s", host, authToken)
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Service sv = exchange.getIn().getBody(Service.class);
-            log.info("Got event with service name: " + sv.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with service name: " + sv.getMetadata().getName() + " and action " + in.getHeader("CamelKubernetesEventAction"));
         }
     }
 ----

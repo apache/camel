@@ -46,7 +46,7 @@ from("direct:createPod")
     .toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host, authToken);
 ----
 
-By using the `KubernetesConstants.KUBERNETES_POD_SPEC` header, you can specify your PodSpec and pass it to this operation.
+By using the `CamelKubernetesPodSpec` header, you can specify your PodSpec and pass it to this operation.
 
 === Delete a pod
 
@@ -57,7 +57,7 @@ from("direct:createPod")
     .toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host, authToken);
 ----
 
-By using the `KubernetesConstants.KUBERNETES_POD_NAME` header, you can specify your Pod name and pass it to this operation.
+By using the `CamelKubernetesPodName` header, you can specify your Pod name and pass it to this operation.
 
 == Using Kubernetes ConfigMaps and Secrets
 

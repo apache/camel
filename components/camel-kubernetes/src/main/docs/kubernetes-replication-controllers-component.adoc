@@ -57,7 +57,7 @@ This operation returns a list of RCs from your cluster
 
 - `listReplicationControllersByLabels`: this operation lists the RCs by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with KubernetesConstants and HashMap_
+._Java-only: uses inline Processor with HashMap_
 [source,java]
 ----
 from("direct:listByLabels").process(new Processor() {
@@ -66,7 +66,7 @@ from("direct:listByLabels").process(new Processor() {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
+                exchange.getIn().setHeader("CamelKubernetesReplicationControllersLabels", labels);
             }
         });
     toF("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllersByLabels").
@@ -77,7 +77,7 @@ This operation returns a list of RCs from your cluster using a label selector (w
 
 === Kubernetes Replication Controllers Consumer Example
 
-._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
+._Java-only: uses fromF(), inline Processor class, and string concatenation_
 [source,java]
 ----
 fromF("kubernetes-replication-controllers://%s?oauthToken=%s", host, authToken)
@@ -88,7 +88,7 @@ fromF("kubernetes-replication-controllers://%s?oauthToken=%s", host, authToken)
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             ReplicationController rc = exchange.getIn().getBody(ReplicationController.class);
-            log.info("Got event with replication controller name: " + rc.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with replication controller name: " + rc.getMetadata().getName() + " and action " + in.getHeader("CamelKubernetesEventAction"));
         }
     }
 ----

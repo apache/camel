@@ -87,9 +87,9 @@ your codec. See xref:dataformats:hl7-dataformat.adoc[HL7] that has a custom code
 === Get the IoSession for message
 
 You can get the IoSession from the message header with this key
-`MinaConstants.MINA_IOSESSION`, and also get the local host address
-with the key `MinaConstants.MINA_LOCAL_ADDRESS` and remote host address
-with the key `MinaConstants.MINA_REMOTE_ADDRESS`.
+`CamelMinaIoSession`, and also get the local host address
+with the key `CamelMinaLocalAddress` and remote host address
+with the key `CamelMinaRemoteAddress`.
 
 === Configuring Mina filters
 
@@ -227,7 +227,7 @@ written the `bye` message back to the client:
             public void process(Exchange exchange) throws Exception {
                 String body = exchange.getIn().getBody(String.class);
                 exchange.getOut().setBody("Bye " + body);
-                exchange.getOut().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
+                exchange.getOut().setHeader("CamelMinaCloseSessionWhenComplete", true);
             }
         });
 ----

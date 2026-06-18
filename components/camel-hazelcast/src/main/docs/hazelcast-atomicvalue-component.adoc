@@ -56,8 +56,8 @@ Java::
 [source,java]
 ----
 from("direct:set")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.SET_VALUE))
-    .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("setValue"))
+    .to("hazelcast-atomicvalue:foo");
 ----
 
 XML::
@@ -101,8 +101,8 @@ Java::
 [source,java]
 ----
 from("direct:get")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
-    .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("get"))
+    .to("hazelcast-atomicvalue:foo");
 ----
 
 XML::
@@ -146,8 +146,8 @@ Java::
 [source,java]
 ----
 from("direct:increment")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.INCREMENT))
-    .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("increment"))
+    .to("hazelcast-atomicvalue:foo");
 ----
 
 XML::
@@ -191,8 +191,8 @@ Java::
 [source,java]
 ----
 from("direct:decrement")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DECREMENT))
-    .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("decrement"))
+    .to("hazelcast-atomicvalue:foo");
 ----
 
 XML::
@@ -236,8 +236,8 @@ Java::
 [source,java]
 ----
 from("direct:destroy")
-    .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DESTROY))
-    .toF("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX);
+    .setHeader("CamelHazelcastOperationType", constant("destroy"))
+    .to("hazelcast-atomicvalue:foo");
 ----
 
 XML::
