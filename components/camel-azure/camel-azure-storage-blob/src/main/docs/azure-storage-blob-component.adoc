@@ -117,6 +117,8 @@ If your Camel Application is running behind a firewall or if you need to
 have more control over the `BlobServiceClient` instance configuration, you can
 create your own instance:
 
+._Java-only: programmatic BlobServiceClient setup_
+
 [source,java]
 -----------------------------------------------------------------------
 StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");

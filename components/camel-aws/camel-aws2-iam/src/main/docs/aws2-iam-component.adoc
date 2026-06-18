@@ -126,7 +126,7 @@ Java::
 [source,java]
 ----
 from("direct:createUser")
-    .setHeader(IAM2Constants.USERNAME, constant("camel"))
+    .setHeader("CamelAwsIAMUsername", constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser");
 ----
 
@@ -171,7 +171,7 @@ Java::
 [source,java]
 ----
 from("direct:deleteUser")
-    .setHeader(IAM2Constants.USERNAME, constant("camel"))
+    .setHeader("CamelAwsIAMUsername", constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteUser");
 ----
 
@@ -254,7 +254,7 @@ Java::
 [source,java]
 ----
 from("direct:createGroup")
-    .setHeader(IAM2Constants.GROUP_NAME, constant("camel"))
+    .setHeader("CamelAwsIAMGroupName", constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createGroup");
 ----
 
@@ -299,7 +299,7 @@ Java::
 [source,java]
 ----
 from("direct:deleteGroup")
-    .setHeader(IAM2Constants.GROUP_NAME, constant("camel"))
+    .setHeader("CamelAwsIAMGroupName", constant("camel"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup");
 ----
 
@@ -384,8 +384,8 @@ Java::
 [source,java]
 ----
 from("direct:createRole")
-    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
-    .setHeader(IAM2Constants.ASSUME_ROLE_POLICY_DOCUMENT, constant("{...}"))
+    .setHeader("CamelAwsIAMRoleName", constant("myRole"))
+    .setHeader("CamelAwsIAMAssumeRolePolicyDocument", constant("{...}"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createRole");
 ----
 
@@ -436,7 +436,7 @@ Java::
 [source,java]
 ----
 from("direct:deleteRole")
-    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .setHeader("CamelAwsIAMRoleName", constant("myRole"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteRole");
 ----
 
@@ -481,7 +481,7 @@ Java::
 [source,java]
 ----
 from("direct:getRole")
-    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .setHeader("CamelAwsIAMRoleName", constant("myRole"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getRole");
 ----
 
@@ -566,8 +566,8 @@ Java::
 [source,java]
 ----
 from("direct:createPolicy")
-    .setHeader(IAM2Constants.POLICY_NAME, constant("myPolicy"))
-    .setHeader(IAM2Constants.POLICY_DOCUMENT, constant("{...}"))
+    .setHeader("CamelAwsIAMPolicyName", constant("myPolicy"))
+    .setHeader("CamelAwsIAMPolicyDocument", constant("{...}"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createPolicy");
 ----
 
@@ -618,7 +618,7 @@ Java::
 [source,java]
 ----
 from("direct:deletePolicy")
-    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .setHeader("CamelAwsIAMPolicyArn", constant("arn:aws:iam::123456789012:policy/myPolicy"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deletePolicy");
 ----
 
@@ -663,7 +663,7 @@ Java::
 [source,java]
 ----
 from("direct:getPolicy")
-    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .setHeader("CamelAwsIAMPolicyArn", constant("arn:aws:iam::123456789012:policy/myPolicy"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getPolicy");
 ----
 
@@ -748,8 +748,8 @@ Java::
 [source,java]
 ----
 from("direct:attachUserPolicy")
-    .setHeader(IAM2Constants.USERNAME, constant("camel"))
-    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .setHeader("CamelAwsIAMUsername", constant("camel"))
+    .setHeader("CamelAwsIAMPolicyArn", constant("arn:aws:iam::123456789012:policy/myPolicy"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=attachUserPolicy");
 ----
 
@@ -800,8 +800,8 @@ Java::
 [source,java]
 ----
 from("direct:detachUserPolicy")
-    .setHeader(IAM2Constants.USERNAME, constant("camel"))
-    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .setHeader("CamelAwsIAMUsername", constant("camel"))
+    .setHeader("CamelAwsIAMPolicyArn", constant("arn:aws:iam::123456789012:policy/myPolicy"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=detachUserPolicy");
 ----
 
@@ -852,8 +852,8 @@ Java::
 [source,java]
 ----
 from("direct:attachGroupPolicy")
-    .setHeader(IAM2Constants.GROUP_NAME, constant("myGroup"))
-    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .setHeader("CamelAwsIAMGroupName", constant("myGroup"))
+    .setHeader("CamelAwsIAMPolicyArn", constant("arn:aws:iam::123456789012:policy/myPolicy"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=attachGroupPolicy");
 ----
 
@@ -904,8 +904,8 @@ Java::
 [source,java]
 ----
 from("direct:detachGroupPolicy")
-    .setHeader(IAM2Constants.GROUP_NAME, constant("myGroup"))
-    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .setHeader("CamelAwsIAMGroupName", constant("myGroup"))
+    .setHeader("CamelAwsIAMPolicyArn", constant("arn:aws:iam::123456789012:policy/myPolicy"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=detachGroupPolicy");
 ----
 
@@ -956,8 +956,8 @@ Java::
 [source,java]
 ----
 from("direct:attachRolePolicy")
-    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
-    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .setHeader("CamelAwsIAMRoleName", constant("myRole"))
+    .setHeader("CamelAwsIAMPolicyArn", constant("arn:aws:iam::123456789012:policy/myPolicy"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=attachRolePolicy");
 ----
 
@@ -1008,8 +1008,8 @@ Java::
 [source,java]
 ----
 from("direct:detachRolePolicy")
-    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
-    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .setHeader("CamelAwsIAMRoleName", constant("myRole"))
+    .setHeader("CamelAwsIAMPolicyArn", constant("arn:aws:iam::123456789012:policy/myPolicy"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=detachRolePolicy");
 ----
 
@@ -1062,7 +1062,7 @@ Java::
 [source,java]
 ----
 from("direct:createInstanceProfile")
-    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
+    .setHeader("CamelAwsIAMInstanceProfileName", constant("myInstanceProfile"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createInstanceProfile");
 ----
 
@@ -1107,7 +1107,7 @@ Java::
 [source,java]
 ----
 from("direct:deleteInstanceProfile")
-    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
+    .setHeader("CamelAwsIAMInstanceProfileName", constant("myInstanceProfile"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteInstanceProfile");
 ----
 
@@ -1152,7 +1152,7 @@ Java::
 [source,java]
 ----
 from("direct:getInstanceProfile")
-    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
+    .setHeader("CamelAwsIAMInstanceProfileName", constant("myInstanceProfile"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getInstanceProfile");
 ----
 
@@ -1235,8 +1235,8 @@ Java::
 [source,java]
 ----
 from("direct:addRoleToInstanceProfile")
-    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
-    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .setHeader("CamelAwsIAMInstanceProfileName", constant("myInstanceProfile"))
+    .setHeader("CamelAwsIAMRoleName", constant("myRole"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=addRoleToInstanceProfile");
 ----
 
@@ -1287,8 +1287,8 @@ Java::
 [source,java]
 ----
 from("direct:removeRoleFromInstanceProfile")
-    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
-    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .setHeader("CamelAwsIAMInstanceProfileName", constant("myInstanceProfile"))
+    .setHeader("CamelAwsIAMRoleName", constant("myRole"))
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=removeRoleFromInstanceProfile");
 ----
 
@@ -1334,6 +1334,8 @@ YAML::
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as a body.
 In AWS IAM, there are multiple operations you can submit, as an example for Create User request, you can do something like:
+
+._Java-only: requires AWS SDK builder_
 
 [source,java]
 --------------------------
