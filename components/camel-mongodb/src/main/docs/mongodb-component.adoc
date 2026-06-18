@@ -698,8 +698,7 @@ Object result = template.requestBodyAndHeaders("direct:update", updateObj, heade
 // route: from("direct:update").to("mongodb:myDb?database=science&collection=notableScientists&operation=update");
 String updateObj = "[{\"filterField\": true}, {\"$set\", {\"scientist\", \"Darwin\"}}]";
 Object result = template.requestBodyAndHeader("direct:update", updateObj, "CamelMongoDbMultiUpdate", true);
-
-------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 ==== Delete operations
 
