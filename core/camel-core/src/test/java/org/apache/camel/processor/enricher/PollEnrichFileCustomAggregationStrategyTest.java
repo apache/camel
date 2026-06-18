@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.enricher;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -39,8 +41,8 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
 
         context.getRouteController().startAllRoutes();
 
-        log.info("Sleeping for 0.5 sec before writing enrichdata file");
-        Thread.sleep(500);
+        getMockEndpoint("mock:start").await(10, TimeUnit.SECONDS);
+        log.info("mock:start satisfied, writing enrichdata file");
         template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
                 Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
