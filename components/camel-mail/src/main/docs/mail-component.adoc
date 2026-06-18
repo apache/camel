@@ -655,6 +655,7 @@ Expression in the route as shown below:
 If you use XML DSL, then you need to declare a method call expression in
 the Splitter as shown below
 
+._XML-only: `method` expression with `beanType` attribute is XML DSL specific_
 [source,xml]
 ----
 <split>
@@ -683,6 +684,18 @@ to filter out unwanted mails.
 For example, to filter mails to contain Camel in either Subject or Text,
 you can do as follows:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("imaps://mymailseerver?username=foo&password=secret&searchTerm.subjectOrBody=Camel")
+    .to("bean:myBean");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -690,6 +703,23 @@ you can do as follows:
   <to uri="bean:myBean"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: imaps://mymailseerver
+      parameters:
+        username: foo
+        password: secret
+        searchTerm.subjectOrBody: Camel
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
 
 Notice we use the `"searchTerm.subjectOrBody"` as a parameter key to
 indicate that we want to search on mail subject or body, to contain the
@@ -700,6 +730,18 @@ number of options you can configure:
 Or to get the new unseen emails going 24 hours back in time, you can do.
 Notice the "now-24h" syntax. See the table below for more details.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("imaps://mymailseerver?username=foo&password=secret&searchTerm.fromSentDate=now-24h")
+    .to("bean:myBean");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -708,11 +750,40 @@ Notice the "now-24h" syntax. See the table below for more details.
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: imaps://mymailseerver
+      parameters:
+        username: foo
+        password: secret
+        searchTerm.fromSentDate: now-24h
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
+
 You can have multiple searchTerm in the endpoint uri configuration. They
 would then be combined using the `AND` operator, e.g., so both
 conditions must match. For example, to get the last unseen emails going
 back 24 hours which has Camel in the mail subject you can do:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("imaps://mymailseerver?username=foo&password=secret&searchTerm.subject=Camel&searchTerm.fromSentDate=now-24h")
+    .to("bean:myBean");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -721,9 +792,28 @@ back 24 hours which has Camel in the mail subject you can do:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: imaps://mymailseerver
+      parameters:
+        username: foo
+        password: secret
+        searchTerm.subject: Camel
+        searchTerm.fromSentDate: now-24h
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
+
 The `SimpleSearchTerm` is designed to be easily configurable from a
 POJO, so you can also configure it using a <bean> style in XML
 
+._XML-only: Spring `<bean>` configuration for `SimpleSearchTerm`_
 [source,xml]
 ----
 <bean id="mySearchTerm" class="org.apache.camel.component.mail.SimpleSearchTerm">
@@ -736,6 +826,18 @@ POJO, so you can also configure it using a <bean> style in XML
 You can then refer to this bean, using #beanId in your Camel route as
 shown:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("imaps://mymailseerver?username=foo&password=secret&searchTerm=#mySearchTerm")
+    .to("bean:myBean");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -743,6 +845,23 @@ shown:
   <to uri="bean:myBean"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: imaps://mymailseerver
+      parameters:
+        username: foo
+        password: secret
+        searchTerm: "#mySearchTerm"
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
 
 In Java there is a builder class to build compound
 `SearchTerms` using the `org.apache.camel.component.mail.SearchTermBuilder`

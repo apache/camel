@@ -858,6 +858,7 @@ CREATE TABLE aggregationRepo3_completed (
 
 And then configure the repository to enable this behavior as shown below:
 
+._XML-only: Spring bean declaration for `JdbcAggregationRepository` with text storage_
 [source,xml]
 ----
 <bean id="repo3"
@@ -915,6 +916,7 @@ your database system, it can be injected with the `lobHandler` property.
 
 Here is the declaration for Oracle:
 
+._XML-only: Spring bean declarations for Oracle `LobHandler` and `JdbcAggregationRepository`_
 [source,xml]
 ----
 <bean id="lobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler">
@@ -968,6 +970,7 @@ optimistic locking error.
 Here is an example, where we define two extra FQN class names from the
 JDBC vendor.
 
+._XML-only: Spring bean declarations for `JdbcAggregationRepository` with custom optimistic locking exception mapper_
 [source,xml]
 ----
 <bean id="repo"
@@ -998,6 +1001,8 @@ common `PlatformTransactionManager` used, there may be a need to configure _prop
 transaction templates inside `JdbcAggregationRepository`.
 
 Here's a way to do it:
+
+._XML-only: Spring bean declaration for `JdbcAggregationRepository` with propagation behavior_
 [source,xml]
 ----
 <bean id="repo"

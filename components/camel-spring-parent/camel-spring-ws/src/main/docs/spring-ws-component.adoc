@@ -243,21 +243,51 @@ The header transformation filter (`HeaderTransformationMessageFilter`)
 can be used to transform the soap header for a soap request. If you want to use 
 the header transformation filter, see the below example:
 
+._XML-only: Spring bean definition for HeaderTransformationMessageFilter_
 [source,xml]
 ----
 <bean id="headerTransformationFilter" class="org.apache.camel.component.spring.ws.filter.impl.HeaderTransformationMessageFilter">
     <constructor-arg index="0" value="org/apache/camel/component/spring/ws/soap-header-transform.xslt"/>
 </bean>
 ----
-Use the bead defined above in the camel endpoint
+Use the bean defined above in the camel endpoint
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:stockQuoteWebserviceHeaderTransformation")
+    .to("spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&soapAction=http://www.stockquotes.edu/GetQuote&messageFilter=#headerTransformationFilter");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
     <from uri="direct:stockQuoteWebserviceHeaderTransformation"/>
     <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;messageFilter=#headerTransformationFilter"/>
-</route> 
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:stockQuoteWebserviceHeaderTransformation
+      steps:
+        - to:
+            uri: spring-ws:http://localhost
+            parameters:
+              webServiceTemplate: "#webServiceTemplate"
+              soapAction: "http://www.stockquotes.edu/GetQuote"
+              messageFilter: "#headerTransformationFilter"
+----
+====
 
 
 === The custom header and attachment filtering
@@ -616,6 +646,7 @@ of annotations.
 
 An example of a route using `beanname`:
 
+._XML-only: Spring XML with legacy endpoint mapping and CamelEndpointDispatcher beans_
 [source,xml]
 ----
 <camelContext xmlns="http://camel.apache.org/schema/spring">

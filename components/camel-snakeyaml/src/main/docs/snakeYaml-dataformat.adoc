@@ -102,6 +102,7 @@ When using Data Format in Spring DSL, you need to
 declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
+._XML-only: Spring XML data format definitions with type filters_
 [source,xml]
 ----
 <dataFormats>
@@ -129,6 +130,7 @@ tag.
 
 And then you can refer to those ids in the route:
 
+._XML-only: routes referencing pre-defined data format beans_
 [source,xml]
 ----
   <route>

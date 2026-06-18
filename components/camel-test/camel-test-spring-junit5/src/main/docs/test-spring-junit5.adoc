@@ -172,6 +172,7 @@ the example above loads the file `com/foo/CamelSpringPlainTest-context.xml`.
 
 This XML file is Spring XML file as shown:
 
+._XML-only: Spring XML context file with Camel route definition_
 [source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>

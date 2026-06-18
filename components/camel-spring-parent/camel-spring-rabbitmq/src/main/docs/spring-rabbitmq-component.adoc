@@ -66,6 +66,18 @@ TIP: It is recommended to use `CachingConnectionFactory` from spring-rabbit as i
 
 The `ConnectionFactory` is auto-detected by default, so you can do:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:cheese")
+    .to("spring-rabbitmq:foo?routingKey=cheese");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -75,6 +87,21 @@ The `ConnectionFactory` is auto-detected by default, so you can do:
   </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:cheese
+      steps:
+        - to:
+            uri: spring-rabbitmq:foo
+            parameters:
+              routingKey: cheese
+----
+====
 
 === Default Exchange Name
 

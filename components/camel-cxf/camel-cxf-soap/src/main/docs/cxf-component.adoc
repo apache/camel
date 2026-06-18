@@ -319,7 +319,7 @@ headers is required, please use `PAYLOAD` mode or plug in a (pretty
 straightforward) CXF interceptor/JAXWS Handler to the CXF endpoint.
 Here is an example of configuring the `CxfHeaderFilterStrategy`.
 
-
+._XML-only: Spring bean definition for CxfHeaderFilterStrategy_
 [source,xml]
 ----
 <bean id="dropAllMessageHeadersStrategy" class="org.apache.camel.component.cxf.transport.header.CxfHeaderFilterStrategy">
@@ -332,6 +332,18 @@ Here is an example of configuring the `CxfHeaderFilterStrategy`.
 
 Then, your endpoint can reference the `CxfHeaderFilterStrategy`:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("cxf:bean:routerNoRelayEndpoint?headerFilterStrategy=#dropAllMessageHeadersStrategy")
+    .to("cxf:bean:serviceNoRelayEndpoint?headerFilterStrategy=#dropAllMessageHeadersStrategy");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -339,6 +351,23 @@ Then, your endpoint can reference the `CxfHeaderFilterStrategy`:
     <to uri="cxf:bean:serviceNoRelayEndpoint?headerFilterStrategy=#dropAllMessageHeadersStrategy"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: cxf:bean:routerNoRelayEndpoint
+      parameters:
+        headerFilterStrategy: "#dropAllMessageHeadersStrategy"
+      steps:
+        - to:
+            uri: cxf:bean:serviceNoRelayEndpoint
+            parameters:
+              headerFilterStrategy: "#dropAllMessageHeadersStrategy"
+----
+====
 
 * You can plug in your own `MessageHeaderFilter` implementations overriding
 or adding additional ones to the list of relays. To override a
@@ -442,6 +471,7 @@ tags. When you are invoking the service endpoint, you can set the
 `CamelCxfOperationName` and `CamelCxfOperationNamespace` headers to explicitly state
 which operation you are calling.
 
+._XML-only: Spring XML configuration with CXF endpoint beans and Camel route_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"

@@ -116,6 +116,21 @@ Here's an example showing some of these functions in use.
 If you prefer to configure your routes in your Spring
 XML file, then you can use XPath expressions as follows
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+Namespaces ns = new Namespaces("foo", "http://example.com/person");
+
+from("activemq:MyQueue")
+    .filter(xpath("/foo:person[@name='James']", ns))
+        .to("mqseries:SomeOtherQueue");
+----
+
+XML::
++
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -136,6 +151,24 @@ XML file, then you can use XPath expressions as follows
   </camelContext>
 </beans>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:MyQueue
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/foo:person[@name='James']"
+            steps:
+              - to:
+                  uri: mqseries:SomeOtherQueue
+----
+====
 
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
 the XPath expression for easier namespace-based XPath expressions.

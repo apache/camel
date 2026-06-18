@@ -317,6 +317,7 @@ of your own `CSVConfig` and/or `CSVStrategy`. Also note that the default
 value of the `autogenColumns` option is true. The following example
 should illustrate this customization.
 
+._XML-only: Spring XML with custom CSVConfig and CSVStrategy beans_
 [source,xml]
 ----
 <route>
@@ -368,8 +369,24 @@ from("direct:start")
 
 *For Camel >= 2.16.5 
 The instruction for CSV Data format to skip headers or first line is the following. 
-Usign the Spring/XML DSL:
+Using the DSL:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+CsvDataFormat csv = new CsvDataFormat();
+csv.setSkipHeaderRecord(true);
+
+from("direct:start")
+    .unmarshal(csv)
+    .to("bean:myCsvHandler?method=doHandleCsv");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -380,6 +397,24 @@ Usign the Spring/XML DSL:
   <to uri="bean:myCsvHandler?method=doHandleCsv" />
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - unmarshal:
+            csv:
+              skipHeaderRecord: true
+        - to:
+            uri: bean:myCsvHandler
+            parameters:
+              method: doHandleCsv
+----
+====
 
 *Since Camel 2.10 and deleted for Camel 2.15*
 

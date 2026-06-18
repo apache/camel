@@ -62,6 +62,7 @@ By default, the SEDA component always instantiates a `LinkedBlockingQueue`,
 but you can use different implementation, you can reference your own
 `BlockingQueue` implementation, in this case the size option is not used:
 
+._XML-only: Spring bean definition for custom BlockingQueue_
 [source,xml]
 ----
 <bean id="arrayQueue" class="java.util.ArrayBlockingQueue">
@@ -80,6 +81,7 @@ Three implementations are provided:
 * `ArrayBlockingQueueFactory`
 * `PriorityBlockingQueueFactory`
 
+._XML-only: Spring bean definition for custom BlockingQueueFactory_
 [source,xml]
 ----
 <bean id="priorityQueueFactory" class="org.apache.camel.component.seda.PriorityBlockingQueueFactory">
