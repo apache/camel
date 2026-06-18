@@ -163,9 +163,11 @@ YAML::
 
 
 === publishAsTemplatedMessage
-Java DSL
+
+._Java-only: requires Java Map variable for template tags_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:triggerRoute")
 .setProperty("CamelHwCloudSmnSubject", constant("This is my subjectline"))
 .setProperty("CamelHwCloudSmnTopic", constant("reji-test"))
@@ -173,7 +175,7 @@ from("direct:triggerRoute")
 .setProperty("CamelHwCloudSmnTemplateTags", constant(tags))
 .setProperty("CamelHwCloudSmnTemplateName", constant("hello-template"))
 .to("hwcloud-smn:publishMessageService?operation=publishAsTemplatedMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
---------------------------------------------------------------------------------
+----
 
 === Using ServiceKey configuration Bean
 
@@ -189,14 +191,16 @@ Check the following code snippets
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----
+._Java-only: requires Java constants and test configuration properties_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:triggerRoute")
  .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Notification Subject"))
- .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME,constant(testConfiguration.getProperty("topic")))
+ .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
  .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
  .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
---------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]
