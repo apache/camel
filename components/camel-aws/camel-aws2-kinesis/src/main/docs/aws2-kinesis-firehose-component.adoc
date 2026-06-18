@@ -25,7 +25,7 @@ at https://aws.amazon.com/kinesis/firehose/[AWS Kinesis Firehose]
 
 == URI Format
 
-[source,java]
+[source,text]
 ----
 aws2-kinesis-firehose://delivery-stream-name[?options]
 ----

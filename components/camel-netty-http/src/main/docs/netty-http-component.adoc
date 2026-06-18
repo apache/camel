@@ -519,6 +519,7 @@ This will cause Camel to fail on startup.
 *Two routes are sharing the same port, but the second route is misconfigured
 and will fail on starting*
 
+._Java-only: demonstrates a misconfiguration that causes startup failure_
 [source,java]
 ----
 from("netty-http:http://0.0.0.0:{{port}}/foo")

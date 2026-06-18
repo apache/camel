@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ----
 arangodb:database[?options]
 ----

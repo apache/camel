@@ -482,6 +482,7 @@ YAML::
 
 And the bean has the following method:
 
+._Java-only: bean class used as expression parameter_
 [source,java]
 ----
 public static class MyIdGenerator {

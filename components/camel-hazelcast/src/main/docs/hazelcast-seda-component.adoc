@@ -33,25 +33,35 @@ specified queue.
 
 [tabs]
 ====
-
-Java DSL::
+Java::
 +
 [source,java]
---------------------------
+----
 from("direct:foo")
-.to("hazelcast-seda:foo");
---------------------------
+    .to("hazelcast-seda:foo");
+----
 
-Spring XML::
+XML::
 +
 [source,xml]
-----------------------------------
+----
 <route>
-   <from uri="direct:start" />
-   <to uri="hazelcast-seda:foo" />
+  <from uri="direct:start"/>
+  <to uri="hazelcast-seda:foo"/>
 </route>
-----------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - to:
+            uri: hazelcast-seda:foo
+----
 ====
 
 == SEDA consumer – from(“hazelcast-seda:foo”)
@@ -61,25 +71,35 @@ the specified queue.
 
 [tabs]
 ====
-
-Java DSL::
+Java::
 +
 [source,java]
---------------------------
+----
 from("hazelcast-seda:foo")
-.to("mock:result");
---------------------------
+    .to("mock:result");
+----
 
-Spring XML::
+XML::
 +
 [source,xml]
------------------------------------
+----
 <route>
-  <from uri="hazelcast-seda:foo" />
-  <to uri="mock:result" />
+  <from uri="hazelcast-seda:foo"/>
+  <to uri="mock:result"/>
 </route>
------------------------------------
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: hazelcast-seda:foo
+      steps:
+        - to:
+            uri: mock:result
+----
 ====
 
 include::spring-boot:partial$starter.adoc[]

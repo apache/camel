@@ -281,6 +281,7 @@ all Spring-WS endpoints
 
 - the local messageFilter directly on the endpoint as follows:
 
+._Java-only: endpoint URI fragment with bean reference_
 [source,java]
 ----
 to("spring-ws:http://yourdomain.com?messageFilter=#myEndpointSpecificMessageFilter");
@@ -428,39 +429,168 @@ define what web service requests are handled by your endpoint:
 The following route will receive all web service requests that have a
 root element named "GetFoo" within the `\http://example.com/` namespace.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointMapping")
     .convertBodyTo(String.class).to("mock:example");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointMapping"/>
+  <convertBodyTo type="String"/>
+  <to uri="mock:example"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "spring-ws:rootqname:{http://example.com/}GetFoo"
+      parameters:
+        endpointMapping: "#endpointMapping"
+      steps:
+        - convertBodyTo:
+            type: String
+        - to:
+            uri: mock:example
+----
+====
+
 The following route will receive web service requests containing the
 `\http://example.com/GetFoo` SOAP action.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("spring-ws:soapaction:http://example.com/GetFoo?endpointMapping=#endpointMapping")
     .convertBodyTo(String.class).to("mock:example");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="spring-ws:soapaction:http://example.com/GetFoo?endpointMapping=#endpointMapping"/>
+  <convertBodyTo type="String"/>
+  <to uri="mock:example"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "spring-ws:soapaction:http://example.com/GetFoo"
+      parameters:
+        endpointMapping: "#endpointMapping"
+      steps:
+        - convertBodyTo:
+            type: String
+        - to:
+            uri: mock:example
+----
+====
+
 The following route will receive all requests sent to
 `\http://example.com/foobar`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("spring-ws:uri:http://example.com/foobar?endpointMapping=#endpointMapping")
     .convertBodyTo(String.class).to("mock:example");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="spring-ws:uri:http://example.com/foobar?endpointMapping=#endpointMapping"/>
+  <convertBodyTo type="String"/>
+  <to uri="mock:example"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "spring-ws:uri:http://example.com/foobar"
+      parameters:
+        endpointMapping: "#endpointMapping"
+      steps:
+        - convertBodyTo:
+            type: String
+        - to:
+            uri: mock:example
+----
+====
+
 The route below will receive requests that contain the element
 `<foobar>abc</foobar>` anywhere inside the message (and the default
 namespace).
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("spring-ws:xpathresult:abc?expression=//foobar&endpointMapping=#endpointMapping")
     .convertBodyTo(String.class).to("mock:example");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="spring-ws:xpathresult:abc?expression=//foobar&amp;endpointMapping=#endpointMapping"/>
+  <convertBodyTo type="String"/>
+  <to uri="mock:example"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "spring-ws:xpathresult:abc"
+      parameters:
+        expression: "//foobar"
+        endpointMapping: "#endpointMapping"
+      steps:
+        - convertBodyTo:
+            type: String
+        - to:
+            uri: mock:example
+----
+====
 
 === Alternative configuration, using existing endpoint mappings
 

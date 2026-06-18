@@ -132,13 +132,9 @@ All https://github.com/thekrakken/java-grok/tree/master/src/main/resources/patte
 Camel Grok DataFormat supports plugable patterns, which are auto loaded from Camel Registry.
 You can register patterns with Java DSL and Spring DSL:
 
-[tabs]
-====
-
-Java DSL::
-+
+._Java-only: registering a custom Grok pattern in a `RouteBuilder`_
 [source,java]
---------------------------------------------------------------------------------
+----
 public class MyRouteBuilder extends RouteBuilder {
 
     @Override
@@ -150,30 +146,19 @@ public class MyRouteBuilder extends RouteBuilder {
             .to("log:out");
     }
 }
---------------------------------------------------------------------------------
+----
 
-Spring XML::
-+
+In Spring XML, you register the custom pattern as a bean:
+
 [source,xml]
---------------------------------------------------------------------------------
+----
 <beans>
     <bean id="myCustomPatternBean" class="org.apache.camel.component.grok.GrokPattern">
         <constructor-arg value="FOOBAR"/>
         <constructor-arg value="foo|bar"/>
     </bean>
-<beans>
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:in"/>
-        <unmarshal>
-            <grok pattern="%{FOOBAR:fooBar}"/>
-        </unmarshal>
-        <to uri="log:out"/>
-    </route>
-</camelContext>
---------------------------------------------------------------------------------
-
-====
+</beans>
+----
 
 == Grok Data format Options
 

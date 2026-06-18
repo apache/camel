@@ -81,10 +81,32 @@ The `ConnectionFactory` is auto-detected by default, so you can do:
 To use default exchange name (which would be an empty exchange name in RabbitMQ) then you should use `default` as name
 in the endpoint uri, such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 to("spring-rabbitmq:default?routingKey=foo")
 ----
+
+XML::
++
+[source,xml]
+----
+<to uri="spring-rabbitmq:default?routingKey=foo"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- to:
+    uri: spring-rabbitmq:default
+    parameters:
+      routingKey: foo
+----
+====
 
 === Auto declare exchanges, queues and bindings
 
@@ -153,6 +175,7 @@ So if we send `World` as message body to _direct:start_ then, we will se the mes
 - `log:input -> World`
 - `log:response -> Hello World`
 
+._Java-only: Java DSL with ExchangePattern.InOut and body().prepend()_
 [source,java]
 ----
 from("direct:start")

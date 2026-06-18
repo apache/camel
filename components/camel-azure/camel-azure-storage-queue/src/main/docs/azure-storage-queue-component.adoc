@@ -116,6 +116,7 @@ If your Camel Application is running behind a firewall or if you need to
 have more control over the `QueueServiceClient` instance configuration, you can
 create your own instance:
 
+._Java-only: programmatic Azure SDK client configuration_
 [source,java]
 ----
 StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");

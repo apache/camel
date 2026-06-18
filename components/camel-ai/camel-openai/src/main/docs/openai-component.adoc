@@ -554,6 +554,11 @@ For full schema validation, integrate with the `camel-json-validator` component 
 === Conversation Memory (Per Exchange)
 
 .Usage example:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:conversation")
@@ -564,6 +569,52 @@ from("direct:conversation")
     .to("openai:chat-completion?conversationMemory=true")
     .log("Second response: ${body}"); // Will remember "Alice"
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:conversation"/>
+  <setBody>
+    <constant>My name is Alice</constant>
+  </setBody>
+  <to uri="openai:chat-completion?conversationMemory=true"/>
+  <log message="First response: ${body}"/>
+  <setBody>
+    <constant>What is my name?</constant>
+  </setBody>
+  <to uri="openai:chat-completion?conversationMemory=true"/>
+  <log message="Second response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:conversation
+      steps:
+        - setBody:
+            constant: "My name is Alice"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              conversationMemory: true
+        - log:
+            message: "First response: ${body}"
+        - setBody:
+            constant: "What is my name?"
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              conversationMemory: true
+        - log:
+            message: "Second response: ${body}"
+----
+====
 
 == Input Handling
 
@@ -722,6 +773,10 @@ YAML::
 
 For two-way authentication, configure both trust store and key store:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -734,10 +789,45 @@ from("direct:chat")
         + "&sslKeyPassword=keypass");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;baseUrl=https://my-llm-server:8443/v1&amp;sslTruststoreLocation=/path/to/truststore.jks&amp;sslTruststorePassword=changeit&amp;sslKeystoreLocation=/path/to/keystore.jks&amp;sslKeystorePassword=changeit&amp;sslKeyPassword=keypass"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              baseUrl: https://my-llm-server:8443/v1
+              sslTruststoreLocation: /path/to/truststore.jks
+              sslTruststorePassword: changeit
+              sslKeystoreLocation: /path/to/keystore.jks
+              sslKeystorePassword: changeit
+              sslKeyPassword: keypass
+----
+====
+
 === Disabling Hostname Verification
 
 In development or test environments, hostname verification can be disabled by setting `sslEndpointAlgorithm` to an empty string or `none`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -747,6 +837,35 @@ from("direct:chat")
         + "&sslTruststorePassword=changeit"
         + "&sslEndpointAlgorithm=none");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;baseUrl=https://localhost:8443/v1&amp;sslTruststoreLocation=/path/to/truststore.jks&amp;sslTruststorePassword=changeit&amp;sslEndpointAlgorithm=none"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              baseUrl: https://localhost:8443/v1
+              sslTruststoreLocation: /path/to/truststore.jks
+              sslTruststorePassword: changeit
+              sslEndpointAlgorithm: none
+----
+====
 
 WARNING: Disabling hostname verification is insecure and should only be used in non-production environments.
 
@@ -779,6 +898,10 @@ This is independent from the inline `<think>...</think>` tag stripping controlle
 * `CamelOpenAIReasoningContent` — from the API-level `reasoning_content` field
 * `CamelOpenAIThinkingContent` — from inline `<think>` tags in the `content` field (requires `stripThinking=true`)
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -788,6 +911,41 @@ from("direct:chat")
     .log("Thinking: ${header.CamelOpenAIThinkingContent}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=qwen3&amp;stripThinking=true"/>
+  <log message="Answer: ${body}"/>
+  <log message="Reasoning: ${header.CamelOpenAIReasoningContent}"/>
+  <log message="Thinking: ${header.CamelOpenAIThinkingContent}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: qwen3
+              stripThinking: true
+        - log:
+            message: "Answer: ${body}"
+        - log:
+            message: "Reasoning: ${header.CamelOpenAIReasoningContent}"
+        - log:
+            message: "Thinking: ${header.CamelOpenAIThinkingContent}"
+----
+====
+
 NOTE: Reasoning content extraction is supported in non-streaming mode only (both simple and agentic/MCP tool loop paths). Streaming responses do not extract reasoning content.
 
 === Mapping Additional Response Fields to Headers
@@ -796,6 +954,10 @@ The `additionalResponseHeader` option allows mapping any extra field from the AP
 
 The key is the field name in the API response, and the value is the Camel header name to set:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -804,6 +966,36 @@ from("direct:chat")
         + "&additionalResponseHeader.custom_field=CamelMyCustomField")
     .log("Custom reasoning: ${header.CamelMyReasoning}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=qwen3&amp;additionalResponseHeader.reasoning_content=CamelMyReasoning&amp;additionalResponseHeader.custom_field=CamelMyCustomField"/>
+  <log message="Custom reasoning: ${header.CamelMyReasoning}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: qwen3
+              additionalResponseHeader.reasoning_content: CamelMyReasoning
+              additionalResponseHeader.custom_field: CamelMyCustomField
+        - log:
+            message: "Custom reasoning: ${header.CamelMyReasoning}"
+----
+====
 
 String-valued fields are set directly. Non-string fields (numbers, booleans, objects) are converted using `toString()`.
 
@@ -871,11 +1063,41 @@ Provider* table below).
 https://lmstudio.ai[LM Studio] serves the model currently loaded in the app. Set `model` to the
 identifier shown in its UI.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
     .to("openai:chat-completion?baseUrl=http://localhost:1234/v1&model=local-model");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?baseUrl=http://localhost:1234/v1&amp;model=local-model"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              baseUrl: http://localhost:1234/v1
+              model: local-model
+----
+====
 
 === vLLM (self-hosted)
 
@@ -887,12 +1109,42 @@ and start the model used in the example below:
 vllm serve meta-llama/Llama-3.1-8B-Instruct --port 8000
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
     .to("openai:chat-completion?baseUrl=http://localhost:8000/v1"
         + "&model=meta-llama/Llama-3.1-8B-Instruct");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?baseUrl=http://localhost:8000/v1&amp;model=meta-llama/Llama-3.1-8B-Instruct"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              baseUrl: http://localhost:8000/v1
+              model: meta-llama/Llama-3.1-8B-Instruct
+----
+====
 
 If vLLM was started with `--api-key`, pass the same value via the `apiKey` option.
 
@@ -908,6 +1160,10 @@ vllm-mlx serve mlx-community/Qwen2.5-7B-Instruct-4bit --port 8000
 https://openrouter.ai[OpenRouter] is an OpenAI-compatible gateway that routes requests across many
 model providers. Set `baseUrl` to its endpoint and select a model with a cross-provider identifier:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -915,6 +1171,33 @@ from("direct:chat")
         + "&apiKey={{openrouter.api.key}}"
         + "&model=anthropic/claude-sonnet-4-20250514");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?baseUrl=https://openrouter.ai/api/v1&amp;apiKey={{openrouter.api.key}}&amp;model=anthropic/claude-sonnet-4-20250514"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              baseUrl: https://openrouter.ai/api/v1
+              apiKey: "{{openrouter.api.key}}"
+              model: anthropic/claude-sonnet-4-20250514
+----
+====
 
 ==== Provider Routing
 
@@ -1216,12 +1499,43 @@ The audio transcription operation works with any OpenAI-compatible server that i
 * https://github.com/ml-explore/mlx-audio[MLX Audio] — `python3 -m mlx_audio.server --host 127.0.0.1 --port 8003`
 
 .Example using MLX Audio for local transcription:
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:transcribe")
     .to("openai:audio-transcription?audioModel=mlx-community/whisper-large-v3-turbo"
         + "&baseUrl=http://localhost:8003/v1");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:transcribe"/>
+  <to uri="openai:audio-transcription?audioModel=mlx-community/whisper-large-v3-turbo&amp;baseUrl=http://localhost:8003/v1"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transcribe
+      steps:
+        - to:
+            uri: openai:audio-transcription
+            parameters:
+              audioModel: mlx-community/whisper-large-v3-turbo
+              baseUrl: http://localhost:8003/v1
+----
+====
 
 [NOTE]
 ====
@@ -1238,6 +1552,10 @@ MCP servers are configured inline on the endpoint URI using the `mcpServer.` pre
 
 ==== Streamable HTTP Transport
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -1246,8 +1564,39 @@ from("direct:chat")
         + "&mcpServer.api.url=http://localhost:9090/mcp");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;mcpServer.api.transportType=streamableHttp&amp;mcpServer.api.url=http://localhost:9090/mcp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              mcpServer.api.transportType: streamableHttp
+              mcpServer.api.url: http://localhost:9090/mcp
+----
+====
+
 ==== SSE Transport (Deprecated)
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -1256,8 +1605,39 @@ from("direct:chat")
         + "&mcpServer.weather.url=http://localhost:8080");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;mcpServer.weather.transportType=sse&amp;mcpServer.weather.url=http://localhost:8080"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              mcpServer.weather.transportType: sse
+              mcpServer.weather.url: http://localhost:8080
+----
+====
+
 ==== Stdio Transport
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -1266,6 +1646,34 @@ from("direct:chat")
         + "&mcpServer.fs.command=npx"
         + "&mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;mcpServer.fs.transportType=stdio&amp;mcpServer.fs.command=npx&amp;mcpServer.fs.args=-y,@modelcontextprotocol/server-filesystem,/tmp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              mcpServer.fs.transportType: stdio
+              mcpServer.fs.command: npx
+              mcpServer.fs.args: "-y,@modelcontextprotocol/server-filesystem,/tmp"
+----
+====
 
 ==== Multiple MCP Servers
 
@@ -1320,6 +1728,10 @@ The `maxToolIterations` option (default: 50) prevents infinite loops. If exceede
 
 Set `autoToolExecution=false` to disable the agentic loop and receive raw tool calls in the message body instead:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -1329,6 +1741,37 @@ from("direct:chat")
         + "&mcpServer.api.url=http://localhost:9090/mcp")
     .log("Tool calls: ${body}"); // body is the raw tool calls list
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;autoToolExecution=false&amp;mcpServer.api.transportType=streamableHttp&amp;mcpServer.api.url=http://localhost:9090/mcp"/>
+  <log message="Tool calls: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              autoToolExecution: false
+              mcpServer.api.transportType: streamableHttp
+              mcpServer.api.url: http://localhost:9090/mcp
+        - log:
+            message: "Tool calls: ${body}"
+----
+====
 
 === Manual Tool Loop with `tool-execution` Operation
 
@@ -1513,6 +1956,10 @@ NOTE: When `systemMessage` is set and `conversationMemory` is enabled, the conve
 
 When using the Streamable HTTP transport, the component advertises MCP protocol versions during initialization. By default, the SDK's built-in versions are used. If your MCP server does not support the latest protocol version, you can restrict the advertised versions:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -1521,6 +1968,34 @@ from("direct:chat")
         + "&mcpServer.api.url=http://localhost:9090/mcp"
         + "&mcpProtocolVersions=2024-11-05,2025-03-26,2025-06-18");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;mcpServer.api.transportType=streamableHttp&amp;mcpServer.api.url=http://localhost:9090/mcp&amp;mcpProtocolVersions=2024-11-05,2025-03-26,2025-06-18"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              mcpServer.api.transportType: streamableHttp
+              mcpServer.api.url: http://localhost:9090/mcp
+              mcpProtocolVersions: "2024-11-05,2025-03-26,2025-06-18"
+----
+====
 
 === MCP Connection Recovery
 
@@ -1535,6 +2010,10 @@ This handles scenarios where an MCP server restarts, a network connection drops,
 
 Set `mcpReconnect=false` to disable automatic recovery:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -1543,6 +2022,34 @@ from("direct:chat")
         + "&mcpServer.api.transportType=streamableHttp"
         + "&mcpServer.api.url=http://localhost:9090/mcp");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="openai:chat-completion?model=gpt-4&amp;mcpReconnect=false&amp;mcpServer.api.transportType=streamableHttp&amp;mcpServer.api.url=http://localhost:9090/mcp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              mcpReconnect: false
+              mcpServer.api.transportType: streamableHttp
+              mcpServer.api.url: http://localhost:9090/mcp
+----
+====
 
 === Error Handling in the Agentic Loop
 

@@ -202,15 +202,48 @@ public void doHandleCsvData(List<List<String>> csvData)
 
 ... your route then looks as follows
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///some/path/to/pickup/csvfiles?delete=true&delay=10000")
+    .unmarshal().csv()
+    .to("bean:myCsvHandler?method=doHandleCsvData");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
-        <!-- poll every 10 seconds -->
-        <from uri="file:///some/path/to/pickup/csvfiles?delete=true&amp;delay=10000" />
-        <unmarshal><csv /></unmarshal>
-        <to uri="bean:myCsvHandler?method=doHandleCsvData" />
+  <!-- poll every 10 seconds -->
+  <from uri="file:///some/path/to/pickup/csvfiles?delete=true&amp;delay=10000"/>
+  <unmarshal><csv/></unmarshal>
+  <to uri="bean:myCsvHandler?method=doHandleCsvData"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:///some/path/to/pickup/csvfiles
+      parameters:
+        delete: true
+        delay: 10000
+      steps:
+        - unmarshal:
+            csv: {}
+        - to:
+            uri: bean:myCsvHandler
+            parameters:
+              method: doHandleCsvData
+----
+====
 
 === Marshaling with a pipe as delimiter
 Considering the following body:

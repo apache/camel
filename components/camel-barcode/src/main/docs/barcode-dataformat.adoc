@@ -26,7 +26,7 @@ If you use maven, you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
-[source,java]
+[source,xml]
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>

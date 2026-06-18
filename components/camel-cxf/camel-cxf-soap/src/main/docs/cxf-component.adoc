@@ -225,10 +225,7 @@ is removed in `RAW` mode), you have to configure
 `LoggingOutInterceptor` to be run during the `WRITE` phase. The
 following is an example.
 
-[tabs]
-====
-Java (Quarkus)::
-+
+._Java-only: configuring `LoggingOutInterceptor` in the WRITE phase for RAW mode_
 [source,java]
 ----
 import java.util.List;
@@ -256,8 +253,8 @@ CxfEndpoint soapMtomEnabledServerPayloadModeEndpoint() {
 }
 ----
 
-XML (Spring)::
-+
+The same configuration in Spring XML:
+
 [source,xml]
 ----
 <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
@@ -275,7 +272,6 @@ XML (Spring)::
     </cxf:properties>
 </cxf:cxfEndpoint>
 ----
-====
 
 === Description of CxfHeaderFilterStrategy options
 
@@ -411,6 +407,7 @@ Error:sendSms: SoapFault exception: [Client] looks like we got no XML document i
 To resolve this issue, you need to tell `StaxOutInterceptor` to
 write the XML start document for you, as in the https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/WriteXmlDeclarationInterceptor.java[WriteXmlDeclarationInterceptor] below:
 
+._Java-only: CXF interceptor to force XML declaration in response_
 [source,java]
 ----
 public class WriteXmlDeclarationInterceptor extends AbstractPhaseInterceptor<SoapMessage> {
@@ -428,6 +425,7 @@ public class WriteXmlDeclarationInterceptor extends AbstractPhaseInterceptor<Soa
 
 As an alternative, you can add a message header for it as demonstrated in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfConsumerTest.java#L62[CxfConsumerTest]:
 
+._Java-only: forcing XML declaration via response context header_
 [source,java]
 ----
  // set up the response context which force start document
@@ -580,7 +578,7 @@ operation parameters.
 
 Having simple java web service interface:
 
-
+._Java-only: JAX-WS web service interface definition_
 [source,java]
 ----
 package org.apache.camel.component.cxf.soap.server;
@@ -633,6 +631,7 @@ list.
 If you want to get the object array from the message body, you can get
 the body using `message.getBody(Object[].class)`, as shown in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfProducerRouterTest.java#L117[CxfProducerRouterTest.testInvokingSimpleServerWithParams]:
 
+._Java-only: preparing and sending a POJO mode request with `ProducerTemplate`_
 [source,java]
 ----
 Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
@@ -666,6 +665,7 @@ for SOAP message headers and the SOAP body.
 
 See https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfConsumerPayloadTest.java#L68[CxfConsumerPayloadTest]:
 
+._Java-only: consuming and processing CXF PAYLOAD with `CxfPayload` API_
 [source,java]
 ----
 protected RouteBuilder createRouteBuilder() {
@@ -777,6 +777,7 @@ The only difference between the two processors is setting the direction of the i
 
 You can find the `InsertResponseOutHeaderProcessor` example in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-soap/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java#L731[CxfMessageHeadersRelayTest]:
 
+._Java-only: Processor that inserts an out-of-band SOAP header into the response_
 [source,java]
 ----
 public static class InsertResponseOutHeaderProcessor implements Processor {
@@ -812,6 +813,7 @@ headers).
 
 For example, see https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfPayLoadSoapHeaderTest.java#L53[CxfPayLoadSoapHeaderTest]:
 
+._Java-only: accessing SOAP headers from `CxfPayload` in PAYLOAD mode_
 [source,java]
 ----
 from(getRouterEndpointURI()).process(new Processor() {
@@ -869,6 +871,7 @@ may need to throw the SOAP Fault from the camel context. +
 `POJO`, `PAYLOAD` and `RAW` data format. +
  You can define the soap fault as shown in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfCustomizedExceptionTest.java#L65[CxfCustomizedExceptionTest]:
 
+._Java-only: creating a `SoapFault` with detail text_
 [source,java]
 ----
 SOAP_FAULT = new SoapFault(EXCEPTION_MESSAGE, SoapFault.FAULT_CODE_CLIENT);
@@ -880,6 +883,7 @@ detail.appendChild(tn);
 
 Then throw it as you like:
 
+._Java-only: setting a SOAP fault on the route using `setFaultBody`_
 [source,java]
 ----
 from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
@@ -912,6 +916,7 @@ If you are using a Camel CXF endpoint producer to
 invoke the outside web service, you can set the request context and get
 response context with the following code:
 
+._Java-only: setting request context and reading response context via `ProducerTemplate`_
 [source,java]
 ----
 CxfExchange exchange = (CxfExchange)template.send(getJaxwsEndpointUri(), new Processor() {
@@ -947,6 +952,7 @@ Since attachments are marshalled and unmarshalled into POJOs, the attachments sh
 retrieved from the Apache Camel message body (as a parameter list), and it isn't
 possible to retrieve attachments by Camel Message API
 
+._Java-only: retrieving an attachment by ID from the exchange_
 [source,java]
 ----
 DataHandler handler = Exchange.getIn(AttachmentMessage.class).getAttachment("id");
@@ -1020,6 +1026,7 @@ XML (Spring)::
 
 You can produce a Camel message with attachment to send to a CXF endpoint in Payload mode.
 
+._Java-only: sending and receiving MTOM attachments via `ProducerTemplate`_
 [source,java]
 ----
 Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint", new Processor() {
@@ -1075,6 +1082,7 @@ assertEquals(300, image.getHeight());
 You can also consume a Camel message received from a CXF endpoint in Payload mode.
 The https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-soap/src/test/java/org/apache/camel/component/cxf/mtom/CxfMtomConsumerPayloadModeTest.java#L97[CxfMtomConsumerPayloadModeTest] illustrates how this works:
 
+._Java-only: Processor that verifies and responds to MTOM requests_
 [source,java]
 ----
 public static class MyProcessor implements Processor {
