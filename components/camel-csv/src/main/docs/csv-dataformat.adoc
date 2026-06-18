@@ -47,6 +47,7 @@ CSV payload.
 
 Considering the following body:
 
+._Java-only: Java collection API_
 [source,java]
 -------------------------------------------------------
 Map<String, Object> body = new LinkedHashMap<>();
@@ -165,6 +166,7 @@ YAML::
 
 The resulting message will contain a `List<List<String>>` like...
 
+._Java-only: Java collection API_
 [source,java]
 --------------------------------------------------------------------------------------------------------------
 List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
@@ -188,6 +190,7 @@ Given a bean which can handle the incoming data...
 
 *MyCsvHandler.java*
 
+._Java-only: Java handler class_
 [source,java]
 -------------------------------------------------------
 // Some comments here
@@ -212,12 +215,13 @@ public void doHandleCsvData(List<List<String>> csvData)
 === Marshaling with a pipe as delimiter
 Considering the following body:
 
+._Java-only: Java collection API_
 [source,java]
 -------------------------------------------------------
 Map<String, Object> body = new LinkedHashMap<>();
 body.put("foo", "abc");
 body.put("bar", 123);
-------------------------------------------------------- 
+-------------------------------------------------------
 
 
 And this Java route definition:
@@ -315,6 +319,7 @@ should illustrate this customization.
 You can instruct the CSV Data Format to collect the headers into
 a message header called CamelCsvHeaderRecord.
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
 --------------------------------------------
 CsvDataFormat csv = new CsvDataFormat();
@@ -464,6 +469,7 @@ YAML::
 
 It looks like that
 
+._Java-only: Java programmatic configuration_
 [source,java]
 --------------------------------------
 CSVConfig csvConfig = new CSVConfig();
