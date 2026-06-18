@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -55,6 +56,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
+        mock.await(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
     }
 
@@ -75,6 +77,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
+        mock.await(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
     }
 
@@ -95,6 +98,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
+        mock.await(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
     }
 
@@ -115,6 +119,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
+        mock.await(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
     }
 
@@ -135,6 +140,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
+        mock.await(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
     }
 
@@ -161,6 +167,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
+        mock.await(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
     }
 
@@ -192,6 +199,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
+        mock.await(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
     }
 
