@@ -82,8 +82,12 @@ the history in a critical route to help pinpoint where the route is slow.
 
 A route level configuration overrides the global configuration.
 
-To enable in Java:
+To enable per route:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms:cheese")
@@ -92,6 +96,36 @@ from("jms:cheese")
   .to("bean:transform")
   .to("jms:wine");
 ----
+
+XML::
++
+[source,xml]
+----
+<route messageHistory="true">
+  <from uri="jms:cheese"/>
+  <to uri="bean:validate"/>
+  <to uri="bean:transform"/>
+  <to uri="jms:wine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    messageHistory: "true"
+    from:
+      uri: jms:cheese
+      steps:
+        - to:
+            uri: bean:validate
+        - to:
+            uri: bean:transform
+        - to:
+            uri: jms:wine
+----
+====
 
 You can also turn off message history per route:
 
@@ -288,6 +322,7 @@ In this case we can see its the `MyJavaRouteBuilder` class on line 35 that is th
 You can turn off logging Message History with `logExhaustedMessageHistory`
 from the xref:manual::error-handler.adoc[Error Handler] using:
 
+._Java-only: disabling message history logging on the error handler_
 [source,java]
 ----
 errorHandler(defaultErrorHandler().logExhaustedMessageHistory(false));
@@ -362,6 +397,7 @@ route id, processor id, timestamp, and elapsed time it took to process the `Exch
 
 You can access the message history from Java code:
 
+._Java-only: accessing the message history from the Exchange_
 [source,java]
 ----
 List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
@@ -376,6 +412,7 @@ The  Message History format in Camel is controlled by `Java String.format` patte
 
 The defaults are defined in https://github.com/apache/camel/blob/main/core/camel-support/src/main/java/org/apache/camel/support/MessageHelper.java[`MessageHelper.java`]:
 
+._Java-only: default message history format patterns_
 [source,java]
 ----
 private static final String MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
@@ -392,6 +429,7 @@ camel.main.global-options[CamelMessageHistoryOutputFormat] = %-40.40s %-30.30s %
 
 If you want to configure the message format for a specific exchange, you can do it programmatically:
 
+._Java-only: configuring custom message history format on the CamelContext_
 [source,java]
 ----
 camelContext.getGlobalOptions().put(Exchange.MESSAGE_HISTORY_HEADER_FORMAT,

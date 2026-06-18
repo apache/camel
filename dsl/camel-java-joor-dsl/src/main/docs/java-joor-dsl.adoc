@@ -21,6 +21,8 @@ which then are loaded via class loader and behaves as regular Java compiled rout
 
 The following `MyRoute.java` source file:
 
+._Java-only: Java DSL source file for runtime compilation_
+
 .MyRoute.java
 [source,java]
 ----
