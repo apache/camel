@@ -216,6 +216,7 @@ Therefore, all the HTTP endpoints are no longer prefixed with the servlet contex
 
 For example:
 
+._Java-only: platform-http endpoint without servlet context-path_
 [source,java]
 ----
 from("platform-http:myservice")

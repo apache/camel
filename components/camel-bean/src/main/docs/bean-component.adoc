@@ -39,6 +39,7 @@ Endpoint to the bean endpoint as output, such as the *direct* endpoint as input.
 
 Suppose you have the following POJO class to be used by Camel
 
+._Java-only: POJO bean class used by the route_
 [source,java]
 ----
 package com.foo;

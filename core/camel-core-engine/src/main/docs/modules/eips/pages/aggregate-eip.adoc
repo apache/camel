@@ -68,6 +68,7 @@ favor returning the old exchange whenever possible.
 Here are a few example `AggregationStrategy` implementations that should
 help you create your own custom strategy.
 
+._Java-only: example AggregationStrategy implementations_
 [source,java]
 ----
 //simply combines Exchange String body values using '+' as a delimiter
@@ -113,6 +114,7 @@ be used for creating commonly used aggregation strategies without having to crea
 In the route below we group all the exchanges together using
 `GroupedExchangeAggregationStrategy`:
 
+._Java-only: using GroupedExchangeAggregationStrategy_
 [source,java]
 ----
 from("direct:start")
@@ -131,6 +133,7 @@ containing all the incoming Exchanges.
 The output of the aggregator will then contain the exchanges grouped
 together in a list as shown below:
 
+._Java-only: retrieving grouped exchanges from message body_
 [source,java]
 ----
 List<Exchange> grouped = exchange.getMessage().getBody(List.class);
@@ -149,6 +152,7 @@ the message body.
 For example, to aggregate a `List<Integer>` you can extend this class as
 shown below, and implement the `getValue` method:
 
+._Java-only: extending AbstractListAggregationStrategy_
 [source,java]
 ----
 public class MyListOfNumbersStrategy extends AbstractListAggregationStrategy<Integer> {
@@ -166,6 +170,7 @@ be used for creating commonly used aggregation strategies without having to crea
 
 The previous example can also be built using the builder as shown:
 
+._Java-only: using AggregationStrategies builder_
 [source,java]
 ----
 AggregationStrategy agg = AggregationStrategies.flexible(Integer.class)
@@ -245,6 +250,7 @@ to return a `true` value.
 
 When pre-completion is enabled then the `preComplete` method is invoked:
 
+._Java-only: preComplete method signature_
 [source,java]
 ----
 /**
@@ -299,6 +305,7 @@ For example, the following logic will complete the
 group if the message body size is larger than 5. This is done by setting
 the exchange property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
+._Java-only: completing current group from AggregationStrategy_
 [source,java]
 ----
 public final class MyCompletionStrategy implements AggregationStrategy {
@@ -333,6 +340,7 @@ previous groups, and start a new aggregation group.
 This is done by setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`
 on the returned exchange.
 
+._Java-only: completing all previous groups from AggregationStrategy_
 [source,java]
 ----
 public final class MyCompletionStrategy implements AggregationStrategy {
@@ -437,6 +445,7 @@ YAML::
 Then there is API on `AggregateController` to force completion. For
 example, to complete a group with key foo:
 
+._Java-only: forcing completion of a group via AggregateController_
 [source,java]
 ----
 int groups = controller.forceCompletionOfGroup("foo");
@@ -447,6 +456,7 @@ A value of 1 is returned if the foo group existed, otherwise 0 is returned.
 
 There is also a method to complete all groups:
 
+._Java-only: forcing completion of all groups_
 [source,java]
 ----
 int groups = controller.forceCompletionOfAllGroups();
@@ -482,6 +492,7 @@ In the method below, we have only two parameters, so the first parameter is
 the body of the `oldExchange`, and the second is paired to the body of the
 `newExchange`:
 
+._Java-only: bean method with two parameters_
 [source,java]
 ----
 public String append(String existing, String next) {
@@ -494,6 +505,7 @@ the body of the `oldExchange`, and the second is the `Map` of the
 `oldExchange` headers, and the third is paired to the body of the `newExchange`,
 and the fourth parameter is the `Map` of the `newExchange` headers:
 
+._Java-only: bean method with four parameters_
 [source,java]
 ----
 public String append(String existing, Map existingHeaders, String next, Map nextHeaders) {
@@ -503,6 +515,7 @@ public String append(String existing, Map existingHeaders, String next, Map next
 
 And finally, if we have six parameters, that includes the exchange properties:
 
+._Java-only: bean method with six parameters_
 [source,java]
 ----
 public String append(String existing, Map existingHeaders, Map existingProperties,
@@ -513,6 +526,7 @@ public String append(String existing, Map existingHeaders, Map existingPropertie
 
 To use this with the aggregate EIP, we can use a bean with the aggregate logic as follows:
 
+._Java-only: bean class for aggregation_
 [source,java]
 ----
 public class MyBodyAppender {
@@ -587,6 +601,7 @@ YAML::
 
 In Java DSL, you can also provide the bean class type directly:
 
+._Java-only: using AggregationStrategies.bean with class type_
 [source,java]
 ----
 public void configure() throws Exception {
@@ -600,6 +615,7 @@ public void configure() throws Exception {
 And if the bean has only one method, we do not need to specify the name
 of the method:
 
+._Java-only: using AggregationStrategies.bean without method name_
 [source,java]
 ----
 public void configure() throws Exception {
@@ -612,6 +628,7 @@ public void configure() throws Exception {
 
 And the `append` method could be static:
 
+._Java-only: bean class with static method_
 [source,java]
 ----
 public class MyBodyAppender {
@@ -675,6 +692,7 @@ then set the `strategyMethodAllowNull` to `true`.
 When using beans, this can be configured a bit easier using the `beanAllowNull` method
 from `AggregationStrategies` as shown:
 
+._Java-only: using AggregationStrategies.beanAllowNull_
 [source,java]
 ----
 public void configure() throws Exception {
@@ -687,6 +705,7 @@ public void configure() throws Exception {
 Then the `append` method in the bean would need to deal with the
 situation that `newExchange` can be `null`:
 
+._Java-only: bean class handling null values_
 [source,java]
 ----
 public class MyBodyAppender {
@@ -767,6 +786,7 @@ parameter type of the message bodies does not have to be the same.
 For example suppose we want to aggregate from a `com.foo.User` type to a
 `List<String>` that contains the name of the user. We could code a bean as follows:
 
+._Java-only: bean class aggregating different body types_
 [source,java]
 ----
 public final class MyUserAppender {

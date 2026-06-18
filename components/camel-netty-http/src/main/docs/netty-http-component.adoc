@@ -198,13 +198,40 @@ io.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHttpMessag
 The Netty HTTP consumer supports HTTP basic authentication by specifying
 the security realm name to use, as shown below
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=someRealm")
+    .to("direct:secured");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
    <from uri="netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=someRealm"/>
-   ...
+   <to uri="direct:secured"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:{{port}}/foo
+      parameters:
+        securityConfiguration.realm: someRealm
+      steps:
+        - to:
+            uri: direct:secured
+----
+====
 
 The realm name is mandatory to enable basic authentication. By default,
 the JAAS based authenticator is used, which will use the realm name
@@ -255,13 +282,42 @@ necessary, and is therefore public for everyone without logging in
 To use this constraint, we just need to refer to the bean id as shown
 below:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true&securityConfiguration.realm=someRealm&securityConfiguration.securityConstraint=#constraint")
+    .to("direct:secured");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
    <from uri="netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true&amp;securityConfiguration.realm=someRealm&amp;securityConfiguration.securityConstraint=#constraint"/>
-   ...
+   <to uri="direct:secured"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:{{port}}/foo
+      parameters:
+        matchOnUriPrefix: true
+        securityConfiguration.realm: someRealm
+        securityConfiguration.securityConstraint: "#constraint"
+      steps:
+        - to:
+            uri: direct:secured
+----
+====
 
 == Examples
 
@@ -519,6 +575,7 @@ This will cause Camel to fail on startup.
 *Two routes are sharing the same port, but the second route is misconfigured
 and will fail on starting*
 
+._Java-only: demonstrates a misconfiguration that causes startup failure_
 [source,java]
 ----
 from("netty-http:http://0.0.0.0:{{port}}/foo")
@@ -550,23 +607,72 @@ consumers to refer and reuse the same options across all consumers.
 
 And in the routes you refer to this option as shown below
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("netty-http:http://0.0.0.0:{{port}}/foo?bootstrapConfiguration=#nettyHttpBootstrapOptions")
+    .to("direct:foo");
+
+from("netty-http:http://0.0.0.0:{{port}}/bar?bootstrapConfiguration=#nettyHttpBootstrapOptions")
+    .to("direct:bar");
+
+from("netty-http:http://0.0.0.0:{{port}}/beer?bootstrapConfiguration=#nettyHttpBootstrapOptions")
+    .to("direct:beer");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?bootstrapConfiguration=#nettyHttpBootstrapOptions"/>
-  ...
+  <to uri="direct:foo"/>
 </route>
 
 <route>
   <from uri="netty-http:http://0.0.0.0:{{port}}/bar?bootstrapConfiguration=#nettyHttpBootstrapOptions"/>
-  ...
+  <to uri="direct:bar"/>
 </route>
 
 <route>
   <from uri="netty-http:http://0.0.0.0:{{port}}/beer?bootstrapConfiguration=#nettyHttpBootstrapOptions"/>
-  ...
+  <to uri="direct:beer"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:{{port}}/foo
+      parameters:
+        bootstrapConfiguration: "#nettyHttpBootstrapOptions"
+      steps:
+        - to:
+            uri: direct:foo
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:{{port}}/bar
+      parameters:
+        bootstrapConfiguration: "#nettyHttpBootstrapOptions"
+      steps:
+        - to:
+            uri: direct:bar
+- route:
+    from:
+      uri: netty-http:http://0.0.0.0:{{port}}/beer
+      parameters:
+        bootstrapConfiguration: "#nettyHttpBootstrapOptions"
+      steps:
+        - to:
+            uri: direct:beer
+----
+====
 
 === Implementing a reverse proxy
 

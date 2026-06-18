@@ -241,6 +241,7 @@ untrusted producers) could override transport-security settings such as `mail.sm
 This behaviour is now disabled by default. Routes that legitimately rely on per-message
 `mail.smtp.*` headers must opt back in on the endpoint:
 
+._Java-only: opting in to JavaMail session properties from headers_
 [source,java]
 ----
 .to("smtp://mymailserver:1234?useJavaMailSessionPropertiesFromHeaders=true");
@@ -880,6 +881,7 @@ Routes that reference the constant symbolically (for example
 Routes that set or read the header by its literal string value (for example
 `setHeader("irc.sendTo", ...)`) must be updated to use the new value:
 
+._Java-only: updating IRC header literal string values_
 [source,java]
 ----
 // before
@@ -962,6 +964,7 @@ producer-direction routing headers: they are read back on the producer side by
 `DaprConfigurationOptionsProxy` and take precedence over the endpoint-configured
 `pubSubName` / `topic`. Setting them on a consumed exchange caused a route such as
 
+._Java-only: Dapr pubsub route affected by header change_
 [source,java]
 ----
 from("dapr-pubsub:configured-pubsub:configured-topic")
@@ -1162,6 +1165,7 @@ then reads it via `in.getHeader(...)` to dispatch to a specific peer). For
 defence in depth at the trust boundary, route authors should explicitly strip
 these headers from untrusted inbound traffic, for example:
 
+._Java-only: stripping websocket headers from untrusted inbound traffic_
 [source,java]
 ----
 from("jetty:http://0.0.0.0:8080/api")
@@ -1216,6 +1220,7 @@ Routes that set the header by its literal string value (for example
 In particular, the documented `cxfrs` `SimpleConsumer` dispatch idiom that routes
 on the operation name by its literal header name must be updated:
 
+._Java-only: updating CXF operation name header reference_
 [source,java]
 ----
 // before
@@ -1312,6 +1317,7 @@ Routes that set the header by its literal string value (for example
 `setHeader("dns.server", ...)` or `setHeader("term", ...)`) must be updated to
 use the new value:
 
+._Java-only: updating DNS header literal string values_
 [source,java]
 ----
 // before
@@ -1378,6 +1384,7 @@ changes. Routes that set or read the headers by their literal string values
 (for example `setHeader("kafka.OVERRIDE_TOPIC", ...)` or Simple expressions such
 as `${headers[kafka.TOPIC]}`) must be updated to use the new values:
 
+._Java-only: updating Kafka header literal string values_
 [source,java]
 ----
 // before

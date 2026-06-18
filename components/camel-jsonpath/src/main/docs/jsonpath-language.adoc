@@ -418,6 +418,7 @@ TIP: You can also use `variable:` as source prefix to refer to an Exchange varia
 
 The same example in XML DSL would be easier to do:
 
+._XML-only:_
 [source,xml]
 ----
 <route>

@@ -86,6 +86,7 @@ include::partial$dataformat-options.adoc[]
 When using Data Format in Spring DSL, you need to
 declare the data formats first. This is done in the `dataFormats` XML tag:
 
+._XML-only: declaring a named data format in Spring XML_
 [source,xml]
 ----
         <dataFormats>
@@ -97,14 +98,42 @@ declare the data formats first. This is done in the `dataFormats` XML tag:
 
 And then you can refer to this id in the route:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:back")
+    .unmarshal("jack")
+    .to("mock:reverse");
+----
+
+XML::
++
 [source,xml]
 ----
-       <route>
-            <from uri="direct:back"/>
-            <unmarshal><custom ref="jack"/></unmarshal>
-            <to uri="mock:reverse"/>
-        </route>
+<route>
+    <from uri="direct:back"/>
+    <unmarshal><custom ref="jack"/></unmarshal>
+    <to uri="mock:reverse"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:back
+      steps:
+        - unmarshal:
+            ref: jack
+        - to:
+            uri: mock:reverse
+----
+====
 
 === Excluding POJO fields from marshalling
 
@@ -149,17 +178,45 @@ from("direct:inPojoAgeView")
   .marshal().jacksonXml(TestPojoView.class, Views.Age.class);
 ----
 
-And the same in XML DSL:
+And the same in the route DSL:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:inPojoAgeView")
+    .marshal().jacksonXml(TestPojoView.class, Views.Age.class);
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
-<from uri="direct:inPojoAgeView"/>
+    <from uri="direct:inPojoAgeView"/>
     <marshal>
-      <jacksonXml unmarshalType="org.apache.camel.component.jackson3xml.TestPojoView" jsonView="org.apache.camel.component.jackson3xml.Views$Age"/>
+        <jacksonXml unmarshalType="org.apache.camel.component.jackson3xml.TestPojoView"
+                    jsonView="org.apache.camel.component.jackson3xml.Views$Age"/>
     </marshal>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:inPojoAgeView
+      steps:
+        - marshal:
+            jacksonXml:
+              unmarshalType: org.apache.camel.component.jackson3xml.TestPojoView
+              jsonView: org.apache.camel.component.jackson3xml.Views$Age
+----
+====
 
 === Setting serialization include option
 
@@ -189,6 +246,7 @@ format.setInclude("NON_NULL");
 
 Or from XML DSL you configure this as
 
+._XML-only: configuring include option in Spring XML_
 [source,xml]
 ----
 <dataFormats>
@@ -217,6 +275,7 @@ format.setAllowJmsType(true);
 
 Or from XML DSL you configure this as:
 
+._XML-only: configuring allowJmsType in Spring XML_
 [source,xml]
 ----
 <dataFormats>
@@ -245,6 +304,7 @@ format.setUnmarshalType(MyPojo.class);
 And if you use XML DSL then you configure to use a list
 using `useList` attribute as shown below:
 
+._XML-only: configuring useList in Spring XML_
 [source,xml]
 ----
 <dataFormats>
@@ -254,6 +314,7 @@ using `useList` attribute as shown below:
 
 And you can specify the POJO type also
 
+._XML-only: configuring useList with unmarshalType in Spring XML_
 [source,xml]
 ----
 <dataFormats>
@@ -266,6 +327,7 @@ And you can specify the POJO type also
 You can use custom Jackson modules by specifying the class names of
 those using the moduleClassNames option as shown below.
 
+._XML-only: configuring moduleClassNames in Spring XML_
 [source,xml]
 ----
 <dataFormats>
@@ -279,12 +341,13 @@ custom module needs any custom configuration, then an instance of the
 module can be created and configured, and then use modulesRefs to refer
 to the module as shown below:
 
+._XML-only: configuring moduleRefs with bean declaration in Spring XML_
 [source,xml]
 ----
 <bean id="myJacksonModule" class="com.foo.MyModule">
   ... // configure the module as you want
 </bean>
- 
+
 <dataFormats>
     <jacksonXml id="jacksonxml" useList="true" unmarshalType="com.foo.MyPojo" moduleRefs="myJacksonModule"/>
 </dataFormats>
@@ -299,6 +362,7 @@ XmlMapper uses.
 For example, to disable failing on unknown properties
 when marshalling, you can configure this using the disableFeatures:
 
+._XML-only: configuring disableFeatures in Spring XML_
 [source,xml]
 ----
 <dataFormats>
@@ -355,6 +419,7 @@ Otherwise, the default mapper will be used.
 Using the `prettyPrint` option one can output a well-formatted XML while
 marshalling:
 
+._XML-only: configuring prettyPrint in Spring XML_
 [source,xml]
 ----
 <dataFormats>

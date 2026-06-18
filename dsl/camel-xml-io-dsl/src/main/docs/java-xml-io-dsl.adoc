@@ -25,6 +25,8 @@ You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel M
 
 The following `my-route.xml` source file:
 
+._XML-only:_
+
 .my-route.xml
 [source,xml]
 ----

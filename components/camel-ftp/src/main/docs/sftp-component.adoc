@@ -46,6 +46,7 @@ WARNING: By default, the SFTP component has `strictHostKeyChecking=no`, which di
 
 You can configure host key verification settings globally on the SFTP component, which will apply to all SFTP endpoints unless overridden at the endpoint level:
 
+._Java-only: programmatic `SftpComponent` configuration via `CamelContext`_
 [source,java]
 ----
 // Configure component for all SFTP endpoints
@@ -295,6 +296,7 @@ If you need to control the CA signature algorithms that JSch will accept, use th
 
 As of Camel 3.17.0, key types and algorithms that use SHA1 have been deprecated. These can be restored, if necessary, by setting JSch configuration directly. E.g.:
 
+._Java-only: restoring deprecated JSch key types and algorithms_
 [source,java]
 ----
 JSch.setConfig("server_host_key",  JSch.getConfig("server_host_key") + ",ssh-rsa");

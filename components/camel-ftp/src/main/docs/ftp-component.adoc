@@ -554,6 +554,18 @@ And then we can configure our route using the *filter* attribute to
 reference our filter (using `#` notation) that we have defined in the
 spring XML file:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ftp://someuser@someftpserver.com?password=secret&filter=#myFilter")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
    <!-- define our sorter as a plain spring bean -->
@@ -564,6 +576,22 @@ spring XML file:
     <to uri="bean:processInbox"/>
   </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp://someuser@someftpserver.com
+      parameters:
+        password: secret
+        filter: "#myFilter"
+      steps:
+        - to:
+            uri: bean:processInbox
+----
+====
 
 ==== Filtering using ANT path matcher
 
@@ -621,6 +649,18 @@ YAML::
 To use an HTTP proxy to connect to your remote host, you can configure
 your route in the following way:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("sftp://localhost:9999/root?username=admin&password=admin&proxy=#proxy")
+    .to("bean:processFile");
+----
+
+XML::
++
 [source,xml]
 ----
 <!-- define our sorter as a plain spring bean -->
@@ -634,6 +674,23 @@ your route in the following way:
   <to uri="bean:processFile"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sftp://localhost:9999/root
+      parameters:
+        username: admin
+        password: admin
+        proxy: "#proxy"
+      steps:
+        - to:
+            uri: bean:processFile
+----
+====
 
 You can also assign a username and password to the proxy, if necessary.
 Please consult the documentation for `com.jcraft.jsch.Proxy` to discover

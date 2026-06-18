@@ -48,6 +48,7 @@ camel-string-template, camel-chunk, camel-robotframework.
 
 The Java DSL `RouteBuilder` allows referring to a custom language as shown below:
 
+._Java-only: using custom language in a route_
 [source,java]
 ----
 from("direct:start")

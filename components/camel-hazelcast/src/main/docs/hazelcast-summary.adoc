@@ -46,8 +46,9 @@ for this component:
 
 === By its name
 
+._XML-only: Spring bean configuration with Hazelcast instance by name_
 [source,xml]
---------------------------------------------------------------------------------------------------------
+----
 <bean id="hazelcastLifecycle" class="com.hazelcast.core.LifecycleService"
       factory-bean="hazelcastInstance" factory-method="getLifecycleService"
       destroy-method="shutdown" />
@@ -77,12 +78,13 @@ for this component:
         <to uri="seda:out" />
     </route>
 </camelContext>
---------------------------------------------------------------------------------------------------------
+----
 
 === By instance
 
+._XML-only: Spring bean configuration with Hazelcast instance by reference_
 [source,xml]
-------------------------------------------------------------------------------
+----
 <bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast"
       factory-method="newHazelcastInstance" />
 <bean id="hazelcastLifecycle" class="com.hazelcast.core.LifecycleService"
@@ -107,7 +109,7 @@ for this component:
         <to uri="seda:out" />
     </route>
 </camelContext>
-------------------------------------------------------------------------------
+----
 
 === Configuring HazelcastInstance on component
 

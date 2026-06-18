@@ -143,6 +143,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 
 *camel:destination Element*
 
+._XML-only: CXF transport destination configuration with embedded Camel route_
 [source,xml]
 ----
 ...
@@ -191,6 +192,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 
 *http-conf:conduit Element*
 
+._XML-only: CXF transport conduit configuration with embedded Camel route_
 [source,xml]
 ----
 ...
@@ -202,7 +204,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
    </camelContext>
 
   <camel:conduit name="{http://widgets/widgetvendor.net}widgetSOAPPort.camel-conduit" camelContextId="conduit_context" />
-     
+
 
   <camel:conduit name="*.camel-conduit">
   <!-- you can also using the wild card to specify the camel-conduit that you want to configure -->

@@ -20,6 +20,7 @@ works across all DSLs (Java, XML and YAML).
 
 For Java DSL that means code should be changed
 
+._Java-only: Old transform with DataType_
 [source,java]
 ----
 from("direct:start")
@@ -29,6 +30,7 @@ from("direct:start")
 
 to:
 
+._Java-only: New transformDataType EIP_
 [source,java]
 ----
 from("direct:start")

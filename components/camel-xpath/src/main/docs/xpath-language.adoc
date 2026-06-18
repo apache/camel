@@ -116,6 +116,21 @@ Here's an example showing some of these functions in use.
 If you prefer to configure your routes in your Spring
 XML file, then you can use XPath expressions as follows
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+Namespaces ns = new Namespaces("foo", "http://example.com/person");
+
+from("activemq:MyQueue")
+    .filter(xpath("/foo:person[@name='James']", ns))
+        .to("mqseries:SomeOtherQueue");
+----
+
+XML::
++
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -136,6 +151,24 @@ XML file, then you can use XPath expressions as follows
   </camelContext>
 </beans>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:MyQueue
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/foo:person[@name='James']"
+            steps:
+              - to:
+                  uri: mqseries:SomeOtherQueue
+----
+====
 
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
 the XPath expression for easier namespace-based XPath expressions.
@@ -255,6 +288,8 @@ XPath which result type to use.
 
 In Java DSL:
 
+._Java-only: XPath expression builder API_
+
 [source,java]
 ----
 xpath("/foo:person/@id", String.class)
@@ -293,6 +328,8 @@ header's value, you can do this by defining the 'headerName' attribute.
 ----
 
 And in Java DSL you specify the headerName as the second parameter as shown:
+
+._Java-only: XPath expression builder API_
 
 [source,java]
 ----
@@ -392,6 +429,7 @@ in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
 In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,
 in the line with `xmlns:foo="http://example.com/person"`:
 
+._XML-only:_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -616,6 +654,8 @@ scopes. For each discovered prefix, all associated URIs are listed.
 You can enable this option in Java DSL and XML DSL:
 
 Java DSL:
+
+._Java-only: XPathBuilder API_
 
 [source,java]
 ----

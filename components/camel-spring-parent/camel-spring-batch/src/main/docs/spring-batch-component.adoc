@@ -181,6 +181,7 @@ infrastructure.
 For example, the snippet below is configuring Spring Batch to read data from
 JMS queue.
 
+._XML-only: Spring Batch job with CamelItemReader bean_
 [source,xml]
 ----
 <bean id="camelReader" class="org.apache.camel.component.spring.batch.support.CamelItemReader">
@@ -205,6 +206,7 @@ dedicated to write chunk of the processed data.
 For example, the snippet below is configuring Spring Batch to read data from
 JMS queue.
 
+._XML-only: Spring Batch job with CamelItemWriter bean_
 [source,xml]
 ----
 <bean id="camelwriter" class="org.apache.camel.component.spring.batch.support.CamelItemWriter">
@@ -235,6 +237,7 @@ For example, the snippet below performs simple processing of the batch
 item using the http://camel.apache.org/direct.html[Direct endpoint] and
 the http://camel.apache.org/simple.html[Simple expression language].
 
+._XML-only: Spring Batch job with CamelItemProcessor and Camel route_
 [source,xml]
 ----
 <camel:camelContext>
@@ -275,6 +278,7 @@ is set to the `BEFORE` or `AFTER` value.
 The example snippet below sends Spring Batch job execution events to the
 JMS queue.
 
+._XML-only: Spring Batch job with CamelJobExecutionListener_
 [source,xml]
 ----
 <bean id="camelJobExecutionListener" class="org.apache.camel.component.spring.batch.support.CamelJobExecutionListener">

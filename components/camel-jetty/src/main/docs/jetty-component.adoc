@@ -311,6 +311,18 @@ The session support option, `sessionSupport`, can be used to enable a
 `HttpSession` object and access the session object while processing the
 exchange. For example, the following route enables sessions:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:http://0.0.0.0/myapp/myservice/?sessionSupport=true")
+    .process("myCode");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -319,9 +331,25 @@ exchange. For example, the following route enables sessions:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0/myapp/myservice/
+      parameters:
+        sessionSupport: true
+      steps:
+        - process:
+            ref: myCode
+----
+====
+
 The `myCode` Processor can be instantiated by a
 Spring `bean` element:
 
+._XML-only: Spring bean definition for Processor_
 [source,xml]
 ----
 <bean id="myCode" class="com.mycompany.MyCodeProcessor"/>
@@ -375,6 +403,7 @@ jettyComponent.setSslContextParameters(scp);
 [[Jetty-SpringDSLbasedconfigurationofendpoint]]
 Spring DSL based configuration of endpoint
 
+._XML-only: Spring XML configuration for SSL context parameters_
 [source,xml]
 ----
   <camel:sslContextParameters
@@ -397,10 +426,30 @@ Configuring Jetty Directly
 Jetty provides SSL support out of the box. To enable Jetty to run in SSL
 mode, format the URI with the `\https://` prefix---for example:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:https://0.0.0.0/myapp/myservice/");
+----
+
+XML::
++
 [source,xml]
 ----
 <from uri="jetty:https://0.0.0.0/myapp/myservice/"/>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: jetty:https://0.0.0.0/myapp/myservice/
+----
+====
 
 Jetty also needs to know where to load your keystore from and what
 passwords to use to load the correct SSL certificate. Set the
@@ -428,6 +477,7 @@ properties like needClientAuth for mutual authentication requiring a
 client certificate or wantClientAuth for mutual authentication where a
 client doesn't need a certificate but can have one.
 
+._XML-only: Spring bean configuration for Jetty SSL socket connectors_
 [source,xml]
 ----
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -457,6 +507,7 @@ above), you can now configure general properties that apply for all
 SSL socket connectors (that are not explicitly configured as above with
 the port number as entry).
 
+._XML-only: Spring bean configuration for general Jetty SSL properties_
 [source,xml]
 ----
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -491,6 +542,7 @@ above), you can now configure general properties that apply for all
 HTTP socket connectors (that are not explicitly configured as above with
 the port number as entry).
 
+._XML-only: Spring bean configuration for general Jetty HTTP connector properties_
 [source,xml]
 ----
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -516,6 +568,7 @@ property.  This property is not available directly through the endpoint
 configuration, but it can be easily added using the socketConnectors
 property:
 
+._XML-only: Spring bean configuration for Jetty X-Forwarded-For support_
 [source,xml]
 ----
 <bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
@@ -562,6 +615,7 @@ order to change how exceptions are returned:
 We can then create an instance of our binding and register it in the
 Spring registry as follows:
 
+._XML-only: Spring bean definition for custom HttpBinding_
 [source,xml]
 ----
 <bean id="mybinding" class="com.mycompany.MyHttpBinding"/>
@@ -569,6 +623,18 @@ Spring registry as follows:
 
 And then we can reference this binding when we define the route:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:http://0.0.0.0:8080/myapp/myservice?httpBinding=#mybinding")
+    .to("bean:doSomething");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -577,12 +643,28 @@ And then we can reference this binding when we define the route:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:8080/myapp/myservice
+      parameters:
+        httpBinding: "#mybinding"
+      steps:
+        - to:
+            uri: bean:doSomething
+----
+====
+
 === Jetty handlers and security configuration
 
 You can configure a list of Jetty handlers on the endpoint, which can be
 useful for enabling advanced Jetty security features. These handlers are
 configured in Spring XML as follows:
 
+._XML-only: Spring bean definitions for Jetty JAAS security handler_
 [source,xml]
 ----
 <bean id="userRealm" class="org.mortbay.jetty.plus.jaas.JAASUserRealm">
@@ -609,6 +691,7 @@ configured in Spring XML as follows:
 
 You can configure a list of Jetty handlers as follows:
 
+._XML-only: Spring bean definitions for Jetty constraint-based security handler_
 [source,xml]
 ----
 <bean id="constraint" class="org.eclipse.jetty.http.security.Constraint">
@@ -705,15 +788,59 @@ first endpoint to use a protocol/host/port pairing. For example, given
 two routes created from the following XML fragments, JMX support would
 remain enabled for all endpoints listening on `https://0.0.0.0`.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:https://0.0.0.0/myapp/myservice1/?enableJmx=true");
+----
+
+XML::
++
 [source,xml]
 ----
 <from uri="jetty:https://0.0.0.0/myapp/myservice1/?enableJmx=true"/>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: jetty:https://0.0.0.0/myapp/myservice1/
+    parameters:
+      enableJmx: true
+----
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jetty:https://0.0.0.0/myapp/myservice2/?enableJmx=false");
+----
+
+XML::
++
 [source,xml]
 ----
 <from uri="jetty:https://0.0.0.0/myapp/myservice2/?enableJmx=false"/>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: jetty:https://0.0.0.0/myapp/myservice2/
+    parameters:
+      enableJmx: false
+----
+====
 
 The camel-jetty component also provides for direct configuration of the
 Jetty MBeanContainer. Jetty creates MBean names dynamically. If you are

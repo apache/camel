@@ -161,13 +161,40 @@ assertEquals("Bye World", response);
 Spring DSL can also be used for xref:mina-component.adoc[MINA].
 In the sample below, we expose a TCP server on port 5555:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("mina:tcp://localhost:5555?textline=true")
+    .to("bean:myTCPOrderHandler");
+----
+
+XML::
++
 [source,xml]
 ----
-   <route>
-     <from uri="mina:tcp://localhost:5555?textline=true"/>
-     <to uri="bean:myTCPOrderHandler"/>
-  </route>
+<route>
+  <from uri="mina:tcp://localhost:5555?textline=true"/>
+  <to uri="bean:myTCPOrderHandler"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mina:tcp://localhost:5555
+      parameters:
+        textline: true
+      steps:
+        - to:
+            uri: bean:myTCPOrderHandler
+----
+====
 
 In the route above, we expose a TCP server on port 5555 using the
 textline codec. We let the Spring bean with ID, `myTCPOrderHandler`,

@@ -21,6 +21,7 @@ for build the routes to be tested. Then the methods with `@Test` annotations are
 will be executed. The base class `CamelTestSupport` has a number of helper methods to configure testing,
 see more at the Javadoc of this class.
 
+._Java-only: CamelTestSupport is a Java test framework class._
 [source,java]
 ----
 import org.apache.camel.RoutesBuilder;
@@ -112,6 +113,7 @@ configuration is done inside them.
 
 Consider, for instance, a test enabling JMX. Previously, that test would be written like this:
 
+._Java-only: overriding CamelTestSupport methods is Java-specific._
 [source,java]
 ----
 public class MyTestClass extends CamelTestSupport {
@@ -128,6 +130,7 @@ public class MyTestClass extends CamelTestSupport {
 
 This test can be migrated to the new API like this:
 
+._Java-only: CamelTestSupport configuration API is Java-specific._
 [source,java]
 ----
 public class MyTestClass extends CamelTestSupport {

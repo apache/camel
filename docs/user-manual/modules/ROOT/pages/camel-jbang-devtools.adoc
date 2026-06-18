@@ -150,6 +150,7 @@ $ camel cmd receive --endpoint='activemq:cheese'
 
 You can also auto-discover endpoints from a running integration. Given this route:
 
+._Java-only: route with FTP consumer and JMS producer_
 [source,java]
 ----
 from("ftp:myserver:1234/foo")

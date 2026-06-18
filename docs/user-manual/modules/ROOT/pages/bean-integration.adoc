@@ -53,6 +53,7 @@ the `@PropertyInject` annotation which can be set on fields and setter
 methods. For example, you can use that with `RouteBuilder` classes,
 such as shown below:
 
+._Java-only: injecting a property placeholder value with @PropertyInject_
 [source,java]
 ----
 public class MyRouteBuilder extends RouteBuilder {
@@ -76,6 +77,7 @@ with this key and inject its value, converted to a String type.
 You can also use multiple placeholders and text in the key, for example
 we can do:
 
+._Java-only: using multiple placeholders and text in @PropertyInject_
 [source,java]
 ----
 @PropertyInject("Hello {{name}} how are you?")
@@ -86,6 +88,7 @@ This will lookup the placeholder with they key `name`.
 
 You can also add a default value if the key does not exist, such as:
 
+._Java-only: using a default value with @PropertyInject_
 [source,java]
 ----
 @PropertyInject(value = "myTimeout", defaultValue = "5000")
@@ -98,6 +101,7 @@ You can also use `@PropertyInject` to inject an array of values. For example, yo
 in the configuration file, and need to inject this into an `String[]` or `List<String>` field.
 To do this, you need to tell Camel that the property value should be split using a separator, as follows:
 
+._Java-only: injecting an array of values using separator_
 [source,java]
 ----
 @PropertyInject(value = "myHostnames", separator = ",")
@@ -124,6 +128,7 @@ myServers = serverA=http://coolstore:4444,serverB=http://megastore:5555
 
 You can then inject this into a `Map` as follows:
 
+._Java-only: injecting key-value pairs into a Map_
 [source,java]
 ----
 @PropertyInject(value = "myServers", separator = ",")
@@ -132,6 +137,7 @@ private Map servers;
 
 You can use generic types in the Map such as the values should be `Integer` values:
 
+._Java-only: injecting a Map with typed values_
 [source,java]
 ----
 @PropertyInject(value = "ports", separator = ",")

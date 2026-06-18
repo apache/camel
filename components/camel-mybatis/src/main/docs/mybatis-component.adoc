@@ -622,6 +622,7 @@ proxy. This proxy enables non-Spring use of the `DataSource` to
 participate in Spring transactions (the MyBatis `SqlSessionFactory` does
 just this).
 
+._XML-only: Spring bean declaration for transaction-aware `DataSource` proxy_
 [source,xml]
 ----
 <bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
@@ -642,6 +643,7 @@ to be externalised using property placeholders.
 A transaction manager is then configured to manage the outermost
 `DataSource`:
 
+._XML-only: Spring bean declaration for `DataSourceTransactionManager`_
 [source,xml]
 ----
 <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -653,6 +655,7 @@ A http://www.mybatis.org/spring/index.html[mybatis-spring]
 http://www.mybatis.org/spring/factorybean.html[`SqlSessionFactoryBean`]
 then wraps that same `DataSource`:
 
+._XML-only: Spring bean declaration for MyBatis `SqlSessionFactoryBean`_
 [source,xml]
 ----
 <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -666,6 +669,7 @@ then wraps that same `DataSource`:
 
 The camel-mybatis component is then configured with that factory:
 
+._XML-only: Spring bean declaration for `MyBatisComponent` with `SqlSessionFactory`_
 [source,xml]
 ----
 <bean id="mybatis" class="org.apache.camel.component.mybatis.MyBatisComponent">
@@ -675,6 +679,19 @@ The camel-mybatis component is then configured with that factory:
 
 Finally, a transaction policy is defined over the top of the transaction manager, which can then be used as usual:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:insert")
+    .policy("PROPAGATION_REQUIRED")
+    .to("mybatis:myModel.insert?statementType=Insert");
+----
+
+XML::
++
 [source,xml]
 ----
 <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
@@ -690,6 +707,24 @@ Finally, a transaction policy is defined over the top of the transaction manager
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - policy:
+            ref: PROPAGATION_REQUIRED
+            steps:
+              - to:
+                  uri: mybatis:myModel.insert
+                  parameters:
+                    statementType: Insert
+----
+====
 
 == MyBatis Spring Boot Starter integration
 

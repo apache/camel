@@ -62,6 +62,7 @@ By default, the SEDA component always instantiates a `LinkedBlockingQueue`,
 but you can use different implementation, you can reference your own
 `BlockingQueue` implementation, in this case the size option is not used:
 
+._XML-only: Spring bean definition for custom BlockingQueue_
 [source,xml]
 ----
 <bean id="arrayQueue" class="java.util.ArrayBlockingQueue">
@@ -80,6 +81,7 @@ Three implementations are provided:
 * `ArrayBlockingQueueFactory`
 * `PriorityBlockingQueueFactory`
 
+._XML-only: Spring bean definition for custom BlockingQueueFactory_
 [source,xml]
 ----
 <bean id="priorityQueueFactory" class="org.apache.camel.component.seda.PriorityBlockingQueueFactory">
@@ -196,6 +198,7 @@ number of concurrent consumers is always fixed.
 Be aware that adding a thread pool to a SEDA endpoint by doing something
 like:
 
+._Java-only: thread pool added to SEDA endpoint_
 [source,java]
 ----
 from("seda:stageName").thread(5).process(...)
@@ -207,6 +210,7 @@ Instead, you might wish to configure a xref:direct-component.adoc[Direct] endpoi
 with a thread pool, which can process messages both synchronously and
 asynchronously. For example:
 
+._Java-only: thread pool on a Direct endpoint_
 [source,java]
 ----
 from("direct:stageName").thread(5).process(...)

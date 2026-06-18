@@ -251,6 +251,7 @@ unit test.
 In this example, we have defined two consumers and registered them as
 spring beans.
 
+._XML-only: Spring bean configuration with shared Disruptor endpoint_
 [source,xml]
 ----
 <!-- define the consumers as spring beans -->

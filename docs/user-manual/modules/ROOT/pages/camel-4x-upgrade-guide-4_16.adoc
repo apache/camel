@@ -68,6 +68,7 @@ The `queryBuilder` option on `camel-infinispan` endpoint has been migrated to no
 
 This means old code such:
 
+._Java-only: old Infinispan query factory API_
 [source,java]
 ----
     private InfinispanQueryBuilder continuousQueryBuilder
@@ -168,14 +169,14 @@ DataSet API and more, with better performance and a unified programming model.
 
 Replace `flink:dataset` with `flink:datastream`:
 
-.Before
+._Java-only: Old flink DataSet endpoint_
 [source,java]
 -----------------------------------
 from("direct:start")
     .to("flink:dataset?dataSet=#myDataSet&dataSetCallback=#myCallback");
 -----------------------------------
 
-.After
+._Java-only: New flink DataStream endpoint_
 [source,java]
 -----------------------------------
 from("direct:start")

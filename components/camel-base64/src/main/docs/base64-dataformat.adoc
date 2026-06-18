@@ -21,6 +21,7 @@ include::partial$dataformat-options.adoc[]
 
 In Spring DSL, you configure the data format using this tag:
 
+._XML-only: Spring XML data format configuration_
 [source,xml]
 ----
 <camelContext>
@@ -35,6 +36,19 @@ In Spring DSL, you configure the data format using this tag:
 
 Then you can use it later by its reference:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:startEncode")
+    .marshal("base64withLineLength64")
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -43,6 +57,21 @@ Then you can use it later by its reference:
      <to uri="mock:result" />
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:startEncode
+      steps:
+        - marshal:
+            ref: base64withLineLength64
+        - to:
+            uri: mock:result
+----
+====
 
 Most of the time, you won't need to declare the data format if you use
 the default options. In that case, you can declare the data format

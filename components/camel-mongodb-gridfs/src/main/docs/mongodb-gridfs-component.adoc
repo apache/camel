@@ -134,6 +134,19 @@ xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
 
 *Get a file from GridFS*
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mongodb-gridfs:mongoBean?database=${mongodb.database}&operation=findOne")
+    .to("direct:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -143,6 +156,24 @@ xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
   <to uri="direct:result" />
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mongodb-gridfs:mongoBean
+            parameters:
+              database: "${mongodb.database}"
+              operation: findOne
+        - to:
+            uri: direct:result
+----
+====
 
 === Configuration of a database in Spring XML
 

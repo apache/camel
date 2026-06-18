@@ -20,6 +20,7 @@ The lookup is used for looking up existing beans from the registry.
 
 The binding API is as follows:
 
+._Java-only: the Registry binding API_
 [source,java]
 ----
 public interface Registry extends BeanRepository {
@@ -51,6 +52,7 @@ IMPORTANT: The binding API will bind the bean to Camels internal registry, and n
 
 If you, for example, need to add a bean to the `Registry` then you can easily do this from Java as follows:
 
+._Java-only: binding a bean to the Registry_
 [source,java]
 ----
 Object myFoo = ...
@@ -59,6 +61,7 @@ camelContext.getRegistry().bind("foo", myFoo);
 
 Then you can access the bean by the id, such as from a Camel route:
 
+._Java-only: using a bean from the Registry in a route_
 [source,java]
 ----
 from("jms:cheese").bean("foo");
@@ -79,6 +82,7 @@ registered into Spring bean container; which means there is no need to bind the 
 When using Spring Boot, then you can also use annotations to declare beans
 such as with the `@Bean` annotation on the method that creates the bean:
 
+._Java-only: declaring a bean using Spring Boot @Bean annotation_
 [source,java]
 ----
 @Bean
@@ -95,6 +99,7 @@ the Spring Boot project documentation.
 Quarkus has similar functionality like Spring Boot to declare beans, which can be done
 with the `javax.inject.enterprise.Produces` and `javax.inject.Named` annotations:
 
+._Java-only: declaring a bean using Quarkus CDI annotations_
 [source,java]
 ----
 @Produces @Named("foo")
@@ -110,6 +115,7 @@ during startup of Camel where Camel is wiring up all components, endpoints, rout
 
 The lookup API is the following methods:
 
+._Java-only: the BeanRepository lookup API_
 [source,java]
 ----
 public interface BeanRepository {
@@ -156,6 +162,7 @@ public interface BeanRepository {
 
 You can lookup beans from Java code as shown:
 
+._Java-only: looking up beans from the Registry_
 [source,java]
 ----
 // lookup by id only

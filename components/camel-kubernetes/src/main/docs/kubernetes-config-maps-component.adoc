@@ -193,6 +193,19 @@ first = Carlsberg
 
 Then these values can be used in your Camel routes such as:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("What {{configmap:myconfig/drink}} do you want?")
+    .log("I want {{configmap:myconfig/first}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -203,6 +216,21 @@ Then these values can be used in your Camel routes such as:
   </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "What {{configmap:myconfig/drink}} do you want?"
+        - log:
+            message: "I want {{configmap:myconfig/first}}"
+----
+====
 
 You can also provide a default value in case a key does not exist:
 

@@ -63,6 +63,7 @@ The id must then be enabled on either the `<camelContext>` (global scope), or pe
 
 The following listing is an equivalent of the prior Java DSL listing:
 
+._XML-only:_
 [source,xml]
 ----
 <camelContext errorHandlerRef="myErrorHandler">
@@ -197,13 +198,46 @@ The option `useOriginalMessage` is used for routing the original input message i
 
 For instance, if you have this route:
 
+[tabs]
+====
+Java::
++
 [source,java]
------
+----
 from("jms:queue:order:input")
    .to("bean:validateOrder")
    .to("bean:transformOrder")
    .to("bean:handleOrder");
------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:queue:order:input"/>
+  <to uri="bean:validateOrder"/>
+  <to uri="bean:transformOrder"/>
+  <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:order:input
+      steps:
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: bean:transformOrder
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 The route listens for JMS messages and validates, transforms and handles it.
 During this the xref:manual::exchange.adoc[Exchange] payload is transformed/modified in the various bean stages.
@@ -332,6 +366,7 @@ Before the exchange is sent to the dead letter queue, you can use `onPrepare` to
 
 For example, the following processor adds a header with the exception message:
 
+._Java-only: custom Processor to prepare the Exchange before sending to the dead letter queue_
 [source,java]
 ----
 public static class MyPrepareProcessor implements Processor {
@@ -388,6 +423,7 @@ In other words, this happens right after the exception was thrown, where you may
 
 For example, you may have a `Processor` that does some special logging:
 
+._Java-only: custom Processor for logging when an exception occurs_
 [source,java]
 ----
 public static class OnErrorLogger implements Processor {
@@ -510,6 +546,7 @@ will append the following headers to the message with the state of the redeliver
 During routing messages, Camel will store an exchange property
 with the most recent endpoint in use (send to):
 
+._Java-only: accessing the last endpoint URI from the Exchange_
 [source,java]
 ----
 String lastEndpointUri = exchange.getProperty(Exchange.TO_ENDPOINT, String.class);
@@ -522,6 +559,7 @@ This information is updated when Apache Camel sends a message to any endpoint.
 When, for example, processing the xref:manual::exchange.adoc[Exchange] at a given
 xref:manual::endpoint.adoc[Endpoint] and the message is to be moved into the dead letter queue, then Camel also decorates the Exchange with another property that contains that *last* endpoint:
 
+._Java-only: accessing the failure endpoint URI from the Exchange_
 [source,java]
 ----
 String failedEndpointUri = exchange.getProperty(Exchange.FAILURE_ENDPOINT, String.class);
@@ -538,12 +576,42 @@ This information is kept on the Exchange even if the message was successfully pr
 and then later fails, for example, in local xref:bean-eip.adoc[Bean] EIP processing instead.
 So beware that this is a hint that helps pinpoint errors to xref:manual::endpoint.adoc[Endpoints], and not EIPs.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:queue:foo")
     .to("http://someserver/somepath")
     .bean("foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:queue:foo"/>
+  <to uri="http://someserver/somepath"/>
+  <bean ref="foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:foo
+      steps:
+        - to:
+            uri: http://someserver/somepath
+        - bean:
+            ref: foo
+----
+====
 
 Now suppose the route above, and a failure happens in the `foo` bean.
 Then the `Exchange.TO_ENDPOINT` and `Exchange.FAILURE_ENDPOINT` will still contain the value of `\http://someserver/somepath`.
@@ -554,6 +622,7 @@ Then the `Exchange.TO_ENDPOINT` and `Exchange.FAILURE_ENDPOINT` will still conta
 When a message is moved into the dead letter queue, then Camel will store the id of the route,
 where the message failed. This information can be obtained in Java via:
 
+._Java-only: accessing the failure route id from the Exchange_
 [source,java]
 ----
 String failedRouteId = exchange.getProperty(Exchange.FAILURE_ROUTE_ID, String.class);

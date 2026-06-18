@@ -65,6 +65,8 @@ YAML::
 ====
 
 Note that delay creates its own block, so some DSLs (including Java) require the delay block be closed:
+
+._Java-only: closing the delay block with end() in Java DSL_
 [source,java]
 ----
 .from("direct:delayBlockExample")
@@ -176,6 +178,7 @@ YAML::
 
 Then the bean would look something like this:
 
+._Java-only: bean class to compute the delay value_
 [source,java]
 ----
 public class SomeBean {

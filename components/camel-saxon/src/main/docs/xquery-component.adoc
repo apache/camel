@@ -112,6 +112,19 @@ key name *foo* then it is added as *foo*.
 If you prefer to configure your routes in your Spring
 XML file, then you can use XPath expressions as follows
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:MyQueue")
+    .filter().xquery("/foo:person[@name='James']")
+        .to("mqseries:SomeOtherQueue");
+----
+
+XML::
++
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -132,6 +145,23 @@ XML file, then you can use XPath expressions as follows
   </camelContext>
 </beans>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:MyQueue
+      steps:
+        - filter:
+            xquery:
+              expression: "/foo:person[@name='James']"
+            steps:
+              - to:
+                  uri: mqseries:SomeOtherQueue
+----
+====
 
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
 the XPath expression for easier namespace-based XQuery expressions!
@@ -156,16 +186,44 @@ templates.
 The following example shows how to take a message of an ActiveMQ queue
 (MyQueue) and transform it using XQuery and send it to MQSeries.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:MyQueue")
+    .to("xquery:com/acme/someTransform.xquery")
+    .to("mqseries:SomeOtherQueue");
+----
+
+XML::
++
 [source,xml]
 ----
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="activemq:MyQueue"/>
-      <to uri="xquery:com/acme/someTransform.xquery"/>
-      <to uri="mqseries:SomeOtherQueue"/>
-    </route>
-  </camelContext>
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="activemq:MyQueue"/>
+    <to uri="xquery:com/acme/someTransform.xquery"/>
+    <to uri="mqseries:SomeOtherQueue"/>
+  </route>
+</camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:MyQueue
+      steps:
+        - to:
+            uri: xquery:com/acme/someTransform.xquery
+        - to:
+            uri: mqseries:SomeOtherQueue
+----
+====
 
 === Loading script from external resource
 

@@ -124,6 +124,7 @@ As a general example on using the operations in this salesforce component, the f
 the upsertSObject API, with the sObjectIdName parameter specifying 'Name' as the external id field.
 The request message body should be an SObject DTO generated using the maven plugin.
 
+._Java-only: endpoint URI snippet_
 [source,java]
 ----
 ...to("salesforce:upsertSObject?sObjectIdName=Name")...
@@ -1891,6 +1892,7 @@ type, which can be XML, CSV, ZIP_XML or ZIP_CSV. The put message body
 will contain `BatchInfo` on success, or throw a `SalesforceException` on
 error.
 
+._Java-only: endpoint URI snippet_
 [source,java]
 ----
 ...to("salesforce:createBatch")..

@@ -385,6 +385,18 @@ YAML::
 In this sample we define a route that exposes a HTTP service at
 `\http://localhost:8080/myapp/myservice`:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:http://localhost:8080/myapp/myservice")
+    .to("bean:myBean");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -393,11 +405,37 @@ In this sample we define a route that exposes a HTTP service at
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:http://localhost:8080/myapp/myservice
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
+
 === WebSocket Example
 
 In this sample we define a route that exposes a WebSocket service at
 `\http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("undertow:ws://localhost:8080/myapp/mysocket")
+    .transform(simple("Echo ${body}"))
+    .to("undertow:ws://localhost:8080/myapp/mysocket");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -406,5 +444,20 @@ In this sample we define a route that exposes a WebSocket service at
   <to uri="undertow:ws://localhost:8080/myapp/mysocket"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: undertow:ws://localhost:8080/myapp/mysocket
+      steps:
+        - transform:
+            simple: "Echo ${body}"
+        - to:
+            uri: undertow:ws://localhost:8080/myapp/mysocket
+----
+====
 
 include::spring-boot:partial$starter.adoc[]

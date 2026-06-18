@@ -60,6 +60,7 @@ producer.process(exchange);
 With Spring XML, you could have a list of endpoints defined in the
 Registry such as:
 
+._XML-only: Spring XML endpoint registry definitions_
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">

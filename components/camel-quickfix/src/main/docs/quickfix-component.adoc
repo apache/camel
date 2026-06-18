@@ -293,6 +293,7 @@ QuickFIX/J session ID strings is also included. The following example
 shows a simple configuration of an acceptor and initiator session with
 default settings for both sessions.
 
+._XML-only: Spring XML configuration with QuickFIX/J component and session settings_
 [source,xml]
 ----
 <!--  camel route  -->

@@ -121,6 +121,18 @@ When using the `operation` option to create, get, list parameters etc., you shou
 
 At this point, you'll be able to reference a property in the following way:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{aws-parameterstore:/myapp/config/endpoint}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -131,10 +143,35 @@ At this point, you'll be able to reference a property in the following way:
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{aws-parameterstore:/myapp/config/endpoint}}"
+----
+====
+
 Where `/myapp/config/endpoint` will be the name (path) of the parameter stored in the AWS Systems Manager Parameter Store.
 
 You could specify a default value in case the parameter is not present on AWS Parameter Store:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("{{aws-parameterstore:/myapp/config/endpoint:http://localhost:8080}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -145,12 +182,39 @@ You could specify a default value in case the parameter is not present on AWS Pa
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{aws-parameterstore:/myapp/config/endpoint:http://localhost:8080}}"
+----
+====
+
 In this case, if the parameter doesn't exist, the property will fall back to "http://localhost:8080" as value.
 
 === Parameter Store Hierarchies
 
 AWS Parameter Store supports hierarchical parameter names. You can organize parameters into hierarchies using forward slashes:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("Database host is {{aws-parameterstore:/myapp/database/host}}")
+    .log("Database port is {{aws-parameterstore:/myapp/database/port}}")
+    .log("Database user is {{aws-parameterstore:/myapp/database/username}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -163,10 +227,39 @@ AWS Parameter Store supports hierarchical parameter names. You can organize para
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Database host is {{aws-parameterstore:/myapp/database/host}}"
+        - log:
+            message: "Database port is {{aws-parameterstore:/myapp/database/port}}"
+        - log:
+            message: "Database user is {{aws-parameterstore:/myapp/database/username}}"
+----
+====
+
 === SecureString Parameters
 
 AWS Parameter Store supports SecureString parameters which are encrypted using AWS KMS. The Parameter Store properties function automatically decrypts SecureString parameters:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .log("API Key is {{aws-parameterstore:/myapp/secrets/api-key}}");
+----
+
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -176,6 +269,19 @@ AWS Parameter Store supports SecureString parameters which are encrypted using A
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "API Key is {{aws-parameterstore:/myapp/secrets/api-key}}"
+----
+====
 
 The only requirement is adding the camel-aws-parameter-store jar to your Camel application.
 

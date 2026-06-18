@@ -159,59 +159,133 @@ A namespace prefix defined as part of the `camelContext`
 definition can be re-used in context within the data format `secureTag`
 attribute of the `xmlSecurity` element.
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .marshal().xmlSecurity("//cheese:cheesesites/italy", true)
+    .to("...");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext id="springXmlSecurityDataFormatTestCamelContext" 
+<camelContext id="springXmlSecurityDataFormatTestCamelContext"
               xmlns="http://camel.apache.org/schema/spring"
-              xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">        
+              xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">
     <route>
         <from uri="direct://start"/>
             <marshal>
                 <xmlSecurity secureTag="//cheese:cheesesites/italy"
                            secureTagContents="true"/>
-            </marshal> 
+            </marshal>
             ...
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            xmlSecurity:
+              secureTag: "//cheese:cheesesites/italy"
+              secureTagContents: true
+----
+====
 
 === Asymmetric Key Encryption
 
 [[XMLSecurityDataFormat-SpringXMLSender]]
 Spring XML Sender
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .marshal().xmlSecurity("//cheese:cheesesites/italy", namespaces, true,
+            "recipient", XMLCipher.AES_128_CBC, XMLCipher.RSA_v1dot5, trustStoreParams)
+    .to("...");
+----
+
+XML::
++
 [source,xml]
 ----
-<!--  trust store configuration -->                          
+<!--  trust store configuration -->
 <camel:keyStoreParameters id="trustStoreParams" resource="./sender.truststore" password="password"/>
 
-<camelContext id="springXmlSecurityDataFormatTestCamelContext" 
+<camelContext id="springXmlSecurityDataFormatTestCamelContext"
               xmlns="http://camel.apache.org/schema/spring"
-              xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">        
+              xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">
     <route>
         <from uri="direct://start"/>
             <marshal>
                 <xmlSecurity secureTag="//cheese:cheesesites/italy"
                            secureTagContents="true"
-                           xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"       
+                           xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
                            keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
                            recipientKeyAlias="recipient"
                            keyOrTrustStoreParametersRef="trustStoreParams"/>
-            </marshal> 
+            </marshal>
             ...
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            xmlSecurity:
+              secureTag: "//cheese:cheesesites/italy"
+              secureTagContents: true
+              xmlCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+              keyCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+              recipientKeyAlias: recipient
+              keyOrTrustStoreParametersRef: "#trustStoreParams"
+----
+====
 
 [[XMLSecurityDataFormat-SpringXMLRecipient]]
 Spring XML Recipient
 
-[source,xml]
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:encrypted")
+    .unmarshal().xmlSecurity("//cheese:cheesesites/italy", namespaces, true,
+            "recipient", XMLCipher.AES_128_CBC, XMLCipher.RSA_v1dot5, keyStoreParams)
+    .to("...");
 ----
 
+XML::
++
+[source,xml]
+----
 <!--  key store configuration -->
 <camel:keyStoreParameters id="keyStoreParams" resource="./recipient.keystore" password="password" />
 
-<camelContext id="springXmlSecurityDataFormatTestCamelContext" 
+<camelContext id="springXmlSecurityDataFormatTestCamelContext"
               xmlns="http://camel.apache.org/schema/spring"
               xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">
-    <route>    
+    <route>
         <from uri="direct://encrypted"/>
             <unmarshal>
                 <xmlSecurity secureTag="//cheese:cheesesites/italy"
@@ -224,6 +298,26 @@ Spring XML Recipient
             </unmarshal>
             ...
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:encrypted
+      steps:
+        - unmarshal:
+            xmlSecurity:
+              secureTag: "//cheese:cheesesites/italy"
+              secureTagContents: true
+              xmlCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+              keyCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+              recipientKeyAlias: recipient
+              keyOrTrustStoreParametersRef: "#keyStoreParams"
+              keyPassword: privateKeyPassword
+----
+====
 
 == Dependencies
 
