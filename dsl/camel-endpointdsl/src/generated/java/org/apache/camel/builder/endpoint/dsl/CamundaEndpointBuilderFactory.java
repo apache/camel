@@ -474,7 +474,7 @@ public interface CamundaEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CamundaHeaderNameBuilder INSTANCE = new CamundaHeaderNameBuilder();
+        public static final CamundaHeaderNameBuilder INSTANCE = new CamundaHeaderNameBuilder();
 
         /**
          * Job key for the worker job.

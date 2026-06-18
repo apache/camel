@@ -1886,7 +1886,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CouchbaseHeaderNameBuilder INSTANCE = new CouchbaseHeaderNameBuilder();
+        public static final CouchbaseHeaderNameBuilder INSTANCE = new CouchbaseHeaderNameBuilder();
 
         /**
          * The key.

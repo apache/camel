@@ -4142,7 +4142,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MongoDbHeaderNameBuilder INSTANCE = new MongoDbHeaderNameBuilder();
+        public static final MongoDbHeaderNameBuilder INSTANCE = new MongoDbHeaderNameBuilder();
 
         /**
          * The operation this endpoint will execute against MongoDB.

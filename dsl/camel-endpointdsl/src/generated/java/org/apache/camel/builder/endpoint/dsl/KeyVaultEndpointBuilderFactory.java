@@ -302,7 +302,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KeyVaultHeaderNameBuilder INSTANCE = new KeyVaultHeaderNameBuilder();
+        public static final KeyVaultHeaderNameBuilder INSTANCE = new KeyVaultHeaderNameBuilder();
 
         /**
          * Overrides the desired operation to be used in the producer.

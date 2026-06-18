@@ -2245,7 +2245,7 @@ public interface A2AEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final A2AHeaderNameBuilder INSTANCE = new A2AHeaderNameBuilder();
+        public static final A2AHeaderNameBuilder INSTANCE = new A2AHeaderNameBuilder();
 
         /**
          * A2A operation to invoke.

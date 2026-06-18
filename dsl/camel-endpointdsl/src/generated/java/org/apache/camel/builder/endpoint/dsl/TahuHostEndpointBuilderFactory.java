@@ -423,7 +423,7 @@ public interface TahuHostEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final TahuHostHeaderNameBuilder INSTANCE = new TahuHostHeaderNameBuilder();
+        public static final TahuHostHeaderNameBuilder INSTANCE = new TahuHostHeaderNameBuilder();
 
         /**
          * The Sparkplug message type of the message.

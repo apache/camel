@@ -378,7 +378,7 @@ public interface PrinterEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PrinterHeaderNameBuilder INSTANCE = new PrinterHeaderNameBuilder();
+        public static final PrinterHeaderNameBuilder INSTANCE = new PrinterHeaderNameBuilder();
 
         /**
          * The name of the job.

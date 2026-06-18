@@ -712,7 +712,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final XmlVerifierHeaderNameBuilder INSTANCE = new XmlVerifierHeaderNameBuilder();
+        public static final XmlVerifierHeaderNameBuilder INSTANCE = new XmlVerifierHeaderNameBuilder();
 
         /**
          * Header which indicates that either the resulting signature document

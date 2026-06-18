@@ -720,7 +720,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HazelcastQueueHeaderNameBuilder INSTANCE = new HazelcastQueueHeaderNameBuilder();
+        public static final HazelcastQueueHeaderNameBuilder INSTANCE = new HazelcastQueueHeaderNameBuilder();
 
         /**
          * the object id to store / find your object inside the cache.

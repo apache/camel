@@ -198,6 +198,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (synchronizeEndpointBuildersStaticClass(allModels, models)) {
             getLog().info("Updated StaticEndpointBuilders");
         }
+
+        getLog().debug("Regenerate EndpointHeaderBuilders");
+        // make sure EndpointHeaderBuilders is synced
+        if (synchronizeEndpointHeaderBuildersClass(allModels, models)) {
+            getLog().info("Updated EndpointHeaderBuilders");
+        }
     }
 
     private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases)
@@ -345,6 +351,26 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         return writeSourceIfChanged(source,
                 endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
+    }
+
+    private boolean synchronizeEndpointHeaderBuildersClass(
+            List<ComponentModel> allModels, Map<String, List<ComponentModel>> models)
+            throws MojoFailureException {
+        List<ComponentModel> sortedModels = new ArrayList<>(allModels);
+        sortedModels.sort(Comparator.comparing(ComponentModel::getScheme));
+
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("generatorClass", getClass().getName());
+        ctx.put("package", endpointFactoriesPackageName);
+        ctx.put("dslPackage", componentsFactoriesPackageName);
+        ctx.put("className", "EndpointHeaderBuilders");
+        ctx.put("models", models);
+        ctx.put("sortedModels", sortedModels);
+        ctx.put("mojo", this);
+        String source = velocity("velocity/endpoint-headers-builders.vm", ctx);
+
+        return writeSourceIfChanged(source,
+                endpointFactoriesPackageName.replace(".", "/"), "EndpointHeaderBuilders.java");
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {

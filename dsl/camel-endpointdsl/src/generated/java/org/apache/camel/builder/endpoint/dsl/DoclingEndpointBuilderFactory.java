@@ -1474,7 +1474,7 @@ public interface DoclingEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DoclingHeaderNameBuilder INSTANCE = new DoclingHeaderNameBuilder();
+        public static final DoclingHeaderNameBuilder INSTANCE = new DoclingHeaderNameBuilder();
 
         /**
          * The operation to perform.

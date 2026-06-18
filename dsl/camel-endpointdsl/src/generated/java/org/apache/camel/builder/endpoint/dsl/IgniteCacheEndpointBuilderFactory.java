@@ -815,7 +815,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IgniteCacheHeaderNameBuilder INSTANCE = new IgniteCacheHeaderNameBuilder();
+        public static final IgniteCacheHeaderNameBuilder INSTANCE = new IgniteCacheHeaderNameBuilder();
 
         /**
          * The cache key for the entry value in the message body.

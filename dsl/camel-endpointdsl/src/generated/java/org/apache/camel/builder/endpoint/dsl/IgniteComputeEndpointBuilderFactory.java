@@ -362,7 +362,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IgniteComputeHeaderNameBuilder INSTANCE = new IgniteComputeHeaderNameBuilder();
+        public static final IgniteComputeHeaderNameBuilder INSTANCE = new IgniteComputeHeaderNameBuilder();
 
         /**
          * Allows you to dynamically change the compute operation to perform.

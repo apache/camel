@@ -1339,7 +1339,7 @@ public interface CometdEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CometdHeaderNameBuilder INSTANCE = new CometdHeaderNameBuilder();
+        public static final CometdHeaderNameBuilder INSTANCE = new CometdHeaderNameBuilder();
 
         /**
          * The clientId of the session.

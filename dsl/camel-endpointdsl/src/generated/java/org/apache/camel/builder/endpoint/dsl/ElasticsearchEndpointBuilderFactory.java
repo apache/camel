@@ -754,7 +754,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ElasticsearchHeaderNameBuilder INSTANCE = new ElasticsearchHeaderNameBuilder();
+        public static final ElasticsearchHeaderNameBuilder INSTANCE = new ElasticsearchHeaderNameBuilder();
 
         /**
          * The operation to perform.

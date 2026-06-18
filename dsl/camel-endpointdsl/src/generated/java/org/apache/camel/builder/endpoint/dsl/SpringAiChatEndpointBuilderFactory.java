@@ -1156,7 +1156,7 @@ public interface SpringAiChatEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SpringAiChatHeaderNameBuilder INSTANCE = new SpringAiChatHeaderNameBuilder();
+        public static final SpringAiChatHeaderNameBuilder INSTANCE = new SpringAiChatHeaderNameBuilder();
 
         /**
          * The response from the chat model.

@@ -1266,7 +1266,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SpringWebserviceHeaderNameBuilder INSTANCE = new SpringWebserviceHeaderNameBuilder();
+        public static final SpringWebserviceHeaderNameBuilder INSTANCE = new SpringWebserviceHeaderNameBuilder();
 
         /**
          * The endpoint URI.

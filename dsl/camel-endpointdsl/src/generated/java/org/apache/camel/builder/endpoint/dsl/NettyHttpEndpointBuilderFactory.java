@@ -5325,7 +5325,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final NettyHttpHeaderNameBuilder INSTANCE = new NettyHttpHeaderNameBuilder();
+        public static final NettyHttpHeaderNameBuilder INSTANCE = new NettyHttpHeaderNameBuilder();
 
         /**
          * If the user was authenticated using HTTP Basic then this header is

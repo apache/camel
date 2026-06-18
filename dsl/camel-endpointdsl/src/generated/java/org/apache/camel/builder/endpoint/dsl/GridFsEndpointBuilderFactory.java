@@ -815,7 +815,7 @@ public interface GridFsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GridFsHeaderNameBuilder INSTANCE = new GridFsHeaderNameBuilder();
+        public static final GridFsHeaderNameBuilder INSTANCE = new GridFsHeaderNameBuilder();
 
         /**
          * The content type of the file.

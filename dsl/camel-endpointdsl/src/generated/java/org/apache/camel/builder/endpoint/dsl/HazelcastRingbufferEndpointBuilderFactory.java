@@ -267,7 +267,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HazelcastRingbufferHeaderNameBuilder INSTANCE = new HazelcastRingbufferHeaderNameBuilder();
+        public static final HazelcastRingbufferHeaderNameBuilder INSTANCE = new HazelcastRingbufferHeaderNameBuilder();
 
         /**
          * The operation to perform.

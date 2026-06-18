@@ -1637,7 +1637,7 @@ public interface Jt400EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Jt400HeaderNameBuilder INSTANCE = new Jt400HeaderNameBuilder();
+        public static final Jt400HeaderNameBuilder INSTANCE = new Jt400HeaderNameBuilder();
 
         /**
          * Data queues: Returns the sender information for this data queue

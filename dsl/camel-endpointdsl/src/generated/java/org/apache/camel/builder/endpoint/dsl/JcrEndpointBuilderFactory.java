@@ -1050,7 +1050,7 @@ public interface JcrEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JcrHeaderNameBuilder INSTANCE = new JcrHeaderNameBuilder();
+        public static final JcrHeaderNameBuilder INSTANCE = new JcrHeaderNameBuilder();
 
         /**
          * The name of the target node.

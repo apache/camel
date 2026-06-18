@@ -3031,7 +3031,7 @@ public interface PahoEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final PahoHeaderNameBuilder INSTANCE = new PahoHeaderNameBuilder();
+        public static final PahoHeaderNameBuilder INSTANCE = new PahoHeaderNameBuilder();
 
         /**
          * The name of the topic.

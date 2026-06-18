@@ -325,7 +325,7 @@ public interface ${builderName}Factory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ${headerNameBuilder} INSTANCE = new ${headerNameBuilder}();
+        public static final ${headerNameBuilder} INSTANCE = new ${headerNameBuilder}();
 
         #foreach( $header in $model.endpointHeaders )
             #set( $headerName = $header.name )

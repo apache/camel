@@ -405,7 +405,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ArangoDbHeaderNameBuilder INSTANCE = new ArangoDbHeaderNameBuilder();
+        public static final ArangoDbHeaderNameBuilder INSTANCE = new ArangoDbHeaderNameBuilder();
 
         /**
          * Indicates if there are multiple documents to update. If set to true,

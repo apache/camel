@@ -589,7 +589,7 @@ public interface KMS2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KMS2HeaderNameBuilder INSTANCE = new KMS2HeaderNameBuilder();
+        public static final KMS2HeaderNameBuilder INSTANCE = new KMS2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

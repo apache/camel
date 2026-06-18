@@ -493,7 +493,7 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ElasticsearchRestClientHeaderNameBuilder INSTANCE = new ElasticsearchRestClientHeaderNameBuilder();
+        public static final ElasticsearchRestClientHeaderNameBuilder INSTANCE = new ElasticsearchRestClientHeaderNameBuilder();
 
         /**
          * ID of the object to index or retrieve or delete.

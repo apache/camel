@@ -1027,7 +1027,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleSheetsStreamHeaderNameBuilder INSTANCE = new GoogleSheetsStreamHeaderNameBuilder();
+        public static final GoogleSheetsStreamHeaderNameBuilder INSTANCE = new GoogleSheetsStreamHeaderNameBuilder();
 
         /**
          * Specifies the spreadsheet identifier that is used to identify the

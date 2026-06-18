@@ -302,7 +302,7 @@ public interface SwiftEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SwiftHeaderNameBuilder INSTANCE = new SwiftHeaderNameBuilder();
+        public static final SwiftHeaderNameBuilder INSTANCE = new SwiftHeaderNameBuilder();
 
         /**
          * The container name.

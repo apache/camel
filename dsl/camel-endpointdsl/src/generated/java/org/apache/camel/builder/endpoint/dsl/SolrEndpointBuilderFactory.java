@@ -606,7 +606,7 @@ public interface SolrEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SolrHeaderNameBuilder INSTANCE = new SolrHeaderNameBuilder();
+        public static final SolrHeaderNameBuilder INSTANCE = new SolrHeaderNameBuilder();
 
         /**
          * The operation to perform.

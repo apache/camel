@@ -376,7 +376,7 @@ public interface StitchEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final StitchHeaderNameBuilder INSTANCE = new StitchHeaderNameBuilder();
+        public static final StitchHeaderNameBuilder INSTANCE = new StitchHeaderNameBuilder();
 
         /**
          * The name of the destination table the data is being pushed to. Table

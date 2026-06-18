@@ -2521,7 +2521,7 @@ public interface KeycloakEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KeycloakHeaderNameBuilder INSTANCE = new KeycloakHeaderNameBuilder();
+        public static final KeycloakHeaderNameBuilder INSTANCE = new KeycloakHeaderNameBuilder();
 
         /**
          * The operation to perform.

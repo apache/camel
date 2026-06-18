@@ -862,7 +862,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SchedulerHeaderNameBuilder INSTANCE = new SchedulerHeaderNameBuilder();
+        public static final SchedulerHeaderNameBuilder INSTANCE = new SchedulerHeaderNameBuilder();
 
         /**
          * The timestamp of the message.

@@ -1139,7 +1139,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final VertxWebsocketHeaderNameBuilder INSTANCE = new VertxWebsocketHeaderNameBuilder();
+        public static final VertxWebsocketHeaderNameBuilder INSTANCE = new VertxWebsocketHeaderNameBuilder();
 
         /**
          * Sends the message to the client with the given connection key. You

@@ -1342,7 +1342,7 @@ public interface XmppEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final XmppHeaderNameBuilder INSTANCE = new XmppHeaderNameBuilder();
+        public static final XmppHeaderNameBuilder INSTANCE = new XmppHeaderNameBuilder();
 
         /**
          * The XMPP message.

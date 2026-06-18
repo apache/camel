@@ -1454,7 +1454,7 @@ public interface OpenshiftDeploymentConfigsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final OpenshiftDeploymentConfigsHeaderNameBuilder INSTANCE = new OpenshiftDeploymentConfigsHeaderNameBuilder();
+        public static final OpenshiftDeploymentConfigsHeaderNameBuilder INSTANCE = new OpenshiftDeploymentConfigsHeaderNameBuilder();
 
         /**
          * The Producer operation.

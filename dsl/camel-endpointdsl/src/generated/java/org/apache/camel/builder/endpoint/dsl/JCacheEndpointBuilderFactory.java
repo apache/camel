@@ -1637,7 +1637,7 @@ public interface JCacheEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JCacheHeaderNameBuilder INSTANCE = new JCacheHeaderNameBuilder();
+        public static final JCacheHeaderNameBuilder INSTANCE = new JCacheHeaderNameBuilder();
 
         /**
          * The cache operation to perform.

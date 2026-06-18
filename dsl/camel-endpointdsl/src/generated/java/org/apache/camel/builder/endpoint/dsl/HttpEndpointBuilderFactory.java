@@ -1991,7 +1991,7 @@ public interface HttpEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HttpHeaderNameBuilder INSTANCE = new HttpHeaderNameBuilder();
+        public static final HttpHeaderNameBuilder INSTANCE = new HttpHeaderNameBuilder();
 
         /**
          * The HTTP content encoding. Is set on both the IN and OUT message to

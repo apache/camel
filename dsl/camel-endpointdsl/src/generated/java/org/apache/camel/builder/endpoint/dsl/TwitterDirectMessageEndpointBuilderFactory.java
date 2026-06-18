@@ -1647,7 +1647,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final TwitterDirectMessageHeaderNameBuilder INSTANCE = new TwitterDirectMessageHeaderNameBuilder();
+        public static final TwitterDirectMessageHeaderNameBuilder INSTANCE = new TwitterDirectMessageHeaderNameBuilder();
 
         /**
          * The user.

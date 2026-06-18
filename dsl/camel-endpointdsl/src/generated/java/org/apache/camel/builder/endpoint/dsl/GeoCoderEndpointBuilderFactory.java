@@ -424,7 +424,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GeoCoderHeaderNameBuilder INSTANCE = new GeoCoderHeaderNameBuilder();
+        public static final GeoCoderHeaderNameBuilder INSTANCE = new GeoCoderHeaderNameBuilder();
 
         /**
          * The formatted address.

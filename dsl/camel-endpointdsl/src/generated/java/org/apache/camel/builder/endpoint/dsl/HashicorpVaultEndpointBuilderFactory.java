@@ -347,7 +347,7 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HashicorpVaultHeaderNameBuilder INSTANCE = new HashicorpVaultHeaderNameBuilder();
+        public static final HashicorpVaultHeaderNameBuilder INSTANCE = new HashicorpVaultHeaderNameBuilder();
 
         /**
          * Overrides the desired operation to be used in the producer.

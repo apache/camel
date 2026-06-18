@@ -1838,7 +1838,7 @@ public interface QueueEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final QueueHeaderNameBuilder INSTANCE = new QueueHeaderNameBuilder();
+        public static final QueueHeaderNameBuilder INSTANCE = new QueueHeaderNameBuilder();
 
         /**
          * Returns non-parsed httpHeaders that can be used by the user.

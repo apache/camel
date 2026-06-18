@@ -347,7 +347,7 @@ public interface GoogleCloudTextToSpeechEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleCloudTextToSpeechHeaderNameBuilder INSTANCE = new GoogleCloudTextToSpeechHeaderNameBuilder();
+        public static final GoogleCloudTextToSpeechHeaderNameBuilder INSTANCE = new GoogleCloudTextToSpeechHeaderNameBuilder();
 
         /**
          * The operation to perform.

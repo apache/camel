@@ -603,7 +603,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DigitalSignatureHeaderNameBuilder INSTANCE = new DigitalSignatureHeaderNameBuilder();
+        public static final DigitalSignatureHeaderNameBuilder INSTANCE = new DigitalSignatureHeaderNameBuilder();
 
         /**
          * The PrivateKey that should be used to sign the message.

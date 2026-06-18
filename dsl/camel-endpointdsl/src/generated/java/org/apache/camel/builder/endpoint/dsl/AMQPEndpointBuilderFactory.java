@@ -7306,7 +7306,7 @@ public interface AMQPEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final AMQPHeaderNameBuilder INSTANCE = new AMQPHeaderNameBuilder();
+        public static final AMQPHeaderNameBuilder INSTANCE = new AMQPHeaderNameBuilder();
 
         /**
          * The destination.

@@ -321,7 +321,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final WhatsAppHeaderNameBuilder INSTANCE = new WhatsAppHeaderNameBuilder();
+        public static final WhatsAppHeaderNameBuilder INSTANCE = new WhatsAppHeaderNameBuilder();
 
         /**
          * Phone Number ID taken from WhatsApp Meta for Developers Dashboard.

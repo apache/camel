@@ -718,7 +718,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final HazelcastTopicHeaderNameBuilder INSTANCE = new HazelcastTopicHeaderNameBuilder();
+        public static final HazelcastTopicHeaderNameBuilder INSTANCE = new HazelcastTopicHeaderNameBuilder();
 
         /**
          * the object id to store / find your object inside the cache.

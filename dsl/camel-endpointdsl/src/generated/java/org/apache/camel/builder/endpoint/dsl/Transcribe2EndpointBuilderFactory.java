@@ -647,7 +647,7 @@ public interface Transcribe2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Transcribe2HeaderNameBuilder INSTANCE = new Transcribe2HeaderNameBuilder();
+        public static final Transcribe2HeaderNameBuilder INSTANCE = new Transcribe2HeaderNameBuilder();
 
         /**
          * The name of the transcription job.

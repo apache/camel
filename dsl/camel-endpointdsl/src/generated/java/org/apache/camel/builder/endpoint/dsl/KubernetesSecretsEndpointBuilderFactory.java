@@ -511,7 +511,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesSecretsHeaderNameBuilder INSTANCE = new KubernetesSecretsHeaderNameBuilder();
+        public static final KubernetesSecretsHeaderNameBuilder INSTANCE = new KubernetesSecretsHeaderNameBuilder();
 
         /**
          * The Producer operation.

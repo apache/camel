@@ -593,7 +593,7 @@ public interface SecurityHubEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SecurityHubHeaderNameBuilder INSTANCE = new SecurityHubHeaderNameBuilder();
+        public static final SecurityHubHeaderNameBuilder INSTANCE = new SecurityHubHeaderNameBuilder();
 
         /**
          * The operation we want to perform.

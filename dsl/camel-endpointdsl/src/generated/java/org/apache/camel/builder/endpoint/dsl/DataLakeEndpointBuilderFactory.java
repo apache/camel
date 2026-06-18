@@ -3173,7 +3173,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DataLakeHeaderNameBuilder INSTANCE = new DataLakeHeaderNameBuilder();
+        public static final DataLakeHeaderNameBuilder INSTANCE = new DataLakeHeaderNameBuilder();
 
         /**
          * Defines options available to configure the behavior of a call to

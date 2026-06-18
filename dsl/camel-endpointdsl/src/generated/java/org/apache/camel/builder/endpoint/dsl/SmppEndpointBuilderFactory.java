@@ -2747,7 +2747,7 @@ public interface SmppEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SmppHeaderNameBuilder INSTANCE = new SmppHeaderNameBuilder();
+        public static final SmppHeaderNameBuilder INSTANCE = new SmppHeaderNameBuilder();
 
         /**
          * For SubmitSm, SubmitMulti and ReplaceSm The data coding according to

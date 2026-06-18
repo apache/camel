@@ -1048,7 +1048,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GooglePubsubHeaderNameBuilder INSTANCE = new GooglePubsubHeaderNameBuilder();
+        public static final GooglePubsubHeaderNameBuilder INSTANCE = new GooglePubsubHeaderNameBuilder();
 
         /**
          * The ID of the message, assigned by the server when the message is
