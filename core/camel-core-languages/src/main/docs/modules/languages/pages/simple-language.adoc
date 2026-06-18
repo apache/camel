@@ -2100,41 +2100,21 @@ e.g., to refer to a file on the classpath you can do:
 
 From *Camel 4.18* onwards then the Simple language can _pretty format_ the output.
 
-In Java DSL you turn this on via the `boolean` parameter that is set as `true` below:
+You turn this on via the `pretty` option set to `true`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:xml")
-    .setBody().simple("<person><name>Jack</name></person>", true)
-    .to("mock:result");
-
 from("direct:json")
     .setBody().simple("{ \"name\": \"Jack\", \"age\": 44 }", true)
     .to("mock:result");
-
-from("direct:text")
-    .setBody().simple("Hello ${body}", true)
-    .to("mock:result");
 ----
 
-In YAML DSL you specific `pretty: true` as follows:
-
-[source,yaml]
-----
-route:
-  from:
-    uri: direct:xml
-    steps:
-      - setBody:
-          simple:
-            expression: "<person><name>Jack</name></person>"
-            pretty: true
-      - to:
-          uri: mock:result
-----
-
-And in XML DSL you use the pretty attribute to true as show below:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -2144,6 +2124,37 @@ And in XML DSL you use the pretty attribute to true as show below:
   </setBody>
   <to uri="mock:result"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:json
+      steps:
+        - setBody:
+            simple:
+              expression: "{ \"name\": \"Jack\", \"age\": 44 }"
+              pretty: true
+        - to:
+            uri: mock:result
+----
+====
+
+This works with XML, JSON and text content:
+
+._Java-only: pretty formatting with different content types_
+[source,java]
+----
+from("direct:xml")
+    .setBody().simple("<person><name>Jack</name></person>", true)
+    .to("mock:result");
+
+from("direct:text")
+    .setBody().simple("Hello ${body}", true)
+    .to("mock:result");
 ----
 
 == Adding custom functions to Simple language
