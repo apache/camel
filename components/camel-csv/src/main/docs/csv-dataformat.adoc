@@ -235,7 +235,7 @@ Java::
 from("direct:start")
     .marshal(new CsvDataFormat().setDelimiter(&#39;|&#39;))
     .to("mock:result")
-------------------------------------------------------- 
+----
 
 XML::
 +
@@ -271,7 +271,7 @@ Then it will produce:
 
 ----
 abc|123
-------------------------------------------------------- 
+----
 
 [[CSV-UsingautogenColumns,configRefandstrategyRefattributesinsideXMLDSL]]
 Using autogenColumns, configRef and strategyRef attributes inside XML

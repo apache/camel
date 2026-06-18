@@ -12,7 +12,6 @@
 *Since Camel {since}*
 
 Protobuf - Protocol Buffers
-----
 
 "Protocol Buffers - Google's data interchange format"
 
