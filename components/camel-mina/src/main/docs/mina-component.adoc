@@ -106,7 +106,7 @@ is, after `codec` and `logger`.
 In this sample, Camel exposes a service that listens for TCP connections
 on port 6200. We use the *textline* codec. In our route, we create a
 Mina consumer endpoint that listens to on port 6200:
-
+._Java-only: Java string concatenation with port variable_
 [source,java]
 ---------------------------------------------------------------------------------------
 from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
@@ -115,6 +115,7 @@ from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:res
 As the sample is part of a unit test, we test it by sending some data to
 it on port 6200.
 
+._Java-only: Java test API (MockEndpoint and ProducerTemplate)_
 [source,java]
 -------------------------------------------------------------------------------------------------
 MockEndpoint mock = getMockEndpoint("mock:result");
@@ -132,6 +133,7 @@ service on port 6201 also use the `textline` codec. However, this time we
 want to return a response, so we set the `sync` option to `true` on the
 consumer.
 
+._Java-only: inline Processor class_
 [source,java]
 ---------------------------------------------------------------------------------------------
 fromF("mina:tcp://localhost:%d?textline=true&sync=true", port2).process(new Processor() {
@@ -147,6 +149,7 @@ using the `template.requestBody()` method. As we know the response is a
 `String`, we cast it to `String` and can assert that the response is, in
 fact, something we have dynamically set in our processor code logic.
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------
 String response = (String)template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
@@ -171,6 +174,7 @@ textline codec. We let the Spring bean with ID, `myTCPOrderHandler`,
 handle the request and return a reply. For instance, the handler bean
 could be implemented as follows:
 
+._Java-only: Java handler class_
 [source,java]
 -----------------------------------------------
     public String handleOrder(String payload) {
@@ -189,6 +193,7 @@ the session, you should add a header with the key
 For instance, the example below will close the session after it has
 written the `bye` message back to the client:
 
+._Java-only: inline Processor class_
 [source,java]
 ---------------------------------------------------------------------------------------------------
         from("mina:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {

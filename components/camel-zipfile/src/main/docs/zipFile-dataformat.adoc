@@ -180,6 +180,7 @@ In this example we unmarshal a Zip file payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
 the `UnZippedMessageProcessor`.
 
+._Java-only: inline Processor class_
 [source,java]
 ----
 from("activemq:queue:MY_QUEUE")
@@ -191,6 +192,7 @@ If the zip file has more than one entry, the usingIterator option of
 ZipFileDataFormat to be true, and you can use splitter to do the further
 work.
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
 ----
 ZipFileDataFormat zipFile = new ZipFileDataFormat();
@@ -205,6 +207,7 @@ from("file:src/test/resources/org/apache/camel/dataformat/zipfile/?delay=1000&no
 
 Or you can use the ZipSplitter as an expression for splitter directly like this:
 
+._Java-only: Java ZipSplitter class_
 [source,java]
 ----
 from("file:src/test/resources/org/apache/camel/dataformat/zipfile?delay=1000&noop=true")
@@ -226,8 +229,9 @@ Please note that this aggregation strategy requires eager completion check to wo
 ====
 
 In this example, we aggregate all text files found in the input directory
-into a single Zip file that is stored in the output directory. 
+into a single Zip file that is stored in the output directory.
 
+._Java-only: Java ZipAggregationStrategy class_
 [source,java]
 ----
 from("file:input/directory?antInclude=*/.txt")
@@ -241,6 +245,7 @@ java.io.File.createTempFile, with the ".zip" suffix. If you want to
 override this behavior, then you can set the value of
 the `CamelFileName` header explicitly in your route:
 
+._Java-only: Java ZipAggregationStrategy class_
 [source,java]
 ----
 from("file:input/directory?antInclude=*/.txt")

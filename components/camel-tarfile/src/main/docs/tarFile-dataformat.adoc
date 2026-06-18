@@ -185,6 +185,7 @@ In this example we unmarshal a Tar File payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
 the `UnTarpedMessageProcessor`.
 
+._Java-only: inline Processor class_
 [source,java]
 -----------------------------------------------------------------------------------------------
 from("activemq:queue:MY_QUEUE").unmarshal().tarFile().process(new UnTarpedMessageProcessor()); 
@@ -194,6 +195,7 @@ If the Tar File has more than one entry, the usingIterator option of
 TarFileDataFormat to be true, and you can use splitter to do the further
 work.
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
 ----------------------------------------------------------------------------------------------------
   TarFileDataFormat tarFile = new TarFileDataFormat();
@@ -209,6 +211,7 @@ work.
 Or you can use the TarSplitter as an expression for splitter directly
 like this
 
+._Java-only: Java TarSplitter class_
 [source,java]
 ----------------------------------------------------------------------------------------------------
    from("file:src/test/resources/org/apache/camel/dataformat/tarfile?delay=1000&noop=true")
@@ -230,8 +233,9 @@ check to work properly.
 ====
 
 In this example, we aggregate all text files found in the input directory
-into a single Tar File that is stored in the output directory. 
+into a single Tar File that is stored in the output directory.
 
+._Java-only: Java TarAggregationStrategy class_
 [source,java]
 -------------------------------------------------
    from("file:input/directory?antInclude=*/.txt")
@@ -247,6 +251,7 @@ java.io.File.createTempFile, with the ".tar" suffix. If you want to
 override this behavior, then you can set the value of
 the `CamelFileName` header explicitly in your route:
 
+._Java-only: Java TarAggregationStrategy class_
 [source,java]
 ------------------------------------------------------------
    from("file:input/directory?antInclude=*/.txt")

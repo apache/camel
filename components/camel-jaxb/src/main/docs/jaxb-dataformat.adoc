@@ -28,6 +28,7 @@ The following example uses a named DataFormat of `jaxb` which is
 configured with a Java package name to initialize the
 https://jakarta.ee/specifications/xml-binding/2.3/apidocs/javax/xml/bind/jaxbcontext[JAXBContext].
 
+._Java-only: Java programmatic data format instantiation_
 [source,java]
 -------------------------------------------------------
 DataFormat jaxb = new JaxbDataFormat("com.acme.model");
@@ -41,6 +42,7 @@ You can, if you prefer, use a named reference to a data format which can
 then be defined in your Registry such as via your
 Spring XML file. e.g.
 
+._Java-only: Java DSL with named data format reference_
 [source,java]
 -------------------------------
 from("activemq:My.Queue").
@@ -109,6 +111,7 @@ on the `JaxbDataFormat`.
 While setting `partNamespace` through `JaxbConstants.JAXB_PART_NAMESPACE`, please
 note that you need to specify its value in the format `\{namespaceUri\}localPart`, as per the example below.
 
+._Java-only: Java constant reference_
 [source,java]
 --------------------------------------------------------------------------------------
 .setHeader(JaxbConstants.JAXB_PART_NAMESPACE, constant("{http://www.camel.apache.org/jaxb/example/address/1}address"));
@@ -145,6 +148,7 @@ marshal the stream to XML. Using this configuration, you can add your
 own stream writer to completely remove, escape, or replace non-XML
 characters.
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
 --------------------------------------------------------------------------------------
 JaxbDataFormat customWriterFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
@@ -226,6 +230,7 @@ then you need to enable file protocol (or others to allow access)
 
 Using the Java DSL, you can configure it in the following way:
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
 -----------------------------------------------------------------------
 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
@@ -250,6 +255,7 @@ The `JaxbDataFormat` supports to specify the `SchemaLocation` when marshalling t
 
 Using the Java DSL, you can configure it in the following way:
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
 -------------------------------------------------------------------
 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();

@@ -179,7 +179,7 @@ By default, the Disruptor endpoint uses a single consumer thread, but
 you can configure it to use concurrent consumer threads. So instead of
 thread pools, you can use:
 
-.Concurrent consumers example
+._Java-only: concurrent consumers example (incomplete route)_
 [source,java]
 --------------------------------------------------------------
 from("disruptor:stageName?concurrentConsumers=5").process(...)
@@ -195,6 +195,7 @@ Disruptor internally, so performance will be higher.
 Be aware that adding a thread pool to a Disruptor endpoint by doing
 something like:
 
+._Java-only: incomplete route (thread pool example)_
 [source,java]
 --------------------------------------------------
 from("disruptor:stageName").thread(5).process(...)
@@ -217,6 +218,7 @@ As such, it is able to send a _fire-and-forget_ message for further
 processing in another thread, and return a constant reply in this thread
 to the original caller.
 
+._Java-only: Java RouteBuilder with multiple routes_
 [source,java]
 -------------------------------------------------
 public void configure() {
@@ -232,6 +234,7 @@ public void configure() {
 
 Here we send a _Hello World_ message and expect the reply to be _OK_.
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 -----------------------------------------------------------------
 Object out = template.requestBody("direct:start", "Hello World");
@@ -267,6 +270,7 @@ of the message as a kind of _publish/subscriber_ style messaging.
 As the beans are part of a unit test, they simply send the message to a mock endpoint,
 but notice how we can use _@Consume_ to consume from the Disruptor.
 
+._Java-only: Java annotation-based consumer class_
 [source,java]
 -------------------------------------------
 public class FooEventConsumer {
@@ -287,6 +291,7 @@ public class FooEventConsumer {
 If needed, information such as buffer size, etc. can be obtained without
 using JMX in this fashion:
 
+._Java-only: Java endpoint API_
 [source,java]
 --------------------------------------------------------------------
 DisruptorEndpoint disruptor = context.getEndpoint("disruptor:xxxx");
