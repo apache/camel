@@ -3242,16 +3242,6 @@ void testPQCDataFormatRoundTrip() throws Exception {
         .to("mock:encrypted")
         .unmarshal(pqcFormat)
         .to("mock:decrypted");
-
-    encrypted.assertIsSatisfied();
-    decrypted.assertIsSatisfied();
-
-    byte[] encryptedBody = encrypted.getExchanges().get(0).getMessage().getBody(byte[].class);
-    assertNotEquals(original, new String(encryptedBody));
-
-    String decryptedBody = decrypted.getExchanges().get(0).getMessage().getBody(String.class);
-    assertEquals(original, decryptedBody);
-}
 --------------------------------------------------------------------------------
 
 === Troubleshooting
