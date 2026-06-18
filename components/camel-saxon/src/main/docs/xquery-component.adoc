@@ -25,23 +25,58 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Examples
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------
+----
 from("queue:foo")
   .filter().xquery("//foo")
-    .to("queue:bar")
----------------------------
+    .to("queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="queue:foo"/>
+  <filter>
+    <xquery>//foo</xquery>
+    <to uri="queue:bar"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - filter:
+            xquery:
+              expression: //foo
+            steps:
+              - to:
+                  uri: queue:bar
+----
+====
 
 You can also use functions inside your query, in which case you need an
 explicit type conversion (otherwise you will get a `org.w3c.dom.DOMException:
 HIERARCHY_REQUEST_ERR`), by passing the Class as a second argument to the
 *xquery()* method.
 
+._Java-only: xquery() with class literal parameter_
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:start")
   .recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
------------------------------------------------------------------------------
+----
 
 == Usage
 
@@ -139,10 +174,11 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: setHeader with xquery() and class literal_
 [source,java]
-------------------------------------------------------------------------------
+----
 .setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
-------------------------------------------------------------------------------
+----
 
 === Learning XQuery
 

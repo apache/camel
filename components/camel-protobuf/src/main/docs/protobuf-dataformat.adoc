@@ -43,6 +43,7 @@ To use this option, set contentTypeFormat value to `json` or call protobuf with 
 If the default instance is not specified, always use the native protobuf format.
 The sample code shows below:
 
+._Java-only: programmatic protobuf configuration with content type format_
 [source,java]
 --------------------------------------------------------------------------------------------------
 from("direct:marshal")
@@ -78,7 +79,7 @@ This is defined in a .proto file as so:
 
 *addressbook.proto*
 
-[source,java]
+[source,protobuf]
 ------------------------------------------------------------
 syntax = "proto2";
 
@@ -171,6 +172,7 @@ domain classes.
 You can use create the ProtobufDataFormat instance and pass it to Camel
 DataFormat marshal and unmarshal API like this.
 
+._Java-only: programmatic ProtobufDataFormat instantiation_
 [source,java]
 ----
    ProtobufDataFormat format = new ProtobufDataFormat(Person.getDefaultInstance());
@@ -182,6 +184,7 @@ DataFormat marshal and unmarshal API like this.
 Or use the DSL `protobuf()` passing the unmarshal default instance or
 default instance class name like this. However, if you have input data as `Map` type, you will need to **specify** the ProtobufDataFormat otherwise it will throw an error.
 
+._Java-only: DSL protobuf() with class name and default instance_
 [source,java]
 ----
    // You don't need to specify the default instance for protobuf marshaling, but you will need in case your input data is a Map type

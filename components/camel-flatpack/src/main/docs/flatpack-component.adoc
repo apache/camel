@@ -63,6 +63,7 @@ value.
 
 For example, to get the firstname from the sample below:
 
+._Java-only: accessing row data from the exchange body_
 [source,java]
 ------------------------------------------------
   Map row = exchange.getIn().getBody(Map.class);
@@ -72,6 +73,7 @@ For example, to get the firstname from the sample below:
 However, you can also always get it as a `List` (even for
 `splitRows=true`). The same example:
 
+._Java-only: accessing row data as a List from the exchange body_
 [source,java]
 ---------------------------------------------------
   List data = exchange.getIn().getBody(List.class);
@@ -185,6 +187,7 @@ expected and ignores the extra characters.
 To use the data format, instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
 
+._Java-only: programmatic FlatpackDataFormat configuration and unmarshal_
 [source,java]
 ---------------------------------------------------------------------------
   FlatpackDataFormat fp = new FlatpackDataFormat();
@@ -198,6 +201,7 @@ unmarshal the input using the Flatpack configuration file
 `INVENTORY-Delimited.pzmap.xml` that configures the structure of the
 files. The result is a `DataSetList` object we store on the SEDA queue.
 
+._Java-only: programmatic FlatpackDataFormat configuration and marshal_
 [source,java]
 -----------------------------------------------------------------------------------
 FlatpackDataFormat df = new FlatpackDataFormat();

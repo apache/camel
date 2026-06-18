@@ -220,6 +220,7 @@ Write methods like put(key, value) and remove(key) do not return the previous va
 
 * Put a key/value into a named cache:
 +
+._Java-only: uses InfinispanConstants and InfinispanOperation Java constants_
 [source,java]
 ----
 from("direct:start")
@@ -233,6 +234,7 @@ from("direct:start")
 +
 It is possible to configure the lifetime and/or the idle time before the entry expires and gets evicted from the cache, as example:
 +
+._Java-only: uses InfinispanConstants Java constants and TimeUnit enum_
 [source,java]
 ----
 from("direct:start")
@@ -247,6 +249,7 @@ from("direct:start")
 
 * Queries
 +
+._Java-only: uses InfinispanQueryBuilder anonymous class and Java constants_
 [source,java]
 ----
 from("direct:start")
@@ -263,11 +266,41 @@ from("direct:start")
 
 * Custom Listeners
 +
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("infinispan://?cacheContainer=#cacheManager&customListener=#myCustomListener")
   .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="infinispan://?cacheContainer=#cacheManager&amp;customListener=#myCustomListener"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "infinispan://"
+      parameters:
+        cacheContainer: "#cacheManager"
+        customListener: "#myCustomListener"
+    steps:
+      - to:
+          uri: mock:result
+----
+====
 +
 The instance of `myCustomListener` must exist and Camel should be able to look it up from the  `Registry`.
 Users are encouraged to extend the `org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener` class and annotate the resulting class with `@Listener` which can be found in the package `org.infinispan.notifications`.

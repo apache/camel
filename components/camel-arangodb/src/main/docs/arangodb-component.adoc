@@ -95,14 +95,45 @@ myObject.addAttribute("b", 42);
 
 ==== Query a collection
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:query")
-  .to("arangodb:testDb?operation=AQL_QUERY
---------------------------------------------------------------------------------
+    .to("arangodb:testDb?operation=AQL_QUERY");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:query"/>
+  <to uri="arangodb:testDb?operation=AQL_QUERY"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:query
+      steps:
+        - to:
+            uri: arangodb:testDb
+            parameters:
+              operation: AQL_QUERY
+----
+====
 
 And you can invoke an AQL Query in this way
 
+._Java-only: ProducerTemplate with AQL query parameters and string concatenation_
+[source,java]
 --------------------------------------------------------------------------------
 String query = "FOR t IN " + COLLECTION_NAME + " FILTER t.value == @value";
 Map<String, Object> bindVars = new MapBuilder().put("value", "hello")

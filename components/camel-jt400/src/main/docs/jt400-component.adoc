@@ -107,13 +107,14 @@ library `BEATLES` on a system named `LIVERPOOL`.  +
  Another user connects to the same data queue to receive the information
 from the data queue and forward it to the `mock:ringo` endpoint.
 
+._Java-only: RouteBuilder class definition_
 [source,java]
 -------------------------------------------------------------------------------------------------------
 public class Jt400RouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-       from("direct:george").to("jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ");
-       from("jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ").to("mock:ringo");
+       from(“direct:george”).to(“jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”);
+       from(“jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”).to(“mock:ringo”);
     }
 }
 -------------------------------------------------------------------------------------------------------
@@ -126,38 +127,40 @@ program “compute” in the library “assets”. This program will write the
 output values in the second and third parameters. All the parameters will be
 sent to the direct:play endpoint.
 
+._Java-only: RouteBuilder class definition_
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 public class Jt400RouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-       from("direct:work").to("jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3").to("direct:play");
+       from(“direct:work”).to(“jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3”).to(“direct:play”);
     }
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 In this example, the camel route will call the QUSRTVUS API to retrieve
-16 bytes from data area "MYUSRSPACE" in the "MYLIB" library.
+16 bytes from data area “MYUSRSPACE” in the “MYLIB” library.
 
+._Java-only: RouteBuilder class definition with lambda expression_
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 public class Jt400RouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        from("timer://foo?period=60000")
+        from(“timer://foo?period=60000”)
         .process( exchange -> {
-            String usrSpc = "MYUSRSPACEMYLIB     ";
+            String usrSpc = “MYUSRSPACEMYLIB     “;
             Object[] parms = new Object[] {
                 usrSpc, // Qualified user space name
                 1,      // starting position
                 16,     // length of data
-                "" // output
+                “” // output
             };
             exchange.getIn().setBody(parms);
         })
-        .to("jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3")
-        .setBody(simple("${body[3]}"))
-        .to("direct:foo");
+        .to(“jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3”)
+        .setBody(simple(“${body[3]}”))
+        .to(“direct:foo”);
     }
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -310,6 +313,7 @@ YAML::
 
 === Replying to an inquiry message on a message queue
 
+._Java-only: uses Java constants, lambda expression, and choice with header() predicate_
 [source,java]
 -------------------------------------------------------------------------------------------------------
 from("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq?sendingReply=true")

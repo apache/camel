@@ -198,8 +198,9 @@ the Spring `<component-scan>` feature and have Camel pickup any
 This allows you to just annotate your routes using the Spring
 `@Component` and have those routes included by Camel
 
+._Java-only: Spring component-scanned RouteBuilder class definition_
 [source,java]
--------------------------------------------------
+----
 @Component
 public class MyRoute extends SpringRouteBuilder {
 
@@ -208,7 +209,7 @@ public class MyRoute extends SpringRouteBuilder {
         from("direct:start").to("mock:result");
     }
 }
--------------------------------------------------
+----
 
 You can also use the ant style for inclusion and exclusion, as mentioned
 above in the `<packageScan>` documentation.
@@ -311,15 +312,16 @@ to allow this. It provides two methods (`excludeRoute` and
 `excludeRoutes`) that may be overridden to exclude a single class or an
 array of classes.
 
+._Java-only: test class with route exclusion_
 [source,java]
-----------------------------------------------------------------
+----
 public class RouteAandRouteBOnlyTest extends SpringTestSupport {
-    @Override      
+    @Override
     protected Class<?> excludeRoute() {
         return RouteC.class;
     }
 }
-----------------------------------------------------------------
+----
 
 To hook into the camelContext initialization by spring to
 exclude the class `MyExcludedRouteBuilder`, we need to intercept the spring
@@ -328,25 +330,27 @@ spring context, we call the `getRouteExcludingApplicationContext()` method
 to provide a special parent spring context that takes care of the
 exclusion.
 
+._Java-only: overriding Spring application context for route exclusion_
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
+----
 @Override
 protected AbstractXmlApplicationContext createApplicationContext() {
     return new ClassPathXmlApplicationContext(new String[] {"routes-context.xml"}, getRouteExcludingApplicationContext());
 }
---------------------------------------------------------------------------------------------------------------------------
+----
 
 `RouteC` will now be excluded from initialization. Similarly, in another
 test that is testing only `RouteC`, we could exclude RouteB and RouteA by
 overriding the method `excludeRoutes`.
 
+._Java-only: excluding multiple route classes_
 [source,java]
----------------------------------------------------
+----
 @Override
 protected Class<?>[] excludeRoutes() {
     return new Class[]{RouteA.class, RouteB.class};
 }
----------------------------------------------------
+----
 
 == Using Spring XML
 

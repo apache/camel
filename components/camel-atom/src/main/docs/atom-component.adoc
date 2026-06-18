@@ -35,7 +35,6 @@ for this component:
 
 == URI format
 
-[source,java]
 ------------------------
 atom://atomUri[?options]
 ------------------------
@@ -77,30 +76,117 @@ Camel supports Idempotent Consumer
 directly within the component, so it will skip already processed entries.
 This feature is enabled by default, but can be disabled by setting the `idempotent=false` option.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?idempotent=false").to("...");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?idempotent=false"/>
+  <to uri="..."/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        idempotent: false
+      steps:
+        - to:
+            uri: "..."
+----
+====
+
 The default Idempotency strategy uses Atom published and updated timestamps to identify already
 read entries, by filtering all entries older that the _last read_ entry.
 
 The idempotency strategy can be changed by setting the `idempotentStrategy` option. The components support two
-strategies _out-of-the-box_, but custom strategies can be used, by referencing a subclass 
+strategies _out-of-the-box_, but custom strategies can be used, by referencing a subclass
 of `org.apache.camel.component.atom.AtomIdempotentStrategy`, with Apache Camel's # notation.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?idempotentStrategy=#myIdempotentStrategy").to("...");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?idempotentStrategy=#myIdempotentStrategy"/>
+  <to uri="..."/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        idempotentStrategy: "#myIdempotentStrategy"
+      steps:
+        - to:
+            uri: "..."
+----
+====
+
 ==== Repository idempotent strategy
 As an alternative to the default idempotent strategy, a repository based strategy can be use:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?idempotentStrategy=repository").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?idempotentStrategy=repository"/>
+  <to uri="..."/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        idempotentStrategy: repository
+      steps:
+        - to:
+            uri: "..."
+----
+====
 
 This strategy checks for idempotency by storing the Atom Entry GUID in an `IdempotentRepository`. The strategy defaults
 a MemoryIdempotentRepository, but the repository can be changes to any subclass of `IdempotentRepository`, using the

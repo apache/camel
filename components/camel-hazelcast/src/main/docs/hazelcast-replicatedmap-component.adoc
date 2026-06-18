@@ -130,6 +130,7 @@ Spring XML::
 
 You can call them in your test class with:
 
+._Java-only: uses ProducerTemplate API and Java constants_
 [source,java]
 ------------------------------------------------------------------------------------------------------------
 template.sendBodyAndHeader("direct:[put|get|delete|clear]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
@@ -142,6 +143,7 @@ variables as for the map cache consumer (except the update and enviction
 listener). The only difference is the *multimap* prefix inside the URI.
 Here is a sample:
 
+._Java-only: uses Java constants, string formatting, and choice/when/otherwise_
 [source,java]
 --------------------------------------------------------------------------------------------------
 fromF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX)

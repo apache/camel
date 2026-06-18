@@ -190,22 +190,46 @@ between different signer/verifier endpoints within the camel context.
 
 The following example shows the basic usage of the component.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:enveloping").to("xmlsecurity-sign://enveloping?keyAccessor=#accessor",
-                             "xmlsecurity-verify://enveloping?keySelector=#selector",
-                             "mock:result")
+from("direct:enveloping")
+    .to("xmlsecurity-sign://enveloping?keyAccessor=#accessor")
+    .to("xmlsecurity-verify://enveloping?keySelector=#selector")
+    .to("mock:result");
 ----
 
-In Spring XML:
-
+XML::
++
 [source,xml]
 ----
-<from uri="direct:enveloping" />
-    <to uri="xmlsecurity-sign://enveloping?keyAccessor=#accessor" />
-    <to uri="xmlsecurity-verify://enveloping?keySelector=#selector" />
-<to uri="mock:result" />
+<route>
+  <from uri="direct:enveloping"/>
+  <to uri="xmlsecurity-sign://enveloping?keyAccessor=#accessor"/>
+  <to uri="xmlsecurity-verify://enveloping?keySelector=#selector"/>
+  <to uri="mock:result"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:enveloping
+      steps:
+        - to:
+            uri: "xmlsecurity-sign://enveloping?keyAccessor=#accessor"
+        - to:
+            uri: "xmlsecurity-verify://enveloping?keySelector=#selector"
+        - to:
+            uri: mock:result
+----
+====
 
 For the signing process, a private key is necessary. You specify a key
 accessor bean which provides this private key. For the validation, the
@@ -367,6 +391,10 @@ element `A`.
 
 *Java DSL Example*
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:detached")
@@ -375,11 +403,39 @@ from("direct:detached")
   .to("mock:result");
 ----
 
-*Spring Example*
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:detached"/>
+  <to uri="xmlsecurity-sign://detached?keyAccessor=#keyAccessorBean&amp;xpathsToIdAttributes=#xpathsToIdAttributesBean&amp;schemaResourceUri=Test.xsd"/>
+  <to uri="xmlsecurity-verify://detached?keySelector=#keySelectorBean&amp;schemaResourceUri=Test.xsd"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:detached
+      steps:
+        - to:
+            uri: "xmlsecurity-sign://detached?keyAccessor=#keyAccessorBean&xpathsToIdAttributes=#xpathsToIdAttributesBean&schemaResourceUri=Test.xsd"
+        - to:
+            uri: "xmlsecurity-verify://detached?keySelector=#keySelectorBean&schemaResourceUri=Test.xsd"
+        - to:
+            uri: mock:result
+----
+====
+
+*Spring Bean Configuration Example*
 
 [source,xml]
 ----
-   
 <bean id="xpathsToIdAttributesBean" class="java.util.ArrayList">
       <constructor-arg type="java.util.Collection">
           <list>
@@ -397,13 +453,6 @@ from("direct:detached")
           </list>
       </constructor-arg>
   </bean>
-...
- <from uri="direct:detached" />
-      <to
-          uri="xmlsecurity-sign://detached?keyAccessor=#keyAccessorBean&amp;xpathsToIdAttributes=#xpathsToIdAttributesBean&amp;schemaResourceUri=Test.xsd" />
-      <to
-          uri="xmlsecurity-verify://detached?keySelector=#keySelectorBean&amp;schemaResourceUri=Test.xsd" />
-      <to uri="mock:result" />
 ----
 
 
@@ -469,6 +518,7 @@ can just omit them.
 
 *XAdES-BES/EPES Example in Java DSL*
 
+._Java-only: programmatic XAdES signature properties configuration_
 [source,java]
 ----
 Keystore keystore = ... // load a keystore

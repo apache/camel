@@ -58,6 +58,7 @@ include::spring-boot:partial$starter.adoc[]
 
 The component requires an `EmbeddingStore` instance. Register it in the Camel registry:
 
+._Java-only: programmatic EmbeddingStore configuration and registry binding_
 [source,java]
 ----
 EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
@@ -218,6 +219,7 @@ YAML::
 
 A complete example showing document ingestion and retrieval:
 
+._Java-only: multi-route RAG pipeline with split and tokenize_
 [source,java]
 ----
 // Ingestion route: chunk, embed, and store documents

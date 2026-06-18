@@ -149,6 +149,7 @@ map on the headers with the key `CamelJdbcParameters`.
 In the following example, we set up the DataSource that camel-jdbc requires.
 First we register our datasource in the Camel registry as `testdb`:
 
+._Java-only: programmatic DataSource registration using EmbeddedDatabaseBuilder_
 [source,java]
 ----
 EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
@@ -199,6 +200,7 @@ We create an endpoint, add the SQL query to the body of the IN message,
 and then send the exchange. The result of the query is returned in the
 _OUT_ body:
 
+._Java-only: using ProducerTemplate to send an exchange to the endpoint_
 [source,java]
 ----
 Endpoint endpoint = context.getEndpoint("direct:hello");
@@ -213,6 +215,10 @@ If you want to work on the rows one by one instead of the entire
 ResultSet at once, you need to use the Splitter EIP
 such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:hello")
@@ -224,6 +230,42 @@ from("direct:hello")
   .split(body()).streaming()
   .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:hello"/>
+  <to uri="jdbc:testdb?outputType=StreamList"/>
+  <split streaming="true">
+    <body/>
+    <to uri="mock:result"/>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:hello
+    steps:
+      - to:
+          uri: jdbc:testdb
+          parameters:
+            outputType: StreamList
+      - split:
+          expression:
+            body: {}
+          streaming: true
+          steps:
+            - to:
+                uri: mock:result
+----
+====
 
 === Polling the database every minute
 
@@ -284,6 +326,7 @@ another data source (ETL operations). In the following example, we
 retrieve new customer records from the source table every hour,
 filter/transform them and move them to a destination table:
 
+._Java-only: ETL route using inline Processor to filter and transform results_
 [source,java]
 ----
 from("timer://MoveNewCustomersEveryHour?period=3600000")

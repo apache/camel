@@ -76,6 +76,7 @@ Assumed we have a java bean with the following annotations
 
 *Car.java*
 
+._Java-only: Java Bean with validation annotations_
 [source,java]
 -----------------------------------------------------------
 public class Car {
@@ -86,7 +87,7 @@ public class Car {
     @NotNull
     @Size(min = 5, max = 14, groups = OptionalChecks.class)
     private String licensePlate;
-    
+
     // getter and setter
 }
 -----------------------------------------------------------
@@ -95,6 +96,7 @@ and an interface definition for our custom validation group
 
 *OptionalChecks.java*
 
+._Java-only: custom validation group interface_
 [source,java]
 ---------------------------------
 public interface OptionalChecks {
@@ -189,6 +191,7 @@ define a new interface first:
 
 *AllChecks.java*
 
+._Java-only: combined validation group interface using @GroupSequence_
 [source,java]
 -----------------------------------------------------
 @GroupSequence({Default.class, OptionalChecks.class})

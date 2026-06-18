@@ -186,6 +186,7 @@ YAML::
 
 The `MyBean` is a simple bean that will receive the messages
 
+._Java-only: bean class definition_
 [source,java]
 ---------------------------------------------------------
 public class MyBean {
@@ -265,6 +266,7 @@ YAML::
 
 The `ChatBotLogic` is a simple bean that implements a generic String-to-String method.
 
+._Java-only: bean class definition_
 [source,java]
 ---------------------------------------------------------
 public class ChatBotLogic {
@@ -383,6 +385,7 @@ Note that the corresponding URI parameter is simply `chatId`.
 You can customize the user keyboard instead of asking him to write an option.
 `OutgoingTextMessage` has the property `ReplyMarkup` which can be used for such a thing.
 
+._Java-only: inline Processor with keyboard builder API_
 [source,java]
 ---------------------------------------------------------
 from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
@@ -417,6 +420,7 @@ from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHer
 
 If you want to disable it, the next message must have the property `removeKeyboard` set on `ReplyKeyboardMarkup` object.
 
+._Java-only: inline Processor with keyboard removal_
 [source,java]
 ---------------------------------------------------------
 from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")

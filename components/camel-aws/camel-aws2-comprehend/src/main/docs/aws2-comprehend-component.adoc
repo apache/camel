@@ -528,6 +528,7 @@ Returns toxicity scores for categories like PROFANITY, HATE_SPEECH, THREAT, INSU
 
 For more control, you can pass AWS SDK request objects directly by setting `pojoRequest=true`:
 
+._Java-only: uses lambda expression and AWS SDK request builder API_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:pojoRequest")
@@ -543,6 +544,7 @@ from("direct:pojoRequest")
 
 You can dynamically set the operation and language code using message headers:
 
+._Java-only: uses Java enum constant for operation header value_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:dynamicOperation")
@@ -609,6 +611,7 @@ YAML::
 
 A practical example combining multiple Comprehend operations for content moderation:
 
+._Java-only: uses choice/when/otherwise with inline comments_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:moderateContent")
@@ -634,6 +637,7 @@ from("direct:moderateContent")
 
 Analyze customer feedback for sentiment and key topics:
 
+._Java-only: uses body() method reference and choice/when/otherwise with inline comments_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("kafka:customer-feedback")

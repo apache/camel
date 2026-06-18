@@ -83,6 +83,7 @@ Lucene usage samples.
 
 === Example 1: Creating a Lucene index
 
+._Java-only: RouteBuilder class definition_
 [source,java]
 ------------------------------------------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
@@ -97,6 +98,7 @@ RouteBuilder builder = new RouteBuilder() {
 
 === Example 2: Loading properties into the JNDI registry in the Camel Context
 
+._Java-only: programmatic CamelContext and registry configuration_
 [source,java]
 -----------------------------------------------------------------
 CamelContext context = new DefaultCamelContext(createRegistry());
@@ -108,6 +110,7 @@ registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
 
 === Example 2: Performing searches using a Query Producer
 
+._Java-only: RouteBuilder with inline Processor and Java constants_
 [source,java]
 ----------------------------------------------------------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
@@ -117,7 +120,7 @@ RouteBuilder builder = new RouteBuilder() {
           to("lucene:searchIndex:query?
              analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20").
           to("direct:next");
-                
+
        from("direct:next").process(new Processor() {
           public void process(Exchange exchange) throws Exception {
              Hits hits = exchange.getIn().getBody(Hits.class);
@@ -139,10 +142,11 @@ RouteBuilder builder = new RouteBuilder() {
 
 === Example 3: Performing searches using a Query Processor
 
+._Java-only: RouteBuilder with LuceneQueryProcessor and inline Processor_
 [source,java]
 -------------------------------------------------------------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
-    public void configure() {            
+    public void configure() {
         try {
             from("direct:start").
                 setHeader(LuceneConstants.HEADER_QUERY, constant("Rodney Dangerfield")).
@@ -151,13 +155,13 @@ RouteBuilder builder = new RouteBuilder() {
         } catch (Exception e) {
             e.printStackTrace();
         }
-                
+
         from("direct:next").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Hits hits = exchange.getIn().getBody(Hits.class);
                 printResults(hits);
             }
-                    
+
             private void printResults(Hits hits) {
                 LOG.debug("Number of hits: " + hits.getNumberOfHits());
                 for (int i = 0; i < hits.getNumberOfHits(); i++) {

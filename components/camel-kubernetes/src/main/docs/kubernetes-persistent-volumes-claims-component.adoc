@@ -43,6 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listPersistentVolumesClaims`: this operation lists the PVCs on a kubernetes cluster
 
+._Java-only: uses `toF()` for URI formatting_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
