@@ -43,7 +43,7 @@ public class SplunkHECConfiguration {
     @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String token;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean skipTlsVerify;
     @UriParam(label = "security", defaultValue = "true")
     private boolean https = true;
