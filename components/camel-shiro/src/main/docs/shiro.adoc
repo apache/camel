@@ -90,6 +90,7 @@ sec-level1 = zone1:readonly:*
 
 A ShiroSecurityPolicy object is instantiated as follows
 
+._Java-only: Java class instantiation and configuration_
 [source,java]
 ----------------------------------------------------------------------------------------
         private final String iniResourcePath = "classpath:shiro.ini";
@@ -164,6 +165,7 @@ further following proper authentication. The SecurityToken object
 contains a Username/Password details that are used to determine where
 the user is a valid user.
 
+._Java-only: Java RouteBuilder with security policy_
 [source,java]
 -----------------------------------------------------------------------
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -199,6 +201,7 @@ specifies the permissions necessary for the user to proceed with the
 execution of the route segment. If the user does not have the proper
 permission set, the request is not authorized to continue any further.
 
+._Java-only: Java RouteBuilder with security policy_
 [source,java]
 -------------------------------------------------------------------------------------------
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -233,6 +236,7 @@ Exchange using a Shiro Processor called ShiroSecurityTokenInjector. An
 example of injecting a ShiroSecurityToken using a
 ShiroSecurityTokenInjector in the client is shown below
 
+._Java-only: Java security token injection_
 [source,java]
 -------------------------------------------------------------------------------------
     ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
@@ -256,6 +260,7 @@ bit security by default and can be changed to any cipher of your choice.
 Given below is an example of how a request may be sent using a
 ProducerTemplate in Camel along with a SecurityToken
 
+._Java-only: Java test method (ProducerTemplate)_
 [source,java]
 -------------------------------------------------------------------------------------------------
  
@@ -286,6 +291,7 @@ You can send a message to a Camel route with a header of key
 `org.apache.camel.component.shiro.security.ShiroSecurityToken` that
 contains the username and password. For example:
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
@@ -296,6 +302,7 @@ contains the username and password. For example:
 You can also provide the username and password in two different headers
 as shown below:
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 --------------------------------------------------------------------------------------
         Map<String, Object> headers = new HashMap<String, Object>();
