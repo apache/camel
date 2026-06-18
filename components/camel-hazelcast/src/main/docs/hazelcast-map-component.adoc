@@ -286,26 +286,108 @@ the message body.
 
 Here's a sample:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------
-fromF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX)
-.log("object...")
-.choice()
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
-         .log("...added")
-         .to("mock:added")
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ENVICTED))
-         .log("...envicted")
-         .to("mock:envicted")
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.UPDATED))
-         .log("...updated")
-         .to("mock:updated")
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED))
-         .log("...removed")
-         .to("mock:removed")
-    .otherwise()
-         .log("fail!");
---------------------------------------------------------------------------------------------
+----
+from("hazelcast-map:foo")
+    .log("object...")
+    .choice()
+        .when(header("CamelHazelcastListenerAction").isEqualTo("added"))
+            .log("...added")
+            .to("mock:added")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("envicted"))
+            .log("...envicted")
+            .to("mock:envicted")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("updated"))
+            .log("...updated")
+            .to("mock:updated")
+        .when(header("CamelHazelcastListenerAction").isEqualTo("removed"))
+            .log("...removed")
+            .to("mock:removed")
+        .otherwise()
+            .log("fail!");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="hazelcast-map:foo"/>
+  <log message="object..."/>
+  <choice>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'added'</simple>
+      <log message="...added"/>
+      <to uri="mock:added"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'envicted'</simple>
+      <log message="...envicted"/>
+      <to uri="mock:envicted"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'updated'</simple>
+      <log message="...updated"/>
+      <to uri="mock:updated"/>
+    </when>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'removed'</simple>
+      <log message="...removed"/>
+      <to uri="mock:removed"/>
+    </when>
+    <otherwise>
+      <log message="fail!"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: hazelcast-map:foo
+      steps:
+        - log:
+            message: "object..."
+        - choice:
+            when:
+              - simple: "${header.CamelHazelcastListenerAction} == 'added'"
+                steps:
+                  - log:
+                      message: "...added"
+                  - to:
+                      uri: mock:added
+              - simple: "${header.CamelHazelcastListenerAction} == 'envicted'"
+                steps:
+                  - log:
+                      message: "...envicted"
+                  - to:
+                      uri: mock:envicted
+              - simple: "${header.CamelHazelcastListenerAction} == 'updated'"
+                steps:
+                  - log:
+                      message: "...updated"
+                  - to:
+                      uri: mock:updated
+              - simple: "${header.CamelHazelcastListenerAction} == 'removed'"
+                steps:
+                  - log:
+                      message: "...removed"
+                  - to:
+                      uri: mock:removed
+            otherwise:
+              steps:
+                - log:
+                    message: "fail!"
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

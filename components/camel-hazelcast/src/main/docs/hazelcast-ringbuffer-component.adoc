@@ -68,15 +68,49 @@ Spring XML::
 
 === Example for *readonce from head*:
 
-Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------------------------
+----
 from("direct:get")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.READ_ONCE_HEAD))
-.toF("hazelcast-%sbar", HazelcastConstants.RINGBUFFER_PREFIX)
-.to("seda:out");
------------------------------------------------------------------------------------------------
+    .setHeader("CamelHazelcastOperationType", constant("readOnceHead"))
+    .to("hazelcast-ringbuffer:bar")
+    .to("seda:out");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:get"/>
+  <setHeader name="CamelHazelcastOperationType">
+    <constant>readOnceHead</constant>
+  </setHeader>
+  <to uri="hazelcast-ringbuffer:bar"/>
+  <to uri="seda:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:get
+      steps:
+        - setHeader:
+            name: CamelHazelcastOperationType
+            constant: readOnceHead
+        - to:
+            uri: hazelcast-ringbuffer:bar
+        - to:
+            uri: seda:out
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

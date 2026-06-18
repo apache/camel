@@ -31,17 +31,69 @@ The instance consumer fires if a new cache instance joins or leaves the cluster.
  
 Here's a sample:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------------------
-fromF("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX)
-.log("instance...")
-.choice()
-    .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
-        .log("...added")
-        .to("mock:added")
-    .otherwise()
-        .log("...removed")
-        .to("mock:removed");
------------------------------------------------------------------------------------------
+----
+from("hazelcast-instance:foo")
+    .log("instance...")
+    .choice()
+        .when(header("CamelHazelcastListenerAction").isEqualTo("added"))
+            .log("...added")
+            .to("mock:added")
+        .otherwise()
+            .log("...removed")
+            .to("mock:removed");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="hazelcast-instance:foo"/>
+  <log message="instance..."/>
+  <choice>
+    <when>
+      <simple>${header.CamelHazelcastListenerAction} == 'added'</simple>
+      <log message="...added"/>
+      <to uri="mock:added"/>
+    </when>
+    <otherwise>
+      <log message="...removed"/>
+      <to uri="mock:removed"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: hazelcast-instance:foo
+      steps:
+        - log:
+            message: "instance..."
+        - choice:
+            when:
+              - simple: "${header.CamelHazelcastListenerAction} == 'added'"
+                steps:
+                  - log:
+                      message: "...added"
+                  - to:
+                      uri: mock:added
+            otherwise:
+              steps:
+                - log:
+                    message: "...removed"
+                - to:
+                    uri: mock:removed
+----
+====
 
 include::spring-boot:partial$starter.adoc[]
