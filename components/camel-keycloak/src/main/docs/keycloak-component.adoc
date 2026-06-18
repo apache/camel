@@ -1218,6 +1218,8 @@ YAML::
 
 Identity providers allow you to configure external authentication systems like LDAP, Active Directory, Google, GitHub, and other SAML/OIDC providers.
 
+._Java-only: Keycloak admin API_
+
 [source,java]
 ----
 // Create OIDC identity provider
@@ -1259,6 +1261,8 @@ template.sendBodyAndHeaders("keycloak:admin?operation=deleteIdentityProvider", n
 === Organization Operations
 
 Organizations (introduced in Keycloak 26) allow you to model multi-tenant scenarios within a realm. Each organization can have members and can be linked to one or more identity providers.
+
+._Java-only: Keycloak admin API_
 
 [source,java]
 ----
@@ -1722,6 +1726,8 @@ Keycloak Authorization Services provide fine-grained authorization with resource
 
 NOTE: These operations require a client with authorization services enabled in Keycloak.
 
+._Java-only: Keycloak authorization API_
+
 [source,java]
 ----
 // Create authorization resource
@@ -1990,6 +1996,8 @@ YAML::
 
 ===== Fine-Grained Resource Authorization
 
+._Java-only: Keycloak authorization API_
+
 [source,java]
 ----
 // Check if user can access a specific document
@@ -2020,6 +2028,8 @@ public Map<String, Boolean> checkMultipleResources(String accessToken, List<Stri
 
 ===== Token Exchange for Delegation
 
+._Java-only: Keycloak token exchange API_
+
 [source,java]
 ----
 // Evaluate permissions on behalf of another user (token exchange)
@@ -2041,6 +2051,8 @@ The operation throws exceptions in the following cases:
 
 * `IllegalArgumentException` - When required configuration is missing (serverUrl, realm, clientId, clientSecret)
 * `AuthorizationDeniedException` - When the user doesn't have permission to access the requested resources
+
+._Java-only: Java exception handling_
 
 [source,java]
 ----
@@ -4407,6 +4419,8 @@ beans:
 
 The introspection cache significantly reduces the performance impact of API calls to Keycloak:
 
+._Java-only: programmatic security policy configuration_
+
 [source,java]
 ----
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
@@ -4586,6 +4600,8 @@ beans:
 
 For production systems, monitor cache performance to optimize TTL and size settings:
 
+._Java-only: cache monitoring API_
+
 [source,java]
 ----
 // Periodically check cache performance
@@ -4638,6 +4654,8 @@ if (stats != null) {
 
 5. **Different Policies for Different Endpoints**: Use Caffeine cache for high-traffic endpoints and stricter settings for security-critical endpoints
 
+._Java-only: programmatic cache configuration_
+
 [source,java]
 ----
 // High-traffic endpoint - use Caffeine with longer TTL
@@ -4663,6 +4681,8 @@ from("rest:post:/payments")
 ==== Token Revocation Workflow
 
 When using token introspection, you can implement a complete token revocation workflow:
+
+._Java-only: token revocation workflow_
 
 [source,java]
 ----
@@ -4777,6 +4797,8 @@ The security policy expects access tokens to be provided in one of the following
 1. **Header**: `CamelKeycloakAccessToken`
 2. **Authorization Header**: `Authorization: Bearer <token>`
 3. **Exchange Property**: `CamelKeycloakAccessToken`
+
+._Java-only: accessing token from exchange_
 
 [source,java]
 ----
@@ -5122,6 +5144,8 @@ beans:
 
 === Sending Requests with Tokens
 
+._Java-only: HTTP client authentication_
+
 [source,java]
 ----
 // In your client code, include the access token
@@ -5230,6 +5254,8 @@ keycloak.client-secret=your-client-secret
 ----
 
 === Spring Configuration
+
+._Java-only: Spring configuration class_
 
 [source,java]
 ----
@@ -5599,6 +5625,8 @@ For permissions-based authorization, you have several options to include permiss
    - Add the scope as **Default** or **Optional**
 
 3. In your application code, you can then use scopes as permissions:
+
+._Java-only: programmatic security policy configuration_
 
 [source,java]
 ----
