@@ -131,13 +131,49 @@ Metric name defined in URI can be overridden by using header with name
 
 For example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:in")
-    .setHeader(MetricsConstants.HEADER_METRIC_NAME, constant("new.name"))
+    .setHeader("CamelMetricsName").constant("new.name")
     .to("metrics:counter:name.not.used")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsName">
+    <constant>new.name</constant>
+  </setHeader>
+  <to uri="metrics:counter:name.not.used"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsName
+            constant: new.name
+        - to:
+            uri: metrics:counter:name.not.used
+        - to:
+            uri: direct:out
+----
+====
 
 will update counter with name `new.name` instead of `name.not.used`.
 
@@ -296,24 +332,97 @@ values specified in Metrics component URI.
 |CamelMetricsCounterDecrement  |Override decrement value in URI |Long
 |====================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // update counter simple.counter by 417
 from("direct:in")
-    .setHeader(MetricsConstants.HEADER_COUNTER_INCREMENT, constant(417L))
+    .setHeader("CamelMetricsCounterIncrement").constant(417L)
     .to("metrics:counter:simple.counter?increment=7")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsCounterIncrement">
+    <constant resultType="java.lang.Long">417</constant>
+  </setHeader>
+  <to uri="metrics:counter:simple.counter?increment=7"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsCounterIncrement
+            constant: 417
+        - to:
+            uri: metrics:counter:simple.counter
+            parameters:
+              increment: 7
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // updates counter using simple language to evaluate body.length
 from("direct:in")
-    .setHeader(MetricsConstants.HEADER_COUNTER_INCREMENT, simple("${body.length}"))
+    .setHeader("CamelMetricsCounterIncrement", simple("${body.length}"))
     .to("metrics:counter:body.length")
     .to("mock:out");
-
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsCounterIncrement">
+    <simple>${body.length}</simple>
+  </setHeader>
+  <to uri="metrics:counter:body.length"/>
+  <to uri="mock:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsCounterIncrement
+            simple: "${body.length}"
+        - to:
+            uri: metrics:counter:body.length
+        - to:
+            uri: mock:out
+----
+====
 
 [[MetricsComponent-histogram]]
 === Metric type histogram
@@ -628,14 +737,50 @@ component URI.
 |`org.apache.camel.component.metrics.MetricsTimerAction`
 |=======================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // sets timer action using header
 from("direct:in")
-    .setHeader(MetricsConstants.HEADER_TIMER_ACTION, MetricsTimerAction.start)
+    .setHeader("CamelMetricsTimerAction").constant("start")
     .to("metrics:timer:simple.timer")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsTimerAction">
+    <constant>start</constant>
+  </setHeader>
+  <to uri="metrics:timer:simple.timer"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsTimerAction
+            constant: start
+        - to:
+            uri: metrics:timer:simple.timer
+        - to:
+            uri: direct:out
+----
+====
 
 [[MetricsComponent-gauge]]
 === Metric type gauge
@@ -706,14 +851,52 @@ default one specified in a URI.
 |CamelMetricsGaugeSubject  |Override subject value in URI |Object
 |====================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // update gauge simple.gauge by a String literal "myUpdatedSubject"
 from("direct:in")
-    .setHeader(MetricsConstants.HEADER_GAUGE_SUBJECT, constant("myUpdatedSubject"))
+    .setHeader("CamelMetricsGaugeSubject").constant("myUpdatedSubject")
     .to("metrics:counter:simple.gauge?subject=#mySubjectBean")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsGaugeSubject">
+    <constant>myUpdatedSubject</constant>
+  </setHeader>
+  <to uri="metrics:counter:simple.gauge?subject=#mySubjectBean"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsGaugeSubject
+            constant: myUpdatedSubject
+        - to:
+            uri: metrics:counter:simple.gauge
+            parameters:
+              subject: "#mySubjectBean"
+        - to:
+            uri: direct:out
+----
+====
 
 === MetricsRoutePolicyFactory
 
