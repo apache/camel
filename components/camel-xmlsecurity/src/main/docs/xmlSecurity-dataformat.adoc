@@ -82,6 +82,7 @@ at the Document, Element, and Content levels.
 
 === Full Payload encryption/decryption
 
+._Java-only: full payload encryption using generated AES key_
 [source,java]
 ----------------------------
 KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
@@ -96,6 +97,7 @@ from("direct:start")
 
 === Partial Payload Content Only encryption/decryption with choice of passPhrase(password)
 
+._Java-only: partial payload encryption with passPhrase_
 [source,java]
 ------------------------------------------------------------------
 String tagXPATH = "//cheesesites/italy/cheese";
@@ -110,6 +112,7 @@ from("direct:start")
 
 === Partial Payload Content Only encryption/decryption with passPhrase(password) and Algorithm
 
+._Java-only: partial payload encryption with passPhrase and algorithm_
 [source,java]
 -----------------------------------------------------------------------------
 import org.apache.xml.security.encryption.XMLCipher;
@@ -129,6 +132,7 @@ from("direct:start")
 [[XMLSecurityDataFormat-JavaDSL]]
 Java DSL
 
+._Java-only: namespace-aware encryption with asymmetric key and KeyStore_
 [source,java]
 ------------------------------------------------------------------------------------------
 final Map<String, String> namespaces = new HashMap<String, String>();

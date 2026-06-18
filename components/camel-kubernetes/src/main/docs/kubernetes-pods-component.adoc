@@ -43,6 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listPods`: this operation lists the pods on a kubernetes cluster
 
+._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
@@ -54,6 +55,7 @@ This operation returns a list of pods from your cluster
 
 - `listPodsByLabels`: this operation lists the pods by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
@@ -73,6 +75,7 @@ This operation returns a list of pods from your cluster using a label selector (
 
 === Kubernetes Pods Consumer Example
 
+._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-pods://%s?oauthToken=%s", host, authToken)

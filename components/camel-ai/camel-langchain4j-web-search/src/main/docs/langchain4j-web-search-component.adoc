@@ -69,7 +69,7 @@ Add the dependency for LangChain4j Tavily Web Search Engine support :
 
 Initialize the Web Search Engine instance, and bind it to the Camel Registry:
 
-.Example:
+._Java-only: binding a Tavily Web Search Engine to the registry_
 [source,java]
 ----
 @BindToRegistry("web-search-engine")
@@ -132,7 +132,7 @@ By default, the `maxResults` property is set to 1. You can adjust this value to 
 
 When `maxResults` is set to 1, you can by default retrieve by default the content as a single string.
 
-.Example:
+._Java-only: retrieving a single search result as a string_
 [source,java]
 ----
 String response = template.requestBody("langchain4j-web-search:test", "Who won the European Cup in 2024?", String.class);
@@ -140,7 +140,7 @@ String response = template.requestBody("langchain4j-web-search:test", "Who won t
 
 When `maxResults` is greater than 1, you can retrieve a list of strings.
 
-.Example:
+._Java-only: retrieving multiple search results as a list of strings_
 [source,java]
 ----
 List<String> responses = template.requestBody("langchain4j-web-search:test?maxResults=3", "Who won the European Cup in 2024?", List.class);
@@ -165,7 +165,7 @@ When using a WebSearchRequest, the body and the parameters of the search will be
 
 A WebSearchRequest should be bound to the registry.
 
-.Example of binding the request to the registry.
+._Java-only: binding a WebSearchRequest to the registry_
 [source,java]
 ----
 @BindToRegistry("web-search-request")
@@ -178,8 +178,37 @@ WebSearchRequest request = WebSearchRequest.builder()
 The request will be autowired automatically if its bound name is `web-search-request`. Otherwise, it should be added as a configured parameter to the Camel route.
 
 .Example of route:
+[tabs]
+====
+Java::
++
 [source,java]
 ----
- from("direct:web-search")
-      .to("langchain4j-web-search:test?webSearchRequest=#searchRequestTest");
+from("direct:web-search")
+    .to("langchain4j-web-search:test?webSearchRequest=#searchRequestTest");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:web-search"/>
+  <to uri="langchain4j-web-search:test?webSearchRequest=#searchRequestTest"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:web-search
+      steps:
+        - to:
+            uri: langchain4j-web-search:test
+            parameters:
+              webSearchRequest: "#searchRequestTest"
+----
+====

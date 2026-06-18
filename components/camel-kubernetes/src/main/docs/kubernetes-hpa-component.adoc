@@ -41,6 +41,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listHPA`: this operation lists the HPAs on a kubernetes cluster
 
+._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
@@ -52,6 +53,7 @@ This operation returns a list of HPAs from your cluster
 
 - `listDeploymentsByLabels`: this operation lists the HPAs by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
@@ -71,6 +73,7 @@ This operation returns a List of HPAs from your cluster using a label selector (
 
 === Kubernetes HPA Consumer Example
 
+._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-hpa://%s?oauthToken=%s", host, authToken)

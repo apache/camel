@@ -42,6 +42,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listNamespaces`: this operation lists the namespaces on a kubernetes cluster
 
+._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
@@ -53,6 +54,7 @@ This operation returns a list of namespaces from your cluster
 
 - `listNamespacesByLabels`: this operation lists the namespaces by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
@@ -72,6 +74,7 @@ This operation returns a list of namespaces from your cluster, using a label sel
 
 === Kubernetes Namespaces Consumer Example
 
+._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-namespaces://%s?oauthToken=%s", host, authToken)

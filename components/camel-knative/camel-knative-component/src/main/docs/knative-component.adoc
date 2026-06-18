@@ -119,6 +119,7 @@ The `metadata` fields has some additional advanced fields:
 |===
 
 .Example
+._Java-only: programmatic Knative component configuration with CamelContext API_
 [source,java]
 ----
 CamelContext context = new DefaultCamelContext();
@@ -147,6 +148,7 @@ camel.component.knative.environmentPath=classpath:knative.json
 As today the Knative component only supports `http` as transport as this is the only supported protocol on Knative side.
 The transport implementation is pluggable though by implementing the following interface:
 
+._Java-only: KnativeTransport SPI interface for custom transport implementations_
 [source,java]
 ----
 public interface KnativeTransport extends Service {
@@ -208,6 +210,7 @@ The `Knative Environment` configuration is set on the Knative component and spec
 You can then use the `event`  resource type in your Camel route to send data to the Knative broker.
 
 .Example
+._Java-only: programmatic CamelContext setup with CloudEvents data type transformation_
 [source,java]
 ----
 CamelContext context = new DefaultCamelContext();
@@ -307,6 +310,7 @@ The Camel application may run into errors because of the missing variable when s
 When using Knative producer with a ProducerTemplate, it is necessary to specify a value for the CloudEvent source, simply by setting a value for the header 'CamelCloudEventSource'.
 
 .Example
+._Java-only: ProducerTemplate API for sending events with CloudEvent headers_
 [source,java]
 ----
 producerTemplate.sendBodyAndHeader("knative:event/broker-test", body, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "my-source-name");
@@ -350,6 +354,7 @@ The Knative Camel component will automatically configure this Http service when 
 Just use the `event` resource type in your Camel route like this:
 
 .Example
+._Java-only: programmatic route setup with RouteBuilder.addRoutes API_
 [source,java]
 ----
 RouteBuilder.addRoutes(context, b -> {

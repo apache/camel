@@ -88,6 +88,7 @@ To indicate from which namespace, the events are expected, it is possible to set
 
 - `listEventsByLabels`: this operation lists the events selected by labels
 
+._Java-only: using a Processor to set label headers on the exchange_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
@@ -110,6 +111,7 @@ This operation expects the message header `CamelKubernetesEventsLabels` to be se
 
 - `getEvent`: this operation gives a specific event
 
+._Java-only: using a Processor to set namespace and event name headers_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:get").process(new Processor() {
@@ -132,6 +134,7 @@ If no matching event could be found, `null` is returned.
 
 - `createEvent`: this operation creates a new event
 
+._Java-only: using a Processor to set event headers for creation_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:get").process(new Processor() {
@@ -171,6 +174,7 @@ The behavior is exactly the same as `createEvent`, only the name of the operatio
 
 - `deleteEvent`: this operation deletes an existing event.
 
+._Java-only: using a Processor to set namespace and event name headers_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:get").process(new Processor() {
@@ -191,6 +195,7 @@ This operation expects two message headers which are `CamelKubernetesNamespaceNa
 
 === Kubernetes Events Consumer Example
 
+._Java-only: using fromF with parameters and a custom Processor to handle Event objects_
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-events://%s?oauthToken=%s", host, authToken)

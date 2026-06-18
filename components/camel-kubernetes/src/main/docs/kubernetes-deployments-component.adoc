@@ -42,6 +42,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listDeployments`: this operation lists the deployments on a kubernetes cluster
 
+._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
@@ -53,6 +54,7 @@ This operation returns a List of Deployment from your cluster
 
 - `listDeploymentsByLabels`:  this operation lists the deployments by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
@@ -72,6 +74,7 @@ This operation returns a List of Deployments from your cluster, using a label se
 
 === Kubernetes Deployments Consumer Example
 
+._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-deployments://%s?oauthToken=%s", host, authToken)

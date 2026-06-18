@@ -43,6 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listNodes`: this operation lists the nodes on a kubernetes cluster
 
+._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
@@ -54,6 +55,7 @@ This operation returns a List of Nodes from your cluster
 
 - `listNodesByLabels`: this operation lists the nodes by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
@@ -73,6 +75,7 @@ This operation returns a list of nodes from your cluster, using a label selector
 
 === Kubernetes Nodes Consumer Example
 
+._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-nodes://%s?oauthToken=%s", host, authToken)

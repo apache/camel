@@ -73,6 +73,7 @@ the Camel context into the transport factory. If you want this factory
 take effect, you need to register the factory into the CXF bus. Here is
 a full example for you.
 
+._Java-only: programmatic CXF bus and transport factory setup_
 [source,java]
 ------------------------------------------------------------------------------------------------------------------
 import org.apache.cxf.Bus;
@@ -116,7 +117,7 @@ the `xsi:schemaLocation` attribute.
 
 *Adding the Configuration Namespace*
 
-[source,java]
+[source,xml]
 ---------------------------------------------------------------------
 <beans ...
        xmlns:camel="http://cxf.apache.org/transports/camel
@@ -142,7 +143,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 
 *camel:destination Element*
 
-[source,java]
+[source,xml]
 ---------------------------------------------------------------------------------------------------------------------------
 ...
   <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.http-destination>
@@ -154,7 +155,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
      </camelContext>
   </camel:destination>
 
-  <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.camel-destination" camelContextId="context" />  
+  <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.camel-destination" camelContextId="context" />
 
 ...
 ---------------------------------------------------------------------------------------------------------------------------

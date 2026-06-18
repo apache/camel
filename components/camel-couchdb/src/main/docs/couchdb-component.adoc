@@ -91,24 +91,110 @@ For example, if you wish to consume all inserts, updates and deletes from
 a CouchDB instance running locally, on port 9999, then you could use the
 following:
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------
+----
 from("couchdb:http://localhost:9999").process(someProcessor);
--------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="couchdb:http://localhost:9999"/>
+    <process ref="someProcessor"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: couchdb:http://localhost:9999
+    steps:
+      - process:
+          ref: someProcessor
+----
+====
 
 If you were only interested in deleting, then you could use the following:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------------
+----
 from("couchdb:http://localhost:9999?updates=false").process(someProcessor);
----------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="couchdb:http://localhost:9999?updates=false"/>
+    <process ref="someProcessor"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: couchdb:http://localhost:9999
+      parameters:
+        updates: false
+    steps:
+      - process:
+          ref: someProcessor
+----
+====
 
 If you want to insert a message as a document, then the body of the exchange is used:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------------------------
+----
 from("someProducingEndpoint").process(someProcessor).to("couchdb:http://localhost:9999")
-----------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="someProducingEndpoint"/>
+    <process ref="someProcessor"/>
+    <to uri="couchdb:http://localhost:9999"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: someProducingEndpoint
+    steps:
+      - process:
+          ref: someProcessor
+      - to:
+          uri: couchdb:http://localhost:9999
+----
+====
 
 To start tracking the changes immediately after an update sequence, implement a custom resume strategy. To do so, it is necessary to implement a CouchDbResumeStrategy and use the resumable to set the last (update) offset to start tracking the changes:
 
