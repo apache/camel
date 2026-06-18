@@ -169,49 +169,173 @@ YAML::
 
 - File Upload: This operation will upload a file to the Google Storage based on the body content
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-//upload a file
-byte[] payload = "Camel rocks!".getBytes();
-ByteArrayInputStream bais = new ByteArrayInputStream(payload);
+----
 from("direct:start")
-.process( exchange -> {
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
-    exchange.getIn().setBody(bais);    
-})
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
-.log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");
---------------------------------------------------------------------------------
+    .setHeader("CamelGoogleCloudStorageObjectName").constant("camel.txt")
+    .setBody().constant("Camel rocks!")
+    .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
+    .log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleCloudStorageObjectName">
+    <constant>camel.txt</constant>
+  </setHeader>
+  <setBody>
+    <constant>Camel rocks!</constant>
+  </setBody>
+  <to uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json"/>
+  <log message="uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleCloudStorageObjectName
+            constant: camel.txt
+        - setBody:
+            constant: "Camel rocks!"
+        - to:
+            uri: google-storage://myCamelBucket
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+        - log:
+            message: "uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}"
+----
+====
 
 This operation will upload the file `camel.txt` with the content `"Camel rocks!"` in the myCamelBucket bucket
 
 - `CopyObject`: this operation copies an object from one bucket to a different one
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process( exchange -> {
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.copyObject);
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, "myCamelBucket_dest");
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, "camel_copy.txt");
-  })
-  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
-  .to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:start")
+    .setHeader("CamelGoogleCloudStorageObjectName").constant("camel.txt")
+    .setHeader("CamelGoogleCloudStorageDestinationBucketName").constant("myCamelBucket_dest")
+    .setHeader("CamelGoogleCloudStorageDestinationObjectName").constant("camel_copy.txt")
+    .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=copyObject")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleCloudStorageObjectName">
+    <constant>camel.txt</constant>
+  </setHeader>
+  <setHeader name="CamelGoogleCloudStorageDestinationBucketName">
+    <constant>myCamelBucket_dest</constant>
+  </setHeader>
+  <setHeader name="CamelGoogleCloudStorageDestinationObjectName">
+    <constant>camel_copy.txt</constant>
+  </setHeader>
+  <to uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;operation=copyObject"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleCloudStorageObjectName
+            constant: camel.txt
+        - setHeader:
+            name: CamelGoogleCloudStorageDestinationBucketName
+            constant: myCamelBucket_dest
+        - setHeader:
+            name: CamelGoogleCloudStorageDestinationObjectName
+            constant: camel_copy.txt
+        - to:
+            uri: google-storage://myCamelBucket
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              operation: copyObject
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will copy the object with the name expressed in the header DESTINATION_OBJECT_NAME to the DESTINATION_BUCKET_NAME bucket, from the bucket myCamelBucket.
 
 - `DeleteObject`: this operation deletes an object from a bucket
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process( exchange -> {
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.deleteObject);
-    exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
-  })
-  .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
-  .to("mock:result");
---------------------------------------------------------------------------------
+----
+from("direct:start")
+    .setHeader("CamelGoogleCloudStorageObjectName").constant("camel.txt")
+    .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=deleteObject")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleCloudStorageObjectName">
+    <constant>camel.txt</constant>
+  </setHeader>
+  <to uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;operation=deleteObject"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleCloudStorageObjectName
+            constant: camel.txt
+        - to:
+            uri: google-storage://myCamelBucket
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              operation: deleteObject
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will delete the object from the bucket myCamelBucket.
 
@@ -349,30 +473,110 @@ This operation will list the objects in the myCamelBucket bucket.
 
 - `GetObject`: this operation gets a single object in a specific bucket
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-.process( exchange -> {
-  exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
-})
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=getObject")
-.to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelGoogleCloudStorageObjectName").constant("camel.txt")
+    .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=getObject")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleCloudStorageObjectName">
+    <constant>camel.txt</constant>
+  </setHeader>
+  <to uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;operation=getObject"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleCloudStorageObjectName
+            constant: camel.txt
+        - to:
+            uri: google-storage://myCamelBucket
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              operation: getObject
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will return a Blob object instance related to the `OBJECT_NAME` object in `myCamelBucket` bucket.
 
 - `CreateDownloadLink`: this operation will return a download link
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-.process( exchange -> {
-  exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt" );
-  exchange.getIn().setHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 86400000L); //1 day
-})
-.to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=createDownloadLink")
-.to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelGoogleCloudStorageObjectName").constant("camel.txt")
+    .setHeader("CamelGoogleCloudStorageDownloadLinkExpirationTime").constant(86400000L)
+    .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&operation=createDownloadLink")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleCloudStorageObjectName">
+    <constant>camel.txt</constant>
+  </setHeader>
+  <setHeader name="CamelGoogleCloudStorageDownloadLinkExpirationTime">
+    <constant resultType="java.lang.Long">86400000</constant>
+  </setHeader>
+  <to uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;operation=createDownloadLink"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleCloudStorageObjectName
+            constant: camel.txt
+        - setHeader:
+            name: CamelGoogleCloudStorageDownloadLinkExpirationTime
+            constant: 86400000
+        - to:
+            uri: google-storage://myCamelBucket
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              operation: createDownloadLink
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will return a download link url for the file OBJECT_NAME in the bucket myCamelBucket. It's possible to specify the expiration time for the created link through the header DOWNLOAD_LINK_EXPIRATION_TIME. If not specified, by default it is 5 minutes.
 
@@ -387,17 +591,45 @@ In addition to `deleteAfterRead` it has been added another option, `moveAfterRea
 With this option enabled the consumed object will be moved to a target `destinationBucket` instead of being only deleted.
 This will require specifying the destinationBucket option. As example:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json"
-    + "&autoCreateBucket=true"
-    + "&destinationBucket=myCamelProcessedBucket"
-    + "&moveAfterRead=true"
-    + "&deleteAfterRead=true"
-    + "&includeBody=true"
-  )
-  .to("mock:result");
---------------------------------------------------------------------------------
+----
+from("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&autoCreateBucket=true&destinationBucket=myCamelProcessedBucket&moveAfterRead=true&deleteAfterRead=true&includeBody=true")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json&amp;autoCreateBucket=true&amp;destinationBucket=myCamelProcessedBucket&amp;moveAfterRead=true&amp;deleteAfterRead=true&amp;includeBody=true"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-storage://myCamelBucket
+      parameters:
+        serviceAccountKey: /home/user/Downloads/my-key.json
+        autoCreateBucket: true
+        destinationBucket: myCamelProcessedBucket
+        moveAfterRead: true
+        deleteAfterRead: true
+        includeBody: true
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 In this case, the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
 
