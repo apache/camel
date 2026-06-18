@@ -58,6 +58,7 @@ Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 In Java DSL:
 
+._Java-only: processing ClickUp webhook events with Java types and lambdas_
 [source,java]
 ---------------------------------------------------------
 from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>&events=taskTimeTrackedUpdated")

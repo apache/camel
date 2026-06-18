@@ -158,6 +158,7 @@ A `JobExecution` instance returned by the
 message. You can use the `JobExecution` instance to perform some
 operations using the Spring Batch API directly.
 
+._Java-only: accessing JobExecution from MockEndpoint_
 [source,java]
 ---------------------------------------------------------------------------------------------------
 from("direct:startBatch").to("spring-batch:myJob").to("mock:JobExecutions");

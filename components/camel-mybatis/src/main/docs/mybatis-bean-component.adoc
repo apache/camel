@@ -111,6 +111,7 @@ bean annotations. You can configure type alias in the SqlMapConfig file:
 
 On the `AccountService` bean you can declare the MyBatis mappins using annotations as shown:
 
+._Java-only: MyBatis bean annotation mappings_
 [source,java]
 ----
 public interface AccountService {

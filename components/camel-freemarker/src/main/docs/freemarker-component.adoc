@@ -93,6 +93,7 @@ a `Map`). The `Exchange` is transferred as:
 You can set up your custom FreeMarker context in the
 message header with the key "*CamelFreemarkerDataModel*" just like this
 
+._Java-only: setting a custom FreeMarker data model via headers_
 [source,java]
 --------------------------------------------------------------------
 Map<String, Object> variableMap = new HashMap<String, Object>();

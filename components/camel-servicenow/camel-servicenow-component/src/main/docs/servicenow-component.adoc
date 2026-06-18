@@ -132,6 +132,7 @@ https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/i
 
 == Examples:
  
+._Java-only: retrieving 10 Incidents with FluentProducerTemplate_
 [source,java]
 .Retrieve 10 Incidents
 -------------------------------------------------------------------------------------------------------------------
@@ -145,7 +146,7 @@ context.addRoutes(new RouteBuilder() {
                + "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
            .to("mock:servicenow");
     }
-}); 
+});
 
 FluentProducerTemplate.on(context)
     .withHeader(ServiceNowConstants.RESOURCE, "table")

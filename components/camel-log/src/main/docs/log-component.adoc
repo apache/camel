@@ -266,6 +266,8 @@ You can enable security masking for logging by setting `logMask` flag to `true`.
 Note that this option also affects Log EIP.
 
 To enable mask in Java DSL at CamelContext level:
+
+._Java-only: enabling log masking on CamelContext_
 [source,java]
 ----
 camelContext.setLogMask(true);

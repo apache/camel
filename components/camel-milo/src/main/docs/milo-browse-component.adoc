@@ -67,6 +67,7 @@ the node tree of the OPC-UA server, e.g. to avoid hard-coding a significant numb
 Camel routes. The component is designed to work in conjunction with the Camel Milo Client component as illustrated in the
 following example:
 
+._Java-only: browsing OPC UA nodes and enriching with client values_
 [source,java]
 ----
 from("direct:start")

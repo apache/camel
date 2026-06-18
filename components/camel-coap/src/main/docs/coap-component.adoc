@@ -76,6 +76,7 @@ include::spring-boot:partial$starter.adoc[]
 The COAP server has many configuration options, and this can be configured from a properties file such as `Californium3.properties`.
 You can specfiy the location of this configuration file on the Camel CoAPComponent, such as:
 
+._Java-only: configuring the CoAP component programmatically_
 [source,java]
 ----
 CoAPComponent coap = context.getComponent("coap", CoAPComponent.class);

@@ -125,6 +125,7 @@ YAML::
 
 To use a JTE template to formulate a response to the REST get call:
 
+._Java-only: example JTE template file content_
 [source,java]
 ----
 @import org.apache.camel.component.jte.Model

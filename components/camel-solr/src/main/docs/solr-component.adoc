@@ -176,6 +176,7 @@ YAML::
 A client would simply need to pass a body message to the insert or
 delete routes and then call the commit route.
 
+._Java-only: sending messages to Solr routes using ProducerTemplate_
 [source,java]
 -----------------------------------------------
 template.sendBodyAndHeader("direct:insert", "1234", "CamelSolrParam.commit", true);

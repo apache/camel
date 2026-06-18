@@ -23,12 +23,43 @@ same way as its JSON counterpart, and thus can be used with classes
 annotated for JSON serialization/deserialization.
 ====
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("kafka:topic").
-  unmarshal().protobuf(ProtobufLibrary.Jackson, JsonNode.class).
-  to("log:info");
--------------------------------
+----
+from("kafka:topic")
+    .unmarshal().protobuf(ProtobufLibrary.Jackson, JsonNode.class)
+    .to("log:info");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:topic"/>
+  <unmarshal><protobuf library="Jackson"/></unmarshal>
+  <to uri="log:info"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:topic
+      steps:
+        - unmarshal:
+            protobuf:
+              library: Jackson
+        - to:
+            uri: log:info
+----
+====
 
 == Protobuf Jackson Options
 

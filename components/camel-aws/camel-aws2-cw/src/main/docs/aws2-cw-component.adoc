@@ -170,6 +170,7 @@ YAML::
 
 and sends something like
 
+._Java-only: setting CloudWatch metric headers programmatically_
 [source,java]
 -------------------------------
 exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "ExchangesCompleted");

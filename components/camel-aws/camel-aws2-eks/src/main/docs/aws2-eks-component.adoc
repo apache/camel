@@ -126,6 +126,7 @@ YAML::
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as a body.
 In AWS EKS there are multiple operations you can submit, as an example for List cluster request, you can do something like:
 
+._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")

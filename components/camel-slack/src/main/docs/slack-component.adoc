@@ -114,6 +114,7 @@ YAML::
 
 You can now use the Slack API model to create blocks. You can read more about it here https://api.slack.com/block-kit
 
+._Java-only: creating Slack Block Kit messages with the API model_
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------
     public void testSlackAPIModelMessage() {

@@ -145,6 +145,7 @@ Sometimes building an AWS Request can be complex because of multiple options. We
 In AWS Step Functions, there are multiple operations you can submit, as an example for Create state machine
  request, you can do something like:
 
+._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")

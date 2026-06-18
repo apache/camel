@@ -73,10 +73,40 @@ In this example we unmarshal a LZF payload from an ActiveMQ queue called
 MY_QUEUE to its original format, and forward it for processing to
 the `UnGZippedMessageProcessor`.
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------------------------------------------------------------
+----
 from("activemq:queue:MY_QUEUE").unmarshal().lzf().process(new UnCompressedMessageProcessor());
-----------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:queue:MY_QUEUE"/>
+  <unmarshal><lzf/></unmarshal>
+  <process ref="unCompressedMessageProcessor"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:queue:MY_QUEUE
+      steps:
+        - unmarshal:
+            lzf: {}
+        - process:
+            ref: unCompressedMessageProcessor
+----
+====
 
 == Dependencies
 

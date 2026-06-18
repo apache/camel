@@ -103,6 +103,10 @@ When processing a single String, the component returns:
 
 === Batch Processing Example
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:batch")
@@ -110,6 +114,37 @@ from("direct:batch")
     .to("spring-ai-embeddings:myEmbedding")
     .log("Number of embeddings: ${body.size()}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:batch"/>
+  <setBody>
+    <constant>["text 1", "text 2", "text 3"]</constant>
+  </setBody>
+  <to uri="spring-ai-embeddings:myEmbedding"/>
+  <log message="Number of embeddings: ${body.size()}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:batch
+      steps:
+        - setBody:
+            constant: '["text 1", "text 2", "text 3"]'
+        - to:
+            uri: spring-ai-embeddings:myEmbedding
+        - log:
+            message: "Number of embeddings: ${body.size()}"
+----
+====
 
 When processing a List<String>, the component returns:
 

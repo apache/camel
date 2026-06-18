@@ -137,6 +137,7 @@ YAML::
 
 === Route to JMS (fire-and-forget)
 
+._Java-only: using ExchangePattern.InOnly with shell consumer_
 [source,java]
 ----
 from("shell:myapp")

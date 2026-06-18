@@ -16,6 +16,7 @@ http://en.wikipedia.org/wiki/ICalendar[iCalendar] messages.
 
 A typical iCalendar message looks like:
 
+._Java-only: example of an iCalendar message format_
 [source,java]
 ----------------------------------------------------------------------
 BEGIN:VCALENDAR

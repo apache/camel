@@ -151,6 +151,7 @@ are collected, they need to be placed in the In message or the
 `SecurityContextHolder` so the Camel xref:spring-security.adoc[Spring
 Security] component can access them:
 
+._Java-only: extracting credentials from HTTP header and creating a Subject_
 [source,java]
 ----
 import javax.security.auth.Subject;

@@ -176,6 +176,7 @@ For valid tokens, the token validation result is stored on the exchange as the
 principal name, token scopes, and immutable token attributes/claims.
 The raw `Authorization` header is removed before the route is invoked and from OAuth rejection responses.
 
+._Java-only: accessing OAuth token validation result in a processor_
 [source,java]
 ----
 import org.apache.camel.component.platform.http.PlatformHttpConstants;

@@ -104,6 +104,7 @@ You can define the custom context map by setting the
 message header "*CamelStringTemplateVariableMap*" just like the below
 code.
 
+._Java-only: setting up a custom StringTemplate variable map_
 [source,java]
 --------------------------------------------------------------------------
 Map<String, Object> variableMap = new HashMap<String, Object>();

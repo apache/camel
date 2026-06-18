@@ -111,6 +111,7 @@ If you provide a header with the `CamelGeoCoderAddress` then that
 overrides the endpoint configuration, so to get the location of
 Copenhagen, Denmark we can send a message with a headers as shown:
 
+._Java-only: overriding the address via a message header_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, "Copenhagen, Denmark");

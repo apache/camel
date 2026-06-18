@@ -226,6 +226,7 @@ YAML::
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS STS, as an example for Assume Role request, you can do something like:
 
+._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:createUser")

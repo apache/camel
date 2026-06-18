@@ -176,6 +176,7 @@ YAML::
 
 A custom binding might look like the following:
 
+._Java-only: implementing a custom JsonataFrameBinding_
 [source,java]
 ---------------------------------------------------------------
 @NoArgsConstructor

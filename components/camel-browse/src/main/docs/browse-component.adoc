@@ -76,6 +76,7 @@ YAML::
 
 We can now inspect the received exchanges from within the Java code:
 
+._Java-only: inspecting received exchanges using the BrowsableEndpoint API_
 [source,java]
 ----
 private CamelContext context;

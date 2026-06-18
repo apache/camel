@@ -47,6 +47,7 @@ To explicitly configure OpenTelemetry support, instantiate the `OpenTelemetryTra
 context. You can optionally specify a `Tracer`, or alternatively it can be implicitly discovered using the
 `Registry`
 
+._Java-only: configuring MicrometerObservationTracer with metrics and tracing_
 [source,java]
 --------------------------------------------------------------------------------------------------
 ObservationRegistry observationRegistry = ObservationRegistry.create();

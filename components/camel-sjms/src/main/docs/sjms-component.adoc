@@ -146,6 +146,7 @@ part of the JMS endpoint URL, but it will be ignored in this example.
 In the `computeDestination` bean, specify the real destination by
 setting the `CamelJmsDestinationName` header as follows:
 
+._Java-only: setting JMS destination header dynamically_
 [source,java]
 -------------------------------------------------------------------------
 public void setJmsHeader(Exchange exchange) {

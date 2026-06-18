@@ -251,6 +251,7 @@ YAML::
 
 To convert a Tweet to a `SplunkEvent`, you could use a converter like:
 
+._Java-only: custom type converter from Tweet to SplunkEvent_
 [source,java]
 ----------------------------------------------------------------------------------
 @Converter

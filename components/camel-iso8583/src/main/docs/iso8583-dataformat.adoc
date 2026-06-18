@@ -175,6 +175,7 @@ YAML::
 
 Instead of simple language you can also use Groovy which has a special support in J8583 library:
 
+._Java-only: using Groovy language for ISO-8583 field extraction_
 [source,java]
 ----
 from("jms:payment:response")

@@ -90,6 +90,7 @@ from `JSonNode` to `String` or vice versa.
 To enable POJO conversion support for `camel-jackson` then this must be enabled,
 which is done by setting the following options on the `CamelContext` global options, as shown:
 
+._Java-only: enabling Jackson POJO type conversion on the CamelContext_
 [source,java]
 ----
 // Enable Jackson JSON type converter for more types.
