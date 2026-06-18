@@ -310,20 +310,50 @@ value.
 For instance, the example below will close the channel after it has
 written the bye message back to the client:
 
-._Java-only: inline Processor implementation_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("netty:tcp://0.0.0.0:8080").process(new Processor() {
-    public void process(Exchange exchange) throws Exception {
-        String body = exchange.getIn().getBody(String.class);
-        exchange.getOut().setBody("Bye " + body);
-        // some condition that determines if we should close
-        if (close) {
-            exchange.getOut().setHeader("CamelNettyCloseChannelWhenComplete", true);
-        }
-    }
-});
+from("netty:tcp://0.0.0.0:8080")
+    .setBody(simple("Bye ${body}"))
+    // set the CamelNettyCloseChannelWhenComplete header to true to close the channel
+    .setHeader("CamelNettyCloseChannelWhenComplete", constant(true));
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty:tcp://0.0.0.0:8080"/>
+  <setBody>
+    <simple>Bye ${body}</simple>
+  </setBody>
+  <!-- set the CamelNettyCloseChannelWhenComplete header to true to close the channel -->
+  <setHeader name="CamelNettyCloseChannelWhenComplete">
+    <constant>true</constant>
+  </setHeader>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# set the CamelNettyCloseChannelWhenComplete header to true to close the channel
+- route:
+    from:
+      uri: netty:tcp://0.0.0.0:8080
+      steps:
+        - setBody:
+            simple: "Bye ${body}"
+        - setHeader:
+            name: CamelNettyCloseChannelWhenComplete
+            constant: true
+----
+====
 
 [[Netty-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
 Adding custom channel pipeline factories to gain complete control over a created pipeline
