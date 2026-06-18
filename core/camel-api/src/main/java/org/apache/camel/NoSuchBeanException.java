@@ -21,7 +21,18 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A runtime exception if a given bean could not be found in the {@link org.apache.camel.spi.Registry}
+ * Thrown when a bean cannot be found in the Camel {@link org.apache.camel.spi.Registry} by name or by type.
+ * <p/>
+ * Raised by registry lookup methods such as
+ * {@link org.apache.camel.CamelContext#getRegistry()}{@code .lookupByName(String)},
+ * {@link org.apache.camel.CamelContext#getRegistry()}{@code .lookupByNameAndType(String, Class)}, the bean component,
+ * and the bean language when a referenced bean is absent or when more than one bean matches a given name (ambiguous
+ * match). Route authors encountering this exception should verify that the required module is on the classpath and that
+ * the bean name in the DSL matches exactly the name under which the bean was registered. The constructor variants
+ * cover: name only, name with ambiguous count, name with expected type, and name with root cause.
+ *
+ * @see org.apache.camel.spi.Registry
+ * @see RuntimeCamelException
  */
 public class NoSuchBeanException extends RuntimeCamelException {
 

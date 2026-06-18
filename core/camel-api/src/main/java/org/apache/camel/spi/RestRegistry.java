@@ -23,8 +23,20 @@ import org.apache.camel.StaticService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A registry of all REST services running within the {@link org.apache.camel.CamelContext} which have been defined and
- * created using the <a href="https://camel.apache.org/rest-dsl">Rest DSL</a>.
+ * A live registry of all REST services running within the {@link org.apache.camel.CamelContext} that were defined using
+ * the Camel REST DSL.
+ * <p/>
+ * Each REST-DSL route registers its verb-plus-path pair at startup via {@link #addRestService addRestService()}; the
+ * registry keeps a {@link RestService} record per operation that carries the URL, HTTP method, media types, binding
+ * types, and hit counter. The developer console, JMX management layer, and the {@code camel-openapi-java} module all
+ * query this registry to render live service listings and to generate the OpenAPI specification
+ * ({@link #apiDocAsJson()}). Separately, OpenAPI contract entries are tracked as "specifications" via
+ * {@link #addRestSpecification addRestSpecification()}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/rest-dsl.html">Rest DSL</a> in the Camel user manual.
+ *
+ * @see RestConsumerFactory
+ * @see RestConfiguration
  */
 public interface RestRegistry extends StaticService {
 

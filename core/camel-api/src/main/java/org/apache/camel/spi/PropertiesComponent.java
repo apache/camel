@@ -28,8 +28,25 @@ import org.apache.camel.StaticService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Component for property placeholders and loading properties from sources (such as .properties file from classpath or
- * file system)
+ * SPI for the Camel property-placeholder subsystem, which resolves {@code {{key}}} tokens in endpoint URIs, DSL
+ * expressions, and configuration values.
+ * <p/>
+ * An implementation is obtained via {@link org.apache.camel.CamelContext#getPropertiesComponent()} and is discovered at
+ * startup via the service key {@link #FACTORY}. Property values are sourced from one or more {@link PropertiesSource}
+ * implementations (classpath {@code .properties} files, environment variables, system properties, and cloud-vault
+ * integrations such as AWS Secrets Manager and HashiCorp Vault) and merged in priority order. Custom prefix-based
+ * resolution is supported via {@link PropertiesFunction} instances registered with
+ * {@link #addPropertiesFunction(PropertiesFunction)}; they handle tokens of the form {@code {{name:remainder}}} and
+ * power the built-in {@code env:}, {@code sys:}, and {@code secret:} functions.
+ * <p/>
+ * Three scoped property layers allow test isolation without touching the shared properties file: override properties
+ * (highest priority), initial properties, and thread-local properties.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using Property Placeholder</a> in the
+ * Camel user manual.
+ *
+ * @see PropertiesSource
+ * @see PropertiesFunction
  */
 public interface PropertiesComponent extends StaticService {
 

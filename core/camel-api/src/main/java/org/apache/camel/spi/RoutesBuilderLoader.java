@@ -21,8 +21,17 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
 
 /**
- * SPI for loading {@link RoutesBuilder} from a {@link Resource}.
+ * SPI that loads {@link org.apache.camel.RoutesBuilder} instances from a {@link Resource} identified by file extension.
+ * <p/>
+ * Implementations are keyed by the extension they support (e.g. {@code java}, {@code xml}, {@code yaml}, {@code kts})
+ * and are discovered at path {@link #FACTORY_PATH}. At startup, {@link org.apache.camel.CamelContext} iterates over the
+ * configured route resource locations, selects the appropriate loader via {@link #isSupportedExtension(String)}, and
+ * calls {@link #loadRoutesBuilder(Resource)} to obtain one or more {@link org.apache.camel.RoutesBuilder}s that are
+ * then added to the context. Before routes are loaded, {@link #preParseRoute(Resource)} may be called to extract
+ * {@code camel.main.*} bootstrap configuration from the DSL source without fully loading the routes; this allows the
+ * context to apply route-shaping settings (e.g. component overrides) before the full load.
  *
+ * @see   Resource
  * @since 3.8
  */
 public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
