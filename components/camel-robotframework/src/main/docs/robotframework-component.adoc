@@ -96,11 +96,11 @@ and pass them to generate a custom report if such need happens
 It's possible to specify what template the component
 should use dynamically via a header, so for example:
 
-._Java-only: Java constants for header names_
+._Java-only: dynamic template via header_
 [source,java]
 ----
 from("direct:in")
-    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
+    .setHeader("CamelRobotResourceUri").constant("path/to/my/template.robot")
     .to("robotframework:dummy?allowTemplateFromHeader=true");
 ----
 
@@ -109,12 +109,12 @@ with the similar approach how you would be able to pass values using
 Camel Simple Language. Components support passing values in three
 different ways. Exchange body, headers, and properties.
 
-._Java-only: Java constants for header names_
+._Java-only: dynamic template via header_
 [source,java]
 ----
 from("direct:in")
     .setBody(constant("Hello Robot"))
-    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
+    .setHeader("CamelRobotResourceUri").constant("path/to/my/template.robot")
     .to("robotframework:dummy?allowTemplateFromHeader=true");
 ----
 
@@ -128,12 +128,12 @@ And the `template.robot` file:
     Should Be True    ${myvar} == ${body}
 ----
 
-._Java-only: Java constants for header names_
+._Java-only: dynamic template via header_
 [source,java]
 ----
 from("direct:in")
     .setHeader("testHeader", constant("testHeaderValue"))
-    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
+    .setHeader("CamelRobotResourceUri").constant("path/to/my/template.robot")
     .to("robotframework:dummy?allowTemplateFromHeader=true");
 ----
 
@@ -147,12 +147,12 @@ And the `template.robot` file:
     Should Be True    ${myvar} == ${headers.testHeader}
 ----
 
-._Java-only: Java constants for header names_
+._Java-only: dynamic template via header_
 [source,java]
 ----
 from("direct:in")
     .setProperty"testProperty", constant("testPropertyValue"))
-    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
+    .setHeader("CamelRobotResourceUri").constant("path/to/my/template.robot")
     .to("robotframework:dummy?allowTemplateFromHeader=true");
 ----
 

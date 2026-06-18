@@ -93,7 +93,7 @@ Java::
 [source,java]
 ----
 from("direct:listByLabels")
-    .setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, constant("key1=value1,key2=value2"))
+    .setHeader("CamelKubernetesConfigMapsLabels", constant("key1=value1,key2=value2"))
     .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMapsByLabels")
     .to("mock:result");
 ----
@@ -150,7 +150,7 @@ fromF("kubernetes-config-maps://%s?oauthToken=%s", host, authToken)
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             ConfigMap cm = exchange.getIn().getBody(ConfigMap.class);
-            log.info("Got event with configmap name: " + cm.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with configmap name: " + cm.getMetadata().getName() + " and action " + in.getHeader("CamelKubernetesEventAction"));
         }
     }
 ----

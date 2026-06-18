@@ -94,7 +94,7 @@ You can set the indexId by setting the message header with
 the key "indexId". Be aware of the fact that unlike the component _camel-elasticsearch-rest_, by default, the expected content of
 an update request must be the same as what the https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Update API expects], consequently
 if you want to update one part of an existing document, you need to embed the content to update into a "doc" object. To change the default behavior, it is possible
-to configure it globally at the component level thanks to the option _enableDocumentOnlyMode_ or by request by setting the header _ElasticsearchConstants.PARAM_DOCUMENT_MODE_ to true.
+to configure it globally at the component level thanks to the option _enableDocumentOnlyMode_ or by request by setting the header `CamelElasticsearchEnableDocumentOnlyMode` to true.
 |Ping |None  |Pings the Elasticsearch cluster and returns true if the ping succeeded, false otherwise
 
 |===

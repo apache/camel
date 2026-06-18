@@ -48,8 +48,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 Each time you'll use an operation on the cache, you'll have two different headers to check for status:
 
-* `CaffeineConstants.ACTION_HAS_RESULT`
-* `CaffeineConstants.ACTION_SUCCEEDED`
+* `CamelCaffeineActionHasResult`
+* `CamelCaffeineActionSucceeded`
 
 == Examples
 

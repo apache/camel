@@ -919,7 +919,7 @@ Java::
 +
 [source,java]
 ----
-    @Bean(name = MicrometerConstants.METRICS_REGISTRY_NAME)
+    @Bean(name = "metricsRegistry")
     public MeterRegistry getMeterRegistry() {
         CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(...);
@@ -936,7 +936,7 @@ CDI::
 [source,java]
 ----
     @Produces
-    @Named(MicrometerConstants.METRICS_REGISTRY_NAME))
+    @Named("metricsRegistry"))
     public MeterRegistry getMeterRegistry() {
         CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(...);

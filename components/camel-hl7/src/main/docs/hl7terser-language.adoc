@@ -154,7 +154,7 @@ import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.ErrorCode;
 
 // In process block
-exchange.setProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT,
+exchange.setProperty("CamelMllpAcknowledgement",
   ack(AcknowledgmentCode.AR, "Server didn't accept this message", ErrorCode.UNKNOWN_KEY_IDENTIFIER).evaluate(exchange, Object.class)
 ----
 

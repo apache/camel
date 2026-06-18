@@ -287,7 +287,7 @@ ProducerTemplate in Camel along with a SecurityToken
 === Using ShiroSecurityToken
 
 You can send a message to a Camel route with a header of key
-`ShiroSecurityConstants.SHIRO_SECURITY_TOKEN` of the type
+`CamelShiroSecurityToken` of the type
 `org.apache.camel.component.shiro.security.ShiroSecurityToken` that
 contains the username and password. For example:
 
@@ -296,7 +296,7 @@ contains the username and password. For example:
 ----
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
 
-        template.sendBodyAndHeader("direct:secureEndpoint", "Beatle Mania", ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, shiroSecurityToken);
+        template.sendBodyAndHeader("direct:secureEndpoint", "Beatle Mania", "CamelShiroSecurityToken", shiroSecurityToken);
 ----
 
 You can also provide the username and password in two different headers
@@ -306,15 +306,15 @@ as shown below:
 [source,java]
 ----
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
-        headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
+        headers.put("CamelShiroSecurityUsername", "ringo");
+        headers.put("CamelShiroSecurityPassword", "starr");
         template.sendBodyAndHeaders("direct:secureEndpoint", "Beatle Mania", headers);
 ----
 
 When you use the username and password headers, then the
 ShiroSecurityPolicy in the Camel route will automatically transform those
 into a single header with key
-ShiroSecurityConstants.SHIRO_SECURITY_TOKEN with the token. Then token
+`CamelShiroSecurityToken` with the token. Then token
 is either a `ShiroSecurityToken` instance, or a base64 representation as
 a String (the latter is when you have set base64=true).
 

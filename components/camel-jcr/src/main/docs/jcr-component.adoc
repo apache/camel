@@ -64,7 +64,7 @@ Java::
 +
 [source,java]
 ----
-from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
+from("direct:a").setHeader("CamelJcrNodeName", constant("node"))
     .setHeader("my.contents.property", body())
     .to("jcr://user:pass@repository/home/test");
 ----
@@ -75,7 +75,7 @@ XML::
 ----
 <route>
     <from uri="direct:a"/>
-    <setHeader name="JcrConstants.JCR_NODE_NAME">
+    <setHeader name="CamelJcrNodeName">
         <constant>node</constant>
     </setHeader>
     <setHeader name="my.contents.property">
@@ -94,7 +94,7 @@ YAML::
       uri: direct:a
       steps:
         - setHeader:
-            name: JcrConstants.JCR_NODE_NAME
+            name: CamelJcrNodeName
             expression:
               constant:
                 expression: node

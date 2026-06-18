@@ -100,11 +100,11 @@ If you are ingesting a large enough dataset with a big enough lag, then the time
 the event hits the server and when that event actually happened could be skewed. If
 you want to override the index time, you can do so.
 
-._Java-only: uses SplunkHECConstants.INDEX_TIME Java constant_
+._Java-only: overrides index time from Kafka header_
 [source,java]
 ----
 from("kafka:logs")
-        .setHeader(SplunkHECConstants.INDEX_TIME, simple("${headers[kafka.HEADERS].lastKey('TIME')}"))
+        .setHeader("CamelSplunkHECIndexTime", simple("${headers[kafka.HEADERS].lastKey('TIME')}"))
         .to("splunk-hec://localhost:8080?token=token");
 ----
 

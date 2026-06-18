@@ -124,17 +124,17 @@ YAML::
 ----
 ====
 
-Setting specific headers can change routing behaviour. For example, if header `RocketMQConstants.OVERRIDE_TOPIC_NAME` was set,
+Setting specific headers can change routing behaviour. For example, if header `CamelRockerMQOverrideTopicName` was set,
 the message will be sent to `ACTUAL_TARGET` instead of `ORIGIN_TARGET`.
 
-._Java-only: uses inline Processor lambda and RocketMQConstants Java constants_
+._Java-only: uses inline Processor lambda_
 [source,java]
 ----
 from("rocketmq:FROM?consumerGroup=consumer")
         .process(exchange -> {
-            exchange.getMessage().setHeader(RocketMQConstants.OVERRIDE_TOPIC_NAME, "ACTUAL_TARGET");
-            exchange.getMessage().setHeader(RocketMQConstants.OVERRIDE_TAG, "OVERRIDE_TAG");
-            exchange.getMessage().setHeader(RocketMQConstants.OVERRIDE_MESSAGE_KEY, "OVERRIDE_MESSAGE_KEY");
+            exchange.getMessage().setHeader("CamelRockerMQOverrideTopicName", "ACTUAL_TARGET");
+            exchange.getMessage().setHeader("CamelRockerMQOverrideTag", "OVERRIDE_TAG");
+            exchange.getMessage().setHeader("CamelRockerMQOverrideMessageKey", "OVERRIDE_MESSAGE_KEY");
         }
 )
 .to("rocketmq:ORIGIN_TARGET?producerGroup=producer")

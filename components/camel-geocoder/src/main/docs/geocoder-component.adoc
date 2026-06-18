@@ -114,7 +114,7 @@ Copenhagen, Denmark we can send a message with a headers as shown:
 ._Java-only: overriding the address via a message header_
 [source,java]
 ----
-template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, "Copenhagen, Denmark");
+template.sendBodyAndHeader("direct:start", "Hello", "CamelGeoCoderAddress", "Copenhagen, Denmark");
 ----
 
 To get the address for a latitude and longitude we can do:

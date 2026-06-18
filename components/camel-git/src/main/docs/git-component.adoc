@@ -57,9 +57,9 @@ then pushes it to remote repository.
 [source,java]
 ----
 from("direct:start")
-    .setHeader(GitConstants.GIT_FILE_NAME, constant("test.java"))
+    .setHeader("CamelGitFilename", constant("test.java"))
     .to("git:///tmp/testRepo?operation=add")
-    .setHeader(GitConstants.GIT_COMMIT_MESSAGE, constant("first commit"))
+    .setHeader("CamelGitCommitMessage", constant("first commit"))
     .to("git:///tmp/testRepo?operation=commit")
     .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
     .to("git:///tmp/testRepo?operation=createTag&tagName=myTag")

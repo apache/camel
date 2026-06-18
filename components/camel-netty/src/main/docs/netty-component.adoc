@@ -319,7 +319,7 @@ from("netty:tcp://0.0.0.0:8080").process(new Processor() {
         exchange.getOut().setBody("Bye " + body);
         // some condition that determines if we should close
         if (close) {
-            exchange.getOut().setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+            exchange.getOut().setHeader("CamelNettyCloseChannelWhenComplete", true);
         }
     }
 });
@@ -719,7 +719,7 @@ header on the Camel Message as shown below:
 ._Java-only: Java SSL session API_
 [source,java]
 ----
-SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+SSLSession session = exchange.getIn().getHeader("CamelNettySSLSession", SSLSession.class);
 // get the first certificate which is client certificate
 javax.security.cert.X509Certificate cert = session.getPeerCertificateChain()[0];
 Principal principal = cert.getSubjectDN();

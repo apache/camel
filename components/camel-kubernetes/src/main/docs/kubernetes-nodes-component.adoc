@@ -55,7 +55,7 @@ This operation returns a List of Nodes from your cluster
 
 - `listNodesByLabels`: this operation lists the nodes by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with KubernetesConstants and HashMap_
+._Java-only: uses inline Processor with HashMap_
 [source,java]
 ----
 from("direct:listByLabels").process(new Processor() {
@@ -64,7 +64,7 @@ from("direct:listByLabels").process(new Processor() {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, labels);
+                exchange.getIn().setHeader("CamelKubernetesNodeLabels", labels);
             }
         });
     toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels").
@@ -75,7 +75,7 @@ This operation returns a list of nodes from your cluster, using a label selector
 
 === Kubernetes Nodes Consumer Example
 
-._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
+._Java-only: uses fromF(), inline Processor class, and string concatenation_
 [source,java]
 ----
 fromF("kubernetes-nodes://%s?oauthToken=%s", host, authToken)
@@ -86,7 +86,7 @@ fromF("kubernetes-nodes://%s?oauthToken=%s", host, authToken)
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Node node = exchange.getIn().getBody(Node.class);
-            log.info("Got event with node name: " + node.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with node name: " + node.getMetadata().getName() + " and action " + in.getHeader("CamelKubernetesEventAction"));
         }
     }
 ----

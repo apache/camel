@@ -318,7 +318,7 @@ YAML::
 ----
 from("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq?sendingReply=true")
 .choice()
-    .when(header(Jt400Constants.MESSAGE_TYPE).isEqualTo(AS400Message.INQUIRY))
+    .when(header("CamelJt400MessageType").isEqualTo(AS400Message.INQUIRY))
         .process((exchange) -> {
             String reply = // insert reply logic here
             exchange.getIn().setBody(reply);

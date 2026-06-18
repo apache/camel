@@ -377,13 +377,13 @@ ou can find the per-method limits in the https://developers.digitalocean.com/doc
 
 == Examples
 
-._Java-only: requires Java enum DigitalOceanOperations.get_
+._Java-only: get account info_
 
 .Get your account info
 [source,java]
 ----
 from("direct:getAccountInfo")
-    .setHeader("CamelDigitalOceanOperation", constant(DigitalOceanOperations.get))
+    .setHeader("CamelDigitalOceanOperation", constant("get"))
     .to("digitalocean:account?oAuthToken=XXXXXX")
 ----
 

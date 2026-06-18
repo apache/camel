@@ -83,11 +83,11 @@ Service] format.
 
 We have the following Camel route
 
-._Java-only: route using Java constants and toF() string formatting_
+._Java-only: route using toF() string formatting_
 [source,java]
 ----
 from("direct:start")
-    .setHeader(NetWeaverConstants.COMMAND, constant(command))
+    .setHeader("CamelNetWeaverCommand", constant(command))
     .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
     .to("log:response")
     .to("velocity:flight-info.vm")

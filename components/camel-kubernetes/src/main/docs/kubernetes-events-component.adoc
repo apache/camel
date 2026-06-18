@@ -98,7 +98,7 @@ from("direct:listByLabels").process(new Processor() {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, labels);
+                exchange.getIn().setHeader("CamelKubernetesEventsLabels", labels);
             }
         });
     to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=listEventsByLabels").
@@ -118,8 +118,8 @@ from("direct:get").process(new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, "event1");
+                exchange.getIn().setHeader("CamelKubernetesNamespaceName", "test");
+                exchange.getIn().setHeader("CamelKubernetesEventName", "event1");
             }
         });
     to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=getEvent").
@@ -141,16 +141,16 @@ from("direct:get").process(new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, "test1");
+                exchange.getIn().setHeader("CamelKubernetesNamespaceName", "default");
+                exchange.getIn().setHeader("CamelKubernetesEventName", "test1");
                 Map<String, String> labels = new HashMap<>();
                 labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, labels);
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION_PRODUCER, "Some Action");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TYPE, "Normal");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_REASON, "Some Reason");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_REPORTING_CONTROLLER, "Some-Reporting-Controller");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_REPORTING_INSTANCE, "Some-Reporting-Instance");
+                exchange.getIn().setHeader("CamelKubernetesEventsLabels", labels);
+                exchange.getIn().setHeader("CamelKubernetesEventAction", "Some Action");
+                exchange.getIn().setHeader("CamelKubernetesEventType", "Normal");
+                exchange.getIn().setHeader("CamelKubernetesEventReason", "Some Reason");
+                exchange.getIn().setHeader("CamelKubernetesEventReportingController", "Some-Reporting-Controller");
+                exchange.getIn().setHeader("CamelKubernetesEventReportingInstance", "Some-Reporting-Instance");
             }
         });
     to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=createEvent").
@@ -181,8 +181,8 @@ from("direct:get").process(new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, "test1");
+                exchange.getIn().setHeader("CamelKubernetesNamespaceName", "default");
+                exchange.getIn().setHeader("CamelKubernetesEventName", "test1");
             }
         });
     to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=deleteEvent").
@@ -206,7 +206,7 @@ fromF("kubernetes-events://%s?oauthToken=%s", host, authToken)
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Event e = exchange.getIn().getBody(Event.class);
-            log.info("Got event with event name: " + e.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with event name: " + e.getMetadata().getName() + " and action " + in.getHeader("CamelKubernetesEventAction"));
         }
     }
 ----

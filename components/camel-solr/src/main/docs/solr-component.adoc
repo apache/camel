@@ -85,16 +85,16 @@ Java::
 [source,java]
 ----
 from("direct:insert")
-    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.INSERT))
-    .setHeader(SolrConstants.FIELD + "id", body())
+    .setHeader("CamelSolrOperation", constant("INSERT"))
+    .setHeader("CamelSolrField.id", body())
     .to("solr://localhost:8983/solr");
 
 from("direct:delete")
-    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.DELETE))
+    .setHeader("CamelSolrOperation", constant("DELETE"))
     .to("solr://localhost:8983/solr");
 
 from("direct:search")
-    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.SEARCH))
+    .setHeader("CamelSolrOperation", constant("SEARCH"))
     .to("solr://localhost:8983/solr");
 ----
 

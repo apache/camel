@@ -53,7 +53,7 @@ This operation returns a list of HPAs from your cluster
 
 - `listDeploymentsByLabels`: this operation lists the HPAs by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with KubernetesConstants and HashMap_
+._Java-only: uses inline Processor with HashMap_
 [source,java]
 ----
 from("direct:listByLabels").process(new Processor() {
@@ -62,7 +62,7 @@ from("direct:listByLabels").process(new Processor() {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
+                exchange.getIn().setHeader("CamelKubernetesHPALabels", labels);
             }
         });
     toF("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels").
@@ -73,7 +73,7 @@ This operation returns a List of HPAs from your cluster using a label selector (
 
 === Kubernetes HPA Consumer Example
 
-._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
+._Java-only: uses fromF(), inline Processor class, and string concatenation_
 [source,java]
 ----
 fromF("kubernetes-hpa://%s?oauthToken=%s", host, authToken)
@@ -84,7 +84,7 @@ fromF("kubernetes-hpa://%s?oauthToken=%s", host, authToken)
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             HorizontalPodAutoscaler hpa = exchange.getIn().getBody(HorizontalPodAutoscaler.class);
-            log.info("Got event with hpa name: " + hpa.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with hpa name: " + hpa.getMetadata().getName() + " and action " + in.getHeader("CamelKubernetesEventAction"));
         }
     }
 ----
