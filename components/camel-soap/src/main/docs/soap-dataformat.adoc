@@ -73,6 +73,7 @@ case it would be a one way SOAP request.
 If you need to request a reply, then you should look at the next example.
 ====
 
+._Java-only: Java programmatic data format instantiation_
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
 SoapDataFormat soap = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
@@ -94,6 +95,7 @@ most settings apply here as well
 
 *Since Camel 2.11*
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
 SoapDataFormat soap = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
@@ -146,6 +148,7 @@ The `ServiceInterfaceStrategy` should be initialized with a boolean
 parameter that indicates whether the mapping strategy applies to the
 request parameters or response parameters.
 
+._Java-only: Java class instantiation_
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------------
 ServiceInterfaceStrategy strat =  new ServiceInterfaceStrategy(com.example.customerservice.multipart.MultiPartCustomerService.class, true);
@@ -168,6 +171,7 @@ unmarshalled response.
 The following route supports marshalling the request and unmarshalling a
 response or fault.
 
+._Java-only: Java programmatic data format with exception handling_
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
 String WS_URI = "cxf://http://myserver/customerservice?serviceClass=com.example.customerservice&dataFormat=RAW";
@@ -185,6 +189,7 @@ from("direct:customerServiceClient")
 The below snippet creates a proxy for the service interface and makes a
 SOAP call to the above route.
 
+._Java-only: Java proxy API_
 [source,java]
 ---------------------------------------------------------------------------------------------------
 import org.apache.camel.Endpoint;
@@ -206,6 +211,7 @@ jms queue `customerServiceQueue` and processes requests using the class
 the interface `CustomerService`. Instead of directly instantiating the
 server class it could be defined in a spring context as a regular bean.
 
+._Java-only: Java programmatic data format with bean processing_
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
 SoapDataFormat soapDF = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
