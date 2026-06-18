@@ -190,19 +190,55 @@ If you have instances of the same component running in different regions, you ca
 
 For example, you may have an instance in NYC and an instance in SFO. You would configure a service CNAME service.example.com to point to nyc-service.example.com to bring NYC instance up and SFO instance down. When you change the CNAME service.example.com to point to sfo-service.example.com -- nyc instance would stop its routes and sfo will bring its routes up. This allows you to switch regions without restarting actual components.
 
-._XML-only: Spring bean configuration for `DnsActivationPolicy` with route policy reference_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+DnsActivationPolicy policy = new DnsActivationPolicy();
+policy.setHostname("service.example.com");
+policy.setResolvesTo("nyc-service.example.com");
+policy.setTtl(60000);
+policy.setStopRoutesOnException(false);
+
+from("direct:start")
+    .routeId("routeId")
+    .autoStartup(false)
+    .routePolicy(policy)
+    .to("...");
+----
+
+XML::
++
 [source,xml]
 ----
- <bean id="dnsActivationPolicy" class="org.apache.camel.component.dns.policy.DnsActivationPolicy">
-     <property name="hostname" value="service.example.com" />
-     <property name="resolvesTo" value="nyc-service.example.com" />
-     <property name="ttl" value="60000" />
-     <property name="stopRoutesOnException" value="false" />
- </bean>
+<bean id="dnsActivationPolicy" class="org.apache.camel.component.dns.policy.DnsActivationPolicy">
+    <property name="hostname" value="service.example.com" />
+    <property name="resolvesTo" value="nyc-service.example.com" />
+    <property name="ttl" value="60000" />
+    <property name="stopRoutesOnException" value="false" />
+</bean>
 
- <route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">
- </route>
+<route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: routeId
+    autoStartup: false
+    routePolicyRef: dnsActivationPolicy
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: "..."
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

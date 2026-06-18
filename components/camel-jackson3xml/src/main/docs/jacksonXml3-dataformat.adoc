@@ -98,15 +98,42 @@ declare the data formats first. This is done in the `dataFormats` XML tag:
 
 And then you can refer to this id in the route:
 
-._XML-only: using a named data format reference in a route_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:back")
+    .unmarshal("jack")
+    .to("mock:reverse");
+----
+
+XML::
++
 [source,xml]
 ----
-       <route>
-            <from uri="direct:back"/>
-            <unmarshal><custom ref="jack"/></unmarshal>
-            <to uri="mock:reverse"/>
-        </route>
+<route>
+    <from uri="direct:back"/>
+    <unmarshal><custom ref="jack"/></unmarshal>
+    <to uri="mock:reverse"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:back
+      steps:
+        - unmarshal:
+            ref: jack
+        - to:
+            uri: mock:reverse
+----
+====
 
 === Excluding POJO fields from marshalling
 
@@ -151,18 +178,45 @@ from("direct:inPojoAgeView")
   .marshal().jacksonXml(TestPojoView.class, Views.Age.class);
 ----
 
-And the same in XML DSL:
+And the same in the route DSL:
 
-._XML-only: specifying jsonView attribute on jacksonXml data format_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:inPojoAgeView")
+    .marshal().jacksonXml(TestPojoView.class, Views.Age.class);
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
-<from uri="direct:inPojoAgeView"/>
+    <from uri="direct:inPojoAgeView"/>
     <marshal>
-      <jacksonXml unmarshalType="org.apache.camel.component.jackson3xml.TestPojoView" jsonView="org.apache.camel.component.jackson3xml.Views$Age"/>
+        <jacksonXml unmarshalType="org.apache.camel.component.jackson3xml.TestPojoView"
+                    jsonView="org.apache.camel.component.jackson3xml.Views$Age"/>
     </marshal>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:inPojoAgeView
+      steps:
+        - marshal:
+            jacksonXml:
+              unmarshalType: org.apache.camel.component.jackson3xml.TestPojoView
+              jsonView: org.apache.camel.component.jackson3xml.Views$Age
+----
+====
 
 === Setting serialization include option
 

@@ -130,24 +130,65 @@ tag.
 
 And then you can refer to those ids in the route:
 
-._XML-only: routes referencing pre-defined data format beans_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:unmarshal")
+    .unmarshal("snake")
+    .to("mock:unmarshal");
+
+from("direct:unmarshal-safe")
+    .unmarshal("snake-safe")
+    .to("mock:unmarshal-safe");
+----
+
+XML::
++
 [source,xml]
 ----
-  <route>
-    <from uri="direct:unmarshal"/>
-    <unmarshal>
-      <custom ref="snake"/>
-    </unmarshal>
-    <to uri="mock:unmarshal"/>
-  </route>
-  <route>
-    <from uri="direct:unmarshal-safe"/>
-    <unmarshal>
-      <custom ref="snake-safe"/>
-    </unmarshal>
-    <to uri="mock:unmarshal-safe"/>
-  </route>
+<route>
+  <from uri="direct:unmarshal"/>
+  <unmarshal>
+    <custom ref="snake"/>
+  </unmarshal>
+  <to uri="mock:unmarshal"/>
+</route>
+<route>
+  <from uri="direct:unmarshal-safe"/>
+  <unmarshal>
+    <custom ref="snake-safe"/>
+  </unmarshal>
+  <to uri="mock:unmarshal-safe"/>
+</route>
 ----
+
+YAML DSL::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:unmarshal
+      steps:
+        - unmarshal:
+            custom:
+              ref: snake
+        - to:
+            uri: mock:unmarshal
+- route:
+    from:
+      uri: direct:unmarshal-safe
+      steps:
+        - unmarshal:
+            custom:
+              ref: snake-safe
+        - to:
+            uri: mock:unmarshal-safe
+----
+====
 
 
 == Dependencies for SnakeYAML

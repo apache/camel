@@ -679,7 +679,19 @@ The camel-mybatis component is then configured with that factory:
 
 Finally, a transaction policy is defined over the top of the transaction manager, which can then be used as usual:
 
-._XML-only: Spring transaction policy bean and transacted route_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:insert")
+    .policy("PROPAGATION_REQUIRED")
+    .to("mybatis:myModel.insert?statementType=Insert");
+----
+
+XML::
++
 [source,xml]
 ----
 <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
@@ -695,6 +707,24 @@ Finally, a transaction policy is defined over the top of the transaction manager
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:insert
+      steps:
+        - policy:
+            ref: PROPAGATION_REQUIRED
+            steps:
+              - to:
+                  uri: mybatis:myModel.insert
+                  parameters:
+                    statementType: Insert
+----
+====
 
 == MyBatis Spring Boot Starter integration
 

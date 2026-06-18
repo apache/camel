@@ -1113,17 +1113,43 @@ the `idempotentRepository` option using the `#` sign in the value to
 indicate it's a referring to a bean in the Registry
 with the specified `id`.
 
-._XML-only: Spring bean definition for custom idempotent repository with route_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox?idempotent=true&idempotentRepository=#myStore")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
- <!-- define our store as a plain spring bean -->
- <bean id="myStore" class="com.mycompany.MyIdempotentStore"/>
+<!-- define our store as a plain spring bean -->
+<bean id="myStore" class="com.mycompany.MyIdempotentStore"/>
 
 <route>
   <from uri="file://inbox?idempotent=true&amp;idempotentRepository=#myStore"/>
   <to uri="bean:processInbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      idempotent: true
+      idempotentRepository: "#myStore"
+    steps:
+      - to:
+          uri: bean:processInbox
+----
+====
 
 Camel will log at `DEBUG` level if it skips a file because it has been
 consumed before:
@@ -1267,7 +1293,18 @@ And then we can configure our route using the `filter` attribute to
 reference our filter (using `#` notation) that we have defined in the
 spring XML file:
 
-._XML-only: Spring bean definition for custom file filter with route_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox?filter=#myFilter")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
 <!-- define our filter as a plain spring bean -->
@@ -1278,6 +1315,20 @@ spring XML file:
   <to uri="bean:processInbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      filter: "#myFilter"
+    steps:
+      - to:
+          uri: bean:processInbox
+----
+====
 
 ==== Filtering using ANT path matcher
 
@@ -1340,17 +1391,42 @@ And then we can configure our route using the *sorter* option to
 reference to our sorter (`mySorter`) we have defined in the spring XML
 file:
 
-._XML-only: Spring bean definition for custom file sorter with route_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://inbox?sorter=#mySorter")
+    .to("bean:processInbox");
+----
+
+XML::
++
 [source,xml]
 ----
- <!-- define our sorter as a plain spring bean -->
- <bean id="mySorter" class="com.mycompany.MyFileSorter"/>
+<!-- define our sorter as a plain spring bean -->
+<bean id="mySorter" class="com.mycompany.MyFileSorter"/>
 
 <route>
   <from uri="file://inbox?sorter=#mySorter"/>
   <to uri="bean:processInbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      sorter: "#mySorter"
+    steps:
+      - to:
+          uri: bean:processInbox
+----
+====
 
 [TIP]
 ====

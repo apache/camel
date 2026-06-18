@@ -364,7 +364,18 @@ protected Class<?>[] excludeRoutes() {
 You can use Spring XML configuration to specify your XML Configuration for
 Routes such as in the following
 
-._XML-only: Spring XML file with CamelContext containing a route definition_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:start")
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -383,6 +394,19 @@ Routes such as in the following
 
 </beans>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:start
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 == Configuring Components and Endpoints
 

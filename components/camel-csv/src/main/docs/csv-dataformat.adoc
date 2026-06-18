@@ -317,7 +317,24 @@ of your own `CSVConfig` and/or `CSVStrategy`. Also note that the default
 value of the `autogenColumns` option is true. The following example
 should illustrate this customization.
 
-._XML-only: Spring XML with custom CSVConfig and CSVStrategy beans_
+[tabs]
+====
+Java::
++
+[source,java]
+----
+CsvDataFormat csv = new CsvDataFormat();
+csv.setDelimiter("|");
+csv.setAutogenColumns(false);
+
+from("direct:start")
+    .marshal(csv)
+    .convertBodyTo(String.class)
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -347,6 +364,24 @@ should illustrate this customization.
   <property name="staticField" value="org.apache.commons.csv.CSVStrategy.EXCEL_STRATEGY" />
 </bean>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - marshal:
+          csv:
+            delimiter: "|"
+            autogenColumns: false
+      - convertBodyTo:
+          type: java.lang.String
+      - to:
+          uri: mock:result
+----
+====
 
 === Collecting header record
 
