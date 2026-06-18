@@ -308,6 +308,8 @@ from("jms:queue:cheese").routeId("cheesy")
 
 And in XML DSL you just assign the route id via the id attribute
 
+._XML-only:_
+
 [source,xml]
 ----
 <route id="cheesy">

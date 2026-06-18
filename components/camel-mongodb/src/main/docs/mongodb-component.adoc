@@ -1283,6 +1283,19 @@ The following route defined in Spring XML executes the operation
 
 *Get DB stats for specified collection*
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mongodb:mongoBean?database=${mongodb.database}&collection=${mongodb.collection}&operation=getDbStats")
+    .to("direct:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -1292,6 +1305,25 @@ The following route defined in Spring XML executes the operation
   <to uri="direct:result" />
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mongodb:mongoBean
+            parameters:
+              database: "${mongodb.database}"
+              collection: "${mongodb.collection}"
+              operation: getDbStats
+        - to:
+            uri: direct:result
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

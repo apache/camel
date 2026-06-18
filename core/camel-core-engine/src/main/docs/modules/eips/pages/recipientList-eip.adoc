@@ -146,6 +146,7 @@ The dynamic list of recipients that are defined in the header must be iterable s
 In XML DSL you can set the delimiter attribute for setting a delimiter to be used if the header value is a single `String` with multiple separated endpoints.
 By default, Camel uses comma as delimiter, but this option lets you specify a custom delimiter to use instead.
 
+._XML-only:_
 [source,xml]
 ----
 <route>

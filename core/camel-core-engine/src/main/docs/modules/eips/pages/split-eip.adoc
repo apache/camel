@@ -835,6 +835,7 @@ In Spring XML, the equivalent route would be written as follows:
 
 NOTE: Notice how the namespace in XML can also be defined in the root tag such as `<camelContext>`.
 
+._XML-only:_
 [source,xml]
 ----
 <camelContext xmlns:ns1="urn:shop">

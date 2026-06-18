@@ -117,20 +117,52 @@ trailer. You can omit one or both of them if not needed.
 A common use case is sending a file to this endpoint for further
 processing in a separate route. For example:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file://someDirectory")
+    .to("flatpack:foo");
+
+from("flatpack:foo")
+    ...
+----
+
+XML::
++
 [source,xml]
 ----
-  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
-    <route>
-      <from uri="file://someDirectory"/>
-      <to uri="flatpack:foo"/>
-    </route>
+<route>
+    <from uri="file://someDirectory"/>
+    <to uri="flatpack:foo"/>
+</route>
 
-    <route>
-      <from uri="flatpack:foo"/>
-      ...
-    </route>
-  </camelContext>
+<route>
+    <from uri="flatpack:foo"/>
+    ...
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://someDirectory
+      steps:
+        - to:
+            uri: flatpack:foo
+
+- route:
+    from:
+      uri: flatpack:foo
+      steps:
+        - ...
+----
+====
 
 You can also convert the payload of each message created to a `Map` for
 easy Bean Integration

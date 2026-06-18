@@ -453,18 +453,49 @@ Index: 20, Size: 20
 
 . Create the JPA idempotent repository in the Spring XML file:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .idempotentConsumer(header("messageId")).idempotentRepository("jpaStore")
+        .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route id="JpaMessageIdRepositoryTest">
-        <from uri="direct:start" />
-        <idempotentConsumer idempotentRepository="jpaStore">
-            <header>messageId</header>
-            <to uri="mock:result" />
-        </idempotentConsumer>
-    </route>
-</camelContext>
+<route id="JpaMessageIdRepositoryTest">
+    <from uri="direct:start" />
+    <idempotentConsumer idempotentRepository="jpaStore">
+        <header>messageId</header>
+        <to uri="mock:result" />
+    </idempotentConsumer>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: JpaMessageIdRepositoryTest
+    from:
+      uri: direct:start
+      steps:
+        - idempotentConsumer:
+            idempotentRepository: "#jpaStore"
+            expression:
+              header:
+                expression: messageId
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
 
 == Important Development Notes
 

@@ -63,6 +63,7 @@ The id must then be enabled on either the `<camelContext>` (global scope), or pe
 
 The following listing is an equivalent of the prior Java DSL listing:
 
+._XML-only:_
 [source,xml]
 ----
 <camelContext errorHandlerRef="myErrorHandler">

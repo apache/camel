@@ -150,6 +150,7 @@ public class MyRouteBuilder extends RouteBuilder {
 
 In Spring XML, you register the custom pattern as a bean:
 
+._XML-only: Spring XML bean registration_
 [source,xml]
 ----
 <beans>

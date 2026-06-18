@@ -111,6 +111,8 @@ from("seda:quoteAggregator")
     .end();
 ----
 
+XML::
++
 [source,xml]
 ----
   <route>

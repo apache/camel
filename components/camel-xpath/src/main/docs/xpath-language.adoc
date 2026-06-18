@@ -429,6 +429,7 @@ in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
 In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,
 in the line with `xmlns:foo="http://example.com/person"`:
 
+._XML-only:_
 [source,xml]
 ----
 <beans xmlns="http://www.springframework.org/schema/beans"

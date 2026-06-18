@@ -1420,6 +1420,7 @@ languages for testing with simple operators. Now you can do this with the simple
 language. In the sample below, we want to test it if the header is a widget
 order:
 
+._XML-only:_
 [source,xml]
 ----
 <from uri="seda:orders">
@@ -1850,6 +1851,7 @@ simple("${body.address.zip} > 1000")
 
 In the XML DSL sample below, we filter based on a header value:
 
+._XML-only:_
 [source,xml]
 ----
 <from uri="seda:orders">

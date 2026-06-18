@@ -21,6 +21,7 @@ include::partial$dataformat-options.adoc[]
 
 In Spring DSL, you configure the data format using this tag:
 
+._XML-only: Spring XML data format configuration_
 [source,xml]
 ----
 <camelContext>

@@ -324,6 +324,7 @@ Here the Java code is externalized into the file `src/main/resources/orders.java
 
 In XML DSL it's easier because you can turn off pre-compilation in the `<java>` XML element:
 
+._XML-only:_
 [source,xml]
 ----
 <route>
