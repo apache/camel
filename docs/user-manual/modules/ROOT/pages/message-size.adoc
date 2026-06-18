@@ -125,6 +125,10 @@ The statistics are reset when the endpoint registry statistics are reset.
 For the IN direction, the computed sizes are available as exchange properties during routing.
 You can use them for logging, content-based routing, or custom processing:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:start")
@@ -135,6 +139,48 @@ from("seda:start")
         .otherwise()
             .to("direct:normalMessage");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="seda:start"/>
+    <log message="Body size: ${exchangeProperty.CamelMessageBodySize} bytes"/>
+    <choice>
+        <when>
+            <simple>${exchangeProperty.CamelMessageBodySize} > 1048576</simple>
+            <to uri="direct:largeMessage"/>
+        </when>
+        <otherwise>
+            <to uri="direct:normalMessage"/>
+        </otherwise>
+    </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:start
+      steps:
+        - log:
+            message: "Body size: ${exchangeProperty.CamelMessageBodySize} bytes"
+        - choice:
+            when:
+              - simple: "${exchangeProperty.CamelMessageBodySize} > 1048576"
+                steps:
+                  - to:
+                      uri: direct:largeMessage
+            otherwise:
+              steps:
+                - to:
+                    uri: direct:normalMessage
+----
+====
 
 [width="100%",cols="1m,3",options="header"]
 |===

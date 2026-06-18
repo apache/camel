@@ -826,6 +826,7 @@ Routes that set the header by its literal string value (for example
 In particular, the documented `cxfrs` `SimpleConsumer` dispatch idiom that routes
 on the operation name by its literal header name must be updated:
 
+._Java-only: updated CXF operation name header in recipientList_
 [source,java]
 ----
 // before
@@ -922,6 +923,7 @@ Routes that set the header by its literal string value (for example
 `setHeader("dns.server", ...)` or `setHeader("term", ...)`) must be updated to
 use the new value:
 
+._Java-only: updated DNS header names in route_
 [source,java]
 ----
 // before
@@ -1315,6 +1317,7 @@ producer-direction routing headers: they are read back on the producer side by
 `DaprConfigurationOptionsProxy` and take precedence over the endpoint-configured
 `pubSubName` / `topic`. Setting them on a consumed exchange caused a route such as
 
+._Java-only: Dapr pubsub route affected by header change_
 [source,java]
 ----
 from("dapr-pubsub:configured-pubsub:configured-topic")
@@ -1434,6 +1437,7 @@ then reads it via `in.getHeader(...)` to dispatch to a specific peer). For
 defence in depth at the trust boundary, route authors should explicitly strip
 these headers from untrusted inbound traffic, for example:
 
+._Java-only: stripping websocket headers at the trust boundary_
 [source,java]
 ----
 from("jetty:http://0.0.0.0:8080/api")
@@ -2070,6 +2074,7 @@ string values (for example `setHeader("kafka.OVERRIDE_TOPIC", ...)` or
 Simple expressions such as `${headers[kafka.TOPIC]}`) must be updated to
 use the new values:
 
+._Java-only: updated Kafka header names in route_
 [source,java]
 ----
 // before
@@ -2087,6 +2092,7 @@ A route that bridges an untrusted HTTP / REST consumer to a Kafka producer
 should also continue to apply the standard transport-boundary mitigation,
 which now also covers the kafka headers:
 
+._Java-only: stripping Camel headers at the transport boundary_
 [source,java]
 ----
 from("platform-http:/api/events")
@@ -2228,6 +2234,7 @@ declared parameters will have zero argument headers set from the LLM tool call.
 
 For example, a tool defined as:
 
+._Java-only: tool route without declared parameters_
 [source,java]
 ----
 from("langchain4j-tools:test1?tags=user&description=Does not really do anything")
@@ -2236,6 +2243,7 @@ from("langchain4j-tools:test1?tags=user&description=Does not really do anything"
 will no longer receive any LLM-provided arguments as headers. To restore argument flow, declare the
 expected parameters explicitly:
 
+._Java-only: tool route with declared parameters_
 [source,java]
 ----
 from("langchain4j-tools:test1?tags=user&description=Query user by number&parameter.number=integer")
@@ -2335,6 +2343,7 @@ Routes that reference the constant symbolically (for example
 Routes that set or read the header by its literal string value (for example
 `setHeader("irc.sendTo", ...)`) must be updated to use the new value:
 
+._Java-only: updated IRC header name in ProducerTemplate call_
 [source,java]
 ----
 // before

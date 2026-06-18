@@ -67,6 +67,7 @@ we have refactored `endChoice` to work more consistent.
 
 For example the following code
 
+._Java-only: nested Choice EIP before migration_
 [source,java]
 ----
 from("direct:start")
@@ -85,6 +86,7 @@ from("direct:start")
 
 Should now be
 
+._Java-only: nested Choice EIP after migration_
 [source,java]
 ----
 from("direct:start")

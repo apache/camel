@@ -11,6 +11,7 @@ The DSL can be accessed in several ways, but the main one is to switch to using 
 
 The following is an example of an FTP route using the standard `RouteBuilder` Java DSL:
 
+._Java-only: FTP route using standard string-based URI_
 [source,java]
 ----
 public class MyRoutes extends RouteBuilder {
@@ -27,6 +28,7 @@ public class MyRoutes extends RouteBuilder {
 The same Java statement can be rewritten in the following more type-safe and readable way using
 the new `EndpointRouteBuilder` that allows using the Endpoint-DSL:
 
+._Java-only: same FTP route rewritten with type-safe Endpoint DSL_
 [source,java]
 ----
 public class MyRoutes extends EndpointRouteBuilder {
@@ -56,6 +58,7 @@ Then you can set up two Camel JMS components with unique names such as: `myAMQ` 
 
 The Endpoint-DSL can use these names with the `jms` fluent builder as shown:
 
+._Java-only: using custom component names with Endpoint DSL_
 [source,java]
 ----
 from(jms("myWMQ", "cheese").concurrentConsumers(5))
@@ -73,6 +76,7 @@ the target component.
 
 In the example below the method `file()` available from `EndpointRouteBuilder`, gives access to the methods corresponding to the name of the headers of the file component. Here the method `fileName()` is called to get the name of the header for the name of the file.
 
+._Java-only: using type-safe header name builder_
 [source,java]
 ----
 public class MyRoutes extends EndpointRouteBuilder {
@@ -96,6 +100,7 @@ You can use the type-safe endpoint-dsl outside route builders with:
 
 For example to send a message to Kafka you can use the `FluentProducerTemplate`
 
+._Java-only: sending a message using FluentProducerTemplate with Endpoint DSL_
 [source,java]
 ----
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.kafka;
@@ -111,6 +116,7 @@ To use the endpoint-dsl with kafka you need to static import `kafka` from the cl
 
 An endpoint can also be created in Java code via the endpoint-dsl as shown:
 
+._Java-only: creating an endpoint using Endpoint DSL and resolving it_
 [source,java]
 ----
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.paho;
@@ -125,6 +131,7 @@ by calling `resolve` with `CamelContext` as parameter.
 If you want to inject an endpoint into your POJO or `RouteBuilder` class using endpoint-dsl, then
 this can be done similar to the previous example, but with one important difference:
 
+._Java-only: injecting an Endpoint DSL builder into a POJO_
 [source,java]
 ----
 import org.apache.camel.BindToRegistry;

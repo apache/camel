@@ -887,12 +887,42 @@ vulnerabilities if skipped; all of them reduce the attack surface materially.
   receives messages from an untrusted producer, remove Camel-controlled
   headers before the message reaches any dispatching processor:
 +
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jetty:http://0.0.0.0:8080/api")
     .removeHeaders("Camel*")
     .to("direct:trusted-pipeline");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jetty:http://0.0.0.0:8080/api"/>
+    <removeHeaders pattern="Camel*"/>
+    <to uri="direct:trusted-pipeline"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:8080/api
+      steps:
+        - removeHeaders:
+            pattern: "Camel*"
+        - to:
+            uri: direct:trusted-pipeline
+----
+====
 * *Do not enable Java serialisation on consumers exposed to untrusted
   networks.* In particular, do not set `allowJavaSerializedObject=true`,
   `transferException=true`, or `mapJmsMessage=true` on a JMS consumer when the

@@ -201,6 +201,7 @@ that is indented in a way where you think that a catch block is associated with 
 
 Given the following Java DSL:
 
+._Java-only: nested doTry scoping issue_
 [source,java]
 ----
 from("direct:test").routeId("myroute")
@@ -223,6 +224,7 @@ which then throws a second exception, that is not caught.
 
 So what you must do is to end the doCatch block correct (notice how we use `endDoTry()` two times) as shown below:
 
+._Java-only: correct nesting with endDoTry()_
 [source,java]
 ----
 from("direct:test")
