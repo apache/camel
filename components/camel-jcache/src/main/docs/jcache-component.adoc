@@ -74,6 +74,7 @@ The cache used by the policy can be set directly. This means you have to configu
 but this gives the most flexibility. For example, it can be setup in the config xml of the cache provider (Hazelcast, EhCache, ...)
 and used here. Or it's possible to use the standard Caching API as below:
 
+._Java-only: Java programmatic cache configuration with JCachePolicy_
 [source,java]
 ----------------------------
 MutableConfiguration configuration = new MutableConfiguration<>();
@@ -97,6 +98,7 @@ If the `cache` is not set, the policy will try to look up or create the cache au
 If the `cacheManager` is set on the policy, it will try to get cache with the set `cacheName` (routeId by default) from the CacheManager.
 If the cache does not exist, it will create a new one using the `cacheConfiguration` (new MutableConfiguration by default).
 
+._Java-only: Java programmatic CacheManager configuration_
 [source,java]
 ----------------------------
 //In a Spring environment, for example, the CacheManager may already exist as a bean
@@ -117,6 +119,7 @@ If `cacheManager` (and the `cache`) is not set, the policy will try to find a JC
 * Lookup a CacheManager in Camel registry. That falls back on JNDI or Spring context based on the environment
 * Use the standard api `Caching.getCachingProvider().getCacheManager()`
 
+._Java-only: Java DSL with JCachePolicy_
 [source,java]
 ----------------------------
 //A Cache "getorders" will be used (or created) from the found CacheManager
@@ -131,6 +134,7 @@ from("direct:get-orders").routeId("getorders")
 In the examples above, the whole route was executed or skipped.
 A policy can be used to wrap only a segment of the route instead of all processors.
 
+._Java-only: Java DSL with partial JCachePolicy wrapping_
 [source,java]
 ----------------------------
 from("direct:get-orders")
@@ -154,6 +158,7 @@ set `header("orderId")` (or `simple("$\{header.orderId\}")` as `keyExpression`.
 The expression is evaluated only once at the beginning of the route to determine the _key_. If nothing was found in cache,
 this _key_ is used to store the _value_ in cache at the end of the route.
 
+._Java-only: Java programmatic JCachePolicy with keyExpression_
 [source,java]
 ----------------------------
 MutableConfiguration configuration = new MutableConfiguration<>();

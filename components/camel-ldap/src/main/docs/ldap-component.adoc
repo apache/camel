@@ -126,6 +126,7 @@ Following on from the configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common
 Name is then extracted from the response.
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 ----------------------------------------------------------
 ProducerTemplate template = exchange.getContext().createProducerTemplate();
@@ -159,6 +160,7 @@ If the LDAP entry has a Common Name, use a filter expression like:
 A Camel end user donated this sample code he used to bind to the ldap
 server using credentials.
 
+._Java-only: Java programmatic CamelContext and LDAP context setup_
 [source,java]
 ---------------------------------------------------------------------------------------
 Properties props = new Properties();

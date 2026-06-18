@@ -56,6 +56,7 @@ to use the utility with the IRC component.
 [[IRC-Programmaticconfigurationoftheendpoint]]
 Programmatic configuration of the endpoint
 
+._Java-only: Java programmatic SSL configuration_
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------------------
 KeyStoreParameters ksp = new KeyStoreParameters();
@@ -99,6 +100,7 @@ Spring DSL based configuration of endpoint
 
 You can also connect to an SSL enabled IRC server, as follows:
 
+._Java-only: endpoint URI syntax_
 [source,java]
 --------------------------------------------------
 ircs:host[:port]/#room?username=user&password=pass
@@ -109,6 +111,7 @@ http://moepii.sourceforge.net/irclib/javadoc/org/schwering/irc/lib/ssl/SSLDefaul
 If you need to provide your own custom trust manager, use the
 `trustManager` parameter as follows:
 
+._Java-only: endpoint URI syntax with trustManager_
 [source,java]
 ----------------------------------------------------------------------------------------------
 ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTrustManagerBean
@@ -123,6 +126,7 @@ channel. The key is just a secret word.
 
 For example, we join three channels whereas only channel 1 and 3 use a key.
 
+._Java-only: endpoint URI syntax with channel keys_
 [source,java]
 -----------------------------------------------------------------------------
 irc:nick@irc.server.org?channels=#chan1,#chan2,#chan3&keys=chan1Key,,chan3key
@@ -136,6 +140,7 @@ Furthermore, one has to filter the `onReply` exchanges to get the names.
 
 For example, we want to get all exchanges that contain the usernames of the channel:
 
+._Java-only: Java DSL with choice and filter EIPs_
 [source,java]
 -----------------------------------------------------------------------------
 from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
