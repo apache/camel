@@ -812,7 +812,7 @@ public interface MiloBrowseEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MiloBrowseHeaderNameBuilder INSTANCE = new MiloBrowseHeaderNameBuilder();
+        public static final MiloBrowseHeaderNameBuilder INSTANCE = new MiloBrowseHeaderNameBuilder();
 
         /**
          * The node ids.

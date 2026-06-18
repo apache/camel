@@ -747,7 +747,7 @@ public interface OpensearchEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final OpensearchHeaderNameBuilder INSTANCE = new OpensearchHeaderNameBuilder();
+        public static final OpensearchHeaderNameBuilder INSTANCE = new OpensearchHeaderNameBuilder();
 
         /**
          * The operation to perform.

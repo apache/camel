@@ -678,7 +678,7 @@ public interface CouchDbEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CouchDbHeaderNameBuilder INSTANCE = new CouchDbHeaderNameBuilder();
+        public static final CouchDbHeaderNameBuilder INSTANCE = new CouchDbHeaderNameBuilder();
 
         /**
          * The database the message came from.

@@ -554,7 +554,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CaffeineCacheHeaderNameBuilder INSTANCE = new CaffeineCacheHeaderNameBuilder();
+        public static final CaffeineCacheHeaderNameBuilder INSTANCE = new CaffeineCacheHeaderNameBuilder();
 
         /**
          * The action to execute. Possible values: CLEANUP PUT PUT_ALL GET

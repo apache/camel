@@ -236,7 +236,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final LangChain4jChatHeaderNameBuilder INSTANCE = new LangChain4jChatHeaderNameBuilder();
+        public static final LangChain4jChatHeaderNameBuilder INSTANCE = new LangChain4jChatHeaderNameBuilder();
 
         /**
          * The prompt Template.

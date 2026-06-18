@@ -425,7 +425,7 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final LangChain4jAgentHeaderNameBuilder INSTANCE = new LangChain4jAgentHeaderNameBuilder();
+        public static final LangChain4jAgentHeaderNameBuilder INSTANCE = new LangChain4jAgentHeaderNameBuilder();
 
         /**
          * The system prompt.

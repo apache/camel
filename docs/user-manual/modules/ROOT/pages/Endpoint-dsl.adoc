@@ -67,11 +67,11 @@ The example would then consume messages from WebSphereMQ queue named cheese and 
 
 === Headers' name
 
-The endpoint-dsl can also be used to be assisted when selecting the name of a header to set or to get. The headers' name builder
-is accessible directly from the method of the class `EndpointRouteBuilder` without argument whose name is the scheme of
-the target component.
+The endpoint-dsl provides type-safe access to component header names, so you don't need to
+remember the exact header name strings or import each component's constants class.
 
-In the example below the method `file()` available from `EndpointRouteBuilder`, gives access to the methods corresponding to the name of the headers of the file component. Here the method `fileName()` is called to get the name of the header for the name of the file.
+The recommended way is to use the `headers()` method which provides a dedicated entry point
+for all component header name builders:
 
 [source,java]
 ----
@@ -79,13 +79,25 @@ public class MyRoutes extends EndpointRouteBuilder {
     @Override
     public void configure() {
         from(/*some endpoint*/)
-            // Some route start
-            .setHeader(file().fileName(), constant("foo.txt"))
-            // Some route end
+            .setHeader(headers().file().fileName(), constant("foo.txt"))
+            .setHeader(headers().kafka().kafkaKey(), constant("myKey"))
             ;
     }
 }
 ----
+
+The `headers()` method is also available as a static method, so you can use it with a static import
+from `EndpointHeaderBuilders`:
+
+[source,java]
+----
+import static org.apache.camel.builder.endpoint.EndpointHeaderBuilders.*;
+
+.setHeader(kafka().kafkaKey(), constant("myKey"))
+----
+
+TIP: Each component's header name builder includes Javadoc with the header description, type, and
+whether it applies to consumers, producers, or both.
 
 === Using Endpoint-DSL outside route builders
 

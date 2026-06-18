@@ -1453,7 +1453,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KubernetesPodsHeaderNameBuilder INSTANCE = new KubernetesPodsHeaderNameBuilder();
+        public static final KubernetesPodsHeaderNameBuilder INSTANCE = new KubernetesPodsHeaderNameBuilder();
 
         /**
          * The Producer operation.

@@ -590,7 +590,7 @@ public interface EKS2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final EKS2HeaderNameBuilder INSTANCE = new EKS2HeaderNameBuilder();
+        public static final EKS2HeaderNameBuilder INSTANCE = new EKS2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

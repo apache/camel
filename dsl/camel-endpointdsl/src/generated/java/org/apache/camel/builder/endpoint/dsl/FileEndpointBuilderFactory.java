@@ -4014,7 +4014,7 @@ public interface FileEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final FileHeaderNameBuilder INSTANCE = new FileHeaderNameBuilder();
+        public static final FileHeaderNameBuilder INSTANCE = new FileHeaderNameBuilder();
 
         /**
          * A long value containing the file size.

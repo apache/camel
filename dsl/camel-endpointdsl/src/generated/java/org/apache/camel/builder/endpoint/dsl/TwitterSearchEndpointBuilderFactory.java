@@ -1647,7 +1647,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final TwitterSearchHeaderNameBuilder INSTANCE = new TwitterSearchHeaderNameBuilder();
+        public static final TwitterSearchHeaderNameBuilder INSTANCE = new TwitterSearchHeaderNameBuilder();
 
         /**
          * The keywords to search.

@@ -1662,7 +1662,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ServiceBusHeaderNameBuilder INSTANCE = new ServiceBusHeaderNameBuilder();
+        public static final ServiceBusHeaderNameBuilder INSTANCE = new ServiceBusHeaderNameBuilder();
 
         /**
          * The application properties (also known as custom properties) on

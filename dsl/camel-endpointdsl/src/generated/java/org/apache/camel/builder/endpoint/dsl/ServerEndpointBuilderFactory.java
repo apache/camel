@@ -1835,7 +1835,7 @@ public interface ServerEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ServerHeaderNameBuilder INSTANCE = new ServerHeaderNameBuilder();
+        public static final ServerHeaderNameBuilder INSTANCE = new ServerHeaderNameBuilder();
 
         /**
          * The address as ObjectAddress.

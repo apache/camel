@@ -1438,7 +1438,7 @@ public interface Web3jEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Web3jHeaderNameBuilder INSTANCE = new Web3jHeaderNameBuilder();
+        public static final Web3jHeaderNameBuilder INSTANCE = new Web3jHeaderNameBuilder();
 
         /**
          * A hexadecimal string representation (32 bytes) of the hash rate.

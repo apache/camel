@@ -1419,7 +1419,7 @@ public interface CoAPEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final CoAPHeaderNameBuilder INSTANCE = new CoAPHeaderNameBuilder();
+        public static final CoAPHeaderNameBuilder INSTANCE = new CoAPHeaderNameBuilder();
 
         /**
          * The CoAP ETag for the response.

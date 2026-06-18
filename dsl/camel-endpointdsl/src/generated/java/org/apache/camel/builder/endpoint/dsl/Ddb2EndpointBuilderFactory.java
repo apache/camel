@@ -730,7 +730,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final Ddb2HeaderNameBuilder INSTANCE = new Ddb2HeaderNameBuilder();
+        public static final Ddb2HeaderNameBuilder INSTANCE = new Ddb2HeaderNameBuilder();
 
         /**
          * The list of attributes returned by the operation.

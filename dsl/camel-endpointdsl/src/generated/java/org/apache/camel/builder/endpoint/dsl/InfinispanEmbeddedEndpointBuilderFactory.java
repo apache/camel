@@ -1112,7 +1112,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final InfinispanEmbeddedHeaderNameBuilder INSTANCE = new InfinispanEmbeddedHeaderNameBuilder();
+        public static final InfinispanEmbeddedHeaderNameBuilder INSTANCE = new InfinispanEmbeddedHeaderNameBuilder();
 
         /**
          * The type of the received event.

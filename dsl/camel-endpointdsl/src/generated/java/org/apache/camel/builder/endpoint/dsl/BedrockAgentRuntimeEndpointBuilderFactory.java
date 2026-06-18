@@ -723,7 +723,7 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final BedrockAgentRuntimeHeaderNameBuilder INSTANCE = new BedrockAgentRuntimeHeaderNameBuilder();
+        public static final BedrockAgentRuntimeHeaderNameBuilder INSTANCE = new BedrockAgentRuntimeHeaderNameBuilder();
 
         /**
          * The operation we want to perform.

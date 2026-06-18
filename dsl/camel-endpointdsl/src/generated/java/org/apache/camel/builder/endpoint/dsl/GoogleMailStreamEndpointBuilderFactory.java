@@ -1005,7 +1005,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleMailStreamHeaderNameBuilder INSTANCE = new GoogleMailStreamHeaderNameBuilder();
+        public static final GoogleMailStreamHeaderNameBuilder INSTANCE = new GoogleMailStreamHeaderNameBuilder();
 
         /**
          * The recipient of the message.

@@ -6936,7 +6936,7 @@ public interface MinaSftpEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MinaSftpHeaderNameBuilder INSTANCE = new MinaSftpHeaderNameBuilder();
+        public static final MinaSftpHeaderNameBuilder INSTANCE = new MinaSftpHeaderNameBuilder();
 
         /**
          * A long value containing the file size.

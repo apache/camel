@@ -1673,7 +1673,7 @@ public interface UndertowEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final UndertowHeaderNameBuilder INSTANCE = new UndertowHeaderNameBuilder();
+        public static final UndertowHeaderNameBuilder INSTANCE = new UndertowHeaderNameBuilder();
 
         /**
          * An identifier of WebSocketChannel through which the message was

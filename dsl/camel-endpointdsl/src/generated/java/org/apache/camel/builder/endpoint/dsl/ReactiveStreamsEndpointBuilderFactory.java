@@ -540,7 +540,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ReactiveStreamsHeaderNameBuilder INSTANCE = new ReactiveStreamsHeaderNameBuilder();
+        public static final ReactiveStreamsHeaderNameBuilder INSTANCE = new ReactiveStreamsHeaderNameBuilder();
 
         /**
          * Every exchange consumed by Camel has this header set to indicate if

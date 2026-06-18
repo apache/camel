@@ -1418,7 +1418,7 @@ public interface DaprEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final DaprHeaderNameBuilder INSTANCE = new DaprHeaderNameBuilder();
+        public static final DaprHeaderNameBuilder INSTANCE = new DaprHeaderNameBuilder();
 
         /**
          * Target service to invoke. Can be a Dapr App ID, a named HTTPEndpoint,

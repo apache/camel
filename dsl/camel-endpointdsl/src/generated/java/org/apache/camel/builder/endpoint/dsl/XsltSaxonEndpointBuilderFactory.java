@@ -811,7 +811,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final XsltSaxonHeaderNameBuilder INSTANCE = new XsltSaxonHeaderNameBuilder();
+        public static final XsltSaxonHeaderNameBuilder INSTANCE = new XsltSaxonHeaderNameBuilder();
 
         /**
          * A URI for the template resource to load and use instead of the

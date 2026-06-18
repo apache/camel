@@ -7306,7 +7306,7 @@ public interface JmsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JmsHeaderNameBuilder INSTANCE = new JmsHeaderNameBuilder();
+        public static final JmsHeaderNameBuilder INSTANCE = new JmsHeaderNameBuilder();
 
         /**
          * The destination.

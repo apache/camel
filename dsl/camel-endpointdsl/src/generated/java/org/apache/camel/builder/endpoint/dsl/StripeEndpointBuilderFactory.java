@@ -202,7 +202,7 @@ public interface StripeEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final StripeHeaderNameBuilder INSTANCE = new StripeHeaderNameBuilder();
+        public static final StripeHeaderNameBuilder INSTANCE = new StripeHeaderNameBuilder();
 
         /**
          * The operation to perform.

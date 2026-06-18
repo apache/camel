@@ -361,7 +361,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final FreemarkerHeaderNameBuilder INSTANCE = new FreemarkerHeaderNameBuilder();
+        public static final FreemarkerHeaderNameBuilder INSTANCE = new FreemarkerHeaderNameBuilder();
 
         /**
          * A URI for the template resource to use instead of the endpoint

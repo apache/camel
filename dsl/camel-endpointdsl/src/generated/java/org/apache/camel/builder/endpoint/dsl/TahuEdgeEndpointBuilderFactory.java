@@ -552,7 +552,7 @@ public interface TahuEdgeEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final TahuEdgeHeaderNameBuilder INSTANCE = new TahuEdgeHeaderNameBuilder();
+        public static final TahuEdgeHeaderNameBuilder INSTANCE = new TahuEdgeHeaderNameBuilder();
 
         /**
          * The Sparkplug message type of the message.

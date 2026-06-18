@@ -592,7 +592,7 @@ public interface IAM2EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IAM2HeaderNameBuilder INSTANCE = new IAM2HeaderNameBuilder();
+        public static final IAM2HeaderNameBuilder INSTANCE = new IAM2HeaderNameBuilder();
 
         /**
          * The operation we want to perform.

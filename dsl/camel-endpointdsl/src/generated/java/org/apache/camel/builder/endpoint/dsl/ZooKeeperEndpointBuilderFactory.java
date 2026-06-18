@@ -656,7 +656,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final ZooKeeperHeaderNameBuilder INSTANCE = new ZooKeeperHeaderNameBuilder();
+        public static final ZooKeeperHeaderNameBuilder INSTANCE = new ZooKeeperHeaderNameBuilder();
 
         /**
          * The node.

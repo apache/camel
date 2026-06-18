@@ -289,7 +289,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final MicrometerHeaderNameBuilder INSTANCE = new MicrometerHeaderNameBuilder();
+        public static final MicrometerHeaderNameBuilder INSTANCE = new MicrometerHeaderNameBuilder();
 
         /**
          * Override timer action in URI.

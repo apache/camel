@@ -5728,7 +5728,7 @@ public interface KafkaEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final KafkaHeaderNameBuilder INSTANCE = new KafkaHeaderNameBuilder();
+        public static final KafkaHeaderNameBuilder INSTANCE = new KafkaHeaderNameBuilder();
 
         /**
          * Explicitly specify the partition.

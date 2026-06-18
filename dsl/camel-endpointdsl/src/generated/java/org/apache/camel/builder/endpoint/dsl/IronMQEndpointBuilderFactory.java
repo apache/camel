@@ -1379,7 +1379,7 @@ public interface IronMQEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final IronMQHeaderNameBuilder INSTANCE = new IronMQHeaderNameBuilder();
+        public static final IronMQHeaderNameBuilder INSTANCE = new IronMQHeaderNameBuilder();
 
         /**
          * (producer) The id of the IronMQ message as a String when sending a

@@ -287,7 +287,7 @@ public interface GlanceEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GlanceHeaderNameBuilder INSTANCE = new GlanceHeaderNameBuilder();
+        public static final GlanceHeaderNameBuilder INSTANCE = new GlanceHeaderNameBuilder();
 
         /**
          * The number of flavor VCPU.

@@ -1424,7 +1424,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final JettyHttp12HeaderNameBuilder INSTANCE = new JettyHttp12HeaderNameBuilder();
+        public static final JettyHttp12HeaderNameBuilder INSTANCE = new JettyHttp12HeaderNameBuilder();
 
         /**
          * The servlet context path used.

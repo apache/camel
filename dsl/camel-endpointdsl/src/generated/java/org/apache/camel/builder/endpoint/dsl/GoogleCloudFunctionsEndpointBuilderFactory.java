@@ -301,7 +301,7 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final GoogleCloudFunctionsHeaderNameBuilder INSTANCE = new GoogleCloudFunctionsHeaderNameBuilder();
+        public static final GoogleCloudFunctionsHeaderNameBuilder INSTANCE = new GoogleCloudFunctionsHeaderNameBuilder();
 
         /**
          * The operation to perform.

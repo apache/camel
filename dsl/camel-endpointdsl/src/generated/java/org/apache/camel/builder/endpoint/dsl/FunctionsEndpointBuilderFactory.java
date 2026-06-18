@@ -533,7 +533,7 @@ public interface FunctionsEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final FunctionsHeaderNameBuilder INSTANCE = new FunctionsHeaderNameBuilder();
+        public static final FunctionsHeaderNameBuilder INSTANCE = new FunctionsHeaderNameBuilder();
 
         /**
          * The operation to perform. Overrides the operation in the endpoint.

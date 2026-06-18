@@ -4283,7 +4283,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The internal instance of the builder used to access to all the
          * methods representing the name of headers.
          */
-        private static final SalesforceHeaderNameBuilder INSTANCE = new SalesforceHeaderNameBuilder();
+        public static final SalesforceHeaderNameBuilder INSTANCE = new SalesforceHeaderNameBuilder();
 
         /**
          * The Streaming API replayId.
