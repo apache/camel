@@ -24,7 +24,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(53);
+        Set<String> props = new HashSet<>(54);
         props.add("accessToken");
         props.add("apiName");
         props.add("as2From");
@@ -67,6 +67,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("server");
         props.add("serverFqdn");
         props.add("serverPortNumber");
+        props.add("signatureVerificationRequired");
         props.add("signedReceiptMicAlgorithms");
         props.add("signingAlgorithm");
         props.add("signingCertificateChain");
