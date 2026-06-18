@@ -99,6 +99,8 @@ To use the legacy naming, then you can use the `LEGACY` naming from the `xxxNami
 
 For example:
 
+._Java-only: configuring legacy naming strategy on the route policy factory_
+
 [source,java]
 ----
 MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
@@ -740,6 +742,8 @@ want to instrument a few selected routes.
 
 From Java, you add the factory to the `CamelContext` as shown below:
 
+._Java-only: adding MicrometerRoutePolicyFactory to the CamelContext_
+
 [source,java]
 ----
 context.addRoutePolicyFactory(new MicrometerRoutePolicyFactory());
@@ -798,6 +802,8 @@ the examples below demonstrates.
 
 From Java, you set the factory to the `CamelContext` as shown below:
 
+._Java-only: setting MicrometerMessageHistoryFactory on the CamelContext_
+
 [source,java]
 ----
 context.setMessageHistoryFactory(new MicrometerMessageHistoryFactory());
@@ -827,6 +833,8 @@ to gather the data as json output.
 From Java code, you can get the service from the CamelContext as
 shown:
 
+._Java-only: accessing MicrometerMessageHistoryService from the CamelContext_
+
 [source,java]
 ----
 MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHistoryService.class);
@@ -843,6 +851,8 @@ There is a `MicrometerRouteEventNotifier` (counting added and running routes) an
 
 EventNotifiers can be added to the CamelContext, e.g.:
 
+._Java-only: adding MicrometerExchangeEventNotifier to the CamelContext_
+
 [source,java]
 ----
 camelContext.getManagementStrategy().addEventNotifier(new MicrometerExchangeEventNotifier());
@@ -853,6 +863,8 @@ to gather the data as json output.
 
 From Java code, you can get the service from the CamelContext as
 shown:
+
+._Java-only: accessing MicrometerEventNotifierService from the CamelContext_
 
 [source,java]
 ----

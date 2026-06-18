@@ -531,15 +531,52 @@ component URI.
 |CamelMetricsHistogramValue |Override histogram value in URI |Long
 |=================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // adds value 992 to simple.histogram
 from("direct:in")
     .setHeader(MetricsConstants.HEADER_HISTOGRAM_VALUE, constant(992L))
     .to("metrics:histogram:simple.histogram?value=700")
-    .to("direct:out")
-
+    .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsHistogramValue">
+    <constant resultType="java.lang.Long">992</constant>
+  </setHeader>
+  <to uri="metrics:histogram:simple.histogram?value=700"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsHistogramValue
+            constant: 992
+        - to:
+            uri: metrics:histogram:simple.histogram
+            parameters:
+              value: 700
+        - to:
+            uri: direct:out
+----
+====
 
 [[MetricsComponent-meter]]
 === Metric type meter
@@ -647,6 +684,10 @@ component URI.
 |CamelMetricsMeterMark |Override mark value in URI |Long
 |=======================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // updates meter simple.meter with value 345
@@ -655,6 +696,40 @@ from("direct:in")
     .to("metrics:meter:simple.meter?mark=123")
     .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsMeterMark">
+    <constant resultType="java.lang.Long">345</constant>
+  </setHeader>
+  <to uri="metrics:meter:simple.meter?mark=123"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsMeterMark
+            constant: 345
+        - to:
+            uri: metrics:meter:simple.meter
+            parameters:
+              mark: 123
+        - to:
+            uri: direct:out
+----
+====
 
 [[MetricsComponent-timer]]
 === Metrics type timer
@@ -914,6 +989,7 @@ want to instrument a few selected routes.
 
 From Java, you add the factory to the `CamelContext` as shown below:
 
+._Java-only: adding MetricsRoutePolicyFactory to CamelContext_
 [source,java]
 ----
 context.addRoutePolicyFactory(new MetricsRoutePolicyFactory());
@@ -970,6 +1046,7 @@ the `com.codahale.metrics.MetricRegistry` from the
 `org.apache.camel.component.metrics.routepolicy.MetricsRegistryService`
 as shown below:
 
+._Java-only: accessing MetricRegistry from MetricsRegistryService_
 [source,java]
 ----
 MetricRegistryService registryService = context.hasService(MetricsRegistryService.class);
@@ -989,6 +1066,7 @@ the examples below demonstrates.
 
 From Java, you set the factory to the `CamelContext` as shown below:
 
+._Java-only: setting MetricsMessageHistoryFactory on CamelContext_
 [source,java]
 ----
 context.setMessageHistoryFactory(new MetricsMessageHistoryFactory());
@@ -1044,6 +1122,7 @@ to gather the data as json output.
 From Java code, you can get the service from the CamelContext as
 shown:
 
+._Java-only: dumping message history statistics as JSON_
 [source,java]
 ----
 MetricsMessageHistoryService service = context.hasService(MetricsMessageHistoryService.class);
