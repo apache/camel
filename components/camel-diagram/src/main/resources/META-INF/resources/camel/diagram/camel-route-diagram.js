@@ -236,17 +236,37 @@ function esc(s) {
 const COMPONENT_STYLE = `
   :host {
     display: block;
+    /*
+     * fit-content makes the host expand to the SVG's intrinsic width so the
+     * parent scroll container sees real overflow and shows a scrollbar.
+     * min-width: 100% prevents collapsing when the diagram is narrower than
+     * the container.
+     */
+    width: fit-content;
+    min-width: 100%;
     font-family: var(--crd-font, system-ui, sans-serif);
     font-size: var(--crd-font-size, 12px);
-    background: var(--crd-bg, transparent);
     color: var(--crd-fg, #1e293b);
   }
   @media (prefers-color-scheme: dark) {
-    :host {
+    :host { color: var(--crd-fg, #e2e8f0); }
+  }
+  /* Background on .wrap (not :host) so it tracks the SVG width on scroll. */
+  .wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+    background: var(--crd-bg, transparent);
+    --crd-node-bg: var(--crd-bg, #ffffff);
+  }
+  @media (prefers-color-scheme: dark) {
+    .wrap {
       background: var(--crd-bg, #0f172a);
-      color: var(--crd-fg, #e2e8f0);
+      --crd-node-bg: var(--crd-bg, #0f172a);
     }
   }
+  .route-col { flex-shrink: 0; }
   .error   { color: #ef4444; padding: 8px; }
   .loading { opacity: .6; padding: 8px; }
   .route-label {
@@ -267,7 +287,7 @@ const COMPONENT_STYLE = `
  *   filter  - route ID filter, forwarded as ?filter= query param (default: all routes)
  *
  * CSS custom properties (all optional):
- *   --crd-bg, --crd-fg, --crd-edge, --crd-font, --crd-font-size, --crd-stat
+ *   --crd-bg, --crd-node-bg, --crd-fg, --crd-edge, --crd-font, --crd-font-size, --crd-stat
  *   --crd-color-{route,from,to,log,choice,when,otherwise,doTry,doCatch,doFinally,...,default}
  *
  * @since 4.21
@@ -369,21 +389,29 @@ class CamelRouteDiagram extends HTMLElement {
 
     #buildHTML() {
         const style = `<style>${COMPONENT_STYLE}</style>`;
-        if (this.#error) return `${style}<p class="error">⚠ ${esc(this.#error)}</p>`;
-        if (!this.#data) return `${style}<p class="loading">Loading diagram…</p>`;
-        return style + this.#data.routes.map((r, i) => this.#routeHTML(r, i)).join('');
+        if (this.#error) return `${style}<div class="wrap"><p class="error">⚠ ${esc(this.#error)}</p></div>`;
+        if (!this.#data) return `${style}<div class="wrap"><p class="loading">Loading diagram…</p></div>`;
+        return style + `<div class="wrap">${this.#data.routes.map((r, i) => this.#routeHTML(r, i)).join('')}</div>`;
     }
 
     #routeHTML(route, routeIdx) {
         const { positions, width, height } = layoutRoute(route);
         const ids = Object.keys(positions);
-        return `
+        const pfx  = `t${this.#uid}r${routeIdx}`;
+        const defs = ids.map(id => {
+            const p = positions[id];
+            return `<clipPath id="${pfx}${id}">` +
+                   `<rect x="${p.x + 28}" y="${p.y}" width="${NODE_W - 30}" height="${NODE_H}"/></clipPath>`;
+        }).join('');
+        return `<div class="route-col">
       <div class="route-label">${esc(route.routeId)}</div>
       <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
            aria-label="Route diagram for ${esc(route.routeId)}">
+        <defs>${defs}</defs>
         ${ids.map(id => this.#edgeHTML(id, positions)).join('')}
-        ${ids.map(id => this.#nodeHTML(positions[id])).join('')}
-      </svg>`;
+        ${ids.map(id => this.#nodeHTML(positions[id], `${pfx}${id}`)).join('')}
+      </svg>
+    </div>`;
     }
 
     #edgeHTML(id, positions) {
@@ -414,36 +442,37 @@ class CamelRouteDiagram extends HTMLElement {
         fill="var(--crd-edge, #94a3b8)"/>`;
     }
 
-    #nodeHTML(pos) {
-        const label = truncate(pos.description ?? pos.code);
-        const stat  = formatStat(pos.statistics);
-        const fill  = nodeColor(pos.type);
-        const cx    = pos.x + NODE_W / 2;
-        const tx    = cx + 9;                   // shift label clear of the icon
-        const textY = pos.y + NODE_H / 2 + 4;
+    #nodeHTML(pos, clipId) {
+        const label  = truncate(pos.description ?? pos.code);
+        const stat   = formatStat(pos.statistics);
+        const fill   = nodeColor(pos.type);
+        const textX  = pos.x + 30;
+        const textY  = pos.y + NODE_H / 2 + 4;
 
         return `
       <g role="img" aria-label="${esc(pos.type)}: ${esc(label)}">
         <rect x="${pos.x}" y="${pos.y}" width="${NODE_W}" height="${NODE_H}"
+              rx="6" ry="6" fill="var(--crd-node-bg, #ffffff)"/>
+        <rect x="${pos.x}" y="${pos.y}" width="${NODE_W}" height="${NODE_H}"
               rx="6" ry="6"
               fill="${fill}" fill-opacity="0.15"
               stroke="${fill}" stroke-width="1.5"/>
+        <text x="${textX}" y="${stat ? textY - 4 : textY}"
+              text-anchor="start" fill="currentColor" font-size="11"
+              clip-path="url(#${clipId})">
+          ${esc(label)}
+        </text>
+        ${stat ? `
+        <text x="${textX}" y="${pos.y + NODE_H - 3}"
+              text-anchor="start" fill="var(--crd-stat, #64748b)" font-size="9"
+              clip-path="url(#${clipId})">
+          ${esc(stat)}
+        </text>` : ''}
         <g transform="translate(${pos.x + 12},${pos.y + (NODE_H - 14) / 2}) scale(0.5833)"
               fill="none" stroke="${fill}" stroke-width="2.4"
               stroke-linecap="round" stroke-linejoin="round" pointer-events="none">
           ${iconFor(pos.type)}
         </g>
-        <text x="${tx}" y="${stat ? textY - 4 : textY}"
-              text-anchor="middle" fill="currentColor"
-              font-size="11">
-          ${esc(label)}
-        </text>
-        ${stat ? `
-        <text x="${tx}" y="${pos.y + NODE_H - 3}"
-              text-anchor="middle"
-              fill="var(--crd-stat, #64748b)" font-size="9">
-          ${esc(stat)}
-        </text>` : ''}
       </g>`;
     }
 }
