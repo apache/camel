@@ -76,7 +76,7 @@ class DefaultRouteDiagramDumperTest extends CamelTestSupport {
         RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(context);
         dumper.dumpRoutesToFile("*", RouteDiagramDumper.Theme.DARK, f);
 
-        assertThat(f.exists());
+        assertThat(f).exists();
     }
 
     @Test
@@ -89,7 +89,7 @@ class DefaultRouteDiagramDumperTest extends CamelTestSupport {
         RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(context);
         dumper.dumpRoutesToFolder("*", RouteDiagramDumper.Theme.LIGHT, f);
 
-        assertThat(f.exists());
+        assertThat(f).exists();
         assertThat(f.list()).contains("myRoute.png", "otherRoute.png");
     }
 
