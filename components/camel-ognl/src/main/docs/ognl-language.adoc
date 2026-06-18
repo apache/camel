@@ -31,6 +31,7 @@ request.body.familyName
 
 Or use similar syntax as in Java:
 
+._Java-only: OGNL expression using Java method call syntax_
 [source,java]
 ----
 getRequest().getBody().getFamilyName()
@@ -121,6 +122,7 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: loading an OGNL script from the classpath_
 [source,java]
 ----
 .setHeader("myHeader").ognl("resource:classpath:myognl.txt")

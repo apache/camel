@@ -195,6 +195,7 @@ Provide the corresponding private keys in the secret keyring, the
 corresponding public keys in the public keyring, and the passphrases in
 the passphrase accessor.
 
+._Java-only: programmatic PGPDataFormat with passphrase accessor and multiple keyrings_
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------------
 Map<String, String> userId2Passphrase = new HashMap<String, String>(2);
@@ -210,11 +211,11 @@ pgpVerifyAndDecrypt.setEncryptionKeyRing(getSecKeyRing()); // alternatively, you
 // the method getPublicKeyRing() provides the public keyring as a byte array containing the public keys
 pgpVerifyAndDecrypt.setSignatureKeyRing((getPublicKeyRing());  // alternatively, you can use setSignatureKeyFileName(signatgureKeyfileName)
 // it is not necessary to specify the encryption or signer User Id
- 
+
 from("direct:start")
-         ...     
+         ...
         .unmarshal(pgpVerifyAndDecrypt) // can decrypt/verify messages encrypted/signed by different private/public keys
-        ...            
+        ...
 ------------------------------------------------------------------------------------------------------------------------------------------
 
 * The functionality is especially useful to support the key exchange. If
@@ -240,23 +241,24 @@ which can be used for the verification of a signature.
 
 *Signature User IDs*
 
+._Java-only: programmatic PGPDataFormat restricting signer identities for verification_
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // specify the User IDs of the expected signer identities
  List<String> expectedSigUserIds = new ArrayList<String>();
  expectedSigUserIds.add("Trusted company1");
  expectedSigUserIds.add("Trusted company2");
- 
+
  PGPDataFormat pgpVerifyWithSpecificKeysAndDecrypt = new PGPDataFormat();
  pgpVerifyWithSpecificKeysAndDecrypt.setPassword("my password"); // for decrypting with private key
  pgpVerifyWithSpecificKeysAndDecrypt.setKeyFileName(keyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyFileName(signatgureKeyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyUserids(expectedSigUserIds); // if you have only one signer identity, then you can also use setSignatureKeyUserid("expected Signer")
- 
+
 from("direct:start")
-         ...     
+         ...
         .unmarshal(pgpVerifyWithSpecificKeysAndDecrypt)
-        ...      
+        ...
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 * If the PGP content has several signatures, the verification is
@@ -274,6 +276,7 @@ User IDs which relate to several private keys in the secret keyring.
 
 *Several Signatures*
 
+._Java-only: programmatic PGPDataFormat with multiple signer keys_
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  PGPDataFormat pgpSignAndEncryptSeveralSignerKeys = new PGPDataFormat();
@@ -286,11 +289,11 @@ User IDs which relate to several private keys in the secret keyring.
  signerUserIds.add("company old key");
  signerUserIds.add("company new key");
  pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyUserids(signerUserIds);
- 
+
 from("direct:start")
-         ...     
+         ...
         .marshal(pgpSignAndEncryptSeveralSignerKeys)
-        ...      
+        ...
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 == Support for Sub-Keys and Key Flags in PGP Data Format Marshaller

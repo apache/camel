@@ -53,6 +53,7 @@ Below is an example route of a producer that adds a file test.java to a
 local repository, commits it with a specific message on the `main` branch and
 then pushes it to remote repository.
 
+._Java-only: setting headers with GitConstants and chaining multiple git operations_
 [source,java]
 --------------------------------------------------------------------------------------------------------------------
 from("direct:start")
@@ -69,11 +70,40 @@ from("direct:start")
 
 Below is an example route of a consumer that consumes commit:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ---------------------------------------
 from("git:///tmp/testRepo?type=commit")
-    .to(....)
+    .to("mock:result");
 ---------------------------------------
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="git:///tmp/testRepo?type=commit"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: git:///tmp/testRepo
+      parameters:
+        type: commit
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 
 === Shallow Clone
 
@@ -123,6 +153,7 @@ A `depth` of 1 fetches only the latest commit. The value must be a positive inte
 By default, camel-git will load ``.gitconfig`` file from user home folder.
 You can override this by providing your own ``.gitconfig`` file.
 
+._Java-only: configuring custom gitConfigFile with different resource schemes_
 [source,java]
 ---------------------------------------
 from("git:///tmp/testRepo?type=commit&gitConfigFile=file:/tmp/configfile")

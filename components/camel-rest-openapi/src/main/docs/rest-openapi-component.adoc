@@ -113,6 +113,7 @@ delegate.
 To validate incoming `Authorization: Bearer` tokens from Rest DSL contract-first routes, pass the
 delegate endpoint option `oauthProfile` through the REST configuration endpoint properties.
 
+._Java-only: configuring REST with OAuth profile_
 [source,java]
 ----
 restConfiguration()
@@ -233,6 +234,7 @@ Here are our dependencies defined in Maven POM file:
 
 Start by defining a `RestOpenApiComponent` bean:
 
+._Java-only: defining a RestOpenApiComponent bean for PetStore_
 [source,java]
 ----
 @Bean
@@ -266,6 +268,7 @@ would use the named component from the Camel registry.
 Now in our application we can simply use the `ProducerTemplate` to
 invoke PetStore REST methods:
 
+._Java-only: invoking PetStore REST methods with ProducerTemplate_
 [source,java]
 ----
 @Autowired

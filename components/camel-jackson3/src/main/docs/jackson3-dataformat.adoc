@@ -65,6 +65,7 @@ include::partial$dataformat-options.adoc[]
 
 Jackson can also be used via the generic `json()` DSL method by specifying `JsonLibrary.Jackson`:
 
+._Java-only: using the json() DSL method with JsonLibrary.Jackson_
 [source,java]
 -------------------------------
 from("activemq:My.Queue")
@@ -74,6 +75,7 @@ from("activemq:My.Queue")
 
 This is equivalent to using `.jackson()` directly. The `json()` method also supports additional parameters:
 
+._Java-only: json() DSL with pretty print and unmarshal type_
 [source,java]
 -------------------------------
 // Pretty print
@@ -115,6 +117,7 @@ from `JsonNode` to `String` or vice versa.
 To enable POJO conversion support for `camel-jackson3` then this must be enabled,
 which is done by setting the following options on the `CamelContext` global options, as shown:
 
+._Java-only: enabling Jackson 3 POJO type converter via CamelContext options_
 [source,java]
 ----
 // Enable Jackson 3 JSON type converter for more types.

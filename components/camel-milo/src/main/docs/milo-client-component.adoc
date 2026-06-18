@@ -132,6 +132,7 @@ The component provide a producer to read values from multiple opc-ua nodes. The 
 
 Example:
 
+._Java-only: reading values from OPC UA nodes using enrich with an AggregationStrategy_
 [source,java]
 ----
 from("direct:start")
@@ -156,6 +157,7 @@ The component does not decode these values automatically, because it cannot reli
 applies. Instead, the active `OpcUaClient` is exposed through `MiloClientConnection.getOpcUaClient()`, so you can obtain
 its encoding contexts and perform the encode/decode yourself:
 
+._Java-only: accessing the underlying OpcUaClient for custom data type encoding/decoding_
 [source,java]
 ----
 MiloClientEndpoint endpoint = context.getEndpoint("milo-client:opc.tcp://localhost:4334", MiloClientEndpoint.class);

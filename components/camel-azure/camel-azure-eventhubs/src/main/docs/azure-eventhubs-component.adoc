@@ -157,6 +157,7 @@ YAML::
 
 To produce events:
 
+._Java-only: producing events with a Processor and EventHubsConstants_
 [source,java]
 ----
 from("direct:start")
@@ -169,6 +170,7 @@ from("direct:start")
 
 The azure-eventhubs producer supports sending sending events as an `Iterable` (E.g. as a `List`). For example:
 
+._Java-only: producing batch events with an Iterable body_
 [source,java]
 ----
 from("direct:start")
@@ -188,6 +190,7 @@ from("direct:start")
 The example below makes use of the Azure-AD authentication. See https://docs.microsoft.com/en-us/java/api/overview/azure/identity-readme?view=azure-java-stable#environment-variables[here]
 about what environment variables you need to set for this to work:
 
+._Java-only: registering a TokenCredential bean and using Azure-AD authentication_
 [source,java]
 ----
 @BindToRegistry("myTokenCredential")

@@ -89,6 +89,7 @@ In the consumer, the returned message body will be of type `String`.
 
 - `sendMessages`
 
+._Java-only: building a batch message list with a Processor_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
@@ -105,6 +106,7 @@ from("direct:start")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+._Java-only: sending a batch message with a session ID_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")
@@ -124,6 +126,7 @@ from("direct:start")
 
 - `scheduleMessages`
 
+._Java-only: scheduling messages with a Processor and ServiceBusConstants_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:start")

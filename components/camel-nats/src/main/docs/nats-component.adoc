@@ -52,6 +52,7 @@ You configure the NATS servers on either the component or the endpoint.
 
 For example, to configure this once on the component, you can do:
 
+._Java-only: configuring NATS servers on the component_
 [source,java]
 ----
 NatsComponent nats = context.getComponent("nats", NatsComponent.class);
@@ -103,6 +104,7 @@ The endpoint configuration will override any server configuration on the compone
 You can specify username and password for the servers in the server URLs,
 where its `username:password@url`, or `token@url` etc:
 
+._Java-only: configuring NATS servers with credentials_
 [source,java]
 ----
 NatsComponent nats = context.getComponent("nats", NatsComponent.class);
@@ -278,6 +280,7 @@ To take full control of acknowledgment, set `manualAck=true` on the consumer end
 This disables automatic acknowledgment and exposes a `NatsManualAck` object as the
 `CamelNatsManualAck` message header.
 
+._Java-only: manual acknowledgment with NatsManualAck in a processor_
 [source,java]
 ----
 from("nats:mytopic?jetstreamEnabled=true&jetstreamName=mystream&durableName=myconsumer&pullSubscription=false&manualAck=true")

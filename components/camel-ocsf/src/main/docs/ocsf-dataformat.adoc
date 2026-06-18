@@ -176,6 +176,10 @@ YAML::
 
 AWS Security Hub now outputs findings in OCSF format. You can use this data format to process those findings:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("aws-securityhub:findings")
@@ -186,6 +190,51 @@ from("aws-securityhub:findings")
         .otherwise()
             .to("direct:normal-severity");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws-securityhub:findings"/>
+  <unmarshal>
+    <ocsf unmarshalType="org.apache.camel.dataformat.ocsf.model.DetectionFinding"/>
+  </unmarshal>
+  <choice>
+    <when>
+      <simple>${body.severityId} >= 4</simple>
+      <to uri="direct:high-severity"/>
+    </when>
+    <otherwise>
+      <to uri="direct:normal-severity"/>
+    </otherwise>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws-securityhub:findings
+      steps:
+        - unmarshal:
+            ocsf:
+              unmarshalType: org.apache.camel.dataformat.ocsf.model.DetectionFinding
+        - choice:
+            when:
+              - simple: "${body.severityId} >= 4"
+                steps:
+                  - to:
+                      uri: direct:high-severity
+            otherwise:
+              steps:
+                - to:
+                    uri: direct:normal-severity
+----
+====
 
 == OCSF Options
 
@@ -212,6 +261,7 @@ OCSF defines the following event categories:
 
 == Example: Creating a Detection Finding
 
+._Java-only: creating and marshalling a DetectionFinding POJO_
 [source,java]
 ----
 DetectionFinding finding = new DetectionFinding();
@@ -241,6 +291,7 @@ You can combine the OCSF DataFormat with the LangChain4j Chat component to use a
 
 === Java DSL Example
 
+._Java-only: AI-powered security finding summarization with process and langchain4j_
 [source,java]
 ----
 from("kafka:security-events")

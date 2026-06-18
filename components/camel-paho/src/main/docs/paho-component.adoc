@@ -56,6 +56,7 @@ include::partial$component-endpoint-headers.adoc[]
 By default, the Camel Paho component operates on the binary payloads
 extracted out of (or put into) the MQTT message:
 
+._Java-only: receiving and sending binary payloads using the Paho component_
 [source,java]
 ----
 // Receive payload
@@ -69,6 +70,7 @@ producerTemplate.sendBody("paho:topic", payload);
 Of course, Camel build-in xref:manual::type-converter.adoc[type conversion API] can perform the automatic data type transformations for you.
 In the example below Camel automatically converts binary payload into `String` (and conversely):
 
+._Java-only: automatic type conversion of payloads_
 [source,java]
 ----
 // Receive payload

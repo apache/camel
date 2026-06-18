@@ -93,12 +93,48 @@ YAML::
 
 Use the block hash code to retrieve the block and full transaction details:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
+----
 from("jms:queue:blocks")
     .setHeader(BLOCK_HASH, body())
     .to("web3j://http://127.0.0.1:7545?operation=ETH_GET_BLOCK_BY_HASH&fullTransactionObjects=true");
----------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:queue:blocks"/>
+  <setHeader name="BLOCK_HASH">
+    <simple>${body}</simple>
+  </setHeader>
+  <to uri="web3j://http://127.0.0.1:7545?operation=ETH_GET_BLOCK_BY_HASH&amp;fullTransactionObjects=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:blocks
+      steps:
+        - setHeader:
+            name: BLOCK_HASH
+            simple: "${body}"
+        - to:
+            uri: "web3j://http://127.0.0.1:7545"
+            parameters:
+              operation: ETH_GET_BLOCK_BY_HASH
+              fullTransactionObjects: true
+----
+====
 
 Read the balance of an address at a specific block number:
 

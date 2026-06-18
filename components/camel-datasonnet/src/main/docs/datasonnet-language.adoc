@@ -22,6 +22,7 @@ xref:eips:recipientList-eip.adoc[Recipient List].
 
 To use a DataSonnet expression, use the following Java code:
 
+._Java-only: creating a DataSonnet expression_
 [source,java]
 ---------------------------------------
 datasonnet("someDSExpression");
@@ -178,7 +179,7 @@ xref:ROOT:properties-component.adoc[Properties] component (property placeholders
 
 Camel ships a standard library of helper functions that can be imported in any DataSonnet script:
 
-[source,java]
+[source,datasonnet]
 ----
 local c = import 'camel.libsonnet';
 {
@@ -301,6 +302,7 @@ such as `"classpath:"`, `"file:"`, or `"http:"`. +
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: loading a DataSonnet script from an external resource_
 [source,java]
 -------------------------------------------------------------------
 .setHeader("myHeader").datasonnet("resource:classpath:mydatasonnet.ds");

@@ -80,6 +80,7 @@ In this example we unmarshal a gzipped payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
 the `UnGZippedMessageProcessor`.
 
+._Java-only: unmarshalling a gzipped payload and forwarding to a custom processor_
 [source,java]
 ----
 from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZippedMessageProcessor());

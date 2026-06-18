@@ -473,6 +473,7 @@ NOTE: Use `script` EIP (not `setBody`) for `${a2a:emit()}` calls — `script` ev
 
 For advanced use cases, `A2AProgress` also supports emitting structured artifacts and intermediate messages:
 
+._Java-only: emitting structured artifacts and intermediate messages with A2AProgress_
 [source,java]
 ----
 // Emit a structured artifact (e.g., a generated file)
@@ -1426,6 +1427,7 @@ Default handlers:
 
 Override or extend by registering a custom handler bean:
 
+._Java-only: implementing a custom A2ASecuritySchemeHandler_
 [source,java]
 ----
 @BindToRegistry("myCustomAuth")
@@ -1672,6 +1674,7 @@ To customize, register a bean implementing `A2ATaskStore` in the Camel registry.
 
 Custom subscribers can be registered on a task-store bean for audit logging, metrics, or custom delivery:
 
+._Java-only: registering a custom A2ATaskStore with a global subscriber_
 [source,java]
 ----
 @BindToRegistry

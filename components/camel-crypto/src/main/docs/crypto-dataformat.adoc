@@ -33,6 +33,7 @@ If one or more instances of the Crypto data format are configured with this key,
 be used to encrypt the payload in one route (or part of one) and decrypted in another.
 For example, using the Java DSL as follows:
 
+._Java-only: programmatic CryptoDataFormat configuration with KeyGenerator_
 [source,java]
 ----------------------------------------------------------
 KeyGenerator generator = KeyGenerator.getInstance("DES");
@@ -71,6 +72,7 @@ In Spring the dataformat is configured first and then used in routes
 
 Changing the algorithm is a matter of supplying the JCE algorithm name. If you change the algorithm, you will need to use a compatible key.
 
+._Java-only: programmatic CryptoDataFormat with custom algorithm and HMAC_
 [source,java]
 ----------------------------------------------------------
 KeyGenerator generator = KeyGenerator.getInstance("DES");
@@ -95,6 +97,7 @@ Some crypto algorithms, particularly block algorithms, require configuration wit
 In the JCE this is passed as an AlgorithmParameterSpec when the Cipher is initialized.
 To use such a vector with the CryptoDataFormat, you can configure it with a byte[] containing the required data, e.g.
 
+._Java-only: programmatic CryptoDataFormat with initialization vector_
 [source,java]
 ----------------------------------------------------------
 KeyGenerator generator = KeyGenerator.getInstance("DES");

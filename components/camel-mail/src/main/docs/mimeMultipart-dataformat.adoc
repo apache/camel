@@ -99,6 +99,7 @@ MIME multipart. The header is removed afterward
 
 == Examples
 
+._Java-only: marshalling a message with attachments into MIME-Multipart format_
 [source,java]
 -----------------------------------
 from(...).marshal().mimeMultipart()
@@ -137,6 +138,7 @@ AAECAwQFBgc=
 A message with the header Content-Type set to "text/plain" sent to the
 route
 
+._Java-only: marshalling with custom MIME-Multipart options_
 [source,java]
 ------------------------------------------------------------------------------------
 from("...").marshal().mimeMultipart("related", true, true, "(included|x-.*)", true);
