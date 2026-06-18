@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -51,6 +52,7 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
                         "File already exist: " + testFile(TEST_FILE_NAME).toString() + ". Cannot write new file."),
                 cause.getMessage());
 
+        mock.await(10, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
     }
 
