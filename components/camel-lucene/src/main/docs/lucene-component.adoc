@@ -83,12 +83,46 @@ Lucene usage samples.
 
 === Example 1: Creating a Lucene index
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&srcDir=#load_dir")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&amp;indexDir=#whitespace&amp;srcDir=#load_dir"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: lucene:whitespaceQuotesIndex:insert
+          parameters:
+            analyzer: "#whitespaceAnalyzer"
+            indexDir: "#whitespace"
+            srcDir: "#load_dir"
+      - to:
+          uri: mock:result
+----
+====
 
 === Example 2: Loading properties into the JNDI registry in the Camel Context
 
@@ -104,6 +138,10 @@ registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
 
 === Example 2: Performing searches using a Query Producer
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -115,6 +153,57 @@ from("direct:next")
     .to("bean:searchResultProcessor")
     .to("mock:searchResult");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelLuceneQuery">
+    <constant>Seinfeld</constant>
+  </setHeader>
+  <to uri="lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&amp;indexDir=#whitespace&amp;maxHits=20"/>
+  <to uri="direct:next"/>
+</route>
+
+<route>
+  <from uri="direct:next"/>
+  <to uri="bean:searchResultProcessor"/>
+  <to uri="mock:searchResult"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelLuceneQuery
+          constant: Seinfeld
+      - to:
+          uri: lucene:searchIndex:query
+          parameters:
+            analyzer: "#whitespaceAnalyzer"
+            indexDir: "#whitespace"
+            maxHits: 20
+      - to:
+          uri: direct:next
+
+- route:
+    from:
+      uri: direct:next
+    steps:
+      - to:
+          uri: bean:searchResultProcessor
+      - to:
+          uri: mock:searchResult
+----
+====
 
 === Example 3: Performing searches using a Query Processor
 

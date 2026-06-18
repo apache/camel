@@ -39,21 +39,81 @@ Here we show some examples of producer using camel-kubernetes.
 
 === Create a pod
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:createPod")
     .to("kubernetes-pods://{{kubernetes-host}}?oauthToken={{kubernetes-token}}&operation=createPod");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:createPod"/>
+  <to uri="kubernetes-pods://{{kubernetes-host}}?oauthToken={{kubernetes-token}}&amp;operation=createPod"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createPod
+    steps:
+      - to:
+          uri: kubernetes-pods://{{kubernetes-host}}
+          parameters:
+            oauthToken: "{{kubernetes-token}}"
+            operation: createPod
+----
+====
+
 By using the `CamelKubernetesPodSpec` header, you can specify your PodSpec and pass it to this operation.
 
 === Delete a pod
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:deletePod")
     .to("kubernetes-pods://{{kubernetes-host}}?oauthToken={{kubernetes-token}}&operation=deletePod");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:deletePod"/>
+  <to uri="kubernetes-pods://{{kubernetes-host}}?oauthToken={{kubernetes-token}}&amp;operation=deletePod"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deletePod
+    steps:
+      - to:
+          uri: kubernetes-pods://{{kubernetes-host}}
+          parameters:
+            oauthToken: "{{kubernetes-token}}"
+            operation: deletePod
+----
+====
 
 By using the `CamelKubernetesPodName` header, you can specify your Pod name and pass it to this operation.
 

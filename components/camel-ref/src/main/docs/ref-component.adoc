@@ -82,11 +82,38 @@ context.getRegistry().bind("endpoint2", context.getEndpoint("log:end"));
 
 Use the `ref` URI scheme to refer to endpoint's bond to the Camel registry:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("ref:endpoint1")
     .to("ref:endpoint2");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ref:endpoint1"/>
+  <to uri="ref:endpoint2"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ref:endpoint1
+    steps:
+      - to:
+          uri: ref:endpoint2
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

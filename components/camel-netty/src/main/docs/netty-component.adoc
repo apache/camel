@@ -596,11 +596,38 @@ from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
 
 === A TCP-based Netty consumer endpoint using One-way communication
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("netty:tcp://0.0.0.0:5150")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty:tcp://0.0.0.0:5150"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty:tcp://0.0.0.0:5150
+    steps:
+      - to:
+          uri: mock:result
+----
+====
 
 === An SSL/TCP-based Netty consumer endpoint using Request-Reply communication
 
