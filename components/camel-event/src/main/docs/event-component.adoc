@@ -114,6 +114,10 @@ The following event types are available (corresponding to `org.apache.camel.spi.
 Instead of listing each event type individually, you can use wildcard patterns with a `*` suffix
 to match all event types that start with a given prefix.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Subscribe to all route events (RouteStarted, RouteStopped, RouteAdded, etc.)
@@ -132,6 +136,65 @@ from("event:*")
 from("event:Route*,ExchangeFailed")
     .log("Event: ${header.CamelEventType}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:Route*"/>
+  <log message="Route event: ${header.CamelEventType}"/>
+</route>
+
+<route>
+  <from uri="event:Exchange*"/>
+  <log message="Exchange event: ${header.CamelEventType}"/>
+</route>
+
+<route>
+  <from uri="event:*"/>
+  <log message="Event: ${header.CamelEventType}"/>
+</route>
+
+<route>
+  <from uri="event:Route*,ExchangeFailed"/>
+  <log message="Event: ${header.CamelEventType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "event:Route*"
+      steps:
+        - log:
+            message: "Route event: ${header.CamelEventType}"
+
+- route:
+    from:
+      uri: "event:Exchange*"
+      steps:
+        - log:
+            message: "Exchange event: ${header.CamelEventType}"
+
+- route:
+    from:
+      uri: "event:*"
+      steps:
+        - log:
+            message: "Event: ${header.CamelEventType}"
+
+- route:
+    from:
+      uri: "event:Route*,ExchangeFailed"
+      steps:
+        - log:
+            message: "Event: ${header.CamelEventType}"
+----
+====
 
 == Filtering
 
@@ -511,6 +574,10 @@ This dispatches event processing to a thread pool, freeing the event notifier th
 
 Use the `asyncPoolSize` option to control the maximum number of concurrent event processing threads (default: 10).
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Process events asynchronously with default pool size (10)
@@ -522,6 +589,46 @@ from("event:Exchange*?async=true&asyncPoolSize=5")
     .log("Exchange event: ${header.CamelEventType}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:ExchangeCompleted?async=true"/>
+  <log message="Exchange completed: ${header.CamelEventExchangeId}"/>
+</route>
+
+<route>
+  <from uri="event:Exchange*?async=true&amp;asyncPoolSize=5"/>
+  <log message="Exchange event: ${header.CamelEventType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:ExchangeCompleted
+      parameters:
+        async: true
+      steps:
+        - log:
+            message: "Exchange completed: ${header.CamelEventExchangeId}"
+
+- route:
+    from:
+      uri: "event:Exchange*"
+      parameters:
+        async: true
+        asyncPoolSize: 5
+      steps:
+        - log:
+            message: "Exchange event: ${header.CamelEventType}"
+----
+====
+
 === Backpressure
 
 When async processing is enabled, events are placed into a bounded blocking queue
@@ -532,6 +639,10 @@ the `backpressurePolicy` option controls the behavior:
 * `Drop` — silently discards the event.
 * `Fail` — throws an exception.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Async with a small queue and Drop policy (discard events when overloaded)
@@ -542,6 +653,49 @@ from("event:ExchangeCompleted?async=true&asyncQueueSize=100&backpressurePolicy=D
 from("event:Exchange*?async=true&asyncQueueSize=500&backpressurePolicy=Fail")
     .log("Exchange event: ${header.CamelEventType}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:ExchangeCompleted?async=true&amp;asyncQueueSize=100&amp;backpressurePolicy=Drop"/>
+  <log message="Exchange completed: ${header.CamelEventExchangeId}"/>
+</route>
+
+<route>
+  <from uri="event:Exchange*?async=true&amp;asyncQueueSize=500&amp;backpressurePolicy=Fail"/>
+  <log message="Exchange event: ${header.CamelEventType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:ExchangeCompleted
+      parameters:
+        async: true
+        asyncQueueSize: 100
+        backpressurePolicy: Drop
+      steps:
+        - log:
+            message: "Exchange completed: ${header.CamelEventExchangeId}"
+
+- route:
+    from:
+      uri: "event:Exchange*"
+      parameters:
+        async: true
+        asyncQueueSize: 500
+        backpressurePolicy: Fail
+      steps:
+        - log:
+            message: "Exchange event: ${header.CamelEventType}"
+----
+====
 
 == Event Batching
 
@@ -555,6 +709,10 @@ controls the maximum time to wait for a full batch before flushing a partial bat
 When batching is enabled, the `CamelEventBatchSize` header is set with the number of events
 in the batch.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Collect events in batches of 50, flush every 2 seconds
@@ -565,6 +723,48 @@ from("event:ExchangeCompleted?batchSize=50&batchTimeout=2000")
 from("event:Exchange*?async=true&batchSize=100&batchTimeout=5000")
     .log("Batch of ${header.CamelEventBatchSize} exchange events");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:ExchangeCompleted?batchSize=50&amp;batchTimeout=2000"/>
+  <log message="Received batch of ${header.CamelEventBatchSize} events"/>
+</route>
+
+<route>
+  <from uri="event:Exchange*?async=true&amp;batchSize=100&amp;batchTimeout=5000"/>
+  <log message="Batch of ${header.CamelEventBatchSize} exchange events"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:ExchangeCompleted
+      parameters:
+        batchSize: 50
+        batchTimeout: 2000
+      steps:
+        - log:
+            message: "Received batch of ${header.CamelEventBatchSize} events"
+
+- route:
+    from:
+      uri: "event:Exchange*"
+      parameters:
+        async: true
+        batchSize: 100
+        batchTimeout: 5000
+      steps:
+        - log:
+            message: "Batch of ${header.CamelEventBatchSize} exchange events"
+----
+====
 
 == JBang Quick Start
 
@@ -613,6 +813,10 @@ camel run event-monitor.yaml
 The Event component captures events within a single CamelContext (JVM). To propagate events across
 multiple Camel instances, use standard Camel routes to forward events to a messaging system:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Producer side: capture local events and publish to Kafka
@@ -624,6 +828,46 @@ from("event:RouteStarted,RouteStopped,ExchangeFailed")
 from("kafka:camel-events")
     .to("log:distributed-events");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="event:RouteStarted,RouteStopped,ExchangeFailed"/>
+  <setBody>
+    <simple>${header.CamelEventType}: ${header.CamelEventRouteId} at ${header.CamelEventTimestamp}</simple>
+  </setBody>
+  <to uri="kafka:camel-events"/>
+</route>
+
+<route>
+  <from uri="kafka:camel-events"/>
+  <to uri="log:distributed-events"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: event:RouteStarted,RouteStopped,ExchangeFailed
+      steps:
+        - setBody:
+            simple: "${header.CamelEventType}: ${header.CamelEventRouteId} at ${header.CamelEventTimestamp}"
+        - to:
+            uri: kafka:camel-events
+
+- route:
+    from:
+      uri: kafka:camel-events
+      steps:
+        - to:
+            uri: log:distributed-events
+----
+====
 
 This approach is transport-agnostic — you can use Kafka, JMS, AMQP, NATS, or any other
 Camel messaging component. It gives you full control over event serialization, filtering,
