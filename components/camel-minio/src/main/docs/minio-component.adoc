@@ -24,9 +24,9 @@ https://min.io/[Minio].
 
 == URI Format
 
-------------------------------
+----
 minio://bucketName[?options]
-------------------------------
+----
 
 The bucket will be created if it doesn't already exist. +
 You can append query options to the URI in the following format: `?options=value&option2=value&...`
@@ -152,37 +152,117 @@ YAML::
 
 - `CopyObject`: this operation copies an object from one bucket to a different one
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
+----
+from("direct:start")
+    .setHeader("CamelMinioDestinationBucketName").constant("camelDestinationBucket")
+    .setHeader("CamelMinioObjectName").constant("camelKey")
+    .setHeader("CamelMinioDestinationObjectName").constant("camelDestinationKey")
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=copyObject")
+    .to("mock:result");
+----
 
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "camelDestinationBucket");
-          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
-          exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "camelDestinationKey");
-      }
-  })
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=copyObject")
-  .to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelMinioDestinationBucketName">
+    <constant>camelDestinationBucket</constant>
+  </setHeader>
+  <setHeader name="CamelMinioObjectName">
+    <constant>camelKey</constant>
+  </setHeader>
+  <setHeader name="CamelMinioDestinationObjectName">
+    <constant>camelDestinationKey</constant>
+  </setHeader>
+  <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=copyObject"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMinioDestinationBucketName
+            constant: camelDestinationBucket
+        - setHeader:
+            name: CamelMinioObjectName
+            constant: camelKey
+        - setHeader:
+            name: CamelMinioDestinationObjectName
+            constant: camelDestinationKey
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: copyObject
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will copy the object with the name expressed in the header camelDestinationKey to the camelDestinationBucket bucket, from the bucket mycamelbucket.
 
 - `DeleteObject`: this operation deletes an object from a bucket
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
+----
+from("direct:start")
+    .setHeader("CamelMinioObjectName").constant("camelKey")
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=deleteObject")
+    .to("mock:result");
+----
 
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
-      }
-  })
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=deleteObject")
-  .to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelMinioObjectName">
+    <constant>camelKey</constant>
+  </setHeader>
+  <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=deleteObject"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMinioObjectName
+            constant: camelKey
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: deleteObject
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will delete the object camelKey from the bucket mycamelbucket.
 
@@ -320,70 +400,230 @@ This operation will list the objects in the mycamelbucket bucket
 
 - `GetObject`: this operation gets a single object in a specific bucket
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
+----
+from("direct:start")
+    .setHeader("CamelMinioObjectName").constant("camelKey")
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObject")
+    .to("mock:result");
+----
 
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
-      }
-  })
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObject")
-  .to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelMinioObjectName">
+    <constant>camelKey</constant>
+  </setHeader>
+  <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=getObject"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMinioObjectName
+            constant: camelKey
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: getObject
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will return a MinioObject instance related to the camelKey object in `mycamelbucket` bucket.
 
 - `GetObjectRange`: this operation gets a single object range in a specific bucket
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
+----
+from("direct:start")
+    .setHeader("CamelMinioObjectName").constant("camelKey")
+    .setHeader("CamelMinioOffset").constant("0")
+    .setHeader("CamelMinioLength").constant("9")
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObjectRange")
+    .to("mock:result");
+----
 
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
-          exchange.getIn().setHeader(MinioConstants.OFFSET, "0");
-          exchange.getIn().setHeader(MinioConstants.LENGTH, "9");
-      }
-  })
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObjectRange")
-  .to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelMinioObjectName">
+    <constant>camelKey</constant>
+  </setHeader>
+  <setHeader name="CamelMinioOffset">
+    <constant>0</constant>
+  </setHeader>
+  <setHeader name="CamelMinioLength">
+    <constant>9</constant>
+  </setHeader>
+  <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=getObjectRange"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMinioObjectName
+            constant: camelKey
+        - setHeader:
+            name: CamelMinioOffset
+            constant: "0"
+        - setHeader:
+            name: CamelMinioLength
+            constant: "9"
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: getObjectRange
+        - to:
+            uri: mock:result
+----
+====
 This operation will return a MinioObject instance related to the camelKey object in `mycamelbucket` bucket, containing bytes from 0 to 9.
 
 - `createDownloadLink`: this operation will return a presigned url through which a file can be downloaded using GET method
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
+----
+from("direct:start")
+    .setHeader("CamelMinioObjectName").constant("camelKey")
+    .setHeader("CamelMinioPresignedURLExpirationTime").constant(3600)
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=createDownloadLink")
+    .to("mock:result");
+----
 
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
-          exchange.getIn().setHeader(MinioConstants.PRESIGNED_URL_EXPIRATION_TIME, 60 * 60);
-      }
-  })
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=createDownloadLink")
-  .to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelMinioObjectName">
+    <constant>camelKey</constant>
+  </setHeader>
+  <setHeader name="CamelMinioPresignedURLExpirationTime">
+    <constant resultType="java.lang.Integer">3600</constant>
+  </setHeader>
+  <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=createDownloadLink"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMinioObjectName
+            constant: camelKey
+        - setHeader:
+            name: CamelMinioPresignedURLExpirationTime
+            constant: 3600
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: createDownloadLink
+        - to:
+            uri: mock:result
+----
+====
 
 - `createUploadLink`: this operation will return a presigned url through which a file can be uploaded using PUT method
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
+----
+from("direct:start")
+    .setHeader("CamelMinioObjectName").constant("camelKey")
+    .setHeader("CamelMinioPresignedURLExpirationTime").constant(3600)
+    .to("minio://mycamelbucket?minioClient=#minioClient&operation=createUploadLink")
+    .to("mock:result");
+----
 
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
-          exchange.getIn().setHeader(MinioConstants.PRESIGNED_URL_EXPIRATION_TIME, 60 * 60);
-      }
-  })
-  .to("minio://mycamelbucket?minioClient=#minioClient&operation=createUploadLink")
-  .to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelMinioObjectName">
+    <constant>camelKey</constant>
+  </setHeader>
+  <setHeader name="CamelMinioPresignedURLExpirationTime">
+    <constant resultType="java.lang.Integer">3600</constant>
+  </setHeader>
+  <to uri="minio://mycamelbucket?minioClient=#minioClient&amp;operation=createUploadLink"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMinioObjectName
+            constant: camelKey
+        - setHeader:
+            name: CamelMinioPresignedURLExpirationTime
+            constant: 3600
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: createUploadLink
+        - to:
+            uri: mock:result
+----
+====
 
 `createDownLink` and `createUploadLink` have a default expiry of 3600s which can be overridden by setting the header `MinioConstants.PRESIGNED_URL_EXPIRATION_TIME` (value in seconds)
 
@@ -456,13 +696,13 @@ We introduce the possibility to use a POJO as the body.
 In Minio, there are multiple operations you can submit, as an example for List brokers request, you can do something like:
 
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:minio")
      .setBody(ListObjectsArgs.builder()
                     .bucket(bucketName)
                     .recursive(getConfiguration().isRecursive()))
      .to("minio://test?minioClient=#minioClient&operation=listObjects&pojoRequest=true");
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -473,13 +713,13 @@ Maven users will need to add the following dependency to their `pom.xml`.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-minio</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

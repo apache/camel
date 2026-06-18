@@ -31,6 +31,7 @@ request.body.familyName
 
 Or use similar syntax as in Java:
 
+._Java-only: OGNL expression using Java method call syntax_
 [source,java]
 ----
 getRequest().getBody().getFamilyName()
@@ -121,6 +122,7 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: loading an OGNL script from the classpath_
 [source,java]
 ----
 .setHeader("myHeader").ognl("resource:classpath:myognl.txt")
@@ -135,13 +137,13 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
--------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-ognl</artifactId>
   <version>x.x.x</version>
 </dependency>
--------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

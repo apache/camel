@@ -22,19 +22,19 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
--------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-servicenow</artifactId>
     <version>${camel-version}</version>
 </dependency>
--------------------------------------------------
+----
 
 == URI format
 
----------------------------------------
+----
 servicenow://instanceName?[options]
----------------------------------------
+----
 
 
 
@@ -132,9 +132,10 @@ https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/i
 
 == Examples:
  
+._Java-only: retrieving 10 Incidents with FluentProducerTemplate_
 [source,java]
 .Retrieve 10 Incidents
--------------------------------------------------------------------------------------------------------------------
+----
 context.addRoutes(new RouteBuilder() {
     public void configure() {
        from("direct:servicenow")
@@ -145,7 +146,7 @@ context.addRoutes(new RouteBuilder() {
                + "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
            .to("mock:servicenow");
     }
-}); 
+});
 
 FluentProducerTemplate.on(context)
     .withHeader(ServiceNowConstants.RESOURCE, "table")
@@ -155,7 +156,7 @@ FluentProducerTemplate.on(context)
     .withHeader(ServiceNowConstants.MODEL, Incident.class)
     .to("direct:servicenow")
     .send();
--------------------------------------------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

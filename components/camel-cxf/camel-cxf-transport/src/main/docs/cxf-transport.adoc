@@ -46,7 +46,7 @@ soon as you include the camel-cxf-transport.jar in your app, cxf will scan the
 jar and load a CamelTransportFactory for you.
 
 [source,xml]
---------------------------------------------------------------------------------------------------------
+----
 <!-- you don't need to specify the CamelTransportFactory configuration as it is auto load by CXF bus -->
 <bean class="org.apache.camel.component.cxf.transport.CamelTransportFactory">
   <property name="bus" ref="cxf" />
@@ -63,7 +63,7 @@ jar and load a CamelTransportFactory for you.
     </list>
   </property>
 </bean>
---------------------------------------------------------------------------------------------------------
+----
 
 [[CamelTransportforCXF-IntegratingtheCamelTransportinaprogrammaticway]]
 === Integrating the Camel Transport in a programmatic way
@@ -73,8 +73,9 @@ the Camel context into the transport factory. If you want this factory
 take effect, you need to register the factory into the CXF bus. Here is
 a full example for you.
 
+._Java-only: programmatic CXF bus and transport factory setup_
 [source,java]
-------------------------------------------------------------------------------------------------------------------
+----
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.transport.ConduitInitiatorManager;
@@ -98,7 +99,7 @@ DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class
 dfm.registerDestinationFactory(CamelTransportFactory.TRANSPORT_ID, camelTransportFactory);
 // set or bus as the default bus for cxf
 BusFactory.setDefaultBus(bus);
-------------------------------------------------------------------------------------------------------------------
+----
 
 [[CamelTransportforCXF-ConfigurethedestinationandconduitwithSpring]]
 == Configure the destination and conduit with Spring
@@ -116,8 +117,8 @@ the `xsi:schemaLocation` attribute.
 
 *Adding the Configuration Namespace*
 
-[source,java]
----------------------------------------------------------------------
+[source,xml]
+----
 <beans ...
        xmlns:camel="http://cxf.apache.org/transports/camel
        ...
@@ -125,7 +126,7 @@ the `xsi:schemaLocation` attribute.
                            http://cxf.apache.org/transports/camel
                            http://cxf.apache.org/transports/camel.xsd
                           ...>
----------------------------------------------------------------------
+----
 
 [[CamelTransportforCXF-Thedestinationelement]]
 === The `destination` element
@@ -142,8 +143,8 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 
 *camel:destination Element*
 
-[source,java]
----------------------------------------------------------------------------------------------------------------------------
+[source,xml]
+----
 ...
   <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.http-destination>
     <camelContext id="context" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -154,10 +155,10 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
      </camelContext>
   </camel:destination>
 
-  <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.camel-destination" camelContextId="context" />  
+  <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.camel-destination" camelContextId="context" />
 
 ...
----------------------------------------------------------------------------------------------------------------------------
+----
 
 The `camel:destination` element for Spring has a number of child
 elements that specify configuration information. They are described
@@ -191,7 +192,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 *http-conf:conduit Element*
 
 [source,xml]
--------------------------------------------------------------------------------------------------------------------------
+----
 ...
   <camelContext id="conduit_context" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
@@ -208,7 +209,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
     ...
   </camel:conduit>
 ...
--------------------------------------------------------------------------------------------------------------------------
+----
 
 The `camel:conduit` element has a number of child elements that specify
 configuration information. They are described below.

@@ -22,20 +22,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-grpc</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------------
+----
 grpc:host:port/service[?options]
--------------------------------------
+----
 
 
 // component options: START
@@ -103,16 +103,40 @@ It is not possible to create a universal proxy-route for all methods, so you nee
 
 For unary requests, it is enough to write the following code:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("grpc://localhost:1101" +
-    "/org.apache.camel.component.grpc.PingPong"
-)
-    .toD("grpc://remotehost:1101" +
-        "/org.apache.camel.component.grpc.PingPong" +
-        "?method=${header.CamelGrpcMethodName}"
-    )
+from("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong")
+    .toD("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=${header.CamelGrpcMethodName}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="grpc://localhost:1101/org.apache.camel.component.grpc.PingPong"/>
+  <toD uri="grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=${header.CamelGrpcMethodName}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: grpc://localhost:1101/org.apache.camel.component.grpc.PingPong
+      steps:
+        - toD:
+            uri: grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: "${header.CamelGrpcMethodName}"
+----
+====
 
 === Server streaming
 
@@ -127,24 +151,61 @@ If this behavior is unacceptable, you need to apply a number of options:
 
 Example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("grpc://localhost:1101" +
-    "/org.apache.camel.component.grpc.PingPong" +
-    "?routeControlledStreamObserver=true"
-)
-    .toD("grpc://remotehost:1101" +
-            "/org.apache.camel.component.grpc.PingPong" +
-            "?method=${header.CamelGrpcMethodName}" +
-            "&streamRepliesTo=direct:next" +
-            "&forwardOnError=true" +
-            "&forwardOnCompleted=true" +
-            "&inheritExchangePropertiesForReplies=true"
-    );
+from("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?routeControlledStreamObserver=true")
+    .toD("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=${header.CamelGrpcMethodName}&streamRepliesTo=direct:next&forwardOnError=true&forwardOnCompleted=true&inheritExchangePropertiesForReplies=true");
 
 from("direct:next")
-        .to("grpc://dummy:0/?toRouteControlledStreamObserver=true");
+    .to("grpc://dummy:0/?toRouteControlledStreamObserver=true");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?routeControlledStreamObserver=true"/>
+  <toD uri="grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=${header.CamelGrpcMethodName}&amp;streamRepliesTo=direct:next&amp;forwardOnError=true&amp;forwardOnCompleted=true&amp;inheritExchangePropertiesForReplies=true"/>
+</route>
+<route>
+  <from uri="direct:next"/>
+  <to uri="grpc://dummy:0/?toRouteControlledStreamObserver=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: grpc://localhost:1101/org.apache.camel.component.grpc.PingPong
+      parameters:
+        routeControlledStreamObserver: true
+      steps:
+        - toD:
+            uri: grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: "${header.CamelGrpcMethodName}"
+              streamRepliesTo: direct:next
+              forwardOnError: true
+              forwardOnCompleted: true
+              inheritExchangePropertiesForReplies: true
+- route:
+    from:
+      uri: direct:next
+      steps:
+        - to:
+            uri: grpc://dummy:0/
+            parameters:
+              toRouteControlledStreamObserver: true
+----
+====
 
 === Client streaming and bidirectional streaming
 
@@ -159,89 +220,311 @@ But there is another thing: requests also come in streaming mode. So you need th
 
 Example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("grpc://localhost:1101" +
-    "/org.apache.camel.component.grpc.PingPong" +
-    "?routeControlledStreamObserver=true" +
-    "&consumerStrategy=DELEGATION" +
-    "&forwardOnError=true" +
-    "&forwardOnCompleted=true"
-)
-    .toD("grpc://remotehost:1101" +
-            "/org.apache.camel.component.grpc.PingPong" +
-            "?method=${header.CamelGrpcMethodName}" +
-            "&producerStrategy=STREAMING" +
-            "&streamRepliesTo=direct:next" +
-            "&forwardOnError=true" +
-            "&forwardOnCompleted=true" +
-            "&inheritExchangePropertiesForReplies=true"
-    );
+from("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?routeControlledStreamObserver=true&consumerStrategy=DELEGATION&forwardOnError=true&forwardOnCompleted=true")
+    .toD("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=${header.CamelGrpcMethodName}&producerStrategy=STREAMING&streamRepliesTo=direct:next&forwardOnError=true&forwardOnCompleted=true&inheritExchangePropertiesForReplies=true");
 
 from("direct:next")
-        .to("grpc://dummy:0/?toRouteControlledStreamObserver=true");
+    .to("grpc://dummy:0/?toRouteControlledStreamObserver=true");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?routeControlledStreamObserver=true&amp;consumerStrategy=DELEGATION&amp;forwardOnError=true&amp;forwardOnCompleted=true"/>
+  <toD uri="grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=${header.CamelGrpcMethodName}&amp;producerStrategy=STREAMING&amp;streamRepliesTo=direct:next&amp;forwardOnError=true&amp;forwardOnCompleted=true&amp;inheritExchangePropertiesForReplies=true"/>
+</route>
+<route>
+  <from uri="direct:next"/>
+  <to uri="grpc://dummy:0/?toRouteControlledStreamObserver=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: grpc://localhost:1101/org.apache.camel.component.grpc.PingPong
+      parameters:
+        routeControlledStreamObserver: true
+        consumerStrategy: DELEGATION
+        forwardOnError: true
+        forwardOnCompleted: true
+      steps:
+        - toD:
+            uri: grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: "${header.CamelGrpcMethodName}"
+              producerStrategy: STREAMING
+              streamRepliesTo: direct:next
+              forwardOnError: true
+              forwardOnCompleted: true
+              inheritExchangePropertiesForReplies: true
+- route:
+    from:
+      uri: direct:next
+      steps:
+        - to:
+            uri: grpc://dummy:0/
+            parameters:
+              toRouteControlledStreamObserver: true
+----
+====
 
 == Examples
 
 Below is a simple synchronous method invoke with host and port parameters
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------
+----
 from("direct:grpc-sync")
-.to("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=sendPing&synchronous=true");
--------------------------------------------------------------------------------
+    .to("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=sendPing&synchronous=true");
+----
 
+XML::
++
 [source,xml]
----------------------------------------------------------------------------------------
+----
 <route>
-    <from uri="direct:grpc-sync" />
-    <to uri="grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=sendPing&synchronous=true"/>
+  <from uri="direct:grpc-sync"/>
+  <to uri="grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=sendPing&amp;synchronous=true"/>
 </route>
----------------------------------------------------------------------------------------
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:grpc-sync
+      steps:
+        - to:
+            uri: grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: sendPing
+              synchronous: true
+----
+====
 
 An asynchronous method invoke
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------
+----
 from("direct:grpc-async")
-.to("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=pingAsyncResponse");
--------------------------------------------------------------------------------
+    .to("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=pingAsyncResponse");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:grpc-async"/>
+  <to uri="grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=pingAsyncResponse"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:grpc-async
+      steps:
+        - to:
+            uri: grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: pingAsyncResponse
+----
+====
 
 gRPC service consumer with propagation consumer strategy
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------
+----
 from("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION")
-.to("direct:grpc-service");
--------------------------------------------------------------------------------
+    .to("direct:grpc-service");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION"/>
+  <to uri="direct:grpc-service"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: grpc://localhost:1101/org.apache.camel.component.grpc.PingPong
+      parameters:
+        consumerStrategy: PROPAGATION
+      steps:
+        - to:
+            uri: direct:grpc-service
+----
+====
 
 gRPC service producer with streaming producer strategy (requires a service that uses "stream" mode as input and output)
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------
+----
 from("direct:grpc-request-stream")
-.to("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=PingAsyncAsync&producerStrategy=STREAMING&streamRepliesTo=direct:grpc-response-stream");
+    .to("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=PingAsyncAsync&producerStrategy=STREAMING&streamRepliesTo=direct:grpc-response-stream");
 
 from("direct:grpc-response-stream")
-.log("Response received: ${body}");
--------------------------------------------------------------------------------
+    .log("Response received: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:grpc-request-stream"/>
+  <to uri="grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=PingAsyncAsync&amp;producerStrategy=STREAMING&amp;streamRepliesTo=direct:grpc-response-stream"/>
+</route>
+<route>
+  <from uri="direct:grpc-response-stream"/>
+  <log message="Response received: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:grpc-request-stream
+      steps:
+        - to:
+            uri: grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: PingAsyncAsync
+              producerStrategy: STREAMING
+              streamRepliesTo: direct:grpc-response-stream
+- route:
+    from:
+      uri: direct:grpc-response-stream
+      steps:
+        - log: "Response received: ${body}"
+----
+====
 
 gRPC service consumer TLS/SSL security negotiation enabled
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------
+----
 from("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&negotiationType=TLS&keyCertChainResource=file:src/test/resources/certs/server.pem&keyResource=file:src/test/resources/certs/server.key&trustCertCollectionResource=file:src/test/resources/certs/ca.pem")
-.to("direct:tls-enable")
--------------------------------------------------------------------------------
+    .to("direct:tls-enable");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&amp;negotiationType=TLS&amp;keyCertChainResource=file:src/test/resources/certs/server.pem&amp;keyResource=file:src/test/resources/certs/server.key&amp;trustCertCollectionResource=file:src/test/resources/certs/ca.pem"/>
+  <to uri="direct:tls-enable"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: grpc://localhost:1101/org.apache.camel.component.grpc.PingPong
+      parameters:
+        consumerStrategy: PROPAGATION
+        negotiationType: TLS
+        keyCertChainResource: "file:src/test/resources/certs/server.pem"
+        keyResource: "file:src/test/resources/certs/server.key"
+        trustCertCollectionResource: "file:src/test/resources/certs/ca.pem"
+      steps:
+        - to:
+            uri: direct:tls-enable
+----
+====
 
 gRPC service producer with custom JSON Web Token (JWT) implementation authentication
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------------------
+----
 from("direct:grpc-jwt")
-.to("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&authenticationType=JWT&jwtSecret=supersecuredsecret");
--------------------------------------------------------------------------------
+    .to("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&authenticationType=JWT&jwtSecret=supersecuredsecret");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:grpc-jwt"/>
+  <to uri="grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&amp;synchronous=true&amp;authenticationType=JWT&amp;jwtSecret=supersecuredsecret"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:grpc-jwt
+      steps:
+        - to:
+            uri: grpc://localhost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: pingSyncSync
+              synchronous: true
+              authenticationType: JWT
+              jwtSecret: supersecuredsecret
+----
+====
 
 == Configuration
 
@@ -251,7 +534,7 @@ The following steps are required:
 
 Insert operating system and CPU architecture detection extension inside **<build>** tag of the project `pom.xml` or set `${os.detected.classifier}` parameter manually
 [source,xml]
--------------------------------------------------------------------------
+----
 <extensions>
   <extension>
     <groupId>kr.motd.maven</groupId>
@@ -259,12 +542,12 @@ Insert operating system and CPU architecture detection extension inside **<build
     <version>1.7.1</version>
   </extension>
 </extensions>
--------------------------------------------------------------------------
+----
 
 Insert the gRPC and protobuf Java code generator plugins into the **<plugins>** tag of the project pom.xml
 
 [source,xml]
--------------------------------------------------------------------------
+----
 <plugin>
   <groupId>org.xolstice.maven.plugins</groupId>
   <artifactId>protobuf-maven-plugin</artifactId>
@@ -285,7 +568,7 @@ Insert the gRPC and protobuf Java code generator plugins into the **<plugins>** 
     </execution>
   </executions>
 </plugin>
--------------------------------------------------------------------------
+----
 
 == More information
 

@@ -30,9 +30,9 @@ https://aws.amazon.com/rekognition/[AWS Rekognition].
 
 == URI Format
 
--------------------------
+----
 aws2-rekognition://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -153,12 +153,13 @@ Sometimes building an AWS Request can be complex because of multiple options. We
 In AWS Rekognition, there are multiple operations you can submit, as an example for Create Collection
  request, you can do something like:
 
+._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(CreateCollectionRequest.builder().collectionId("test-collection").build())
   .to("aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&operation=createCollection&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -169,12 +170,12 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-rekognition</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.

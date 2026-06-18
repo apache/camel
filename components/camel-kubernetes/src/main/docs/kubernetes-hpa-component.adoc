@@ -41,19 +41,21 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listHPA`: this operation lists the HPAs on a kubernetes cluster
 
+._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:list").
     toF("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPA").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of HPAs from your cluster
 
 - `listDeploymentsByLabels`: this operation lists the HPAs by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listByLabels").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -65,14 +67,15 @@ from("direct:listByLabels").process(new Processor() {
         });
     toF("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a List of HPAs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 === Kubernetes HPA Consumer Example
 
+._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
 [source,java]
---------------------------------------------------------------------------------
+----
 fromF("kubernetes-hpa://%s?oauthToken=%s", host, authToken)
     .process(new KubernetesProcessor()).to("mock:result");
 
@@ -84,7 +87,7 @@ fromF("kubernetes-hpa://%s?oauthToken=%s", host, authToken)
             log.info("Got event with hpa name: " + hpa.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
---------------------------------------------------------------------------------
+----
 
 This consumer returns a message per event received for all HorizontalPodAutoscalers from all namespaces in the cluster.
 

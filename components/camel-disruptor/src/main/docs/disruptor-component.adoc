@@ -55,20 +55,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-disruptor</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
------------------------------
+----
  disruptor:someId[?options]
------------------------------
+----
 
 Where _someId_ can be any string that uniquely identifies the
 endpoint within the current CamelContext.
@@ -179,11 +179,11 @@ By default, the Disruptor endpoint uses a single consumer thread, but
 you can configure it to use concurrent consumer threads. So instead of
 thread pools, you can use:
 
-.Concurrent consumers example
+._Java-only: concurrent consumers example (incomplete route)_
 [source,java]
---------------------------------------------------------------
+----
 from("disruptor:stageName?concurrentConsumers=5").process(...)
---------------------------------------------------------------
+----
 
 As for the difference between the two, note that a thread pool can
 increase/shrink dynamically at runtime depending on load. Whereas the
@@ -195,10 +195,11 @@ Disruptor internally, so performance will be higher.
 Be aware that adding a thread pool to a Disruptor endpoint by doing
 something like:
 
+._Java-only: incomplete route (thread pool example)_
 [source,java]
---------------------------------------------------
+----
 from("disruptor:stageName").thread(5).process(...)
---------------------------------------------------
+----
 
 Can wind up with adding a normal
 http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
@@ -217,8 +218,9 @@ As such, it is able to send a _fire-and-forget_ message for further
 processing in another thread, and return a constant reply in this thread
 to the original caller.
 
+._Java-only: Java RouteBuilder with multiple routes_
 [source,java]
--------------------------------------------------
+----
 public void configure() {
     from("direct:start")
         // send it to the disruptor that is async
@@ -228,15 +230,16 @@ public void configure() {
 
     from("disruptor:next").to("mock:result");
 }
--------------------------------------------------
+----
 
 Here we send a _Hello World_ message and expect the reply to be _OK_.
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
------------------------------------------------------------------
+----
 Object out = template.requestBody("direct:start", "Hello World");
 assertEquals("OK", out);
------------------------------------------------------------------
+----
 
 The "Hello World" message will be consumed from the Disruptor from
 another thread for further processing. Since this is from a unit test,
@@ -249,7 +252,7 @@ In this example, we have defined two consumers and registered them as
 spring beans.
 
 [source,xml]
--------------------------------------------------------------------------------------------
+----
 <!-- define the consumers as spring beans -->
 <bean id="consumer1" class="org.apache.camel.spring.example.FooEventConsumer"/>
 
@@ -259,7 +262,7 @@ spring beans.
     <!-- define a shared endpoint which the consumers can refer to instead of using url -->
     <endpoint id="foo" uri="disruptor:foo?multipleConsumers=true"/>
 </camelContext>
--------------------------------------------------------------------------------------------
+----
 
 Since we have specified multipleConsumers=true on the Disruptor foo
 endpoint, we can have those two or more consumers receive their own copy
@@ -267,8 +270,9 @@ of the message as a kind of _publish/subscriber_ style messaging.
 As the beans are part of a unit test, they simply send the message to a mock endpoint,
 but notice how we can use _@Consume_ to consume from the Disruptor.
 
+._Java-only: Java annotation-based consumer class_
 [source,java]
--------------------------------------------
+----
 public class FooEventConsumer {
 
     @EndpointInject("mock:result")
@@ -280,18 +284,19 @@ public class FooEventConsumer {
     }
 
 }
--------------------------------------------
+----
 
 === Extracting disruptor information
 
 If needed, information such as buffer size, etc. can be obtained without
 using JMX in this fashion:
 
+._Java-only: Java endpoint API_
 [source,java]
---------------------------------------------------------------------
+----
 DisruptorEndpoint disruptor = context.getEndpoint("disruptor:xxxx");
 int size = disruptor.getBufferSize();
---------------------------------------------------------------------
+----
 
 // shared with disruptor-vm
 

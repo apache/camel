@@ -47,12 +47,13 @@ CSV payload.
 
 Considering the following body:
 
+._Java-only: Java collection API_
 [source,java]
--------------------------------------------------------
+----
 Map<String, Object> body = new LinkedHashMap<>();
 body.put("foo", "abc");
 body.put("bar", 123);
--------------------------------------------------------
+----
 
 and this route definition:
 
@@ -61,16 +62,16 @@ and this route definition:
 Java::
 +
 [source,java]
--------------------------------------------------------
+----
 from("direct:start")
     .marshal().csv()
     .to("mock:result");
--------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
--------------------------------------------------------
+----
 <route>
     <from uri="direct:start" />
     <marshal>
@@ -78,7 +79,7 @@ XML::
     </marshal>
     <to uri="mock:result" />
 </route>
--------------------------------------------------------
+----
 
 YAML::
 +
@@ -111,13 +112,13 @@ An example: we have a CSV file with names of persons, their IQ and their
 current activity.
 
 [source,text]
------------------------------------------------------
+----
 Jack Dalton, 115, mad at Averell
 Joe Dalton, 105, calming Joe
 William Dalton, 105, keeping Joe from killing Averell
 Averell Dalton, 80, playing with Rantanplan
 Lucky Luke, 120, capturing the Daltons
------------------------------------------------------
+----
 
 We can now use the CSV component to unmarshal this file:
 
@@ -165,13 +166,14 @@ YAML::
 
 The resulting message will contain a `List<List<String>>` like...
 
+._Java-only: Java collection API_
 [source,java]
---------------------------------------------------------------------------------------------------------------
+----
 List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
 for (List<String> line : data) {
     LOG.debug(String.format("%s has an IQ of %s and is currently %s", line.get(0), line.get(1), line.get(2)));
 }
---------------------------------------------------------------------------------------------------------------
+----
 
 === Marshalling a List<Map> to CSV
 
@@ -188,36 +190,38 @@ Given a bean which can handle the incoming data...
 
 *MyCsvHandler.java*
 
+._Java-only: Java handler class_
 [source,java]
--------------------------------------------------------
+----
 // Some comments here
 public void doHandleCsvData(List<List<String>> csvData)
 {
     // do magic here
 }
--------------------------------------------------------
+----
 
 ... your route then looks as follows
 
 [source,xml]
-------------------------------------------------------------------------------------------------
+----
 <route>
         <!-- poll every 10 seconds -->
         <from uri="file:///some/path/to/pickup/csvfiles?delete=true&amp;delay=10000" />
         <unmarshal><csv /></unmarshal>
         <to uri="bean:myCsvHandler?method=doHandleCsvData" />
 </route>
-------------------------------------------------------------------------------------------------
+----
 
 === Marshaling with a pipe as delimiter
 Considering the following body:
 
+._Java-only: Java collection API_
 [source,java]
--------------------------------------------------------
+----
 Map<String, Object> body = new LinkedHashMap<>();
 body.put("foo", "abc");
 body.put("bar", 123);
-------------------------------------------------------- 
+----
 
 
 And this Java route definition:
@@ -227,16 +231,16 @@ And this Java route definition:
 Java::
 +
 [source,java]
--------------------------------------------------------
+----
 from("direct:start")
     .marshal(new CsvDataFormat().setDelimiter(&#39;|&#39;))
     .to("mock:result")
-------------------------------------------------------- 
+----
 
 XML::
 +
 [source,xml]
--------------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <marshal>
@@ -244,7 +248,7 @@ XML::
   </marshal>
   <to uri="mock:result" />
 </route>
--------------------------------------------------------
+----
 
 YAML::
 +
@@ -265,9 +269,9 @@ YAML::
 
 Then it will produce:
 
--------------------------------------------------------
+----
 abc|123
-------------------------------------------------------- 
+----
 
 [[CSV-UsingautogenColumns,configRefandstrategyRefattributesinsideXMLDSL]]
 Using autogenColumns, configRef and strategyRef attributes inside XML
@@ -281,7 +285,7 @@ value of the `autogenColumns` option is true. The following example
 should illustrate this customization.
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <marshal>
@@ -308,22 +312,23 @@ should illustrate this customization.
 <bean id="excelStrategy" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
   <property name="staticField" value="org.apache.commons.csv.CSVStrategy.EXCEL_STRATEGY" />
 </bean>
------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Collecting header record
 
 You can instruct the CSV Data Format to collect the headers into
 a message header called CamelCsvHeaderRecord.
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
---------------------------------------------
+----
 CsvDataFormat csv = new CsvDataFormat();
 csv.setCaptureHeaderRecord(true);
 
 from("direct:start")
   .unmarshal(csv)
   .log("${header[CamelCsvHeaderRecord]}");
---------------------------------------------
+----
 
 
 === Using skipFirstLine or skipHeaderRecord option while unmarshaling
@@ -333,7 +338,7 @@ The instruction for CSV Data format to skip headers or first line is the followi
 Usign the Spring/XML DSL:
 
 [source,xml]
----------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <unmarshal>
@@ -341,7 +346,7 @@ Usign the Spring/XML DSL:
   </unmarshal>
   <to uri="bean:myCsvHandler?method=doHandleCsv" />
 </route>
----------------------------------------------------
+----
 
 *Since Camel 2.10 and deleted for Camel 2.15*
 
@@ -353,19 +358,19 @@ first line which contains the CSV headers. Using the Spring/XML DSL:
 Java::
 +
 [source,java]
---------------------------------------------
+----
 CsvDataFormat csv = new CsvDataFormat();
 csv.setSkipFirstLine(true);
 
 from("direct:start")
   .unmarshal(csv)
 .to("bean:myCsvHandler?method=doHandleCsv");
---------------------------------------------
+----
 
 XML::
 +
 [source,xml]
----------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <unmarshal>
@@ -373,7 +378,7 @@ XML::
   </unmarshal>
   <to uri="bean:myCsvHandler?method=doHandleCsv" />
 </route>
----------------------------------------------------
+----
 
 YAML::
 +
@@ -404,7 +409,7 @@ YAML::
 Java::
 +
 [source,java]
-----------------------------------------------------
+----
 CsvDataFormat csv = new CsvDataFormat();
 CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;
 strategy.setDelimiter('|');
@@ -413,24 +418,24 @@ csv.setStrategy(strategy);
 from("direct:start")
   .unmarshal(csv)
   .to("bean:myCsvHandler?method=doHandleCsv");
-----------------------------------------------------
+----
 +
 Or, possibly:
 +
 [source,java]
-----------------------------------------------
+----
 CsvDataFormat csv = new CsvDataFormat();
 csv.setDelimiter("|");
 
 from("direct:start")
   .unmarshal(csv)
   .to("bean:myCsvHandler?method=doHandleCsv");
-----------------------------------------------
+----
 
 XML::
 +
 [source,xml]
----------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <unmarshal>
@@ -438,7 +443,7 @@ XML::
   </unmarshal>
   <to uri="bean:myCsvHandler?method=doHandleCsv" />
 </route>
----------------------------------------------------
+----
 
 YAML::
 +
@@ -464,11 +469,12 @@ YAML::
 
 It looks like that
 
+._Java-only: Java programmatic configuration_
 [source,java]
---------------------------------------
+----
 CSVConfig csvConfig = new CSVConfig();
 csvConfig.setDelimiter(';');
---------------------------------------
+----
 
 This doesn't work. You have to set the delimiter as a String!
 
@@ -482,13 +488,13 @@ substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
 [source,xml]
--------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-csv</artifactId>
   <version>x.x.x</version>
 </dependency>
--------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

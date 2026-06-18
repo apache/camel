@@ -82,19 +82,48 @@ camel.oauth.keycloak.client-secret=camel-client-secret
 camel.oauth.keycloak.token-endpoint=https://keycloak.example.com/realms/camel/protocol/openid-connect/token
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:agent")
-    .to("langchain4j-agent:myAgent"
-        + "?mcpServer.tools.transportType=http"
-        + "&mcpServer.tools.url=https://mcp.internal/mcp"
-        + "&mcpServer.tools.oauthProfile=keycloak");
+    .to("langchain4j-agent:myAgent?mcpServer.tools.transportType=http&mcpServer.tools.url=https://mcp.internal/mcp&mcpServer.tools.oauthProfile=keycloak");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:agent"/>
+  <to uri="langchain4j-agent:myAgent?mcpServer.tools.transportType=http&amp;mcpServer.tools.url=https://mcp.internal/mcp&amp;mcpServer.tools.oauthProfile=keycloak"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:agent
+      steps:
+        - to:
+            uri: langchain4j-agent:myAgent
+            parameters:
+              mcpServer.tools.transportType: http
+              mcpServer.tools.url: "https://mcp.internal/mcp"
+              mcpServer.tools.oauthProfile: keycloak
+----
+====
 
 === LLM Provider Authentication
 
 The langchain4j-agent component accepts a pre-built `Agent` or `ChatModel` bean — it does not create the LLM client itself. For LLM providers that require OAuth authentication (e.g., Azure OpenAI), use `OAuthHelper` when building the bean programmatically:
 
+._Java-only: programmatic `ChatModel` bean registration with `OAuthHelper`_
 [source,java]
 ----
 import org.apache.camel.support.OAuthHelper;
@@ -142,6 +171,7 @@ Agents are configured using the `AgentConfiguration` class which provides a flue
 
 ==== Creating an Agent without Memory
 
+._Java-only: LangChain4j `AgentConfiguration` and programmatic bean registration_
 [source, java]
 ----
 // Create and configure the chat model
@@ -167,14 +197,44 @@ context.getRegistry().bind("simpleAgent", simpleAgent);
 
 Use the agent in your Camel route:
 
+[tabs]
+====
+Java::
++
 [source, java]
 ----
 from("direct:chat")
     .to("langchain4j-agent:test?agent=#simpleAgent")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:test?agent=#simpleAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:test
+            parameters:
+              agent: "#simpleAgent"
+----
+====
+
 ==== Creating an Agent with Memory
 
+._Java-only: LangChain4j `ChatMemoryProvider` and `AgentConfiguration` setup_
 [source, java]
 ----
 // Create chat model (same as above)
@@ -221,19 +281,53 @@ Instead of manually instantiating `AgentWithoutMemory` or `AgentWithMemory`, you
 
 ==== Stateless agent
 
+._Java-only: `AgentConfiguration` bean registration_
 [source,java]
 ----
 AgentConfiguration config = new AgentConfiguration()
     .withChatModel(chatModel);
 
 context.getRegistry().bind("myConfig", config);
+----
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("direct:chat")
     .to("langchain4j-agent:assistant?agentConfiguration=#myConfig");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agentConfiguration=#myConfig"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agentConfiguration: "#myConfig"
+----
+====
+
 ==== Stateful agent (with memory)
 
+._Java-only: `ChatMemoryProvider` and `AgentConfiguration` bean registration_
 [source,java]
 ----
 ChatMemoryProvider memoryProvider = memoryId -> MessageWindowChatMemory.builder()
@@ -247,10 +341,42 @@ AgentConfiguration config = new AgentConfiguration()
     .withChatMemoryProvider(memoryProvider);
 
 context.getRegistry().bind("myConfig", config);
+----
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("direct:chat")
     .to("langchain4j-agent:assistant?agentConfiguration=#myConfig");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agentConfiguration=#myConfig"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agentConfiguration: "#myConfig"
+----
+====
 
 If an `agentFactory` is also configured on the endpoint, the factory takes precedence over `agentConfiguration`.
 
@@ -258,15 +384,46 @@ If an `agentFactory` is also configured on the endpoint, the factory takes prece
 
 For simple chat interactions, you can use an agent without memory.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
     .to("langchain4j-agent:simple?agent=#simpleAgent")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:simple?agent=#simpleAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:simple
+            parameters:
+              agent: "#simpleAgent"
+----
+====
+
 The body can either contain the prompt as a String, or you can create an object of type *org.apache.camel.component.langchain4j.agent.api.AiAgentBody* containing the userMessage.
 
 .Usage example with a body as String:
+
+._Java-only: ProducerTemplate test API_
 [source, java]
 ----
 var prompt = "What is Apache Camel";
@@ -275,6 +432,8 @@ String response = template.requestBody("direct:chat", prompt, String.class);
 ----
 
 .Usage example with a body as AiAgentBody:
+
+._Java-only: ProducerTemplate test API with `AiAgentBody`_
 [source, java]
 ----
 var prompt = "What is Apache Camel";
@@ -287,15 +446,46 @@ String response = template.requestBody("direct:chat", body, String.class);
 
 For chat interactions with system prompts, you can use an agent without memory.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
     .to("langchain4j-agent:simple?agent=#simpleAgent")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:simple?agent=#simpleAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:simple
+            parameters:
+              agent: "#simpleAgent"
+----
+====
+
 The body can either contain the user prompt as a String and specifying the *CamelLangChain4jAgentSystemMessage* header for the system prompt, or you can create an object of type *org.apache.camel.component.langchain4j.agent.api.AiAgentBody* containing both *userMessage* and *systemMessage*.
 
 .Usage example with a body as String:
+
+._Java-only: ProducerTemplate test API_
 [source, java]
 ----
 var userPrompt = "Write a short story about a lost cat.";
@@ -306,6 +496,8 @@ String response = template.requestBodyAndHeader("direct:chat",
 ----
 
 .Usage example with a body as AiAgentBody:
+
+._Java-only: ProducerTemplate test API with `AiAgentBody`_
 [source, java]
 ----
 var userPrompt = "Write a short story about a lost cat.";
@@ -322,6 +514,10 @@ String response = template.requestBody("direct:chat", body, String.class);
 
 Integrate with Camel routes as tools. The LangChain4j Agent component integrates with Camel Routes defined using the Camel LangChain4j Tools component via the `tags` parameter.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Define tool routes
@@ -336,7 +532,75 @@ from("direct:chat")
     .to("langchain4j-agent:tools?agent=#simpleAgent&tags=users,weather");
 ----
 
-.Usage example :
+XML::
++
+[source,xml]
+----
+<!-- Define tool routes -->
+<route>
+  <from uri="langchain4j-tools:userDb?tags=users&amp;description=Query user database&amp;parameter.userId=string"/>
+  <setBody>
+    <constant>{"name": "John Doe", "id": "123"}</constant>
+  </setBody>
+</route>
+
+<route>
+  <from uri="langchain4j-tools:weather?tags=weather&amp;description=Get weather information&amp;parameter.city=string"/>
+  <setBody>
+    <constant>{"weather": "sunny", "temperature": "22°C"}</constant>
+  </setBody>
+</route>
+
+<!-- Agent with tools -->
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:tools?agent=#simpleAgent&amp;tags=users,weather"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# Define tool routes
+- route:
+    from:
+      uri: langchain4j-tools:userDb
+      parameters:
+        tags: users
+        description: Query user database
+        parameter.userId: string
+      steps:
+        - setBody:
+            constant: '{"name": "John Doe", "id": "123"}'
+
+- route:
+    from:
+      uri: langchain4j-tools:weather
+      parameters:
+        tags: weather
+        description: Get weather information
+        parameter.city: string
+      steps:
+        - setBody:
+            constant: '{"weather": "sunny", "temperature": "22°C"}'
+
+# Agent with tools
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:tools
+            parameters:
+              agent: "#simpleAgent"
+              tags: users,weather
+----
+====
+
+.Usage example:
+
+._Java-only: ProducerTemplate test API_
 [source, java]
 ----
 var userPrompt = "Can you tell me the name of user 123 and the weather in New York?";
@@ -359,6 +623,7 @@ You can also add custom LangChain4j tools using the `@Tool` annotation. These to
 
 Create a class with methods annotated with `@Tool`:
 
+._Java-only: LangChain4j `@Tool` annotated class_
 [source,java]
 ----
 import dev.langchain4j.agent.tool.P;
@@ -387,6 +652,7 @@ public class CalculatorTool {
 
 Pass your custom tool instances to the agent configuration:
 
+._Java-only: LangChain4j `@Tool` instances and `AgentConfiguration` setup_
 [source,java]
 ----
 // Create tool instances
@@ -409,6 +675,10 @@ context.getRegistry().bind("customToolsAgent", agent);
 
 Use the agent with custom tools in your routes:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -416,11 +686,40 @@ from("direct:chat")
     .to("mock:agent-response");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#customToolsAgent"/>
+  <to uri="mock:agent-response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#customToolsAgent"
+        - to:
+            uri: mock:agent-response
+----
+====
+
 ==== Usage Example
 
+._Java-only: ProducerTemplate test API_
 [source,java]
 ----
-String response = template.requestBody("direct:chat", 
+String response = template.requestBody("direct:chat",
     "Calculate 10 * 5 and tell me the weather in Paris", String.class);
 ----
 
@@ -433,6 +732,7 @@ Custom LangChain4j tools are executed directly by the LangChain4j framework. No 
 
 You can combine both Camel route tools (via `tags`) and custom LangChain4j tools (via `customTools`) in the same agent:
 
+._Java-only: LangChain4j `@Tool` instances, `AgentConfiguration`, and bean registration_
 [source,java]
 ----
 // Define Camel route tools
@@ -457,6 +757,10 @@ context.getRegistry().bind("mixedToolsAgent", agent);
 
 ==== Route Configuration with Mixed Tools
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -464,11 +768,41 @@ from("direct:chat")
     .to("mock:agent-response");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#mixedToolsAgent&amp;tags=weather"/>
+  <to uri="mock:agent-response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#mixedToolsAgent"
+              tags: weather
+        - to:
+            uri: mock:agent-response
+----
+====
+
 ==== Usage Example
 
+._Java-only: ProducerTemplate test API_
 [source,java]
 ----
-String response = template.requestBody("direct:chat", 
+String response = template.requestBody("direct:chat",
     "Calculate 10 * 5 and tell me the weather in London", String.class);
 ----
 
@@ -485,6 +819,7 @@ The LangChain4j Agent component supports integration with MCP (Model Context Pro
 
 To use MCP tools with your agent, you need to configure MCP clients in your `AgentConfiguration`:
 
+._Java-only: LangChain4j MCP transport and client configuration_
 [source,java]
 ----
 // Create MCP transport for filesystem server
@@ -511,6 +846,7 @@ Agent agent = new AgentWithoutMemory(config);
 
 You can apply filters to control which MCP tools are available to your agent:
 
+._Java-only: `BiPredicate` filter with LangChain4j `ToolSpecification`_
 [source,java]
 ----
 // Create security filter to only allow read operations
@@ -530,6 +866,7 @@ AgentConfiguration config = new AgentConfiguration()
 
 Here's a complete example showing how to use MCP tools with an agent:
 
+._Java-only: LangChain4j MCP client setup and bean registration_
 [source,java]
 ----
 // Create MCP client for filesystem access
@@ -555,6 +892,10 @@ context.getRegistry().bind("mcpAgent", agent);
 
 ==== Route Configuration with MCP Tools
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
@@ -562,8 +903,37 @@ from("direct:chat")
     .to("mock:agent-response");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#mcpAgent"/>
+  <to uri="mock:agent-response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#mcpAgent"
+        - to:
+            uri: mock:agent-response
+----
+====
+
 ==== Usage Example with MCP Tools
 
+._Java-only: ProducerTemplate test API_
 [source,java]
 ----
 String response = template.requestBody("direct:chat",
@@ -578,6 +948,7 @@ MCP servers can also be configured directly on the endpoint, without setting the
 
 Register pre-built `McpClient` beans and reference them via the `mcpClients` endpoint parameter:
 
+._Java-only: LangChain4j `McpClient` bean registration_
 [source,java]
 ----
 // Register MCP clients as beans
@@ -588,12 +959,48 @@ McpClient timeClient = new DefaultMcpClient.Builder()
         .build())
     .build();
 context.getRegistry().bind("timeMcpClient", timeClient);
+----
 
-// Reference in endpoint URI
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("direct:chat")
     .to("langchain4j-agent:assistant?agent=#myAgent&tags=users&mcpClients=#timeMcpClient")
     .to("mock:response");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#myAgent&amp;tags=users&amp;mcpClients=#timeMcpClient"/>
+  <to uri="mock:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#myAgent"
+              tags: users
+              mcpClients: "#timeMcpClient"
+        - to:
+            uri: mock:response
+----
+====
 
 ===== Inline URI Configuration
 
@@ -617,16 +1024,49 @@ Supported properties:
 
 Example with two MCP servers configured inline:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
-    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users"
-        + "&mcpServer.everything.transportType=http"
-        + "&mcpServer.everything.url=http://localhost:3001/mcp"
-        + "&mcpServer.time.transportType=stdio"
-        + "&mcpServer.time.command=docker,run,-i,--rm,mcp/time")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users&mcpServer.everything.transportType=http&mcpServer.everything.url=http://localhost:3001/mcp&mcpServer.time.transportType=stdio&mcpServer.time.command=docker,run,-i,--rm,mcp/time")
     .to("mock:response");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#myAgent&amp;tags=users&amp;mcpServer.everything.transportType=http&amp;mcpServer.everything.url=http://localhost:3001/mcp&amp;mcpServer.time.transportType=stdio&amp;mcpServer.time.command=docker,run,-i,--rm,mcp/time"/>
+  <to uri="mock:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#myAgent"
+              tags: users
+              mcpServer.everything.transportType: http
+              mcpServer.everything.url: "http://localhost:3001/mcp"
+              mcpServer.time.transportType: stdio
+              mcpServer.time.command: "docker,run,-i,--rm,mcp/time"
+        - to:
+            uri: mock:response
+----
+====
 
 Both `mcpClients` (bean references) and `mcpServer` (inline) can be used together on the same endpoint. All tool sources -- Camel route tools, endpoint-level MCP tools, and agent-level MCP tools -- are automatically composed into a single tool provider.
 
@@ -644,19 +1084,72 @@ Tools can be dynamically excluded on a per-message basis using Camel headers. Th
 
 Example -- exclude specific tools based on a condition:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
     .choice()
         .when(header("userRole").isEqualTo("readonly"))
-            // Exclude write-capable tools for read-only users
             .setHeader("CamelLangChain4jAgentExcludeTags", constant("admin-tools"))
             .setHeader("CamelLangChain4jAgentExcludeMcpServers", constant("filesystem"))
     .end()
-    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users,admin-tools"
-        + "&mcpClients=#fsMcpClient,#timeMcpClient")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users,admin-tools&mcpClients=#fsMcpClient,#timeMcpClient")
     .to("mock:response");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <choice>
+    <when>
+      <simple>${header.userRole} == 'readonly'</simple>
+      <setHeader name="CamelLangChain4jAgentExcludeTags">
+        <constant>admin-tools</constant>
+      </setHeader>
+      <setHeader name="CamelLangChain4jAgentExcludeMcpServers">
+        <constant>filesystem</constant>
+      </setHeader>
+    </when>
+  </choice>
+  <to uri="langchain4j-agent:assistant?agent=#myAgent&amp;tags=users,admin-tools&amp;mcpClients=#fsMcpClient,#timeMcpClient"/>
+  <to uri="mock:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - choice:
+            when:
+              - simple: "${header.userRole} == 'readonly'"
+                steps:
+                  - setHeader:
+                      name: CamelLangChain4jAgentExcludeTags
+                      constant: admin-tools
+                  - setHeader:
+                      name: CamelLangChain4jAgentExcludeMcpServers
+                      constant: filesystem
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#myAgent"
+              tags: users,admin-tools
+              mcpClients: "#fsMcpClient,#timeMcpClient"
+        - to:
+            uri: mock:response
+----
+====
 
 MCP servers are matched by their key, which is set via `DefaultMcpClient.Builder.key(name)` or automatically from the server name in inline `mcpServer.<name>` configuration. MCP clients without a key are never excluded.
 
@@ -664,6 +1157,7 @@ MCP servers are matched by their key, which is set via `DefaultMcpClient.Builder
 
 RAG (Retrieval-Augmented Generation) is supported by configuring a `RetrievalAugmentor` in the `AgentConfiguration`. Create an agent with RAG capabilities:
 
+._Java-only: LangChain4j `RetrievalAugmentor` and `AgentConfiguration` setup_
 [source,java]
 ----
 // Create the retrieval augmentor (shown below)
@@ -678,13 +1172,48 @@ AgentConfiguration configuration = new AgentConfiguration()
 
 Agent ragAgent = new AgentWithoutMemory(configuration);
 context.getRegistry().bind("ragAgent", ragAgent);
+----
 
-// Use the RAG agent
+Use the RAG agent:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("direct:chat")
     .to("langchain4j-agent:rag?agent=#ragAgent")
 ----
 
-.Usage example with Retrieval Augmentor serving as naive RAG :
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:rag?agent=#ragAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:rag
+            parameters:
+              agent: "#ragAgent"
+----
+====
+
+.Usage example with Retrieval Augmentor serving as naive RAG:
+
+._Java-only: LangChain4j `EmbeddingStoreContentRetriever` and ProducerTemplate test API_
 [source, java]
 ----
 // creating the retrieval Augmentor
@@ -721,13 +1250,45 @@ The memory works for multiple users/sessions. For each context window, the users
 - By setting the AiAgentBody.memoryId field. This supposes that that user is using a body as AiAgentBody.
 
 .Example of Route with Memory Agent
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:chat")
     .to("langchain4j-agent:memory?agent=#memoryAgent")
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:memory?agent=#memoryAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:memory
+            parameters:
+              agent: "#memoryAgent"
+----
+====
+
 .Example of usage with AiAgentBody
+
+._Java-only: `ChatMemoryProvider`, `AiAgentBody`, and ProducerTemplate test API_
 [source,java]
 ----
 // Example of creating a Chat Memory Provider : Create a message window memory that keeps the last 10 messages
@@ -754,6 +1315,7 @@ Guardrails validate and filter AI interactions to ensure security and quality. T
 
 Create classes defining InputGuardrails and OutputGuardrails as defined in the https://docs.langchain4j.dev/tutorials/guardrails[LangChain4j Guardrails documentation] page.
 
+._Java-only: `AgentConfiguration` with guardrail classes and bean registration_
 [source,java]
 ----
 // Create agent configuration with custom guardrails
@@ -764,11 +1326,44 @@ AgentConfiguration configuration = new AgentConfiguration()
 
 Agent safeAgent = new AgentWithoutMemory(configuration);
 context.getRegistry().bind("safeAgent", safeAgent);
+----
 
-// Use the agent with guardrails
+Use the agent with guardrails:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("direct:agent-with-guardrails")
     .to("langchain4j-agent:safe?agent=#safeAgent")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:agent-with-guardrails"/>
+  <to uri="langchain4j-agent:safe?agent=#safeAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:agent-with-guardrails
+      steps:
+        - to:
+            uri: langchain4j-agent:safe
+            parameters:
+              agent: "#safeAgent"
+----
+====
 
 [NOTE]
 ====
@@ -836,6 +1431,7 @@ The `camel-langchain4j-agent-api` module provides production-ready guardrails in
 
 The `Guardrails` helper class provides convenient factory methods:
 
+._Java-only: `Guardrails` factory methods and bean registration_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.Guardrails;
@@ -848,10 +1444,42 @@ AgentConfiguration configuration = new AgentConfiguration()
 
 Agent secureAgent = new AgentWithoutMemory(configuration);
 context.getRegistry().bind("secureAgent", secureAgent);
+----
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("direct:secure-chat")
     .to("langchain4j-agent:chat?agent=#secureAgent");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:secure-chat"/>
+  <to uri="langchain4j-agent:chat?agent=#secureAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:secure-chat
+      steps:
+        - to:
+            uri: langchain4j-agent:chat
+            parameters:
+              agent: "#secureAgent"
+----
+====
 
 The default guardrails include:
 
@@ -862,6 +1490,7 @@ The default guardrails include:
 
 The `Guardrails.configure()` method provides a fluent API for building configurations:
 
+._Java-only: `Guardrails` fluent builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.Guardrails;
@@ -883,6 +1512,7 @@ Agent agent = new AgentWithoutMemory(configuration);
 
 You can specify exactly which guardrails to use:
 
+._Java-only: `AgentConfiguration` with specific guardrail classes_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.*;
@@ -904,6 +1534,7 @@ AgentConfiguration configuration = new AgentConfiguration()
 
 The `Guardrails` class provides preset configurations for different security levels:
 
+._Java-only: `Guardrails` preset factory methods_
 [source,java]
 ----
 // Minimal protection (just length validation)
@@ -920,6 +1551,7 @@ configuration.withInputGuardrailClasses(Guardrails.strictInputGuardrails());
 
 The `Guardrails` class provides static factory methods to create guardrail instances:
 
+._Java-only: `Guardrails` static factory methods_
 [source,java]
 ----
 // Input guardrails
@@ -940,6 +1572,7 @@ Each guardrail provides a builder for custom configuration:
 
 ===== PII Detection Configuration
 
+._Java-only: `PiiDetectorGuardrail` builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.PiiDetectorGuardrail;
@@ -954,6 +1587,7 @@ PiiDetectorGuardrail guardrail = PiiDetectorGuardrail.builder()
 
 ===== Prompt Injection Detection Configuration
 
+._Java-only: `PromptInjectionGuardrail` builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.PromptInjectionGuardrail;
@@ -972,6 +1606,7 @@ PromptInjectionGuardrail customGuardrail = PromptInjectionGuardrail.builder()
 
 ===== Sensitive Data Output Configuration
 
+._Java-only: `SensitiveDataOutputGuardrail` builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.SensitiveDataOutputGuardrail;
@@ -987,6 +1622,7 @@ SensitiveDataOutputGuardrail guardrail = SensitiveDataOutputGuardrail.builder()
 
 ===== JSON Format Validation Configuration
 
+._Java-only: `JsonFormatGuardrail` builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.JsonFormatGuardrail;
@@ -1001,6 +1637,7 @@ JsonFormatGuardrail guardrail = JsonFormatGuardrail.builder()
 
 ===== Keyword Filtering Configuration
 
+._Java-only: `KeywordFilterGuardrail` and `KeywordOutputFilterGuardrail` builder APIs_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.KeywordFilterGuardrail;
@@ -1024,6 +1661,7 @@ KeywordOutputFilterGuardrail outputFilter = KeywordOutputFilterGuardrail.builder
 
 ===== Language Validation Configuration
 
+._Java-only: `LanguageGuardrail` builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.LanguageGuardrail;
@@ -1049,6 +1687,7 @@ LanguageGuardrail customLanguage = LanguageGuardrail.builder()
 
 ===== Code Injection Detection Configuration
 
+._Java-only: `CodeInjectionGuardrail` builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.CodeInjectionGuardrail;
@@ -1073,6 +1712,7 @@ CodeInjectionGuardrail customGuard = CodeInjectionGuardrail.builder()
 
 ===== Regex Pattern Guardrail Configuration
 
+._Java-only: `RegexPatternGuardrail` builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.RegexPatternGuardrail;
@@ -1096,6 +1736,7 @@ RegexPatternGuardrail customPatterns = RegexPatternGuardrail.builder()
 
 ===== Not Empty Guardrail Configuration
 
+._Java-only: `NotEmptyGuardrail` configuration_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.NotEmptyGuardrail;
@@ -1118,6 +1759,7 @@ NotEmptyGuardrail customNotEmpty = new NotEmptyGuardrail(
 
 ===== Word Count Guardrail Configuration
 
+._Java-only: `WordCountGuardrail` builder API_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.guardrails.WordCountGuardrail;
@@ -1140,6 +1782,7 @@ WordCountGuardrail custom = WordCountGuardrail.builder()
 
 ==== Complete Example with Memory and Guardrails
 
+._Java-only: `RouteBuilder` class with `AgentConfiguration`, guardrails, memory, and `doTry`/`doCatch`_
 [source,java]
 ----
 import org.apache.camel.component.langchain4j.agent.api.*;
@@ -1215,6 +1858,7 @@ langchain4j.open-ai.chat-model.temperature=0.7
 
 Create the Agent bean using the auto-configured ChatLanguageModel:
 
+._Java-only: Spring Boot `@Configuration` with auto-configured `ChatLanguageModel`_
 [source,java]
 ----
 import org.springframework.context.annotation.Bean;
@@ -1256,6 +1900,7 @@ Refer to the https://docs.langchain4j.dev/tutorials/spring-boot-integration[Lang
 
 Alternatively, you can manually configure the ChatModel bean:
 
+._Java-only: Spring Boot `@Configuration` with manual `ChatModel` bean_
 [source,java]
 ----
 import org.springframework.context.annotation.Bean;
@@ -1371,20 +2016,66 @@ Create a JSON schema file, for example `src/main/resources/person-schema.json`:
 
 Then use it in a route:
 
+._Java-only: `AgentConfiguration` bean registration_
 [source,java]
 ----
 AgentConfiguration agentConfiguration = new AgentConfiguration()
         .withChatModel(chatModel);
 
 context.getRegistry().bind("myAgentConfig", agentConfiguration);
+----
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("direct:extract-person-info")
     .setBody(constant("Extract information about John Smith, a 35-year-old software engineer"))
-    .to("langchain4j-agent:structured?agentConfiguration=#myAgentConfig"
-            + "&jsonSchema=classpath:person-schema.json")
+    .to("langchain4j-agent:structured?agentConfiguration=#myAgentConfig&jsonSchema=classpath:person-schema.json")
     .unmarshal().json()
     .log("Extracted person: ${body}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:extract-person-info"/>
+  <setBody>
+    <constant>Extract information about John Smith, a 35-year-old software engineer</constant>
+  </setBody>
+  <to uri="langchain4j-agent:structured?agentConfiguration=#myAgentConfig&amp;jsonSchema=classpath:person-schema.json"/>
+  <unmarshal>
+    <json/>
+  </unmarshal>
+  <log message="Extracted person: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:extract-person-info
+      steps:
+        - setBody:
+            constant: "Extract information about John Smith, a 35-year-old software engineer"
+        - to:
+            uri: langchain4j-agent:structured
+            parameters:
+              agentConfiguration: "#myAgentConfig"
+              jsonSchema: "classpath:person-schema.json"
+        - unmarshal:
+            json: {}
+        - log:
+            message: "Extracted person: ${body}"
+----
+====
 
 The `jsonSchema` option accepts:
 
@@ -1410,6 +2101,7 @@ This approach is mutually exclusive with `jsonSchema` — you can use one or the
 
 First, define your response class. Annotate required fields with `@JsonProperty(required = true)` so they appear in the `required` array of the generated JSON schema, ensuring the model always populates them. Use `@Description` to add semantic hints:
 
+._Java-only: Java POJO with `@JsonProperty` and `@Description` annotations_
 [source,java]
 ----
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -1434,6 +2126,7 @@ public class PersonInfo {
 
 Then configure the endpoint to use this class. Use the fully qualified class name (FQCN) directly — no registry binding needed. Add `.unmarshal().json()` to convert the raw JSON response to a POJO:
 
+._Java-only: `AgentConfiguration` bean setup, `unmarshal` with POJO class, and `process` lambda_
 [source,java]
 ----
 AgentConfiguration agentConfiguration = new AgentConfiguration()
@@ -1443,8 +2136,7 @@ context.getRegistry().bind("myAgentConfig", agentConfiguration);
 
 from("direct:extract-person-info")
     .setBody(constant("Extract information about John Smith, a 35-year-old software engineer"))
-    .to("langchain4j-agent:structured?agentConfiguration=#myAgentConfig"
-            + "&outputClass=com.example.PersonInfo")
+    .to("langchain4j-agent:structured?agentConfiguration=#myAgentConfig&outputClass=com.example.PersonInfo")
     .unmarshal().json(PersonInfo.class)
     .process(exchange -> {
         PersonInfo person = exchange.getIn().getBody(PersonInfo.class);
@@ -1480,6 +2172,7 @@ The LangChain4j Agent component supports multimodal content, allowing you to sen
 
 You can explicitly create an `AiAgentBody` with multimodal content:
 
+._Java-only: `AiAgentBody` with `ImageContent`, `Files.readAllBytes()`, and ProducerTemplate test API_
 [source,java]
 ----
 // Load an image and create ImageContent
@@ -1524,6 +2217,10 @@ The agent component automatically converts files from various Camel components t
 
 ===== Example: Processing Images from File Component
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox/images?noop=true&include=.*\\.png")
@@ -1532,8 +2229,49 @@ from("file:inbox/images?noop=true&include=.*\\.png")
     .to("log:response");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox/images?noop=true&amp;include=.*\.png"/>
+  <setHeader name="CamelLangChain4jAgentUserMessage">
+    <constant>Describe this image</constant>
+  </setHeader>
+  <to uri="langchain4j-agent:vision?agent=#visionAgent"/>
+  <to uri="log:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox/images
+      parameters:
+        noop: true
+        include: ".*\\.png"
+      steps:
+        - setHeader:
+            name: CamelLangChain4jAgentUserMessage
+            constant: Describe this image
+        - to:
+            uri: langchain4j-agent:vision
+            parameters:
+              agent: "#visionAgent"
+        - to:
+            uri: log:response
+----
+====
+
 ===== Example: Processing Files from AWS S3
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("aws2-s3://my-bucket?prefix=images/&includeBody=true")
@@ -1541,6 +2279,43 @@ from("aws2-s3://my-bucket?prefix=images/&includeBody=true")
     .to("langchain4j-agent:vision?agent=#visionAgent")
     .to("log:response");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws2-s3://my-bucket?prefix=images/&amp;includeBody=true"/>
+  <setHeader name="CamelLangChain4jAgentUserMessage">
+    <constant>What do you see in this image?</constant>
+  </setHeader>
+  <to uri="langchain4j-agent:vision?agent=#visionAgent"/>
+  <to uri="log:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-s3://my-bucket
+      parameters:
+        prefix: images/
+        includeBody: true
+      steps:
+        - setHeader:
+            name: CamelLangChain4jAgentUserMessage
+            constant: "What do you see in this image?"
+        - to:
+            uri: langchain4j-agent:vision
+            parameters:
+              agent: "#visionAgent"
+        - to:
+            uri: log:response
+----
+====
 
 [NOTE]
 ====
@@ -1554,6 +2329,10 @@ When using `byte[]` or `InputStream` inputs, a MIME type header is required sinc
 
 ===== Example: Overriding MIME Type
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:process-file")
@@ -1562,10 +2341,48 @@ from("direct:process-file")
     .to("langchain4j-agent:analyzer?agent=#analyzerAgent");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:process-file"/>
+  <setHeader name="CamelLangChain4jAgentUserMessage">
+    <constant>Analyze this document</constant>
+  </setHeader>
+  <setHeader name="CamelLangChain4jAgentMediaType">
+    <constant>application/pdf</constant>
+  </setHeader>
+  <to uri="langchain4j-agent:analyzer?agent=#analyzerAgent"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:process-file
+      steps:
+        - setHeader:
+            name: CamelLangChain4jAgentUserMessage
+            constant: Analyze this document
+        - setHeader:
+            name: CamelLangChain4jAgentMediaType
+            constant: application/pdf
+        - to:
+            uri: langchain4j-agent:analyzer
+            parameters:
+              agent: "#analyzerAgent"
+----
+====
+
 ==== Complete Multimodal Route Example
 
 Here's a complete example showing how to process images from a file system and send them to an AI agent for analysis:
 
+._Java-only: `ChatModel` and `AgentConfiguration` bean registration_
 [source,java]
 ----
 // Create a vision-capable chat model
@@ -1580,8 +2397,16 @@ AgentConfiguration configuration = new AgentConfiguration()
 
 Agent visionAgent = new AgentWithoutMemory(configuration);
 context.getRegistry().bind("visionAgent", visionAgent);
+----
 
-// Route to process images
+Route to process images:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("file:inbox/images?noop=true&include=.*\\.(png|jpg|jpeg)")
     .setHeader("CamelLangChain4jAgentUserMessage",
         constant("Describe what you see in this image. Be detailed but concise."))
@@ -1589,3 +2414,43 @@ from("file:inbox/images?noop=true&include=.*\\.(png|jpg|jpeg)")
     .log("AI Response: ${body}")
     .to("file:outbox/descriptions");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox/images?noop=true&amp;include=.*\.(png|jpg|jpeg)"/>
+  <setHeader name="CamelLangChain4jAgentUserMessage">
+    <constant>Describe what you see in this image. Be detailed but concise.</constant>
+  </setHeader>
+  <to uri="langchain4j-agent:vision?agent=#visionAgent"/>
+  <log message="AI Response: ${body}"/>
+  <to uri="file:outbox/descriptions"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox/images
+      parameters:
+        noop: true
+        include: ".*\\.(png|jpg|jpeg)"
+      steps:
+        - setHeader:
+            name: CamelLangChain4jAgentUserMessage
+            constant: "Describe what you see in this image. Be detailed but concise."
+        - to:
+            uri: langchain4j-agent:vision
+            parameters:
+              agent: "#visionAgent"
+        - log:
+            message: "AI Response: ${body}"
+        - to:
+            uri: file:outbox/descriptions
+----
+====

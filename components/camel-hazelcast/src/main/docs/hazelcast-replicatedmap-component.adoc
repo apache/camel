@@ -45,16 +45,16 @@ The replicatedmap producer provides 6 operations:
 Java DSL::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:put")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
 .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
-------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:put" />
     <log message="put.."/>
@@ -63,7 +63,7 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-replicatedmap:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -75,17 +75,17 @@ Spring XML::
 Java DSL::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:get")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
 .toF("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX)
 .to("seda:out");
-------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:get" />
     <log message="get.."/>
@@ -95,7 +95,7 @@ Spring XML::
     <to uri="hazelcast-replicatedmap:foo" />
     <to uri="seda:out" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -107,16 +107,16 @@ Spring XML::
 Java DSL::
 +
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("direct:delete")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
 .toF("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX);
----------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:delete" />
     <log message="delete.."/>
@@ -125,15 +125,16 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-replicatedmap:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 ====
 
 You can call them in your test class with:
 
+._Java-only: uses ProducerTemplate API and Java constants_
 [source,java]
-------------------------------------------------------------------------------------------------------------
+----
 template.sendBodyAndHeader("direct:[put|get|delete|clear]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
-------------------------------------------------------------------------------------------------------------
+----
 
 == replicatedmap cache consumer
 
@@ -142,8 +143,9 @@ variables as for the map cache consumer (except the update and enviction
 listener). The only difference is the *multimap* prefix inside the URI.
 Here is a sample:
 
+._Java-only: uses Java constants, string formatting, and choice/when/otherwise_
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 fromF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX)
 .log("object...")
 .choice()
@@ -158,7 +160,7 @@ fromF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX)
                 .to("mock:removed")
         .otherwise()
                 .log("fail!");
---------------------------------------------------------------------------------------------------
+----
 
 Header Variables inside the response message:
 

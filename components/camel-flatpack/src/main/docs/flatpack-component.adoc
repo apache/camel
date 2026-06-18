@@ -23,15 +23,15 @@ format.
 
 == URI format
 
----------------------------------------------------------
+----
 flatpack:[delim|fixed]:flatPackConfig.pzmap.xml[?options]
----------------------------------------------------------
+----
 
 Or for a delimited file handler with no configuration file just use
 
----------------------------
+----
 flatpack:someName[?options]
----------------------------
+----
 
 
 // component options: START
@@ -63,21 +63,23 @@ value.
 
 For example, to get the firstname from the sample below:
 
+._Java-only: accessing row data from the exchange body_
 [source,java]
-------------------------------------------------
+----
   Map row = exchange.getIn().getBody(Map.class);
   String firstName = row.get("FIRSTNAME");
-------------------------------------------------
+----
 
 However, you can also always get it as a `List` (even for
 `splitRows=true`). The same example:
 
+._Java-only: accessing row data as a List from the exchange body_
 [source,java]
----------------------------------------------------
+----
   List data = exchange.getIn().getBody(List.class);
   Map row = (Map)data.get(0);
   String firstName = row.get("FIRSTNAME");
----------------------------------------------------
+----
 
 === Header and Trailer records
 
@@ -91,7 +93,7 @@ The example below illustrates this fact that we have a header and a
 trailer. You can omit one or both of them if not needed.
 
 [source,xml]
----------------------------------------------------------------------------
+----
     <RECORD id="header" startPosition="1" endPosition="3" indicator="HBT">
         <COLUMN name="INDICATOR" length="3"/>
         <COLUMN name="DATE" length="8"/>
@@ -108,7 +110,7 @@ trailer. You can omit one or both of them if not needed.
         <COLUMN name="INDICATOR" length="3"/>
         <COLUMN name="STATUS" length="7"/>
     </RECORD>
----------------------------------------------------------------------------
+----
 
 === Using as an Endpoint
 
@@ -116,7 +118,7 @@ A common use case is sending a file to this endpoint for further
 processing in a separate route. For example:
 
 [source,xml]
------------------------------------------------------------------------
+----
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="file://someDirectory"/>
@@ -128,7 +130,7 @@ processing in a separate route. For example:
       ...
     </route>
   </camelContext>
------------------------------------------------------------------------
+----
 
 You can also convert the payload of each message created to a `Map` for
 easy Bean Integration
@@ -185,28 +187,30 @@ expected and ignores the extra characters.
 To use the data format, instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
 
+._Java-only: programmatic FlatpackDataFormat configuration and unmarshal_
 [source,java]
----------------------------------------------------------------------------
+----
   FlatpackDataFormat fp = new FlatpackDataFormat();
   fp.setDefinition(new ClassPathResource("INVENTORY-Delimited.pzmap.xml"));
   ...
   from("file:order/in").unmarshal(df).to("seda:queue:neworder");
----------------------------------------------------------------------------
+----
 
 The sample above will read files from the `order/in` folder and
 unmarshal the input using the Flatpack configuration file
 `INVENTORY-Delimited.pzmap.xml` that configures the structure of the
 files. The result is a `DataSetList` object we store on the SEDA queue.
 
+._Java-only: programmatic FlatpackDataFormat configuration and marshal_
 [source,java]
------------------------------------------------------------------------------------
+----
 FlatpackDataFormat df = new FlatpackDataFormat();
 df.setDefinition(new ClassPathResource("PEOPLE-FixedLength.pzmap.xml"));
 df.setFixed(true);
 df.setIgnoreFirstRecord(false);
 
 from("seda:people").marshal(df).convertBodyTo(String.class).to("jms:queue:people");
------------------------------------------------------------------------------------
+----
 
 In the code above we marshal the data from an Object representation as a
 `List` of rows as `Maps`. The rows as `Map` contains the column name as
@@ -224,13 +228,13 @@ If you use maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest release.
 
 [source,xml]
------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-flatpack</artifactId>
   <version>x.x.x</version>
 </dependency>
------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

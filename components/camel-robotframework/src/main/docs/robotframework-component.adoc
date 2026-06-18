@@ -96,6 +96,7 @@ and pass them to generate a custom report if such need happens
 It's possible to specify what template the component
 should use dynamically via a header, so for example:
 
+._Java-only: Java constants for header names_
 [source,java]
 ----
 from("direct:in")
@@ -108,6 +109,7 @@ with the similar approach how you would be able to pass values using
 Camel Simple Language. Components support passing values in three
 different ways. Exchange body, headers, and properties.
 
+._Java-only: Java constants for header names_
 [source,java]
 ----
 from("direct:in")
@@ -126,6 +128,7 @@ And the `template.robot` file:
     Should Be True    ${myvar} == ${body}
 ----
 
+._Java-only: Java constants for header names_
 [source,java]
 ----
 from("direct:in")
@@ -144,6 +147,7 @@ And the `template.robot` file:
     Should Be True    ${myvar} == ${headers.testHeader}
 ----
 
+._Java-only: Java constants for header names_
 [source,java]
 ----
 from("direct:in")

@@ -80,6 +80,7 @@ In this example we unmarshal a gzipped payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
 the `UnGZippedMessageProcessor`.
 
+._Java-only: unmarshalling a gzipped payload and forwarding to a custom processor_
 [source,java]
 ----
 from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZippedMessageProcessor());
@@ -90,12 +91,12 @@ from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZipped
 If you use Maven you could add the following to your `pom.xml`, substituting the version number for the latest and greatest release (see the download page for the latest versions).
 
 [source,xml]
----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-zip-deflater</artifactId>
   <version>x.x.x</version>
 </dependency>
----------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

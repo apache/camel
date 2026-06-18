@@ -30,13 +30,13 @@ You must have a valid Azure subscription. More information is available at
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-functions</artifactId>
     <version>${camel-version}</version>
 </dependency>
-------------------------------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
@@ -85,36 +85,125 @@ See the documentation https://docs.microsoft.com/en-us/azure/active-directory/au
 
 For invoking HTTP-triggered functions, you can use function keys or host keys:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:invoke")
     .to("azure-functions:myFunctionApp/myFunction?credentialType=FUNCTION_KEY&functionKey=your-function-key");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:invoke"/>
+  <to uri="azure-functions:myFunctionApp/myFunction?credentialType=FUNCTION_KEY&amp;functionKey=your-function-key"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:invoke
+      steps:
+        - to:
+            uri: azure-functions:myFunctionApp/myFunction
+            parameters:
+              credentialType: FUNCTION_KEY
+              functionKey: your-function-key
+----
+====
+
 *TOKEN_CREDENTIAL*:
 
 Provide an implementation of `com.azure.core.credential.TokenCredential` into the Camel Registry:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:invoke")
     .to("azure-functions:myFunctionApp/myFunction?credentialType=TOKEN_CREDENTIAL&tokenCredential=#myCredential");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:invoke"/>
+  <to uri="azure-functions:myFunctionApp/myFunction?credentialType=TOKEN_CREDENTIAL&amp;tokenCredential=#myCredential"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:invoke
+      steps:
+        - to:
+            uri: azure-functions:myFunctionApp/myFunction
+            parameters:
+              credentialType: TOKEN_CREDENTIAL
+              tokenCredential: "#myCredential"
+----
+====
+
 === Service Principal Authentication
 
 For service principal authentication, provide the client credentials:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:manage")
-    .to("azure-functions:myFunctionApp?operation=listFunctionApps"
-        + "&subscriptionId=your-subscription-id"
-        + "&resourceGroup=your-resource-group"
-        + "&clientId=your-client-id"
-        + "&clientSecret=your-client-secret"
-        + "&tenantId=your-tenant-id");
+    .to("azure-functions:myFunctionApp?operation=listFunctionApps&subscriptionId=your-subscription-id&resourceGroup=your-resource-group&clientId=your-client-id&clientSecret=your-client-secret&tenantId=your-tenant-id");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:manage"/>
+  <to uri="azure-functions:myFunctionApp?operation=listFunctionApps&amp;subscriptionId=your-subscription-id&amp;resourceGroup=your-resource-group&amp;clientId=your-client-id&amp;clientSecret=your-client-secret&amp;tenantId=your-tenant-id"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:manage
+      steps:
+        - to:
+            uri: azure-functions:myFunctionApp
+            parameters:
+              operation: listFunctionApps
+              subscriptionId: your-subscription-id
+              resourceGroup: your-resource-group
+              clientId: your-client-id
+              clientSecret: your-client-secret
+              tenantId: your-tenant-id
+----
+====
 
 == Operations
 
@@ -175,6 +264,10 @@ The component supports the following operations:
 
 === Invoke a Function
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:invoke")
@@ -183,49 +276,181 @@ from("direct:invoke")
     .log("Response: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:invoke"/>
+  <setBody>
+    <constant>{"name": "World"}</constant>
+  </setBody>
+  <to uri="azure-functions:myFunctionApp/HelloFunction?functionKey=your-key"/>
+  <log message="Response: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:invoke
+      steps:
+        - setBody:
+            constant: '{"name": "World"}'
+        - to:
+            uri: azure-functions:myFunctionApp/HelloFunction
+            parameters:
+              functionKey: your-key
+        - log:
+            message: "Response: ${body}"
+----
+====
+
 === List Function Apps
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:list")
-    .to("azure-functions:myFunctionApp?operation=listFunctionApps"
-        + "&subscriptionId=xxx&resourceGroup=myResourceGroup")
+    .to("azure-functions:myFunctionApp?operation=listFunctionApps&subscriptionId=xxx&resourceGroup=myResourceGroup")
     .log("Function Apps: ${body}");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="azure-functions:myFunctionApp?operation=listFunctionApps&amp;subscriptionId=xxx&amp;resourceGroup=myResourceGroup"/>
+  <log message="Function Apps: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+      steps:
+        - to:
+            uri: azure-functions:myFunctionApp
+            parameters:
+              operation: listFunctionApps
+              subscriptionId: xxx
+              resourceGroup: myResourceGroup
+        - log:
+            message: "Function Apps: ${body}"
+----
+====
+
 === Stop a Function App
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:stop")
-    .to("azure-functions:myFunctionApp?operation=stopFunctionApp"
-        + "&subscriptionId=xxx&resourceGroup=myResourceGroup")
+    .to("azure-functions:myFunctionApp?operation=stopFunctionApp&subscriptionId=xxx&resourceGroup=myResourceGroup")
     .log("Function App stopped");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:stop"/>
+  <to uri="azure-functions:myFunctionApp?operation=stopFunctionApp&amp;subscriptionId=xxx&amp;resourceGroup=myResourceGroup"/>
+  <log message="Function App stopped"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:stop
+      steps:
+        - to:
+            uri: azure-functions:myFunctionApp
+            parameters:
+              operation: stopFunctionApp
+              subscriptionId: xxx
+              resourceGroup: myResourceGroup
+        - log:
+            message: "Function App stopped"
+----
+====
+
 === Update Configuration
+
+._Java-only: requires Java Map.of() for app settings_
 
 [source,java]
 ----
 from("direct:updateConfig")
     .setHeader("CamelAzureFunctionsAppSettings", constant(Map.of("MY_SETTING", "value")))
-    .to("azure-functions:myFunctionApp?operation=updateFunctionAppConfiguration"
-        + "&subscriptionId=xxx&resourceGroup=myResourceGroup")
+    .to("azure-functions:myFunctionApp?operation=updateFunctionAppConfiguration&subscriptionId=xxx&resourceGroup=myResourceGroup")
     .log("Configuration updated: ${body}");
 ----
 
 === Create a Function App
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:create")
-    .to("azure-functions:newFunctionApp?operation=createFunctionApp"
-        + "&subscriptionId=xxx"
-        + "&resourceGroup=myResourceGroup"
-        + "&location=eastus"
-        + "&runtime=java"
-        + "&storageAccountConnectionString=DefaultEndpointsProtocol=https;...")
+    .to("azure-functions:newFunctionApp?operation=createFunctionApp&subscriptionId=xxx&resourceGroup=myResourceGroup&location=eastus&runtime=java&storageAccountConnectionString=RAW(DefaultEndpointsProtocol=https;...)")
     .log("Created function app: ${header.CamelAzureFunctionsResourceId}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:create"/>
+  <to uri="azure-functions:newFunctionApp?operation=createFunctionApp&amp;subscriptionId=xxx&amp;resourceGroup=myResourceGroup&amp;location=eastus&amp;runtime=java&amp;storageAccountConnectionString=RAW(DefaultEndpointsProtocol=https;...)"/>
+  <log message="Created function app: ${header.CamelAzureFunctionsResourceId}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:create
+      steps:
+        - to:
+            uri: azure-functions:newFunctionApp
+            parameters:
+              operation: createFunctionApp
+              subscriptionId: xxx
+              resourceGroup: myResourceGroup
+              location: eastus
+              runtime: java
+              storageAccountConnectionString: "RAW(DefaultEndpointsProtocol=https;...)"
+        - log:
+            message: "Created function app: ${header.CamelAzureFunctionsResourceId}"
+----
+====
 
 include::spring-boot:partial$starter.adoc[]

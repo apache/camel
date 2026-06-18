@@ -20,14 +20,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-graphql</artifactId>
     <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 // component options: START
@@ -267,6 +267,7 @@ query BookById($id: Int!) {
 }
 ----
 
+._Java-only: registering query variables and referencing them in the endpoint_
 [source,java]
 ----
 @BindToRegistry("bookByIdQueryVariables")
@@ -282,6 +283,7 @@ from("direct:start")
 
 A query that accesses variables via the variablesHeader parameter:
 
+._Java-only: setting variables via a header with a lambda supplier_
 [source,java]
 ----
 from("direct:start")
@@ -311,6 +313,7 @@ mutation AddBook($bookInput: BookInput) {
 }
 ----
 
+._Java-only: registering mutation variables and referencing them in the endpoint_
 [source,java]
 ----
 @BindToRegistry("addBookMutationVariables")

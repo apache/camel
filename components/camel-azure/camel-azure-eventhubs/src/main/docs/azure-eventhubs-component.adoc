@@ -27,21 +27,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-eventhubs</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI Format
 
 [source,text]
-------------------------------
+----
 azure-eventhubs://[namespace/eventHubName][?options]
-------------------------------
+----
 
 When providing a `connectionString`, the `namespace` and `eventHubName` options are not required as they are already included
 in the `connectionString`
@@ -157,6 +157,7 @@ YAML::
 
 To produce events:
 
+._Java-only: producing events with a Processor and EventHubsConstants_
 [source,java]
 ----
 from("direct:start")
@@ -169,6 +170,7 @@ from("direct:start")
 
 The azure-eventhubs producer supports sending sending events as an `Iterable` (E.g. as a `List`). For example:
 
+._Java-only: producing batch events with an Iterable body_
 [source,java]
 ----
 from("direct:start")
@@ -188,6 +190,7 @@ from("direct:start")
 The example below makes use of the Azure-AD authentication. See https://docs.microsoft.com/en-us/java/api/overview/azure/identity-readme?view=azure-java-stable#environment-variables[here]
 about what environment variables you need to set for this to work:
 
+._Java-only: registering a TokenCredential bean and using Azure-AD authentication_
 [source,java]
 ----
 @BindToRegistry("myTokenCredential")

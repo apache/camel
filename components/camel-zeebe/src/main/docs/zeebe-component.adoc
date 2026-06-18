@@ -38,9 +38,9 @@ https://camunda.com/platform/zeebe/[Camunda Zeebe].
 
 == URI format
 
--------------------------------
+----
 zeebe://[endpoint]?[options]
--------------------------------
+----
 
 
 // component options: START
@@ -81,8 +81,9 @@ The endpoints accept either Java request objects as shown in the examples below 
 
 * startProcess
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
     from("direct:start")
         .process(exchange -> {
             ProcessRequest request = new ProcessRequest();
@@ -98,22 +99,22 @@ The endpoints accept either Java request objects as shown in the examples below 
                 long processInstanceKey = body.getProcessInstanceKey();
             }
         });
-----------------------------------------------------------------------------------------------------------------------
+----
 
 *JSON Request Example*
 
 [source,json]
-----------------------------------------------------------------------------------------------------------------------
+----
     {
         "process_id" : "Process_0e3ldfm",
         "variables" : { "v1": "a", "v2": 10 }
     }
-----------------------------------------------------------------------------------------------------------------------
+----
 
 *JSON Response Example*
 
 [source,json]
-----------------------------------------------------------------------------------------------------------------------
+----
     {
         "success": true,
         "process_id": "Process_0e3ldfm",
@@ -121,12 +122,13 @@ The endpoints accept either Java request objects as shown in the examples below 
         "process_version": 4,
         "process_key": 2251799813685906
     }
-----------------------------------------------------------------------------------------------------------------------
+----
 
 * cancelProcess
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
     from("direct:start")
         .process(exchange -> {
             ProcessRequest request = new ProcessRequest();
@@ -140,12 +142,13 @@ The endpoints accept either Java request objects as shown in the examples below 
                 bool success = body.getSuccess();
             }
         });
-----------------------------------------------------------------------------------------------------------------------
+----
 
 * publishMessage
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
     from("direct:start")
         .process(exchange -> {
             MessageRequest request = new MessageRequest();
@@ -163,35 +166,36 @@ The endpoints accept either Java request objects as shown in the examples below 
                 String messageKey = body.getMessageKey();
             }
         });
-----------------------------------------------------------------------------------------------------------------------
+----
 
 *JSON Request Example*
 
 [source,json]
-----------------------------------------------------------------------------------------------------------------------
+----
     {
         "correlation_key" : "messageKey",
         "time-to-live" : 100,
         "variables" : { "v1": "a", "v2": 10 },
         "name" : "MessageName"
     }
-----------------------------------------------------------------------------------------------------------------------
+----
 
 *JSON Response Example*
 
 [source,json]
-----------------------------------------------------------------------------------------------------------------------
+----
     {
         "success": true,
         "correlation_key": "messageKey",
         "message_key": 2251799813688336
     }
-----------------------------------------------------------------------------------------------------------------------
+----
 
 * completeJob
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
     from("direct:start")
         .process(exchange -> {
             JobRequest request = new JobRequest();
@@ -206,12 +210,13 @@ The endpoints accept either Java request objects as shown in the examples below 
                 bool success = body.getSuccess();
             }
         });
-----------------------------------------------------------------------------------------------------------------------
+----
 
 * failJob
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
     from("direct:start")
         .process(exchange -> {
             JobRequest request = new JobRequest();
@@ -227,12 +232,13 @@ The endpoints accept either Java request objects as shown in the examples below 
                 bool success = body.getSuccess();
             }
         });
-----------------------------------------------------------------------------------------------------------------------
+----
 
 * updateJobRetries
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
     from("direct:start")
         .process(exchange -> {
             JobRequest request = new JobRequest();
@@ -247,12 +253,13 @@ The endpoints accept either Java request objects as shown in the examples below 
                 bool success = body.getSuccess();
             }
         });
-----------------------------------------------------------------------------------------------------------------------
+----
 
 * throwError
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
     from("direct:start")
         .process(exchange -> {
             JobRequest request = new JobRequest();
@@ -268,12 +275,13 @@ The endpoints accept either Java request objects as shown in the examples below 
                 bool success = body.getSuccess();
             }
         });
-----------------------------------------------------------------------------------------------------------------------
+----
 
 * deployResource
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------
+----
     from("direct:start")
         .process(exchange -> {
             DeploymentRequest request = new DeploymentRequest();
@@ -292,7 +300,7 @@ The endpoints accept either Java request objects as shown in the examples below 
                 String resourceName = body.getResourceName();
             }
         });
-----------------------------------------------------------------------------------------------------------------------
+----
 
 === Consumer Endpoints:
 
@@ -306,8 +314,9 @@ The endpoints accept either Java request objects as shown in the examples below 
 
 *Example*
 
+._Java-only: inline Processor with Zeebe SDK types_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------
+----
     from("zeebe://worker?jobKey=job1&timeout=20")
         .process(exchange -> {
             JobWorkerMessage body = exchange.getIn().getBody(JobWorkerMessage.class);
@@ -327,7 +336,7 @@ The endpoints accept either Java request objects as shown in the examples below 
                 Map<String,Object> variables = body.getVariables();
             }
         })
----------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 camel-zeebe creates a route exchange per job type with a job in the body.
 
@@ -338,13 +347,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-zeebe</artifactId>
     <version>${camel-version}</version>
 </dependency>
------------------------------------------------
+----
 
 where `${camel-version`} must be replaced by the actual version of Camel.
 

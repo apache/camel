@@ -23,20 +23,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-spring-batch</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-------------------------------
+----
 spring-batch:jobName[?options]
-------------------------------
+----
 
 Where *jobName* represents the name of the Spring Batch job located in
 the Camel registry.
@@ -158,14 +158,15 @@ A `JobExecution` instance returned by the
 message. You can use the `JobExecution` instance to perform some
 operations using the Spring Batch API directly.
 
+._Java-only: accessing JobExecution from MockEndpoint_
 [source,java]
----------------------------------------------------------------------------------------------------
+----
 from("direct:startBatch").to("spring-batch:myJob").to("mock:JobExecutions");
 ...
 MockEndpoint mockEndpoint = ...;
 JobExecution jobExecution = mockEndpoint.getExchanges().get(0).getIn().getBody(JobExecution.class);
 BatchStatus currentJobStatus = jobExecution.getStatus();
----------------------------------------------------------------------------------------------------
+----
 
 === Support classes
 
@@ -181,7 +182,7 @@ For example, the snippet below is configuring Spring Batch to read data from
 JMS queue.
 
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <bean id="camelReader" class="org.apache.camel.component.spring.batch.support.CamelItemReader">
   <constructor-arg ref="consumerTemplate"/>
   <constructor-arg value="jms:dataQueue"/>
@@ -194,7 +195,7 @@ JMS queue.
     </batch:tasklet>
   </batch:step>
 </batch:job>
------------------------------------------------------------------------------------------------
+----
 
 ==== CamelItemWriter
 
@@ -205,7 +206,7 @@ For example, the snippet below is configuring Spring Batch to read data from
 JMS queue.
 
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <bean id="camelwriter" class="org.apache.camel.component.spring.batch.support.CamelItemWriter">
   <constructor-arg ref="producerTemplate"/>
   <constructor-arg value="jms:dataQueue"/>
@@ -218,7 +219,7 @@ JMS queue.
     </batch:tasklet>
   </batch:step>
 </batch:job>
------------------------------------------------------------------------------------------------
+----
 
 ==== CamelItemProcessor
 
@@ -235,7 +236,7 @@ item using the http://camel.apache.org/direct.html[Direct endpoint] and
 the http://camel.apache.org/simple.html[Simple expression language].
 
 [source,xml]
--------------------------------------------------------------------------------------------------------------
+----
 <camel:camelContext>
   <camel:route>
     <camel:from uri="direct:processor"/>
@@ -258,7 +259,7 @@ the http://camel.apache.org/simple.html[Simple expression language].
     </batch:tasklet>
   </batch:step>
 </batch:job>
--------------------------------------------------------------------------------------------------------------
+----
 
 ==== CamelJobExecutionListener
 
@@ -275,7 +276,7 @@ The example snippet below sends Spring Batch job execution events to the
 JMS queue.
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------------
+----
 <bean id="camelJobExecutionListener" class="org.apache.camel.component.spring.batch.support.CamelJobExecutionListener">
   <constructor-arg ref="producerTemplate"/>
   <constructor-arg value="jms:batchEventsBus"/>
@@ -291,7 +292,7 @@ JMS queue.
     <batch:listener ref="camelJobExecutionListener"/>
   </batch:listeners>
 </batch:job>
------------------------------------------------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

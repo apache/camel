@@ -38,6 +38,7 @@ In this example we marshal a regular text/XML payload to a compressed
 payload employing zip compression `Deflater.BEST_COMPRESSION` and send
 it an ActiveMQ queue called MY_QUEUE.
 
+._Java-only: specifying compression level via Java constant_
 [source,java]
 ----
 from("direct:start").marshal().zipDeflater(Deflater.BEST_COMPRESSION).to("activemq:queue:MY_QUEUE");
@@ -89,9 +90,10 @@ the UnZippedMessageProcessor. Note that the compression Level employed
 during marshaling should be identical to the one employed during
 unmarshalling to avoid errors.
 
+._Java-only: inline Processor instance_
 [source,java]
 ----
-from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor()); 
+from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor());
 ----
 
 == Dependencies
@@ -99,12 +101,12 @@ from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMe
 If you use Maven you could add the following to your `pom.xml`, substituting the version number for the latest and greatest release (see the download page for the latest versions).
 
 [source,xml]
----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-zip-deflater</artifactId>
   <version>x.x.x</version>
 </dependency>
----------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

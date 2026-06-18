@@ -25,9 +25,9 @@ More information is available at https://cloud.ibm.com/catalog/services/text-to-
 
 == URI Format
 
-------------------------------
+----
 ibm-watson-text-to-speech:label[?options]
-------------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -65,13 +65,54 @@ If you don't specify an operation explicitly, you must set it via the `operation
 
 Convert text to speech using the default voice:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-  .setHeader(WatsonTextToSpeechConstants.TEXT, constant("Hello, welcome to IBM Watson Text to Speech!"))
+  .setHeader("CamelIBMWatsonTTSText", constant("Hello, welcome to IBM Watson Text to Speech!"))
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=synthesize")
   .to("file:/var/audio?fileName=output.wav");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelIBMWatsonTTSText">
+    <constant>Hello, welcome to IBM Watson Text to Speech!</constant>
+  </setHeader>
+  <to uri="ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&amp;operation=synthesize"/>
+  <to uri="file:/var/audio?fileName=output.wav"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelIBMWatsonTTSText
+            constant: "Hello, welcome to IBM Watson Text to Speech!"
+        - to:
+            uri: ibm-watson-text-to-speech:myTTS
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              operation: synthesize
+        - to:
+            uri: file:/var/audio
+            parameters:
+              fileName: output.wav
+----
+====
 
 This will synthesize the text and produce an audio WAV file.
 
@@ -79,13 +120,55 @@ This will synthesize the text and produce an audio WAV file.
 
 Convert text to speech using a specific voice:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(constant("Bonjour, bienvenue sur IBM Watson!"))
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=synthesize&voice=fr-FR_NicolasV3Voice&accept=audio/mp3")
   .to("file:/var/audio?fileName=output.mp3");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>Bonjour, bienvenue sur IBM Watson!</constant>
+  </setBody>
+  <to uri="ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&amp;operation=synthesize&amp;voice=fr-FR_NicolasV3Voice&amp;accept=audio/mp3"/>
+  <to uri="file:/var/audio?fileName=output.mp3"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: "Bonjour, bienvenue sur IBM Watson!"
+        - to:
+            uri: ibm-watson-text-to-speech:myTTS
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              operation: synthesize
+              voice: fr-FR_NicolasV3Voice
+              accept: audio/mp3
+        - to:
+            uri: file:/var/audio
+            parameters:
+              fileName: output.mp3
+----
+====
 
 This will synthesize French text using the Nicolas voice and produce an MP3 file.
 
@@ -106,8 +189,10 @@ Some commonly used voices include:
 
 Get a list of all available voices:
 
+._Java-only: processes typed Voice SDK objects_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listVoices")
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=listVoices")
   .process(exchange -> {
@@ -118,22 +203,24 @@ from("direct:listVoices")
                            " - Description: " + voice.getDescription());
       });
   });
---------------------------------------------------------------------------------
+----
 
 === Get Voice Information
 
 Get detailed information about a specific voice:
 
+._Java-only: processes typed Voice SDK object_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:getVoice")
-  .setHeader(WatsonTextToSpeechConstants.VOICE_NAME, constant("en-US_AllisonV3Voice"))
+  .setHeader("CamelIBMWatsonTTSVoiceName", constant("en-US_AllisonV3Voice"))
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=getVoice")
   .process(exchange -> {
       Voice voice = exchange.getMessage().getBody(Voice.class);
       System.out.println("Voice details: " + voice);
   });
---------------------------------------------------------------------------------
+----
 
 === Audio Format Options
 
@@ -147,33 +234,120 @@ The component supports various audio formats via the `accept` parameter:
 
 Example with MP3 output:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:mp3")
   .setBody(constant("This will be an MP3 file"))
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=synthesize&accept=audio/mp3")
   .to("file:/var/audio?fileName=speech.mp3");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:mp3"/>
+  <setBody>
+    <constant>This will be an MP3 file</constant>
+  </setBody>
+  <to uri="ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&amp;operation=synthesize&amp;accept=audio/mp3"/>
+  <to uri="file:/var/audio?fileName=speech.mp3"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:mp3
+      steps:
+        - setBody:
+            constant: This will be an MP3 file
+        - to:
+            uri: ibm-watson-text-to-speech:myTTS
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              operation: synthesize
+              accept: audio/mp3
+        - to:
+            uri: file:/var/audio
+            parameters:
+              fileName: speech.mp3
+----
+====
 
 === Using Custom Voice Models
 
 If you have created a custom voice model, you can use it for synthesis:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:customVoice")
   .setBody(constant("Text to synthesize with custom voice"))
-  .setHeader(WatsonTextToSpeechConstants.CUSTOMIZATION_ID, constant("your-customization-guid"))
+  .setHeader("CamelIBMWatsonTTSCustomizationId", constant("your-customization-guid"))
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=synthesize")
   .to("file:/var/audio");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:customVoice"/>
+  <setBody>
+    <constant>Text to synthesize with custom voice</constant>
+  </setBody>
+  <setHeader name="CamelIBMWatsonTTSCustomizationId">
+    <constant>your-customization-guid</constant>
+  </setHeader>
+  <to uri="ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&amp;operation=synthesize"/>
+  <to uri="file:/var/audio"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:customVoice
+      steps:
+        - setBody:
+            constant: Text to synthesize with custom voice
+        - setHeader:
+            name: CamelIBMWatsonTTSCustomizationId
+            constant: your-customization-guid
+        - to:
+            uri: ibm-watson-text-to-speech:myTTS
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              operation: synthesize
+        - to:
+            uri: file:/var/audio
+----
+====
 
 === List Custom Models
 
 List all your custom voice models:
 
+._Java-only: processes typed CustomModel SDK objects_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listCustomModels")
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=listCustomModels")
   .process(exchange -> {
@@ -184,23 +358,25 @@ from("direct:listCustomModels")
                            " - Language: " + model.getLanguage());
       });
   });
---------------------------------------------------------------------------------
+----
 
 === Get Pronunciation
 
 Get the pronunciation for a specific word:
 
+._Java-only: processes typed Pronunciation SDK object_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:pronunciation")
-  .setHeader(WatsonTextToSpeechConstants.WORD, constant("synthesize"))
-  .setHeader(WatsonTextToSpeechConstants.FORMAT, constant("ipa"))
+  .setHeader("CamelIBMWatsonTTSWord", constant("synthesize"))
+  .setHeader("CamelIBMWatsonTTSFormat", constant("ipa"))
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=getPronunciation")
   .process(exchange -> {
       Pronunciation pronunciation = exchange.getMessage().getBody(Pronunciation.class);
       System.out.println("IPA Pronunciation: " + pronunciation.getPronunciation());
   });
---------------------------------------------------------------------------------
+----
 
 === Watson Text to Speech Authentication
 
@@ -219,13 +395,52 @@ https://cloud.ibm.com/docs/text-to-speech?topic=text-to-speech-getting-started[I
 
 If you have a dedicated or regional instance, you can specify a custom service URL:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(constant("Hello World"))
   .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&serviceUrl=https://api.eu-gb.text-to-speech.watson.cloud.ibm.com&operation=synthesize")
   .to("file:/var/audio");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>Hello World</constant>
+  </setBody>
+  <to uri="ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&amp;serviceUrl=https://api.eu-gb.text-to-speech.watson.cloud.ibm.com&amp;operation=synthesize"/>
+  <to uri="file:/var/audio"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: Hello World
+        - to:
+            uri: ibm-watson-text-to-speech:myTTS
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              serviceUrl: "https://api.eu-gb.text-to-speech.watson.cloud.ibm.com"
+              operation: synthesize
+        - to:
+            uri: file:/var/audio
+----
+====
 
 Common regional endpoints:
 - Dallas: https://api.us-south.text-to-speech.watson.cloud.ibm.com
@@ -257,23 +472,23 @@ To get your credentials:
 Integration tests are executed with the `verify` goal and require system properties:
 
 [source,bash]
---------------------------------------------------------------------------------
+----
 mvn verify \
   -Dcamel.ibm.watson.tts.apiKey=YOUR_API_KEY \
   -Dcamel.ibm.watson.tts.serviceUrl=YOUR_SERVICE_URL
---------------------------------------------------------------------------------
+----
 
 Alternatively, using environment variables:
 
 [source,bash]
---------------------------------------------------------------------------------
+----
 export CAMEL_IBM_WATSON_TTS_API_KEY=YOUR_API_KEY
 export CAMEL_IBM_WATSON_TTS_SERVICE_URL=YOUR_SERVICE_URL
 
 mvn verify \
   -Dcamel.ibm.watson.tts.apiKey=${CAMEL_IBM_WATSON_TTS_API_KEY} \
   -Dcamel.ibm.watson.tts.serviceUrl=${CAMEL_IBM_WATSON_TTS_SERVICE_URL}
---------------------------------------------------------------------------------
+----
 
 === Integration Test Coverage
 
@@ -325,7 +540,7 @@ These files can be played with any media player to verify audio quality and comp
 === Example Output
 
 [source]
---------------------------------------------------------------------------------
+----
 [INFO] Running org.apache.camel.component.ibm.watson.tts.integration.WatsonTextToSpeechIT
 Created output directory: target/audio-output
 Successfully synthesized text with default voice. Bytes read: 44032
@@ -335,7 +550,7 @@ Found 28 voices
 Successfully saved MP3 file: target/audio-output/test-output.mp3 (size: 51234 bytes)
 Successfully created audio files in 4 different languages
 [INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
---------------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -344,14 +559,14 @@ Maven users will need to add the following dependency to their `pom.xml`.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-ibm-watson-text-to-speech</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
----------------------------------------
+----
 
 where `x.x.x` is the version number of Camel.
 

@@ -221,6 +221,7 @@ Since Saxon 9.2, writing extension functions has been supplemented by a
 new mechanism, referred to
 as https://www.saxonica.com/html/documentation12/extensibility/extension-functions.html[extension functions] you can now easily use camel as shown in the below example:
 
+._Java-only: registering Saxon extension functions and using them in a route_
 [source,java]
 ----
 SimpleRegistry registry = new SimpleRegistry();

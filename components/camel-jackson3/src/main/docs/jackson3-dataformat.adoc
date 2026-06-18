@@ -65,17 +65,19 @@ include::partial$dataformat-options.adoc[]
 
 Jackson can also be used via the generic `json()` DSL method by specifying `JsonLibrary.Jackson`:
 
+._Java-only: using the json() DSL method with JsonLibrary.Jackson_
 [source,java]
--------------------------------
+----
 from("activemq:My.Queue")
   .marshal().json(JsonLibrary.Jackson)
   .to("mqseries:Another.Queue");
--------------------------------
+----
 
 This is equivalent to using `.jackson()` directly. The `json()` method also supports additional parameters:
 
+._Java-only: json() DSL with pretty print and unmarshal type_
 [source,java]
--------------------------------
+----
 // Pretty print
 from("activemq:My.Queue")
   .marshal().json(JsonLibrary.Jackson, true)
@@ -85,7 +87,7 @@ from("activemq:My.Queue")
 from("activemq:My.Queue")
   .unmarshal().json(JsonLibrary.Jackson, MyPojo.class)
   .to("mqseries:Another.Queue");
--------------------------------
+----
 
 === 2 and 4 bytes characters
 
@@ -115,6 +117,7 @@ from `JsonNode` to `String` or vice versa.
 To enable POJO conversion support for `camel-jackson3` then this must be enabled,
 which is done by setting the following options on the `CamelContext` global options, as shown:
 
+._Java-only: enabling Jackson 3 POJO type converter via CamelContext options_
 [source,java]
 ----
 // Enable Jackson 3 JSON type converter for more types.
@@ -137,14 +140,14 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release:
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-jackson3</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

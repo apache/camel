@@ -22,7 +22,7 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
-------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-google-functions</artifactId>
@@ -30,7 +30,7 @@ for this component:
     <version>x.x.x</version>
 </dependency>
 
-------------------------------------------------------
+----
 
 [[GoogleFunctions-AuthenticationConfiguration]]
 
@@ -43,33 +43,65 @@ When you have the **service account key**, you can provide authentication creden
 Google security credentials can be set through the component endpoint:
 
 [source,java]
---------------------------------------------------------
+----
 String endpoint = "google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json";
---------------------------------------------------------
+----
 
 Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
 
---------------------------------------------------------
+----
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
---------------------------------------------------------
+----
 
 
 == URI Format
 
---------------------------------------------------------
+----
 google-functions://functionName[?options]
---------------------------------------------------------
+----
 
 You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
 For example, to call the function `myCamelFunction` from the project `myProject` and location `us-central1`, use the following snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("google-functions://myCamelFunction?project=myProject&location=us-central1&operation=callFunction&serviceAccountKey=/home/user/Downloads/my-key.json");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-functions://myCamelFunction?project=myProject&amp;location=us-central1&amp;operation=callFunction&amp;serviceAccountKey=/home/user/Downloads/my-key.json"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              project: myProject
+              location: us-central1
+              operation: callFunction
+              serviceAccountKey: /home/user/Downloads/my-key.json
+----
+====
 
 
 
@@ -101,94 +133,364 @@ If you don't specify an operation by default, the producer will use the `callFun
 
 If you need to have more control over the `client` instance configuration, you can create your own instance and refer to it in your Camel google-functions component configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("google-functions://myCamelFunction?client=#myClient");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-functions://myCamelFunction?client=#myClient"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              client: "#myClient"
+----
+====
 
 === Google Functions Producer Operation examples
 
 - `ListFunctions`: This operation invokes the Google Functions client and gets the list of cloud Functions
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-//list functions
+----
 from("direct:start")
     .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=listFunctions")
-    .log("body:${body}")
---------------------------------------------------------------------------------
+    .log("body:${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&amp;project=myProject&amp;location=us-central1&amp;operation=listFunctions"/>
+  <log message="body:${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              project: myProject
+              location: us-central1
+              operation: listFunctions
+        - log:
+            message: "body:${body}"
+----
+====
 
 This operation will get the list of cloud functions for the project `myProject` and location `us-central1`.
 
 - `GetFunction`: this operation gets the Cloud Functions object
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-//get function
+----
 from("direct:start")
     .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=getFunction")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&amp;project=myProject&amp;location=us-central1&amp;operation=getFunction"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              project: myProject
+              location: us-central1
+              operation: getFunction
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 This operation will get the `CloudFunction` object for the project `myProject`, location `us-central1` and functionName `myCamelFunction`.
 
 - `CallFunction`: this operation calls the function using an HTTP request
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-//call function
+----
 from("direct:start")
-    .process(exchange -> {
-      exchange.getIn().setBody("just a message");
-    })
+    .setBody(constant("just a message"))
     .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=callFunction")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>just a message</constant>
+  </setBody>
+  <to uri="google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&amp;project=myProject&amp;location=us-central1&amp;operation=callFunction"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: just a message
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              project: myProject
+              location: us-central1
+              operation: callFunction
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `GenerateDownloadUrl`: this operation generates the signed URL for downloading deployed function source code.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-//generate download url
+----
 from("direct:start")
     .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=generateDownloadUrl")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&amp;project=myProject&amp;location=us-central1&amp;operation=generateDownloadUrl"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              project: myProject
+              location: us-central1
+              operation: generateDownloadUrl
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `GenerateUploadUrl`: this operation generates a signed URL for uploading a function source code.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=generateUploadUrl")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&amp;project=myProject&amp;location=us-central1&amp;operation=generateUploadUrl"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              project: myProject
+              location: us-central1
+              operation: generateUploadUrl
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `createFunction`: this operation creates a new function.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-
+----
 from("direct:start")
-    .process(exchange -> {
-      exchange.getIn().setHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, "com.example.Example");
-      exchange.getIn().setHeader(GoogleCloudFunctionsConstants.RUNTIME, "java11");
-      exchange.getIn().setHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL, "gs://myBucket/source.zip");
-    })
+    .setHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, constant("com.example.Example"))
+    .setHeader(GoogleCloudFunctionsConstants.RUNTIME, constant("java11"))
+    .setHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL, constant("gs://myBucket/source.zip"))
     .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=createFunction")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleCloudFunctionsEntryPoint">
+    <constant>com.example.Example</constant>
+  </setHeader>
+  <setHeader name="CamelGoogleCloudFunctionsRuntime">
+    <constant>java11</constant>
+  </setHeader>
+  <setHeader name="CamelGoogleCloudFunctionsSourceArchiveUrl">
+    <constant>gs://myBucket/source.zip</constant>
+  </setHeader>
+  <to uri="google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&amp;project=myProject&amp;location=us-central1&amp;operation=createFunction"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleCloudFunctionsEntryPoint
+            constant: com.example.Example
+        - setHeader:
+            name: CamelGoogleCloudFunctionsRuntime
+            constant: java11
+        - setHeader:
+            name: CamelGoogleCloudFunctionsSourceArchiveUrl
+            constant: "gs://myBucket/source.zip"
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              project: myProject
+              location: us-central1
+              operation: createFunction
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `updateFunction`: this operation updates existing function.
 
+._Java-only: Google Cloud SDK UpdateFunctionRequest builder_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .process(exchange -> {
       UpdateFunctionRequest request = UpdateFunctionRequest.newBuilder()
@@ -199,17 +501,55 @@ from("direct:start")
     .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=updateFunction&pojoRequest=true")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `deleteFunction`: this operation Deletes a function with the given name from the specified project.
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .to("google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&project=myProject&location=us-central1&operation=deleteFunction")
     .log("body:${body}")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json&amp;project=myProject&amp;location=us-central1&amp;operation=deleteFunction"/>
+  <log message="body:${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: google-functions://myCamelFunction
+            parameters:
+              serviceAccountKey: /home/user/Downloads/my-key.json
+              project: myProject
+              location: us-central1
+              operation: deleteFunction
+        - log:
+            message: "body:${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

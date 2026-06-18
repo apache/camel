@@ -551,7 +551,7 @@ YAML::
 ----
 ====
 
-.Custom deep learning model
+._Java-only: creating a custom DJL model with translator and binding to the registry_
 [source,java]
 ----
 // create a deep learning model

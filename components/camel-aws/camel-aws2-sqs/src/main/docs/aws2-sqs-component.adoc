@@ -26,9 +26,9 @@ https://aws.amazon.com/sqs[Amazon SQS].
 
 == URI Format
 
-------------------------------
+----
 aws2-sqs://queueNameOrArn[?options]
-------------------------------
+----
 
 The queue will be created if they don't already exist.
 
@@ -89,18 +89,19 @@ create your own instance, and configure Camel to use your instance by the bean i
 
 In the example below, we use _myClient_ as the bean id:
 
+._Java-only: programmatic `SqsClient` creation and registry binding_
 [source,java]
----------------------------------------------------------------------------------
-// crate my own instance of SqsClient
+----
+// create my own instance of SqsClient
 SqsClient sqs = ...
 
 // register the client into Camel registry
 camelContext.getRegistry().bind("myClient", sqs);
 
 // refer to the custom client via myClient as the bean id
-from("aws2-sqs://MyQueue?amazonSQSClient=#m4yClient&delay=5000&maxMessagesPerPoll=5")
+from("aws2-sqs://MyQueue?amazonSQSClient=#myClient&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
----------------------------------------------------------------------------------
+----
 
 === DelayQueue VS Delay for Single message
 
@@ -131,20 +132,66 @@ route, unless the route ended in failure. To achieve appropriate
 filtering and not send the DeleteMessage even on successful completion
 of the route, use a Filter:
 
+[tabs]
+====
+Java::
++
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("aws2-sqs://MyQueue?amazonSQSClient=#client&defaultVisibilityTimeout=5000&deleteIfFiltered=false&deleteAfterRead=false")
 .filter("${header.login} == true")
-  .setProperty(Sqs2Constants.SQS_DELETE_FILTERED, constant(true))
+  .setProperty("CamelAwsSqsDeleteFiltered", constant(true))
   .to("mock:filter");
-------------------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="aws2-sqs://MyQueue?amazonSQSClient=#client&amp;defaultVisibilityTimeout=5000&amp;deleteIfFiltered=false&amp;deleteAfterRead=false"/>
+  <filter>
+    <simple>${header.login} == true</simple>
+    <setProperty name="CamelAwsSqsDeleteFiltered">
+      <constant>true</constant>
+    </setProperty>
+    <to uri="mock:filter"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-sqs://MyQueue
+      parameters:
+        amazonSQSClient: "#client"
+        defaultVisibilityTimeout: 5000
+        deleteIfFiltered: false
+        deleteAfterRead: false
+      steps:
+        - filter:
+            simple: "${header.login} == true"
+            steps:
+              - setProperty:
+                  name: CamelAwsSqsDeleteFiltered
+                  constant: true
+              - to:
+                  uri: mock:filter
+----
+====
+
+TIP: In Java code, you can use the constant `Sqs2Constants.SQS_DELETE_FILTERED` for the property name.
 
 In the above code, if an exchange doesn't have an appropriate header, it
 will not make it through the filter AND also not be deleted from the SQS
 queue. After 5000 milliseconds, the message will become visible to other
 consumers.
 
-Note we must set the property `Sqs2Constants.SQS_DELETE_FILTERED` to `true` to
+Note we must set the property `CamelAwsSqsDeleteFiltered` to `true` to
 instruct Camel to send the DeleteMessage, if being filtered.
 
 === Available Producer Operations
@@ -203,23 +250,21 @@ YAML::
 
 You can set a `SendMessageBatchRequest` or an `Iterable`
 
+._Java-only: requires constructing a `List` body programmatically for batch messages_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
-  .setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage"))
-  .process(new Processor() {
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          List c = new ArrayList();
-          c.add("team1");
-          c.add("team2");
-          c.add("team3");
-          c.add("team4");
-          exchange.getIn().setBody(c);					
-      }
+  .setHeader("CamelAwsSqsOperation", constant("sendBatchMessage"))
+  .process(exchange -> {
+      List<String> c = new ArrayList<>();
+      c.add("team1");
+      c.add("team2");
+      c.add("team3");
+      c.add("team4");
+      exchange.getIn().setBody(c);
   })
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
-------------------------------------------------------------------------------------------------------
+----
 
 As result, you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examine to check what messages were successful and what not.
 The id set on each message of the batch will be a Random UUID.
@@ -235,8 +280,8 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .setHeader(SqsConstants.SQS_OPERATION, constant("deleteMessage"))
-    .setHeader(SqsConstants.RECEIPT_HANDLE, constant("123456"))
+    .setHeader("CamelAwsSqsOperation", constant("deleteMessage"))
+    .setHeader("CamelAwsSqsReceiptHandle", constant("123456"))
     .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ----
 
@@ -292,7 +337,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues"))
+    .setHeader("CamelAwsSqsOperation", constant("listQueues"))
     .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ----
 
@@ -342,7 +387,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .setHeader(SqsConstants.SQS_OPERATION, constant("purgeQueue"))
+    .setHeader("CamelAwsSqsOperation", constant("purgeQueue"))
     .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ----
 
@@ -404,13 +449,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-sqs</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

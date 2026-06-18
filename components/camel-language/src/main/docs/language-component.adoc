@@ -163,6 +163,7 @@ You can also provide the script as a header as shown below. Here we use
 xref:languages:xpath-language.adoc[XPath] language to extract the text from the `<foo>`
 tag.
 
+._Java-only: providing the script as a message header_
 [source,java]
 ----
 Object out = producer.requestBodyAndHeader("language:xpath", "<foo>Hello World</foo>", Exchange.LANGUAGE_SCRIPT, "/foo/text()");

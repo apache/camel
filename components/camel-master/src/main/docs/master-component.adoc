@@ -89,7 +89,7 @@ TIP: Apache ActiveMQ 5.x has such a feature out of the box called https://active
 
 You can protect a clustered Camel application to only consume files from one active node.
 
-
+._Java-only: string concatenation to build the master endpoint URI_
 [source,java]
 ----
 // the file endpoint we want to consume from
@@ -108,6 +108,7 @@ The master component leverages CamelClusterService you can configure using
 
 * *Java*
 +
+._Java-only: programmatic ZooKeeperClusterService configuration_
 [source,java]
 ----
 ZooKeeperClusterService service = new ZooKeeperClusterService();

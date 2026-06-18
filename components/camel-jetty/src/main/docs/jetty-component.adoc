@@ -330,6 +330,7 @@ Spring `bean` element:
 Where the processor implementation can access the `HttpSession` as
 follows:
 
+._Java-only: inline Processor accessing HttpSession_
 [source,java]
 ----
 public void process(Exchange exchange) throws Exception {
@@ -353,6 +354,7 @@ to use the utility with the Jetty component.
 [[Jetty-Programmaticconfigurationofthecomponent]]
 Programmatic configuration of the component
 
+._Java-only: programmatic SSL configuration with KeyStore and SSLContext parameters_
 [source,java]
 ----
 KeyStoreParameters ksp = new KeyStoreParameters();
@@ -475,6 +477,7 @@ the port number as entry).
 Jetty stores a reference to the certificate in the HttpServletRequest
 which you can access from code as follows:
 
+._Java-only: accessing X509Certificate from HttpServletRequest_
 [source,java]
 ----
 HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
@@ -633,10 +636,38 @@ You can configure a list of Jetty handlers as follows:
 
 You can then define the endpoint as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler"/>
+    <!-- ... -->
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://0.0.0.0:9080/myservice
+      parameters:
+        handlers: securityHandler
+    steps:
+      # ...
+----
+====
 
 If you need more handlers, set the `handlers` option equal to a
 comma-separated list of bean IDs.

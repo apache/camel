@@ -20,9 +20,9 @@ The exchanges sent to the endpoint are all available to be browsed.
 
 == URI format
 
--------------------------
+----
 browse:someId[?options]
--------------------------
+----
 
 Where _someId_ can be any string to uniquely identify the endpoint.
 
@@ -76,6 +76,7 @@ YAML::
 
 We can now inspect the received exchanges from within the Java code:
 
+._Java-only: inspecting received exchanges using the BrowsableEndpoint API_
 [source,java]
 ----
 private CamelContext context;

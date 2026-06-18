@@ -20,34 +20,34 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
--------------------------------------------------------------------------------------
+----
 <dependency>
    <groupId>org.apache.camel</groupId>
    <artifactId>camel-cxf-rest</artifactId>
    <version>x.x.x</version>  <!-- use the same version as your Camel core version -->
 </dependency>
--------------------------------------------------------------------------------------
+----
 
 == URI format
 
------------------------
+----
 cxfrs://address?options
------------------------
+----
 
 Where *address* represents the CXF endpoint's address
 
----------------------
+----
 cxfrs:bean:rsEndpoint
----------------------
+----
 
 Where *rsEndpoint* represents the spring bean's name, which presents the
 CXFRS client or server
 
 For either style above, you can append options to the URI as follows:
 
-------------------------------------------------------------------
+----
 cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
-------------------------------------------------------------------
+----
 
 
 // component options: START
@@ -88,11 +88,12 @@ You can find a Camel REST service route configuration example there.
 
 The `camel-cxfrs` producer supports overriding the service address by setting the message with the key of `CamelDestinationOverrideUrl`.
 
+._Java-only: inline exchange header manipulation_
 [source,java]
-----------------------------------------------------------------------------------------------
+----
  // set up the service address from the message header to override the setting of CXF endpoint
  exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()));
-----------------------------------------------------------------------------------------------
+----
 
 === Consuming a REST Request - Simple Binding Style
 
@@ -137,11 +138,38 @@ respected, and it becomes the final response.
 This binding style can be activated by setting the `bindingStyle`
 parameter in the consumer endpoint to value `SimpleConsumer`:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------
-  from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+----
+from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
     .to("log:TEST?showAll=true");
----------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="cxfrs:bean:rsServer?bindingStyle=SimpleConsumer"/>
+  <to uri="log:TEST?showAll=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "cxfrs:bean:rsServer?bindingStyle=SimpleConsumer"
+      steps:
+        - to:
+            uri: "log:TEST?showAll=true"
+----
+====
 
 === Examples of request binding with different method signatures
 
@@ -166,28 +194,68 @@ is preserved as the _IN_ message body.
 
 Given a JAX-RS resource class with this method:
 
+._Java-only: Java JAX-RS annotation_
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------------------
+----
 @POST @Path("/customers/{type}")
 public Response newCustomer(Customer customer, @PathParam("type") String type, @QueryParam("active") @DefaultValue("true") boolean active) {
     return null;
 }
-------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 Serviced by the following route:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------------------
+----
 from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
     .recipientList(simple("direct:${header.CamelCxfOperationName}"));
 
 from("direct:newCustomer")
     .log("Request: type=${header.type}, active=${header.active}, customerData=${body}");
---------------------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="cxfrs:bean:rsServer?bindingStyle=SimpleConsumer"/>
+  <recipientList>
+    <simple>direct:${header.CamelCxfOperationName}</simple>
+  </recipientList>
+</route>
+<route>
+  <from uri="direct:newCustomer"/>
+  <log message="Request: type=${header.type}, active=${header.active}, customerData=${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "cxfrs:bean:rsServer?bindingStyle=SimpleConsumer"
+      steps:
+        - recipientList:
+            simple: "direct:${header.CamelCxfOperationName}"
+- route:
+    from:
+      uri: direct:newCustomer
+      steps:
+        - log:
+            message: "Request: type=${header.type}, active=${header.active}, customerData=${body}"
+----
+====
 
 The following HTTP request with XML payload (given that the Customer DTO is JAXB-annotated):
 
--------------------------------------
+----
 POST /customers/gold?active=true
 
 Payload:
@@ -196,13 +264,13 @@ Payload:
   <country>Spain</country>
   <project>Apache Camel</project>
 </Customer>
--------------------------------------
+----
 
 Will print the message:
 
-----------------------------------------------------------------------------------
+----
 Request: type=gold, active=true, customerData=<Customer.toString() representation>
-----------------------------------------------------------------------------------
+----
 
 [NOTE]
 ====
@@ -225,6 +293,8 @@ JSR-311 specification. All you need to do in Camel is delegate this
 method request to the right processor or endpoint.
 
 Here is an example of a CXFRS route...
+
+._Java-only: Java RouteBuilder with constants and Processors_
 [source,java]
 ----
 private static final String CXF_RS_ENDPOINT_URI =
@@ -281,6 +351,7 @@ set on the Camel exchange, and the route execution will continue as
 usual. This can be useful for integrating the existing JAX-RS implementations into Camel routes and
 for post-processing JAX-RS Responses in custom processors.
 
+._Java-only: Java JAX-RS interface definition_
 [source,java]
 ----
 @Path("/customerservice/")
@@ -319,6 +390,8 @@ prepare the parameter in the message body, the camel-cxfrs producer will
  generate the right REST request for you.
 
 Here is an example:
+
+._Java-only: Java test API (ProducerTemplate with inline Processor)_
 [source,java]
 ----
 Exchange exchange = template.send("direct://proxy", new Processor() {
@@ -362,6 +435,8 @@ https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apac
 You can turn the response object to the type class specified with the
 message
 header https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apache/camel/component/cxf/common/message/CxfConstants.html#CAMEL_CXF_RS_RESPONSE_CLASS[CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS].
+
+._Java-only: Java test API (ProducerTemplate with inline Processor)_
 [source,java]
 ----
 Exchange exchange = template.send("direct://http", new Processor() {
@@ -385,6 +460,8 @@ Exchange exchange = template.send("direct://http", new Processor() {
 ----
 We also support to specify the query parameters from
 cxfrs URI for the CXFRS http centric client.
+
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 ----
 Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpClientAPI=true&q1=12&q2=13"
@@ -392,6 +469,8 @@ Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpC
 To support the Dynamical routing, you can override the URI's query
 parameters by using the https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apache/camel/component/cxf/common/message/CxfConstants.html#CAMEL_CXF_RS_QUERY_MAP[CxfConstants.CAMEL_CXF_RS_QUERY_MAP]
 header to set the parameter map for it.
+
+._Java-only: Java collection API_
 [source,java]
 ----
 Map<String, String> queryMap = new LinkedHashMap<>();

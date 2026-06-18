@@ -80,12 +80,45 @@ camel.vault.spring-config.password=configPass
 camel.vault.spring-config.label=latest
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct")
   .setHeader("MyHeader", simple("{{spring-config:custom.property}}"))
   .to("log");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct"/>
+  <setHeader name="MyHeader">
+    <simple>{{spring-config:custom.property}}</simple>
+  </setHeader>
+  <to uri="log"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      steps:
+        - setHeader:
+            name: MyHeader
+            simple: "{{spring-config:custom.property}}"
+        - to:
+            uri: log
+----
+====
 
 == Automatic Configuration Reload
 

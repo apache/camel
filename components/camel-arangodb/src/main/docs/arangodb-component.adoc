@@ -20,22 +20,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-arangodb</artifactId>
     <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 == URI format
 
 [source,java]
----------------------------
+----
 arangodb:database[?options]
----------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -87,23 +87,54 @@ YAML::
 
 And you can set as body a BaseDocument class 
 
---------------------------------------------------------------------------------
+----
 BaseDocument myObject = new BaseDocument();
 myObject.addAttribute("a", "Foo");
 myObject.addAttribute("b", 42);
---------------------------------------------------------------------------------
+----
 
 ==== Query a collection
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:query")
-  .to("arangodb:testDb?operation=AQL_QUERY
---------------------------------------------------------------------------------
+    .to("arangodb:testDb?operation=AQL_QUERY");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:query"/>
+  <to uri="arangodb:testDb?operation=AQL_QUERY"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:query
+      steps:
+        - to:
+            uri: arangodb:testDb
+            parameters:
+              operation: AQL_QUERY
+----
+====
 
 And you can invoke an AQL Query in this way
 
---------------------------------------------------------------------------------
+._Java-only: ProducerTemplate with AQL query parameters and string concatenation_
+[source,java]
+----
 String query = "FOR t IN " + COLLECTION_NAME + " FILTER t.value == @value";
 Map<String, Object> bindVars = new MapBuilder().put("value", "hello")
         .get();
@@ -112,7 +143,7 @@ Exchange result = template.request("direct:query", exchange -> {
     exchange.getMessage().setHeader(AQL_QUERY, query);
     exchange.getMessage().setHeader(AQL_QUERY_BIND_PARAMETERS, bindVars);
 });
---------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

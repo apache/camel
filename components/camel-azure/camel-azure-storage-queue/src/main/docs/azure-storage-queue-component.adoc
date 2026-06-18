@@ -28,21 +28,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-storage-queue</artifactId>
     <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI Format
 
 [source,text]
-------------------------------
+----
 azure-storage-queue://accountName[/queueName][?options]
-------------------------------
+----
 
 In the case of consumer, `accountName` and `queueName` are required.
 
@@ -117,7 +117,7 @@ have more control over the `QueueServiceClient` instance configuration, you can
 create your own instance:
 
 [source,java]
------------------------------------------------------------------------
+----
 StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
 String uri = String.format("https://%s.queue.core.windows.net", "yourAccountName");
 
@@ -127,7 +127,7 @@ QueueServiceClient client = new QueueServiceClientBuilder()
                           .buildClient();
 // This is camel context
 context.getRegistry().bind("client", client);
------------------------------------------------------------------------
+----
 
 Then refer to this instance in your Camel `azure-storage-queue` component configuration:
 
@@ -255,141 +255,391 @@ YAML::
 === Producer Operations Examples
 - `listQueues`:
 
+._Java-only: requires SDK QueuesSegmentOptions object_
+
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
     .process(exchange -> {
-      // set the header you want the producer to evaluate, refer to the previous
-      // section to learn about the headers that can be set
-      // e.g., to only returns a list of queues with 'awesome' prefix:
-      exchange.getIn().setHeader(QueueConstants.QUEUES_SEGMENT_OPTIONS, new QueuesSegmentOptions().setPrefix("awesome"));
-     })
+        exchange.getIn().setHeader("CamelAzureStorageQueueSegmentOptions",
+                new QueuesSegmentOptions().setPrefix("awesome"));
+    })
     .to("azure-storage-queue://cameldev?serviceClient=#client&operation=listQueues")
     .log("${body}")
     .to("mock:result");
------------------------------------------------------------------------
-
+----
 
 - `createQueue`:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-      // set the header you want the producer to evaluate, refer to the previous
-      // section to learn about the headers that can be set
-      // e.g.:
-      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
-     })
+    .setHeader("CamelAzureStorageQueueName", constant("overrideName"))
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=createQueue");
------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureStorageQueueName">
+    <constant>overrideName</constant>
+  </setHeader>
+  <to uri="azure-storage-queue://cameldev/test?serviceClient=#client&amp;operation=createQueue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureStorageQueueName
+            constant: overrideName
+        - to:
+            uri: azure-storage-queue://cameldev/test
+            parameters:
+              serviceClient: "#client"
+              operation: createQueue
+----
+====
 
 - `deleteQueue`:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-      // set the header you want the producer to evaluate, refer to the previous
-      // section to learn about the headers that can be set
-      // e.g.:
-      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
-     })
+    .setHeader("CamelAzureStorageQueueName", constant("overrideName"))
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=deleteQueue");
------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureStorageQueueName">
+    <constant>overrideName</constant>
+  </setHeader>
+  <to uri="azure-storage-queue://cameldev/test?serviceClient=#client&amp;operation=deleteQueue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureStorageQueueName
+            constant: overrideName
+        - to:
+            uri: azure-storage-queue://cameldev/test
+            parameters:
+              serviceClient: "#client"
+              operation: deleteQueue
+----
+====
 
 - `clearQueue`:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-      // set the header you want the producer to evaluate, refer to the previous
-      // section to learn about the headers that can be set
-      // e.g.:
-      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
-     })
+    .setHeader("CamelAzureStorageQueueName", constant("overrideName"))
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=clearQueue");
------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureStorageQueueName">
+    <constant>overrideName</constant>
+  </setHeader>
+  <to uri="azure-storage-queue://cameldev/test?serviceClient=#client&amp;operation=clearQueue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureStorageQueueName
+            constant: overrideName
+        - to:
+            uri: azure-storage-queue://cameldev/test
+            parameters:
+              serviceClient: "#client"
+              operation: clearQueue
+----
+====
 
 - `sendMessage`:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-      // set the header you want the producer to evaluate, refer to the previous
-      // section to learn about the headers that can be set
-      // e.g.:
-      exchange.getIn().setBody("message to send");
-      // we set a visibility of 1min
-      exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMinutes(1));
-     })
+    .setBody(constant("message to send"))
     .to("azure-storage-queue://cameldev/test?serviceClient=#client");
------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>message to send</constant>
+  </setBody>
+  <to uri="azure-storage-queue://cameldev/test?serviceClient=#client"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: message to send
+        - to:
+            uri: azure-storage-queue://cameldev/test
+            parameters:
+              serviceClient: "#client"
+----
+====
 
 - `deleteMessage`:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-      // set the header you want the producer to evaluate, refer to the previous
-      // section to learn about the headers that can be set
-      // e.g.:
-      // Mandatory header:
-      exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
-      // Mandatory header:
-      exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, "PAAAAHEEERXXX-1");
-     })
+    .setHeader("CamelAzureStorageQueueMessageId", constant("1"))
+    .setHeader("CamelAzureStorageQueuePopReceipt", constant("PAAAAHEEERXXX-1"))
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=deleteMessage");
------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureStorageQueueMessageId">
+    <constant>1</constant>
+  </setHeader>
+  <setHeader name="CamelAzureStorageQueuePopReceipt">
+    <constant>PAAAAHEEERXXX-1</constant>
+  </setHeader>
+  <to uri="azure-storage-queue://cameldev/test?serviceClient=#client&amp;operation=deleteMessage"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureStorageQueueMessageId
+            constant: "1"
+        - setHeader:
+            name: CamelAzureStorageQueuePopReceipt
+            constant: PAAAAHEEERXXX-1
+        - to:
+            uri: azure-storage-queue://cameldev/test
+            parameters:
+              serviceClient: "#client"
+              operation: deleteMessage
+----
+====
 
 - `receiveMessages`:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=receiveMessages")
-    .process(exchange -> {
-        final List<QueueMessageItem> messageItems = exchange.getMessage().getBody(List.class);
-        messageItems.forEach(messageItem -> System.out.println(messageItem.getMessageText()));
-    })
-   .to("mock:result");
------------------------------------------------------------------------
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="azure-storage-queue://cameldev/test?serviceClient=#client&amp;operation=receiveMessages"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: azure-storage-queue://cameldev/test
+            parameters:
+              serviceClient: "#client"
+              operation: receiveMessages
+        - to:
+            uri: mock:result
+----
+====
 
 - `peekMessages`:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=peekMessages")
-    .process(exchange -> {
-        final List<PeekedMessageItem> messageItems = exchange.getMessage().getBody(List.class);
-        messageItems.forEach(messageItem -> System.out.println(messageItem.getMessageText()));
-    })
-   .to("mock:result");
------------------------------------------------------------------------
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="azure-storage-queue://cameldev/test?serviceClient=#client&amp;operation=peekMessages"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: azure-storage-queue://cameldev/test
+            parameters:
+              serviceClient: "#client"
+              operation: peekMessages
+        - to:
+            uri: mock:result
+----
+====
 
 - `updateMessage`:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:start")
-   .process(exchange -> {
-       // set the header you want the producer to evaluate, refer to the previous
-       // section to learn about the headers that can be set
-       // e.g.:
-       exchange.getIn().setBody("new message text");
-       // Mandatory header:
-       exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
-       // Mandatory header:
-       exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, "PAAAAHEEERXXX-1");
-       // Mandatory header:
-       exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMinutes(1));
-    })
+    .setBody(constant("new message text"))
+    .setHeader("CamelAzureStorageQueueMessageId", constant("1"))
+    .setHeader("CamelAzureStorageQueuePopReceipt", constant("PAAAAHEEERXXX-1"))
     .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=updateMessage");
------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>new message text</constant>
+  </setBody>
+  <setHeader name="CamelAzureStorageQueueMessageId">
+    <constant>1</constant>
+  </setHeader>
+  <setHeader name="CamelAzureStorageQueuePopReceipt">
+    <constant>PAAAAHEEERXXX-1</constant>
+  </setHeader>
+  <to uri="azure-storage-queue://cameldev/test?serviceClient=#client&amp;operation=updateMessage"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: new message text
+        - setHeader:
+            name: CamelAzureStorageQueueMessageId
+            constant: "1"
+        - setHeader:
+            name: CamelAzureStorageQueuePopReceipt
+            constant: PAAAAHEEERXXX-1
+        - to:
+            uri: azure-storage-queue://cameldev/test
+            parameters:
+              serviceClient: "#client"
+              operation: updateMessage
+----
+====
 
 
 == Important Development Notes

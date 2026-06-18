@@ -28,14 +28,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-printer</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
@@ -43,10 +43,10 @@ Since the URI scheme for a printer has not been standardized (the
 nearest thing to a standard being the IETF print standard), and therefore
 not uniformly applied by vendors, we have chosen *"lpr"* as the scheme.
 
------------------------------------------------
+----
 lpr://localhost/default[?options]
 lpr://remotehost:port/path/to/printer[?options]
------------------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -72,49 +72,134 @@ Usage samples.
 === Printing text-based payloads
 
 .Printing text-based payloads on a Default printer using letter stationary and one-sided mode
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-       from("file://inputdir/?delete=true")
-       .to("lpr://localhost/default?copies=2" +
-           "&flavor=DocFlavor.INPUT_STREAM&" +
-           "&mimeType=AUTOSENSE" +
-           "&mediaSize=NA_LETTER" +
-           "&sides=one-sided");
-    }};
------------------------------------------------
+----
+from("file://inputdir/?delete=true")
+    .to("lpr://localhost/default?copies=2&flavor=DocFlavor.INPUT_STREAM&mimeType=AUTOSENSE&mediaSize=NA_LETTER&sides=one-sided");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="lpr://localhost/default?copies=2&amp;flavor=DocFlavor.INPUT_STREAM&amp;mimeType=AUTOSENSE&amp;mediaSize=NA_LETTER&amp;sides=one-sided"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: lpr://localhost/default
+            parameters:
+              copies: 2
+              flavor: DocFlavor.INPUT_STREAM
+              mimeType: AUTOSENSE
+              mediaSize: NA_LETTER
+              sides: one-sided
+----
+====
 
 === Printing GIF-based payloads
 
 .Printing GIF-based payloads on a remote printer using A4 stationary and one-sided mode
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-       from("file://inputdir/?delete=true")
-       .to("lpr://remotehost/sales/salesprinter" +
-           "?copies=2&sides=one-sided" +
-           "&mimeType=GIF&mediaSize=ISO_A4" +
-           "&flavor=DocFlavor.INPUT_STREAM");
-   }};
---------------------------------------------------
+----
+from("file://inputdir/?delete=true")
+    .to("lpr://remotehost/sales/salesprinter?copies=2&sides=one-sided&mimeType=GIF&mediaSize=ISO_A4&flavor=DocFlavor.INPUT_STREAM");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="lpr://remotehost/sales/salesprinter?copies=2&amp;sides=one-sided&amp;mimeType=GIF&amp;mediaSize=ISO_A4&amp;flavor=DocFlavor.INPUT_STREAM"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: lpr://remotehost/sales/salesprinter
+            parameters:
+              copies: 2
+              sides: one-sided
+              mimeType: GIF
+              mediaSize: ISO_A4
+              flavor: DocFlavor.INPUT_STREAM
+----
+====
 
 === Printing JPEG-based payloads
 
 .Printing JPEG-based payloads on a remote printer using Japanese Postcard stationary and one-sided mode
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-       from("file://inputdir/?delete=true")
-       .to("lpr://remotehost/sales/salesprinter" +
-           "?copies=2&sides=one-sided" +
-           "&mimeType=JPEG" +
-           "&mediaSize=JAPANESE_POSTCARD" +
-           "&flavor=DocFlavor.INPUT_STREAM");
-    }};
---------------------------------------------------
+----
+from("file://inputdir/?delete=true")
+    .to("lpr://remotehost/sales/salesprinter?copies=2&sides=one-sided&mimeType=JPEG&mediaSize=JAPANESE_POSTCARD&flavor=DocFlavor.INPUT_STREAM");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="lpr://remotehost/sales/salesprinter?copies=2&amp;sides=one-sided&amp;mimeType=JPEG&amp;mediaSize=JAPANESE_POSTCARD&amp;flavor=DocFlavor.INPUT_STREAM"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: lpr://remotehost/sales/salesprinter
+            parameters:
+              copies: 2
+              sides: one-sided
+              mimeType: JPEG
+              mediaSize: JAPANESE_POSTCARD
+              flavor: DocFlavor.INPUT_STREAM
+----
+====
 
 
 include::spring-boot:partial$starter.adoc[]

@@ -71,18 +71,20 @@ YAML DSL::
             uri: mqseries:Another.Queue
 ----
 ====
-+
+
+._Java-only: selecting the SnakeYAML library explicitly_
 [source,java]
-------------------------------------------------------------
+----
 from("activemq:My.Queue")
   .marshal().yaml(YAMLLibrary.SnakeYAML)
   .to("mqseries:Another.Queue");
-------------------------------------------------------------
+----
 
 - Restrict classes to be loaded from YAML
-+
+
+._Java-only: programmatic type filter configuration_
 [source,java]
-------------------------------------------------------------
+----
 // Creat a SnakeYAMLDataFormat instance
 SnakeYAMLDataFormat yaml = new SnakeYAMLDataFormat();
 
@@ -92,7 +94,7 @@ yaml.addTypeFilters(TypeFilters.types(MyPojo.class, MyOtherPojo.class));
 from("activemq:My.Queue")
   .unmarshal(yaml)
   .to("mqseries:Another.Queue");
-------------------------------------------------------------
+----
 
 == Using YAML in Spring DSL
 
@@ -101,7 +103,7 @@ declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
 [source,xml]
---------------------------------------------------------------------------------
+----
 <dataFormats>
   <!--
     here we define a YAML data format with the id snake and that it should use
@@ -123,12 +125,12 @@ tag.
     <typeFilter value="com.mycompany\..*" type="regexp"/>
   </yaml>
 </dataFormats>
---------------------------------------------------------------------------------
+----
 
 And then you can refer to those ids in the route:
 
 [source,xml]
--------------------------------------
+----
   <route>
     <from uri="direct:unmarshal"/>
     <unmarshal>
@@ -143,7 +145,7 @@ And then you can refer to those ids in the route:
     </unmarshal>
     <to uri="mock:unmarshal-safe"/>
   </route>
--------------------------------------
+----
 
 
 == Dependencies for SnakeYAML
@@ -156,13 +158,13 @@ substituting the version number for the latest release
 (see the download page for the latest versions).
 
 [source,xml]
-------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-snakeyaml</artifactId>
   <version>${camel-version}</version>
 </dependency>
-------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

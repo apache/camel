@@ -25,23 +25,58 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Examples
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------
+----
 from("queue:foo")
   .filter().xquery("//foo")
-    .to("queue:bar")
----------------------------
+    .to("queue:bar");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="queue:foo"/>
+  <filter>
+    <xquery>//foo</xquery>
+    <to uri="queue:bar"/>
+  </filter>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: queue:foo
+      steps:
+        - filter:
+            xquery:
+              expression: //foo
+            steps:
+              - to:
+                  uri: queue:bar
+----
+====
 
 You can also use functions inside your query, in which case you need an
 explicit type conversion (otherwise you will get a `org.w3c.dom.DOMException:
 HIERARCHY_REQUEST_ERR`), by passing the Class as a second argument to the
 *xquery()* method.
 
+._Java-only: xquery() with class literal parameter_
 [source,java]
------------------------------------------------------------------------------
+----
 from("direct:start")
   .recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
------------------------------------------------------------------------------
+----
 
 == Usage
 
@@ -78,7 +113,7 @@ If you prefer to configure your routes in your Spring
 XML file, then you can use XPath expressions as follows
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:foo="http://example.com/person"
@@ -96,7 +131,7 @@ XML file, then you can use XPath expressions as follows
     </route>
   </camelContext>
 </beans>
----------------------------------------------------------------------------------------------------------------
+----
 
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
 the XPath expression for easier namespace-based XQuery expressions!
@@ -106,9 +141,9 @@ type conversion which is done in the xml configuration via the *@type*
 attribute:
 
 [source,xml]
--------------------------------------------------------------------------------
+----
 <xquery resultType="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
--------------------------------------------------------------------------------
+----
 
 
 === Using XQuery as an endpoint
@@ -122,7 +157,7 @@ The following example shows how to take a message of an ActiveMQ queue
 (MyQueue) and transform it using XQuery and send it to MQSeries.
 
 [source,xml]
--------------------------------------------------------------------------
+----
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="activemq:MyQueue"/>
@@ -130,7 +165,7 @@ The following example shows how to take a message of an ActiveMQ queue
       <to uri="mqseries:SomeOtherQueue"/>
     </route>
   </camelContext>
--------------------------------------------------------------------------
+----
 
 === Loading script from external resource
 
@@ -139,10 +174,11 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: setHeader with xquery() and class literal_
 [source,java]
-------------------------------------------------------------------------------
+----
 .setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
-------------------------------------------------------------------------------
+----
 
 === Learning XQuery
 
@@ -162,13 +198,13 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest release.
 
 [source,xml]
---------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-saxon</artifactId>
   <version>x.x.x</version>
 </dependency>
---------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

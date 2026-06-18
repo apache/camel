@@ -39,6 +39,7 @@ Add the `camel-diagram` dependency to your project:
 
 You can use the diagram renderer with the Camel API to render as PNG images:
 
+._Java-only: using RouteDiagramDumper to render as PNG image_
 [source,java]
 ----
 RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(context);
@@ -47,6 +48,7 @@ BufferedImage image = dumper.dumpRoutesAsImage("*", RouteDiagramDumper.Theme.DAR
 
 Or render as ASCII art text:
 
+._Java-only: using RouteDiagramDumper to render as ASCII art_
 [source,java]
 ----
 RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(context);
@@ -57,6 +59,7 @@ String ascii = dumper.dumpRoutesAsAsciiArt("*");
 
 Then use the API to render diagrams:
 
+._Java-only: standalone rendering to PNG image_
 [source,java]
 ----
 import org.apache.camel.diagram.*;
@@ -80,6 +83,7 @@ ImageIO.write(image, "PNG", new File("diagram.png"));
 
 To render as ASCII art instead:
 
+._Java-only: standalone rendering to ASCII art_
 [source,java]
 ----
 import org.apache.camel.diagram.*;
@@ -255,6 +259,7 @@ or they typically follow the pattern `<eipName><index>`.
 
 === With Java API
 
+._Java-only: path highlighting with ASCII and PNG renderers_
 [source,java]
 ----
 import org.apache.camel.diagram.*;

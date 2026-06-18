@@ -45,19 +45,21 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listReplicationControllers`: this operation lists the RCs on a kubernetes cluster
 
+._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:list").
     toF("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllers").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of RCs from your cluster
 
 - `listReplicationControllersByLabels`: this operation lists the RCs by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listByLabels").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -69,14 +71,15 @@ from("direct:listByLabels").process(new Processor() {
         });
     toF("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllersByLabels").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of RCs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 === Kubernetes Replication Controllers Consumer Example
 
+._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
 [source,java]
---------------------------------------------------------------------------------
+----
 fromF("kubernetes-replication-controllers://%s?oauthToken=%s", host, authToken)
     .process(new KubernetesProcessor()).to("mock:result");
 
@@ -88,7 +91,7 @@ fromF("kubernetes-replication-controllers://%s?oauthToken=%s", host, authToken)
             log.info("Got event with replication controller name: " + rc.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
---------------------------------------------------------------------------------
+----
 
 This consumer returns a message per event received for all ReplicationControllers from all namespaces in the cluster.
 

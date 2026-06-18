@@ -79,6 +79,8 @@ The meter attributes defined as URI parameters can be augmented by populating a 
 
 For example
 
+._Java-only: requires OpenTelemetry Attributes API_
+
 [source,java]
 ----
 from("direct:in")
@@ -244,24 +246,97 @@ Message headers can be used to override `increment` and `decrement` values speci
 |CamelMetricsCounterDecrement  |Override decrement value in URI |Long
 |====================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // update counter 'simple.counter' by 417
 from("direct:in")
-    .setHeader(OpenTelemetryConstants.HEADER_COUNTER_INCREMENT, constant(417))
+    .setHeader("CamelMetricsCounterIncrement", constant(417L))
     .to("opentelemetry-metrics:counter:simple.counter?increment=7")
     .to("direct:out");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsCounterIncrement">
+    <constant resultType="java.lang.Long">417</constant>
+  </setHeader>
+  <to uri="opentelemetry-metrics:counter:simple.counter?increment=7"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsCounterIncrement
+            constant: 417
+        - to:
+            uri: opentelemetry-metrics:counter:simple.counter
+            parameters:
+              increment: 7
+        - to:
+            uri: direct:out
+----
+====
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // updates counter using simple language to evaluate 'body.length'
 from("direct:in")
-    .setHeader(OpenTelemetryConstants.HEADER_COUNTER_INCREMENT, simple("${body.length}"))
+    .setHeader("CamelMetricsCounterIncrement", simple("${body.length}"))
     .to("opentelemetry-metrics:counter:body.len")
     .to("direct:out");
-
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsCounterIncrement">
+    <simple>${body.length}</simple>
+  </setHeader>
+  <to uri="opentelemetry-metrics:counter:body.len"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsCounterIncrement
+            simple: "${body.length}"
+        - to:
+            uri: opentelemetry-metrics:counter:body.len
+        - to:
+            uri: direct:out
+----
+====
 
 [[OpenTelemetryComponent-summary]]
 === Distribution Summary
@@ -410,15 +485,52 @@ A specific Message header can be used to override the value specified in the Ope
 |CamelMetricsHistogramValue |Override histogram value in URI |Long
 |=================================================================
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-// adds value 992.0 to 'simple.histogram'
+// adds value 992 to 'simple.histogram'
 from("direct:in")
-    .setHeader(OpenTelemetryConstants.HEADER_HISTOGRAM_VALUE, constant(992))
+    .setHeader("CamelMetricsHistogramValue", constant(992L))
     .to("opentelemetry-metrics:summary:simple.histogram?value=700")
-    .to("direct:out")
-
+    .to("direct:out");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:in"/>
+  <setHeader name="CamelMetricsHistogramValue">
+    <constant resultType="java.lang.Long">992</constant>
+  </setHeader>
+  <to uri="opentelemetry-metrics:summary:simple.histogram?value=700"/>
+  <to uri="direct:out"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - setHeader:
+            name: CamelMetricsHistogramValue
+            constant: 992
+        - to:
+            uri: opentelemetry-metrics:summary:simple.histogram
+            parameters:
+              value: 700
+        - to:
+            uri: direct:out
+----
+====
 
 [[OpenTelemetryComponent-timer]]
 === Timer
@@ -497,6 +609,8 @@ A specific Message header can be used to override action value specified in the 
 |`org.apache.camel.component.opentelemetry.OpenTelemetryTimerAction`
 |=======================================================================
 
+._Java-only: requires OpenTelemetryTimerAction enum_
+
 [source,java]
 ----
 // sets timer action using header
@@ -516,6 +630,8 @@ while the xref:#OpenTelemetryComponent-exchange-event-notifier[Exchange Event No
 ==== Camel Route Event Notifier
 
 A Route event notifier can be added to the CamelContext as follows:
+
+._Java-only: programmatic CamelContext API_
 
 [source,java]
 ----
@@ -544,6 +660,8 @@ The following options are supported:
 ==== Camel Exchange Event Notifier
 
 An Exchange event notifier can be added to the CamelContext as follows:
+
+._Java-only: programmatic CamelContext API_
 
 [source,java]
 ----
@@ -578,6 +696,8 @@ leading to high cardinality in metrics.
 === OpenTelemetry Route Policy
 
 Route policy metrics can be enabled by adding the `OpenTelemetryRoutePolicyFactory` to the `CamelContext`:
+
+._Java-only: programmatic CamelContext API_
 
 [source,java]
 ----
@@ -621,6 +741,8 @@ The following options are supported:
 It works by using an OpenTelemetry Timer to record the time taken to process each node in all routes.
 
 The `OpenTelemetryMessageHistoryFactory` can be added to the `CamelContext`:
+
+._Java-only: programmatic CamelContext API_
 
 [source,java]
 ----

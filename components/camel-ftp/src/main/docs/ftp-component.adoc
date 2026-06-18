@@ -582,10 +582,39 @@ The file paths are matched with the following rules:
 
 The sample below demonstrates how to use it:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("ftp://admin@localhost:2222/public/camel?antInclude=**/*.txt").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ftp://admin@localhost:2222/public/camel?antInclude=**/*.txt"/>
+  <to uri="..."/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp://admin@localhost:2222/public/camel
+      parameters:
+        antInclude: "**/*.txt"
+      steps:
+        - to:
+            uri: "..."
+----
+====
 
 === Using a proxy with SFTP
 
@@ -619,11 +648,42 @@ with a private/public SSH key and fallback to user/password authentication
 in the case when no public key is available, use the following route
 configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("sftp://localhost:9999/root?username=admin&password=admin&preferredAuthentications=publickey,password").
-  to("bean:processFile");
+from("sftp://localhost:9999/root?username=admin&password=admin&preferredAuthentications=publickey,password")
+    .to("bean:processFile");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="sftp://localhost:9999/root?username=admin&amp;password=admin&amp;preferredAuthentications=publickey,password"/>
+  <to uri="bean:processFile"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: sftp://localhost:9999/root
+      parameters:
+        username: admin
+        password: admin
+        preferredAuthentications: publickey,password
+      steps:
+        - to:
+            uri: bean:processFile
+----
+====
 
 === Consuming a single file using a fixed name
 
@@ -689,6 +749,7 @@ Notice that we have used all the options we talked above.
 You can also use this with `ConsumerTemplate`. For example, to download a
 single file (if it exists) and grab the file content as a String type:
 
+._Java-only: using ConsumerTemplate to download a single file_
 [source,java]
 ----
 String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true", String.class);
@@ -749,21 +810,84 @@ YAML::
 
 === Consuming a remote FTPS server (implicit SSL) and client authentication
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=SSL&implicit=true
-      &ftpClient.keyStore.file=./src/test/resources/server.jks
-      &ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password")
-  .to("bean:foo");
+from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=SSL&implicit=true&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password")
+    .to("bean:foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ftps://admin@localhost:2222/public/camel?password=admin&amp;securityProtocol=SSL&amp;implicit=true&amp;ftpClient.keyStore.file=./src/test/resources/server.jks&amp;ftpClient.keyStore.password=password&amp;ftpClient.keyStore.keyPassword=password"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftps://admin@localhost:2222/public/camel
+      parameters:
+        password: admin
+        securityProtocol: SSL
+        implicit: true
+        ftpClient.keyStore.file: ./src/test/resources/server.jks
+        ftpClient.keyStore.password: password
+        ftpClient.keyStore.keyPassword: password
+      steps:
+        - to:
+            uri: bean:foo
+----
+====
 
 === Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("ftps://admin@localhost:2222/public/camel?password=admin&ftpClient.trustStore.file=./src/test/resources/server.jks&ftpClient.trustStore.password=password")
-  .to("bean:foo");
+    .to("bean:foo");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ftps://admin@localhost:2222/public/camel?password=admin&amp;ftpClient.trustStore.file=./src/test/resources/server.jks&amp;ftpClient.trustStore.password=password"/>
+  <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftps://admin@localhost:2222/public/camel
+      parameters:
+        password: admin
+        ftpClient.trustStore.file: ./src/test/resources/server.jks
+        ftpClient.trustStore.password: password
+      steps:
+        - to:
+            uri: bean:foo
+----
+====
 
 === Examples
 

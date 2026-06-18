@@ -139,8 +139,9 @@ This operation returns a List of ConfigMaps from your cluster, using a label sel
 
 === Kubernetes ConfigMaps Consumer Example
 
+._Java-only: consuming ConfigMap events with a custom processor_
 [source,java]
---------------------------------------------------------------------------------
+----
 fromF("kubernetes-config-maps://%s?oauthToken=%s", host, authToken)
     .process(new KubernetesProcessor()).to("mock:result");
 
@@ -152,7 +153,7 @@ fromF("kubernetes-config-maps://%s?oauthToken=%s", host, authToken)
             log.info("Got event with configmap name: " + cm.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
---------------------------------------------------------------------------------
+----
 
 This consumer returns a message per event received for all ConfigMaps from all namespaces in the cluster.
 

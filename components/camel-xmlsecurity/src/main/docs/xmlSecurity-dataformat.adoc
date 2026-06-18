@@ -82,8 +82,9 @@ at the Document, Element, and Content levels.
 
 === Full Payload encryption/decryption
 
+._Java-only: full payload encryption using generated AES key_
 [source,java]
-----------------------------
+----
 KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
 keyGenerator.init(256);
 Key key = keyGenerator.generateKey();
@@ -92,12 +93,13 @@ from("direct:start")
     .marshal().xmlSecurity(key.getEncoded())
     .unmarshal().xmlSecurity(key.getEncoded()
     .to("direct:end");
-----------------------------
+----
 
 === Partial Payload Content Only encryption/decryption with choice of passPhrase(password)
 
+._Java-only: partial payload encryption with passPhrase_
 [source,java]
-------------------------------------------------------------------
+----
 String tagXPATH = "//cheesesites/italy/cheese";
 boolean secureTagContent = true;
 ...
@@ -106,12 +108,13 @@ from("direct:start")
     .marshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase)
     .unmarshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase)
     .to("direct:end");
-------------------------------------------------------------------
+----
 
 === Partial Payload Content Only encryption/decryption with passPhrase(password) and Algorithm
 
+._Java-only: partial payload encryption with passPhrase and algorithm_
 [source,java]
------------------------------------------------------------------------------
+----
 import org.apache.xml.security.encryption.XMLCipher;
 ....
 String tagXPATH = "//cheesesites/italy/cheese";
@@ -122,15 +125,16 @@ from("direct:start")
     .marshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase, algorithm)
     .unmarshal().xmlSecurity(tagXPATH, secureTagContent, passPhrase, algorithm)
     .to("direct:end");
------------------------------------------------------------------------------
+----
 
 === Partial Payload Content with Namespace support
 
 [[XMLSecurityDataFormat-JavaDSL]]
 Java DSL
 
+._Java-only: namespace-aware encryption with asymmetric key and KeyStore_
 [source,java]
-------------------------------------------------------------------------------------------
+----
 final Map<String, String> namespaces = new HashMap<String, String>();
 namespaces.put("cust", "http://cheese.xmlsecurity.camel.apache.org/");
 
@@ -146,7 +150,7 @@ context.addRoutes(new RouteBuilder() {
            .to("mock:encrypted");
     }
 }
-------------------------------------------------------------------------------------------
+----
 
 [[XMLSecurityDataFormat-SpringXML]]
 Spring XML
@@ -156,7 +160,7 @@ definition can be re-used in context within the data format `secureTag`
 attribute of the `xmlSecurity` element.
 
 [source,xml]
----------------------------------------------------------------------------------
+----
 <camelContext id="springXmlSecurityDataFormatTestCamelContext" 
               xmlns="http://camel.apache.org/schema/spring"
               xmlns:cheese="http://cheese.xmlsecurity.camel.apache.org/">        
@@ -167,7 +171,7 @@ attribute of the `xmlSecurity` element.
                            secureTagContents="true"/>
             </marshal> 
             ...
----------------------------------------------------------------------------------
+----
 
 === Asymmetric Key Encryption
 
@@ -175,7 +179,7 @@ attribute of the `xmlSecurity` element.
 Spring XML Sender
 
 [source,xml]
---------------------------------------------------------------------------------------------------
+----
 <!--  trust store configuration -->                          
 <camel:keyStoreParameters id="trustStoreParams" resource="./sender.truststore" password="password"/>
 
@@ -193,13 +197,13 @@ Spring XML Sender
                            keyOrTrustStoreParametersRef="trustStoreParams"/>
             </marshal> 
             ...
---------------------------------------------------------------------------------------------------
+----
 
 [[XMLSecurityDataFormat-SpringXMLRecipient]]
 Spring XML Recipient
 
 [source,xml]
-----------------------------------------------------------------------------------------------
+----
 
 <!--  key store configuration -->
 <camel:keyStoreParameters id="keyStoreParams" resource="./recipient.keystore" password="password" />
@@ -219,7 +223,7 @@ Spring XML Recipient
                            keyPassword="privateKeyPassword" />
             </unmarshal>
             ...
-----------------------------------------------------------------------------------------------
+----
 
 == Dependencies
 

@@ -20,14 +20,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component.
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-knative-http</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == Knative Http producer factory
 
@@ -36,6 +36,7 @@ The factory provides some configuration options that you can set to customize th
 
 First of all the producer factory performs a lookup on the Vertx instance and the VertxOptions, so you can customize these resources and bind them to the Camel context prior to using the Kntive component.
 
+._Java-only: binding custom Vertx instance and options to the Camel registry_
 .Example
 [source,java]
 ----
@@ -52,6 +53,7 @@ context.getRegistry().bind("vertxInstance", vertx);
 In the very same manner you may also bind the Vertx web client options to the Camel context.
 The producer factory will automatically perform the lookup of the options instance.
 
+._Java-only: binding custom Vertx web client options to the Camel registry_
 .Example
 [source,java]
 ----
@@ -79,6 +81,7 @@ The Apache Camel Knative component supports special web client options to easily
 
 You can set the client options on the Knative Http producer factory as follows:
 
+._Java-only: configuring SSL client options on the Knative Http producer factory_
 .Example
 [source,java]
 ----
@@ -108,6 +111,7 @@ camel.component.knative.producerFactory.clientOptions=#bean:myClientOptions
 
 TIP: When there is no proper trust certificate available (e.g. on test environments) you can use a trust all strategy on the client options with the class `org.apache.camel.component.knative.http.TrustAllOptions`.
 
+._Java-only: using TrustAllOptions for test environments_
 .TrustAllOptions
 [source,java]
 ----
@@ -179,6 +183,7 @@ This means the OIDC access token is mounted as a file into the application conta
 
 You need to enable OIDC support on the Knative Http client in the options like this:
 
+._Java-only: configuring OIDC client options on the Knative Http producer factory_
 .Example
 [source,java]
 ----

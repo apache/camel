@@ -28,9 +28,9 @@ When creating a Lambda function, you need to specify an IAM role which has at le
 
 == URI Format
 
--------------------------
+----
 aws2-lambda://functionName[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -155,6 +155,8 @@ YAML::
 
 and by sending
 
+._Java-only: Java test API (ProducerTemplate with file upload)_
+
 [source,java]
 ----
         template.send("direct:createFunction", ExchangePattern.InOut, new Processor() {
@@ -190,7 +192,7 @@ Java::
 [source,java]
 ----
 from("direct:createFunctionUrl")
-    .setHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, constant("NONE"))
+    .setHeader("CamelAwsLambdaFunctionUrlAuthType", constant("NONE"))
     .to("aws2-lambda://myFunction?operation=createFunctionUrlConfig")
     .to("mock:result");
 ----
@@ -281,7 +283,7 @@ Java::
 [source,java]
 ----
 from("direct:updateFunctionUrl")
-    .setHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, constant("AWS_IAM"))
+    .setHeader("CamelAwsLambdaFunctionUrlAuthType", constant("AWS_IAM"))
     .to("aws2-lambda://myFunction?operation=updateFunctionUrlConfig")
     .to("mock:result");
 ----
@@ -449,17 +451,65 @@ YAML::
 
 - updateFunctionConfiguration: this operation will update the configuration of a function
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:updateFunctionConfiguration")
-    .process(exchange -> {
-        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_MEMORY_SIZE, 512);
-        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_TIMEOUT, 60);
-        exchange.getIn().setHeader(Lambda2Constants.DESCRIPTION, "Updated function description");
-    })
+    .setHeader("CamelAwsLambdaFunctionMemorySize", constant(512))
+    .setHeader("CamelAwsLambdaFunctionTimeout", constant(60))
+    .setHeader("CamelAwsLambdaDescription", constant("Updated function description"))
     .to("aws2-lambda://myFunction?operation=updateFunctionConfiguration")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:updateFunctionConfiguration"/>
+    <setHeader name="CamelAwsLambdaFunctionMemorySize">
+        <constant resultType="java.lang.Integer">512</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaFunctionTimeout">
+        <constant resultType="java.lang.Integer">60</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaDescription">
+        <constant>Updated function description</constant>
+    </setHeader>
+    <to uri="aws2-lambda://myFunction?operation=updateFunctionConfiguration"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:updateFunctionConfiguration
+    steps:
+      - setHeader:
+          name: CamelAwsLambdaFunctionMemorySize
+          constant: 512
+      - setHeader:
+          name: CamelAwsLambdaFunctionTimeout
+          constant: 60
+      - setHeader:
+          name: CamelAwsLambdaDescription
+          constant: Updated function description
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: updateFunctionConfiguration
+      - to:
+          uri: mock:result
+----
+====
 
 === Concurrency Operations
 
@@ -474,7 +524,7 @@ Java::
 [source,java]
 ----
 from("direct:putFunctionConcurrency")
-    .setHeader(Lambda2Constants.RESERVED_CONCURRENT_EXECUTIONS, constant(100))
+    .setHeader("CamelAwsLambdaReservedConcurrentExecutions", constant(100))
     .to("aws2-lambda://myFunction?operation=putFunctionConcurrency")
     .to("mock:result");
 ----
@@ -601,18 +651,72 @@ Permission operations allow you to manage the resource-based policy for your Lam
 
 - addPermission: this operation will add a permission to the function's resource-based policy
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:addPermission")
-    .process(exchange -> {
-        exchange.getIn().setHeader(Lambda2Constants.STATEMENT_ID, "s3-invoke");
-        exchange.getIn().setHeader(Lambda2Constants.ACTION, "lambda:InvokeFunction");
-        exchange.getIn().setHeader(Lambda2Constants.PRINCIPAL, "s3.amazonaws.com");
-        exchange.getIn().setHeader(Lambda2Constants.SOURCE_ARN, "arn:aws:s3:::my-bucket");
-    })
+    .setHeader("CamelAwsLambdaStatementId", constant("s3-invoke"))
+    .setHeader("CamelAwsLambdaAction", constant("lambda:InvokeFunction"))
+    .setHeader("CamelAwsLambdaPrincipal", constant("s3.amazonaws.com"))
+    .setHeader("CamelAwsLambdaSourceArn", constant("arn:aws:s3:::my-bucket"))
     .to("aws2-lambda://myFunction?operation=addPermission")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:addPermission"/>
+    <setHeader name="CamelAwsLambdaStatementId">
+        <constant>s3-invoke</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaAction">
+        <constant>lambda:InvokeFunction</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaPrincipal">
+        <constant>s3.amazonaws.com</constant>
+    </setHeader>
+    <setHeader name="CamelAwsLambdaSourceArn">
+        <constant>arn:aws:s3:::my-bucket</constant>
+    </setHeader>
+    <to uri="aws2-lambda://myFunction?operation=addPermission"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:addPermission
+    steps:
+      - setHeader:
+          name: CamelAwsLambdaStatementId
+          constant: s3-invoke
+      - setHeader:
+          name: CamelAwsLambdaAction
+          constant: "lambda:InvokeFunction"
+      - setHeader:
+          name: CamelAwsLambdaPrincipal
+          constant: s3.amazonaws.com
+      - setHeader:
+          name: CamelAwsLambdaSourceArn
+          constant: "arn:aws:s3:::my-bucket"
+      - to:
+          uri: aws2-lambda://myFunction
+          parameters:
+            operation: addPermission
+      - to:
+          uri: mock:result
+----
+====
 
 - removePermission: this operation will remove a permission from the function's resource-based policy
 
@@ -623,7 +727,7 @@ Java::
 [source,java]
 ----
 from("direct:removePermission")
-    .setHeader(Lambda2Constants.STATEMENT_ID, constant("s3-invoke"))
+    .setHeader("CamelAwsLambdaStatementId", constant("s3-invoke"))
     .to("aws2-lambda://myFunction?operation=removePermission")
     .to("mock:result");
 ----
@@ -705,11 +809,13 @@ YAML::
 
 You can also configure CORS settings for function URLs:
 
+._Java-only: requires List values for CORS headers_
+
 [source,java]
 ----
 from("direct:createFunctionUrlWithCors")
     .process(exchange -> {
-        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, "NONE");
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlAuthType", "NONE");
         exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_ALLOW_ORIGINS,
             Arrays.asList("https://example.com"));
         exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_ALLOW_METHODS,
@@ -727,12 +833,14 @@ from("direct:createFunctionUrlWithCors")
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS Lambda there are multiple operations you can submit, as an example for Get Function request, you can do something like:
 
+._Java-only: requires AWS SDK builder_
+
 [source,java]
---------------------------
+----
 from("direct:getFunction")
      .setBody(GetFunctionRequest.builder().functionName("test").build())
      .to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunction&pojoRequest=true")
---------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -744,13 +852,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-lambda</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

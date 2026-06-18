@@ -27,22 +27,22 @@ https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-cosmosdb</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 == URI Format
 
 [source,text]
-------------------------------
+----
 azure-cosmosdb://[databaseName][/containerName][?options]
-------------------------------
+----
 
 In case of the consumer, `databaseName`, `containerName` are required, In case of the producer, it depends on the operation that being
 requested, for example if operation is on a database level, e.b: deleteDatabase, only `databaseName` is required, but in case
@@ -252,160 +252,575 @@ YAML::
 
 - `createDatabase`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-        exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "myDb");
-      })
-  .to("azure-cosmosdb://?operation=createDatabase")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("myDb"))
+    .to("azure-cosmosdb://?operation=createDatabase")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>myDb</constant>
+  </setHeader>
+  <to uri="azure-cosmosdb://?operation=createDatabase"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: myDb
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: createDatabase
+        - to:
+            uri: mock:result
+----
+====
 
 - `deleteDatabase`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-        exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "myDb");
-      })
-  .to("azure-cosmosdb://?operation=deleteDatabase")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("myDb"))
+    .to("azure-cosmosdb://?operation=deleteDatabase")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>myDb</constant>
+  </setHeader>
+  <to uri="azure-cosmosdb://?operation=deleteDatabase"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: myDb
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: deleteDatabase
+        - to:
+            uri: mock:result
+----
+====
 
 - `createContainer`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-        exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "databaseName");
-        exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, "containerName");
-        exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH, "path");
-        exchange.getIn().setHeader(CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST, true);
-      })
-  .to("azure-cosmosdb://?operation=createContainer")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("databaseName"))
+    .setHeader("CamelAzureCosmosDbContainerName", constant("containerName"))
+    .setHeader("CamelAzureCosmosDbContainerPartitionKeyPath", constant("path"))
+    .setHeader("CamelAzureCosmosDbCreateDatabaseIfNotExist", constant(true))
+    .to("azure-cosmosdb://?operation=createContainer")
+    .to("mock:result");
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>databaseName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbContainerName">
+    <constant>containerName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbContainerPartitionKeyPath">
+    <constant>path</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbCreateDatabaseIfNotExist">
+    <constant>true</constant>
+  </setHeader>
+  <to uri="azure-cosmosdb://?operation=createContainer"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: databaseName
+        - setHeader:
+            name: CamelAzureCosmosDbContainerName
+            constant: containerName
+        - setHeader:
+            name: CamelAzureCosmosDbContainerPartitionKeyPath
+            constant: path
+        - setHeader:
+            name: CamelAzureCosmosDbCreateDatabaseIfNotExist
+            constant: true
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: createContainer
+        - to:
+            uri: mock:result
+----
+====
 
 - `deleteContainer`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-        exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "databaseName");
-        exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, "containerName");
-      })
-  .to("azure-cosmosdb://?operation=deleteContainer")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("databaseName"))
+    .setHeader("CamelAzureCosmosDbContainerName", constant("containerName"))
+    .to("azure-cosmosdb://?operation=deleteContainer")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>databaseName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbContainerName">
+    <constant>containerName</constant>
+  </setHeader>
+  <to uri="azure-cosmosdb://?operation=deleteContainer"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: databaseName
+        - setHeader:
+            name: CamelAzureCosmosDbContainerName
+            constant: containerName
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: deleteContainer
+        - to:
+            uri: mock:result
+----
+====
 
 - `replaceDatabaseThroughput`:
 
+._Java-only: requires SDK ThroughputProperties object_
+
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .process(exchange -> {
-        exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "databaseName");
-         exchange.getIn().setHeader(CosmosDbConstants.THROUGHPUT_PROPERTIES,
-                    ThroughputProperties.createManualThroughput(700));
-      })
-  .to("azure-cosmosdb://?operation=replaceDatabaseThroughput")
-  .to("mock:result");
---------------------------------------------------------------------------------
+        exchange.getIn().setHeader("CamelAzureCosmosDbDatabaseName", "databaseName");
+        exchange.getIn().setHeader("CamelAzureCosmosDbThroughputProperties",
+                ThroughputProperties.createManualThroughput(700));
+    })
+    .to("azure-cosmosdb://?operation=replaceDatabaseThroughput")
+    .to("mock:result");
+----
 
 - `queryContainers`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-        exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "databaseName");
-            exchange.getIn().setHeader(CosmosDbConstants.QUERY, "SELECT * from c where c.id = 'myAwersomeContainer'");
-      })
-  .to("azure-cosmosdb://?operation=queryContainers")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("databaseName"))
+    .setHeader("CamelAzureCosmosDbQuery", constant("SELECT * from c where c.id = 'myAwesomeContainer'"))
+    .to("azure-cosmosdb://?operation=queryContainers")
+    .to("mock:result");
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>databaseName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbQuery">
+    <constant>SELECT * from c where c.id = 'myAwesomeContainer'</constant>
+  </setHeader>
+  <to uri="azure-cosmosdb://?operation=queryContainers"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: databaseName
+        - setHeader:
+            name: CamelAzureCosmosDbQuery
+            constant: "SELECT * from c where c.id = 'myAwesomeContainer'"
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: queryContainers
+        - to:
+            uri: mock:result
+----
+====
 
 - `createItem`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-            // create item to send
-            final Map<String, Object> item = new HashMap<>();
-            item1.put("id", "test-id-1");
-            item1.put("partition", "test-1");
-            item1.put("field1", "awesome!");
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("databaseName"))
+    .setHeader("CamelAzureCosmosDbContainerName", constant("containerName"))
+    .setHeader("CamelAzureCosmosDbContainerPartitionKeyPath", constant("partition"))
+    .setHeader("CamelAzureCosmosDbItemPartitionKey", constant("test-1"))
+    .setBody(constant("{\"id\":\"test-id-1\",\"partition\":\"test-1\",\"field1\":\"awesome!\"}"))
+    .to("azure-cosmosdb://?operation=createItem")
+    .to("mock:result");
+----
 
-            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "databaseName");
-            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, "containerName");
-            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH, "partition");
-            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
-            exchange.getIn().setBody(item);
-      })
-  .to("azure-cosmosdb://?operation=createItem")
-  .to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>databaseName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbContainerName">
+    <constant>containerName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbContainerPartitionKeyPath">
+    <constant>partition</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbItemPartitionKey">
+    <constant>test-1</constant>
+  </setHeader>
+  <setBody>
+    <constant>{"id":"test-id-1","partition":"test-1","field1":"awesome!"}</constant>
+  </setBody>
+  <to uri="azure-cosmosdb://?operation=createItem"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: databaseName
+        - setHeader:
+            name: CamelAzureCosmosDbContainerName
+            constant: containerName
+        - setHeader:
+            name: CamelAzureCosmosDbContainerPartitionKeyPath
+            constant: partition
+        - setHeader:
+            name: CamelAzureCosmosDbItemPartitionKey
+            constant: "test-1"
+        - setBody:
+            constant: '{"id":"test-id-1","partition":"test-1","field1":"awesome!"}'
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: createItem
+        - to:
+            uri: mock:result
+----
+====
 
 - `replaceItem`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-            // create item to send
-            final Map<String, Object> item = new HashMap<>();
-            item1.put("id", "test-id-1");
-            item1.put("partition", "test-1");
-            item1.put("field1", "awesome!");
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("databaseName"))
+    .setHeader("CamelAzureCosmosDbContainerName", constant("containerName"))
+    .setHeader("CamelAzureCosmosDbItemPartitionKey", constant("test-1"))
+    .setHeader("CamelAzureCosmosDbItemId", constant("test-id-1"))
+    .setBody(constant("{\"id\":\"test-id-1\",\"partition\":\"test-1\",\"field1\":\"awesome!\"}"))
+    .to("azure-cosmosdb://?operation=replaceItem")
+    .to("mock:result");
+----
 
-            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "databaseName");
-            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, "containerName");
-            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
-            exchange.getIn().setHeader(CosmosDbConstants.ITEM_ID, "test-id-1");
-            exchange.getIn().setBody(item);
-      })
-  .to("azure-cosmosdb://?operation=replaceItem")
-  .to("mock:result");
---------------------------------------------------------------------------------
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>databaseName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbContainerName">
+    <constant>containerName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbItemPartitionKey">
+    <constant>test-1</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbItemId">
+    <constant>test-id-1</constant>
+  </setHeader>
+  <setBody>
+    <constant>{"id":"test-id-1","partition":"test-1","field1":"awesome!"}</constant>
+  </setBody>
+  <to uri="azure-cosmosdb://?operation=replaceItem"/>
+  <to uri="mock:result"/>
+</route>
+----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: databaseName
+        - setHeader:
+            name: CamelAzureCosmosDbContainerName
+            constant: containerName
+        - setHeader:
+            name: CamelAzureCosmosDbItemPartitionKey
+            constant: "test-1"
+        - setHeader:
+            name: CamelAzureCosmosDbItemId
+            constant: "test-id-1"
+        - setBody:
+            constant: '{"id":"test-id-1","partition":"test-1","field1":"awesome!"}'
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: replaceItem
+        - to:
+            uri: mock:result
+----
+====
 
 - `deleteItem`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "databaseName");
-            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, "containerName");
-            exchange.getIn().setHeader(CosmosDbConstants.ITEM_PARTITION_KEY, "test-1");
-            exchange.getIn().setHeader(CosmosDbConstants.ITEM_ID, "test-id-1");
-            exchange.getIn().setBody(item);
-      })
-  .to("azure-cosmosdb://?operation=deleteItem")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("databaseName"))
+    .setHeader("CamelAzureCosmosDbContainerName", constant("containerName"))
+    .setHeader("CamelAzureCosmosDbItemPartitionKey", constant("test-1"))
+    .setHeader("CamelAzureCosmosDbItemId", constant("test-id-1"))
+    .to("azure-cosmosdb://?operation=deleteItem")
+    .to("mock:result");
+----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>databaseName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbContainerName">
+    <constant>containerName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbItemPartitionKey">
+    <constant>test-1</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbItemId">
+    <constant>test-id-1</constant>
+  </setHeader>
+  <to uri="azure-cosmosdb://?operation=deleteItem"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: databaseName
+        - setHeader:
+            name: CamelAzureCosmosDbContainerName
+            constant: containerName
+        - setHeader:
+            name: CamelAzureCosmosDbItemPartitionKey
+            constant: "test-1"
+        - setHeader:
+            name: CamelAzureCosmosDbItemId
+            constant: "test-id-1"
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: deleteItem
+        - to:
+            uri: mock:result
+----
+====
 
 - `queryItems`:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
-    .process(exchange -> {
-            exchange.getIn().setHeader(CosmosDbConstants.DATABASE_NAME, "databaseName");
-            exchange.getIn().setHeader(CosmosDbConstants.CONTAINER_NAME, "containerName");
-            exchange.getIn().setHeader(CosmosDbConstants.QUERY, "SELECT c.id,c.field2,c.field1 from c where c.id = 'test-id-1'");
-      })
-  .to("azure-cosmosdb://?operation=queryItems")
-  .to("mock:result");
---------------------------------------------------------------------------------
+    .setHeader("CamelAzureCosmosDbDatabaseName", constant("databaseName"))
+    .setHeader("CamelAzureCosmosDbContainerName", constant("containerName"))
+    .setHeader("CamelAzureCosmosDbQuery", constant("SELECT c.id,c.field2,c.field1 from c where c.id = 'test-id-1'"))
+    .to("azure-cosmosdb://?operation=queryItems")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelAzureCosmosDbDatabaseName">
+    <constant>databaseName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbContainerName">
+    <constant>containerName</constant>
+  </setHeader>
+  <setHeader name="CamelAzureCosmosDbQuery">
+    <constant>SELECT c.id,c.field2,c.field1 from c where c.id = 'test-id-1'</constant>
+  </setHeader>
+  <to uri="azure-cosmosdb://?operation=queryItems"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelAzureCosmosDbDatabaseName
+            constant: databaseName
+        - setHeader:
+            name: CamelAzureCosmosDbContainerName
+            constant: containerName
+        - setHeader:
+            name: CamelAzureCosmosDbQuery
+            constant: "SELECT c.id,c.field2,c.field1 from c where c.id = 'test-id-1'"
+        - to:
+            uri: azure-cosmosdb://
+            parameters:
+              operation: queryItems
+        - to:
+            uri: mock:result
+----
+====
 
 
 === Azure CosmosDB Consumer

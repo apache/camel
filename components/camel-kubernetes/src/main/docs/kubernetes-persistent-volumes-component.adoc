@@ -40,19 +40,21 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listPersistentVolumes`: this operation lists the PVs on a kubernetes cluster
 
+._Java-only: uses `toF()` for URI formatting_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:list").
     toF("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of PVs from your cluster
 
 - `listPersistentVolumesByLabels`: this operation lists the PVs by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor, Java constants, and `toF()`_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listByLabels").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -64,7 +66,7 @@ from("direct:listByLabels").process(new Processor() {
         });
     toF("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of PVs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 

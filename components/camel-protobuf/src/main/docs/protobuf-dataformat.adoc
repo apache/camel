@@ -12,7 +12,6 @@
 *Since Camel {since}*
 
 Protobuf - Protocol Buffers
----------------------------
 
 "Protocol Buffers - Google's data interchange format"
 
@@ -43,13 +42,14 @@ To use this option, set contentTypeFormat value to `json` or call protobuf with 
 If the default instance is not specified, always use the native protobuf format.
 The sample code shows below:
 
+._Java-only: programmatic protobuf configuration with content type format_
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 from("direct:marshal")
     .unmarshal()
     .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person", "json")
     .to("mock:reverse");
---------------------------------------------------------------------------------------------------
+----
 
 == Input data type
 
@@ -78,8 +78,8 @@ This is defined in a .proto file as so:
 
 *addressbook.proto*
 
-[source,java]
-------------------------------------------------------------
+[source,protobuf]
+----
 syntax = "proto2";
 
 package org.apache.camel.component.protobuf;
@@ -109,7 +109,7 @@ message Person {
 message AddressBook {
   repeated Person person = 1;
 }
-------------------------------------------------------------
+----
 
 == Generating Java classes
 
@@ -120,7 +120,7 @@ you can automate protobuf Java code generating by adding the following configura
 
 Insert operating system and CPU architecture detection extension inside `<build>` tag of the project `pom.xml` or set `${os.detected.classifier}` parameter manually
 [source,xml]
--------------------------------------------------------------------------
+----
 <extensions>
   <extension>
     <groupId>kr.motd.maven</groupId>
@@ -128,10 +128,10 @@ Insert operating system and CPU architecture detection extension inside `<build>
     <version>1.4.1.Final</version>
   </extension>
 </extensions>
--------------------------------------------------------------------------
+----
 Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the project `pom.xml`
 [source,xml]
--------------------------------------------------------------------------
+----
 <plugin>
   <groupId>org.xolstice.maven.plugins</groupId>
   <artifactId>protobuf-maven-plugin</artifactId>
@@ -149,7 +149,7 @@ Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the pro
     </execution>
   </executions>
 </plugin>
--------------------------------------------------------------------------
+----
 
 You can also run the compiler for any additional supported languages you require manually.
 
@@ -171,6 +171,7 @@ domain classes.
 You can use create the ProtobufDataFormat instance and pass it to Camel
 DataFormat marshal and unmarshal API like this.
 
+._Java-only: programmatic ProtobufDataFormat instantiation_
 [source,java]
 ----
    ProtobufDataFormat format = new ProtobufDataFormat(Person.getDefaultInstance());
@@ -182,6 +183,7 @@ DataFormat marshal and unmarshal API like this.
 Or use the DSL `protobuf()` passing the unmarshal default instance or
 default instance class name like this. However, if you have input data as `Map` type, you will need to **specify** the ProtobufDataFormat otherwise it will throw an error.
 
+._Java-only: DSL protobuf() with class name and default instance_
 [source,java]
 ----
    // You don't need to specify the default instance for protobuf marshaling, but you will need in case your input data is a Map type
@@ -242,14 +244,14 @@ To use Protobuf in your Camel routes, you need to add the dependency on
 
 .Example pom.xml for `camel-protobuf`
 [source,xml]
------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-protobuf</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

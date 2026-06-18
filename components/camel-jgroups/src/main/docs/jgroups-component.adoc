@@ -22,20 +22,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component.
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jgroups</artifactId>
     <!-- use the same version as your Camel core version -->
     <version>x.y.z</version>
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
------------------------------
+----
 jgroups:clusterName[?options]
------------------------------
+----
 
 Where *clusterName* represents the name of the JGroups cluster, the
 component should connect to.
@@ -136,14 +136,15 @@ master in the cluster, because messages passing this filter notifies you
 below demonstrates how to collect only messages received by the master
 node.
 
+._Java-only: Java static import and filter EIP_
 [source,java]
-----------------------------------------------------------------------------------------
+----
 import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
 ...
 from("jgroups:clusterName?enableViewMessages=true").
   filter(dropNonCoordinatorViews()).
   to("seda:masterNodeEventsQueue");
-----------------------------------------------------------------------------------------
+----
 
 === Predefined expressions
 
@@ -168,8 +169,9 @@ The snippet below demonstrates how to use conditional delaying with the
 JGroups component to delay the initial startup of master node in the
 cluster.
 
+._Java-only: Java static imports with conditional delay expression_
 [source,java]
------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.camel.component.jgroups.JGroupsExpressions.delayIfContextNotStarted;
 import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
@@ -180,7 +182,7 @@ from("jgroups:clusterName?enableViewMessages=true").
   to("controlbus:route?routeId=masterRoute&action=start&async=true");
 
 from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri); 
------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 == Examples
 
@@ -189,26 +191,28 @@ from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).t
 To send a message to the JGroups cluster, use producer endpoint,
 just as demonstrated in the snippet below.
 
+._Java-only: Java test API (ProducerTemplate)_
 [source,java]
-------------------------------------------------
+----
 from("direct:start").to("jgroups:myCluster");
 ...
 producerTemplate.sendBody("direct:start", "msg")
-------------------------------------------------
+----
 
 To receive the message from the snippet above (on the same, or the other
 physical machine), listen to the messages coming from the given cluster,
 just as demonstrated on the code fragment below.
 
+._Java-only: Java test API (MockEndpoint assertions)_
 [source,java]
-------------------------------------------------------------
+----
 mockEndpoint.setExpectedMessageCount(1);
 mockEndpoint.message(0).body().isEqualTo("msg");
 ...
 from("jgroups:myCluster").to("mock:messagesFromTheCluster");
 ...
 mockEndpoint.assertIsSatisfied();
-------------------------------------------------------------
+----
 
 === Receive cluster view change notifications
 
@@ -216,12 +220,13 @@ The snippet below demonstrates how to create the consumer endpoint
 listening to the notifications regarding cluster membership changes. By
 default, the endpoint consumes only regular messages.
 
+._Java-only: Java test API (MockEndpoint assertions)_
 [source,java]
----------------------------------------------------------------------
+----
 mockEndpoint.setExpectedMessageCount(1);
 mockEndpoint.message(0).body().isInstanceOf(org.jgroups.View.class);
 ...
 from("jgroups:clusterName?enableViewMessages=true").to(mockEndpoint);
 ...
 mockEndpoint.assertIsSatisfied();
----------------------------------------------------------------------
+----

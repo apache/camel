@@ -40,19 +40,21 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listBuilds`: this operation lists the build configs on an Openshift cluster
 
+._Java-only: uses `toF()` for URI formatting_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:list").
     toF("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigs").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of builds from your Openshift cluster
 
 - `listBuildsByLabels`: this operation lists the build configs by labels on an Openshift cluster
 
+._Java-only: uses inline Processor, Java constants, and `toF()`_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listByLabels").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -64,7 +66,7 @@ from("direct:listByLabels").process(new Processor() {
         });
     toF("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigsByLabels").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of build configs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 

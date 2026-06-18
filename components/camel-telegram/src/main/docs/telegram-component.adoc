@@ -36,20 +36,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-telegram</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-----------------------------------------------------
+----
 telegram:type[?options]
-----------------------------------------------------
+----
 
 
 
@@ -186,8 +186,9 @@ YAML::
 
 The `MyBean` is a simple bean that will receive the messages
 
+._Java-only: bean class definition_
 [source,java]
----------------------------------------------------------
+----
 public class MyBean {
 
     public void process(String message) {
@@ -197,7 +198,7 @@ public class MyBean {
     }
 
 }
----------------------------------------------------------
+----
 
 
 Supported types for incoming messages are
@@ -265,8 +266,9 @@ YAML::
 
 The `ChatBotLogic` is a simple bean that implements a generic String-to-String method.
 
+._Java-only: bean class definition_
 [source,java]
----------------------------------------------------------
+----
 public class ChatBotLogic {
 
     public String chatBotProcess(String message) {
@@ -278,7 +280,7 @@ public class ChatBotLogic {
     }
 
 }
----------------------------------------------------------
+----
 
 
 Every non-null string returned by the `chatBotProcess` method is automatically routed to the
@@ -383,8 +385,9 @@ Note that the corresponding URI parameter is simply `chatId`.
 You can customize the user keyboard instead of asking him to write an option.
 `OutgoingTextMessage` has the property `ReplyMarkup` which can be used for such a thing.
 
+._Java-only: inline Processor with keyboard builder API_
 [source,java]
----------------------------------------------------------
+----
 from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
     .process(exchange -> {
 
@@ -413,12 +416,13 @@ from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHer
         exchange.getIn().setBody(msg);
     })
     .to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
----------------------------------------------------------
+----
 
 If you want to disable it, the next message must have the property `removeKeyboard` set on `ReplyKeyboardMarkup` object.
 
+._Java-only: inline Processor with keyboard removal_
 [source,java]
----------------------------------------------------------
+----
 from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
     .process(exchange -> {
 
@@ -434,7 +438,7 @@ from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHer
         exchange.getIn().setBody(msg);
     })
     .to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
----------------------------------------------------------
+----
 
 
 === Webhook Mode
@@ -445,14 +449,14 @@ To enable webhook mode, users need first to add a REST implementation to their a
 Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-netty-http</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 Once done, you need to prepend the webhook URI to the telegram URI you want to use.
 

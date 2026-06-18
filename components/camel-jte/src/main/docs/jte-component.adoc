@@ -26,19 +26,19 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
--------------------------------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jte</artifactId>
     <version>x.x.x</version> <!-- use the same version as your Camel core version -->
 </dependency>
--------------------------------------------------------------------------------------
+----
 
 == URI format
 
----------------------------------
+----
 jte:templateName[?options]
----------------------------------
+----
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (e.g.:
@@ -125,6 +125,7 @@ YAML::
 
 To use a JTE template to formulate a response to the REST get call:
 
+._Java-only: example JTE template file content_
 [source,java]
 ----
 @import org.apache.camel.component.jte.Model

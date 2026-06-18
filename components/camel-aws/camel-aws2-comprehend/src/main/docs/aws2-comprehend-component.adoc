@@ -35,9 +35,9 @@ https://aws.amazon.com/comprehend/[Amazon Comprehend].
 
 == URI Format
 
--------------------------
+----
 aws2-comprehend://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -528,8 +528,9 @@ Returns toxicity scores for categories like PROFANITY, HATE_SPEECH, THREAT, INSU
 
 For more control, you can pass AWS SDK request objects directly by setting `pojoRequest=true`:
 
+._Java-only: uses lambda expression and AWS SDK request builder API_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:pojoRequest")
     .setBody(exchange -> DetectSentimentRequest.builder()
             .text("I am very happy with this service!")
@@ -537,21 +538,22 @@ from("direct:pojoRequest")
             .build())
     .to("aws2-comprehend://test?operation=detectSentiment&pojoRequest=true&useDefaultCredentialsProvider=true&region=us-east-1")
     .log("Sentiment: ${header.CamelAwsComprehendDetectedSentiment}");
-------------------------------------------------------------------------------------------------------
+----
 
 === Setting Operation and Language via Headers
 
 You can dynamically set the operation and language code using message headers:
 
+._Java-only: uses Java enum constant for operation header value_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:dynamicOperation")
     .setHeader("CamelAwsComprehendOperation", constant(Comprehend2Operations.detectEntities))
     .setHeader("CamelAwsComprehendLanguageCode", constant("en"))
     .setBody(constant("Apple Inc. is headquartered in Cupertino, California."))
     .to("aws2-comprehend://test?useDefaultCredentialsProvider=true&region=us-east-1")
     .log("Detected entities: ${body}");
-------------------------------------------------------------------------------------------------------
+----
 
 === Using with Static Credentials
 
@@ -609,8 +611,9 @@ YAML::
 
 A practical example combining multiple Comprehend operations for content moderation:
 
+._Java-only: uses choice/when/otherwise with inline comments_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:moderateContent")
     .setHeader("originalText", simple("${body}"))
     // First, detect the language
@@ -628,14 +631,15 @@ from("direct:moderateContent")
         .otherwise()
             .log("Content is safe")
             .to("direct:approveContent");
-------------------------------------------------------------------------------------------------------
+----
 
 === Customer Feedback Analysis Example
 
 Analyze customer feedback for sentiment and key topics:
 
+._Java-only: uses body() method reference and choice/when/otherwise with inline comments_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("kafka:customer-feedback")
     .log("Processing feedback: ${body}")
     // Analyze sentiment
@@ -653,7 +657,7 @@ from("kafka:customer-feedback")
             .to("direct:handlePositiveFeedback")
         .otherwise()
             .to("direct:handleNeutralFeedback");
-------------------------------------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -662,13 +666,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-comprehend</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

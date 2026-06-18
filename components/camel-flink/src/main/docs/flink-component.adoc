@@ -26,23 +26,23 @@ Maven users will need to add the following dependency to
 their `pom.xml` for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-flink</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI Format
 
 Currently, the Flink Component supports only Producers. One can create DataSet, DataStream jobs.
 
--------------------------------------------------
+----
 flink:dataset?dataset=#myDataSet&dataSetCallback=#dataSetCallback
 flink:datastream?datastream=#myDataStream&dataStreamCallback=#dataStreamCallback
--------------------------------------------------
+----
 
 IMPORTANT: The DataSet API has been deprecated by Apache Flink since version 1.12.
 It is recommended to migrate to the DataStream API with bounded streams for batch processing.
@@ -60,8 +60,10 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Flink DataSet Callback
 
+._Java-only: Flink DataSetCallback API_
+
 [source,java]
------------------------------------
+----
 @Bean
 public DataSetCallback<Long> dataSetCallback() {
     return new DataSetCallback<Long>() {
@@ -75,12 +77,14 @@ public DataSetCallback<Long> dataSetCallback() {
         }
     };
 }
------------------------------------
+----
 
 === Flink DataStream Callback
 
+._Java-only: Flink DataStreamCallback API_
+
 [source,java]
----------------------------
+----
 @Bean
 public VoidDataStreamCallback dataStreamCallback() {
     return new VoidDataStreamCallback() {
@@ -92,12 +96,14 @@ public VoidDataStreamCallback dataStreamCallback() {
         }
     };
 }
----------------------------
+----
 
 === Camel-Flink Producer call
 
+._Java-only: ProducerTemplate API_
+
 [source,java]
------------------------------------
+----
 CamelContext camelContext = new SpringCamelContext(context);
 
 String pattern = "foo";
@@ -109,14 +115,16 @@ try {
     } finally {
         camelContext.stop();
     }
------------------------------------
+----
 
 === Modern DataStream Batch Processing Example
 
-The recommended approach using the DataStream API in batch mode:
+The recommended approach using the DataStream API in batch mode.
+
+._Java-only: Spring @Bean configuration_
 
 [source,java]
------------------------------------
+----
 @Bean
 public StreamExecutionEnvironment streamExecutionEnvironment() {
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -148,18 +156,54 @@ public DataStreamCallback wordCountCallback() {
         }
     };
 }
+----
 
-// In your route
+Then use the beans in the route:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
 from("direct:wordCount")
     .to("flink:datastream?dataStream=#myDataStream&dataStreamCallback=#wordCountCallback");
------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:wordCount"/>
+  <to uri="flink:datastream?dataStream=#myDataStream&amp;dataStreamCallback=#wordCountCallback"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:wordCount
+      steps:
+        - to:
+            uri: flink:datastream
+            parameters:
+              dataStream: "#myDataStream"
+              dataStreamCallback: "#wordCountCallback"
+----
+====
 
 === Real-time Streaming Example
 
 For true streaming use cases with unbounded data:
 
+._Java-only: Spring @Bean configuration with Flink streaming API_
+
 [source,java]
------------------------------------
+----
 @Bean
 public StreamExecutionEnvironment streamingEnvironment() {
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -187,7 +231,7 @@ public DataStreamCallback streamingProcessCallback() {
         }
     };
 }
------------------------------------
+----
 
 === Advanced Configuration Examples
 
@@ -195,34 +239,92 @@ public DataStreamCallback streamingProcessCallback() {
 
 Configure a DataStream endpoint for batch processing with custom settings:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------
+----
 from("direct:batchProcess")
-    .to("flink:datastream?dataStream=#myDataStream"
-        + "&dataStreamCallback=#myCallback"
-        + "&executionMode=BATCH"
-        + "&parallelism=4"
-        + "&jobName=MyBatchJob");
------------------------------------
+    .to("flink:datastream?dataStream=#myDataStream&dataStreamCallback=#myCallback&executionMode=BATCH&parallelism=4&jobName=MyBatchJob");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:batchProcess"/>
+  <to uri="flink:datastream?dataStream=#myDataStream&amp;dataStreamCallback=#myCallback&amp;executionMode=BATCH&amp;parallelism=4&amp;jobName=MyBatchJob"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:batchProcess
+      steps:
+        - to:
+            uri: flink:datastream
+            parameters:
+              dataStream: "#myDataStream"
+              dataStreamCallback: "#myCallback"
+              executionMode: BATCH
+              parallelism: 4
+              jobName: MyBatchJob
+----
+====
 
 ==== Streaming with Checkpointing
 
 Configure a streaming job with checkpointing for fault tolerance:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------
+----
 from("direct:streamProcess")
-    .to("flink:datastream?dataStream=#myDataStream"
-        + "&dataStreamCallback=#streamCallback"
-        + "&executionMode=STREAMING"
-        + "&checkpointInterval=60000"              // Checkpoint every 60 seconds
-        + "&checkpointingMode=EXACTLY_ONCE"        // Exactly-once semantics
-        + "&checkpointTimeout=120000"              // 2 minute timeout
-        + "&minPauseBetweenCheckpoints=30000"      // 30 second minimum pause
-        + "&parallelism=8"
-        + "&maxParallelism=128"
-        + "&jobName=StreamingPipeline");
------------------------------------
+    .to("flink:datastream?dataStream=#myDataStream&dataStreamCallback=#streamCallback&executionMode=STREAMING&checkpointInterval=60000&checkpointingMode=EXACTLY_ONCE&checkpointTimeout=120000&minPauseBetweenCheckpoints=30000&parallelism=8&maxParallelism=128&jobName=StreamingPipeline");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:streamProcess"/>
+  <to uri="flink:datastream?dataStream=#myDataStream&amp;dataStreamCallback=#streamCallback&amp;executionMode=STREAMING&amp;checkpointInterval=60000&amp;checkpointingMode=EXACTLY_ONCE&amp;checkpointTimeout=120000&amp;minPauseBetweenCheckpoints=30000&amp;parallelism=8&amp;maxParallelism=128&amp;jobName=StreamingPipeline"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:streamProcess
+      steps:
+        - to:
+            uri: flink:datastream
+            parameters:
+              dataStream: "#myDataStream"
+              dataStreamCallback: "#streamCallback"
+              executionMode: STREAMING
+              checkpointInterval: 60000
+              checkpointingMode: EXACTLY_ONCE
+              checkpointTimeout: 120000
+              minPauseBetweenCheckpoints: 30000
+              parallelism: 8
+              maxParallelism: 128
+              jobName: StreamingPipeline
+----
+====
 
 ==== Configuration Options Reference
 
@@ -281,36 +383,40 @@ from("direct:streamProcess")
 
 ==== Counting Elements
 
+._Java-only: Flink DataSet/DataStream API migration pattern_
+
 .Before (DataSet)
 [source,java]
------------------------------------
+----
 long count = dataSet.count();
------------------------------------
+----
 
 .After (DataStream)
 [source,java]
------------------------------------
+----
 // Use a custom sink or reduce operation
 dataStream
     .map(e -> 1L)
     .reduce(Long::sum)
     .print();
------------------------------------
+----
 
 ==== Collecting Results
 
+._Java-only: Flink DataSet/DataStream API migration pattern_
+
 .Before (DataSet)
 [source,java]
------------------------------------
+----
 List<String> results = dataSet.collect();
------------------------------------
+----
 
 .After (DataStream)
 [source,java]
------------------------------------
+----
 // In batch mode, use executeAndCollect() or a sink
 List<String> results = dataStream.executeAndCollect(1000);
------------------------------------
+----
 
 === Additional Resources
 

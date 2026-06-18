@@ -23,20 +23,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-velocity</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------
+----
 velocity:templateName[?options]
--------------------------------
+----
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (e.g.:
@@ -58,9 +58,9 @@ Velocity to the Message.
 For example, to set the header value of `fruit` in the Velocity template
 `.tm`:
 
--------------------------------
+----
 $in.setHeader("fruit", "Apple")
--------------------------------
+----
 
 The `fruit` header is now accessible from the `message.out.headers`.
 
@@ -100,11 +100,12 @@ The `Exchange` is transferred as:
 You can set up a custom Velocity Context yourself by
 setting property `allowTemplateFromHeader=true` and setting the message header `CamelVelocityContext` just like this
 
+._Java-only: programmatic VelocityContext creation and header manipulation_
 [source,java]
------------------------------------------------------------------------
+----
 VelocityContext velocityContext = new VelocityContext(variableMap);
 exchange.getIn().setHeader("CamelVelocityContext", velocityContext);
------------------------------------------------------------------------
+----
 
 === Hot reloading
 
@@ -395,17 +396,18 @@ confirmation email. The email template is laid out in Velocity as:
 
 .letter.vm
 [source,text]
-----------------------------------------------
+----
 Dear ${headers.lastName}, ${headers.firstName}
 
 Thanks for the order of ${headers.item}.
 
 Regards Camel Riders Bookstore
 ${body}
-----------------------------------------------
+----
 
 And the java code (from an unit test):
 
+._Java-only: unit test with Exchange API, ProducerTemplate, MockEndpoint assertions, and RouteBuilder class_
 [source,java]
 ----
     private Exchange createLetter() {

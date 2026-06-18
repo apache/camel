@@ -147,6 +147,7 @@ Add the dependency for LangChain4j OpenAI support:
 
 Initialize the OpenAI Embedding Model:
 
+._Java-only: programmatic EmbeddingModel initialization and registry binding_
 [source,java]
 ----
 EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()

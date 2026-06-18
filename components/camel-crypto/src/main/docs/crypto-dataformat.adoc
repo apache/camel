@@ -33,8 +33,9 @@ If one or more instances of the Crypto data format are configured with this key,
 be used to encrypt the payload in one route (or part of one) and decrypted in another.
 For example, using the Java DSL as follows:
 
+._Java-only: programmatic CryptoDataFormat configuration with KeyGenerator_
 [source,java]
-----------------------------------------------------------
+----
 KeyGenerator generator = KeyGenerator.getInstance("DES");
 
 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", generator.generateKey());
@@ -44,13 +45,13 @@ from("direct:basic-encryption")
     .to("mock:encrypted")
     .unmarshal(cryptoFormat)
     .to("mock:unencrypted");
-----------------------------------------------------------
+----
 
 
 In Spring the dataformat is configured first and then used in routes
 
 [source,xml]
-----------------------------------------------------------
+----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <dataFormats>
     <crypto id="basic" algorithm="DES" key="desKey" />
@@ -64,15 +65,16 @@ In Spring the dataformat is configured first and then used in routes
     <to uri="mock:unencrypted" />
   </route>
 </camelContext>
-----------------------------------------------------------
+----
 
 
 == Specifying the Encryption Algorithm
 
 Changing the algorithm is a matter of supplying the JCE algorithm name. If you change the algorithm, you will need to use a compatible key.
 
+._Java-only: programmatic CryptoDataFormat with custom algorithm and HMAC_
 [source,java]
-----------------------------------------------------------
+----
 KeyGenerator generator = KeyGenerator.getInstance("DES");
 
 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", generator.generateKey());
@@ -84,7 +86,7 @@ from("direct:hmac-algorithm")
     .to("mock:encrypted")
     .unmarshal(cryptoFormat)
     .to("mock:unencrypted");
-----------------------------------------------------------
+----
 
 A list of the available algorithms in Java 17 is available via the https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html[Java Security Standard Algorithm Names] documentation.
 
@@ -95,8 +97,9 @@ Some crypto algorithms, particularly block algorithms, require configuration wit
 In the JCE this is passed as an AlgorithmParameterSpec when the Cipher is initialized.
 To use such a vector with the CryptoDataFormat, you can configure it with a byte[] containing the required data, e.g.
 
+._Java-only: programmatic CryptoDataFormat with initialization vector_
 [source,java]
-----------------------------------------------------------
+----
 KeyGenerator generator = KeyGenerator.getInstance("DES");
 byte[] initializationVector = new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
@@ -108,14 +111,14 @@ from("direct:init-vector")
     .to("mock:encrypted")
     .unmarshal(cryptoFormat)
     .to("mock:unencrypted");
-----------------------------------------------------------
+----
 
 or with spring, suppling a reference to a byte[]
 
 [source,xml]
-----------------------------------------------------------
+----
 <crypto id="initvector" algorithm="DES/CBC/PKCS5Padding" key="desKey" initVector="initializationVector" />
-----------------------------------------------------------
+----
 
 The same vector is required in both the encryption and decryption phases. As it is not necessary to keep the IV a secret, the DataFormat allows for it to be inlined into the encrypted data and subsequently read out in the decryption phase to initialize the Cipher. To inline the IV set the `Inline` flag.
 
@@ -125,7 +128,7 @@ The same vector is required in both the encryption and decryption phases. As it 
 Java::
 +
 [source,java]
-----------------------------------------------------------
+----
 KeyGenerator generator = KeyGenerator.getInstance("DES");
 byte[] initializationVector = new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 SecretKey key = generator.generateKey();
@@ -141,16 +144,16 @@ from("direct:inline")
     .to("mock:encrypted")
     .unmarshal(decryptFormat)
     .to("mock:unencrypted");
-----------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
-----------------------------------------------------------
+----
 <crypto id="inline" algorithm="DES/CBC/PKCS5Padding" key="desKey" initVector="initializationVector"
   inline="true" />
 <crypto id="inline-decrypt" algorithm="DES/CBC/PKCS5Padding" key="desKey" inline="true" />
-----------------------------------------------------------
+----
 
 ====
 
@@ -169,7 +172,7 @@ To avoid attacks against the encrypted data while it is in transit, the CryptoDa
 Java::
 +
 [source,java]
-----------------------------------------------------------
+----
 KeyGenerator generator = KeyGenerator.getInstance("DES");
 
 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", generator.generateKey());
@@ -180,14 +183,14 @@ from("direct:hmac")
     .to("mock:encrypted")
     .unmarshal(cryptoFormat)
     .to("mock:unencrypted");
-----------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
-----------------------------------------------------------
+----
 <crypto id="hmac" algorithm="DES" key="desKey" shouldAppendHMAC="true" />
-----------------------------------------------------------
+----
 
 ====
 
@@ -198,7 +201,7 @@ By default, the HMAC is calculated using the HmacSHA1 mac algorithm, though this
 Java::
 +
 [source,java]
-----------------------------------------------------------
+----
 KeyGenerator generator = KeyGenerator.getInstance("DES");
 
 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", generator.generateKey());
@@ -210,14 +213,14 @@ from("direct:hmac-algorithm")
     .to("mock:encrypted")
     .unmarshal(cryptoFormat)
     .to("mock:unencrypted");
-----------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
-----------------------------------------------------------
+----
 <crypto id="hmac-algorithm" algorithm="DES" key="desKey" macAlgorithm="HmacMD5" shouldAppendHMAC="true" />
-----------------------------------------------------------
+----
 
 ====
 
@@ -236,7 +239,7 @@ dynamically via the message headers below
 Java::
 +
 [source,java]
-----------------------------------------------------------
+----
 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", null);
 /**
  * Note: the header containing the key should be cleared after
@@ -256,14 +259,14 @@ from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Process
         exchange.getMessage().copyFrom(exchange.getIn());
     }
 }).to("mock:unencrypted");
-----------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
-----------------------------------------------------------
+----
 <crypto id="nokey" algorithm="DES" />
-----------------------------------------------------------
+----
 
 ====
 
@@ -273,14 +276,14 @@ To use the xref:ROOT:crypto-component.adoc[Crypto] dataformat in your camel rout
 need to add the following dependency to your pom.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-crypto</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
 
 
 

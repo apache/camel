@@ -308,11 +308,13 @@ YAML::
 
 To create a new index with some custom settings.
 
+._Java-only: uses a Java String variable for index settings_
 [source,java]
 ----
 String indexSettings = "{\"settings\":{\"number_of_replicas\": 1,\"number_of_shards\": 3,\"analysis\": {},\"refresh_interval\": \"1s\"},\"mappings\":{\"dynamic\": false,\"properties\": {\"title\": {\"type\": \"text\", \"analyzer\": \"english\"}}}}";
 ----
 
+._Java-only: route using the indexSettings Java variable_
 [source,java]
 ----
 from("direct:createIndex")
@@ -409,12 +411,14 @@ YAML::
 
 Search on specific field(s) using `Map`.
 
+._Java-only: creating a search criteria Map_
 [source,java]
 ----
 Map<String, String> criteria = new HashMap<>();
 criteria.put("content", "Camel");
 ----
 
+._Java-only: route using the criteria Java variable_
 [source,java]
 ----
 from("direct:search")

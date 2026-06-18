@@ -32,12 +32,44 @@ This data format relies on
 https://github.com/FasterXML/Woodstox[Woodstox] (especially for
 features like pretty printing), a fast and efficient XML processor.
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("activemq:My.Queue").
-  unmarshal().jacksonXml().
-  to("mqseries:Another.Queue");
--------------------------------
+----
+from("activemq:My.Queue")
+    .unmarshal().jacksonXml()
+    .to("mqseries:Another.Queue");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:My.Queue"/>
+  <unmarshal>
+    <jacksonXml/>
+  </unmarshal>
+  <to uri="mqseries:Another.Queue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:My.Queue
+      steps:
+        - unmarshal:
+            jacksonXml: {}
+        - to:
+            uri: mqseries:Another.Queue
+----
+====
 
 == JacksonXML Options
 
@@ -55,24 +87,24 @@ When using Data Format in Spring DSL, you need to
 declare the data formats first. This is done in the `dataFormats` XML tag:
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------------------
+----
         <dataFormats>
             <!-- here we define an XML data format with the id jack and that it should use the TestPojo as the class type when
                  doing unmarshal. The unmarshalType is optional, if not provided Camel will use a Map as the type -->
             <jacksonXml id="jack" unmarshalType="org.apache.camel.component.jacksonxml.TestPojo"/>
         </dataFormats>
------------------------------------------------------------------------------------------------------------------------------
+----
 
 And then you can refer to this id in the route:
 
 [source,xml]
--------------------------------------
+----
        <route>
             <from uri="direct:back"/>
             <unmarshal><custom ref="jack"/></unmarshal>
             <to uri="mock:reverse"/>
         </route>
--------------------------------------
+----
 
 === Excluding POJO fields from marshalling
 
@@ -90,42 +122,44 @@ to XML.
 Note that the weight field is missing in the resulting XML:
 
 [source,xml]
-----------------------------
+----
 <pojo age="30" weight="70"/>
-----------------------------
+----
 
 === Include/Exclude fields using the `jsonView` attribute with ``JacksonXML``DataFormat
 
 As an example of using this attribute, you can instead of:
 
+._Java-only: Java programmatic data format with class literal_
 [source,java]
----------------------------------------------------------------------------------------------------
+----
 JacksonXMLDataFormat ageViewFormat = new JacksonXMLDataFormat(TestPojoView.class, Views.Age.class);
 
 from("direct:inPojoAgeView")
   .marshal(ageViewFormat);
----------------------------------------------------------------------------------------------------
+----
 
 Directly specify your https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java[JSON
 view] inside the Java DSL as:
 
+._Java-only: Java DSL with class literal parameters_
 [source,java]
-------------------------------------------------------------
+----
 from("direct:inPojoAgeView")
   .marshal().jacksonXml(TestPojoView.class, Views.Age.class);
-------------------------------------------------------------
+----
 
 And the same in XML DSL:
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------------------------------
+----
 <route>
 <from uri="direct:inPojoAgeView"/>
     <marshal>
       <jacksonXml unmarshalType="org.apache.camel.component.jacksonxml.TestPojoView" jsonView="org.apache.camel.component.jacksonxml.Views$Age"/>
     </marshal>
 </route>
----------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Setting serialization include option
 
@@ -133,32 +167,34 @@ If you want to marshal a POJO to XML, and the POJO has some fields with
 null values. And you want to skip these null values, then you need to
 set either an annotation on the POJO:
 
+._Java-only: Java annotation_
 [source,java]
-------------------------------
+----
 @JsonInclude(Include.NON_NULL)
 public class MyPojo {
    ...
 }
-------------------------------
+----
 
 But this requires you to include that annotation in your POJO source
 code. You can also configure the Camel JacksonXMLDataFormat to set the
 `include` option, as shown below:
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
----------------------------------------------------------
+----
 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 format.setInclude("NON_NULL");
----------------------------------------------------------
+----
 
 Or from XML DSL you configure this as
 
 [source,xml]
-------------------------------------------------------
+----
 <dataFormats>
   <jacksonXml id="jacksonxml" include="NON_NULL"/>
 </dataFormats>
-------------------------------------------------------
+----
 
 === Unmarshalling from XML to POJO with dynamic class name
 
@@ -172,20 +208,21 @@ For JMS end users, there is the `JMSType` header from the JMS spec that
 indicates that also. To enable support for `JMSType` you would need to
 turn that on, on the Jackson data format as shown:
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
----------------------------------------------------
+----
 JacksonDataFormat format = new JacksonDataFormat();
 format.setAllowJmsType(true);
----------------------------------------------------
+----
 
 Or from XML DSL you configure this as:
 
 [source,xml]
--------------------------------------------------------
+----
 <dataFormats>
   <jacksonXml id="jacksonxml" allowJmsType="true"/>
 </dataFormats>
--------------------------------------------------------
+----
 
 === Unmarshalling from XML to `List<Map>` or `List<POJO>`
 
@@ -194,34 +231,35 @@ now specify this by setting `useList="true"` or use
 the `org.apache.camel.component.jacksonxml.ListJacksonXMLDataFormat`.
 For example, with Java, you can do as shown below:
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
--------------------------------------------------------------
+----
 JacksonXMLDataFormat format = new ListJacksonXMLDataFormat();
 // or
 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 format.useList();
 // and you can specify the POJO class type also
 format.setUnmarshalType(MyPojo.class);
--------------------------------------------------------------
+----
 
 And if you use XML DSL then you configure to use a list
 using `useList` attribute as shown below:
 
 [source,xml]
---------------------------------------------
+----
 <dataFormats>
     <jacksonXml id="jack" useList="true"/>
 </dataFormats>
---------------------------------------------
+----
 
 And you can specify the POJO type also
 
 [source,xml]
--------------------------------------------------------------------------------
+----
 <dataFormats>
     <jacksonXml id="jack" useList="true" unmarshalType="com.foo.MyPojo"/>
 </dataFormats>
--------------------------------------------------------------------------------
+----
 
 === Using custom Jackson modules
 
@@ -229,11 +267,11 @@ You can use custom Jackson modules by specifying the class names of
 those using the moduleClassNames option as shown below.
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------------------------------
+----
 <dataFormats>
     <jacksonXml id="jack" useList="true" unmarshalType="com.foo.MyPojo" moduleClassNames="com.foo.MyModule,com.foo.MyOtherModule"/>
 </dataFormats>
------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 When using `moduleClassNames` then the custom Jackson modules are not
 configured, by created using default constructor and used as-is. If a
@@ -242,7 +280,7 @@ module can be created and configured, and then use modulesRefs to refer
 to the module as shown below:
 
 [source,xml]
-------------------------------------------------------------------------------------------------------------------
+----
 <bean id="myJacksonModule" class="com.foo.MyModule">
   ... // configure the module as you want
 </bean>
@@ -250,7 +288,7 @@ to the module as shown below:
 <dataFormats>
     <jacksonXml id="jacksonxml" useList="true" unmarshalType="com.foo.MyPojo" moduleRefs="myJacksonModule"/>
 </dataFormats>
-------------------------------------------------------------------------------------------------------------------
+----
 
 Multiple modules can be specified separated by comma, such as `moduleRefs="myJacksonModule,myOtherModule"`.
 
@@ -262,11 +300,11 @@ For example, to disable failing on unknown properties
 when marshalling, you can configure this using the disableFeatures:
 
 [source,xml]
--------------------------------------------------------------------------------------------------------------------
+----
 <dataFormats>
     <jacksonXml id="jacksonxml" unmarshalType="com.foo.MyPojo" disableFeatures="FAIL_ON_UNKNOWN_PROPERTIES"/>
 </dataFormats>
--------------------------------------------------------------------------------------------------------------------
+----
 
 You can disable multiple features by separating the values using comma.
 The values for the features must be the name of the enums from Jackson
@@ -282,12 +320,13 @@ To enable a feature, use the enableFeatures options instead.
 From Java code, you can use the type safe methods from camel-jackson
 module:
 
+._Java-only: Java programmatic data format configuration_
 [source,java]
-----------------------------------------------------------------------
+----
 JacksonDataFormat df = new JacksonDataFormat(MyPojo.class);
 df.disableFeature(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 df.disableFeature(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
-----------------------------------------------------------------------
+----
 
 === Converting Maps to POJO using Jackson
 
@@ -296,15 +335,16 @@ Jackson component comes with the data converter that can be used to
 convert `java.util.Map` instance to non-String, non-primitive and
 non-Number objects.
 
+._Java-only: Java collection API (ProducerTemplate)_
 [source,java]
-----------------------------------------------------------------
+----
 Map<String, Object> invoiceData = new HashMap<String, Object>();
 invoiceData.put("netValue", 500);
 producerTemplate.sendBody("direct:mapToInvoice", invoiceData);
 ...
 // Later in the processor
 Invoice invoice = exchange.getIn().getBody(Invoice.class);
-----------------------------------------------------------------
+----
 
 If there is a single `XmlMapper` instance available in the Camel
 registry, it will be used by the converter to perform the conversion.
@@ -316,18 +356,19 @@ Using the `prettyPrint` option one can output a well-formatted XML while
 marshalling:
 
 [source,xml]
-------------------------------------------------
+----
 <dataFormats>
     <jacksonXml id="jack" prettyPrint="true"/>
 </dataFormats>
-------------------------------------------------
+----
 
 And in Java DSL:
 
+._Java-only: Java DSL shorthand_
 [source,java]
----------------------------------------------------
+----
 from("direct:inPretty").marshal().jacksonXml(true);
----------------------------------------------------
+----
 
 Please note that there are 5 different overloaded `jacksonXml()` DSL
 methods which support the `prettyPrint` option in combination with other
@@ -342,14 +383,14 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-jacksonxml</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

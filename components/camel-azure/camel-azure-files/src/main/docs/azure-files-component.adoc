@@ -226,10 +226,39 @@ the local file is deleted.
 So if you want to download files from a remote files server and store it
 as local files, then you need to route to a file endpoint such as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("azure-files://...&localWorkDirectory=/tmp").to("file://inbox");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="azure-files://...&amp;localWorkDirectory=/tmp"/>
+  <to uri="file://inbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-files://...
+      parameters:
+        localWorkDirectory: /tmp
+      steps:
+        - to:
+            uri: file://inbox
+----
+====
 
 [TIP]
 ====
@@ -278,10 +307,39 @@ The file paths are matched with the following rules:
 
 The sample below demonstrates how to use it:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("azure-files://...&antInclude=**/*.txt").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="azure-files://...&amp;antInclude=**/*.txt"/>
+  <to uri="..."/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: azure-files://...
+      parameters:
+        antInclude: "**/*.txt"
+      steps:
+        - to:
+            uri: "..."
+----
+====
 
 === Using a Proxy
 

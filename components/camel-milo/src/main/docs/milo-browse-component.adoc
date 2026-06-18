@@ -26,23 +26,23 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-milo</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 == URI format
 
 The URI syntax of the endpoint is:
 
-------------------------
+----
 milo-browse:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
-------------------------
+----
 
 Please refer to the xref:milo-client-component.adoc[Milo Client] component for further details about the construction of the URI.
 
@@ -67,6 +67,7 @@ the node tree of the OPC-UA server, e.g. to avoid hard-coding a significant numb
 Camel routes. The component is designed to work in conjunction with the Camel Milo Client component as illustrated in the
 following example:
 
+._Java-only: browsing OPC UA nodes and enriching with client values_
 [source,java]
 ----
 from("direct:start")

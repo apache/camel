@@ -26,7 +26,7 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
-------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-google-bigquery</artifactId>
@@ -34,7 +34,7 @@ for this component:
     <version>x.x.x</version>
 </dependency>
 
-------------------------------------------------------
+----
 
 [[GoogleBigQuery-AuthenticationConfiguration]]
 
@@ -51,36 +51,38 @@ https://developers.google.com/identity/protocols/application-default-credentials
 When you have the **service account key** you can provide authentication credentials to your application code.
 Google security credentials can be set through the component endpoint:
 
+._Java-only: endpoint URI as Java string variable_
 [source,java]
---------------------------------------------------------
+----
 String endpoint = "google-bigquery-sql://project-id:query?serviceAccountKey=/home/user/Downloads/my-key.json";
---------------------------------------------------------
+----
 
 You can also use the base64 encoded content of the authentication credentials file if you don't want to set a file system path.
 
+._Java-only: endpoint URI as Java string variable_
 [source,java]
---------------------------------------------------------
+----
 String endpoint = "google-bigquery-sql://project-id:query?serviceAccountKey=base64:<base64 encoded>";
---------------------------------------------------------
+----
 
 Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
 
---------------------------------------------------------
+----
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
---------------------------------------------------------
+----
 
 == URI Format
 
---------------------------------------------------------
+----
 google-bigquery-sql://project-id:query?[options]
---------------------------------------------------------
+----
 
 Examples:
---------------------------------------------------------
+----
 google-bigquery-sql://project-17248459:delete * from test.table where id=@myId
 
 google-bigquery-sql://project-17248459:delete * from ${datasetId}.${tableId} where id=@myId
---------------------------------------------------------
+----
 where
 
  * parameters in form $\{name} are extracted from message headers and formed the translated query.
@@ -88,9 +90,9 @@ where
 
 You can externalize your SQL queries to files in the classpath or file system as shown:
 
---------------------------------------------------------
+----
 google-bigquery-sql://project-17248459::classpath:delete.sql
---------------------------------------------------------
+----
 
 
 // component options: START

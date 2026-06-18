@@ -25,14 +25,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-spring-ws</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 *Be aware* Spring WS version 4.x does not support Axiom anymore (because Axiom does not support Jakarta JEE 9)
 
@@ -40,9 +40,9 @@ for this component:
 
 The URI scheme for this component is as follows
 
-------------------------------------------
+----
 spring-ws:[mapping-type:]address[?options]
-------------------------------------------
+----
 
 To expose a web service *mapping-type* needs to be set to any of the
 following:
@@ -126,10 +126,11 @@ YAML::
 
 And sent a message:
 
+._Java-only: ProducerTemplate test API_
 [source,java]
-------------------------------------------------------------------------------------------------------------
+----
 template.requestBody("direct:example", "<foobar xmlns=\"http://foo.com\"><msg>test message</msg></foobar>");
-------------------------------------------------------------------------------------------------------------
+----
 
 Remember if it's a SOAP service you're calling, you don't have to include
 SOAP tags. Spring-WS will perform the XML-to-SOAP marshaling.
@@ -177,12 +178,13 @@ YAML::
 
 Optionally, you can override the endpoint options with header values:
 
+._Java-only: ProducerTemplate setting SOAP action header_
 [source,java]
---------------------------------------------------------------------
+----
 template.requestBodyAndHeader("direct:example",
-"<foobar xmlns=\"http://foo.com\"><msg>test message</msg></foobar>",
-SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "http://baz.com");
---------------------------------------------------------------------
+    "<foobar xmlns=\"http://foo.com\"><msg>test message</msg></foobar>",
+    "CamelSpringWebserviceSoapAction", "http://baz.com");
+----
 
 === Using SOAP headers
 
@@ -190,19 +192,17 @@ You can provide the SOAP header(s) as a Camel Message header when
 sending a message to a spring-ws endpoint, for example, given the
 following SOAP header in a String
 
+._Java-only: constructing SOAP header and setting it on the Exchange_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 String body = ...
-String soapHeader = "<h:Header xmlns:h=\"http://www.webserviceX.NET/\"><h:MessageID>1234567890</h:MessageID><h:Nested><h:NestedID>1111</h:NestedID></h:Nested></h:Header>";
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+String soapHeader = "<h:Header xmlns:h=\"http://www.webserviceX.NET/\">"
+        + "<h:MessageID>1234567890</h:MessageID>"
+        + "<h:Nested><h:NestedID>1111</h:NestedID></h:Nested></h:Header>";
 
-We can set the body and header on the Camel Message as follows:
-
-[source,java]
-----------------------------------------------------------------------------------------
 exchange.getIn().setBody(body);
-exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader);
-----------------------------------------------------------------------------------------
+exchange.getIn().setHeader("CamelSpringWebserviceSoapHeader", soapHeader);
+----
 
 And then send the Exchange to a `spring-ws` endpoint to call the Web
 Service.
@@ -223,11 +223,12 @@ implementation is provided by `BasicMessageFilter`) to propagate the
 exchange headers and attachments into `WebServiceMessage` response. Now
 you can use
 
+._Java-only: programmatic header and attachment manipulation_
 [source,java]
---------------------------------------------------------------------
-exchange.getOut().getHeaders().put("myCustom","myHeaderValue")
-exchange.getIn().addAttachment("myAttachment", new DataHandler(...))
---------------------------------------------------------------------
+----
+exchange.getOut().getHeaders().put("myCustom", "myHeaderValue");
+exchange.getIn().addAttachment("myAttachment", new DataHandler(...));
+----
 
 [NOTE]
 ====
@@ -243,20 +244,20 @@ can be used to transform the soap header for a soap request. If you want to use
 the header transformation filter, see the below example:
 
 [source,xml]
-------------------------------------------------------------------
+----
 <bean id="headerTransformationFilter" class="org.apache.camel.component.spring.ws.filter.impl.HeaderTransformationMessageFilter">
     <constructor-arg index="0" value="org/apache/camel/component/spring/ws/soap-header-transform.xslt"/>
 </bean>
-------------------------------------------------------------------
+----
 Use the bead defined above in the camel endpoint
 
 [source,xml]
-------------------------------------------------------------------
+----
 <route>
     <from uri="direct:stockQuoteWebserviceHeaderTransformation"/>
     <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;messageFilter=#headerTransformationFilter"/>
 </route> 
-------------------------------------------------------------------
+----
 
 
 === The custom header and attachment filtering
@@ -274,16 +275,16 @@ follows:
 all Spring-WS endpoints
 
 [source,xml]
---------------------------------------------------------------------------------
+----
 <bean id="messageFilter" class="your.domain.myMessageFiler" scope="singleton" />
---------------------------------------------------------------------------------
+----
 
 - the local messageFilter directly on the endpoint as follows:
 
 [source,java]
--------------------------------------------------------------------------------------
+----
 to("spring-ws:http://yourdomain.com?messageFilter=#myEndpointSpecificMessageFilter");
--------------------------------------------------------------------------------------
+----
 
 For more information, see
 https://issues.apache.org/jira/browse/CAMEL-5724[CAMEL-5724]
@@ -292,30 +293,63 @@ If you want to create your own `MessageFilter`, consider overriding the
 following methods in the default implementation of `MessageFilter` in
 class `BasicMessageFilter`:
 
+._Java-only: custom `MessageFilter` method overrides_
 [source,java]
--------------------------------------------------------------------------------
-protected void doProcessSoapHeader(Message inOrOut, SoapMessage soapMessage)
-{your code /*no need to call super*/ }
+----
+protected void doProcessSoapHeader(Message inOrOut, SoapMessage soapMessage) {
+    // your code, no need to call super
+}
 
-protected void doProcessSoapAttachements(Message inOrOut, SoapMessage response)
-{ your code /*no need to call super*/ }
--------------------------------------------------------------------------------
+protected void doProcessSoapAttachements(Message inOrOut, SoapMessage response) {
+    // your code, no need to call super
+}
+----
 
 === Using a custom MessageSender and MessageFactory
 
 A custom message sender or factory in the registry can be referenced
 like this:
 
+[tabs]
+====
+Java::
++
 [source,java]
------------------------------------------------------------------------------------------------
+----
 from("direct:example")
-.to("spring-ws:http://foo.com/bar?messageFactory=#messageFactory&messageSender=#messageSender")
------------------------------------------------------------------------------------------------
+    .to("spring-ws:http://foo.com/bar?messageFactory=#messageFactory&messageSender=#messageSender");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:example"/>
+  <to uri="spring-ws:http://foo.com/bar?messageFactory=#messageFactory&amp;messageSender=#messageSender"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:example
+      steps:
+        - to:
+            uri: spring-ws:http://foo.com/bar
+            parameters:
+              messageFactory: "#messageFactory"
+              messageSender: "#messageSender"
+----
+====
 
 Spring configuration:
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------
+----
 <!-- authenticate using HTTP Basic Authentication -->
 <bean id="messageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
     <property name="credentials">
@@ -325,7 +359,7 @@ Spring configuration:
         </bean>
     </property>
 </bean>
----------------------------------------------------------------------------------------------------------------------
+----
 
 === Exposing web services
 
@@ -345,7 +379,7 @@ your routes.
 _web.xml_
 
 [source,xml]
------------------------------------------------------------------------------------------------------
+----
 <web-app>
     <servlet>
         <servlet-name>spring-ws</servlet-name>
@@ -357,12 +391,12 @@ _web.xml_
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>
------------------------------------------------------------------------------------------------------
+----
 
 _spring-ws-servlet.xml_
 
 [source,xml]
-----------------------------------------------------------------------------------------------------
+----
 <bean id="endpointMapping" class="org.apache.camel.component.spring.ws.bean.CamelEndpointMapping" />
 
 <bean id="wsdl" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
@@ -375,7 +409,7 @@ _spring-ws-servlet.xml_
     <property name="locationUri" value="/"/>
     <property name="targetNamespace" value="http://example.com/"/>
 </bean>
-----------------------------------------------------------------------------------------------------
+----
 
 More information on setting up Spring-WS can be found in
 https://docs.spring.io/spring-ws/docs/4.0.x/reference/html/#tutorial[Writing
@@ -395,38 +429,38 @@ The following route will receive all web service requests that have a
 root element named "GetFoo" within the `\http://example.com/` namespace.
 
 [source,java]
-----------------------------------------------------------------------------------------
+----
 from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointMapping")
-.convertBodyTo(String.class).to(mock:example)
-----------------------------------------------------------------------------------------
+    .convertBodyTo(String.class).to("mock:example");
+----
 
 The following route will receive web service requests containing the
 `\http://example.com/GetFoo` SOAP action.
 
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("spring-ws:soapaction:http://example.com/GetFoo?endpointMapping=#endpointMapping")
-.convertBodyTo(String.class).to(mock:example)
----------------------------------------------------------------------------------------
+    .convertBodyTo(String.class).to("mock:example");
+----
 
 The following route will receive all requests sent to
 `\http://example.com/foobar`.
 
 [source,java]
---------------------------------------------------------------------------------
+----
 from("spring-ws:uri:http://example.com/foobar?endpointMapping=#endpointMapping")
-.convertBodyTo(String.class).to(mock:example)
---------------------------------------------------------------------------------
+    .convertBodyTo(String.class).to("mock:example");
+----
 
 The route below will receive requests that contain the element
 `<foobar>abc</foobar>` anywhere inside the message (and the default
 namespace).
 
 [source,java]
---------------------------------------------------------------------------------------
+----
 from("spring-ws:xpathresult:abc?expression=//foobar&endpointMapping=#endpointMapping")
-.convertBodyTo(String.class).to(mock:example)
---------------------------------------------------------------------------------------
+    .convertBodyTo(String.class).to("mock:example");
+----
 
 === Alternative configuration, using existing endpoint mappings
 
@@ -453,7 +487,7 @@ of annotations.
 An example of a route using `beanname`:
 
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------
+----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="spring-ws:beanname:QuoteEndpointDispatcher" />
@@ -472,7 +506,7 @@ An example of a route using `beanname`:
 
 <bean id="QuoteEndpointDispatcher" class="org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher" />
 <bean id="FutureEndpointDispatcher" class="org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher" />
-------------------------------------------------------------------------------------------------------------------------
+----
 
 === POJO (un)marshalling
 
@@ -484,22 +518,26 @@ receive pojo's, to and from web services.
 When _accessing_ web services, you can marshal the request and unmarshal
 the response message:
 
+._Java-only: programmatic JAXB data format configuration with marshal/unmarshal_
 [source,java]
-----------------------------------------------------------------------------------------
+----
 JaxbDataFormat jaxb = new JaxbDataFormat(false);
 jaxb.setContextPath("com.example.model");
 
 from("direct:example").marshal(jaxb).to("spring-ws:http://foo.com/bar").unmarshal(jaxb);
-----------------------------------------------------------------------------------------
+----
 
 Similarly, when _providing_ web services, you can unmarshal XML requests
 to POJO's and marshal the response message back to XML:
 
+._Java-only: unmarshal incoming SOAP requests and marshal responses with JAXB_
 [source,java]
---------------------------------------------------------------------------------------------------------
-from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointMapping").unmarshal(jaxb)
-.to("mock:example").marshal(jaxb);
---------------------------------------------------------------------------------------------------------
+----
+from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointMapping")
+    .unmarshal(jaxb)
+    .to("mock:example")
+    .marshal(jaxb);
+----
 
 
 

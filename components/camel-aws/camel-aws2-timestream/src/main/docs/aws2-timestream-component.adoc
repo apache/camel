@@ -40,9 +40,9 @@ https://aws.amazon.com/timestream/[AWS Timestream].
 
 == URI Format
 
--------------------------
+----
 aws2-timestream://clientType:label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -233,22 +233,24 @@ In AWS Timestream there are multiple operations you can submit, as an example fo
 * Write Operation
 ** createDatabase: this operation will create a timestream database
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(CreateDatabaseRequest.builder().database(Database.builder().databaseName("testDb").kmsKeyId("testKmsKey").build()).build())
   .to("aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&operation=createDatabase&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 * Query Operation
 ** query: this operation will execute a timestream query
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:query")
     .setBody(QueryRequest.builder().queryString("SELECT * FROM testDb.testTable ORDER BY time DESC LIMIT 10").build())
     .to("aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&operation=query&pojoRequest=true")
---------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -259,13 +261,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-timestream</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

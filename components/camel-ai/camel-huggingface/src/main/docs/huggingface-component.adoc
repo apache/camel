@@ -267,6 +267,8 @@ Send multiple messages to "direct:start-chat" — history is maintained automati
 .Custom Task
 For a custom task (e.g., _translation_):
 Define a custom predictor bean in your application or test:
+
+._Java-only: defining a custom predictor bean_
 [source,java]
 ----
 public class TranslationPredictor extends AbstractTaskPredictor {

@@ -26,9 +26,9 @@ at https://aws.amazon.com/kinesis/firehose/[AWS Kinesis Firehose]
 == URI Format
 
 [source,java]
------------------------------------
+----
 aws2-kinesis-firehose://delivery-stream-name[?options]
------------------------------------
+----
 
 The stream needs to be created prior to it being used.
 
@@ -150,8 +150,9 @@ Camel-AWS s3 component provides the following operation on the producer side:
 
 You can send an iterable of Kinesis Record (as the following example shows), or you can send directly a PutRecordBatchRequest POJO instance in the body.
 
+._Java-only: uses ProducerTemplate, inline Processor, and AWS SDK builders_
 [source,java]
---------------------------------------------------------------------------------------------------------------------
+----
     @Test
     public void testFirehoseBatchRouting() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -168,7 +169,7 @@ You can send an iterable of Kinesis Record (as the following example shows), or 
     }
 
 from("direct:start").to("aws2-kinesis-firehose://cc?amazonKinesisFirehoseClient=#FirehoseClient&operation=sendBatchRecord");
---------------------------------------------------------------------------------------------------------------------
+----
 
 In the deliveryStream you'll find "Test1Test2".
 
@@ -179,13 +180,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-kinesis</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

@@ -693,6 +693,8 @@ YAML::
 
 When using YAML DSL, the processor references used in the examples above would be implemented as Spring beans:
 
+._Java-only: Spring bean Processor implementation_
+
 [source,java]
 ----
 @Component("htmlProcessor")
@@ -997,6 +999,8 @@ YAML::
 
 NOTE: For the aggregation example above, you can also use a custom processor. Create a Java class:
 
+._Java-only: Processor implementation_
+
 [source,java]
 ----
 public class DocumentListProcessor implements Processor {
@@ -1195,6 +1199,8 @@ Headers can be used to override batch configuration per-message:
 === Input Formats for Batch Processing
 
 The batch operations accept multiple input formats:
+
+._Java-only: Java collection types_
 
 [source,java]
 ----
@@ -1792,6 +1798,8 @@ NOTE: Custom polling workflows require Java processors and are more complex. The
 
 The simplest custom workflow uses a Java loop to poll for status:
 
+._Java-only: Java test API (ProducerTemplate with polling loop)_
+
 [source,java]
 ----
 // Submit conversion
@@ -2336,16 +2344,47 @@ camel.oauth.docling.client-secret=my-secret
 camel.oauth.docling.token-endpoint=https://idp.example.com/token
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:///data/input")
-    .to("docling:CONVERT_TO_MARKDOWN"
-        + "?useDoclingServe=true"
-        + "&doclingServeUrl=http://localhost:5001"
-        + "&oauthProfile=docling"
-        + "&contentInBody=true")
+    .to("docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&doclingServeUrl=http://localhost:5001&oauthProfile=docling&contentInBody=true")
     .log("${body}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:///data/input"/>
+  <to uri="docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&amp;doclingServeUrl=http://localhost:5001&amp;oauthProfile=docling&amp;contentInBody=true"/>
+  <log message="${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:///data/input
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN
+            parameters:
+              useDoclingServe: true
+              doclingServeUrl: "http://localhost:5001"
+              oauthProfile: docling
+              contentInBody: true
+        - log:
+            message: "${body}"
+----
+====
 
 == Advanced Processing Options (API Mode)
 

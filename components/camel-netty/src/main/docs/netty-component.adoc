@@ -178,6 +178,7 @@ Read further about using <<Netty-NonShareableEncodersOrDecoders,non-shareable en
 The lists of codecs need to be added to the Camel's registry, so they can
 be resolved when the endpoint is created.
 
+._Java-only: Java programmatic registry configuration_
 [source,java]
 ----
 ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
@@ -309,6 +310,7 @@ value.
 For instance, the example below will close the channel after it has
 written the bye message back to the client:
 
+._Java-only: inline Processor implementation_
 [source,java]
 ----
 from("netty:tcp://0.0.0.0:8080").process(new Processor() {
@@ -353,6 +355,7 @@ created
 
 ==== Using custom pipeline factory
 
+._Java-only: Java class definition_
 [source,java]
 ----
 public class SampleServerInitializerFactory extends ServerInitializerFactory {
@@ -373,6 +376,7 @@ public class SampleServerInitializerFactory extends ServerInitializerFactory {
 The custom channel pipeline factory can then be added to the registry
 and instantiated/utilized on a Camel route in the following way
 
+._Java-only: Java programmatic registry and route configuration_
 [source,java]
 ----
 Registry registry = camelContext.getRegistry();
@@ -529,6 +533,7 @@ MacOS/BSD::
 
 Note that Object serialization is not allowed by default, and so a decoder must be configured.
 
+._Java-only: Java annotation and class definition_
 [source,java]
 ----
 @BindToRegistry("decoder")
@@ -557,6 +562,7 @@ RouteBuilder builder = new RouteBuilder() {
 
 === A TCP-based Netty consumer endpoint using One-way communication
 
+._Java-only: Java RouteBuilder class_
 [source,java]
 ----
 RouteBuilder builder = new RouteBuilder() {
@@ -581,6 +587,7 @@ The following examples demonstrate how to use the utility with the Netty compone
 [[Netty-Programmaticconfigurationofthecomponent]]
 Programmatic configuration of the component
 
+._Java-only: Java programmatic SSL configuration_
 [source,java]
 ----
 KeyStoreParameters ksp = new KeyStoreParameters();
@@ -621,6 +628,7 @@ Spring DSL based configuration of endpoint
 [[Netty-UsingBasicSSLTLSconfigurationontheJettyComponent]]
 Using Basic SSL/TLS configuration on the Jetty Component
 
+._Java-only: Java programmatic SSL route configuration_
 [source,java]
 ----
 context.addRoutes(new RouteBuilder() {
@@ -650,6 +658,7 @@ get details about the client certificate. When `ssl=true` then the
 xref:netty-component.adoc[Netty] component will store the `SSLSession` as a
 header on the Camel Message as shown below:
 
+._Java-only: Java SSL session API_
 [source,java]
 ----
 SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);

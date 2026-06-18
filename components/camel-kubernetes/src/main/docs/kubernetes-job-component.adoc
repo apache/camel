@@ -42,19 +42,21 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listJob`: this operation lists the jobs on a kubernetes cluster
 
+._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:list").
     toF("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJob").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of jobs from your cluster
 
 - `listJobByLabels`: this operation lists the jobs by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listByLabels").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -66,7 +68,7 @@ from("direct:listByLabels").process(new Processor() {
         });
     toF("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJobByLabels").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of jobs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
@@ -74,8 +76,9 @@ This operation returns a list of jobs from your cluster, using a label selector 
 
 We have a wonderful example of this operation thanks to https://github.com/Emmerson-Miranda[Emmerson Miranda] from this https://github.com/Emmerson-Miranda/camel/blob/master/camel3-cdi/cdi-k8s-pocs/src/main/java/edu/emmerson/camel/k8s/jobs/camel_k8s_jobs/KubernetesCreateJob.java[Java test]
 
+._Java-only: full RouteBuilder class with KubernetesConstants, lambda Processors, and programmatic JobSpec construction_
 [source,java]
---------------------------------------------------------------------------------
+----
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -169,7 +172,7 @@ public class KubernetesCreateJob extends RouteBuilder {
 		return containers;
 	}
 }
---------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

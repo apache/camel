@@ -22,14 +22,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
----------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-servlet</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
----------------------------------------------------------------
+----
 
 
 [NOTE]
@@ -47,9 +47,9 @@ a `String` which is safe to be read multiple times.
 
 == URI format
 
----------------------------------
+----
 servlet://relative_path[?options]
----------------------------------
+----
 
 
 // component options: START
@@ -172,7 +172,7 @@ If you're running Camel standalone on a Servlet container or application server,
 For example, to define a route that exposes an HTTP service under the path `/services`.
 
 [source,xml]
--------------------------------------------------------------------------
+----
 <web-app>
   <servlet>
     <servlet-name>CamelServlet</servlet-name>
@@ -184,12 +184,13 @@ For example, to define a route that exposes an HTTP service under the path `/ser
     <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
 </web-app>
--------------------------------------------------------------------------
+----
 
 === Example route
 
+._Java-only: inline Processor with Exchange API and string concatenation_
 [source,java]
--------------------------------------------------------------------------
+----
 from("servlet:hello").process(new Processor() {
     public void process(Exchange exchange) throws Exception {
         // Access HTTP headers sent by the client
@@ -201,7 +202,7 @@ from("servlet:hello").process(new Processor() {
         message.setBody("<b>Got Content-Type: " + contentType = ", URI: " + httpUri + "</b>");
     }
 });
--------------------------------------------------------------------------
+----
 
 === Camel Servlet HTTP endpoint path
 
@@ -228,7 +229,7 @@ On the Camel Quarkus runtime, these init parameters can be set via configuration
 On other runtimes you can configure these parameters in `web.xml` as follows.
 
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <web-app>
     <servlet>
         <servlet-name>CamelServlet</servlet-name>
@@ -248,7 +249,7 @@ On other runtimes you can configure these parameters in `web.xml` as follows.
         <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
 </web-app>
------------------------------------------------------------------------------------------------
+----
 
 === Camel JARs on an application server boot classpath
 
@@ -260,7 +261,7 @@ WARNING: Having Camel JARs on the boot classpath of the application server is no
 In this scenario, you *must* define a custom and unique servlet name in each of your Camel applications. For example, in `web.xml`:
 
 [source,xml]
----------------------------------------------------------------------------------------------
+----
 <web-app>
     <servlet>
       <servlet-name>MyServlet</servlet-name>
@@ -273,14 +274,43 @@ In this scenario, you *must* define a custom and unique servlet name in each of 
       <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>
----------------------------------------------------------------------------------------------
+----
 
 In your Camel servlet endpoints, include the servlet name:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------
+----
 from("servlet://foo?servletName=MyServlet")
----------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="servlet://foo?servletName=MyServlet"/>
+  <!-- ... -->
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: servlet://foo
+      parameters:
+        servletName: MyServlet
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
 
 Camel detects duplicate Servlet names and will fail to
 start the application. You can control and ignore such duplicates by
@@ -288,7 +318,7 @@ setting the servlet init parameter `ignoreDuplicateServletName` to `true` as
 follows:
 
 [source,xml]
------------------------------------------------------------------------------------------------
+----
   <servlet>
     <servlet-name>CamelServlet</servlet-name>
     <display-name>Camel Http Transport Servlet</display-name>
@@ -298,7 +328,7 @@ follows:
       <param-value>true</param-value>
     </init-param>
   </servlet>
------------------------------------------------------------------------------------------------
+----
 
 But it is *strongly advised* to use unique `servlet-name` for each Camel
 application to avoid this duplication clash, as well any unforeseen

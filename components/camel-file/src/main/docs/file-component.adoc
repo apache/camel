@@ -465,6 +465,10 @@ files, by setting a property on the exchange with the key
 `Exchange.CHARSET_NAME`. For example, in the route below, we set the
 property with a value from a message header.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -473,6 +477,42 @@ from("file:inbox")
   .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader"))
   .to("file:outbox");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox"/>
+  <convertBodyTo type="byte[]" charset="iso-8859-1"/>
+  <to uri="bean:myBean"/>
+  <setProperty name="CamelCharsetName">
+    <header>someCharsetHeader</header>
+  </setProperty>
+  <to uri="file:outbox"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - convertBodyTo:
+            type: "byte[]"
+            charset: iso-8859-1
+        - to:
+            uri: bean:myBean
+        - setProperty:
+            name: CamelCharsetName
+            header: someCharsetHeader
+        - to:
+            uri: file:outbox
+----
+====
 
 We suggest keeping things simpler, so if you pick up files with the same
 encoding, and want to write the files in a specific encoding, then favor
@@ -526,10 +566,10 @@ YAML::
 
 And the logs:
 
-----------------------------------------------------------------------------------------------------------------------------------------------
+----
 DEBUG GenericFileConverter           - Read file /Users/davsclaus/workspace/camel/camel-core/target/charset/input/input.txt with charset utf-8
 DEBUG FileOperations                 - Using Reader to write file: target/charset/output.txt with charset: iso-8859-1
-----------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Common gotchas with folder and filenames
 
@@ -576,14 +616,7 @@ YAML::
 ----
 ====
 
-To use `report.txt` as the filename you have to do:
-
-[source,java]
-----
-from("direct:report").setHeader(Exchange.FILE_NAME, constant("report.txt")).to( "file:target/reports");
-----
-
-... the same as above, but with `CamelFileName`:
+To use `report.txt` as the filename you have to do (using the `CamelFileName` header):
 
 [tabs]
 ====
@@ -692,10 +725,32 @@ See also section <<File2-WritingDoneFiles,_writing done files_>> below.
 If you want only to consume files when a _done file_ exists, then you can
 use the `doneFileName` option on the endpoint.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:bar?doneFileName=done");
 ----
+
+XML::
++
+[source,xml]
+----
+<from uri="file:bar?doneFileName=done"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file:bar
+    parameters:
+      doneFileName: done
+----
+====
 
 It will only consume files from the _bar_ folder if a _done file_ exists in
 the same directory as the target files. Camel will automatically delete
@@ -754,10 +809,32 @@ After you have written a file, you may want to write an additional _done file_ a
 to indicate to others that the file is finished and has been written.
 To do that, you can use the `doneFileName` option on the file producer endpoint.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 .to("file:bar?doneFileName=done");
 ----
+
+XML::
++
+[source,xml]
+----
+<to uri="file:bar?doneFileName=done"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- to:
+    uri: file:bar
+    parameters:
+      doneFileName: done
+----
+====
 
 This will create a file named `done` in the same directory as the
 target file.
@@ -935,10 +1012,32 @@ Camel supports Idempotent Consumer
 directly within the component, so it will skip already processed files.
 This feature can be enabled by setting the `idempotent=true` option.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?idempotent=true").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<from uri="file://inbox?idempotent=true"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      idempotent: true
+----
+====
 
 Camel uses the absolute file name as the idempotent key, to detect
 duplicate files. You can customize this key by
@@ -1113,10 +1212,32 @@ See the URI options above for more information.
 
 The sample below demonstrates how to use it:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?antInclude=**/*.txt").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<from uri="file://inbox?antInclude=**/*.txt"/>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file://inbox
+    parameters:
+      antInclude: "**/*.txt"
+----
+====
 
 === Sorting Strategies
 
@@ -1262,6 +1383,7 @@ If you want to use the Camel Error Handler to
 deal with any exception occurring in the file consumer, then you can
 enable the `bridgeErrorHandler` option as shown below:
 
+._Java-only: `onException` error handler configuration is Java DSL specific_
 [source,java]
 ----
 // to handle any IOException being thrown
@@ -1302,10 +1424,40 @@ problems.
 By default, Camel will move any processed file into a `.camel`
 subdirectory in the directory the file was consumed from.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
+from("file://inputdir/?recursive=true&delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?recursive=true&amp;delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        recursive: true
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 Affects the layout as follows: +
 *before*
@@ -1326,17 +1478,77 @@ outputdir/sub/bar.txt
 
 === Read from a directory and write to another directory
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?delete=true").to("file://outputdir")
+from("file://inputdir/?delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 === Read from a directory and write to another directory using a dynamic name
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}")
+from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?delete=true"/>
+  <to uri="file://outputdir?fileName=copy-of-${file:name}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+            parameters:
+              fileName: "copy-of-${file:name}"
+----
+====
 
 Listen to a directory and create a message for each file dropped there.
 Copy the contents to the `outputdir` and delete the file in the
@@ -1344,10 +1556,40 @@ Copy the contents to the `outputdir` and delete the file in the
 
 === Reading recursively from a directory and writing to another
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("file://inputdir/?recursive=true&delete=true").to("file://outputdir")
+from("file://inputdir/?recursive=true&delete=true").to("file://outputdir");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inputdir/?recursive=true&amp;delete=true"/>
+  <to uri="file://outputdir"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inputdir/
+      parameters:
+        recursive: true
+        delete: true
+      steps:
+        - to:
+            uri: file://outputdir
+----
+====
 
 Listen to a directory and create a message for each file dropped there.
 Copy the contents to the `outputdir` and delete the file in the
@@ -1370,6 +1612,8 @@ outputdir/sub/bar.txt
 
 === Read from a directory and process the message in java
 
+._Java-only: inline Processor implementation_
+
 [source,java]
 ----
 from("file://inputdir/").process(new Processor() {
@@ -1388,10 +1632,39 @@ dropped into the `inputdir` directory.
 In this sample, we want to move consumed files to a backup folder using
 today's date as a subfolder name:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}"/>
+  <to uri="..."/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://inbox
+      parameters:
+        move: "backup/${date:now:yyyyMMdd}/${file:name}"
+      steps:
+        - to:
+            uri: "..."
+----
+====
 
 See xref:languages:file-language.adoc[File Language] for more samples.
 

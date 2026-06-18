@@ -26,9 +26,9 @@ https://aws.amazon.com/msk/[Amazon MSK].
 
 == URI Format
 
--------------------------
+----
 aws2-msk://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -115,8 +115,9 @@ YAML::
 
 - createCluster: this operation will create an MSK Cluster in AWS
 
+._Java-only: creating an MSK Cluster with a Processor and MSK2Constants_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:createCluster")
     .process(new Processor() {
        @Override
@@ -125,11 +126,11 @@ from("direct:createCluster")
                 exchange.getIn().setHeader(MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1");
                 exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_NUMBER, 2);
                 BrokerNodeGroupInfo groupInfo = BrokerNodeGroupInfo.builder().build();
-                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);					
+                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);
        }
     })
     .to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster")
---------------------------------------------------------------------------------
+----
 
 - deleteCluster: this operation will delete an MSK Cluster in AWS
 
@@ -176,8 +177,9 @@ YAML::
 ----
 ====
 
+._Java-only: deleting an MSK Cluster with a Processor and MSK2Constants_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:createCluster")
     .process(new Processor() {
        @Override
@@ -186,23 +188,24 @@ from("direct:createCluster")
                 exchange.getIn().setHeader(MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1");
                 exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_NUMBER, 2);
                 BrokerNodeGroupInfo groupInfo = BrokerNodeGroupInfo.builder().build();
-                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);					
+                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);
        }
     })
     .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster")
---------------------------------------------------------------------------------
+----
 
 === Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS MSK, there are multiple operations you can submit, as an example for List clusters request, you can do something like:
 
+._Java-only: using an AWS SDK POJO request as the message body_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:aws2-msk")
      .setBody(ListClustersRequest.builder().maxResults(10).build())
      .to("aws2-msk://test?mskClient=#amazonMskClient&operation=listClusters&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -213,13 +216,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-msk</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

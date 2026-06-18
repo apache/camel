@@ -38,6 +38,7 @@ the REST components (without the need for servlet)
 You can enable the OpenApi api from the rest-dsl by configuring the
 `apiContextPath` dsl as shown below:
 
+._Java-only: RouteBuilder with Rest DSL configuration and class literals_
 [source,java]
 ----
 public class UserRouteBuilder extends RouteBuilder {
@@ -138,6 +139,7 @@ to the generated OpenAPI document and not to the actual REST services
 The Rest DSL now supports declaring OpenApi `securityDefinitions` in the generated API document.
 For example, as shown below:
 
+._Java-only: Rest DSL security definitions builder API_
 [source,java]
 ----
 rest("/user").tag("dude").description("User rest service")
@@ -157,6 +159,7 @@ Here we have set up two security definitions
 Then you need to specify on the rest operations which security to use by referring to
 their key (petstore_auth or api_key).
 
+._Java-only: Rest DSL security on operations with class literals_
 [source,java]
 ----
 .get("/{id}/{date}").description("Find user by id and date").outType(User.class)
@@ -188,6 +191,7 @@ By default, the value for these fields is determined by `X-Forwarded` headers, `
 
 This can be overridden by specifying your own host, port & scheme on the REST configuration.
 
+._Java-only: programmatic restConfiguration builder API_
 [source,java]
 ----
 restConfiguration().component("netty-http")

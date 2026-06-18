@@ -139,6 +139,7 @@ If you have a standard set of namespaces you wish to work with and wish
 to share them across many XQuery expressions, you can use the
 `org.apache.camel.support.builder.Namespaces` when using Java DSL as shown:
 
+._Java-only: programmatic namespace configuration with Namespaces builder_
 [source,java]
 ----
 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
@@ -161,6 +162,7 @@ In the XQuery expression then the namespace is used by its prefix, e.g.:
 
 The namespace builder supports adding multiple namespaces as shown:
 
+._Java-only: adding multiple namespaces with the Namespaces builder_
 [source,java]
 ----
 Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
@@ -175,7 +177,7 @@ In the XML example below we use Spring XML where the namespace is declared in th
 in the line with `xmlns:foo="http://example.com/person"`:
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:foo="http://example.com/person"
@@ -193,7 +195,7 @@ in the line with `xmlns:foo="http://example.com/person"`:
     </route>
   </camelContext>
 </beans>
----------------------------------------------------------------------------------------------------------------
+----
 
 This namespace uses `foo` as prefix, so the `<xquery>` expression uses `foo:` to use this namespace.
 
@@ -202,34 +204,66 @@ This namespace uses `foo` as prefix, so the `<xquery>` expression uses `foo:` to
 We can do a message translation using transform or setBody in the route,
 as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
-----------------------------------------
+----
 from("direct:start").
    transform().xquery("/people/person");
-----------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <xquery>/people/person</xquery>
+  </transform>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            expression:
+              xquery:
+                expression: /people/person
+----
+====
 
 Notice that xquery will use DOMResult by default, so if we want to grab
 the value of the person node, using `text()` we need to tell XQuery to use
 String as the result type, as shown:
 
+._Java-only: specifying result type with String.class parameter_
 [source,java]
--------------------------------------------------------------
+----
 from("direct:start").
    transform().xquery("/people/person/text()", String.class);
--------------------------------------------------------------
+----
 
 If you want to use Camel variables like headers, you have to explicitly
 declare them in the XQuery expression.
 
 [source,xml]
--------------------------------------------------------------
+----
 <transform>
     <xquery>
         declare variable $in.headers.foo external;
         element item {$in.headers.foo}
     </xquery>
 </transform>
--------------------------------------------------------------
+----
 
 == Loading script from external resource
 
@@ -238,10 +272,11 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: loading XQuery script from classpath with class literal_
 [source,java]
-------------------------------------------------------------------------------
+----
 .setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
-------------------------------------------------------------------------------
+----
 
 == Learning XQuery
 
@@ -260,13 +295,13 @@ If you use Maven you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
---------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-saxon</artifactId>
   <version>x.x.x</version>
 </dependency>
---------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

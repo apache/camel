@@ -22,34 +22,34 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jt400</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
 To send or receive data from a data queue
 
-----------------------------------------------------------------------
+----
 jt400://user:password/system/QSYS.LIB/library.LIB/queue.DTAQ[?options]
-----------------------------------------------------------------------
+----
 
 To send or receive messages from a message queue
 
-----------------------------------------------------------------------
+----
 jt400://user:password/system/QSYS.LIB/library.LIB/queue.MSGQ[?options]
-----------------------------------------------------------------------
+----
 
 To call program
 
------------------------------------------------------------------------
+----
 jt400://user:password/system/QSYS.LIB/library.LIB/program.PGM[?options]
------------------------------------------------------------------------
+----
 
 
 // component options: START
@@ -107,16 +107,17 @@ library `BEATLES` on a system named `LIVERPOOL`.  +
  Another user connects to the same data queue to receive the information
 from the data queue and forward it to the `mock:ringo` endpoint.
 
+._Java-only: RouteBuilder class definition_
 [source,java]
--------------------------------------------------------------------------------------------------------
+----
 public class Jt400RouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-       from("direct:george").to("jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ");
-       from("jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ").to("mock:ringo");
+       from(“direct:george”).to(“jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”);
+       from(“jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”).to(“mock:ringo”);
     }
 }
--------------------------------------------------------------------------------------------------------
+----
 
 === Program call examples
 
@@ -126,41 +127,43 @@ program “compute” in the library “assets”. This program will write the
 output values in the second and third parameters. All the parameters will be
 sent to the direct:play endpoint.
 
+._Java-only: RouteBuilder class definition_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 public class Jt400RouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-       from("direct:work").to("jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3").to("direct:play");
+       from(“direct:work”).to(“jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3”).to(“direct:play”);
     }
 }
----------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 In this example, the camel route will call the QUSRTVUS API to retrieve
-16 bytes from data area "MYUSRSPACE" in the "MYLIB" library.
+16 bytes from data area “MYUSRSPACE” in the “MYLIB” library.
 
+._Java-only: RouteBuilder class definition with lambda expression_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 public class Jt400RouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        from("timer://foo?period=60000")
+        from(“timer://foo?period=60000”)
         .process( exchange -> {
-            String usrSpc = "MYUSRSPACEMYLIB     ";
+            String usrSpc = “MYUSRSPACEMYLIB     “;
             Object[] parms = new Object[] {
                 usrSpc, // Qualified user space name
                 1,      // starting position
                 16,     // length of data
-                "" // output
+                “” // output
             };
             exchange.getIn().setBody(parms);
         })
-        .to("jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3")
-        .setBody(simple("${body[3]}"))
-        .to("direct:foo");
+        .to(“jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3”)
+        .setBody(simple(“${body[3]}”))
+        .to(“direct:foo”);
     }
 }
----------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Writing to keyed data queues
 
@@ -310,8 +313,9 @@ YAML::
 
 === Replying to an inquiry message on a message queue
 
+._Java-only: uses Java constants, lambda expression, and choice with header() predicate_
 [source,java]
--------------------------------------------------------------------------------------------------------
+----
 from("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq?sendingReply=true")
 .choice()
     .when(header(Jt400Constants.MESSAGE_TYPE).isEqualTo(AS400Message.INQUIRY))
@@ -320,7 +324,7 @@ from("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq?sendingR
             exchange.getIn().setBody(reply);
         })
         .to("jt400://username:password@localhost/qsys.lib/qusrsys.lib/myq.msgq");
--------------------------------------------------------------------------------------------------------
+----
 
 
 

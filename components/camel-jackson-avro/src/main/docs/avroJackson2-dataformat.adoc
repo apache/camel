@@ -23,12 +23,43 @@ same way as its JSON counterpart, and thus can be used with classes
 annotated for JSON serialization/deserialization.
 ====
 
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------
-from("kafka:topic").
-  unmarshal().avro(JsonNode.class).
-  to("log:info");
--------------------------------
+----
+from("kafka:topic")
+    .unmarshal().avro(JsonNode.class)
+    .to("log:info");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kafka:topic"/>
+  <unmarshal><avro library="Jackson"/></unmarshal>
+  <to uri="log:info"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:topic
+      steps:
+        - unmarshal:
+            avro:
+              library: Jackson
+        - to:
+            uri: log:info
+----
+====
 
 == Avro Jackson Options
 
@@ -61,13 +92,13 @@ If you use Maven, you could add the following to your pom.xml,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-jackson-avro</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

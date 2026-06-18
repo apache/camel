@@ -598,21 +598,21 @@ public interface TextService {
 
 We can then create the simplest CXF service (note we didn't specify the `POJO` mode, as it is the default mode) as follows:
 
+._Java-only: CXF POJO mode with `MessageContentsList` processing_
 [source,java]
 ----
-    from("cxf:textServiceResponseFromRoute?serviceClass=org.apache.camel.component.cxf.soap.server.TextService&address=/text-route",
-            .process(exchange -> {
-                String operation = (String) exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);
-                String inputArg = ((MessageContentsList) exchange.getIn().getBody()).get(0).toString();
-                String result = null;
-                if (operation.equals("upperCase")) {
-                    result = inputArg.toUpperCase();
-                }
-                else if (operation.equals("lowerCase")) {
-                    result = inputArg.toLowerCase();
-                }
-                exchange.getIn().setBody(result);
-            });                                     
+from("cxf:textServiceResponseFromRoute?serviceClass=org.apache.camel.component.cxf.soap.server.TextService&address=/text-route")
+    .process(exchange -> {
+        String operation = (String) exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);
+        String inputArg = ((MessageContentsList) exchange.getIn().getBody()).get(0).toString();
+        String result = null;
+        if (operation.equals("upperCase")) {
+            result = inputArg.toUpperCase();
+        } else if (operation.equals("lowerCase")) {
+            result = inputArg.toLowerCase();
+        }
+        exchange.getIn().setBody(result);
+    });
 ----
 
 === How to prepare the message for the Camel CXF endpoint in POJO data format
@@ -890,19 +890,15 @@ If your CXF endpoint is working in the `RAW` data format, you could
 set the SOAP Fault message in the message body and set the response
 code in the message header as demonstrated by https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfMessageStreamExceptionTest.java#L43[CxfMessageStreamExceptionTest]:
 
+._Java-only: setting SOAP fault response body and HTTP status code in RAW mode_
 [source,java]
 ----
-from(routerEndpointURI).process(new Processor() {
-
-    public void process(Exchange exchange) throws Exception {
+from(routerEndpointURI)
+    .process(exchange -> {
         Message out = exchange.getMessage();
-        // Set the message body
         out.setBody(this.getClass().getResourceAsStream("SoapFaultMessage.xml"));
-        // Set the response code here
-        out.setHeader(org.apache.cxf.message.Message.RESPONSE_CODE, new Integer(500));
-    }
-
-});
+        out.setHeader(org.apache.cxf.message.Message.RESPONSE_CODE, 500);
+    });
 ----
 
 Same for using POJO data format. You can set the SOAPFault on the _OUT_ body.
@@ -1142,10 +1138,11 @@ remote connection IP easily.
 
 Here is the code snippet:
 
+._Java-only: accessing the CXF message to get the remote IP address_
 [source,java]
 ----
-// check the remote IP from the CXF Message
-org.apache.cxf.message.Message cxfMessage = exchange.getIn().getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
+org.apache.cxf.message.Message cxfMessage = exchange.getIn().getHeader(
+        CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
 ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
 String remoteAddress = request.getRemoteAddr();
 ----
@@ -1219,7 +1216,7 @@ environment specific configurations could look like in Spring XML:
 The environment specific configurations are externalized into a properties file:
 
 *orderEntry.cfg*
-[source,java]
+[source,properties]
 ----
 endpointUri=https://localhost:8181/OrderEntry
 trustStore.password=password

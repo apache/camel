@@ -175,6 +175,7 @@ YAML::
 
 Instead of simple language you can also use Groovy which has a special support in J8583 library:
 
+._Java-only: using Groovy language for ISO-8583 field extraction_
 [source,java]
 ----
 from("jms:payment:response")
@@ -207,14 +208,14 @@ If you use maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest and greatest release.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-iso8583</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

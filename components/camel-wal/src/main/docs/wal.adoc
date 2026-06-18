@@ -23,6 +23,7 @@ Thus guaranteeing that records can be recovered in case that system crashes.
 Because this strategy wraps another one,
 then the other one should be created first and then passed as an argument to this strategy when creating it.
 
+._Java-only: creating a WriteAheadResumeStrategy wrapping another strategy_
 [source,java]
 ----
 SomeOtherResumeStrategy resumeStrategy = new SomeOtherResumeStrategy();
@@ -33,6 +34,7 @@ WriteAheadResumeStrategy writeAheadResumeStrategy = new WriteAheadResumeStrategy
 
 Subsequently, this strategy should be registered to the registry instead
 
+._Java-only: registering the strategy and using it in a route_
 [source,java]
 ----
 getCamelContext().getRegistry().bind(ResumeStrategy.DEFAULT_NAME, writeAheadResumeStrategy);

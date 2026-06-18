@@ -158,6 +158,7 @@ WARNING: beware of any potential circular reference you may introduce when using
 _Kamelets_ can be used as if they were standard Camel components.
 For example, suppose that we have created a Route Template as follows:
 
+._Java-only: programmatic route template definition_
 [source,java]
 ----
 routeTemplate("setMyBody")
@@ -216,6 +217,7 @@ Behind the scenes, the *Kamelet* component does the following things:
 
 If you had to do it programmatically, it would have been something like:
 
+._Java-only: programmatic TemplatedRouteBuilder usage_
 [source,java]
 ----
 routeTemplate("setMyBody")
