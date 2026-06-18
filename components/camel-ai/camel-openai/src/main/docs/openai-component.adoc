@@ -131,6 +131,16 @@ from("direct:chat")
         + "&mcpServer.tools.oauthProfile=keycloak");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:chat"/>
+    <to uri="openai:chat-completion?model=gpt-4&amp;oauthProfile=azure&amp;mcpServer.tools.transportType=streamableHttp&amp;mcpServer.tools.url=https://mcp.internal/mcp&amp;mcpServer.tools.oauthProfile=keycloak"/>
+</route>
+----
+
 YAML::
 +
 [source,yaml]
