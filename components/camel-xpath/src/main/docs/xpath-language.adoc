@@ -70,6 +70,9 @@ local part. Camel will try to resolve a variable in the following steps:
 
 ==== Example of using variables, header and body in XPath expression
 You can combine headers, properties, body and variables in an XPath expression as shown in the example below:
+
+._Java-only: uses Document.class type conversion in setVariable/setHeader_
+
 [source,java]
 ----
 from("timer:java?period=1000,repeatCount=1")
@@ -268,6 +271,8 @@ TIP: Classes from `java.lang` can omit the FQN name, so you can use `resultType=
 
 Using `@XPath` annotation:
 
+._Java-only: Java bean integration annotation_
+
 [source,java]
 ----
 @XPath(value = "concat('foo-',//order/name/)", resultType = String.class) String name)
@@ -348,6 +353,8 @@ If you have a standard set of namespaces you wish to work with and wish
 to share them across many XPath expressions, you can use the
 `org.apache.camel.support.builder.Namespaces` when using Java DSL as shown:
 
+._Java-only: Namespaces builder API_
+
 [source,java]
 ----
 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
@@ -369,6 +376,8 @@ In the XPath expression then the namespace is used by its prefix, e.g.:
 ----
 
 The namespace builder supports adding multiple namespaces as shown:
+
+._Java-only: Namespaces builder API_
 
 [source,java]
 ----
@@ -416,10 +425,12 @@ value from the message and bind it to a method parameter.
 
 NOTE: The default `@XPath` annotation has SOAP and XML namespaces available.
 
+._Java-only: Java bean integration annotation_
+
 [source,java]
 ----
 public class Foo {
-    
+
     @Consume(uri = "activemq:my.queue")
     public void doSomething(@XPath("/person/@name") String name, String xml) {
         // process the inbound message here
@@ -440,6 +451,8 @@ and hence why `CamelContext` is needed.
 
 For example, you can do something like this:
 
+._Java-only: XPathBuilder API_
+
 [source,java]
 ----
 boolean matches = XPathBuilder.xpath("/foo/bar/@xyz").matches(context, "<foo><bar xyz='cheese'/></foo>"));
@@ -449,6 +462,8 @@ This will match the given predicate.
 
 You can also evaluate as shown in the following three examples:
 
+._Java-only: XPathBuilder API_
+
 [source,java]
 ----
 String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>", String.class);
@@ -457,6 +472,8 @@ Boolean bool = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>true</
 ----
 
 Evaluating with a `String` result is a common requirement and make this simpler:
+
+._Java-only: XPathBuilder API_
 
 [source,java]
 ----
@@ -630,6 +647,8 @@ such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
 e.g., to refer to a file on the classpath you can do:
 
+._Java-only: Java DSL expression syntax_
+
 [source,java]
 ----
 .setHeader("myHeader").xpath("resource:classpath:myxpath.txt", String.class)
@@ -668,6 +687,10 @@ Which you want to transform to a smaller structure:
 
 Then you can use simple as template and XPath to grab the content from the message payload, as shown in the route snippet below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -680,17 +703,86 @@ from("direct:start")
         .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <simple><![CDATA[<user>
+  <rool>${xpath(/order/@id)}</rool>
+  <country>${xpath(/order/address/co/text())}</country>
+  <fullname>${xpath(/order/first/text())}</fullname>
+</user>]]></simple>
+  </transform>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            simple: |
+              <user>
+                <rool>${xpath(/order/@id)}</rool>
+                <country>${xpath(/order/address/co/text())}</country>
+                <fullname>${xpath(/order/first/text())}</fullname>
+              </user>
+        - to:
+            uri: mock:result
+----
+====
+
 Notice how we use `${xpath(exp}` syntax in the simple template to use xpath that will be evaluated on the message body,
 to extract the content to be used in the output (see previous for output).
 
 Since the simple language can output anything, you can also use this to output in plain text or JSON, etc.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
         .transform().simple("The order ${xpath(/order/@id)} is being shipped to ${xpath(/order/address/co/text())}")
         .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <transform>
+    <simple>The order ${xpath(/order/@id)} is being shipped to ${xpath(/order/address/co/text())}</simple>
+  </transform>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            simple: "The order ${xpath(/order/@id)} is being shipped to ${xpath(/order/address/co/text())}"
+        - to:
+            uri: mock:result
+----
+====
 
 == Dependencies
 
