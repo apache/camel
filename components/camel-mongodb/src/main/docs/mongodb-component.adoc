@@ -48,21 +48,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-mongodb</artifactId>
     <version>x.y.z</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI formats
 
----------------------------------------------------------------------------------------------------------------
+----
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 mongodb:dummy?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
----------------------------------------------------------------------------------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -84,7 +84,7 @@ Since mongo java driver 3, the WriteConcern and readPreference options have not 
 They are defined in the mongoClient object:
 
 [source,xml]
-----------------------------------------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xmlns:context="http://www.springframework.org/schema/context"
@@ -100,7 +100,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/context
     <mongo:client-options write-concern="NORMAL" />
   </mongo:mongo-client>
 </beans>
-----------------------------------------------------------------------------------------------------------------------------------
+----
 
 === MongoDB operations - producer endpoints
 
@@ -159,12 +159,12 @@ YAML::
 Please note that the default _id is treated by Mongo as and `ObjectId` type, so you may need to convert it properly.
 
 [source,java]
-------------------------------------------------------------------------------
+----
 from("direct:findById")
     .convertBodyTo(ObjectId.class)
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
     .to("mock:resultFindById");
-------------------------------------------------------------------------------
+----
 
 [TIP]
 ====
@@ -805,7 +805,7 @@ Equivalent of running the `db.stats()` command in the MongoDB shell,
 which displays useful statistic figures about the database. +
  For example:
 
--------------------------------------
+----
 > db.stats();
 {
     "db" : "test",
@@ -821,16 +821,16 @@ which displays useful statistic figures about the database. +
     "nsSizeMB" : 16,
     "ok" : 1
 }
--------------------------------------
+----
 
 Usage example:
 
 [source,java]
----------------------------------------------------------------------------------------------------------
+----
 // from("direct:getDbStats").to("mongodb:myDb?database=flights&collection=tickets&operation=getDbStats");
 Object result = template.requestBody("direct:getDbStats", "irrelevantBody");
 assertTrue("Result is not of type Document", result instanceof Document);
----------------------------------------------------------------------------------------------------------
+----
 
 The operation will return a data structure similar to the one displayed
 in the shell, in the form of a `Document` in the OUT message body.
@@ -841,7 +841,7 @@ Equivalent of running the `db.collection.stats()` command in the MongoDB
 shell, which displays useful statistic figures about the collection. +
  For example:
 
------------------------------
+----
 > db.camelTest.stats();
 {
     "ns" : "test.camelTest",
@@ -860,16 +860,16 @@ shell, which displays useful statistic figures about the collection. +
     },
     "ok" : 1
 }
------------------------------
+----
 
 Usage example:
 
 [source,java]
------------------------------------------------------------------------------------------------------------
+----
 // from("direct:getColStats").to("mongodb:myDb?database=flights&collection=tickets&operation=getColStats");
 Object result = template.requestBody("direct:getColStats", "irrelevantBody");
 assertTrue("Result is not of type Document", result instanceof Document);
------------------------------------------------------------------------------------------------------------
+----
 
 The operation will return a data structure similar to the one displayed
 in the shell, in the form of a `Document` in the OUT message body.
@@ -882,11 +882,11 @@ getting host information, replication or sharding status.
 Collection parameter is not used for this operation.
 
 [source,java]
---------------------------------------------------------------------------------
+----
 // route: from("command").to("mongodb:myDb?database=science&operation=command");
 DBObject commandBody = new BasicDBObject("hostInfo", "1");
 Object result = template.requestBody("direct:command", commandBody);
---------------------------------------------------------------------------------
+----
 
 ==== Dynamic operations
 
@@ -974,12 +974,12 @@ value of 1000ms.), which you can modify to suit your needs.
 An example:
 
 [source,java]
------------------------------------------------------------------------------------------------------
+----
 from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime")
     .id("tailableCursorConsumer1")
     .autoStartup(false)
     .to("mock:test");
------------------------------------------------------------------------------------------------------
+----
 
 The above route will consume from the `flights.cancellations` capped
 collection, using `departureTime` as the increasing field, with a
@@ -1028,13 +1028,13 @@ the last processed value under the "lastTrackingValue" field
 (`camelTailTracking` and `lastTrackingValue` are defaults).
 
 [source,java]
------------------------------------------------------------------------------------------------------------------------------------
+----
 from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" + 
      "&persistentId=cancellationsTracker")
     .id("tailableCursorConsumer2")
     .autoStartup(false)
     .to("mock:test");
------------------------------------------------------------------------------------------------------------------------------------
+----
 
 Below is another example identical to the one above, but where the
 persistent tail tracking runtime information will be stored under the
@@ -1042,14 +1042,14 @@ persistent tail tracking runtime information will be stored under the
 field:
 
 [source,java]
------------------------------------------------------------------------------------------------------------------------------------
+----
 from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasingField=departureTime&persistentTailTracking=true" + 
      "&persistentId=cancellationsTracker&tailTrackDb=trackers&tailTrackCollection=camelTrackers" + 
      "&tailTrackField=lastProcessedDepartureTime")
     .id("tailableCursorConsumer3")
     .autoStartup(false)
     .to("mock:test");
------------------------------------------------------------------------------------------------------------------------------------
+----
 
 ==== Change Streams Consumer
 
@@ -1064,19 +1064,19 @@ That JSON property is standard MongoDB `$match` aggregation.
 It could be easily specified using XML DSL configuration:
 
 [source,xml]
--------------
+----
 <route id="filterConsumer">
     <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets&amp;streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }"/>
     <to uri="mock:test"/>
 </route>
--------------
+----
 
 Java configuration:
 [source,java]
--------------
+----
 from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=tickets&streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }")
     .to("mock:test");
--------------
+----
 
 TIP: You can externalize the streamFilter value into a property placeholder which allows the endpoint
 URI parameters to be _cleaner_ and easier to read.
@@ -1111,14 +1111,14 @@ The following route defined in Spring XML executes the operation
 *Get DB stats for specified collection*
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <!-- using bean 'mongoBean' defined above -->
   <to uri="mongodb:mongoBean?database=${mongodb.database}&amp;collection=${mongodb.collection}&amp;operation=getDbStats" />
   <to uri="direct:result" />
 </route>
----------------------------------------------------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

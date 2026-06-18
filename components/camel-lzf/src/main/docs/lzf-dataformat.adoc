@@ -117,14 +117,14 @@ If you use Maven you can add the following to your `pom.xml`,
 substituting the version number for the latest release.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-lzf</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

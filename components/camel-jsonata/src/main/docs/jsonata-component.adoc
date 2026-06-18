@@ -22,21 +22,21 @@ Maven users will need to add the following dependency to
 their `pom.xml` for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jsonata</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
  
 
 == URI format
 
------------------------
+----
 jsonata:specName[?options]
------------------------
+----
 
 Where *specName* is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
@@ -178,7 +178,7 @@ A custom binding might look like the following:
 
 ._Java-only: implementing a custom JsonataFrameBinding_
 [source,java]
----------------------------------------------------------------
+----
 @NoArgsConstructor
 public class CustomJsonataFrameBinding implements JsonataFrameBinding {
   @Override
@@ -186,6 +186,6 @@ public class CustomJsonataFrameBinding implements JsonataFrameBinding {
     frame.bind("env", (String s) -> System.getenv(s));
   }
 }
----------------------------------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

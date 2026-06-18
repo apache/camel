@@ -18,9 +18,9 @@ The JCache component enables you to perform caching operations using JSR107/JCac
 
 == URI Format
 
-----------------------------
+----
 jcache:cacheName[?options]
-----------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -76,7 +76,7 @@ and used here. Or it's possible to use the standard Caching API as below:
 
 ._Java-only: Java programmatic cache configuration with JCachePolicy_
 [source,java]
-----------------------------
+----
 MutableConfiguration configuration = new MutableConfiguration<>();
 configuration.setTypes(String.class, Object.class);
 configuration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 60)));
@@ -90,7 +90,7 @@ from("direct:get-orders")
     .policy(jcachePolicy)
     .log("Getting order with id: ${body}")
     .bean(OrderService.class,"findOrderById(${body})");
-----------------------------
+----
 
 === Set cacheManager
 
@@ -100,7 +100,7 @@ If the cache does not exist, it will create a new one using the `cacheConfigurat
 
 ._Java-only: Java programmatic CacheManager configuration_
 [source,java]
-----------------------------
+----
 //In a Spring environment, for example, the CacheManager may already exist as a bean
 @Autowire
 CacheManager cacheManager;
@@ -110,7 +110,7 @@ CacheManager cacheManager;
 JCachePolicy jcachePolicy = new JCachePolicy();
 jcachePolicy.setCacheManager(cacheManager);
 jcachePolicy.setCacheName("items")
-----------------------------
+----
 
 === Find cacheManager
 
@@ -121,13 +121,13 @@ If `cacheManager` (and the `cache`) is not set, the policy will try to find a JC
 
 ._Java-only: Java DSL with JCachePolicy_
 [source,java]
-----------------------------
+----
 //A Cache "getorders" will be used (or created) from the found CacheManager
 from("direct:get-orders").routeId("getorders")
     .policy(new JCachePolicy())
     .log("Getting order with id: ${body}")
     .bean(OrderService.class,"findOrderById(${body})");
-----------------------------
+----
 
 === Partially wrapped route
 
@@ -136,7 +136,7 @@ A policy can be used to wrap only a segment of the route instead of all processo
 
 ._Java-only: Java DSL with partial JCachePolicy wrapping_
 [source,java]
-----------------------------
+----
 from("direct:get-orders")
     .log("Order requested: ${body}")
     .policy(new JCachePolicy())
@@ -144,7 +144,7 @@ from("direct:get-orders")
         .bean(OrderService.class,"findOrderById(${body})")
     .end()
     .log("Order found: ${body}");
-----------------------------
+----
 
 The `.log()` at the beginning and at the end of the route is always called, but the section inside `.policy()` and `.end()` is executed based on the cache.
 
@@ -160,7 +160,7 @@ this _key_ is used to store the _value_ in cache at the end of the route.
 
 ._Java-only: Java programmatic JCachePolicy with keyExpression_
 [source,java]
-----------------------------
+----
 MutableConfiguration configuration = new MutableConfiguration<>();
 configuration.setTypes(String.class, Order.class);
 configuration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 10)));
@@ -175,7 +175,7 @@ from("direct:get-orders")
     .policy(jcachePolicy)
     .log("Getting order with id: ${header.orderId}")
     .bean(OrderService.class,"findOrderById(${header.orderId})");
-----------------------------
+----
 
 === BypassExpression
 
@@ -191,7 +191,7 @@ In Camel XML DSL, we need a named reference to the JCachePolicy instance (regist
 We have to wrap the route between `<policy>...</policy>` tags after `<from>`.
 
 [source,xml]
-----------------------------
+----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:get-order"/>
@@ -202,12 +202,12 @@ We have to wrap the route between `<policy>...</policy>` tags after `<from>`.
         </policy>
     </route>
 </camelContext>
-----------------------------
+----
 
 See this example when only a part of the route is wrapped:
 
 [source,xml]
-----------------------------
+----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:get-order"/>
@@ -221,7 +221,7 @@ See this example when only a part of the route is wrapped:
         <log message="End - This is always called. body:${body}"/>
     </route>
 </camelContext>
-----------------------------
+----
 
 
 === Define CachePolicy in Spring
@@ -230,7 +230,7 @@ It's more convenient to create a JCachePolicy in Java, especially within a Route
 but see this example to define it in a Spring XML:
 
 [source,xml]
-----------------------------
+----
 <bean id="jCachePolicy" class="org.apache.camel.component.jcache.policy.JCachePolicy">
     <property name="cacheName" value="spring"/>
     <property name="keyExpression">
@@ -239,7 +239,7 @@ but see this example to define it in a Spring XML:
         </bean>
     </property>
 </bean>
-----------------------------
+----
 
 === Create Cache from XML
 
@@ -247,7 +247,7 @@ It's not strictly speaking related to Camel XML DSL, but JCache providers usuall
 For example with Hazelcast, you can add a `hazelcast.xml` to classpath to configure the cache "spring" used in the example above.
 
 [source,xml]
-----------------------------
+----
 <hazelcast xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/config/hazelcast-config-4.0.xsd">
@@ -261,7 +261,7 @@ For example with Hazelcast, you can add a `hazelcast.xml` to classpath to config
     </cache>
 
 </hazelcast>
-----------------------------
+----
 
 === Special scenarios and error handling
 

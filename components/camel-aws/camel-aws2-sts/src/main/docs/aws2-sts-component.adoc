@@ -31,9 +31,9 @@ The AWS2 STS component works on the aws-global region, and it has aws-global as 
 
 == URI Format
 
--------------------------
+----
 aws2-sts://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -228,11 +228,11 @@ In AWS STS, as an example for Assume Role request, you can do something like:
 
 ._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:createUser")
      .setBody(AssumeRoleRequest.builder().roleArn("arn:123").roleSessionName("groot").build())
     .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=assumeRole&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -243,13 +243,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-sts</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

@@ -42,11 +42,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 ._Java-only: uses `toF()` for URI formatting_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:list").
     toF("openshift-builds:///?kubernetesClient=#kubernetesClient&operation=listBuilds").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a List of Builds from your Openshift cluster
 
@@ -54,7 +54,7 @@ This operation returns a List of Builds from your Openshift cluster
 
 ._Java-only: uses inline Processor, Java constants, and `toF()`_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listByLabels").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -66,7 +66,7 @@ from("direct:listByLabels").process(new Processor() {
         });
     toF("openshift-builds:///?kubernetesClient=#kubernetesClient&operation=listBuildsByLabels").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of builds from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 

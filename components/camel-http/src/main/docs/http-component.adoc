@@ -22,20 +22,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-http</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
----------------------------------------------
+----
 http:hostname[:port][/resourceUri][?options]
----------------------------------------------
+----
 
 Will by default use port 80 for HTTP and 443 for HTTPS.
 
@@ -422,22 +422,22 @@ only from the CamelContext or URI. +
 
 ._Java-only: programmatic `CamelContext` global options configuration (deprecated)_
 [source,java]
----------------------------------------------------------------
+----
 context.getGlobalOptions().put("http.proxyHost", "172.168.18.9");
 context.getGlobalOptions().put("http.proxyPort", "8080");
----------------------------------------------------------------
+----
 
 Spring XML
 
 [source,xml]
-----------------------------------------------------------------
+----
 <camelContext>
     <properties>
         <property key="http.proxyHost" value="172.168.18.9"/>
         <property key="http.proxyPort" value="8080"/>
    </properties>
 </camelContext>
-----------------------------------------------------------------
+----
 
 Camel will first set the settings from Java System or CamelContext
 Properties and then the endpoint proxy options if provided.
@@ -455,9 +455,9 @@ using the `Exchange` property:
 
 ._Java-only: setting exchange property programmatically_
 [source,java]
-----------------------------------------------------------
+----
 exchange.setProperty(Exchange.CHARSET_NAME, "ISO-8859-1");
-----------------------------------------------------------
+----
 
 ==== Example with scheduled poll
 
@@ -521,21 +521,21 @@ web browser. Camel does no tricks here.
 
 ._Java-only: uses `ProducerTemplate` test API_
 [source,java]
------------------------------------------------------------------
+----
 // we query for Camel at the Google page
 template.sendBody("http://www.google.com/search?q=Camel", null);
------------------------------------------------------------------
+----
 
 ==== URI Parameters from the Message
 
 ._Java-only: uses `ProducerTemplate` test API with headers_
 [source,java]
-------------------------------------------------------------------
+----
 Map headers = new HashMap();
 headers.put(Exchange.HTTP_QUERY, "q=Camel&lr=lang_en");
 // we query for Camel and English language at Google
 template.sendBody("http://www.google.com/search", null, headers);
-------------------------------------------------------------------
+----
 
 In the header value above notice that it should *not* be prefixed with
 `?` and you can separate parameters as usual with the `&` char.
@@ -548,13 +548,13 @@ the value from the Out message header with
 
 ._Java-only: uses `ProducerTemplate` and `Processor` to inspect response code_
 [source,java]
-------------------------------------------------------------------------------------
+----
 Exchange exchange = template.send("http://www.google.com/search", e -> {
     e.getIn().setHeader("CamelHttpQuery", "hl=en&q=activemq");
 });
 Message out = exchange.getMessage();
 int responseCode = out.getHeader("CamelHttpResponseCode", Integer.class);
-------------------------------------------------------------------------------------
+----
 
 === Defining specific properties of Apache HTTP client via Camel parameters
 
@@ -702,7 +702,7 @@ Programmatic configuration of the component
 
 ._Java-only: programmatic `SSLContextParameters` setup_
 [source,java]
----------------------------------------------------------------------------------------
+----
 KeyStoreParameters ksp = new KeyStoreParameters();
 ksp.setResource("file:/users/home/server/keystore.jks");
 ksp.setPassword("keystorePassword");
@@ -716,14 +716,14 @@ scp.setKeyManagers(kmp);
 
 HttpComponent httpComponent = getContext().getComponent("https", HttpComponent.class);
 httpComponent.setSslContextParameters(scp);
----------------------------------------------------------------------------------------
+----
 
 [[HTTP-SpringDSLbasedconfigurationofendpoint]]
 
 Spring DSL based configuration of endpoint
 
 [source,xml]
---------------------------------------------------------------------------------------
+----
   <camel:sslContextParameters
       id="sslContextParameters">
     <camel:keyManagers
@@ -735,7 +735,7 @@ Spring DSL based configuration of endpoint
   </camel:sslContextParameters>
 
   <to uri="https://127.0.0.1/mail/?sslContextParameters=#sslContextParameters"/>
---------------------------------------------------------------------------------------
+----
 
 [[HTTP-ConfiguringApacheHTTPClientDirectly]]
 Configuring Apache HTTP Client Directly
@@ -756,13 +756,13 @@ can do this with Apache HTTP `HttpClientConfigurer`, for example:
 
 ._Java-only: programmatic `KeyStore` and `SchemeRegistry` setup_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 KeyStore keystore = ...;
 KeyStore truststore = ...;
 
 SchemeRegistry registry = new SchemeRegistry();
 registry.register(new Scheme("https", 443, new SSLSocketFactory(keystore, "mypassword", truststore)));
-------------------------------------------------------------------------------------------------------
+----
 
 And then you need to create a class that implements
 `HttpClientConfigurer`, and registers https protocol providing a
@@ -771,22 +771,22 @@ builder class, you can hook it up like so:
 
 ._Java-only: programmatic `HttpClientConfigurer` setup_
 [source,java]
---------------------------------------------------------------------------------------
+----
 HttpComponent httpComponent = getContext().getComponent("http", HttpComponent.class);
 httpComponent.setHttpClientConfigurer(new MyHttpClientConfigurer());
---------------------------------------------------------------------------------------
+----
 
 If you are doing this using the Spring DSL, you can specify your
 `HttpClientConfigurer` using the URI. For example:
 
 [source,xml]
------------------------------------------------------------------------------------------
+----
 <bean id="myHttpClientConfigurer"
  class="my.https.HttpClientConfigurer">
 </bean>
 
 <to uri="https://myhostname.com:443/myURL?httpClientConfigurer=myHttpClientConfigurer"/>
------------------------------------------------------------------------------------------
+----
 
 As long as you implement the `HttpClientConfigurer` and configure your
 keystore and truststore as described above, it will work fine.
@@ -802,7 +802,7 @@ The problem was eventually resolved by providing a custom configured
 
 ._Java-only: custom `HttpContext` factory for preemptive basic authentication_
 [source,java]
-------------------------------------------------------------------
+----
 public class HttpContextFactory {
 
   private String httpHost = "localhost";
@@ -830,21 +830,21 @@ public class HttpContextFactory {
 
   // getter and setter
 }
-------------------------------------------------------------------
+----
 
 * 2. Declare an` HttpContext` in the Spring application context file:
 
 [source,xml]
----------------------------------------------------------------------------------------
+----
 <bean id="myHttpContext" factory-bean="httpContextFactory" factory-method="getObject"/>
----------------------------------------------------------------------------------------
+----
 
 * 3. Reference the context in the http URL:
 
 [source,xml]
------------------------------------------------------------------------
+----
 <to uri="https://myhostname.com:443/myURL?httpContext=myHttpContext"/>
------------------------------------------------------------------------
+----
 
 [[HTTP-UsingdifferentSSLContextParameters]]
 Using different SSLContextParameters
@@ -857,7 +857,7 @@ two components, each using their own instance of `sslContextParameters`
 property.
 
 [source,xml]
-----------------------------------------------------------------------------
+----
 <bean id="http-foo" class="org.apache.camel.component.http.HttpComponent">
    <property name="sslContextParameters" ref="sslContextParams1"/>
    <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
@@ -867,7 +867,7 @@ property.
    <property name="sslContextParameters" ref="sslContextParams2"/>
    <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
 </bean>
-----------------------------------------------------------------------------
+----
 
 == Removing http protocol headers in the Camel Message
 

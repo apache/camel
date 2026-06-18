@@ -177,7 +177,7 @@ In the XML example below we use Spring XML where the namespace is declared in th
 in the line with `xmlns:foo="http://example.com/person"`:
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:foo="http://example.com/person"
@@ -195,7 +195,7 @@ in the line with `xmlns:foo="http://example.com/person"`:
     </route>
   </camelContext>
 </beans>
----------------------------------------------------------------------------------------------------------------
+----
 
 This namespace uses `foo` as prefix, so the `<xquery>` expression uses `foo:` to use this namespace.
 
@@ -256,14 +256,14 @@ If you want to use Camel variables like headers, you have to explicitly
 declare them in the XQuery expression.
 
 [source,xml]
--------------------------------------------------------------
+----
 <transform>
     <xquery>
         declare variable $in.headers.foo external;
         element item {$in.headers.foo}
     </xquery>
 </transform>
--------------------------------------------------------------
+----
 
 == Loading script from external resource
 
@@ -295,13 +295,13 @@ If you use Maven you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
---------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-saxon</artifactId>
   <version>x.x.x</version>
 </dependency>
---------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

@@ -30,13 +30,13 @@ You must have a valid Azure subscription. More information is available at
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-functions</artifactId>
     <version>${camel-version}</version>
 </dependency>
-------------------------------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

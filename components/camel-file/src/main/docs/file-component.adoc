@@ -566,10 +566,10 @@ YAML::
 
 And the logs:
 
-----------------------------------------------------------------------------------------------------------------------------------------------
+----
 DEBUG GenericFileConverter           - Read file /Users/davsclaus/workspace/camel/camel-core/target/charset/input/input.txt with charset utf-8
 DEBUG FileOperations                 - Using Reader to write file: target/charset/output.txt with charset: iso-8859-1
-----------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Common gotchas with folder and filenames
 

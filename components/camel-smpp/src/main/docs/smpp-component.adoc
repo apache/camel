@@ -32,14 +32,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-smpp</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 [TIP]
 ====
@@ -159,10 +159,10 @@ throttling messages in the SMPP route before handing them to the SMSC.
 
 == URI format
 
---------------------------------------------
+----
 smpp://[username@]hostname[:port][?options]
 smpps://[username@]hostname[:port][?options]
---------------------------------------------
+----
 
 If no *username* is provided, then Camel will provide the default value
 `smppclient`. +
@@ -201,14 +201,14 @@ following lines of code:
 
 ._Java-only: uses doTry/doCatch with Exception.class literal and ProcessRequestException constructor_
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
+----
 from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer")
   .doTry()
     .to("bean:dao?method=updateSmsState")
   .doCatch(Exception.class)
     .throwException(new ProcessRequestException("update of sms state failed", 100))
   .end();
---------------------------------------------------------------------------------------------------------------------------
+----
 
 Please refer to the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP
 specification] for the complete list of error codes and their meanings.
@@ -299,14 +299,14 @@ An example of using transceiver (TRX) binding type:
 
 ._Java-only: multi-route definition with string concatenation and route id assignment_
 [source,java]
---------------------------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
         .to("smpp://j@localhost:8056?password=jpwd&systemType=producer" +
             "&messageReceiverRouteId=sampleMessageReceiverRouteId");
 
 from("direct:messageReceiver").id("sampleMessageReceiverRouteId")
         .to("bean:foo");
---------------------------------------------------------------------------------------------------------------------------
+----
 
 Please note that with TRX binding type, you wouldn't define a corresponding redundant SMPP consumer. Camel will use the
 specified route by `messageReceiverRouteId` as the corresponding consumer. Internally, it uses one and same SmppSession
@@ -331,9 +331,9 @@ problems. If you use log4j, you can add the following line to your
 configuration:
 
 [source,properties]
---------------------------------------------------
+----
 log4j.logger.org.apache.camel.component.smpp=DEBUG
---------------------------------------------------
+----
 
 
 

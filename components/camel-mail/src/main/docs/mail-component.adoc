@@ -21,14 +21,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-mail</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 [TIP]
@@ -56,21 +56,21 @@ will kick in and avoid sending the mails.
 Mail endpoints can have one of the following URI formats (for the
 protocols, SMTP, POP3, or IMAP, respectively):
 
----------------------------------------
+----
 smtp://[username@]host[:port][?options]
 pop3://[username@]host[:port][?options]
 imap://[username@]host[:port][?options]
----------------------------------------
+----
 
 The mail component also supports secure variants of these protocols
 (layered over SSL). You can enable the secure protocols by adding `s` to
 the scheme:
 
-----------------------------------------
+----
 smtps://[username@]host[:port][?options]
 pop3s://[username@]host[:port][?options]
 imaps://[username@]host[:port][?options]
-----------------------------------------
+----
 
 
 // component options: START
@@ -85,22 +85,22 @@ include::partial$component-endpoint-headers.adoc[]
 Typically, you specify a URI with login credentials as follows:
 
 .SMTP endpoint example
-------------------------------------------------
+----
 smtp://[username@]host[:port][?password=somepwd]
-------------------------------------------------
+----
 
 Alternatively, it is possible to specify both the username and the
 password as query options:
 
------------------------------------------------------
+----
 smtp://host[:port]?password=somepwd&username=someuser
------------------------------------------------------
+----
 
 For example:
 
-------------------------------------------------------------
+----
 smtp://mycompany.mailserver:30?password=tiger&username=scott
-------------------------------------------------------------
+----
 
 === Component alias names
 
@@ -149,7 +149,7 @@ Programmatic configuration of the endpoint
 
 ._Java-only: programmatic `SSLContextParameters` configuration and registry binding_
 [source,java]
-----------------------------------------------------------------------------------------------------------------------------------
+----
 KeyStoreParameters ksp = new KeyStoreParameters();
 ksp.setResource("/users/home/server/truststore.jks");
 ksp.setPassword("keystorePassword");
@@ -162,13 +162,13 @@ registry.bind("sslContextParameters", scp);
 ...
 from(...)
     .to("smtps://smtp.google.com?username=user@gmail.com&password=password&sslContextParameters=#sslContextParameters");
-----------------------------------------------------------------------------------------------------------------------------------
+----
 
 [[Mail-SpringDSLbasedconfigurationofendpoint]]
 Spring DSL based configuration of endpoint
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------
+----
 ...
 <camel:sslContextParameters id="sslContextParameters">
   <camel:trustManagers>
@@ -177,7 +177,7 @@ Spring DSL based configuration of endpoint
 </camel:sslContextParameters>...
 ...
 <to uri="smtps://smtp.google.com?username=user@gmail.com&password=password&sslContextParameters=#sslContextParameters"/>...
----------------------------------------------------------------------------------------------------------------------------
+----
 
 ==== Configuring JavaMail Directly
 
@@ -245,7 +245,7 @@ you can use a header property as `To`:
 
 ._Java-only: ProducerTemplate API with mail headers_
 [source,java]
-------------------------------------------------------------------------------------------------------------
+----
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put("To", "davsclaus@apache.org");
 headers.put("From", "jstrachan@apache.org");
@@ -255,7 +255,7 @@ headers.put("org.apache.camel.test", "value");
 
 String body = "Hello Claus.\nYes it does.\n\nRegards James.";
 template.sendBodyAndHeaders("smtp://davsclaus@apache.org", body, headers);
-------------------------------------------------------------------------------------------------------------
+----
 
 When using the MailProducer to send the mail to
 server, you should be able to get the message id of the
@@ -367,7 +367,7 @@ For example, you define the following headers on the message:
 
 ._Java-only: programmatic header map construction_
 [source,java]
----------------------------------------------------------
+----
 Map headers = new HashMap();
 map.put("Subject", "Camel is cool");
 map.put("From", "James Strachan <jstrachan@apache.org>");
@@ -375,7 +375,7 @@ map.put("To", "Claus Ibsen <davsclaus@apache.org>");
 map.put("Cc", "An Other <another@example.com>");
 map.put("Bcc", "An Other <another@example.com>");
 map.put("Reply-To", "An Other <another@example.com>");
----------------------------------------------------------
+----
 
 === JavaMail API (ex SUN JavaMail)
 
@@ -501,7 +501,7 @@ attachment.
 
 ._Java-only: programmatic `Exchange` and attachment manipulation via Camel API_
 [source,java]
--------------------------------------------------------
+----
 // create an exchange with a normal body and attachment to be produced as email
 Endpoint endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
  
@@ -519,7 +519,7 @@ Producer producer = endpoint.createProducer();
 producer.start();
 // and let it go (processes the exchange by sending the email)
 producer.process(exchange);
--------------------------------------------------------
+----
 
 === SSL example
 
@@ -575,13 +575,13 @@ Running the sample with `DEBUG` logging enabled, we can monitor the
 progress in the logs:
 
 [source,text]
-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 2008-05-08 06:32:09,640 DEBUG MailConsumer - Connecting to MailStore imaps//imap.gmail.com:993 (SSL enabled), folder=INBOX
 2008-05-08 06:32:11,203 DEBUG MailConsumer - Polling mailfolder: imaps//imap.gmail.com:993 (SSL enabled), folder=INBOX
 2008-05-08 06:32:11,640 DEBUG MailConsumer - Fetching 1 messages. Total 1 messages.
 2008-05-08 06:32:12,171 DEBUG MailConsumer - Processing message: messageNumber=[332], from=[James Bond <007@mi5.co.uk>], to=YOUR_USERNAME@gmail.com], subject=[...
 2008-05-08 06:32:12,187 INFO  newmail - Exchange[MailMessage: messageNumber=[332], from=[James Bond <007@mi5.co.uk>], to=YOUR_USERNAME@gmail.com], subject=[...
-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Consuming mails with attachment
 
@@ -592,17 +592,17 @@ SSL sample:
 
 ._Java-only: uses custom `Processor` to handle mail attachments_
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("imaps://imap.gmail.com?username=YOUR_USERNAME@gmail.com&password=YOUR_PASSWORD&delete=false&unseen=true&delay=60000")
     .process(new MyMailProcessor());
----------------------------------------------------------------------------------------
+----
 
 Instead of logging the mail, we use a processor where we can process the
 mail from java code:
 
 ._Java-only: custom `Processor` for extracting and saving attachments_
 [source,java]
----------------------------------------------------------------------------------
+----
 public void process(Exchange exchange) throws Exception {
     // the API is a bit clunky, so we need to loop
     AttachmentMessage attachmentMessage = exchange.getMessage(AttachmentMessage.class);
@@ -625,7 +625,7 @@ public void process(Exchange exchange) throws Exception {
         }
     }
 }
----------------------------------------------------------------------------------
+----
 
 As you can see the API to handle attachments is a bit clunky, but it's
 there, so you can get the `javax.activation.DataHandler` so you can
@@ -656,12 +656,12 @@ If you use XML DSL, then you need to declare a method call expression in
 the Splitter as shown below
 
 [source,xml]
----------------------------------------------------------------------------------
+----
 <split>
   <method beanType="org.apache.camel.component.mail.SplitAttachmentsExpression"/>
   <to uri="mock:split"/>
 </split>
----------------------------------------------------------------------------------
+----
 
 You can also split the attachments as byte[] to
 be stored as the message body. This is done by creating the expression
@@ -669,9 +669,9 @@ with boolean true
 
 ._Java-only: programmatic `SplitAttachmentsExpression` configuration_
 [source,java]
---------------------------------------------------------------------
+----
 SplitAttachmentsExpression split = SplitAttachmentsExpression(true);
---------------------------------------------------------------------
+----
 
 And then use the expression with the splitter EIP.
 
@@ -684,12 +684,12 @@ For example, to filter mails to contain Camel in either Subject or Text,
 you can do as follows:
 
 [source,xml]
--------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.subjectOrBody=Camel"/>
   <to uri="bean:myBean"/>
 </route>
--------------------------------------------------------------------------------------------------
+----
 
 Notice we use the `"searchTerm.subjectOrBody"` as a parameter key to
 indicate that we want to search on mail subject or body, to contain the
@@ -701,12 +701,12 @@ Or to get the new unseen emails going 24 hours back in time, you can do.
 Notice the "now-24h" syntax. See the table below for more details.
 
 [source,xml]
---------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.fromSentDate=now-24h"/>
   <to uri="bean:myBean"/>
 </route>
---------------------------------------------------------------------------------------------------
+----
 
 You can have multiple searchTerm in the endpoint uri configuration. They
 would then be combined using the `AND` operator, e.g., so both
@@ -714,35 +714,35 @@ conditions must match. For example, to get the last unseen emails going
 back 24 hours which has Camel in the mail subject you can do:
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.subject=Camel&searchTerm.fromSentDate=now-24h"/>
   <to uri="bean:myBean"/>
 </route>
----------------------------------------------------------------------------------------------------------------------------
+----
 
 The `SimpleSearchTerm` is designed to be easily configurable from a
 POJO, so you can also configure it using a <bean> style in XML
 
 [source,xml]
----------------------------------------------------------------------------------
+----
 <bean id="mySearchTerm" class="org.apache.camel.component.mail.SimpleSearchTerm">
   <property name="subject" value="Order"/>
   <property name="to" value="acme-order@acme.com"/>
   <property name="fromSentDate" value="now"/>
  </bean>
----------------------------------------------------------------------------------
+----
 
 You can then refer to this bean, using #beanId in your Camel route as
 shown:
 
 [source,xml]
--------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm=#mySearchTerm"/>
   <to uri="bean:myBean"/>
 </route>
--------------------------------------------------------------------------------------------
+----
 
 In Java there is a builder class to build compound
 `SearchTerms` using the `org.apache.camel.component.mail.SearchTermBuilder`
@@ -750,7 +750,7 @@ class. This allows you to build complex terms such as:
 
 ._Java-only: programmatic `SearchTermBuilder` for complex mail filters_
 [source,java]
---------------------------------------------------------------
+----
 // we just want the unseen mails that are not spam
 SearchTermBuilder builder = new SearchTermBuilder();
 
@@ -760,7 +760,7 @@ builder.unseen().body(Op.not, "Spam").subject(Op.not, "Spam")
   // ... and we could continue building the terms
 
 SearchTerm term = builder.build();
---------------------------------------------------------------
+----
 
 === Using headers with additional Java Mail Sender properties
 

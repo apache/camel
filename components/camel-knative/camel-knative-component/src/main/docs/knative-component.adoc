@@ -20,14 +20,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component.
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-knative</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
@@ -39,9 +39,9 @@ knative:type/name[?options]
 You can append query options to the URI in the following format:
 
 [source,text]
-------------------------------------------------------------
+----
 ?option=value&option=value&...
-------------------------------------------------------------
+----
 
 == Options
 
@@ -68,7 +68,7 @@ To do so, the component needs a so called `Knative Environment`, which is essenc
 
 .Example
 [source,json]
-------------------------------------------------------------
+----
 {
     "services": [
         {
@@ -84,7 +84,7 @@ To do so, the component needs a so called `Knative Environment`, which is essenc
         }
     ]
 }
-------------------------------------------------------------
+----
 <1> the type of the Knative resource
 <2> the name of the resource
 <3> the url of the service to invoke (for producer only)

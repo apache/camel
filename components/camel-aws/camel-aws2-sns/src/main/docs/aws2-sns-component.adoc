@@ -28,9 +28,9 @@ https://aws.amazon.com/sns[Amazon SNS].
 
 == URI Format
 
------------------------------
+----
 aws2-sns://topicNameOrArn[?options]
------------------------------
+----
 
 The topic will be created if they don't already exist.
 
@@ -217,7 +217,7 @@ Suppose you created an SNS FIFO Topic called `Order.fifo` and an SQS Queue calle
 In the access Policy of the `QueueSub.fifo` you should submit something like this
 
 [source,json]
--------------------------------------------------
+----
 {
   "Version": "2008-10-17",
   "Id": "__default_policy_ID",
@@ -246,7 +246,7 @@ In the access Policy of the `QueueSub.fifo` you should submit something like thi
     }
   ]
 }
--------------------------------------------------
+----
 
 This is a critical step to make the subscription work correctly.
 
@@ -308,7 +308,7 @@ Sending batch to a topic
 
 ._Java-only: requires constructing `PublishBatchRequestEntry` objects programmatically_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
      .process(exchange -> {
           List<PublishBatchRequestEntry> pubList = List.of(
@@ -319,7 +319,7 @@ from("direct:start")
           exchange.getIn().setBody(pubList);
   })
   .to("aws2-sns://camel-topic?subject=The+subject+message&autoCreateTopic=true&batchEnabled=true");
---------------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -328,13 +328,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-sns</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

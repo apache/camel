@@ -45,9 +45,9 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 
 == URI format
 
----------------------------
+----
 debezium-postgres:name[?options]
----------------------------
+----
 
 
 // component options: START

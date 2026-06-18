@@ -24,14 +24,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-crypto</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == Introduction
 
@@ -64,10 +64,10 @@ http://en.wikipedia.org/wiki/Digital_signature[Digital_signatures]
 As mentioned, Camel provides a pair of crypto endpoints to create and
 verify signatures
 
-----------------------------
+----
 crypto:sign:name[?options]
 crypto:verify:name[?options]
-----------------------------
+----
 
 * `crypto:sign` creates the signature and stores it in the Header keyed
 by the constant

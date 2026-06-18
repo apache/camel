@@ -25,14 +25,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-spring-ws</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 *Be aware* Spring WS version 4.x does not support Axiom anymore (because Axiom does not support Jakarta JEE 9)
 
@@ -40,9 +40,9 @@ for this component:
 
 The URI scheme for this component is as follows
 
-------------------------------------------
+----
 spring-ws:[mapping-type:]address[?options]
-------------------------------------------
+----
 
 To expose a web service *mapping-type* needs to be set to any of the
 following:
@@ -244,20 +244,20 @@ can be used to transform the soap header for a soap request. If you want to use
 the header transformation filter, see the below example:
 
 [source,xml]
-------------------------------------------------------------------
+----
 <bean id="headerTransformationFilter" class="org.apache.camel.component.spring.ws.filter.impl.HeaderTransformationMessageFilter">
     <constructor-arg index="0" value="org/apache/camel/component/spring/ws/soap-header-transform.xslt"/>
 </bean>
-------------------------------------------------------------------
+----
 Use the bead defined above in the camel endpoint
 
 [source,xml]
-------------------------------------------------------------------
+----
 <route>
     <from uri="direct:stockQuoteWebserviceHeaderTransformation"/>
     <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote&amp;messageFilter=#headerTransformationFilter"/>
 </route> 
-------------------------------------------------------------------
+----
 
 
 === The custom header and attachment filtering
@@ -275,9 +275,9 @@ follows:
 all Spring-WS endpoints
 
 [source,xml]
---------------------------------------------------------------------------------
+----
 <bean id="messageFilter" class="your.domain.myMessageFiler" scope="singleton" />
---------------------------------------------------------------------------------
+----
 
 - the local messageFilter directly on the endpoint as follows:
 
@@ -349,7 +349,7 @@ YAML::
 Spring configuration:
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------
+----
 <!-- authenticate using HTTP Basic Authentication -->
 <bean id="messageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
     <property name="credentials">
@@ -359,7 +359,7 @@ Spring configuration:
         </bean>
     </property>
 </bean>
----------------------------------------------------------------------------------------------------------------------
+----
 
 === Exposing web services
 
@@ -379,7 +379,7 @@ your routes.
 _web.xml_
 
 [source,xml]
------------------------------------------------------------------------------------------------------
+----
 <web-app>
     <servlet>
         <servlet-name>spring-ws</servlet-name>
@@ -391,12 +391,12 @@ _web.xml_
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>
------------------------------------------------------------------------------------------------------
+----
 
 _spring-ws-servlet.xml_
 
 [source,xml]
-----------------------------------------------------------------------------------------------------
+----
 <bean id="endpointMapping" class="org.apache.camel.component.spring.ws.bean.CamelEndpointMapping" />
 
 <bean id="wsdl" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
@@ -409,7 +409,7 @@ _spring-ws-servlet.xml_
     <property name="locationUri" value="/"/>
     <property name="targetNamespace" value="http://example.com/"/>
 </bean>
-----------------------------------------------------------------------------------------------------
+----
 
 More information on setting up Spring-WS can be found in
 https://docs.spring.io/spring-ws/docs/4.0.x/reference/html/#tutorial[Writing
@@ -487,7 +487,7 @@ of annotations.
 An example of a route using `beanname`:
 
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------
+----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="spring-ws:beanname:QuoteEndpointDispatcher" />
@@ -506,7 +506,7 @@ An example of a route using `beanname`:
 
 <bean id="QuoteEndpointDispatcher" class="org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher" />
 <bean id="FutureEndpointDispatcher" class="org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher" />
-------------------------------------------------------------------------------------------------------------------------
+----
 
 === POJO (un)marshalling
 

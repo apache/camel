@@ -26,23 +26,23 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-milo</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 == URI format
 
 The URI syntax of the endpoint is:
 
-------------------------
+----
 milo-browse:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
-------------------------
+----
 
 Please refer to the xref:milo-client-component.adoc[Milo Client] component for further details about the construction of the URI.
 

@@ -47,9 +47,9 @@ for this component.
 
 == URI format
 
----------------------------
+----
 debezium-db2:name[?options]
----------------------------
+----
 
 
 // component options: START

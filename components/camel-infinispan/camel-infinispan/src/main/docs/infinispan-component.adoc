@@ -20,20 +20,20 @@ Infinispan is an extremely scalable, highly available key/value data store and d
 If you use Maven, you must add the following dependency to your `pom.xml`:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-infinispan</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------
+----
 infinispan://cacheName?[options]
--------------------------------
+----
 
 The producer allows sending messages to a remote cache using the HotRod protocol.
 The consumer allows listening for events from a remote cache using the HotRod protocol.

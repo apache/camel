@@ -24,9 +24,9 @@ To use a DataSonnet expression, use the following Java code:
 
 ._Java-only: creating a DataSonnet expression_
 [source,java]
----------------------------------------
+----
 datasonnet("someDSExpression");
----------------------------------------
+----
 
 == DataSonnet Options
 
@@ -258,16 +258,16 @@ Here's an example showing some of these functions in use:
 Java::
 +
 [source,java]
-------------------------------------------------------------------------------------------------
+----
 from("direct:in")
     .setBody(datasonnet("'hello, ' + cml.properties('toGreet')", String.class))
     .to("mock:camel");
-------------------------------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:in"/>
     <setBody>
@@ -275,7 +275,7 @@ XML::
     </setBody>
     <to uri="mock:camel"/>
 </route>
------------------------------------------------------------------------------
+----
 
 YAML::
 +
@@ -304,9 +304,9 @@ e.g., to refer to a file on the classpath you can do:
 
 ._Java-only: loading a DataSonnet script from an external resource_
 [source,java]
--------------------------------------------------------------------
+----
 .setHeader("myHeader").datasonnet("resource:classpath:mydatasonnet.ds");
--------------------------------------------------------------------
+----
 
 == Examples
 
@@ -317,17 +317,17 @@ Here is a simple example using a DataSonnet expression as a predicate in a Messa
 Java::
 +
 [source,java]
-------------------------------------------------------------------------------------------------
+----
 // let's route if a line item is over $100
 from("queue:foo")
     .filter(datasonnet("ds.arrays.firstWith(body.lineItems, function(item) item > 100) != null"))
     .to("queue:bar");
-------------------------------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
------------------------------------------------------------------------------
+----
 <route>
     <from uri="queue:foo"/>
     <filter>
@@ -335,7 +335,7 @@ XML::
         <to uri="queue:bar"/>
     </filter>
 </route>
------------------------------------------------------------------------------
+----
 
 YAML::
 +
@@ -364,16 +364,16 @@ Here is an example of a simple DataSonnet expression as a transformation EIP. Th
 Java::
 +
 [source,java]
-------------------------------------------------------------------------------------------------
+----
 from("queue:foo")
     .transform(datasonnet("ds.filter(body.lineItems, function(item) item > 100)", String.class, "application/xml", "application/json"))
     .to("queue:bar");
-------------------------------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
------------------------------------------------------------------------------
+----
 <route>
     <from uri="queue:foo"/>
     <filter>
@@ -383,7 +383,7 @@ XML::
         <to uri="queue:bar"/>
     </filter>
 </route>
------------------------------------------------------------------------------
+----
 
 YAML::
 +
@@ -446,13 +446,13 @@ substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
 [source,xml]
----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-datasonnet</artifactId>
   <version>x.x.x</version>
 </dependency>
----------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

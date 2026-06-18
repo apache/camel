@@ -810,7 +810,7 @@ Here is the SQL query used to create the tables. Replace
 `"aggregation"` with your aggregator repository name.
 
 [source,sql]
------
+----
 CREATE TABLE aggregation (
  id varchar(255) NOT NULL,
  exchange blob NOT NULL,
@@ -823,7 +823,7 @@ CREATE TABLE aggregation_completed (
  version BIGINT NOT NULL,
  constraint aggregation_completed_pk PRIMARY KEY (id)
 );
------
+----
 
 
 === Storing body and headers as text

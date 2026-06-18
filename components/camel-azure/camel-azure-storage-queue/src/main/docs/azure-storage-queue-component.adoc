@@ -28,21 +28,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-storage-queue</artifactId>
     <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI Format
 
 [source,text]
-------------------------------
+----
 azure-storage-queue://accountName[/queueName][?options]
-------------------------------
+----
 
 In the case of consumer, `accountName` and `queueName` are required.
 
@@ -117,7 +117,7 @@ have more control over the `QueueServiceClient` instance configuration, you can
 create your own instance:
 
 [source,java]
------------------------------------------------------------------------
+----
 StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
 String uri = String.format("https://%s.queue.core.windows.net", "yourAccountName");
 
@@ -127,7 +127,7 @@ QueueServiceClient client = new QueueServiceClientBuilder()
                           .buildClient();
 // This is camel context
 context.getRegistry().bind("client", client);
------------------------------------------------------------------------
+----
 
 Then refer to this instance in your Camel `azure-storage-queue` component configuration:
 

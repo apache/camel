@@ -152,12 +152,12 @@ setting the `CamelJmsDestinationName` header as follows:
 
 ._Java-only: programmatic header manipulation with Exchange API_
 [source,java]
--------------------------------------------------------------------------
+----
 public void setJmsHeader(Exchange exchange) {
    String id = ....
    exchange.getIn().setHeader("CamelJmsDestinationName", "order:" + id");
 }
--------------------------------------------------------------------------
+----
 
 Then Camel will read this header and use it as the destination instead
 of the one configured on the endpoint. So, in this example Camel sends
@@ -184,10 +184,10 @@ then using toD could, for example, be done as follows:
 Java::
 +
 [source,java]
---------------------------------
+----
 from("direct:order")
   .toD("sjms2:order-${header.orderType}");
---------------------------------
+----
 
 XML::
 +

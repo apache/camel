@@ -18,20 +18,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-mongodb-gridfs</artifactId>
     <version>x.y.z</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-------------------------------------------------------------------------------
+----
 mongodb-gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
-------------------------------------------------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -51,35 +51,35 @@ as the OUT message body.
 
 ._Java-only: using ProducerTemplate to invoke the count operation_
 [source,java]
----------------------------------------------------------------------------------
+----
 // from("direct:count").to("mongodb-gridfs?database=tickets&operation=count");
 Integer result = template.requestBodyAndHeader("direct:count", "irrelevantBody");
 assertTrue("Result is not of type Long", result instanceof Integer);
----------------------------------------------------------------------------------
+----
 
 You can provide a filename header to provide a count of files matching
 that filename.
 
 ._Java-only: using ProducerTemplate with filename header_
 [source,java]
--------------------------------------------------------------------------------
+----
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 Integer count = template.requestBodyAndHeaders("direct:count", query, headers);
--------------------------------------------------------------------------------
+----
 
 ==== listAll
 
 Returns a Reader that lists all the filenames and their IDs in a tab
 separated stream.
 
-----------------------------------------------------------------------------------
+----
 // from("direct:listAll").to("mongodb-gridfs?database=tickets&operation=listAll");
 Reader result = template.requestBodyAndHeader("direct:listAll", "irrelevantBody");
 
 filename1.txt   1252314321
 filename2.txt   2897651254
-----------------------------------------------------------------------------------
+----
 
 ==== findOne
 
@@ -89,12 +89,12 @@ the content. Also provides the metadata has headers. It uses
 
 ._Java-only: using ProducerTemplate to find a file by name_
 [source,java]
--------------------------------------------------------------------------------------------------
+----
 // from("direct:findOne").to("mongodb-gridfs?database=tickets&operation=findOne");
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 InputStream result = template.requestBodyAndHeaders("direct:findOne", "irrelevantBody", headers);
--------------------------------------------------------------------------------------------------
+----
 
 ==== create
 
@@ -104,13 +104,13 @@ contents (as an InputStream) as the content.
 
 ._Java-only: using ProducerTemplate to create a file_
 [source,java]
-------------------------------------------------------------------------
+----
 // from("direct:create").to("mongodb-gridfs?database=tickets&operation=create");
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 InputStream stream = ... the data for the file ...
 template.requestBodyAndHeaders("direct:create", stream, headers);
-------------------------------------------------------------------------
+----
 
 ==== remove
 
@@ -118,12 +118,12 @@ Removes a file from the GridFS database.
 
 ._Java-only: using ProducerTemplate to remove a file_
 [source,java]
-------------------------------------------------------------------------
+----
 // from("direct:remove").to("mongodb-gridfs?database=tickets&operation=remove");
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 template.requestBodyAndHeaders("direct:remove", "", headers);
-------------------------------------------------------------------------
+----
 
 == Examples
 
@@ -135,14 +135,14 @@ xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
 *Get a file from GridFS*
 
 [source,xml]
-----------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <!-- using bean 'mongoBean' defined above -->
   <to uri="mongodb-gridfs:mongoBean?database=${mongodb.database}&amp;operation=findOne" />
   <to uri="direct:result" />
 </route>
-----------------------------------------------------------------------------------
+----
 
 === Configuration of a database in Spring XML
 
@@ -150,7 +150,7 @@ The following Spring XML creates a bean defining the connection to a
 MongoDB instance.
 
 [source,xml]
-----------------------------------------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
@@ -159,7 +159,7 @@ MongoDB instance.
         <constructor-arg name="port" value="${mongodb.port}" />
     </bean>
 </beans>
-----------------------------------------------------------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

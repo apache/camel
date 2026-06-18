@@ -37,7 +37,7 @@ The module hosting the function *must* provide the functions to allocate/dealloc
 Here's an example of the mentioned functions implemented in https://www.rust-lang.org[Rust]:
 
 [source,rust]
----------------------------------------
+----
 pub extern "C" fn alloc(size: u32) -> *mut u8 {
     let mut buf = Vec::with_capacity(size as usize);
     let ptr = buf.as_mut_ptr();
@@ -52,7 +52,7 @@ pub unsafe extern "C" fn dealloc(ptr: &mut u8, len: i32) {
     // Retakes the pointer which allows its memory to be freed.
     let _ = Vec::from_raw_parts(ptr, 0, len as usize);
 }
----------------------------------------
+----
 
 === Data shapes
 
@@ -63,7 +63,7 @@ containing headers the body encoded as a base64 string:
 
 ._Java-only: data wrapper class definition_
 [source,java]
--------------------------------------------------
+----
 public static class Wrapper {
     @JsonProperty
     public Map<String, String> headers = new HashMap<>();
@@ -71,16 +71,16 @@ public static class Wrapper {
     @JsonProperty
     public byte[] body;
 }
--------------------------------------------------
+----
 
 === Data processing
 
 The component expects the processing function to have the following signature:
 
 [source,rust]
----------------------------------------
+----
 fn function(ptr: u32, len: u32) -> u64
----------------------------------------
+----
 
 * it accepts two 32bit unsigned integers arguments
 ** a pointer to the memory location when the input data has been written (`ptr`)
@@ -93,7 +93,7 @@ fn function(ptr: u32, len: u32) -> u64
 Here's an example of a complete function:
 
 [source,rust]
----------------------------------------
+----
 #[derive(Serialize, Deserialize)]
 struct Message {
     headers: HashMap<String, serde_json::Value>,
@@ -126,7 +126,7 @@ pub extern fn transform(ptr: u32, len: u32) -> u64 {
 
     return ((out_ptr as u64) << 32) | out_len as u64;
 }
----------------------------------------
+----
 
 == Examples
 
@@ -134,7 +134,7 @@ Supposing we have compiled a Wasm module containing the function above, then it 
 
 ._Java-only: programmatic CamelContext and FluentProducerTemplate usage_
 [source,java]
----------------------------------------
+----
  try (CamelContext cc = new DefaultCamelContext()) {
     FluentProducerTemplate pt = cc.createFluentProducerTemplate();
 
@@ -158,7 +158,7 @@ Supposing we have compiled a Wasm module containing the function above, then it 
     assertThat(out.getMessage().getBody(String.class))
             .isEqualTo("HELLO");
 }
----------------------------------------
+----
 
 
 
@@ -168,12 +168,12 @@ If you use Maven you could add the following to your `pom.xml`,
 substituting the version number for the latest and greatest release.
 
 [source,xml]
----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-wasm</artifactId>
   <version>x.x.x</version>
 </dependency>
----------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

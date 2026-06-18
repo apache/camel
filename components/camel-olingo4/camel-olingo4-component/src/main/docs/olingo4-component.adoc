@@ -118,22 +118,22 @@ ordered by ascending FirstName property.
 
 ._Java-only: uses setHeader with Java constant_
 [source,java]
-------------------------------------------------------------
+----
 from("direct:...")
     .setHeader("CamelOlingo4.$top", "5");
     .to("olingo4://read/People?orderBy=FirstName%20asc");
-------------------------------------------------------------
+----
 
 The following route reads Airports entity using the key property
 value in incoming *id* header.
 
 ._Java-only: uses setHeader with header() expression_
 [source,java]
-------------------------------------------------------------
+----
 from("direct:...")
     .setHeader("CamelOlingo4.keyPredicate", header("id"))
     .to("olingo4://read/Airports");
-------------------------------------------------------------
+----
 
 The following route creates People entity using the
 *ClientEntity* in body message.

@@ -45,9 +45,9 @@ for this component.
 
 == URI format
 
----------------------------
+----
 debezium-sqlserver:name[?options]
----------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]

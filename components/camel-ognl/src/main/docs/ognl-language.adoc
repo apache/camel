@@ -137,13 +137,13 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
--------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-ognl</artifactId>
   <version>x.x.x</version>
 </dependency>
--------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

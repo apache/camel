@@ -32,19 +32,19 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
----------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-splunk</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------------
+----
 
 == URI format
 
--------------------------------
+----
 splunk://[endpoint]?[options]
--------------------------------
+----
 
 
 
@@ -253,7 +253,7 @@ To convert a Tweet to a `SplunkEvent`, you could use a converter like:
 
 ._Java-only: custom type converter from Tweet to SplunkEvent_
 [source,java]
-----------------------------------------------------------------------------------
+----
 @Converter
 public class Tweet2SplunkEvent {
     @Converter
@@ -278,7 +278,7 @@ public class Tweet2SplunkEvent {
         return data;
     }
 }
-----------------------------------------------------------------------------------
+----
 
 Search Splunk for tweets:
 

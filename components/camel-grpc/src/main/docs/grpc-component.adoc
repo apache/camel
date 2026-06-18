@@ -22,20 +22,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-grpc</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------------
+----
 grpc:host:port/service[?options]
--------------------------------------
+----
 
 
 // component options: START
@@ -534,7 +534,7 @@ The following steps are required:
 
 Insert operating system and CPU architecture detection extension inside **<build>** tag of the project `pom.xml` or set `${os.detected.classifier}` parameter manually
 [source,xml]
--------------------------------------------------------------------------
+----
 <extensions>
   <extension>
     <groupId>kr.motd.maven</groupId>
@@ -542,12 +542,12 @@ Insert operating system and CPU architecture detection extension inside **<build
     <version>1.7.1</version>
   </extension>
 </extensions>
--------------------------------------------------------------------------
+----
 
 Insert the gRPC and protobuf Java code generator plugins into the **<plugins>** tag of the project pom.xml
 
 [source,xml]
--------------------------------------------------------------------------
+----
 <plugin>
   <groupId>org.xolstice.maven.plugins</groupId>
   <artifactId>protobuf-maven-plugin</artifactId>
@@ -568,7 +568,7 @@ Insert the gRPC and protobuf Java code generator plugins into the **<plugins>** 
     </execution>
   </executions>
 </plugin>
--------------------------------------------------------------------------
+----
 
 == More information
 

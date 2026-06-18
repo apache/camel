@@ -30,13 +30,13 @@ https://jakarta.ee/specifications/xml-binding/2.3/apidocs/javax/xml/bind/jaxbcon
 
 ._Java-only: Java programmatic data format instantiation_
 [source,java]
--------------------------------------------------------
+----
 DataFormat jaxb = new JaxbDataFormat("com.acme.model");
 
 from("activemq:My.Queue").
   unmarshal(jaxb).
   to("mqseries:Another.Queue");
--------------------------------------------------------
+----
 
 You can, if you prefer, use a named reference to a data format which can
 then be defined in your Registry such as via your
@@ -44,18 +44,18 @@ Spring XML file. e.g.
 
 ._Java-only: Java DSL with named data format reference_
 [source,java]
--------------------------------
+----
 from("activemq:My.Queue").
   unmarshal("myJaxbDataType").
   to("mqseries:Another.Queue");
--------------------------------
+----
 
 === Using Spring XML
 
 The following example shows how to configure the `JaxbDataFormat` and use it in multiple routes.
 
 [source,xml]
--------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -79,7 +79,7 @@ The following example shows how to configure the `JaxbDataFormat` and use it in 
   </camelContext>
 
 </beans>
--------------------------------
+----
 
 === Multiple context paths
 
@@ -113,9 +113,9 @@ note that you need to specify its value in the format `\{namespaceUri\}localPart
 
 ._Java-only: Java constant reference_
 [source,java]
---------------------------------------------------------------------------------------
+----
 .setHeader(JaxbConstants.JAXB_PART_NAMESPACE, constant("{http://www.camel.apache.org/jaxb/example/address/1}address"));
---------------------------------------------------------------------------------------
+----
 
 === Fragment
 
@@ -150,19 +150,19 @@ characters.
 
 ._Java-only: Java programmatic data format configuration_
 [source,java]
---------------------------------------------------------------------------------------
+----
 JaxbDataFormat customWriterFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
 customWriterFormat.setXmlStreamWriterWrapper(new TestXmlStreamWriter());
---------------------------------------------------------------------------------------
+----
 
 The following example shows using the Spring DSL and also enabling
 Camel's non-XML filtering:
 
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------------
+----
 <bean id="testXmlStreamWriterWrapper" class="org.apache.camel.jaxb.TestXmlStreamWriter"/>
 <jaxb filterNonXmlChars="true" contextPath="org.apache.camel.foo.bar" xmlStreamWriterWrapper="#testXmlStreamWriterWrapper" />
-------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Working with the `ObjectFactory`
 
@@ -198,13 +198,13 @@ mapping file below, we map SOAP to use soap as a prefix. While our custom
 namespace `http://www.mycompany.com/foo/2` is not using any prefix.
 
 [source,xml]
------------------------------------------------------------------------
+----
  <util:map id="myMap">
     <entry key="http://www.w3.org/2003/05/soap-envelope" value="soap"/>
     <!-- we don't want any prefix for our namespace -->
     <entry key="http://www.mycompany.com/foo/2" value=""/>
  </util:map>
------------------------------------------------------------------------
+----
 
 To use this in JAXB or SOAP data formats, you refer to
 this map, using the `namespacePrefixRef` attribute as shown below. Then
@@ -212,11 +212,11 @@ Camel will look up in the Registry a `java.util.Map`
 with the id `myMap`, which was what we defined above.
 
 [source,xml]
-----------------------------------------------------------------------------------------
+----
  <marshal>
     <soap version="1.2" contextPath="com.mycompany.foo" namespacePrefixRef="myMap"/>
  </marshal>
-----------------------------------------------------------------------------------------
+----
 
 === Schema validation
 
@@ -232,22 +232,22 @@ Using the Java DSL, you can configure it in the following way:
 
 ._Java-only: Java programmatic data format configuration_
 [source,java]
------------------------------------------------------------------------
+----
 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
 jaxbDataFormat.setContextPath(Person.class.getPackage().getName());
 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
 jaxbDataFormat.setAccessExternalSchemaProtocols("file");
------------------------------------------------------------------------
+----
 
 You can do the same using the XML DSL:
 
 [source,xml]
--------------------------------------------------------------------------
+----
 <marshal>
     <jaxb id="jaxb" schema="classpath:person.xsd,classpath:address.xsd"
           accessExternalSchemaProtocols="file"/>
 </marshal>
--------------------------------------------------------------------------
+----
 
 === Schema Location
 
@@ -257,20 +257,20 @@ Using the Java DSL, you can configure it in the following way:
 
 ._Java-only: Java programmatic data format configuration_
 [source,java]
--------------------------------------------------------------------
+----
 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
 jaxbDataFormat.setContextPath(Person.class.getPackage().getName());
 jaxbDataFormat.setSchemaLocation("schema/person.xsd");
--------------------------------------------------------------------
+----
 
 You can do the same using the XML DSL:
 
 [source,xml]
---------------------------------------------------------
+----
 <marshal>
     <jaxb id="jaxb" schemaLocation="schema/person.xsd"/>
 </marshal>
---------------------------------------------------------
+----
 
 === Marshal data that is already XML
 
@@ -292,13 +292,13 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
--------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-jaxb</artifactId>
   <version>x.x.x</version>
 </dependency>
--------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

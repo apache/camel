@@ -75,12 +75,12 @@ If you need to request a reply, then you should look at the next example.
 
 ._Java-only: Java programmatic data format instantiation_
 [source,java]
--------------------------------------------------------------------------------------------------------------------------------------
+----
 SoapDataFormat soap = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 from("direct:start")
   .marshal(soap)
   .to("jms:myQueue");
--------------------------------------------------------------------------------------------------------------------------------------
+----
 
 [TIP]
 ====
@@ -97,30 +97,30 @@ most settings apply here as well
 
 ._Java-only: Java programmatic data format configuration_
 [source,java]
--------------------------------------------------------------------------------------------------------------------------------------
+----
 SoapDataFormat soap = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 soap.setVersion("1.2");
 from("direct:start")
   .marshal(soap)
   .to("jms:myQueue");
--------------------------------------------------------------------------------------------------------------------------------------
+----
 
 When using XML DSL, there is a version attribute you can set on the
 <soap> element.
 
 [source,xml]
------------------------------------------------------------------------------------------------------
+----
     <!-- Defining a ServiceInterfaceStrategy for retrieving the element name when marshalling -->
     <bean id="myNameStrategy" class="org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy">
         <constructor-arg value="com.example.customerservice.CustomerService"/>
     <constructor-arg value="true"/>
     </bean>
------------------------------------------------------------------------------------------------------
+----
 
 And in the Camel route
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start"/>
   <marshal>
@@ -128,7 +128,7 @@ And in the Camel route
   </marshal>
   <to uri="jms:myQueue"/>
 </route>
----------------------------------------------------------------------------------------------------------------
+----
 
 == Multi-part Messages
 
@@ -150,10 +150,10 @@ request parameters or response parameters.
 
 ._Java-only: Java class instantiation_
 [source,java]
--------------------------------------------------------------------------------------------------------------------------------------------
+----
 ServiceInterfaceStrategy strat =  new ServiceInterfaceStrategy(com.example.customerservice.multipart.MultiPartCustomerService.class, true);
 SoapDataFormat soapDataFormat = new SoapDataFormat("com.example.customerservice.multipart", strat);
--------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Holder Object mapping
 
@@ -173,7 +173,7 @@ response or fault.
 
 ._Java-only: Java programmatic data format with exception handling_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------
+----
 String WS_URI = "cxf://http://myserver/customerservice?serviceClass=com.example.customerservice&dataFormat=RAW";
 SoapDataFormat soapDF = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 from("direct:customerServiceClient")
@@ -184,14 +184,14 @@ from("direct:customerServiceClient")
   .marshal(soapDF)
   .to(WS_URI)
   .unmarshal(soapDF);
----------------------------------------------------------------------------------------------------------------------------------------
+----
 
 The below snippet creates a proxy for the service interface and makes a
 SOAP call to the above route.
 
 ._Java-only: Java proxy API_
 [source,java]
----------------------------------------------------------------------------------------------------
+----
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.ProxyHelper;
 ...
@@ -201,7 +201,7 @@ ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 // CustomerService below is the service endpoint interface, *not* the javax.xml.ws.Service subclass
 CustomerService proxy = ProxyHelper.createProxy(startEndpoint, classLoader, CustomerService.class);
 GetCustomersByNameResponse response = proxy.getCustomersByName(new GetCustomersByName());
----------------------------------------------------------------------------------------------------
+----
 
 === Webservice Server
 
@@ -213,7 +213,7 @@ server class it could be defined in a spring context as a regular bean.
 
 ._Java-only: Java programmatic data format with bean processing_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------
+----
 SoapDataFormat soapDF = new SoapDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 CustomerService serverBean = new CustomerServiceImpl();
 from("jms://queue:customerServiceQueue")
@@ -224,7 +224,7 @@ from("jms://queue:customerServiceQueue")
   .unmarshal(soapDF)
   .bean(serverBean)
   .marshal(soapDF);
----------------------------------------------------------------------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -232,13 +232,13 @@ To use the SOAP dataformat in your Camel routes, you need to add the
 following dependency to your `pom.xml`.
 
 [source,xml]
--------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-soap</artifactId>
   <version>x.y.z</version>
 </dependency>
--------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

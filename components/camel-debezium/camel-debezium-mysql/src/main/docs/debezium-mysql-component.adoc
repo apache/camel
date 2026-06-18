@@ -45,9 +45,9 @@ for this component.
 
 == URI format
 
----------------------------
+----
 debezium-mysql:name[?options]
----------------------------
+----
 
 [NOTE]
 ====

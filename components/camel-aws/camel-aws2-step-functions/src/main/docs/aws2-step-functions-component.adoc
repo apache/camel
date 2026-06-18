@@ -33,9 +33,9 @@ https://aws.amazon.com/step-functions/[AWS Step Functions].
 
 == URI Format
 
--------------------------
+----
 aws2-step-functions://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -147,11 +147,11 @@ In AWS Step Functions, there are multiple operations you can submit, as an examp
 
 ._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(CreateStateMachineRequest.builder().name("state-machine").build())
   .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createStateMachine&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -162,13 +162,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-step-functions</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

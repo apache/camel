@@ -36,9 +36,9 @@ To use this component, you need:
 
 == URI Format
 
-------------------------------
+----
 ibm-watsonx-ai:label[?options]
-------------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -373,7 +373,7 @@ Stream chat responses with a callback consumer:
 
 ._Java-only: uses `Consumer<String>` callback and `UserMessage` SDK type_
 [source,java]
---------------------------------------------------------------------------------
+----
 import com.ibm.watsonx.ai.chat.model.UserMessage;
 
 from("direct:streamChat")
@@ -393,7 +393,7 @@ from("direct:streamChat")
       "&modelId=ibm/granite-4-h-small" +
       "&operation=chatStreaming")
   .log("Full response: ${body}");
---------------------------------------------------------------------------------
+----
 
 === Streaming Chat with WebSocket
 
@@ -574,7 +574,7 @@ Generate embeddings for semantic search and similarity:
 
 ._Java-only: uses `List.of()` for batch input and `process` lambda for typed result handling_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:embed")
   .setBody(constant(List.of(
       "Apache Camel is an integration framework",
@@ -590,7 +590,7 @@ from("direct:embed")
       System.out.println("Generated " + embeddings.size() + " embeddings");
       System.out.println("Embedding dimensions: " + embeddings.get(0).size());
   });
---------------------------------------------------------------------------------
+----
 
 === Single Text Embedding
 
@@ -651,7 +651,7 @@ Generate an embedding and store it in a Qdrant vector database for semantic sear
 
 ._Java-only: uses Qdrant SDK types (`Points.PointStruct`, `VectorsFactory`, etc.) for vector construction_
 [source,java]
---------------------------------------------------------------------------------
+----
 import org.apache.camel.component.qdrant.QdrantHeaders;
 import org.apache.camel.component.qdrant.QdrantAction;
 import io.qdrant.client.PointIdFactory;
@@ -679,7 +679,7 @@ from("direct:embedAndStore")
   })
   .to("qdrant:embeddings?host=localhost&port=6334")
   .log("Embedding stored with ID: ${header.CamelQdrantOperationID}");
---------------------------------------------------------------------------------
+----
 
 NOTE: This example requires the `camel-qdrant` dependency. See the xref:qdrant-component.adoc[Qdrant component documentation] for more details.
 
@@ -689,7 +689,7 @@ Rerank documents by relevance to a query:
 
 ._Java-only: uses `process` lambda with `List.of()` for document input_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:rerank")
   .process(exchange -> {
       // Set the query to rank against
@@ -712,7 +712,7 @@ from("direct:rerank")
       List results = exchange.getMessage().getBody(List.class);
       System.out.println("Reranked results: " + results);
   });
---------------------------------------------------------------------------------
+----
 
 === Rerank with Top N
 
@@ -720,7 +720,7 @@ Return only the top N most relevant documents:
 
 ._Java-only: uses `List.of()` for document input_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:rerankTopN")
   .setHeader("CamelIBMWatsonxAiRerankQuery", constant("Cloud computing platform"))
   .setHeader("CamelIBMWatsonxAiRerankTopN", constant(3))
@@ -737,7 +737,7 @@ from("direct:rerankTopN")
       "&modelId=cross-encoder/ms-marco-minilm-l-12-v2" +
       "&operation=rerank")
   .log("Top 3 results: ${body}");
---------------------------------------------------------------------------------
+----
 
 === Tokenization
 
@@ -955,7 +955,7 @@ Provide custom detectors via header:
 
 ._Java-only: uses watsonx.ai SDK detector types (`Pii`, `Hap`)_
 [source,java]
---------------------------------------------------------------------------------
+----
 import com.ibm.watsonx.ai.detection.detector.Pii;
 import com.ibm.watsonx.ai.detection.detector.Hap;
 
@@ -972,7 +972,7 @@ from("direct:detectCustom")
       "&projectId=yourProjectId" +
       "&operation=detect")
   .log("Detections: ${body}");
---------------------------------------------------------------------------------
+----
 
 === Text Extraction from Cloud Object Storage
 
@@ -1166,7 +1166,7 @@ The text extraction operations integrate seamlessly with Camel file components:
 
 ._Java-only: illustrative snippets showing various file source integrations_
 [source,java]
---------------------------------------------------------------------------------
+----
 // From local file system
 from("file:/documents/incoming?noop=true")
   .to("ibm-watsonx-ai:extract?operation=textExtractionUploadAndFetch...")
@@ -1186,7 +1186,7 @@ from("aws2-s3://my-bucket?region=us-east-1&prefix=docs/")
 from("azure-storage-blob://mycontainer?prefix=documents/")
   .to("ibm-watsonx-ai:extract?operation=textExtractionUploadAndFetch...")
   .log("Extracted text from blob");
---------------------------------------------------------------------------------
+----
 
 === Document Classification
 
@@ -1318,7 +1318,7 @@ For more control, use the async flow with `textClassificationUpload` and `textCl
 
 ._Java-only: complex async polling pattern with `loopDoWhile`, `delay`, `exchangeProperty`, and `choice`_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Start classification and poll until complete
 from("direct:startClassification")
   .to("ibm-watsonx-ai:classify?operation=textClassificationUpload" +
@@ -1349,7 +1349,7 @@ from("direct:startClassification")
     .otherwise()
       .log("Classification failed: ${header.CamelIBMWatsonxAiErrorMessage}")
   .end();
---------------------------------------------------------------------------------
+----
 
 ==== Classification with File Components
 
@@ -1357,7 +1357,7 @@ The classification operations integrate seamlessly with Camel file components:
 
 ._Java-only: illustrative snippets showing various file source integrations_
 [source,java]
---------------------------------------------------------------------------------
+----
 // From local file system
 from("file:/documents/incoming?noop=true")
   .to("ibm-watsonx-ai:classify?operation=textClassificationUploadAndFetch...")
@@ -1377,7 +1377,7 @@ from("aws2-s3://my-bucket?region=us-east-1&prefix=docs/")
 from("azure-storage-blob://mycontainer?prefix=documents/")
   .to("ibm-watsonx-ai:classify?operation=textClassificationUploadAndFetch...")
   .log("Classified blob: ${header.CamelIBMWatsonxAiClassificationResult}");
---------------------------------------------------------------------------------
+----
 
 ==== Delete Classification Request
 
@@ -1580,7 +1580,7 @@ Generate time series forecasts:
 
 ._Java-only: uses watsonx.ai SDK types (`InputSchema`, `ForecastData`) for time series data construction_
 [source,java]
---------------------------------------------------------------------------------
+----
 import com.ibm.watsonx.ai.timeseries.InputSchema;
 import com.ibm.watsonx.ai.timeseries.ForecastData;
 
@@ -1607,7 +1607,7 @@ from("direct:forecast")
       "&modelId=ibm/granite-ttm-1536-96-r2" +
       "&operation=forecast")
   .log("Forecast results: ${body}");
---------------------------------------------------------------------------------
+----
 
 === List Available Models
 
@@ -1757,7 +1757,7 @@ Use watsonx.ai utility tools (experimental):
 
 ._Java-only: uses `process` lambda with `Map.of()` for tool input and config_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:runTool")
   .process(exchange -> {
       // Set tool name
@@ -1771,7 +1771,7 @@ from("direct:runTool")
       "&baseUrl=https://us-south.ml.cloud.ibm.com" +
       "&operation=runTool")
   .log("Tool result: ${body}");
---------------------------------------------------------------------------------
+----
 
 === List Available Tools
 
@@ -1825,7 +1825,7 @@ When using Spring Boot or Camel Main, you can configure the component in `applic
 NOTE: This configuration approach works with both Spring Boot (`camel-ibm-watsonx-ai-starter`) and Camel Main runtimes.
 
 [source,properties]
---------------------------------------------------------------------------------
+----
 # watsonx.ai configuration
 camel.component.ibm-watsonx-ai.configuration.api-key=${IBM_WATSONX_API_KEY}
 camel.component.ibm-watsonx-ai.configuration.base-url=https://us-south.ml.cloud.ibm.com
@@ -1833,7 +1833,7 @@ camel.component.ibm-watsonx-ai.configuration.project-id=${IBM_WATSONX_PROJECT_ID
 camel.component.ibm-watsonx-ai.configuration.model-id=ibm/granite-13b-instruct-v2
 camel.component.ibm-watsonx-ai.configuration.temperature=0.7
 camel.component.ibm-watsonx-ai.configuration.max-new-tokens=200
---------------------------------------------------------------------------------
+----
 
 Then use the component in routes without repeating configuration:
 
@@ -1947,14 +1947,14 @@ Maven users will need to add the following dependency to their `pom.xml`.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-ibm-watsonx-ai</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
----------------------------------------
+----
 
 where `x.x.x` is the version number of Camel.
 

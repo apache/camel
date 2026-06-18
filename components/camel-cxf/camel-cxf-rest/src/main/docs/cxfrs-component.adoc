@@ -20,34 +20,34 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
--------------------------------------------------------------------------------------
+----
 <dependency>
    <groupId>org.apache.camel</groupId>
    <artifactId>camel-cxf-rest</artifactId>
    <version>x.x.x</version>  <!-- use the same version as your Camel core version -->
 </dependency>
--------------------------------------------------------------------------------------
+----
 
 == URI format
 
------------------------
+----
 cxfrs://address?options
------------------------
+----
 
 Where *address* represents the CXF endpoint's address
 
----------------------
+----
 cxfrs:bean:rsEndpoint
----------------------
+----
 
 Where *rsEndpoint* represents the spring bean's name, which presents the
 CXFRS client or server
 
 For either style above, you can append options to the URI as follows:
 
-------------------------------------------------------------------
+----
 cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
-------------------------------------------------------------------
+----
 
 
 // component options: START
@@ -90,10 +90,10 @@ The `camel-cxfrs` producer supports overriding the service address by setting th
 
 ._Java-only: inline exchange header manipulation_
 [source,java]
-----------------------------------------------------------------------------------------------
+----
  // set up the service address from the message header to override the setting of CXF endpoint
  exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()));
-----------------------------------------------------------------------------------------------
+----
 
 === Consuming a REST Request - Simple Binding Style
 
@@ -196,12 +196,12 @@ Given a JAX-RS resource class with this method:
 
 ._Java-only: Java JAX-RS annotation_
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------------------
+----
 @POST @Path("/customers/{type}")
 public Response newCustomer(Customer customer, @PathParam("type") String type, @QueryParam("active") @DefaultValue("true") boolean active) {
     return null;
 }
-------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 Serviced by the following route:
 
@@ -255,7 +255,7 @@ YAML::
 
 The following HTTP request with XML payload (given that the Customer DTO is JAXB-annotated):
 
--------------------------------------
+----
 POST /customers/gold?active=true
 
 Payload:
@@ -264,13 +264,13 @@ Payload:
   <country>Spain</country>
   <project>Apache Camel</project>
 </Customer>
--------------------------------------
+----
 
 Will print the message:
 
-----------------------------------------------------------------------------------
+----
 Request: type=gold, active=true, customerData=<Customer.toString() representation>
-----------------------------------------------------------------------------------
+----
 
 [NOTE]
 ====

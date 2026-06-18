@@ -113,7 +113,7 @@ If you prefer to configure your routes in your Spring
 XML file, then you can use XPath expressions as follows
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:foo="http://example.com/person"
@@ -131,7 +131,7 @@ XML file, then you can use XPath expressions as follows
     </route>
   </camelContext>
 </beans>
----------------------------------------------------------------------------------------------------------------
+----
 
 Notice how we can reuse the namespace prefixes, *foo* in this case, in
 the XPath expression for easier namespace-based XQuery expressions!
@@ -141,9 +141,9 @@ type conversion which is done in the xml configuration via the *@type*
 attribute:
 
 [source,xml]
--------------------------------------------------------------------------------
+----
 <xquery resultType="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
--------------------------------------------------------------------------------
+----
 
 
 === Using XQuery as an endpoint
@@ -157,7 +157,7 @@ The following example shows how to take a message of an ActiveMQ queue
 (MyQueue) and transform it using XQuery and send it to MQSeries.
 
 [source,xml]
--------------------------------------------------------------------------
+----
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="activemq:MyQueue"/>
@@ -165,7 +165,7 @@ The following example shows how to take a message of an ActiveMQ queue
       <to uri="mqseries:SomeOtherQueue"/>
     </route>
   </camelContext>
--------------------------------------------------------------------------
+----
 
 === Loading script from external resource
 
@@ -198,13 +198,13 @@ If you use Maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest release.
 
 [source,xml]
---------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-saxon</artifactId>
   <version>x.x.x</version>
 </dependency>
---------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

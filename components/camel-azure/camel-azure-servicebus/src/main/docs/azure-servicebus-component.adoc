@@ -25,14 +25,14 @@ You must have a valid Windows Azure Storage account. More information is availab
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-servicebus</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 // component options: START
@@ -91,7 +91,7 @@ In the consumer, the returned message body will be of type `String`.
 
 ._Java-only: building a batch message list with a Processor_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .process(exchange -> {
          final List<Object> inputBatch = new LinkedList<>();
@@ -104,11 +104,11 @@ from("direct:start")
        })
   .to("azure-servicebus:test//?connectionString=test")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 ._Java-only: sending a batch message with a session ID_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .process(exchange -> {
          final List<Object> inputBatch = new LinkedList<>();
@@ -121,14 +121,14 @@ from("direct:start")
        })
   .to("azure-servicebus:test//?connectionString=test&sessionId=123")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 
 - `scheduleMessages`
 
 ._Java-only: scheduling messages with a Processor and ServiceBusConstants_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
   .process(exchange -> {
          final List<Object> inputBatch = new LinkedList<>();
@@ -142,7 +142,7 @@ from("direct:start")
        })
   .to("azure-servicebus:test//?connectionString=test&producerOperation=scheduleMessages")
   .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 - `receiveMessages`
 

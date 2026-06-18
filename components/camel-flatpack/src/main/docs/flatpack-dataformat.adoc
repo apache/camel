@@ -40,12 +40,12 @@ marshal or unmarshal operation in the route builder:
 
 ._Java-only: programmatic FlatpackDataFormat configuration and unmarshal_
 [source,java]
----------------------------------------------------------------------------
+----
   FlatpackDataFormat fp = new FlatpackDataFormat();
   fp.setDefinition(new ClassPathResource("INVENTORY-Delimited.pzmap.xml"));
   ...
   from("file:order/in").unmarshal(df).to("seda:queue:neworder");
----------------------------------------------------------------------------
+----
 
 The sample above will read files from the `order/in` folder and
 unmarshal the input using the Flatpack configuration file
@@ -54,14 +54,14 @@ files. The result is a `DataSetList` object we store on the SEDA queue.
 
 ._Java-only: programmatic FlatpackDataFormat configuration and marshal_
 [source,java]
------------------------------------------------------------------------------------
+----
 FlatpackDataFormat df = new FlatpackDataFormat();
 df.setDefinition(new ClassPathResource("PEOPLE-FixedLength.pzmap.xml"));
 df.setFixed(true);
 df.setIgnoreFirstRecord(false);
 
 from("seda:people").marshal(df).convertBodyTo(String.class).to("jms:queue:people");
------------------------------------------------------------------------------------
+----
 
 In the code above we marshal the data from an Object representation as a
 `List` of rows as `Maps`. The rows as `Map` contains the column name as
@@ -79,13 +79,13 @@ If you use maven, you could add the following to your `pom.xml`,
 substituting the version number for the latest release.
 
 [source,xml]
------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-flatpack</artifactId>
   <version>x.x.x</version>
 </dependency>
------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

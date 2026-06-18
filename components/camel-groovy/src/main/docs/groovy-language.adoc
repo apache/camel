@@ -19,9 +19,9 @@ Filter] EIP.
 
 ._Java-only: creating a Groovy expression_
 [source,java]
----------------------------------------
+----
 groovy("someGroovyExpression")
----------------------------------------
+----
 
 == Groovy Options
 
@@ -73,12 +73,12 @@ statements scripts, you need to make sure you set the value of result
 variable as the script return value.
 
 [source,groovy]
--------------------------------------------------------------
+----
 bar = "baz"
 // some other statements ...
 // camel take the result value as the script evaluation result
 result = body * 2 + 1
--------------------------------------------------------------
+----
 
 === Customizing Groovy Shell
 
@@ -115,9 +115,9 @@ e.g., to refer to a file on the classpath you can do:
 
 ._Java-only: loading a Groovy script from an external resource_
 [source,java]
--------------------------------------------------------------------
+----
 .setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
--------------------------------------------------------------------
+----
 
 === Dependencies
 
@@ -129,13 +129,13 @@ substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
 [source,xml]
----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-groovy</artifactId>
   <version>x.x.x</version>
 </dependency>
----------------------------------------
+----
 
 == Examples
 
@@ -148,11 +148,11 @@ to determine if any line items are over $100:
 Java::
 +
 [source,java]
-------------------------------------------------------------------------------------------------
+----
 from("queue:foo")
     .filter(groovy("body.lineItems.any { i -> i.value > 100 }"))
         .to("queue:bar")
-------------------------------------------------------------------------------------------------
+----
 
 XML DSL::
 +

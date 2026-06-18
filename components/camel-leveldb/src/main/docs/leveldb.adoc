@@ -149,10 +149,10 @@ Example of jackson serialization:
 
 ._Java-only: programmatic Jackson serializer configuration_
 [source,java]
-----------------------------------------
+----
 LevelDBAggregationRepository repo = ...; //initialization of repository
 repo.setSerializer(new JacksonLevelDBSerializer());
-----------------------------------------
+----
 
 Limitation of jackson serializer is caused by binary data:
 
@@ -162,13 +162,13 @@ can be used to solve this problem. Please use custom serializer with Jackson by 
 
 ._Java-only: custom Jackson module with serializer and deserializer_
 [source,java]
-----------------------------------------
+----
 SimpleModule simpleModule = new SimpleModule();
 simpleModule.addSerializer(ObjectWithBinaryField.class, new ObjectWithBinaryFieldSerializer()); //custom serializer
 simpleModule.addDeserializer(ObjectWithBinaryField.class, new ObjectWithBinaryFieldDeserializer()); //custom deserializer
 
 repo.setSerializer(new JacksonLevelDBSerializer(simpleModule));
-----------------------------------------
+----
 
 [[LevelDB-UsingLevelDBAggregationRepositoryinJavaDSL]]
 == Using LevelDBAggregationRepository in Java DSL
@@ -190,12 +190,12 @@ If you use Maven, you could add the following to your pom.xml,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
-----------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-leveldb</artifactId>
   <version>x.y.z</version>
 </dependency>
-----------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

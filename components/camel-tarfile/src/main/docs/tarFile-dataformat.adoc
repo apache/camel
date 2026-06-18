@@ -187,9 +187,9 @@ the `UnTarpedMessageProcessor`.
 
 ._Java-only: inline Processor class_
 [source,java]
------------------------------------------------------------------------------------------------
+----
 from("activemq:queue:MY_QUEUE").unmarshal().tarFile().process(new UnTarpedMessageProcessor()); 
------------------------------------------------------------------------------------------------
+----
 
 If the Tar File has more than one entry, the usingIterator option of
 TarFileDataFormat to be true, and you can use splitter to do the further
@@ -197,7 +197,7 @@ work.
 
 ._Java-only: Java programmatic data format configuration_
 [source,java]
-----------------------------------------------------------------------------------------------------
+----
   TarFileDataFormat tarFile = new TarFileDataFormat();
   tarFile.setUsingIterator(true);
   from("file:src/test/resources/org/apache/camel/dataformat/tarfile/?delay=1000&noop=true")
@@ -206,20 +206,20 @@ work.
         .streaming()
           .process(new UnTarpedMessageProcessor())
     .end();
-----------------------------------------------------------------------------------------------------
+----
 
 Or you can use the TarSplitter as an expression for splitter directly
 like this
 
 ._Java-only: Java TarSplitter class_
 [source,java]
-----------------------------------------------------------------------------------------------------
+----
    from("file:src/test/resources/org/apache/camel/dataformat/tarfile?delay=1000&noop=true")
      .split(new TarSplitter())
         .streaming()
         .process(new UnTarpedMessageProcessor())
      .end();
-----------------------------------------------------------------------------------------------------
+----
 
 IMPORTANT: You cannot use TarSplitter in _parallel_ mode with the splitter.
 
@@ -237,14 +237,14 @@ into a single Tar File that is stored in the output directory.
 
 ._Java-only: Java TarAggregationStrategy class_
 [source,java]
--------------------------------------------------
+----
    from("file:input/directory?antInclude=*/.txt")
      .aggregate(new TarAggregationStrategy())
        .constant(true)
        .completionFromBatchConsumer()
        .eagerCheckCompletion()
    .to("file:output/directory");
--------------------------------------------------
+----
 
 The outgoing `CamelFileName` message header is created using
 java.io.File.createTempFile, with the ".tar" suffix. If you want to
@@ -253,7 +253,7 @@ the `CamelFileName` header explicitly in your route:
 
 ._Java-only: Java TarAggregationStrategy class_
 [source,java]
-------------------------------------------------------------
+----
    from("file:input/directory?antInclude=*/.txt")
      .aggregate(new TarAggregationStrategy())
        .constant(true)
@@ -261,7 +261,7 @@ the `CamelFileName` header explicitly in your route:
        .eagerCheckCompletion()
      .setHeader(Exchange.FILE_NAME, constant("reports.tar"))
    .to("file:output/directory");
-------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -273,14 +273,14 @@ substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-tarfile</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

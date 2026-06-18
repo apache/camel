@@ -28,14 +28,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-printer</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
@@ -43,10 +43,10 @@ Since the URI scheme for a printer has not been standardized (the
 nearest thing to a standard being the IETF print standard), and therefore
 not uniformly applied by vendors, we have chosen *"lpr"* as the scheme.
 
------------------------------------------------
+----
 lpr://localhost/default[?options]
 lpr://remotehost:port/path/to/printer[?options]
------------------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]

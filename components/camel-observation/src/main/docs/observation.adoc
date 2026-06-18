@@ -49,7 +49,7 @@ context. You can optionally specify a `Tracer`, or alternatively it can be impli
 
 ._Java-only: configuring MicrometerObservationTracer with metrics and tracing_
 [source,java]
---------------------------------------------------------------------------------------------------
+----
 ObservationRegistry observationRegistry = ObservationRegistry.create();
 MicrometerObservationTracer micrometerObservationTracer = new MicrometerObservationTracer();
 
@@ -73,7 +73,7 @@ micrometerObservationTracer.setTracer(otelTracer);
 
 // Initialize the MicrometerObservationTracer
 micrometerObservationTracer.init(context);
---------------------------------------------------------------------------------------------------
+----
 
 == Spring Boot
 

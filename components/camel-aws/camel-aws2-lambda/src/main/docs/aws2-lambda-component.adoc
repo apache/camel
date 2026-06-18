@@ -28,9 +28,9 @@ When creating a Lambda function, you need to specify an IAM role which has at le
 
 == URI Format
 
--------------------------
+----
 aws2-lambda://functionName[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -836,11 +836,11 @@ In AWS Lambda there are multiple operations you can submit, as an example for Ge
 ._Java-only: requires AWS SDK builder_
 
 [source,java]
---------------------------
+----
 from("direct:getFunction")
      .setBody(GetFunctionRequest.builder().functionName("test").build())
      .to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunction&pojoRequest=true")
---------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -852,13 +852,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-lambda</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

@@ -27,22 +27,22 @@ https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-cosmosdb</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 == URI Format
 
 [source,text]
-------------------------------
+----
 azure-cosmosdb://[databaseName][/containerName][?options]
-------------------------------
+----
 
 In case of the consumer, `databaseName`, `containerName` are required, In case of the producer, it depends on the operation that being
 requested, for example if operation is on a database level, e.b: deleteDatabase, only `databaseName` is required, but in case

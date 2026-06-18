@@ -20,20 +20,20 @@ Maven users will need to add the following dependency to
 their `pom.xml` for this component.
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-nats</artifactId>
     <!-- use the same version as your Camel core version -->
     <version>x.y.z</version>
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-----------------------
+----
 nats:topic[?options]
-----------------------
+----
 
 Where *topic* is the topic name
 

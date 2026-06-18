@@ -44,11 +44,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 ._Java-only: uses toF() for endpoint URI formatting_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:list").
     toF("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServices").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a List of services from your cluster
 
@@ -56,7 +56,7 @@ This operation returns a List of services from your cluster
 
 ._Java-only: uses inline Processor with KubernetesConstants and HashMap_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listByLabels").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -68,7 +68,7 @@ from("direct:listByLabels").process(new Processor() {
         });
     toF("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of services from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
@@ -76,7 +76,7 @@ This operation returns a list of services from your cluster using a label select
 
 ._Java-only: uses fromF(), inline Processor class, KubernetesConstants, and string concatenation_
 [source,java]
---------------------------------------------------------------------------------
+----
 fromF("kubernetes-services://%s?oauthToken=%s", host, authToken)
     .process(new KubernetesProcessor()).to("mock:result");
 
@@ -88,7 +88,7 @@ fromF("kubernetes-services://%s?oauthToken=%s", host, authToken)
             log.info("Got event with service name: " + sv.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
---------------------------------------------------------------------------------
+----
 
 This consumer returns a message per event received for all Services from all namespaces in the cluster.
 

@@ -24,21 +24,21 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-geocoder</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
---------------------------------------------
+----
 geocoder:address:name[?options]
 geocoder:latlng:latitude,longitude[?options]
---------------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -113,9 +113,9 @@ Copenhagen, Denmark we can send a message with a headers as shown:
 
 ._Java-only: overriding the address via a message header_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, "Copenhagen, Denmark");
-------------------------------------------------------------------------------------------------------
+----
 
 To get the address for a latitude and longitude we can do:
 
@@ -158,9 +158,9 @@ YAML::
 
 Which will log
 
---------------------------------------------------------------------------------------------------------------
+----
 Location 285 Bedford Avenue, Brooklyn, NY 11211, USA is at lat/lng: 40.71412890,-73.96140740 and in country US
---------------------------------------------------------------------------------------------------------------
+----
 
 To get the current location using the Google GeoCoder,
 you can use "current" as the address as shown:

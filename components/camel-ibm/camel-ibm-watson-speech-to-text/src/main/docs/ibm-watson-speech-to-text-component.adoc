@@ -25,9 +25,9 @@ More information is available at https://cloud.ibm.com/catalog/services/speech-t
 
 == URI Format
 
-------------------------------
+----
 ibm-watson-speech-to-text:label[?options]
-------------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -479,23 +479,23 @@ To get your credentials:
 Integration tests are executed with the `verify` goal and require system properties:
 
 [source,bash]
---------------------------------------------------------------------------------
+----
 mvn verify \
   -Dcamel.ibm.watson.stt.apiKey=YOUR_API_KEY \
   -Dcamel.ibm.watson.stt.serviceUrl=YOUR_SERVICE_URL
---------------------------------------------------------------------------------
+----
 
 Alternatively, using environment variables:
 
 [source,bash]
---------------------------------------------------------------------------------
+----
 export CAMEL_IBM_WATSON_STT_API_KEY=YOUR_API_KEY
 export CAMEL_IBM_WATSON_STT_SERVICE_URL=YOUR_SERVICE_URL
 
 mvn verify \
   -Dcamel.ibm.watson.stt.apiKey=${CAMEL_IBM_WATSON_STT_API_KEY} \
   -Dcamel.ibm.watson.stt.serviceUrl=${CAMEL_IBM_WATSON_STT_SERVICE_URL}
---------------------------------------------------------------------------------
+----
 
 === Integration Test Coverage
 
@@ -564,7 +564,7 @@ These files can be reviewed to verify transcription accuracy and examine the det
 === Example Output
 
 [source]
---------------------------------------------------------------------------------
+----
 [INFO] Running org.apache.camel.component.ibm.watson.stt.integration.WatsonSpeechToTextIT
 Created input directory: target/audio-input
 Created output directory: target/transcription-output
@@ -585,7 +585,7 @@ Created transcript file: transcript-file2.txt (size: 156 bytes)
 Created transcript file: transcript-file3.txt (size: 156 bytes)
 Successfully transcribed and saved 3 audio files
 [INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
---------------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -594,14 +594,14 @@ Maven users will need to add the following dependency to their `pom.xml`.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-ibm-watson-speech-to-text</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
----------------------------------------
+----
 
 where `x.x.x` is the version number of Camel.
 

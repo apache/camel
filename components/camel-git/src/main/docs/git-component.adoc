@@ -17,20 +17,20 @@
 The Git component allows you to work with a generic Git repository. 
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-git</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 *URI Format*
 
------------------------------------
+----
 git://localRepositoryPath[?options]
------------------------------------
+----
 
 == URI Options
 
@@ -55,7 +55,7 @@ then pushes it to remote repository.
 
 ._Java-only: setting headers with GitConstants and chaining multiple git operations_
 [source,java]
---------------------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
     .setHeader(GitConstants.GIT_FILE_NAME, constant("test.java"))
     .to("git:///tmp/testRepo?operation=add")
@@ -64,7 +64,7 @@ from("direct:start")
     .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
     .to("git:///tmp/testRepo?operation=createTag&tagName=myTag")
     .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin");
---------------------------------------------------------------------------------------------------------------------
+----
 
 === Consumer Example
 
@@ -75,10 +75,10 @@ Below is an example route of a consumer that consumes commit:
 Java::
 +
 [source,java]
----------------------------------------
+----
 from("git:///tmp/testRepo?type=commit")
     .to("mock:result");
----------------------------------------
+----
 
 XML::
 +
@@ -155,7 +155,7 @@ You can override this by providing your own ``.gitconfig`` file.
 
 ._Java-only: configuring custom gitConfigFile with different resource schemes_
 [source,java]
----------------------------------------
+----
 from("git:///tmp/testRepo?type=commit&gitConfigFile=file:/tmp/configfile")
     .to(....); // will load from os dirs
 
@@ -164,6 +164,6 @@ from("git:///tmp/testRepo?type=commit&gitConfigFile=classpath:configfile")
 
 from("git:///tmp/testRepo?type=commit&gitConfigFile=http://somedomain.xyz/gitconfigfile")
     .to(....); // will load from http. You could also use https
----------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

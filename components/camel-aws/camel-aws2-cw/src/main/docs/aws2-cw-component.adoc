@@ -28,9 +28,9 @@ https://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
 
 == URI Format
 
-----------------------------
+----
 aws2-cw://namespace[?options]
-----------------------------
+----
 
 The metrics will be created if they don't already exist.
 
@@ -121,13 +121,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-cw</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `${camel-version`} must be replaced by the actual version of Camel.
 
@@ -172,11 +172,11 @@ and sends something like
 
 ._Java-only: setting CloudWatch metric headers programmatically_
 [source,java]
--------------------------------
+----
 exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "ExchangesCompleted");
 exchange.getIn().setHeader(Cw2Constants.METRIC_VALUE, "2.0");
 exchange.getIn().setHeader(Cw2Constants.METRIC_UNIT, "Count");
--------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

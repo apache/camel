@@ -33,9 +33,9 @@ In this first example we unmarshal file payload to OutputStream and send it to m
 
 ._Java-only: unmarshal with a local parquet data format variable_
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:unmarshal").unmarshal(parquet).to("mock:unmarshal");
------------------------------------------------------------------------
+----
 
 == Marshal
 
@@ -43,9 +43,9 @@ Marshalling is the reverse process of unmarshalling, so when you have your `Gene
 
 ._Java-only: marshal with a local parquet data format variable_
 [source,java]
------------------------------------------------------------------------
+----
 from("direct:marshal").marshal(parquet).to("mock:marshal");
------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -56,14 +56,14 @@ If you use Maven you can add the following to your `pom.xml`,
 substituting the version number for the latest & greatest release.
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parquet-avro</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

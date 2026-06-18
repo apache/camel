@@ -20,9 +20,9 @@ The exchanges sent to the endpoint are all available to be browsed.
 
 == URI format
 
--------------------------
+----
 browse:someId[?options]
--------------------------
+----
 
 Where _someId_ can be any string to uniquely identify the endpoint.
 

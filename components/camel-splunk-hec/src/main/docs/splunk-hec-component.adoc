@@ -21,19 +21,19 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
----------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-splunk-hec</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------------
+----
 
 == URI format
 
--------------------------------
+----
 splunk-hec:[splunkURL]?[options]
--------------------------------
+----
 
 
 
@@ -102,21 +102,21 @@ you want to override the index time, you can do so.
 
 ._Java-only: uses SplunkHECConstants.INDEX_TIME Java constant_
 [source,java]
--------------------------------
+----
 from("kafka:logs")
         .setHeader(SplunkHECConstants.INDEX_TIME, simple("${headers[kafka.HEADERS].lastKey('TIME')}"))
         .to("splunk-hec://localhost:8080?token=token");
--------------------------------
+----
 
 [tabs]
 ====
 Java::
 +
 [source,java]
--------------------------------
+----
 from("kafka:logs")
         .toD("splunk-hec://localhost:8080?token=token&time=${headers[kafka.HEADERS].lastKey('TIME')}");
--------------------------------
+----
 
 XML::
 +

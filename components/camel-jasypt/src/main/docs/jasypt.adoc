@@ -23,14 +23,14 @@ If you are using Maven, you need to add the following dependency to your `pom.xm
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jasypt</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == Tooling
 
@@ -47,7 +47,7 @@ The Jasypt component is a runnable JAR that provides a command line utility to e
 The usage documentation can be output to the console to describe the syntax and options it provides:
 
 [source,text]
---------------------------------------------------------------
+----
 Apache Camel Jasypt takes the following options
 
   -h or -help = Displays the help screen
@@ -57,23 +57,23 @@ Apache Camel Jasypt takes the following options
   -a or -algorithm <algorithm> = Optional algorithm to use
   -rsga or -algorithm <algorithm> = Optional random salt generator algorithm to use
   -riga or -algorithm <algorithm> = Optional random iv generator algorithm to use
---------------------------------------------------------------
+----
 
 A simple way of running the tool is with https://www.jbang.dev/[JBang].
 
 For example, to encrypt the value `tiger`, you can use the following parameters. Make sure to specify the version of camel-jasypt that you want to use.
 
 [source,bash]
-----------------------------------------------------------------
+----
 $ jbang org.apache.camel:camel-jasypt:<camel version here> -c encrypt -p secret -i tiger
-----------------------------------------------------------------
+----
 
 Which outputs the following result
 
 [source,text]
-----------------------------------------
+----
 Encrypted text: qaEEacuW7BUti8LcMgyjKw==
-----------------------------------------
+----
 
 This means the encrypted representation `qaEEacuW7BUti8LcMgyjKw==` can
 be decrypted back to `tiger` if you know the _master_ password which was
@@ -86,24 +86,24 @@ You can test decrypting the value by running the tooling using the following
 parameters:
 
 [source,bash]
------------------------------------------------------------------------------------
+----
 $ jbang org.apache.camel:camel-jasypt:<camel version here> -c decrypt -p secret -i qaEEacuW7BUti8LcMgyjKw==
------------------------------------------------------------------------------------
+----
 
 Which outputs the following result:
 
 [source,text]
----------------------
+----
 Decrypted text: tiger
----------------------
+----
 
 The idea is to then use the encrypted values in your xref:ROOT:properties-component.adoc[Properties] files. For example.
 
 [source,text]
----------------------
+----
 # Encrypted value for 'tiger'
 my.secret = ENC(qaEEacuW7BUti8LcMgyjKw==)
----------------------
+----
 
 == Protecting the master password
 
@@ -121,33 +121,33 @@ For example, you could provide the password before you start the
 application
 
 [source,bash]
------------------------------------------
+----
 $ export CAMEL_ENCRYPTION_PASSWORD=secret
------------------------------------------
+----
 
 Then start the application, such as running the start script.
 
 When the application is up and running, you can unset the environment
 
 [source,bash]
----------------------------------
+----
 $ unset CAMEL_ENCRYPTION_PASSWORD
----------------------------------
+----
 
 On runtimes like Spring Boot and Quarkus, you can configure a password property in `application.properties` as follows.
 
 [source,text]
----------------------
+----
 password=sysenv:CAMEL_ENCRYPTION_PASSWORD
----------------------
+----
 
 Or if configuring `JasyptPropertiesParser` manually, you can set the password like this.
 
 ._Java-only: setting the master password on JasyptPropertiesParser_
 [source,java]
----------------------
+----
 jasyptPropertiesParser.setPassword("sysenv:CAMEL_ENCRYPTION_PASSWORD");
----------------------
+----
 
 == Example configuration
 
@@ -160,7 +160,7 @@ On the Spring Boot and Quarkus runtimes, Camel Jasypt can be configured via conf
 Else, in Java DSL you need to configure Jasypt as a `JasyptPropertiesParser` instance and set it on the xref:ROOT:properties-component.adoc[Properties] component as shown below:
 +
 [source,java]
----------------------
+----
 // create the jasypt properties parser
 JasyptPropertiesParser jasypt = new JasyptPropertiesParser();
 // set the master password (see above for how to do this in a secure way)
@@ -176,27 +176,27 @@ pc.setNestedPlaceholder(true);
 
 // add properties component to camel context
 context.setPropertiesComponent(pc);
----------------------
+----
 +
 It is possible to configure custom algorithms on the JasyptPropertiesParser like this.
 +
 [source,java]
------------------------------------------------------------------------------------------------------------
+----
 JasyptPropertiesParser jasyptPropertiesParser = new JasyptPropertiesParser();
 
 jasyptPropertiesParser.setAlgorithm("PBEWithHmacSHA256AndAES_256");
 jasyptPropertiesParser.setRandomSaltGeneratorAlgorithm("PKCS11");
 jasyptPropertiesParser.setRandomIvGeneratorAlgorithm("PKCS11");
------------------------------------------------------------------------------------------------------------
+----
 +
 The properties file `secret.properties` will contain your encrypted
 configuration values, such as shown below. Notice how the password value is encrypted
 and is surrounded like `ENC(value here)`.
 +
 [source,text]
----------------------
+----
 my.secret.password=ENC(bsW9uV37gQ0QHFu7KO03Ww==)
----------------------
+----
 
 XML (Spring)::
 +
@@ -207,7 +207,7 @@ Jasypt has its chance to decrypt values looked up in
 the properties file.
 +
 [source,xml]
------------------------------------------------------------------------------------------------------------
+----
 <!-- define the jasypt properties parser with the given password to be used -->
 <bean id="jasypt" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
     <property name="password" value="secret"/>
@@ -222,7 +222,7 @@ the properties file.
     <!-- end enable nested placeholder -->
     <property name="nestedPlaceholder" value="true"/>
 </bean>
------------------------------------------------------------------------------------------------------------
+----
 +
 The xref:ROOT:properties-component.adoc[Properties] component can also be inlined
 inside the `<camelContext>` tag which is shown below. Notice how we use
@@ -230,7 +230,7 @@ the `propertiesParserRef` attribute to refer to
 Jasypt.
 +
 [source,xml]
---------------------------------------------------------------------------------------------------------------
+----
 <!-- define the jasypt properties parser with the given password to be used -->
 <bean id="jasypt" class="org.apache.camel.component.jasypt.JasyptPropertiesParser">
     <!-- password is mandatory, you can prefix it with sysenv: or sys: to indicate it should use
@@ -249,7 +249,7 @@ Jasypt.
         <to uri="{{cool.result}}"/>
     </route>
 </camelContext>
---------------------------------------------------------------------------------------------------------------
+----
 ====
 
 include::spring-boot:partial$starter.adoc[]

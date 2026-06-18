@@ -27,9 +27,9 @@ https://aws.amazon.com/ec2/[Amazon EC2].
 
 == URI Format
 
--------------------------
+----
 aws2-ec2://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -94,19 +94,19 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
 Java::
 +
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:createAndRun")
      .setHeader(EC2Constants.IMAGE_ID, constant("ami-fd65ba94"))
      .setHeader(EC2Constants.INSTANCE_TYPE, constant(InstanceType.T2_MICRO))
      .setHeader(EC2Constants.INSTANCE_MIN_COUNT, constant("1"))
      .setHeader(EC2Constants.INSTANCE_MAX_COUNT, constant("1"))
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
---------------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
---------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:createAndRun"/>
   <setHeader name="CamelAwsEC2ImageId">
@@ -123,12 +123,12 @@ XML::
   </setHeader>
   <to uri="aws2-ec2://TestDomain?accessKey=xxxx&amp;secretKey=xxxx&amp;operation=createAndRunInstances"/>
 </route>
---------------------------------------------------------------------------------
+----
 
 YAML::
 +
 [source,yaml]
---------------------------------------------------------------------------------
+----
 - route:
     from:
       uri: direct:createAndRun
@@ -151,14 +151,14 @@ YAML::
               accessKey: xxxx
               secretKey: xxxx
               operation: createAndRunInstances
---------------------------------------------------------------------------------
+----
 ====
 
 - startInstances: this operation will start a list of EC2 instances
 
 ._Java-only: using a Processor to set the instance IDs collection_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
      .process(new Processor() {
             @Override
@@ -169,13 +169,13 @@ from("direct:start")
             }
         })
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
---------------------------------------------------------------------------------
+----
 
 - stopInstances: this operation will stop a list of EC2 instances
 
 ._Java-only: using a Processor to set the instance IDs collection_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:stop")
      .process(new Processor() {
             @Override
@@ -186,13 +186,13 @@ from("direct:stop")
             }
         })
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=stopInstances");
---------------------------------------------------------------------------------
+----
 
 - terminateInstances: this operation will terminate a list of EC2 instances
 
 ._Java-only: using a Processor to set the instance IDs collection_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:stop")
      .process(new Processor() {
             @Override
@@ -203,7 +203,7 @@ from("direct:stop")
             }
         })
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
---------------------------------------------------------------------------------
+----
 
 === Using a POJO as body
 
@@ -212,11 +212,11 @@ In AWS EC2 there are multiple operations you can submit, as an example for Creat
 
 ._Java-only: using AWS SDK RunInstancesRequest as POJO body_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setBody(RunInstancesRequest.builder().imageId("test-1").instanceType(InstanceType.T2_MICRO).build())
   .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances&pojoRequest=true");
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -227,13 +227,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-ec2</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

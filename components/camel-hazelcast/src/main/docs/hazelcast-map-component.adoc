@@ -51,9 +51,9 @@ The map cache producer provides follow operations specified by *CamelHazelcastOp
 You can call the samples with:
 
 [source,java]
--------------------------------------------------------------------------------------------------------------------
+----
 template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
--------------------------------------------------------------------------------------------------------------------
+----
 
 === Example for *put*:
 
@@ -63,16 +63,16 @@ template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo
 Java DSL::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:put")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
-------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:put" />
     <setHeader name="hazelcast.operation.type">
@@ -80,7 +80,7 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-map:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -93,18 +93,18 @@ Java DSL::
 +
 
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:put")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
 .setHeader(HazelcastConstants.TTL_VALUE, constant(Long.valueOf(1)))
 .setHeader(HazelcastConstants.TTL_UNIT, constant(TimeUnit.MINUTES))
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
-------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:put" />
     <setHeader name="hazelcast.operation.type">
@@ -118,7 +118,7 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-map:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -130,17 +130,17 @@ Spring XML::
 Java DSL::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:get")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX)
 .to("seda:out");
-------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:get" />
     <setHeader name="hazelcast.operation.type">
@@ -149,7 +149,7 @@ Spring XML::
     <to uri="hazelcast-map:foo" />
     <to uri="seda:out" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -161,16 +161,16 @@ Spring XML::
 Java DSL::
 +
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("direct:update")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.UPDATE))
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
----------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:update" />
     <setHeader name="hazelcast.operation.type">
@@ -178,7 +178,7 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-map:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -191,16 +191,16 @@ Java DSL::
 +
 
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("direct:delete")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX);
----------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:delete" />
     <setHeader name="hazelcast.operation.type">
@@ -208,7 +208,7 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-map:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -220,17 +220,17 @@ Spring XML::
 Java DSL::
 +
 [source,java]
---------------------------------------------------------------------------------------
+----
 from("direct:query")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.QUERY))
 .toF("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX)
 .to("seda:out");
---------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:query" />
     <setHeader name="hazelcast.operation.type">
@@ -239,7 +239,7 @@ Spring XML::
     <to uri="hazelcast-map:foo" />
     <to uri="seda:out" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -247,10 +247,10 @@ For the query operation Hazelcast offers an SQL like syntax to query your
 distributed map.
 
 [source,java]
--------------------------------------------------------------------------------
+----
 String q1 = "bar > 1000";
 template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q1);
--------------------------------------------------------------------------------
+----
 
 
 == Map cache consumer - from("hazelcast-map:foo")

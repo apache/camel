@@ -24,14 +24,14 @@ It keeps your data in sync across client apps through realtime listeners and off
 Maven users will need to add the following dependency to their pom.xml for this component:
 
 [source,xml]
-------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-google-firestore</artifactId>
     <!-- use the same version as your Camel core version -->
     <version>x.x.x</version>
 </dependency>
-------------------------------------------------------
+----
 
 [[GoogleFirestore-AuthenticationConfiguration]]
 
@@ -44,24 +44,24 @@ When you have the **service account key**, you can provide authentication creden
 Google security credentials can be set through the component endpoint:
 
 [source,java]
---------------------------------------------------------
+----
 String endpoint = "google-firestore://myCollection?serviceAccountKey=/home/user/Downloads/my-key.json&projectId=my-project";
---------------------------------------------------------
+----
 
 Or by providing the path to the GCP credentials file location:
 
 Provide authentication credentials to your application code by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS`:
 
---------------------------------------------------------
+----
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
---------------------------------------------------------
+----
 
 
 == URI Format
 
---------------------------------------------------------
+----
 google-firestore://collectionName?[options]
---------------------------------------------------------
+----
 
 You can append query options to the URI in the following format: `?options=value&option2=value&...`
 
@@ -951,7 +951,7 @@ For write operations (`setDocument`, `createDocument`, `updateDocument`), the co
 You can send a JSON string directly as the message body. The component will automatically parse it:
 
 [source,java]
---------------------------------------------------------------------------------
+----
 // Simple JSON
 from("direct:start")
     .setBody(constant("{\"name\": \"John\", \"age\": 30}"))
@@ -977,28 +977,28 @@ String json = """
 from("direct:start")
     .setBody(constant(json))
     .to("google-firestore://users?operation=createDocument");
---------------------------------------------------------------------------------
+----
 
 ==== Reading JSON from Files
 
 [source,java]
---------------------------------------------------------------------------------
+----
 // Read JSON files and store in Firestore
 from("file:data/users?noop=true&include=.*\\.json")
     .setHeader("CamelGoogleFirestoreDocumentId", simple("${file:name.noext}"))
     .to("google-firestore://users?operation=setDocument")
     .log("Imported: ${file:name}");
---------------------------------------------------------------------------------
+----
 
 ==== REST API Integration
 
 [source,java]
---------------------------------------------------------------------------------
+----
 // Receive JSON from REST endpoint and store in Firestore
 from("rest:post:/api/users")
     .to("google-firestore://users?operation=createDocument")
     .setBody(simple("{\"id\": \"${header.CamelGoogleFirestoreResponseDocumentId}\"}"));
---------------------------------------------------------------------------------
+----
 
 === Supported Firestore Data Types
 
@@ -1058,10 +1058,10 @@ For `listCollections`, the response body is:
 If the input body cannot be converted to a Map (e.g., invalid JSON), an `InvalidPayloadException` is thrown:
 
 [source,text]
---------------------------------------------------------------------------------
+----
 org.apache.camel.InvalidPayloadException: No body available of type: java.util.Map
   ...Caused by: Unexpected character ('x' (code 120)): was expecting...
---------------------------------------------------------------------------------
+----
 
 == Message Headers
 

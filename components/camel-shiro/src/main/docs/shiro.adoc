@@ -25,14 +25,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-shiro</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == Usage
 
@@ -63,7 +63,7 @@ Ini file (properties file) or an Ini object. The Ini file is a standard
 Shiro configuration file containing user/role details as shown below
 
 [source,properties]
-------------------------------------------------------------------
+----
 [users]
 # user 'ringo' with password 'starr' and the 'sec-level1' role
 ringo = starr, sec-level1
@@ -83,7 +83,7 @@ sec-level2 = zone1:*
 # The 'sec-level1' role can do anything with access of permission 
 # readonly   
 sec-level1 = zone1:readonly:*
-------------------------------------------------------------------
+----
 
 [[ShiroSecurity-InstantiatingaShiroSecurityPolicyObject]]
 === Instantiating a ShiroSecurityPolicy Object
@@ -92,7 +92,7 @@ A ShiroSecurityPolicy object is instantiated as follows
 
 ._Java-only: Java class instantiation and configuration_
 [source,java]
-----------------------------------------------------------------------------------------
+----
         private final String iniResourcePath = "classpath:shiro.ini";
         private final byte[] passPhrase = {
             (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
@@ -105,7 +105,7 @@ A ShiroSecurityPolicy object is instantiated as follows
 
         final ShiroSecurityPolicy securityPolicy = 
             new ShiroSecurityPolicy(iniResourcePath, passPhrase, true, permissionsList);
-----------------------------------------------------------------------------------------
+----
 
 [[ShiroSecurity-ShiroSecurityPolicyOptions]]
 === ShiroSecurityPolicy Options
@@ -167,7 +167,7 @@ the user is a valid user.
 
 ._Java-only: Java RouteBuilder with security policy_
 [source,java]
------------------------------------------------------------------------
+----
     protected RouteBuilder createRouteBuilder() throws Exception {
         final ShiroSecurityPolicy securityPolicy = 
             new ShiroSecurityPolicy("classpath:shiro.ini", passPhrase);
@@ -190,7 +190,7 @@ the user is a valid user.
             }
         };
     }
------------------------------------------------------------------------
+----
 
 [[ShiroSecurity-ApplyingShiroAuthorizationonaCamelRoute]]
 ==== Applying Shiro Authorization on a Camel Route
@@ -203,7 +203,7 @@ permission set, the request is not authorized to continue any further.
 
 ._Java-only: Java RouteBuilder with security policy_
 [source,java]
--------------------------------------------------------------------------------------------
+----
     protected RouteBuilder createRouteBuilder() throws Exception {
         final ShiroSecurityPolicy securityPolicy = 
             new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase);
@@ -226,7 +226,7 @@ permission set, the request is not authorized to continue any further.
             }
         };
     }
--------------------------------------------------------------------------------------------
+----
 
 [[ShiroSecurity-CreatingaShiroSecurityTokenandinjectingitintoaMessageExchange]]
 === Creating a ShiroSecurityToken and injecting it into a Message Exchange
@@ -238,7 +238,7 @@ ShiroSecurityTokenInjector in the client is shown below
 
 ._Java-only: Java security token injection_
 [source,java]
--------------------------------------------------------------------------------------
+----
     ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
     ShiroSecurityTokenInjector shiroSecurityTokenInjector = 
         new ShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
@@ -246,7 +246,7 @@ ShiroSecurityTokenInjector in the client is shown below
     from("direct:client").
         process(shiroSecurityTokenInjector).
         to("direct:secureEndpoint");
--------------------------------------------------------------------------------------
+----
 
 [[ShiroSecurity-SendingMessagestoroutessecuredbyaShiroSecurityPolicy]]
 === Sending Messages to routes secured by a ShiroSecurityPolicy
@@ -262,7 +262,7 @@ ProducerTemplate in Camel along with a SecurityToken
 
 ._Java-only: Java test method (ProducerTemplate)_
 [source,java]
--------------------------------------------------------------------------------------------------
+----
  
     @Test
     public void testSuccessfulShiroAuthenticationWithNoAuthorization() throws Exception {        
@@ -281,7 +281,7 @@ ProducerTemplate in Camel along with a SecurityToken
         successEndpoint.assertIsSatisfied();
         failureEndpoint.assertIsSatisfied();
     } 
--------------------------------------------------------------------------------------------------
+----
 
 [[ShiroSecurity-UsingShiroSecurityToken]]
 === Using ShiroSecurityToken
@@ -293,23 +293,23 @@ contains the username and password. For example:
 
 ._Java-only: Java test API (ProducerTemplate)_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------------------------
+----
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
 
         template.sendBodyAndHeader("direct:secureEndpoint", "Beatle Mania", ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, shiroSecurityToken);
----------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 You can also provide the username and password in two different headers
 as shown below:
 
 ._Java-only: Java test API (ProducerTemplate)_
 [source,java]
---------------------------------------------------------------------------------------
+----
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
         template.sendBodyAndHeaders("direct:secureEndpoint", "Beatle Mania", headers);
---------------------------------------------------------------------------------------
+----
 
 When you use the username and password headers, then the
 ShiroSecurityPolicy in the Camel route will automatically transform those

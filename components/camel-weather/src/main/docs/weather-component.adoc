@@ -27,20 +27,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-weather</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
----------------------------------
+----
 weather://<unused name>[?options]
----------------------------------
+----
 
 
 
@@ -185,17 +185,17 @@ location as shown:
 
 ._Java-only: ProducerTemplate API usage_
 [source,java]
--------------------------------------------------------------------------------------------------------------------------------------
+----
 String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "Paris,France&appid=APIKEY", String.class);
--------------------------------------------------------------------------------------------------------------------------------------
+----
 
 And to get the weather at the current location, then:
 
 ._Java-only: ProducerTemplate API usage_
 [source,java]
---------------------------------------------------------------------------------------------------------------------------------
+----
 String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);
---------------------------------------------------------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

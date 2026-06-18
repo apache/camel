@@ -21,20 +21,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-thrift</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------------
+----
 thrift://service[?options]
--------------------------------------
+----
 
 
 
@@ -52,7 +52,7 @@ different parameters to the method with the Camel body:
 
 ._Java-only: passing different parameter types in the Thrift method request body_
 [source,java]
--------------------------------------------------------------------------------
+----
 List requestBody = new ArrayList();
 
 requestBody.add((boolean)true);
@@ -69,7 +69,7 @@ requestBody.add(new HashSet<String>()); // set parameter
 requestBody.add(new HashMap<String, Long>()); // map parameter 
 
 Object responseBody = template.requestBody("direct:thrift-alltypes", requestBody);
--------------------------------------------------------------------------------
+----
 
 Incoming parameters in the service consumer will also be passed to the message body as a list of objects.
 

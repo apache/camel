@@ -26,9 +26,9 @@ The Keycloak component provides two main functionalities:
 
 == URI Format
 
--------------------------
+----
 keycloak://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 

@@ -25,20 +25,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-bean-validator</artifactId>
     <version>x.y.z</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-------------------------------
+----
 bean-validator:label[?options]
-------------------------------
+----
 
 Where *label* is an arbitrary text value describing the endpoint.
 You can append query options to the URI in the following format: `?option=value&option=value&...`
@@ -57,17 +57,17 @@ include::partial$component-endpoint-headers.adoc[]
 Java::
 +
 [source,java]
---------------------------------------------------------------------------------------------------------------------------------
+----
 from("direct:test").
   to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
---------------------------------------------------------------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
---------------------------------------------------------------------------------------------------------------------------------
+----
 <bean id="myValidationProviderResolver" class="org.apache.camel.component.bean.validator.HibernateValidationProviderResolver"/>
---------------------------------------------------------------------------------------------------------------------------------
+----
 ====
 
 == Example
@@ -78,7 +78,7 @@ Assumed we have a java bean with the following annotations
 
 ._Java-only: Java Bean with validation annotations_
 [source,java]
------------------------------------------------------------
+----
 public class Car {
 
     @NotNull
@@ -90,7 +90,7 @@ public class Car {
 
     // getter and setter
 }
------------------------------------------------------------
+----
 
 and an interface definition for our custom validation group
 
@@ -98,10 +98,10 @@ and an interface definition for our custom validation group
 
 ._Java-only: custom validation group interface_
 [source,java]
----------------------------------
+----
 public interface OptionalChecks {
 }
----------------------------------
+----
 
 with the following Camel route, only the *@NotNull* constraints on the
 attributes `manufacturer` and `licensePlate` will be validated (Camel uses
@@ -193,11 +193,11 @@ define a new interface first:
 
 ._Java-only: combined validation group interface using @GroupSequence_
 [source,java]
------------------------------------------------------
+----
 @GroupSequence({Default.class, OptionalChecks.class})
 public interface AllChecks {
 }
------------------------------------------------------
+----
 
 And then your route definition should look like this:
 
@@ -249,20 +249,20 @@ like this:
 Java::
 +
 [source,xml]
-------------------------------------------------------------------------------------------------------
+----
 <bean id="myMessageInterpolator" class="my.ConstraintValidatorFactory" />
 <bean id="myTraversableResolver" class="my.TraversableResolver" />
 <bean id="myConstraintValidatorFactory" class="my.ConstraintValidatorFactory" />
-------------------------------------------------------------------------------------------------------
+----
 XML::
 +
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
 .to("bean-validator://x?group=AllChecks&messageInterpolator=#myMessageInterpolator
 &traversableResolver=#myTraversableResolver&constraintValidatorFactory=#myConstraintValidatorFactory")
 .to("mock:end")
-------------------------------------------------------------------------------------------------------
+----
 ====
 
 It's also possible to describe your constraints as XML and not as Java
@@ -274,7 +274,7 @@ In this case, you have to provide the files `META-INF/validation.xml` and `const
 validation.xml::
 +
 [source,xml]
-------------------------------------------------------------------------------------------------------------------------------
+----
 <validation-config
         xmlns="https://jakarta.ee/xml/ns/validation/configuration"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -288,12 +288,12 @@ validation.xml::
     <constraint-mapping>/constraints-car.xml</constraint-mapping>
 
 </validation-config>
-------------------------------------------------------------------------------------------------------------------------------
+----
 
 constraints-car.xml::
 +
 [source,xml]
-----------------------------------------------------------------------------------------------------
+----
 <constraint-mappings
         xmlns="https://jakarta.ee/xml/ns/validation/mapping"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -321,7 +321,7 @@ constraints-car.xml::
         </field>
     </bean>
 </constraint-mappings>
-----------------------------------------------------------------------------------------------------
+----
 ====
 
 Here is the XML syntax for the example route definition where **OrderedChecks** can be https://github.com/apache/camel/blob/main/components/camel-bean-validator/src/test/java/org/apache/camel/component/bean/validator/OrderedChecks.java 
@@ -329,7 +329,7 @@ Here is the XML syntax for the example route definition where **OrderedChecks** 
 Note that the body should include an instance of a class to validate.
 
 [source,xml]
-----------------------------------------------------------------------------------------------------
+----
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
@@ -343,7 +343,7 @@ Note that the body should include an instance of a class to validate.
         </route>
     </camelContext>
 </beans>
-----------------------------------------------------------------------------------------------------
+----
 
 
 include::spring-boot:partial$starter.adoc[]

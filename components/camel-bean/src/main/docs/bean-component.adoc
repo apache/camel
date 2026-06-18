@@ -105,30 +105,30 @@ component. Instead of specifying the bean explicitly as the endpoint
 
 ._Java-only: `.bean()` DSL shorthand for bean invocation_
 [source,java]
--------------------------------------------------------
+----
 from("direct:start").bean("beanName");
 
 from("direct:start").bean("beanName", "methodName");
--------------------------------------------------------
+----
 
 Instead of passing the name of the reference to the bean (so that Camel will
 look up for it in the xref:manual::registry.adoc[Registry]), you can specify the bean itself:
 
 ._Java-only: `.bean()` DSL with inline bean instances and class references_
 [source,java]
----------------------------------------------------------------
+----
 from("direct:start").bean(new ExampleBean());
 
 from("direct:start").bean(new ExampleBean(), "methodName");
 
 from("direct:start").bean(ExampleBean.class);
----------------------------------------------------------------
+----
 
 This bean could be a lambda if you cast the lambda to a `@FunctionalInterface`
 
 ._Java-only: lambda-based bean with `@FunctionalInterface`_
 [source,java]
----------------------------------------------------------------
+----
 @FunctionalInterface
 public interface ExampleInterface() {
     @Handler String methodName();
@@ -136,7 +136,7 @@ public interface ExampleInterface() {
 
 from("direct:start")
     .bean((ExampleInterface) () -> ""))
----------------------------------------------------------------
+----
 
 == Bean Binding
 

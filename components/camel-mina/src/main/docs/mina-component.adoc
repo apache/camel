@@ -30,22 +30,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-mina</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------------
+----
 mina:tcp://hostname[:port][?options]
 mina:udp://hostname[:port][?options]
 mina:vm://hostname[:port][?options]
--------------------------------------
+----
 
 You can specify a codec in the Registry using the
 *codec* option. If you are using TCP and no codec is specified then the
@@ -108,23 +108,23 @@ on port 6200. We use the *textline* codec. In our route, we create a
 Mina consumer endpoint that listens to on port 6200:
 ._Java-only: Java string concatenation with port variable_
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
----------------------------------------------------------------------------------------
+----
 
 As the sample is part of a unit test, we test it by sending some data to
 it on port 6200.
 
 ._Java-only: Java test API (MockEndpoint and ProducerTemplate)_
 [source,java]
--------------------------------------------------------------------------------------------------
+----
 MockEndpoint mock = getMockEndpoint("mock:result");
 mock.expectedBodiesReceived("Hello World");
 
 template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
 
 MockEndpoint.assertIsSatisfied(context);
--------------------------------------------------------------------------------------------------
+----
 
 === Example with sync=true
 
@@ -135,14 +135,14 @@ consumer.
 
 ._Java-only: inline Processor class_
 [source,java]
----------------------------------------------------------------------------------------------
+----
 fromF("mina:tcp://localhost:%d?textline=true&sync=true", port2).process(new Processor() {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         exchange.getOut().setBody("Bye " + body);
     }
 });
----------------------------------------------------------------------------------------------
+----
 
 Then we test the sample by sending some data and retrieving the response
 using the `template.requestBody()` method. As we know the response is a
@@ -151,10 +151,10 @@ fact, something we have dynamically set in our processor code logic.
 
 ._Java-only: Java test API (ProducerTemplate)_
 [source,java]
------------------------------------------------------------------------------------------------------------------------
+----
 String response = (String)template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
 assertEquals("Bye World", response);
------------------------------------------------------------------------------------------------------------------------
+----
 
 === Example with Spring DSL
 
@@ -162,12 +162,12 @@ Spring DSL can also be used for xref:mina-component.adoc[MINA].
 In the sample below, we expose a TCP server on port 5555:
 
 [source,xml]
------------------------------------------------------------
+----
    <route>
      <from uri="mina:tcp://localhost:5555?textline=true"/>
      <to uri="bean:myTCPOrderHandler"/>
   </route>
------------------------------------------------------------
+----
 
 In the route above, we expose a TCP server on port 5555 using the
 textline codec. We let the Spring bean with ID, `myTCPOrderHandler`,
@@ -176,12 +176,12 @@ could be implemented as follows:
 
 ._Java-only: Java handler class_
 [source,java]
------------------------------------------------
+----
     public String handleOrder(String payload) {
         ...
         return "Order: OK"
    }
------------------------------------------------
+----
 
 == Closing Session When Complete
 
@@ -195,7 +195,7 @@ written the `bye` message back to the client:
 
 ._Java-only: inline Processor class_
 [source,java]
----------------------------------------------------------------------------------------------------
+----
         from("mina:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 String body = exchange.getIn().getBody(String.class);
@@ -203,7 +203,7 @@ written the `bye` message back to the client:
                 exchange.getOut().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
             }
         });
----------------------------------------------------------------------------------------------------
+----
 
 
 

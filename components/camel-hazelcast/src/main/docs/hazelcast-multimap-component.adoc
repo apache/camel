@@ -50,16 +50,16 @@ The  multimap producer provides eight operations:
 Java DSL::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:put")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
 .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
-------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:put" />
     <log message="put.."/>
@@ -68,7 +68,7 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-multimap:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -81,16 +81,16 @@ Java DSL::
 +
 
 [source,java]
---------------------------------------------------------------------------------------------
+----
 from("direct:removevalue")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_VALUE))
 .toF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX);
---------------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:removevalue" />
     <log message="removevalue..."/>
@@ -99,7 +99,7 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-multimap:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -116,17 +116,17 @@ inside the message body to remove the `my-foo` value.
 Java DSL::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:get")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
 .toF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX)
 .to("seda:out");
-------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:get" />
     <log message="get.."/>
@@ -136,7 +136,7 @@ Spring XML::
     <to uri="hazelcast-multimap:foo" />
     <to uri="seda:out" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
@@ -148,16 +148,16 @@ Spring XML::
 Java DSL::
 +
 [source,java]
----------------------------------------------------------------------------------------
+----
 from("direct:delete")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
 .toF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX);
----------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:delete" />
     <log message="delete.."/>
@@ -166,16 +166,16 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-multimap:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 
 You can call them in your test class with:
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------
+----
 template.sendBodyAndHeader("direct:[put|get|removevalue|delete]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
-------------------------------------------------------------------------------------------------------------------
+----
 
 == multimap cache consumer - from("hazelcast-multimap:foo")
 

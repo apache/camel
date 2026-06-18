@@ -25,9 +25,9 @@ https://aws.amazon.com/athena/[AWS Athena].
 
 == URI Format
 
-------------------------------
+----
 aws2-athena://label[?options]
-------------------------------
+----
 
 You can append query options to the URI in the following format: `?options=value&option2=value&...`
 
@@ -964,13 +964,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-athena</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

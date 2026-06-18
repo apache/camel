@@ -51,9 +51,9 @@ for this component.
 
 == URI format
 
----------------------------
+----
 debezium-mongodb:name[?options]
----------------------------
+----
 
 
 // component options: START

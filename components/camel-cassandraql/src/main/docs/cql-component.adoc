@@ -99,14 +99,14 @@ Cassandra table like this:
 *CAMEL_IDEMPOTENT.cql*
 
 [source,sql]
----------------------------------------------------------
+----
 CREATE TABLE CAMEL_IDEMPOTENT (
   NAME varchar,   -- Repository name
   KEY varchar,    -- Message key
   PRIMARY KEY (NAME, KEY)
 ) WITH compaction = {'class':'LeveledCompactionStrategy'}
   AND gc_grace_seconds = 86400;
----------------------------------------------------------
+----
 
 This repository implementation uses lightweight transactions, (also known
 as Compare and Set) and requires Cassandra 2.0.7+.
@@ -141,7 +141,7 @@ correlation key in a Cassandra table like this:
 *CAMEL_AGGREGATION.cql*
 
 [source,sql]
----------------------------------------------------------
+----
 CREATE TABLE CAMEL_AGGREGATION (
   NAME varchar,        -- Repository name
   KEY varchar,         -- Correlation id
@@ -150,7 +150,7 @@ CREATE TABLE CAMEL_AGGREGATION (
   PRIMARY KEY (NAME, KEY)
 ) WITH compaction = {'class':'LeveledCompactionStrategy'}
   AND gc_grace_seconds = 86400;
----------------------------------------------------------
+----
 
 Alternatively, the `CassandraAggregationRepository` does not have a
 `NAME` column and can be extended to use a different data model.
@@ -188,19 +188,19 @@ To insert something on a table, you can use the following code:
 
 ._Java-only: route with CQL query string concatenation_
 [source,java]
----------------------------------------------------------
+----
 String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
 from("direct:input")
     .to("cql://localhost/camel_ks?cql=" + CQL);
----------------------------------------------------------
+----
 
 At this point, you should be able to insert data by using a list as body
 
 ._Java-only: creating a parameter list for CQL binding_
 [source,java]
----------------------------------------------------------
+----
 Arrays.asList("davsclaus", "Claus", "Ibsen");
----------------------------------------------------------
+----
 
 The same approach can be used for updating or querying the table.
 

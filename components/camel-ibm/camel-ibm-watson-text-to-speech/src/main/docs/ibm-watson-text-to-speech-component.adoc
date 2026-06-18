@@ -25,9 +25,9 @@ More information is available at https://cloud.ibm.com/catalog/services/text-to-
 
 == URI Format
 
-------------------------------
+----
 ibm-watson-text-to-speech:label[?options]
-------------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -472,23 +472,23 @@ To get your credentials:
 Integration tests are executed with the `verify` goal and require system properties:
 
 [source,bash]
---------------------------------------------------------------------------------
+----
 mvn verify \
   -Dcamel.ibm.watson.tts.apiKey=YOUR_API_KEY \
   -Dcamel.ibm.watson.tts.serviceUrl=YOUR_SERVICE_URL
---------------------------------------------------------------------------------
+----
 
 Alternatively, using environment variables:
 
 [source,bash]
---------------------------------------------------------------------------------
+----
 export CAMEL_IBM_WATSON_TTS_API_KEY=YOUR_API_KEY
 export CAMEL_IBM_WATSON_TTS_SERVICE_URL=YOUR_SERVICE_URL
 
 mvn verify \
   -Dcamel.ibm.watson.tts.apiKey=${CAMEL_IBM_WATSON_TTS_API_KEY} \
   -Dcamel.ibm.watson.tts.serviceUrl=${CAMEL_IBM_WATSON_TTS_SERVICE_URL}
---------------------------------------------------------------------------------
+----
 
 === Integration Test Coverage
 
@@ -540,7 +540,7 @@ These files can be played with any media player to verify audio quality and comp
 === Example Output
 
 [source]
---------------------------------------------------------------------------------
+----
 [INFO] Running org.apache.camel.component.ibm.watson.tts.integration.WatsonTextToSpeechIT
 Created output directory: target/audio-output
 Successfully synthesized text with default voice. Bytes read: 44032
@@ -550,7 +550,7 @@ Found 28 voices
 Successfully saved MP3 file: target/audio-output/test-output.mp3 (size: 51234 bytes)
 Successfully created audio files in 4 different languages
 [INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
---------------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -559,14 +559,14 @@ Maven users will need to add the following dependency to their `pom.xml`.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-ibm-watson-text-to-speech</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
----------------------------------------
+----
 
 where `x.x.x` is the version number of Camel.
 

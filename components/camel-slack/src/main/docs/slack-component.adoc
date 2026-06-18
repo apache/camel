@@ -21,28 +21,28 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-slack</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
 To send a message to a channel.
 
-------------------------
+----
 slack:#channel[?options]
-------------------------
+----
 
 To send a direct message to a Slack user.
 
--------------------------
+----
 slack:@userID[?options]
--------------------------
+----
 
 
 
@@ -64,12 +64,12 @@ The SlackComponent with XML must be configured as a Spring bean that contains th
 parameter.
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------------
+----
 <bean id="slack" class="org.apache.camel.component.slack.SlackComponent">
     <property name="webhookUrl" value="https://hooks.slack.com/services/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"/>
     <property name="token" value="xoxb-12345678901-1234567890123-xxxxxxxxxxxxxxxxxxxxxxxx"/>
 </bean>
------------------------------------------------------------------------------------------------------------------------
+----
 
 NOTE: for Java, you can configure this using Java code.
 
@@ -116,7 +116,7 @@ You can now use the Slack API model to create blocks. You can read more about it
 
 ._Java-only: creating Slack Block Kit messages with the API model_
 [source,java]
----------------------------------------------------------------------------------------------------------------------------
+----
     public void testSlackAPIModelMessage() {
         Message message = new Message();
         message.setBlocks(Collections.singletonList(SectionBlock
@@ -129,7 +129,7 @@ You can now use the Slack API model to create blocks. You can read more about it
 
         template.sendBody(test, message);
     }
----------------------------------------------------------------------------------------------------------------------------
+----
 
 You'll need to create a Slack app and use it in your workspace.
 

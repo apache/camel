@@ -22,7 +22,7 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 [source,xml]
-------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-google-functions</artifactId>
@@ -30,7 +30,7 @@ for this component:
     <version>x.x.x</version>
 </dependency>
 
-------------------------------------------------------
+----
 
 [[GoogleFunctions-AuthenticationConfiguration]]
 
@@ -43,22 +43,22 @@ When you have the **service account key**, you can provide authentication creden
 Google security credentials can be set through the component endpoint:
 
 [source,java]
---------------------------------------------------------
+----
 String endpoint = "google-functions://myCamelFunction?serviceAccountKey=/home/user/Downloads/my-key.json";
---------------------------------------------------------
+----
 
 Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
 
---------------------------------------------------------
+----
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
---------------------------------------------------------
+----
 
 
 == URI Format
 
---------------------------------------------------------
+----
 google-functions://functionName[?options]
---------------------------------------------------------
+----
 
 You can append query options to the URI in the following format,
 `?options=value&option2=value&...`

@@ -23,9 +23,9 @@ You must have access to a CyberArk Conjur instance and have the necessary creden
 
 == URI Format
 
--------------------------
+----
 cyberark-vault:label[?options]
--------------------------
+----
 
 Where `label` is a logical name for the endpoint.
 

@@ -27,22 +27,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-storage-blob</artifactId>
     <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 
 == URI Format
 
 [source,text]
-------------------------------
+----
 azure-storage-blob://accountName[/containerName][?options]
-------------------------------
+----
 
 In the case of a consumer, `accountName`, `containerName` are required.
 
@@ -120,7 +120,7 @@ create your own instance:
 ._Java-only: programmatic BlobServiceClient setup_
 
 [source,java]
------------------------------------------------------------------------
+----
 StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
 String uri = String.format("https://%s.blob.core.windows.net", "yourAccountName");
 
@@ -130,7 +130,7 @@ BlobServiceClient client = new BlobServiceClientBuilder()
                           .buildClient();
 // This is camel context
 context.getRegistry().bind("client", client);
------------------------------------------------------------------------
+----
 
 Then refer to this instance in your Camel `azure-storage-blob` component configuration:
 
@@ -139,25 +139,25 @@ Then refer to this instance in your Camel `azure-storage-blob` component configu
 Java::
 +
 [source,java]
------------------------------------------------------------------------
+----
 from("azure-storage-blob://cameldev/container1?blobName=myblob&serviceClient=#client")
     .to("mock:result");
------------------------------------------------------------------------
+----
 
 XML::
 +
 [source,xml]
------------------------------------------------------------------------
+----
 <route>
     <from uri="azure-storage-blob://cameldev/container1?blobName=myblob&amp;serviceClient=#client"/>
     <to uri="mock:result"/>
 </route>
------------------------------------------------------------------------
+----
 
 YAML::
 +
 [source,yaml]
------------------------------------------------------------------------
+----
 - route:
     from:
       uri: azure-storage-blob://cameldev/container1
@@ -167,7 +167,7 @@ YAML::
     steps:
       - to:
           uri: mock:result
------------------------------------------------------------------------
+----
 ====
 
 === Automatic detection of BlobServiceClient client in registry

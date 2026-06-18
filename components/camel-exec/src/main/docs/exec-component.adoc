@@ -22,21 +22,21 @@ The Exec component can be used to execute system commands.
 Maven users need to add the following dependency to their `pom.xml`
 
 [source,xml]
--------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-exec</artifactId>
   <version>${camel-version}</version>
 </dependency>
--------------------------------------
+----
 
 Where `${camel-version`} must be replaced by the actual version of Camel.
 
 == URI format
 
----------------------------
+----
 exec://executable[?options]
----------------------------
+----
 
 Where `executable` is the name, or file path, of the system command that
 will be executed. If executable name is used (e.g. `exec:java`), the
@@ -93,7 +93,7 @@ the standard output stream of `wc`:
 
 ._Java-only: route with inline Processor to handle ExecResult_
 [source,java]
---------------------------------------------------------------------------------------
+----
 from("direct:exec")
 .to("exec:wc?args=--words /usr/share/dict/words")
 .process(new Processor() {
@@ -106,7 +106,7 @@ from("direct:exec")
        // do something with the word count
      }
 });
---------------------------------------------------------------------------------------
+----
 
 === Executing `java`
 
@@ -237,7 +237,7 @@ assumes that `ant.bat` is in the system path, and that
 
 ._Java-only: route with inline Processor to handle output file_
 [source,java]
--------------------------------------------------------------------------------------------------------
+----
 from("direct:exec")
 .to("exec:ant.bat?args=-f CamelExecBuildFile.xml -l CamelExecOutFile.txt&outFile=CamelExecOutFile.txt")
 .process(new Processor() {
@@ -247,7 +247,7 @@ from("direct:exec")
         // do something with the out file here
      }
   });
--------------------------------------------------------------------------------------------------------
+----
 
 === Executing `echo` (Windows)
 

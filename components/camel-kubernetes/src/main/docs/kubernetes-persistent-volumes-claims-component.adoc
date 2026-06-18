@@ -45,11 +45,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 ._Java-only: uses `toF()` for URI formatting_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:list").
     toF("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaims").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of PVC from your cluster
 
@@ -57,7 +57,7 @@ This operation returns a list of PVC from your cluster
 
 ._Java-only: uses inline Processor, Java constants, and `toF()`_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:listByLabels").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -69,7 +69,7 @@ from("direct:listByLabels").process(new Processor() {
         });
     toF("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaimsByLabels").
     to("mock:result");
---------------------------------------------------------------------------------
+----
 
 This operation returns a list of PVCs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 

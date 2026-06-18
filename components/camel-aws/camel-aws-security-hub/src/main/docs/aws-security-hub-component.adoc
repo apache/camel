@@ -28,9 +28,9 @@ https://aws.amazon.com/security-hub/[Amazon Security Hub].
 
 == URI Format
 
--------------------------
+----
 aws-security-hub://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -81,7 +81,7 @@ Import security findings into Security Hub. This is the primary way to send find
 
 ._Java-only: uses inline Processor with AWS SDK builder API_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:importFindings")
     .process(exchange -> {
         AwsSecurityFinding finding = AwsSecurityFinding.builder()
@@ -105,7 +105,7 @@ from("direct:importFindings")
     })
     .to("aws-security-hub://findings?operation=batchImportFindings")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 ==== GetFindings
 
@@ -113,7 +113,7 @@ Retrieve security findings from Security Hub with optional filtering.
 
 ._Java-only: uses inline Processor with AWS SDK builder API_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:getFindings")
     .process(exchange -> {
         AwsSecurityFindingFilters filters = AwsSecurityFindingFilters.builder()
@@ -127,7 +127,7 @@ from("direct:getFindings")
     })
     .to("aws-security-hub://findings?operation=getFindings")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 ==== BatchUpdateFindings
 
@@ -135,7 +135,7 @@ Update security findings with notes, severity changes, workflow status, etc.
 
 ._Java-only: uses inline Processor with AWS SDK builder API and Java constants_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:updateFindings")
     .process(exchange -> {
         List<AwsSecurityFindingIdentifier> identifiers = List.of(
@@ -159,7 +159,7 @@ from("direct:updateFindings")
     })
     .to("aws-security-hub://findings?operation=batchUpdateFindings")
     .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 ==== DescribeHub
 
@@ -210,7 +210,7 @@ AWS Security Hub uses the https://schema.ocsf.io/[Open Cybersecurity Schema Fram
 
 ._Java-only: uses inline Processor with class literal and method reference_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:ocsfToSecurityHub")
     .unmarshal().ocsf(DetectionFinding.class)
     .process(exchange -> {
@@ -220,7 +220,7 @@ from("direct:ocsfToSecurityHub")
         exchange.getIn().setBody(List.of(finding));
     })
     .to("aws-security-hub://findings?operation=batchImportFindings");
---------------------------------------------------------------------------------
+----
 
 == Dependencies
 
@@ -229,12 +229,12 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws-security-hub</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.

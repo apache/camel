@@ -27,9 +27,9 @@ https://aws.amazon.com/bedrock/[Amazon Bedrock].
 
 == URI Format
 
--------------------------
+----
 aws-bedrock://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -78,7 +78,7 @@ Express is a large language model for text generation. It is useful for a wide r
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -120,7 +120,7 @@ Json schema for request
     "textGenerationConfig"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Titan Text Lite V1 with id `amazon.titan-text-lite-v1`
 Lite is a light weight efficient model, ideal for fine-tuning of English-language tasks.
@@ -128,7 +128,7 @@ Lite is a light weight efficient model, ideal for fine-tuning of English-languag
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -170,7 +170,7 @@ Json schema for request
     "textGenerationConfig"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Titan Image Generator G1 with id `amazon.titan-image-generator-v1`
 It generates images from text, and allows users to upload and edit an existing image. Users can edit an image with a text prompt (without a mask) or parts of an image with an image mask. You can extend the boundaries of an image with outpainting, and fill in an image with inpainting. 
@@ -178,7 +178,7 @@ It generates images from text, and allows users to upload and edit an existing i
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -239,7 +239,7 @@ Json schema for request
     "imageGenerationConfig"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Titan Embeddings G1 with id `amazon.titan-embed-text-v1`
 The Amazon Titan Embeddings G1 - Text – Text v1.2 can intake up to 8k tokens and outputs a vector of 1,536 dimensions. The model also works in 25+ different language
@@ -247,7 +247,7 @@ The Amazon Titan Embeddings G1 - Text – Text v1.2 can intake up to 8k tokens a
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -260,7 +260,7 @@ Json schema for request
     "inputText"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Jurassic2-Ultra with id `ai21.j2-ultra-v1`
 Jurassic-2 Ultra is AI21’s most powerful model for complex tasks that require advanced text generation and comprehension.
@@ -268,7 +268,7 @@ Jurassic-2 Ultra is AI21’s most powerful model for complex tasks that require 
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -326,7 +326,7 @@ Json schema for request
     "frequencyPenalty"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Jurassic2-Mid with id `ai21.j2-mid-v1`
 Jurassic-2 Mid is less powerful than Ultra, yet carefully designed to strike the right balance between exceptional quality and affordability.
@@ -334,7 +334,7 @@ Jurassic-2 Mid is less powerful than Ultra, yet carefully designed to strike the
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -392,7 +392,7 @@ Json schema for request
     "frequencyPenalty"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Claude Instant V1.2 with id `anthropic.claude-instant-v1`
 A fast, affordable yet still very capable model, which can handle a range of tasks including casual dialogue, text analysis, summarization, and document question-answering.
@@ -400,7 +400,7 @@ A fast, affordable yet still very capable model, which can handle a range of tas
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -442,7 +442,7 @@ Json schema for request
     "anthropic_version"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Claude 2 with id `anthropic.claude-v2`
 Anthropic's highly capable model across a wide range of tasks from sophisticated dialogue and creative content generation to detailed instruction following.
@@ -450,7 +450,7 @@ Anthropic's highly capable model across a wide range of tasks from sophisticated
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -492,7 +492,7 @@ Json schema for request
     "anthropic_version"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Claude 2.1 with id `anthropic.claude-v2:1`
 An update to Claude 2 that features double the context window, plus improvements across reliability, hallucination rates, and evidence-based accuracy in long document and RAG contexts.
@@ -500,7 +500,7 @@ An update to Claude 2 that features double the context window, plus improvements
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -542,7 +542,7 @@ Json schema for request
     "anthropic_version"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Claude 3 Sonnet with id `anthropic.claude-3-sonnet-20240229-v1:0`
 Claude 3 Sonnet by Anthropic strikes the ideal balance between intelligence and speed—particularly for enterprise workloads.
@@ -550,7 +550,7 @@ Claude 3 Sonnet by Anthropic strikes the ideal balance between intelligence and 
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -605,7 +605,7 @@ Json schema for request
     "anthropic_version"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 - Claude 3 Haiku with id `anthropic.claude-3-haiku-20240307-v1:0`
 Claude 3 Haiku is Anthropic's fastest, most compact model for near-instant responsiveness. It answers simple queries and requests with speed.
@@ -613,7 +613,7 @@ Claude 3 Haiku is Anthropic's fastest, most compact model for near-instant respo
 Json schema for request
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -668,7 +668,7 @@ Json schema for request
     "anthropic_version"
   ]
 }
---------------------------------------------------------------------------------
+----
 
 === Bedrock Producer operations
 
@@ -736,15 +736,15 @@ Two operations are provided:
 
 *converse*: Standard request-response conversation
 [source]
---------------------------------------------------------------------------------
+----
 aws-bedrock://label?operation=converse&modelId=anthropic.claude-3-sonnet-20240229-v1:0
---------------------------------------------------------------------------------
+----
 
 *converseStream*: Streaming conversation with real-time chunk delivery
 [source]
---------------------------------------------------------------------------------
+----
 aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-20240229-v1:0
---------------------------------------------------------------------------------
+----
 
 ==== Converse Configuration Options
 
@@ -812,26 +812,26 @@ The Camel AWS Bedrock component provides comprehensive support for guardrails th
 *converse with Guardrails*: Apply guardrails to conversational model invocations
 
 [source]
---------------------------------------------------------------------------------
+----
 aws-bedrock://label?operation=converse&modelId=anthropic.claude-3-sonnet-20240229-v1:0
     &guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT&guardrailTrace=true
---------------------------------------------------------------------------------
+----
 
 *converseStream with Guardrails*: Apply guardrails to streaming conversations
 
 [source]
---------------------------------------------------------------------------------
+----
 aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-20240229-v1:0
     &guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT
---------------------------------------------------------------------------------
+----
 
 *applyGuardrail*: Standalone operation to validate content against a guardrail without invoking a model
 
 [source]
---------------------------------------------------------------------------------
+----
 aws-bedrock://label?operation=applyGuardrail&guardrailIdentifier=abc123xyz
     &guardrailVersion=DRAFT
---------------------------------------------------------------------------------
+----
 
 ==== Guardrails Response Headers
 
@@ -913,7 +913,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with complex JSON construction_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:invoke", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
@@ -932,7 +932,7 @@ and you can then send to the direct endpoint something like
             exchange.getMessage().setHeader("CamelAwsBedrockContentType", "application/json");
             exchange.getMessage().setHeader("CamelAwsBedrockAcceptContentType", "application/json");
         });
---------------------------------------------------------------------------------
+----
 
 where template is a ProducerTemplate.
 
@@ -940,20 +940,20 @@ where template is a ProducerTemplate.
 
 ._Java-only: uses `unmarshal().base64()` method chain and `simple()` expression builder_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:invoke")
     .to("aws-bedrock://test?bedrockRuntimeClient=#amazonBedrockRuntimeClient&operation=invokeImageModel&modelId=amazon.titan-image-generator-v1")
     .split(body())
         .unmarshal().base64()
         .setHeader("CamelFileName", simple("image-${random(128)}.png"))
         .to("file:target/generated_images");
---------------------------------------------------------------------------------
+----
 
 and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with complex JSON construction_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:send_titan_image", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
@@ -976,7 +976,7 @@ and you can then send to the direct endpoint something like
             exchange.getMessage().setHeader("CamelAwsBedrockContentType", "application/json");
             exchange.getMessage().setHeader("CamelAwsBedrockAcceptContentType", "application/json");
         });
---------------------------------------------------------------------------------
+----
 
 where template is a ProducerTemplate.
 
@@ -1028,7 +1028,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with complex JSON construction_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:send_titan_embeddings", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
@@ -1039,7 +1039,7 @@ and you can then send to the direct endpoint something like
             exchange.getMessage().setHeader("CamelAwsBedrockContentType", "application/json");
             exchange.getMessage().setHeader("CamelAwsBedrockAcceptContentType", "*/*");
         });
---------------------------------------------------------------------------------
+----
 
 where template is a ProducerTemplate.
 
@@ -1092,7 +1092,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with complex JSON construction_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:stream_complete", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
@@ -1118,7 +1118,7 @@ and you can then send to the direct endpoint something like
         Integer tokenCount = result.getMessage().getHeader("CamelAwsBedrockTokenCount", Integer.class);
         String completionReason = result.getMessage().getHeader("CamelAwsBedrockCompletionReason", String.class);
         Integer chunkCount = result.getMessage().getHeader("CamelAwsBedrockChunkCount", Integer.class);
---------------------------------------------------------------------------------
+----
 
 - invokeTextModelStreaming (Chunks Mode): this operation will invoke a model from Bedrock with streaming, emitting individual chunks.
 
@@ -1177,7 +1177,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with complex JSON construction_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:stream_chunks", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
@@ -1211,7 +1211,7 @@ and you can then send to the direct endpoint something like
         for (String chunk : chunks) {
             System.out.println("Chunk: " + chunk);
         }
---------------------------------------------------------------------------------
+----
 
 - converse: this operation uses the unified Converse API for model-agnostic conversations.
 
@@ -1261,7 +1261,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with AWS SDK objects_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:converse", exchange -> {
             // Create a conversation message
             List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
@@ -1301,7 +1301,7 @@ and you can then send to the direct endpoint something like
         System.out.println("Stop reason: " + stopReason);
         System.out.println("Input tokens: " + usage.inputTokens());
         System.out.println("Output tokens: " + usage.outputTokens());
---------------------------------------------------------------------------------
+----
 
 - converseStream (Complete Mode): this operation uses the Converse API with streaming, accumulating the complete response.
 
@@ -1351,7 +1351,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with AWS SDK objects_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:converse_stream", exchange -> {
             // Create a conversation message
             List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
@@ -1379,7 +1379,7 @@ and you can then send to the direct endpoint something like
 
         System.out.println("Response: " + response);
         System.out.println("Received " + chunkCount + " chunks");
---------------------------------------------------------------------------------
+----
 
 - converseStream (Chunks Mode): this operation uses the Converse API with streaming, emitting individual chunks.
 
@@ -1437,7 +1437,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with AWS SDK objects_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:converse_stream_chunks", exchange -> {
             // Create a conversation message
             List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
@@ -1458,7 +1458,7 @@ and you can then send to the direct endpoint something like
         for (String chunk : chunks) {
             System.out.println("Chunk: " + chunk);
         }
---------------------------------------------------------------------------------
+----
 
 - Multi-turn Conversation with Converse API: demonstrates maintaining conversation history.
 
@@ -1508,7 +1508,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with multi-turn conversation history_
 [source,java]
---------------------------------------------------------------------------------
+----
         // Maintain conversation history
         List<software.amazon.awssdk.services.bedrockruntime.model.Message> conversationHistory = new ArrayList<>();
 
@@ -1544,7 +1544,7 @@ and you can then send to the direct endpoint something like
 
         String followUpResponse = result2.getMessage().getBody(String.class);
         System.out.println("Follow-up response: " + followUpResponse);
---------------------------------------------------------------------------------
+----
 
 === Guardrails Examples
 
@@ -1599,7 +1599,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with AWS SDK objects_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:converse_with_guardrails", exchange -> {
             // Create a conversation message
             List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
@@ -1631,7 +1631,7 @@ and you can then send to the direct endpoint something like
         if (trace != null) {
             System.out.println("Guardrail evaluation: " + trace);
         }
---------------------------------------------------------------------------------
+----
 
 - Converse with Guardrails (Header Configuration): Apply guardrails configured per-message via headers.
 
@@ -1681,7 +1681,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with AWS SDK `GuardrailConfiguration` objects_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:converse_dynamic_guardrails", exchange -> {
             // Create a conversation message
             List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
@@ -1705,7 +1705,7 @@ and you can then send to the direct endpoint something like
 
         String response = result.getMessage().getBody(String.class);
         System.out.println("Protected response: " + response);
---------------------------------------------------------------------------------
+----
 
 - Converse Stream with Guardrails: Apply guardrails to streaming conversations.
 
@@ -1757,7 +1757,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with AWS SDK objects_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:stream_with_guardrails", exchange -> {
             List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
             messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
@@ -1772,7 +1772,7 @@ and you can then send to the direct endpoint something like
 
         String streamedResponse = result.getMessage().getBody(String.class);
         System.out.println("Guardrail-protected stream response: " + streamedResponse);
---------------------------------------------------------------------------------
+----
 
 - Apply Guardrail: Validate content against a guardrail without invoking a model.
 
@@ -1823,7 +1823,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with AWS SDK `GuardrailContentBlock` objects_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:validate_content", exchange -> {
             // Create content blocks to check
             List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
@@ -1854,7 +1854,7 @@ and you can then send to the direct endpoint something like
         } else {
             System.out.println("Content passed guardrail validation");
         }
---------------------------------------------------------------------------------
+----
 
 - Apply Guardrail with POJO Request: Use the SDK request object directly for maximum control.
 
@@ -1904,7 +1904,7 @@ and you can then send to the direct endpoint something like
 
 ._Java-only: uses `ProducerTemplate` test API with AWS SDK `ApplyGuardrailRequest` POJO_
 [source,java]
---------------------------------------------------------------------------------
+----
         final Exchange result = template.send("direct:validate_pojo", exchange -> {
             // Create content blocks
             List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
@@ -1929,7 +1929,7 @@ and you can then send to the direct endpoint something like
 
         String action = result.getMessage().getBody(String.class);
         System.out.println("Validation result: " + action);
---------------------------------------------------------------------------------
+----
 
 - Content Moderation Pipeline: Combine guardrails with model invocation in a pipeline.
 
@@ -2019,13 +2019,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws-bedrock</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

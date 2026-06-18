@@ -21,22 +21,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-rss</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 NOTE: The component currently only supports consuming feeds.
 
 == URI format
 
-----------
+----
 rss:rssUri
-----------
+----
 
 Where `rssUri` is the URI to the RSS feed to poll.
 

@@ -26,9 +26,9 @@ https://aws.amazon.com/sqs[Amazon SQS].
 
 == URI Format
 
-------------------------------
+----
 aws2-sqs://queueNameOrArn[?options]
-------------------------------
+----
 
 The queue will be created if they don't already exist.
 
@@ -91,7 +91,7 @@ In the example below, we use _myClient_ as the bean id:
 
 ._Java-only: programmatic `SqsClient` creation and registry binding_
 [source,java]
----------------------------------------------------------------------------------
+----
 // create my own instance of SqsClient
 SqsClient sqs = ...
 
@@ -101,7 +101,7 @@ camelContext.getRegistry().bind("myClient", sqs);
 // refer to the custom client via myClient as the bean id
 from("aws2-sqs://MyQueue?amazonSQSClient=#myClient&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
----------------------------------------------------------------------------------
+----
 
 === DelayQueue VS Delay for Single message
 
@@ -252,7 +252,7 @@ You can set a `SendMessageBatchRequest` or an `Iterable`
 
 ._Java-only: requires constructing a `List` body programmatically for batch messages_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:start")
   .setHeader("CamelAwsSqsOperation", constant("sendBatchMessage"))
   .process(exchange -> {
@@ -264,7 +264,7 @@ from("direct:start")
       exchange.getIn().setBody(c);
   })
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
-------------------------------------------------------------------------------------------------------
+----
 
 As result, you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examine to check what messages were successful and what not.
 The id set on each message of the batch will be a Random UUID.
@@ -449,13 +449,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-sqs</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

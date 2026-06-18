@@ -44,16 +44,16 @@ The ringbuffer producer provides 5 operations:
 Java DSL::
 +
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:put")
 .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.ADD))
 .to(String.format("hazelcast-%sbar", HazelcastConstants.RINGBUFFER_PREFIX));
-------------------------------------------------------------------------------------
+----
 
 Spring XML::
 +
 [source,xml]
------------------------------------------------------------------------------------------------
+----
 <route>
     <from uri="direct:put" />
     <log message="put.."/>
@@ -62,7 +62,7 @@ Spring XML::
     </setHeader>
     <to uri="hazelcast-ringbuffer:foo" />
 </route>
------------------------------------------------------------------------------------------------
+----
 
 ====
 

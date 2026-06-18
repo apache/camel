@@ -369,9 +369,9 @@ Simply by registering a bean with the name `logFormatter`; the Log
 Component is intelligent enough to pick it up automatically.
 
 [source,xml]
------
+----
 <bean name="logFormatter" class="com.xyz.MyCustomExchangeFormatter" />
------
+----
 
 [NOTE]
 ====
@@ -397,11 +397,11 @@ And then we can have Camel routes using the log uri with different
 options:
 
 [source,xml]
----------------------------------------------
+----
 <to uri="log:foo?param1=foo&amp;param2=100"/>
 
 <to uri="log:bar?param1=bar&amp;param2=200"/>
----------------------------------------------
+----
 
 
 

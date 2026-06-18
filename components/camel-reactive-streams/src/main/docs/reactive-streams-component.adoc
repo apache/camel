@@ -33,20 +33,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-reactive-streams</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
--------------------------------------------------
+----
 reactive-streams://stream?[options]
--------------------------------------------------
+----
 
 Where *stream* is a logical stream name used to bind Camel routes to the
 external stream processing systems.

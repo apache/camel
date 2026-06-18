@@ -23,14 +23,14 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-irc</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -58,7 +58,7 @@ Programmatic configuration of the endpoint
 
 ._Java-only: Java programmatic SSL configuration_
 [source,java]
------------------------------------------------------------------------------------------------------------------------------------------
+----
 KeyStoreParameters ksp = new KeyStoreParameters();
 ksp.setResource("/users/home/server/truststore.jks");
 ksp.setPassword("keystorePassword");
@@ -76,13 +76,13 @@ registry.bind("sslContextParameters", scp);
 
 from(...)
     .to("ircs://camel-prd-user@server:6669/#camel-test?nickname=camel-prd&password=password&sslContextParameters=#sslContextParameters");
------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 [[IRC-SpringDSLbasedconfigurationofendpoint]]
 Spring DSL based configuration of endpoint
 
 [source,xml]
-----------------------------------------------------------------------------------------------------------------------------------------------
+----
 ...
   <camel:sslContextParameters
       id="sslContextParameters">
@@ -94,7 +94,7 @@ Spring DSL based configuration of endpoint
   </camel:sslContextParameters>...
 ...
   <to uri="ircs://camel-prd-user@server:6669/#camel-test?nickname=camel-prd&password=password&sslContextParameters=#sslContextParameters"/>...
-----------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 === Using the legacy basic configuration options
 
@@ -102,9 +102,9 @@ You can also connect to an SSL enabled IRC server, as follows:
 
 ._Java-only: endpoint URI syntax_
 [source,java]
---------------------------------------------------
+----
 ircs:host[:port]/#room?username=user&password=pass
---------------------------------------------------
+----
 
 By default, the IRC transport uses
 http://moepii.sourceforge.net/irclib/javadoc/org/schwering/irc/lib/ssl/SSLDefaultTrustManager.html[SSLDefaultTrustManager].
@@ -113,9 +113,9 @@ If you need to provide your own custom trust manager, use the
 
 ._Java-only: endpoint URI syntax with trustManager_
 [source,java]
-----------------------------------------------------------------------------------------------
+----
 ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTrustManagerBean
-----------------------------------------------------------------------------------------------
+----
 
 == Examples
 
@@ -128,9 +128,9 @@ For example, we join three channels whereas only channel 1 and 3 use a key.
 
 ._Java-only: endpoint URI syntax with channel keys_
 [source,java]
------------------------------------------------------------------------------
+----
 irc:nick@irc.server.org?channels=#chan1,#chan2,#chan3&keys=chan1Key,,chan3key
------------------------------------------------------------------------------
+----
 
 === Getting a list of channel users
 
@@ -142,13 +142,13 @@ For example, we want to get all exchanges that contain the usernames of the chan
 
 ._Java-only: Java DSL with choice and filter EIPs_
 [source,java]
------------------------------------------------------------------------------
+----
 from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
 	.choice()
 		.when(header("CamelIrcMessageType").isEqualToIgnoreCase("REPLY"))
 			.filter(header("CamelIrcNum").isEqualTo("353"))
 			.to("mock:result").stop();
------------------------------------------------------------------------------
+----
 
 === Sending to a different channel or a person
 

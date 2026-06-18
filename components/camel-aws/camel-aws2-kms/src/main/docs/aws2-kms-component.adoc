@@ -26,9 +26,9 @@ https://aws.amazon.com/kms/[Amazon KMS].
 
 == URI Format
 
--------------------------
+----
 aws2-kms://label[?options]
--------------------------
+----
 
 You can append query options to the URI in the following format:
 
@@ -256,11 +256,11 @@ In AWS KMS there are multiple operations you can submit, as an example for List 
 
 ._Java-only: using a POJO request body with the AWS SDK builder_
 [source,java]
-------------------------------------------------------------------------------------------------------
+----
 from("direct:createUser")
      .setBody(ListKeysRequest.builder().limit(10).build())
      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=listKeys&pojoRequest=true")
-------------------------------------------------------------------------------------------------------
+----
 
 In this way, you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
@@ -271,13 +271,13 @@ Maven users will need to add the following dependency to their pom.xml.
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws2-kms</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 

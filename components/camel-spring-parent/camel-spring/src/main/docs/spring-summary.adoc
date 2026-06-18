@@ -145,7 +145,7 @@ one or more 'includes' or 'excludes' elements specifying patterns to be
 applied to the fully qualified names of the discovered classes. e.g.
 
 [source,xml]
---------------------------------------------------------------
+----
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <packageScan>
       <package>org.example.routes</package>
@@ -153,7 +153,7 @@ applied to the fully qualified names of the discovered classes. e.g.
       <includes>**.*</includes>
     </packageScan>
   </camelContext>
---------------------------------------------------------------
+----
 
 Exclude patterns are applied before the include patterns. If no include
 or exclude patterns are defined, then all the Route classes discovered in
@@ -421,14 +421,14 @@ The `camel-spring` module can be used as implementation of the Camel Cron compon
 Maven users will need to add the following additional dependency to their `pom.xml`:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-cron</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 Users can then use the cron component inside routes of their Spring or Spring Boot application:
 

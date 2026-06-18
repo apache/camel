@@ -24,22 +24,22 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-sap-netweaver</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
 The URI scheme for a sap netweaver gateway component is as follows
 
------------------------------------------------------------------
+----
 sap-netweaver:https://host:8080/path?username=foo&password=secret
------------------------------------------------------------------
+----
 
 == Prerequisites
 
@@ -66,9 +66,9 @@ http://scn.sap.com/docs/DOC-31221[here].
 In the route below we request the SAP NetWeaver demo server using the
 following url
 
-----------------------------------------------------------------------
+----
 https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT
-----------------------------------------------------------------------
+----
 
 And we want to execute the following command
 
@@ -111,7 +111,7 @@ The velocity template is used for formatting the response to a basic
 HTML page
 
 [source,xml]
-------------------------------------------------------------------------
+----
 <html>
   <body>
   Flight information:
@@ -126,11 +126,11 @@ HTML page
 
   </body>
 </html>
-------------------------------------------------------------------------
+----
 
 When running the application, you get sample output:
 
--------------------------------
+----
 Flight information:
 Airline ID: AA
 Aircraft Type: 747-400
@@ -138,7 +138,7 @@ Departure city: new york
 Departure airport: JFK
 Destination city: SAN FRANCISCO
 Destination airport: SFO
--------------------------------
+----
 
 
 
