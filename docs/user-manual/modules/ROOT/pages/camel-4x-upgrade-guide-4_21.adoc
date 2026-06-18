@@ -21,9 +21,8 @@ It implies small differences listed https://github.com/whatap/java-grok#what-is-
 === camel-jbang
 
 The project exported by `camel export` now includes additional guidance for AI coding assistants. The generated
-`readme.md` gained a _For AI coding assistants_ section linking to the Apache Camel LLM index
-(`https://camel.apache.org/llms.txt`), and a new `AGENTS.md` file is generated at the project root. This applies to
-all runtimes (Camel Main, Spring Boot and Quarkus).
+`readme.md` gained a _For AI coding assistants_ section linking to the Apache Camel website LLM index,
+and a new `AGENTS.md` file is generated at the project root. This applies to all runtimes (Camel Main, Spring Boot and Quarkus).
 
 === camel-micrometer
 
