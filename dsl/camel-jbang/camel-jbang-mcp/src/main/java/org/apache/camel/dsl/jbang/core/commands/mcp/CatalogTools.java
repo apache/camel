@@ -93,6 +93,7 @@ public class CatalogTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get documentation for a Camel component: URI syntax and endpoint options. "
                         + "Default returns common options only (excludes deprecated and advanced). "
+                        + "Set includeHeaders=true to also return message header metadata (CamelXxx names, constants, types). "
                         + "Use camel_catalog_component_maven for groupId/artifactId/version.")
     public ComponentDetailResult camel_catalog_component_doc(
             @ToolArg(description = "Component name (e.g., kafka, http, file, timer)") String component,
@@ -101,6 +102,9 @@ public class CatalogTools {
             @ToolArg(description = "Which options to include: required | common | all (default: common). "
                                    + "'common' excludes deprecated and advanced options.",
                      required = false) String includeOptions,
+            @ToolArg(description = "Whether to include message headers in the response (default: false). "
+                                   + "Headers show the CamelXxx header names, their Java constants, types, and consumer/producer group.",
+                     required = false) Boolean includeHeaders,
             @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
             @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
@@ -143,7 +147,7 @@ public class CatalogTools {
                 throw new ToolCallException(hint.toString(), null);
             }
 
-            return toComponentDetailResult(model, scope, optionsFilter);
+            return toComponentDetailResult(model, scope, optionsFilter, Boolean.TRUE.equals(includeHeaders));
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -422,7 +426,8 @@ public class CatalogTools {
                 model.getSupportLevel() != null ? model.getSupportLevel().name() : null);
     }
 
-    private ComponentDetailResult toComponentDetailResult(ComponentModel model, OptionScope scope, String optionsFilter) {
+    private ComponentDetailResult toComponentDetailResult(
+            ComponentModel model, OptionScope scope, String optionsFilter, boolean includeHeaders) {
         Predicate<BaseOptionModel> filter = scope.asPredicate().and(nameFilter(optionsFilter));
 
         List<OptionInfo> componentOptions = new ArrayList<>();
@@ -451,6 +456,15 @@ public class CatalogTools {
                             opt.getGroup())));
         }
 
+        List<HeaderInfo> headers = List.of();
+        if (includeHeaders && model.getEndpointHeaders() != null) {
+            headers = model.getEndpointHeaders().stream()
+                    .map(h -> new HeaderInfo(
+                            h.getName(), h.getDescription(), h.getJavaType(),
+                            h.getGroup(), h.getConstantName(), h.isRequired()))
+                    .collect(Collectors.toList());
+        }
+
         return new ComponentDetailResult(
                 model.getScheme(),
                 model.getTitle(),
@@ -463,7 +477,8 @@ public class CatalogTools {
                 model.isConsumerOnly(),
                 model.isProducerOnly(),
                 componentOptions,
-                endpointOptions);
+                endpointOptions,
+                headers);
     }
 
     private static Predicate<BaseOptionModel> nameFilter(String optionsFilter) {
@@ -640,7 +655,8 @@ public class CatalogTools {
     public record ComponentDetailResult(String name, String title, String description, String label,
             boolean deprecated, String supportLevel, String syntax,
             boolean async, boolean consumerOnly, boolean producerOnly,
-            List<OptionInfo> componentOptions, List<OptionInfo> endpointOptions) {
+            List<OptionInfo> componentOptions, List<OptionInfo> endpointOptions,
+            List<HeaderInfo> headers) {
     }
 
     public record ComponentMavenResult(String name, String groupId, String artifactId, String version) {
@@ -648,6 +664,10 @@ public class CatalogTools {
 
     public record OptionInfo(String name, String description, String type, boolean required,
             String defaultValue, String group) {
+    }
+
+    public record HeaderInfo(String name, String description, String javaType,
+            String group, String constantName, boolean required) {
     }
 
     public record DataFormatListResult(int count, List<DataFormatInfo> dataFormats) {

@@ -85,7 +85,7 @@ class McpJsonSerializationTest {
 
         CatalogTools.ComponentDetailResult detail = new CatalogTools.ComponentDetailResult(
                 "timer", "Timer", null, null, false, null, null,
-                false, false, false, null, null);
+                false, false, false, null, null, null);
 
         String json = mapper.writeValueAsString(detail);
 
@@ -96,6 +96,7 @@ class McpJsonSerializationTest {
         assertThat(json).doesNotContain("\"groupId\"");
         assertThat(json).doesNotContain("\"componentOptions\"");
         assertThat(json).doesNotContain("\"endpointOptions\"");
+        assertThat(json).doesNotContain("\"headers\"");
     }
 
     @Test
