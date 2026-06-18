@@ -1226,6 +1226,8 @@ template.requestBody("salesforce:updateSObject", doc);
 
 When using the <<MavenPlugin,Camel Salesforce Maven Plugin>>, binary fields are automatically generated for blob fields:
 
+._Java-only: generated DTO class_
+
 [source,java]
 ----
 public class ContentVersion extends AbstractSObjectBase {
@@ -1262,6 +1264,8 @@ Using binary fields provides significant performance improvements:
 ===== Backward Compatibility
 
 The existing base64 string approach continues to work:
+
+._Java-only: Salesforce DTO API_
 
 [source,java]
 ----
@@ -2447,6 +2451,8 @@ The response is:
 
 For efficient document uploads without base64 encoding overhead, use the binary field approach:
 
+._Java-only: Processor implementation with Salesforce DTO and binary fields_
+
 [source,java]
 ----
 public class ContentProcessor implements Processor {
@@ -2475,6 +2481,8 @@ public class ContentProcessor implements Processor {
 
 Give the output from the processor to the Salesforce component:
 
+._Java-only: inline Processor instantiation_
+
 [source,java]
 ----
 from("file:///home/camel/library")
@@ -2486,6 +2494,8 @@ from("file:///home/camel/library")
 ==== Using Base64 Encoding (Legacy)
 
 The traditional base64 encoding approach is still supported for backward compatibility:
+
+._Java-only: Processor implementation with base64 encoding_
 
 [source,java]
 ----
@@ -2518,6 +2528,8 @@ public class ContentProcessor implements Processor {
 `org.apache.camel.component.salesforce.api.utils.QueryHelper` contains helper
 methods to generate SOQL queries. For instance, to fetch all custom fields from
 _Account_ SObject, you can generate the SOQL SELECT by invoking:
+
+._Java-only: QueryHelper API_
 
 [source,java]
 ----
