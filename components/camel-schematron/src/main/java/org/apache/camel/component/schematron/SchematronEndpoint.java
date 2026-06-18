@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
@@ -167,7 +169,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
         }
     }
 
-    private void createTransformerFactory() throws ClassNotFoundException {
+    private void createTransformerFactory() throws ClassNotFoundException, TransformerConfigurationException {
         // provide the class loader of this component to work in OSGi environments
         Class<TransformerFactory> factoryClass
                 = getCamelContext().getClassResolver().resolveMandatoryClass(SAXON_TRANSFORMER_FACTORY_CLASS_NAME,
@@ -175,6 +177,12 @@ public class SchematronEndpoint extends DefaultEndpoint {
 
         LOG.debug("Using TransformerFactoryClass {}", factoryClass);
         transformerFactory = getCamelContext().getInjector().newInstance(factoryClass);
+        // Harden the rules-compilation factory against XXE / external resource access, consistent with the
+        // SAXParserFactory hardening in SchematronProcessorFactory. The ISO skeleton stylesheets are resolved
+        // from the classpath via the URIResolver set below, so legitimate rule compilation is unaffected.
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         transformerFactory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, this.uriResolver));
         transformerFactory.setAttribute(LINE_NUMBERING, true);
     }
