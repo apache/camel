@@ -67,13 +67,53 @@ You can append query options to the URI in the following format: `?options=value
 
 For example, to get a document from the `users` collection:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
     .to("google-firestore://users?operation=getDocumentById&serviceAccountKey=/path/to/key.json&projectId=my-project")
     .to("log:result");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleFirestoreDocumentId">
+    <constant>user123</constant>
+  </setHeader>
+  <to uri="google-firestore://users?operation=getDocumentById&amp;serviceAccountKey=/path/to/key.json&amp;projectId=my-project"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleFirestoreDocumentId
+            constant: user123
+        - to:
+            uri: google-firestore://users
+            parameters:
+              operation: getDocumentById
+              serviceAccountKey: /path/to/key.json
+              projectId: my-project
+        - to:
+            uri: log:result
+----
+====
 
 
 // component options: START
@@ -110,23 +150,53 @@ For operations that require document data (`setDocument`, `createDocument`, `upd
 
 JSON String Example:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-// Using JSON string as input
-String json = """
-    {
-        "name": "John Doe",
-        "email": "john@example.com",
-        "age": 30,
-        "active": true
-    }
-    """;
-
+----
 from("direct:start")
-    .setBody(constant(json))
+    .setBody(constant("{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"age\":30,\"active\":true}"))
     .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
     .to("google-firestore://users?operation=setDocument");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>{"name":"John Doe","email":"john@example.com","age":30,"active":true}</constant>
+  </setBody>
+  <setHeader name="CamelGoogleFirestoreDocumentId">
+    <constant>user123</constant>
+  </setHeader>
+  <to uri="google-firestore://users?operation=setDocument"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: '{"name":"John Doe","email":"john@example.com","age":30,"active":true}'
+        - setHeader:
+            name: CamelGoogleFirestoreDocumentId
+            constant: user123
+        - to:
+            uri: google-firestore://users
+            parameters:
+              operation: setDocument
+----
+====
 
 === Google Firestore Consumer
 
@@ -217,52 +287,169 @@ YAML::
 
 This operation creates a new document with an auto-generated unique ID:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-Map<String, Object> document = new HashMap<>();
-document.put("name", "John Doe");
-document.put("email", "john@example.com");
-document.put("age", 30);
-
+----
 from("direct:start")
-    .setBody(constant(document))
+    .setBody(constant("{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"age\":30}"))
     .to("google-firestore://users?operation=createDocument")
     .log("Created document with ID: ${header.CamelGoogleFirestoreResponseDocumentId}");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>{"name":"John Doe","email":"john@example.com","age":30}</constant>
+  </setBody>
+  <to uri="google-firestore://users?operation=createDocument"/>
+  <log message="Created document with ID: ${header.CamelGoogleFirestoreResponseDocumentId}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: '{"name":"John Doe","email":"john@example.com","age":30}'
+        - to:
+            uri: google-firestore://users
+            parameters:
+              operation: createDocument
+        - log:
+            message: "Created document with ID: ${header.CamelGoogleFirestoreResponseDocumentId}"
+----
+====
 
 === Set Document with Specific ID
 
 This operation creates or overwrites a document with a specific ID:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-Map<String, Object> document = new HashMap<>();
-document.put("name", "Jane Doe");
-document.put("email", "jane@example.com");
-
+----
 from("direct:start")
-    .setBody(constant(document))
+    .setBody(constant("{\"name\":\"Jane Doe\",\"email\":\"jane@example.com\"}"))
     .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
     .to("google-firestore://users?operation=setDocument")
     .log("Document saved");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>{"name":"Jane Doe","email":"jane@example.com"}</constant>
+  </setBody>
+  <setHeader name="CamelGoogleFirestoreDocumentId">
+    <constant>user123</constant>
+  </setHeader>
+  <to uri="google-firestore://users?operation=setDocument"/>
+  <log message="Document saved"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: '{"name":"Jane Doe","email":"jane@example.com"}'
+        - setHeader:
+            name: CamelGoogleFirestoreDocumentId
+            constant: user123
+        - to:
+            uri: google-firestore://users
+            parameters:
+              operation: setDocument
+        - log:
+            message: "Document saved"
+----
+====
 
 === Set Document with Merge
 
 To merge data with an existing document instead of overwriting:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-Map<String, Object> updates = new HashMap<>();
-updates.put("lastLogin", new Date());
-
+----
 from("direct:start")
-    .setBody(constant(updates))
+    .setBody(constant("{\"lastLogin\":\"2025-01-15T10:30:00Z\"}"))
     .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
     .setHeader("CamelGoogleFirestoreMerge", constant(true))
     .to("google-firestore://users?operation=setDocument")
     .log("Document merged");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>{"lastLogin":"2025-01-15T10:30:00Z"}</constant>
+  </setBody>
+  <setHeader name="CamelGoogleFirestoreDocumentId">
+    <constant>user123</constant>
+  </setHeader>
+  <setHeader name="CamelGoogleFirestoreMerge">
+    <constant>true</constant>
+  </setHeader>
+  <to uri="google-firestore://users?operation=setDocument"/>
+  <log message="Document merged"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: '{"lastLogin":"2025-01-15T10:30:00Z"}'
+        - setHeader:
+            name: CamelGoogleFirestoreDocumentId
+            constant: user123
+        - setHeader:
+            name: CamelGoogleFirestoreMerge
+            constant: true
+        - to:
+            uri: google-firestore://users
+            parameters:
+              operation: setDocument
+        - log:
+            message: "Document merged"
+----
+====
 
 === Get Document by ID
 
@@ -320,18 +507,57 @@ The response body will contain a `Map<String, Object>` with the document data, o
 
 This operation updates specific fields without overwriting the entire document:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
-Map<String, Object> updates = new HashMap<>();
-updates.put("status", "active");
-updates.put("updatedAt", new Date());
-
+----
 from("direct:start")
-    .setBody(constant(updates))
+    .setBody(constant("{\"status\":\"active\",\"updatedAt\":\"2025-01-15T10:30:00Z\"}"))
     .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
     .to("google-firestore://users?operation=updateDocument")
     .log("Document updated");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setBody>
+    <constant>{"status":"active","updatedAt":"2025-01-15T10:30:00Z"}</constant>
+  </setBody>
+  <setHeader name="CamelGoogleFirestoreDocumentId">
+    <constant>user123</constant>
+  </setHeader>
+  <to uri="google-firestore://users?operation=updateDocument"/>
+  <log message="Document updated"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant: '{"status":"active","updatedAt":"2025-01-15T10:30:00Z"}'
+        - setHeader:
+            name: CamelGoogleFirestoreDocumentId
+            constant: user123
+        - to:
+            uri: google-firestore://users
+            parameters:
+              operation: updateDocument
+        - log:
+            message: "Document updated"
+----
+====
 
 === Delete Document
 
@@ -563,13 +789,51 @@ YAML::
 
 To list subcollections under a specific document:
 
+[tabs]
+====
+Java::
++
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:start")
     .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
     .to("google-firestore://users?operation=listCollections")
     .log("Subcollections: ${body}");
---------------------------------------------------------------------------------
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelGoogleFirestoreDocumentId">
+    <constant>user123</constant>
+  </setHeader>
+  <to uri="google-firestore://users?operation=listCollections"/>
+  <log message="Subcollections: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelGoogleFirestoreDocumentId
+            constant: user123
+        - to:
+            uri: google-firestore://users
+            parameters:
+              operation: listCollections
+        - log:
+            message: "Subcollections: ${body}"
+----
+====
 
 == Consumer Examples
 
