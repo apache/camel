@@ -100,6 +100,7 @@ The `Exchange` is transferred as:
 You can set up a custom Velocity Context yourself by
 setting property `allowTemplateFromHeader=true` and setting the message header `CamelVelocityContext` just like this
 
+._Java-only: programmatic VelocityContext creation and header manipulation_
 [source,java]
 -----------------------------------------------------------------------
 VelocityContext velocityContext = new VelocityContext(variableMap);
@@ -406,6 +407,7 @@ ${body}
 
 And the java code (from an unit test):
 
+._Java-only: unit test with Exchange API, ProducerTemplate, MockEndpoint assertions, and RouteBuilder class_
 [source,java]
 ----
     private Exchange createLetter() {

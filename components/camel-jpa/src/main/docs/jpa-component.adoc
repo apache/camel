@@ -158,6 +158,7 @@ For consuming only selected entities, you can use the
 `namedQuery` URI query option. First, you have to define the
 named query in the JPA Entity class:
 
+._Java-only: JPA entity class definition with @NamedQuery annotation_
 [source,java]
 ----------------------------------------------------------------------------------
 @Entity
@@ -295,6 +296,7 @@ For retrieving selected entities or execute bulk update/delete, you can use the
 `namedQuery` URI query option. First, you have to define the
 named query in the JPA Entity class:
 
+._Java-only: JPA entity class definition with @NamedQuery annotation_
 [source,java]
 ----------------------------------------------------------------------------------
 @Entity

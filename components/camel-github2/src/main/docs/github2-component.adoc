@@ -67,6 +67,7 @@ The GitHub2 component requires to be configured with an authentication token on 
 
 For example, to set it on the component:
 
+._Java-only: programmatic component configuration_
 [source,java]
 ----
 GitHub2Component ghc = context.getComponent("github2", GitHub2Component.class);
@@ -77,11 +78,42 @@ ghc.setOauthToken("mytoken");
 
 To use with GitHub Enterprise, set the `apiUrl` parameter to your GitHub Enterprise API endpoint:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("github2:commit/main?repoOwner=myorg&repoName=myrepo&apiUrl=https://github.mycompany.com/api/v3")
     .to("log:commits");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="github2:commit/main?repoOwner=myorg&amp;repoName=myrepo&amp;apiUrl=https://github.mycompany.com/api/v3"/>
+  <to uri="log:commits"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: github2:commit/main
+      parameters:
+        repoOwner: myorg
+        repoName: myrepo
+        apiUrl: "https://github.mycompany.com/api/v3"
+      steps:
+        - to:
+            uri: log:commits
+----
+====
 
 === Consumer Endpoints
 

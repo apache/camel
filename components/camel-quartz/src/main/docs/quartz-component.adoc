@@ -386,20 +386,82 @@ IMPORTANT: Remember that configuring these options from the endpoint
 URIs must be prefixed with `scheduler.`.
 For example, to configure the trigger id and group:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-    from("file:inbox?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?&scheduler.triggerId=myId&scheduler.triggerGroup=myGroup")
-       .to("bean:process");
+from("file:inbox?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?&scheduler.triggerId=myId&scheduler.triggerGroup=myGroup")
+    .to("bean:process");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?scheduler=quartz&amp;scheduler.cron=0/2+*+*+*+*+?&amp;scheduler.triggerId=myId&amp;scheduler.triggerGroup=myGroup"/>
+  <to uri="bean:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        scheduler: quartz
+        scheduler.cron: "0/2 * * * * ?"
+        scheduler.triggerId: myId
+        scheduler.triggerGroup: myGroup
+      steps:
+        - to:
+            uri: bean:process
+----
+====
 
 There is also a CRON scheduler in Spring, so you can
 use the following as well:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-    from("file:inbox?scheduler=spring&scheduler.cron=0/2+*+*+*+*+?")
-       .to("bean:process");
+from("file:inbox?scheduler=spring&scheduler.cron=0/2+*+*+*+*+?")
+    .to("bean:process");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?scheduler=spring&amp;scheduler.cron=0/2+*+*+*+*+?"/>
+  <to uri="bean:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        scheduler: spring
+        scheduler.cron: "0/2 * * * * ?"
+      steps:
+        - to:
+            uri: bean:process
+----
+====
 
 === Cron Component Support
 

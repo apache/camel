@@ -40,6 +40,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listPersistentVolumes`: this operation lists the PVs on a kubernetes cluster
 
+._Java-only: uses `toF()` for URI formatting_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
@@ -51,6 +52,7 @@ This operation returns a list of PVs from your cluster
 
 - `listPersistentVolumesByLabels`: this operation lists the PVs by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor, Java constants, and `toF()`_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {

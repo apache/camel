@@ -146,6 +146,8 @@ You can use serialization via Jackson (using json).
 Jackson's serialization brings better performance, but also several limitations.
 
 Example of jackson serialization:
+
+._Java-only: programmatic Jackson serializer configuration_
 [source,java]
 ----------------------------------------
 LevelDBAggregationRepository repo = ...; //initialization of repository
@@ -158,6 +160,7 @@ Limitation of jackson serializer is caused by binary data:
 * If payload contains objects with binary fields. Those fields won't be serialized/deserialized correctly. Customized serializer
 can be used to solve this problem. Please use custom serializer with Jackson by providing own Module:
 
+._Java-only: custom Jackson module with serializer and deserializer_
 [source,java]
 ----------------------------------------
 SimpleModule simpleModule = new SimpleModule();

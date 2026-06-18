@@ -150,6 +150,7 @@ part of the JMS endpoint URL, but it will be ignored in this example.
 In the `computeDestination` bean, specify the real destination by
 setting the `CamelJmsDestinationName` header as follows:
 
+._Java-only: programmatic header manipulation with Exchange API_
 [source,java]
 -------------------------------------------------------------------------
 public void setJmsHeader(Exchange exchange) {
@@ -178,11 +179,38 @@ For example, suppose you need to send messages to queues with order types,
 then using toD could, for example, be done as follows:
 
 .Example SJMS2 route with `toD`
+[tabs]
+====
+Java::
++
 [source,java]
 --------------------------------
 from("direct:order")
   .toD("sjms2:order-${header.orderType}");
 --------------------------------
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <toD uri="sjms2:order-${header.orderType}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - toD:
+            uri: "sjms2:order-${header.orderType}"
+----
+====
 
 === Local transactions
 

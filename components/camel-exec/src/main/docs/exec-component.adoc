@@ -91,6 +91,7 @@ The example below executes `wc` (word count, Linux) to count the words
 in file `/usr/share/dict/words`. The word count (_output_) is written to
 the standard output stream of `wc`:
 
+._Java-only: route with inline Processor to handle ExecResult_
 [source,java]
 --------------------------------------------------------------------------------------
 from("direct:exec")
@@ -234,6 +235,7 @@ used as the _out file_ with `outFile=CamelExecOutFile.txt`. The example
 assumes that `ant.bat` is in the system path, and that
 `CamelExecBuildFile.xml` is in the current directory.
 
+._Java-only: route with inline Processor to handle output file_
 [source,java]
 -------------------------------------------------------------------------------------------------------
 from("direct:exec")

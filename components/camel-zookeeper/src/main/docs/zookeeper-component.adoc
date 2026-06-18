@@ -190,6 +190,7 @@ not to `/somepath/somenode` but to the path from the header
 WARNING: the `testPayload` must be convertible
 to `byte[]` as the data stored in ZooKeeper is byte-based.
 
+._Java-only: ProducerTemplate with dynamic znode header_
 [source,java]
 ----
 Object testPayload = ...
@@ -334,6 +335,7 @@ or using the header `CamelZookeeperCreateMode`.
 WARNING: the `testPayload` must be convertible to `byte[]` as the data stored in
 ZooKeeper is byte-based.
 
+._Java-only: ProducerTemplate with create mode header_
 [source,java]
 ----
 Object testPayload = ...

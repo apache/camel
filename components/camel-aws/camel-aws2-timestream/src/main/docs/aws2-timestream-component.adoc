@@ -233,6 +233,7 @@ In AWS Timestream there are multiple operations you can submit, as an example fo
 * Write Operation
 ** createDatabase: this operation will create a timestream database
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
@@ -243,6 +244,7 @@ from("direct:start")
 * Query Operation
 ** query: this operation will execute a timestream query
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:query")

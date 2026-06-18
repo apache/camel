@@ -49,6 +49,7 @@ For the SMB producer to operate correctly, the header `Exchange.FILE_NAME` has t
 
 For instance, polling all the files from an SMB file share and reading their contents would look like this:
 
+._Java-only: uses fromF with string formatting and method reference Processor_
 [source,java]
 ----
 private void process(Exchange exchange) throws IOException {
@@ -71,6 +72,7 @@ NOTE: you may also get the file contents as an InputStream using `exchange.getMe
 You can also get access to the file using the underlying `File` implementation provided by Camel. In that case, polling all the
 files from an SMB file share and reading their contents would look like this:
 
+._Java-only: uses SmbFile class, type casts, fromF with string formatting, and method reference Processor_
 [source,java]
 ----
 private void process(Exchange exchange) throws IOException {

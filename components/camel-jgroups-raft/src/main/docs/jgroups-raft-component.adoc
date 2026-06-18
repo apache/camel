@@ -131,12 +131,40 @@ The snippet below demonstrates how to create the consumer endpoint
 listening to the change role events.
 By default, this option is off.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------------------------------------------------------
-...
-from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to(mock:mockEndpoint);
-...
----------------------------------------------------------------------
+----
+from("jgroups-raft:clusterName?enableRoleChangeEvents=true")
+    .to("mock:mockEndpoint");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jgroups-raft:clusterName?enableRoleChangeEvents=true"/>
+  <to uri="mock:mockEndpoint"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jgroups-raft:clusterName
+      parameters:
+        enableRoleChangeEvents: true
+      steps:
+        - to:
+            uri: mock:mockEndpoint
+----
+====
 
 === Keeping singleton route within the cluster
 
@@ -147,6 +175,7 @@ particular example, we want to keep singleton xref:jetty-component.adoc[jetty]
 instance listening for the requests on
 address` http://localhost:8080/orders`.
 
+._Java-only: programmatic JGroupsRaftClusterService configuration_
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 JGroupsRaftClusterService service = new JGroupsRaftClusterService();
@@ -156,7 +185,7 @@ service.setJgroupsClusterName("clusterName");
 ...
 context.addService(service);
 
-from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
+from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders");
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

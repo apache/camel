@@ -38,6 +38,7 @@ include::partial$dataformat-options.adoc[]
 To use the data format, instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
 
+._Java-only: programmatic FlatpackDataFormat configuration and unmarshal_
 [source,java]
 ---------------------------------------------------------------------------
   FlatpackDataFormat fp = new FlatpackDataFormat();
@@ -51,6 +52,7 @@ unmarshal the input using the Flatpack configuration file
 `INVENTORY-Delimited.pzmap.xml` that configures the structure of the
 files. The result is a `DataSetList` object we store on the SEDA queue.
 
+._Java-only: programmatic FlatpackDataFormat configuration and marshal_
 [source,java]
 -----------------------------------------------------------------------------------
 FlatpackDataFormat df = new FlatpackDataFormat();

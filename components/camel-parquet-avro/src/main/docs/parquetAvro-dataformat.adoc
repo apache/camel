@@ -31,6 +31,7 @@ There are ways to unmarshal parquet files/structures, usually binary parquet fil
 
 In this first example we unmarshal file payload to OutputStream and send it to mock endpoint, then we will be able to get GenericRecord or POJO (it could be a list if that is coming through)
 
+._Java-only: unmarshal with a local parquet data format variable_
 [source,java]
 -----------------------------------------------------------------------
 from("direct:unmarshal").unmarshal(parquet).to("mock:unmarshal");
@@ -40,6 +41,7 @@ from("direct:unmarshal").unmarshal(parquet).to("mock:unmarshal");
 
 Marshalling is the reverse process of unmarshalling, so when you have your `GenericRecord` or POJO and marshal it, you will get the parquet-formatted output stream on your producer endpoint.
 
+._Java-only: marshal with a local parquet data format variable_
 [source,java]
 -----------------------------------------------------------------------
 from("direct:marshal").marshal(parquet).to("mock:marshal");

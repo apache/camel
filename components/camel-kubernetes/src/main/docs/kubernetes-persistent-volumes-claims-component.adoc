@@ -55,6 +55,7 @@ This operation returns a list of PVC from your cluster
 
 - `listPersistentVolumesClaimsByLabels`: this operation lists the PVCs by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor, Java constants, and `toF()`_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {

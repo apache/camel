@@ -199,6 +199,7 @@ code to the SMSC. This feature is useful to e.g., instruct the SMSC to
 resend the short message at a later time. This could be done with the
 following lines of code:
 
+._Java-only: uses doTry/doCatch with Exception.class literal and ProcessRequestException constructor_
 [source,java]
 --------------------------------------------------------------------------------------------------------------------------
 from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer")
@@ -296,6 +297,7 @@ YAML::
 
 An example of using transceiver (TRX) binding type:
 
+._Java-only: multi-route definition with string concatenation and route id assignment_
 [source,java]
 --------------------------------------------------------------------------------------------------------------------------
 from("direct:start")

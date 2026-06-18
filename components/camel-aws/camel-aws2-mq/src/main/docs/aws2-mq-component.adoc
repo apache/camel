@@ -123,6 +123,7 @@ YAML::
 
 - createBroker: this operation will create an MQ Broker in AWS
 
+._Java-only: uses inline Processor, Java constants, and AWS SDK builders_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:createBroker")
@@ -141,7 +142,7 @@ from("direct:createBroker")
                 user.password("camelpwd");
                 users.add(user.build());
                 exchange.getIn().setHeader(MQ2Constants.BROKER_USERS, users);
-						
+
        }
     })
     .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker")
@@ -242,6 +243,7 @@ YAML::
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS MQ, there are multiple operations you can submit, as an example for List brokers request, you can do something like:
 
+._Java-only: uses AWS SDK POJO request builder as message body_
 [source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:aws2-mq")

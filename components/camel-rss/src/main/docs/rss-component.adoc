@@ -160,6 +160,7 @@ YAML::
 
 The custom bean for this would be:
 
+._Java-only: bean class definition with annotations and type casts_
 [source,java]
 ----
 public static class FilterBean {
@@ -182,6 +183,7 @@ Instead of directly using `from("rss:...")`, you can configure an HTTP client wi
 
 Below is an example that sets up an HTTP client with a proxy (including authentication support) and uses it to retrieve and process an RSS feed:
 
+._Java-only: programmatic proxy configuration with HttpClientConfigurer, registry binding, and RouteBuilder class_
 [source,java]
 ----
 protected RoutesBuilder createRouteBuilder() throws Exception {

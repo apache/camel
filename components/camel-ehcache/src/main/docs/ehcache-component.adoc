@@ -49,11 +49,12 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Ehcache based idempotent repository example:
 
+._Java-only: programmatic CacheManager and idempotent repository configuration_
 [source,java]
 ------------------------------------------------------------------------------------------------
 CacheManager manager = CacheManagerBuilder.newCacheManager(new XmlConfiguration("ehcache.xml"));
 EhcacheIdempotentRepository repo = new EhcacheIdempotentRepository(manager, "idempotent-cache");
- 
+
 from("direct:in")
     .idempotentConsumer(header("messageId"), idempotentRepo)
     .to("mock:out");
@@ -63,6 +64,7 @@ from("direct:in")
 
 === Ehcache based aggregation repository example:
 
+._Java-only: full test class with aggregation repository configuration_
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------
 public class EhcacheAggregationRepositoryRoutesTest extends CamelTestSupport {

@@ -97,6 +97,7 @@ The `Exchange` is transferred as:
 You can set up a custom Thymeleaf Context yourself by
 setting property `allowTemplateFromHeader=true` and setting the message header `CamelThymeleafContext` like this
 
+._Java-only: programmatic Thymeleaf context setup via Exchange API_
 [source,java]
 -----------------------------------------------------------------------
 EngineContext engineContext = new EngineContext(variableMap);
@@ -403,6 +404,7 @@ Regards Camel Riders Bookstore
 
 And the java code (from a unit test):
 
+._Java-only: unit test with Exchange creation and RouteBuilder_
 [source,java]
 ----
     private Exchange createLetter() {

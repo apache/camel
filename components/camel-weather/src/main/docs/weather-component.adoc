@@ -183,6 +183,7 @@ YAML::
 And we can send in a message with a header to get the weather for any
 location as shown:
 
+._Java-only: ProducerTemplate API usage_
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
 String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "Paris,France&appid=APIKEY", String.class);
@@ -190,6 +191,7 @@ String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLoc
 
 And to get the weather at the current location, then:
 
+._Java-only: ProducerTemplate API usage_
 [source,java]
 --------------------------------------------------------------------------------------------------------------------------------
 String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);

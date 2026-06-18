@@ -188,6 +188,7 @@ For example, to define a route that exposes an HTTP service under the path `/ser
 
 === Example route
 
+._Java-only: inline Processor with Exchange API and string concatenation_
 [source,java]
 -------------------------------------------------------------------------
 from("servlet:hello").process(new Processor() {
@@ -277,10 +278,39 @@ In this scenario, you *must* define a custom and unique servlet name in each of 
 
 In your Camel servlet endpoints, include the servlet name:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ---------------------------------------------------
 from("servlet://foo?servletName=MyServlet")
 ---------------------------------------------------
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="servlet://foo?servletName=MyServlet"/>
+  <!-- ... -->
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: servlet://foo
+      parameters:
+        servletName: MyServlet
+      steps:
+        - to:
+            uri: direct:businessLogic
+----
+====
 
 Camel detects duplicate Servlet names and will fail to
 start the application. You can control and ignore such duplicates by

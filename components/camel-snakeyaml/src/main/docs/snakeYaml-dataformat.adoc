@@ -71,7 +71,8 @@ YAML DSL::
             uri: mqseries:Another.Queue
 ----
 ====
-+
+
+._Java-only: selecting the SnakeYAML library explicitly_
 [source,java]
 ------------------------------------------------------------
 from("activemq:My.Queue")
@@ -80,7 +81,8 @@ from("activemq:My.Queue")
 ------------------------------------------------------------
 
 - Restrict classes to be loaded from YAML
-+
+
+._Java-only: programmatic type filter configuration_
 [source,java]
 ------------------------------------------------------------
 // Creat a SnakeYAMLDataFormat instance

@@ -66,6 +66,7 @@ Business Cloud API.
 
 in Java DSL
 
+._Java-only: inline Processor lambda with TextMessageRequest construction_
 [source,java]
 ---------------------------------------------------------
 from("direct:start")
@@ -74,7 +75,7 @@ from("direct:start")
 		 request.setTo(insertYourRecipientPhoneNumberHere);
 		 request.setText(new TextMessage());
 		 request.getText().setBody("This is an auto-generated message from Camel \uD83D\uDC2B");
-        
+
 		 exchange.getIn().setBody(request);
 	})
 	.to("whatsapp:123456789:insertYourPhoneNumberIdHere?authorizationToken=123456789:insertYourAuthorizationTokenHere");
@@ -100,6 +101,7 @@ Once done, you need to prepend the webhook URI to the whatsapp URI you want to u
 
 In Java DSL:
 
+._Java-only: uses fromF with string formatting_
 [source,java]
 ---------------------------------------------------------
 fromF("webhook:whatsapp:%s?authorizationToken=%s&webhookVerifyToken=%s", "<phoneNumberId>", "<AuthorizationToken>", "<webhookVerifyToken>").log("${body}")

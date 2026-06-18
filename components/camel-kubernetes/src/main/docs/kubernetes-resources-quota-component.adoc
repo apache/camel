@@ -43,6 +43,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listResourcesQuota`: this operation lists the resource quotas on a kubernetes cluster
 
+._Java-only: uses `toF()` for URI formatting_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
@@ -54,6 +55,7 @@ This operation returns a list of resource quotas from your cluster
 
 - `listResourcesQuotaByLabels`: this operation lists the resource quotas by labels on a kubernetes cluster
 
+._Java-only: uses inline Processor, Java constants, and `toF()`_
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listByLabels").process(new Processor() {
