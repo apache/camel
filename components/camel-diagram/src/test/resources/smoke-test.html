@@ -137,6 +137,7 @@
             { type: 'from',           id: 'f1',  level: 1, code: 'from[timer:probe?period=5s]' },
             { type: 'circuitBreaker', id: 'cb1', level: 1, code: 'circuitBreaker[resilience4j]' },
             { type: 'to',             id: 't1',  level: 2, code: 'to[http:payment-svc/api/charge]' },
+            // onFallback is modeled as a `when` node — the component has no dedicated onFallback type styling
             { type: 'when',           id: 'fb1', level: 2, code: 'onFallback' },
             { type: 'log',            id: 'l1',  level: 3, code: 'log[Service unavailable]' },
             { type: 'log',            id: 'l2',  level: 1, code: 'log[Result: ${body}]' },
@@ -696,7 +697,7 @@
           Nodes in the generator route use the <code>description</code> field for human-readable labels.
         </p>
       </div>
-      <div class="card-body diagram-scroll" style="overflow-x: scroll;">
+      <div class="card-body diagram-scroll">
         <camel-route-diagram src="/mock/multi-route"></camel-route-diagram>
       </div>
     </div>

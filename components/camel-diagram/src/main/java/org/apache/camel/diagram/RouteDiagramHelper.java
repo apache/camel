@@ -99,13 +99,15 @@ public final class RouteDiagramHelper {
                             stat = new RouteDiagramLayoutEngine.StatInfo();
                         }
                         node.stat = stat;
-                        stat.idleSince = ls.getLong("idleSince");
-                        stat.exchangesTotal = ls.getLong("exchangesTotal");
-                        stat.exchangesFailed = ls.getLong("exchangesFailed");
-                        stat.exchangesInflight = ls.getLong("exchangesInflight");
-                        stat.meanProcessingTime = ls.getLong("meanProcessingTime");
-                        stat.maxProcessingTime = ls.getLong("maxProcessingTime");
-                        stat.minProcessingTime = ls.getLong("minProcessingTime");
+                        // counters default to 0 so a partial statistics object (missing a field) does not NPE on
+                        // auto-unboxing into the primitive long fields of StatInfo
+                        stat.idleSince = ls.getLongOrDefault("idleSince", 0);
+                        stat.exchangesTotal = ls.getLongOrDefault("exchangesTotal", 0);
+                        stat.exchangesFailed = ls.getLongOrDefault("exchangesFailed", 0);
+                        stat.exchangesInflight = ls.getLongOrDefault("exchangesInflight", 0);
+                        stat.meanProcessingTime = ls.getLongOrDefault("meanProcessingTime", 0);
+                        stat.maxProcessingTime = ls.getLongOrDefault("maxProcessingTime", 0);
+                        stat.minProcessingTime = ls.getLongOrDefault("minProcessingTime", 0);
                         stat.lastProcessingTime = ls.getLongOrDefault("lastProcessingTime", -1);
                         stat.deltaProcessingTime = ls.getLongOrDefault("deltaProcessingTime", -1);
                         stat.lastCreatedExchangeTimestamp = ls.getLongOrDefault("lastCreatedExchangeTimestamp", -1);

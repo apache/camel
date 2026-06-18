@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Ports the Vitest layout.test.js suite to JUnit, covering computeSubtreeWidth and assignPositions behaviour through
- * the public layoutRoute() API.
+ * Verifies computeSubtreeWidth and assignPositions behaviour through the public layoutRoute() API. The same scenarios
+ * are mirrored in the browser tests in integration-test.html.
  *
  * Java constants (default constructor, SCALE=2): nodeWidth = 360 (DEFAULT_BOX_WIDTH * SCALE) hGap = 180 (nodeWidth / 2)
  * V_GAP = 80 (40 * SCALE) PADDING = 60 (30 * SCALE)

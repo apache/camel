@@ -35,7 +35,10 @@ function buildTree(nodes) {
 
     for (let i = 1; i < nodes.length; i++) {
         const ni = nodes[i];
-        if (!ni.id) continue;
+        if (!ni.id) {
+            console.warn('camel-route-diagram: node without an id is omitted from the diagram', ni);
+            continue;
+        }
         const tn = { info: ni, children: [], parent: null, subtreeWidth: 0 };
 
         if (ni.level > current.info.level) {
@@ -101,7 +104,10 @@ function lastChainId(node) {
 }
 
 function assignPositions(node, x, y, parentWidth, positions) {
-    if (!node.info.id) return y + NODE_H;
+    if (!node.info.id) {
+        console.warn('camel-route-diagram: node without an id is omitted from the diagram', node.info);
+        return y + NODE_H;
+    }
 
     const available = Math.max(node.subtreeWidth, parentWidth);
     const nodeX = x + (available - NODE_W) / 2;
@@ -231,6 +237,12 @@ function esc(s) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+}
+
+// Node ids are interpolated into a DOM id and a url(#...) reference, so restrict them to characters that are
+// safe in both contexts (esc() alone would not produce a valid id fragment).
+function safeId(id) {
+    return String(id).replace(/[^A-Za-z0-9_-]/g, '_');
 }
 
 const COMPONENT_STYLE = `
@@ -400,7 +412,7 @@ class CamelRouteDiagram extends HTMLElement {
         const pfx  = `t${this.#uid}r${routeIdx}`;
         const defs = ids.map(id => {
             const p = positions[id];
-            return `<clipPath id="${pfx}${id}">` +
+            return `<clipPath id="${pfx}${safeId(id)}">` +
                    `<rect x="${p.x + 28}" y="${p.y}" width="${NODE_W - 30}" height="${NODE_H}"/></clipPath>`;
         }).join('');
         return `<div class="route-col">
@@ -409,7 +421,7 @@ class CamelRouteDiagram extends HTMLElement {
            aria-label="Route diagram for ${esc(route.routeId)}">
         <defs>${defs}</defs>
         ${ids.map(id => this.#edgeHTML(id, positions)).join('')}
-        ${ids.map(id => this.#nodeHTML(positions[id], `${pfx}${id}`)).join('')}
+        ${ids.map(id => this.#nodeHTML(positions[id], `${pfx}${safeId(id)}`)).join('')}
       </svg>
     </div>`;
     }

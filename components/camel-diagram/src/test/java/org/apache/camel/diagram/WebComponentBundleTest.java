@@ -25,6 +25,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Verifies that the web component and its third-party notices are bundled on the classpath, and that the bundle still
+ * contains the load-bearing markers a custom element needs. These are packaging-integrity checks based on text content,
+ * not runtime behaviour tests: the actual rendering, layout and fetch lifecycle of the component are exercised in the
+ * browser by {@code src/test/resources/integration-test.html}, which is not run as part of the CI build.
+ */
 class WebComponentBundleTest {
 
     @Test
