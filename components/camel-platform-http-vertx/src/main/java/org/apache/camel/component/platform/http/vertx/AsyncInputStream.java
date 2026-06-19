@@ -48,6 +48,7 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     private final Vertx vertx;
     private final Context context;
     private final InboundBuffer<Buffer> queue;
+    private final boolean eagerFlush;
     private long readPos;
     private boolean closed;
     private boolean readInProgress;
@@ -56,9 +57,14 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     private Handler<Throwable> exceptionHandler;
 
     public AsyncInputStream(Vertx vertx, Context context, InputStream inputStream) {
+        this(vertx, context, inputStream, false);
+    }
+
+    public AsyncInputStream(Vertx vertx, Context context, InputStream inputStream, boolean eagerFlush) {
         this.vertx = vertx;
         this.context = context;
         this.channel = Channels.newChannel(inputStream);
+        this.eagerFlush = eagerFlush;
         this.queue = new InboundBuffer<>(context, 0);
         queue.handler(buffer -> {
             if (buffer.length() > 0) {
@@ -222,22 +228,24 @@ public class AsyncInputStream implements ReadStream<Buffer> {
                             // EOF
                             context.runOnContext((v) -> {
                                 buffer.flip();
+                                int written = offset + buffer.limit();
                                 writeBuff.setBytes(offset, buffer);
                                 buffer.compact();
-                                handler.handle(Future.succeededFuture(writeBuff));
+                                handler.handle(Future.succeededFuture(writeBuff.slice(0, written)));
                             });
-                        } else if (buffer.hasRemaining()) {
-                            // Read from the next offset
+                        } else if (!eagerFlush && buffer.hasRemaining()) {
+                            // Read from the next offset to fill the buffer
                             context.runOnContext((v) -> {
                                 doRead(writeBuff, offset, buffer, position + bytesRead, handler);
                             });
                         } else {
-                            // All data is written
+                            // Emit what we have (always for eagerFlush, or when buffer is full)
                             context.runOnContext((v) -> {
                                 buffer.flip();
+                                int written = offset + buffer.limit();
                                 writeBuff.setBytes(offset, buffer);
                                 buffer.compact();
-                                handler.handle(Future.succeededFuture(writeBuff));
+                                handler.handle(Future.succeededFuture(writeBuff.slice(0, written)));
                             });
                         }
                     } else {
