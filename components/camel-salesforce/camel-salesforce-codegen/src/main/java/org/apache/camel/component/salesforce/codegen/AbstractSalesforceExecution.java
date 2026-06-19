@@ -22,6 +22,7 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -245,7 +246,9 @@ public abstract class AbstractSalesforceExecution {
 
             SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
-            httpClient = new SalesforceHttpClient(sslContextFactory);
+            ExecutorService workerPool = camelContext.getExecutorServiceManager()
+                    .newSingleThreadExecutor(this, "SalesforceHttpClient");
+            httpClient = new SalesforceHttpClient(camelContext, workerPool, sslContextFactory);
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException("Error creating default SSL context: " + e.getMessage(), e);
         }
