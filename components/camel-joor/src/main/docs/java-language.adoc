@@ -6,8 +6,6 @@
 :since: 4.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: joor
 
 *Since Camel {since}*
 
@@ -386,5 +384,3 @@ If you use Maven you could add the following to your `pom.xml`, substituting the
   <version>x.x.x</version>
 </dependency>
 ---------------------------------------
-
-include::spring-boot:partial$starter.adoc[]

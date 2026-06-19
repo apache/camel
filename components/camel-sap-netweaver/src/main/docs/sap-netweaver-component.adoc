@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: sap-netweaver
 
 *Since Camel {since}*
 
@@ -169,7 +167,3 @@ Departure airport: JFK
 Destination city: SAN FRANCISCO
 Destination airport: SFO
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -6,8 +6,6 @@
 :since: 4.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: opentelemetry2
 
 *Since Camel {since}*
 

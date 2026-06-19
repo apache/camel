@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: splunk-hec
 
 *Since Camel {since}*
 
@@ -34,7 +32,6 @@ for this component:
 ----
 splunk-hec:[splunkURL]?[options]
 ----
-
 
 
 // component options: START
@@ -140,7 +137,3 @@ YAML::
             uri: "splunk-hec://localhost:8080?token=token&time=${headers[kafka.HEADERS].lastKey('TIME')}"
 ----
 ====
-
-
-
-include::spring-boot:partial$starter.adoc[]

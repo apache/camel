@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: metrics
 
 *Since Camel {since}*
 
@@ -984,7 +982,6 @@ is the name of the route. And `###type###` is the value of responses.
 |=======================================================================
 
 
-
 From Java code you can get hold of
 the `com.codahale.metrics.MetricRegistry` from the
 `org.apache.camel.component.metrics.routepolicy.MetricsRegistryService`
@@ -1081,6 +1078,3 @@ with `name=MetricsMessageHistoryService`.
 This factory allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from the inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
-
-
-include::spring-boot:partial$starter.adoc[]

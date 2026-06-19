@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: pg-replication-slot
 
 *Since Camel {since}*
 
@@ -98,7 +96,3 @@ YAML::
             uri: mock:result
 ----
 ====
-
-
-
-include::spring-boot:partial$starter.adoc[]

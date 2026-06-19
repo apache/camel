@@ -8,8 +8,6 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: paho
 
 *Since Camel {since}*
 
@@ -233,6 +231,3 @@ YAML::
           uri: paho:some/target/queue
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

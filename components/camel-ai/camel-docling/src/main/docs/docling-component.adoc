@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: docling
 
 *Since Camel {since}*
 
@@ -2711,4 +2710,3 @@ YAML::
 
 4. **Monitor with logging**: Use DEBUG level logging to monitor API calls and async task status.
 
-include::spring-boot:partial$starter.adoc[]

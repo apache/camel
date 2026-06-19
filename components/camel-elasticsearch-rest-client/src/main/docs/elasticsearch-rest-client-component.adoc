@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: elasticsearch-rest-client
 
 *Since Camel {since}*
 
@@ -425,5 +423,3 @@ from("direct:search")
     .setBody().constant(criteria)
     .to("elasticsearch-rest-client://myCluster?operation=SEARCH&indexName=myIndex");
 ----
-
-include::spring-boot:partial$starter.adoc[]

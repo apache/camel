@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -140,4 +139,3 @@ from("timer:foo?delay=1000&repeatCount=1")
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

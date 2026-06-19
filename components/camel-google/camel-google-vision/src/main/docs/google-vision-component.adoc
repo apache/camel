@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-vision
 
 *Since Camel {since}*
 
@@ -100,7 +99,6 @@ YAML::
               serviceAccountKey: /home/user/Downloads/my-key.json
 ----
 ====
-
 
 
 // component options: START
@@ -542,4 +540,3 @@ YAML::
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

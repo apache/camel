@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: lucene
 
 *Since Camel {since}*
 
@@ -219,6 +217,3 @@ from("direct:next")
     .to("bean:searchResultProcessor")
     .to("mock:searchResult");
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

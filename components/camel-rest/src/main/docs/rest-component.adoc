@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: rest
 
 *Since Camel {since}*
 
@@ -372,7 +370,3 @@ Camel distribution, that demonstrates how to use the
 Rest DSL with Servlet as
 transport that can be deployed on Apache Tomcat, or similar web
 containers.
-
-
-
-include::spring-boot:partial$starter.adoc[]

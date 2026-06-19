@@ -6,8 +6,6 @@
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -283,7 +281,3 @@ need to add the following dependency to your pom.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

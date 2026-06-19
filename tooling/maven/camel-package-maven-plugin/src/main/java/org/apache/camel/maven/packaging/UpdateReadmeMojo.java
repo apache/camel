@@ -81,9 +81,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     //Header attributes that are preserved through header generation
     private static final Pattern[] MANUAL_ATTRIBUTES = {
             Pattern.compile(":(group): *(.*)"),
-            Pattern.compile(":(summary-group): *(.*)"),
-            Pattern.compile(":(camel-spring-boot-name): *(.*)"),
-            Pattern.compile(":(starter-artifactid): *(.*)")
+            Pattern.compile(":(summary-group): *(.*)")
     };
 
     /**

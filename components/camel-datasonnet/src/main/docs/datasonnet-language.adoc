@@ -6,8 +6,6 @@
 :since: 3.7
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: datasonnet
 
 *Since Camel {since}*
 
@@ -406,7 +404,6 @@ YAML::
 ====
 
 
-
 == Migrating from DataWeave
 
 If you have existing DataWeave (`.dwl`) scripts, Camel provides a transpiler to convert them to DataSonnet format via the Camel CLI CLI.
@@ -453,6 +450,3 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

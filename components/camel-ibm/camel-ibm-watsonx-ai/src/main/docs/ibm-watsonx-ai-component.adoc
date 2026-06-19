@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: IBM
-:camel-spring-boot-name: ibm-watsonx-ai
 
 *Since Camel {since}*
 
@@ -1959,4 +1958,3 @@ Maven users will need to add the following dependency to their `pom.xml`.
 where `x.x.x` is the version number of Camel.
 
 // TODO restore once Spring Boot partials are released
-// include::spring-boot:partial$starter.adoc[]

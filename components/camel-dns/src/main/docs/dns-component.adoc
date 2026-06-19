@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: dns
 
 *Since Camel {since}*
 
@@ -239,6 +237,3 @@ YAML::
           uri: "..."
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

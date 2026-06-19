@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: graphql
 
 *Since Camel {since}*
 
@@ -329,6 +327,3 @@ public JsonObject addBookMutationVariables() {
 from("direct:start")
     .to("graphql://http://example.com/graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

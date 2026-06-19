@@ -7,9 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: xmlsecurity
-
 
 
 *Since Camel {since}*
@@ -72,8 +69,6 @@ successful, then the original content is extracted from the XML
 signature and set to the body of the out-message.
 * The `name` part in the URI can be chosen by the user to distinguish
 between different signer/verifier endpoints within the camel context.
-
-
 
 
 // component options: START
@@ -607,7 +602,3 @@ the XML signer endpoint).
 `CommitmentTypeIndication` element is not supported.
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
-
-
-
-include::spring-boot:partial$starter.adoc[]

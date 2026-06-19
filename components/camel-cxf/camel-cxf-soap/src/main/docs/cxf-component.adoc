@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: cxf-soap
 
 *Since Camel {since}*
 
@@ -1185,6 +1183,3 @@ e.g. `\http://localhost:8080/OrderEntry`.
 
 Apache CXF detects that you _only_ use HTTP and instantiates a
 `HttpURLConnectionFactoryImpl` instead of a `HttpsURLConnectionFactory`.
-
-
-include::spring-boot:partial$starter.adoc[]

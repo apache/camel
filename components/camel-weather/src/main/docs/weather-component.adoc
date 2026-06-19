@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: weather
 
 *Since Camel {since}*
 
@@ -41,7 +39,6 @@ for this component:
 ----
 weather://<unused name>[?options]
 ----
-
 
 
 // component options: START
@@ -196,6 +193,3 @@ And to get the weather at the current location, then:
 ----
 String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

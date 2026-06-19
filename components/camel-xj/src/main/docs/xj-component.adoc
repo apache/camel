@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: xj
 
 *Since Camel {since}*
 
@@ -48,7 +46,6 @@ component as well. At least look at the XSLT component documentation how to conf
 The *transformDirection* option is mandatory and must be either XML2JSON or JSON2XML.
 
 The *templateName* parameter allows using _identify transforma_ by specifying the name `identity`.
-
 
 
 // component options: START
@@ -552,6 +549,3 @@ This is required when you want to generate key names that contain chars that are
 | `boolean` | Generate a JSON boolean
 | `null` | Generate an empty value using the word null
 |===
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: schematron
 
 *Since Camel {since}*
 
@@ -244,6 +242,3 @@ to get you started on Schematron.
 * http://www.schematron.com[Schematron official site]. This contains
 links to other resources
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

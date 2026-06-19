@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: xmpp
 
 *Since Camel {since}*
 
@@ -40,7 +38,6 @@ conversations. +
  The component supports both producer and consumer (you can get messages
 from XMPP or send messages to XMPP). Consumer mode supports rooms
 starting.
-
 
 
 // component options: START
@@ -278,7 +275,3 @@ YAML::
 ====
 
  
-
-
-
-include::spring-boot:partial$starter.adoc[]

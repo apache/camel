@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Debezium
-:camel-spring-boot-name: debezium-sqlserver
 
 *Since Camel {since}*
 
@@ -172,4 +171,3 @@ This is especially true in regard to https://debezium.io/documentation/reference
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

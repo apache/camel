@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: stax
 
 *Since Camel {since}*
 
@@ -50,7 +48,6 @@ using the # syntax as shown:
 ----
 stax:#myHandler
 ----
-
 
 
 // component options: START
@@ -213,7 +210,3 @@ Alternatively, the example above could be implemented as follows in Spring XML
     </route>
   </camelContext>
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

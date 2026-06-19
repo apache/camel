@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: cxf-rest
 
 *Since Camel {since}*
 
@@ -462,6 +460,3 @@ queryMap.put("q1", "new");
 queryMap.put("q2", "world");
 inMessage.setHeader("CamelCxfRsQueryMap", queryMap);
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

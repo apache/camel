@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: caffeine
 
 *Since Camel {since}*
 
@@ -107,5 +105,3 @@ YAML::
 ====
 
 In this way, you'll work always on the same cache in the registry.
-
-include::spring-boot:partial$starter.adoc[]

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: arangodb
 
 *Since Camel {since}*
 
@@ -143,6 +141,3 @@ Exchange result = template.request("direct:query", exchange -> {
     exchange.getMessage().setHeader(AQL_QUERY_BIND_PARAMETERS, bindVars);
 });
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

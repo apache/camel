@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: language
 
 *Since Camel {since}*
 
@@ -297,5 +295,3 @@ YAML::
             uri: mock:result
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

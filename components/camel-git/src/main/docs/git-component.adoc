@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: git
 
 *Since Camel {since}*
 
@@ -165,5 +163,3 @@ from("git:///tmp/testRepo?type=commit&gitConfigFile=classpath:configfile")
 from("git:///tmp/testRepo?type=commit&gitConfigFile=http://somedomain.xyz/gitconfigfile")
     .to(....); // will load from http. You could also use https
 ----
-
-include::spring-boot:partial$starter.adoc[]

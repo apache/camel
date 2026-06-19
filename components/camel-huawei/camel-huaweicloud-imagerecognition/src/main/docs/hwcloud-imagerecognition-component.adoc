@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud
-:camel-spring-boot-name: huaweicloud-imagerecognition
 
 *Since Camel {since}*
 
@@ -210,4 +209,3 @@ YAML::
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

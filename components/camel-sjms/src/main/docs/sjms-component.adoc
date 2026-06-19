@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: sjms
 
 *Since Camel {since}*
 
@@ -56,7 +54,6 @@ example, to connect to the topic, `Stocks.Prices`, use:
 ----
 sjms:topic:Stocks.Prices
 ----
-
 
 
 // component options: START
@@ -315,7 +312,3 @@ Currently, the only correlation strategy is to use the `JMSCorrelationId`.
 The _InOut_ Consumer uses this strategy as well ensuring that all
 response messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
-
-
-
-include::spring-boot:partial$starter.adoc[]

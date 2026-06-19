@@ -6,8 +6,6 @@
 :since: 1.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -143,6 +141,3 @@ from("activemq:topic:OrdersTopic")
   .filter().method(my, "isGoldCustomer")
   .to("activemq:BigSpendersQueue");
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

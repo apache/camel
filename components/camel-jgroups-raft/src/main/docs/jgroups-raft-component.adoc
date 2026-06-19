@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: jgroups-raft
 
 *Since Camel {since}*
 
@@ -187,6 +185,3 @@ context.addService(service);
 
 from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders");
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

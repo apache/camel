@@ -6,8 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: zip-deflater
 
 *Since Camel {since}*
 
@@ -98,5 +96,3 @@ If you use Maven you could add the following to your `pom.xml`, substituting the
   <version>x.x.x</version>
 </dependency>
 ----
-
-include::spring-boot:partial$starter.adoc[]

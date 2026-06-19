@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: optaplanner
 
 *Since Camel {since}*
 
@@ -139,7 +137,3 @@ YAML::
               configFile: /org/foo/barSolverConfig.xml
 ----
 ====
-
-
-
-include::spring-boot:partial$starter.adoc[]

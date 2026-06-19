@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Hazelcast
-:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -265,4 +264,3 @@ YAML::
 Destroys the PN Counter instance:
 `template.sendBody("direct:destroy", null);`
 
-include::spring-boot:partial$starter.adoc[]

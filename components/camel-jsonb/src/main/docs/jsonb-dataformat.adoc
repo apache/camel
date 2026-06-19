@@ -6,8 +6,6 @@
 :since: 3.7
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: jsonb
 
 *Since Camel {since}*
 
@@ -54,7 +52,6 @@ YAML::
 == JSON-B Options
 
 
-
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
@@ -90,6 +87,3 @@ If you want to add the Johnzon implementation, and you are using maven, add foll
   <version>x.x.x</version>  
 </dependency>
 ----------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

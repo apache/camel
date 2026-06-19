@@ -6,8 +6,6 @@
 :since: 2.1
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: rss
 
 *Since Camel {since}*
 
@@ -138,6 +136,3 @@ YAML::
                   uri: mock:result
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

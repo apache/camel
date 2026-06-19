@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: influxdb
 
 *Since Camel {since}*
 
@@ -92,7 +90,3 @@ YAML::
               databaseName: myTimeSeriesDB
 ----
 ====
-
-
-
-include::spring-boot:partial$starter.adoc[]

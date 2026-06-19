@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: tensorflow-serving
 
 *Since Camel {since}*
 
@@ -438,4 +437,3 @@ from("direct:predict-with-headers")
     .log("Result3: ${body.getOutputsOrThrow('y').getFloatVal(2)}");
 ----
 
-include::spring-boot:partial$starter.adoc[]

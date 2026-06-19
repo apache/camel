@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: paho-mqtt5
 
 *Since Camel {since}*
 
@@ -233,6 +231,3 @@ YAML::
           uri: paho-mqtt5:some/target/queue
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

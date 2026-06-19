@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: xslt-saxon
 
 *Since Camel {since}*
 
@@ -42,7 +40,6 @@ You can append query options to the URI in the following format:
 |`xslt-saxon:file:///foo/bar.xsl` |Refers to the file `/foo/bar.xsl`
 |`xslt-saxon:http://acme.com/cheese/foo.xsl`|Refers to the remote http resource
 |=================================================================
-
 
 
 // component options: START
@@ -515,5 +512,3 @@ XSLT 3.0 XML representation of JSON is
    </array>
 </map>
 ----
-
-include::spring-boot:partial$starter.adoc[]

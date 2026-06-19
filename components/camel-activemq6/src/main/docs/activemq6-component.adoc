@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: activemq6
 
 *Since Camel {since}*
 
@@ -144,7 +142,3 @@ YAML::
             message: "Received a message - ${body}"
 ----
 ====
-
-
-
-include::spring-boot:partial$starter.adoc[]

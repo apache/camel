@@ -7,9 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: xmlsecurity
-
 
 
 *Since Camel {since}*
@@ -657,7 +654,3 @@ the XML signer endpoint).
 `CommitmentTypeIndication` element is not supported.
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
-
-
-
-include::spring-boot:partial$starter.adoc[]

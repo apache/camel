@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: couchbase
 
 *Since Camel {since}*
 
@@ -203,6 +201,3 @@ Check the compatibility https://docs.couchbase.com/java-sdk/current/project-docs
 
  * The value formerly interpreted as a bucket-name is now interpreted as a username. The username must correspond to a user defined on the cluster that is being accessed.
  * The value formerly interpreted as a bucket-password is now interpreted as the password of the defined user.
-
-
-include::spring-boot:partial$starter.adoc[]

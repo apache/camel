@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: wasm
 
 *Since Camel {since}*
 
@@ -139,7 +137,6 @@ pub extern fn process(ptr: u32, len: u32) -> u64 {
     let mut msg: Message = serde_json::from_slice(bytes).unwrap();
 
 
-
     let out_vec = serde_json::to_vec(&msg).unwrap();
     let out_len = out_vec.len();
     let out_ptr = alloc(out_len as u32);
@@ -193,5 +190,3 @@ YAML::
               module: classpath://functions.wasm
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

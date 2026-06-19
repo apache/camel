@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: hashicorp-vault
 
 *Since Camel {since}*
 
@@ -454,7 +452,6 @@ For example, if a secret named `database` is updated in Vault:
 
 This polling approach works with all Hashicorp Vault deployments (on-premise, cloud, enterprise, and open-source) without requiring additional infrastructure.
 
-include::spring-boot:partial$starter.adoc[]
 
 === Using Hashicorp Vault Property Function in Spring Boot for Early resolving properties
 

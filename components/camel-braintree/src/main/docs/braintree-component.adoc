@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: braintree
 
 *Since Camel {since}*
 
@@ -89,7 +87,3 @@ YAML::
 
 For more information on the endpoints and options see Braintree
 references at https://developers.braintreepayments.com/reference/overview[https://developers.braintreepayments.com/reference/overview]
-
-
-
-include::spring-boot:partial$starter.adoc[]

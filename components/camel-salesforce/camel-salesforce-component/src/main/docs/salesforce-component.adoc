@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: salesforce
 
 *Since Camel {since}*
 
@@ -2546,5 +2544,3 @@ The Maven plugin generates Java DTOs to represent salesforce objects.
 Please refer to
 https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
 for details on how to use the plugin.
-
-include::spring-boot:partial$starter.adoc[]

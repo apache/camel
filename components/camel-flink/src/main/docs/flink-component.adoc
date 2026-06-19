@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: flink
 
 *Since Camel {since}*
 
@@ -423,5 +421,3 @@ List<String> results = dataStream.executeAndCollect(1000);
 * https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/dataset/overview/[Apache Flink DataSet API Migration Guide]
 * https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/overview/[DataStream API Documentation]
 * https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/execution_mode/[Batch Execution Mode]
-
-include::spring-boot:partial$starter.adoc[]

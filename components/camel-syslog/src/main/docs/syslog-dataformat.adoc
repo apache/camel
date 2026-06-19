@@ -6,8 +6,6 @@
 :since: 2.6
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: syslog
 
 *Since Camel {since}*
 
@@ -216,7 +214,3 @@ YAML::
             uri: mina:udp://remotehost:10514
 ----
 ====
-
-
-
-include::spring-boot:partial$starter.adoc[]

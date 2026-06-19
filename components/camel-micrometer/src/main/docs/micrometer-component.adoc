@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: micrometer
 
 *Since Camel {since}*
 
@@ -65,7 +63,6 @@ mainly for testing.
 You should define a dedicated registry by providing
 a `MeterRegistry` bean. Micrometer registries primarily determine the backend monitoring system
 to be used. A `CompositeMeterRegistry` can be used to address more than one monitoring target.
-
 
 
 === Default Camel Metrics
@@ -987,5 +984,3 @@ For example, to capture data with Prometheus, you can add the following dependen
 ----
 
 See the following table for options to specify what metrics to capture, or to turn it off.
-
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: spring-ai-embeddings
 
 *Since Camel {since}*
 
@@ -154,4 +153,3 @@ When processing a List<String>, the component returns:
 ** `CamelSpringAiEmbeddingInputTexts` - The original input texts as List<String>
 ** `CamelSpringAiEmbeddingMetadata` - Response metadata
 
-include::spring-boot:partial$starter.adoc[]

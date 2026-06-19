@@ -6,8 +6,6 @@
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: spring-security
 
 *Since Camel {since}*
 
@@ -279,5 +277,3 @@ YAML::
                     constant: "You do not have ROLE_ADMIN access!"
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

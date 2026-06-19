@@ -6,8 +6,6 @@
 :since: 1.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: saxon
 
 *Since Camel {since}*
 
@@ -303,6 +301,3 @@ substituting the version number for the latest & greatest release.
   <version>x.x.x</version>
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

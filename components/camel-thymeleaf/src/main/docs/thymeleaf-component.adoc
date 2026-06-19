@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: thymeleaf
 
 *Since Camel {since}*
 
@@ -40,8 +38,6 @@ thymeleaf:templateName[?options]
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (e.g.:
 `\file://folder/myfile.html`).
-
-
 
 
 // component options: START
@@ -432,6 +428,3 @@ And the java code (from a unit test):
         .to("thymeleaf:org/apache/camel/component/thymeleaf/letter.txt")
         .to("mock:result");
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

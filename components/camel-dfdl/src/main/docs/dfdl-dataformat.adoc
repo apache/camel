@@ -6,8 +6,6 @@
 :since: 4.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: dfdl
 
 *Since Camel {since}*
 
@@ -100,5 +98,3 @@ YAML::
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-include::spring-boot:partial$starter.adoc[]

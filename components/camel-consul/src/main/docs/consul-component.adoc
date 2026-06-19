@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: consul
 
 *Since Camel {since}*
 
@@ -111,6 +109,3 @@ from("jetty:http://0.0.0.0:8080/service/endpoint").routeId("foo-1")
     .routePolicy(new ServiceRegistrationRoutePolicy())
 ...
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Ignite
-:camel-spring-boot-name: ignite
 
 *Since Camel {since}*
 
@@ -42,4 +41,3 @@ Each operation expects the indicated types:
 | AFFINITY_RUN | IgniteRunnable.
 |=======================================================================
 
-include::spring-boot:partial$starter.adoc[]

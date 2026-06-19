@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Hazelcast
-:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -478,4 +477,3 @@ YAML::
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

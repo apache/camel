@@ -6,8 +6,6 @@
 :since: 4.19
 :supportlevel: Preview
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: groovy
 
 *Since Camel {since}*
 
@@ -102,5 +100,3 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ----------------------------------------
-
-include::spring-boot:partial$starter.adoc[]

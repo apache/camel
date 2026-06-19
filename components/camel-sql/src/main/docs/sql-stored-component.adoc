@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: sql
 
 *Since Camel {since}*
 
@@ -65,7 +63,6 @@ SUBNUMBERS(
   OUT INTEGER out2
 )
 ----
-
 
 
 // component options: START
@@ -235,7 +232,3 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 ----
 
 You should also include the specific database driver, if needed.
-
-
-
-include::spring-boot:partial$starter.adoc[]

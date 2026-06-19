@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: dataformat
 
 *Since Camel {since}*
 
@@ -36,9 +34,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-
-
 
 
 == Examples
@@ -83,5 +78,3 @@ YAML::
             uri: mqseries:Another.Queue
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

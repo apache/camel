@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: jcache
 
 *Since Camel {since}*
 
@@ -346,6 +344,3 @@ If the determined _key_ is _null_, nothing is looked up or stored in cache.
 In case of an exception during the route, the error handled is called as always. If the exception gets `handled()`,
 the policy stores the Exchange body. Otherwise, nothing is added to the cache.
 If an exception happens during evaluating the keyExpression, the routing fails, the error handler is called as normally.
-
-
-include::spring-boot:partial$starter.adoc[]

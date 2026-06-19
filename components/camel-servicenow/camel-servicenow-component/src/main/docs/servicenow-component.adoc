@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: servicenow
 
 *Since Camel {since}*
 
@@ -35,7 +33,6 @@ for this component:
 ----
 servicenow://instanceName?[options]
 ----
-
 
 
 // component options: START
@@ -157,6 +154,3 @@ FluentProducerTemplate.on(context)
     .to("direct:servicenow")
     .send();
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

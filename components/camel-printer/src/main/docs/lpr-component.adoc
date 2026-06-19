@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: printer
 
 *Since Camel {since}*
 
@@ -200,6 +198,3 @@ YAML::
               flavor: DocFlavor.INPUT_STREAM
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

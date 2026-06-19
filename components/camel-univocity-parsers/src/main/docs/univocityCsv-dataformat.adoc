@@ -6,8 +6,6 @@
 :since: 2.15
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: univocity-parsers
 
 *Since Camel {since}*
 
@@ -52,7 +50,6 @@ section presents them all.
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
 
 
 == Marshalling usages
@@ -294,6 +291,3 @@ YAML::
             uri: mock:result
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -7,8 +7,6 @@
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: stripe
 
 *Since Camel {since}*
 

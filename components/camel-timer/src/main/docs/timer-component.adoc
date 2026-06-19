@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only consumer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: timer
 
 *Since Camel {since}*
 
@@ -204,7 +202,3 @@ YAML::
               method: someMethodName
 ----
 ====
-
-
-
-include::spring-boot:partial$starter.adoc[]

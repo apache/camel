@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -217,6 +215,3 @@ id `foo` and invoke the `setCool` method on the created instance of the
 See more details on the xref:bean-component.adoc[Bean] component as the *class*
 component works in much the same way.
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

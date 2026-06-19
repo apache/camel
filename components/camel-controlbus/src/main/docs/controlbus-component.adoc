@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: controlbus
 
 *Since Camel {since}*
 
@@ -150,6 +148,3 @@ message we sent to the control bus component.
 ====
 You can also use other languages such as xref:languages:groovy-language.adoc[Groovy], etc.
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -10,7 +10,6 @@
 
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: huggingface
 
 *Since Camel {since}*
 

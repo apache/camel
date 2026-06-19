@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-ddb
 
 *Since Camel {since}*
 
@@ -304,4 +303,3 @@ from("direct:batchWrite")
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

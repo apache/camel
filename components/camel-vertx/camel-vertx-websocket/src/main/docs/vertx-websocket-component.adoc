@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: vertx-websocket
 
 *Since Camel {since}*
 
@@ -34,7 +32,6 @@ for this component:
 ----
 vertx-websocket://hostname[:port][/resourceUri][?options]
 ----
-
 
 
 // component options: START
@@ -344,6 +341,3 @@ YAML::
 
 By default, the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
 via the `sslContextParameters` URI parameter and the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility]
-
-
-include::spring-boot:partial$starter.adoc[]
