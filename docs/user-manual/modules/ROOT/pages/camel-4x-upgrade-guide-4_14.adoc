@@ -995,6 +995,19 @@ the removed headers were redundant with the endpoint configuration. Routes that 
 on reading `CamelDaprPubSubName` / `CamelDaprTopic` from a consumed exchange should read
 the configured destination from the endpoint URI instead.
 
+=== camel-schematron - potential breaking change
+
+The Schematron rules-compilation `TransformerFactory` now runs with secure processing enabled
+(`FEATURE_SECURE_PROCESSING`) and with external DTD and external stylesheet access disabled
+(`accessExternalDTD` and `accessExternalStylesheet` set to empty), as defense-in-depth against XXE and
+external-resource resolution while compiling Schematron rules. This matches the hardening already applied
+to the component's `SAXParserFactory`. The bundled ISO Schematron skeleton stylesheets continue to be
+resolved from the classpath via the component's `URIResolver` and are therefore unaffected.
+
+If your Schematron rules legitimately reference an external DTD, external entity, or external stylesheet,
+those references will no longer be resolved and rule compilation will fail; inline the referenced content
+instead.
+
 == Upgrading from 4.14.2 to 4.14.3
 
 === camel-tika
