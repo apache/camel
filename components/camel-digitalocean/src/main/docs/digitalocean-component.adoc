@@ -8,8 +8,6 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: digitalocean
 
 *Since Camel {since}*
 
@@ -598,6 +596,3 @@ YAML::
               oAuthToken: XXXXXX
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -6,8 +6,6 @@
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: micrometer-observability
 
 *Since Camel {since}*
 
@@ -36,7 +34,6 @@ The configuration properties for the component are:
 |`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
-include::spring-boot:partial$starter.adoc[]
 
 === Spring Boot context propagation
 
@@ -187,12 +184,9 @@ public void process(Exchange exchange) throws Exception {
                         .setProperty("CamelBaggage_myValue", constant("1234"))
                         .routeId("start")
                         .log("A message")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                // Baggage is available via the Micrometer Observability API
-                                String val = tracer.getBaggage("myValue").get();
-                            }
+                        .process(exchange -> {
+                            // Baggage is available via the Micrometer Observability API
+                            String val = tracer.getBaggage("myValue").get();
                         })
                         .to("log:info");
 ----
@@ -202,4 +196,3 @@ Any span executed after the `setProperty` will include a baggage variable named 
 NOTE: an important thing to do is to include a `BaggageManager` specifying the baggage properties to include during context propagation. You may require to configure those baggages fields you want to propagate across the boards.
 
 Any baggage setting defined externally (i.e., calling the Camel process into another external process where you're setting some baggage) is normally going to be propagated in Camel logic.
-

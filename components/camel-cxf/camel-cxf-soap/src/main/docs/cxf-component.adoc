@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: cxf-soap
 
 *Since Camel {since}*
 
@@ -603,7 +601,7 @@ and setDefaultBus properties from spring configuration file.
 The Camel CXF endpoint consumer POJO data format is based on the
 http://cxf.apache.org/docs/invokers.html[CXF invoker], so the
 message header has a property with the name of
-`CxfConstants.OPERATION_NAME` and the message body is a list of the SEI
+`CamelCxfOperationName` and the message body is a list of the SEI
 operation parameters.
 
 Having simple java web service interface:
@@ -631,7 +629,7 @@ We can then create the simplest CXF service (note we didn't specify the `POJO` m
 ----
 from("cxf:textServiceResponseFromRoute?serviceClass=org.apache.camel.component.cxf.soap.server.TextService&address=/text-route")
     .process(exchange -> {
-        String operation = (String) exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);
+        String operation = (String) exchange.getIn().getHeader("CamelCxfOperationName");
         String inputArg = ((MessageContentsList) exchange.getIn().getBody()).get(0).toString();
         String result = null;
         if (operation.equals("upperCase")) {
@@ -669,7 +667,7 @@ final List<String> params = new ArrayList<>();
 // Prepare the request message for the camel-cxf procedure
 params.add(TEST_MESSAGE);
 senderExchange.getIn().setBody(params);
-senderExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
+senderExchange.getIn().setHeader("CamelCxfOperationName", ECHO_OPERATION);
 
 Exchange exchange = template.send("direct:EndpointA", senderExchange);
 
@@ -698,42 +696,30 @@ See https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soa
 ._Java-only: consuming and processing CXF PAYLOAD with `CxfPayload` API_
 [source,java]
 ----
-protected RouteBuilder createRouteBuilder() {
-    return new RouteBuilder() {
-        public void configure() {
-            from(simpleEndpointURI + "&dataFormat=PAYLOAD").to("log:info").process(new Processor() {
-                @SuppressWarnings("unchecked")
-                public void process(final Exchange exchange) throws Exception {
-                    CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
-                    List<Source> inElements = requestPayload.getBodySources();
-                    List<Source> outElements = new ArrayList<>();
-                    // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want
-                    String request = exchange.getIn().getBody(String.class);
-                    XmlConverter converter = new XmlConverter();
-                    String documentString = ECHO_RESPONSE;
+from(simpleEndpointURI + "&dataFormat=PAYLOAD").to("log:info").process(exchange -> {
+    CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
+    List<Source> inElements = requestPayload.getBodySources();
+    List<Source> outElements = new ArrayList<>();
+    String request = exchange.getIn().getBody(String.class);
+    XmlConverter converter = new XmlConverter();
+    String documentString = ECHO_RESPONSE;
 
-                    Element in = new XmlConverter().toDOMElement(inElements.get(0));
-                    // Check the element namespace
-                    if (!in.getNamespaceURI().equals(ELEMENT_NAMESPACE)) {
-                        throw new IllegalArgumentException("Wrong element namespace");
-                    }
-                    if (in.getLocalName().equals("echoBoolean")) {
-                        documentString = ECHO_BOOLEAN_RESPONSE;
-                        checkRequest("ECHO_BOOLEAN_REQUEST", request);
-                    } else {
-                        documentString = ECHO_RESPONSE;
-                        checkRequest("ECHO_REQUEST", request);
-                    }
-                    Document outDocument = converter.toDOMDocument(documentString, exchange);
-                    outElements.add(new DOMSource(outDocument.getDocumentElement()));
-                    // set the payload header with null
-                    CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements, null);
-                    exchange.getMessage().setBody(responsePayload);
-                }
-            });
-        }
-    };
-}
+    Element in = new XmlConverter().toDOMElement(inElements.get(0));
+    if (!in.getNamespaceURI().equals(ELEMENT_NAMESPACE)) {
+        throw new IllegalArgumentException("Wrong element namespace");
+    }
+    if (in.getLocalName().equals("echoBoolean")) {
+        documentString = ECHO_BOOLEAN_RESPONSE;
+        checkRequest("ECHO_BOOLEAN_REQUEST", request);
+    } else {
+        documentString = ECHO_RESPONSE;
+        checkRequest("ECHO_REQUEST", request);
+    }
+    Document outDocument = converter.toDOMDocument(documentString, exchange);
+    outElements.add(new DOMSource(outDocument.getDocumentElement()));
+    CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements, null);
+    exchange.getMessage().setBody(responsePayload);
+});
 ----
 
 === How to get and set SOAP headers in POJO mode
@@ -846,33 +832,27 @@ For example, see https://github.com/apache/camel/blob/main/components/camel-cxf/
 ._Java-only: accessing SOAP headers from `CxfPayload` in PAYLOAD mode_
 [source,java]
 ----
-from(getRouterEndpointURI()).process(new Processor() {
-    @SuppressWarnings("unchecked")
-    public void process(Exchange exchange) throws Exception {
-        CxfPayload<SoapHeader> payload = exchange.getIn().getBody(CxfPayload.class);
-        List<Source> elements = payload.getBodySources();
-        assertNotNull(elements, "We should get the elements here");
-        assertEquals(1, elements.size(), "Get the wrong elements size");
+from(getRouterEndpointURI()).process(exchange -> {
+    CxfPayload<SoapHeader> payload = exchange.getIn().getBody(CxfPayload.class);
+    List<Source> elements = payload.getBodySources();
+    assertNotNull(elements, "We should get the elements here");
+    assertEquals(1, elements.size(), "Get the wrong elements size");
 
-        Element el = new XmlConverter().toDOMElement(elements.get(0));
-        elements.set(0, new DOMSource(el));
-        assertEquals("http://camel.apache.org/pizza/types",
-                el.getNamespaceURI(), "Get the wrong namespace URI");
+    Element el = new XmlConverter().toDOMElement(elements.get(0));
+    elements.set(0, new DOMSource(el));
+    assertEquals("http://camel.apache.org/pizza/types",
+            el.getNamespaceURI(), "Get the wrong namespace URI");
 
-        List<SoapHeader> headers = payload.getHeaders();
-        assertNotNull(headers, "We should get the headers here");
-        assertEquals(1, headers.size(), "Get the wrong headers size");
-        assertEquals("http://camel.apache.org/pizza/types",
-                ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
-        // alternatively, you can also get the SOAP header via the camel header:
-        headers = exchange.getIn().getHeader(Header.HEADER_LIST, List.class);
-        assertNotNull(headers, "We should get the headers here");
-        assertEquals(1, headers.size(), "Get the wrong headers size");
-        assertEquals("http://camel.apache.org/pizza/types",
-                ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
-
-    }
-
+    List<SoapHeader> headers = payload.getHeaders();
+    assertNotNull(headers, "We should get the headers here");
+    assertEquals(1, headers.size(), "Get the wrong headers size");
+    assertEquals("http://camel.apache.org/pizza/types",
+            ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
+    headers = exchange.getIn().getHeader(Header.HEADER_LIST, List.class);
+    assertNotNull(headers, "We should get the headers here");
+    assertEquals(1, headers.size(), "Get the wrong headers size");
+    assertEquals("http://camel.apache.org/pizza/types",
+            ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
 })
 .to(getServiceEndpointURI());
 ----
@@ -949,17 +929,14 @@ response context with the following code:
 ._Java-only: setting request context and reading response context via `ProducerTemplate`_
 [source,java]
 ----
-CxfExchange exchange = (CxfExchange)template.send(getJaxwsEndpointUri(), new Processor() {
-     public void process(final Exchange exchange) {
-         final List<String> params = new ArrayList<String>();
-         params.add(TEST_MESSAGE);
-         // Set the request context to the inMessage
-         Map<String, Object> requestContext = new HashMap<String, Object>();
-         requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, JAXWS_SERVER_ADDRESS);
-         exchange.getIn().setBody(params);
-         exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
-         exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
-     }
+CxfExchange exchange = (CxfExchange)template.send(getJaxwsEndpointUri(), ex -> {
+    final List<String> params = new ArrayList<String>();
+    params.add(TEST_MESSAGE);
+    Map<String, Object> requestContext = new HashMap<String, Object>();
+    requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, JAXWS_SERVER_ADDRESS);
+    ex.getIn().setBody(params);
+    ex.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
+    ex.getIn().setHeader("CamelCxfOperationName", GREET_ME_OPERATION);
 });
 org.apache.camel.Message out = exchange.getMessage();
 // The output is an object array, the first element of the array is the return value
@@ -997,85 +974,22 @@ SwA is the default (same as setting the CXF endpoint property `mtomEnabled` to `
 
 To enable MTOM, set the CXF endpoint property `mtomEnabled` to `true`.
 
-[tabs]
-====
-Java (Quarkus)::
-+
-[source,java]
-----
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.DataFormat;
-import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Named;
-
-@ApplicationScoped
-public class CxfSoapMtomRoutes extends RouteBuilder {
-
-    @Override
-    public void configure() {
-        from("cxf:bean:mtomPayloadModeEndpoint")
-                .process( exchange -> { ... });
-    }
-
-    @Produces
-    @SessionScoped
-    @Named
-    CxfEndpoint mtomPayloadModeEndpoint() {
-        final CxfEndpoint result = new CxfEndpoint();
-        result.setServiceClass(MyMtomService.class);
-        result.setDataFormat(DataFormat.PAYLOAD);
-        result.setMtomEnabled(true);
-        result.setAddress("/mtom/hello");
-        return result;
-    }
-}
-----
-
-XML (Spring)::
-+
-[source,xml]
-----
-<cxf:cxfEndpoint id="mtomPayloadModeEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfMtomRouterPayloadModeTest/mtom"
-        wsdlURL="mtom.wsdl"
-        serviceName="ns:MyMtomService"
-        endpointName="ns:MyMtomPort"
-        xmlns:ns="http://apache.org/camel/cxf/mtom_feature">
-
-    <cxf:properties>
-        <!--  enable mtom by setting this property to true -->
-        <entry key="mtom-enabled" value="true"/>
-        <!--  set the Camel CXF endpoint data format to PAYLOAD mode -->
-        <entry key="dataFormat" value="PAYLOAD"/>
-    </cxf:properties>
-</cxf:cxfEndpoint>
-----
-====
-
 You can produce a Camel message with attachment to send to a CXF endpoint in Payload mode.
 
 ._Java-only: sending and receiving MTOM attachments via `ProducerTemplate`_
 [source,java]
 ----
-Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint", new Processor() {
-
-    public void process(Exchange exchange) throws Exception {
-        exchange.setPattern(ExchangePattern.InOut);
-        List<Source> elements = new ArrayList<Source>();
-        elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement()));
-        CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
-            elements, null);
-        exchange.getIn().setBody(body);
-        exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
-            new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
-
-        exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
-            new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
-
-    }
-
+Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint", ex -> {
+    ex.setPattern(ExchangePattern.InOut);
+    List<Source> elements = new ArrayList<Source>();
+    elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement()));
+    CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+        elements, null);
+    ex.getIn().setBody(body);
+    ex.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
+        new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
+    ex.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
+        new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
 });
 
 // process response
@@ -1180,7 +1094,7 @@ Here is the code snippet:
 [source,java]
 ----
 org.apache.cxf.message.Message cxfMessage = exchange.getIn().getHeader(
-        CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
+        "CamelCxfMessage", org.apache.cxf.message.Message.class);
 ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
 String remoteAddress = request.getRemoteAddr();
 ----
@@ -1269,6 +1183,3 @@ e.g. `\http://localhost:8080/OrderEntry`.
 
 Apache CXF detects that you _only_ use HTTP and instantiates a
 `HttpURLConnectionFactoryImpl` instead of a `HttpsURLConnectionFactory`.
-
-
-include::spring-boot:partial$starter.adoc[]

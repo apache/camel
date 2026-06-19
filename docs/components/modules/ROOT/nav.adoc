@@ -78,6 +78,7 @@
 *** xref:aws2-translate-component.adoc[AWS Translate]
 ** xref:azure-summary.adoc[Azure]
 *** xref:azure-cosmosdb-component.adoc[Azure CosmosDB]
+*** xref:azure-eventgrid-component.adoc[Azure Event Grid]
 *** xref:azure-eventhubs-component.adoc[Azure Event Hubs]
 *** xref:azure-files-component.adoc[Azure Files]
 *** xref:azure-functions-component.adoc[Azure Functions]

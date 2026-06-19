@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: file-watch
 
 *Since Camel {since}*
 
@@ -148,5 +146,3 @@ YAML::
             uri: file:some-directory/snapshots
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

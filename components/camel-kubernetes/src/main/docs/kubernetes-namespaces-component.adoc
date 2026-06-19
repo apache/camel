@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -86,18 +85,13 @@ This operation returns a list of namespaces from your cluster
 
 - `listNamespacesByLabels`: this operation lists the namespaces by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesNamespaceLabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesNamespaceLabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespacesByLabels")
     .to("mock:result");
@@ -150,4 +144,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `resourceName` - Watch the Namespace with the specified name.
 
 
-include::spring-boot:partial$starter.adoc[]

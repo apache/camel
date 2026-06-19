@@ -92,7 +92,6 @@ public class CamelCatalogTui extends CamelCommand {
     public Integer doCall() throws Exception {
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
-        TuiHelper.preloadClasses(classLoader);
 
         loadCatalog();
 

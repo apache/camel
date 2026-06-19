@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: velocity
 
 *Since Camel {since}*
 
@@ -41,8 +39,6 @@ velocity:templateName[?options]
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (e.g.:
 `\file://folder/myfile.vm`).
-
-
 
 
 // component options: START
@@ -435,6 +431,3 @@ And the java code (from an unit test):
         .to("velocity:org/apache/camel/component/velocity/letter.vm")
         .to("mock:result");
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

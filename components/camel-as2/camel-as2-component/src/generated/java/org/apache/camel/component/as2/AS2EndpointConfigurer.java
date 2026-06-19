@@ -65,6 +65,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("MdnPassword", java.lang.String.class);
         map.put("MdnUserName", java.lang.String.class);
         map.put("Password", java.lang.String.class);
+        map.put("SignatureVerificationRequired", boolean.class);
         map.put("SignedReceiptMicAlgorithms", java.lang.String.class);
         map.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
         map.put("SigningCertificateChain", java.security.cert.Certificate[].class);
@@ -150,6 +151,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverFqdn": target.getConfiguration().setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
         case "serverportnumber":
         case "serverPortNumber": target.getConfiguration().setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "signatureverificationrequired":
+        case "signatureVerificationRequired": target.getConfiguration().setSignatureVerificationRequired(property(camelContext, boolean.class, value)); return true;
         case "signedreceiptmicalgorithms":
         case "signedReceiptMicAlgorithms": target.getConfiguration().setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String.class, value)); return true;
         case "signingalgorithm":
@@ -254,6 +257,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverFqdn": return java.lang.String.class;
         case "serverportnumber":
         case "serverPortNumber": return java.lang.Integer.class;
+        case "signatureverificationrequired":
+        case "signatureVerificationRequired": return boolean.class;
         case "signedreceiptmicalgorithms":
         case "signedReceiptMicAlgorithms": return java.lang.String.class;
         case "signingalgorithm":
@@ -354,6 +359,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverFqdn": return target.getConfiguration().getServerFqdn();
         case "serverportnumber":
         case "serverPortNumber": return target.getConfiguration().getServerPortNumber();
+        case "signatureverificationrequired":
+        case "signatureVerificationRequired": return target.getConfiguration().isSignatureVerificationRequired();
         case "signedreceiptmicalgorithms":
         case "signedReceiptMicAlgorithms": return target.getConfiguration().getSignedReceiptMicAlgorithms();
         case "signingalgorithm":

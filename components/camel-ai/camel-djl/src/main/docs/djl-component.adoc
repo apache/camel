@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: djl
 
 *Since Camel {since}*
 
@@ -476,7 +475,6 @@ It will automatically determine the appropriate jars for your system based on th
 More information about https://docs.djl.ai/engines/mxnet/index.html[MXNet engine installation]
 
 
-
 == Examples
 
 .MNIST image classification from file
@@ -574,4 +572,3 @@ from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator");
 ----
 
-include::spring-boot:partial$starter.adoc[]

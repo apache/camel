@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: cxf-rest
 
 *Since Camel {since}*
 
@@ -394,22 +392,14 @@ Here is an example:
 ._Java-only: Java test API (ProducerTemplate with inline Processor)_
 [source,java]
 ----
-Exchange exchange = template.send("direct://proxy", new Processor() {
-    public void process(Exchange exchange) throws Exception {
-        exchange.setPattern(ExchangePattern.InOut);
-        Message inMessage = exchange.getIn();
-        // set the operation name
-        inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
-        // using the proxy client API
-        inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
-        // set a customer header
-        inMessage.setHeader("key", "value");
-        // set up the accepted content type
-        inMessage.setHeader(CxfConstants.ACCEPT_CONTENT_TYPE, "application/json");
-        // set the parameters, if you just have one parameter,
-        // camel will put this object into an Object[] itself
-        inMessage.setBody("123");
-    }
+Exchange exchange = template.send("direct://proxy", ex -> {
+    ex.setPattern(ExchangePattern.InOut);
+    Message inMessage = ex.getIn();
+    inMessage.setHeader("CamelCxfOperationName", "getCustomer");
+    inMessage.setHeader("CamelCxfRsUsingHttpAPI", Boolean.FALSE);
+    inMessage.setHeader("key", "value");
+    inMessage.setHeader("Accept", "application/json");
+    inMessage.setBody("123");
 });
 
 // get the response message
@@ -431,31 +421,23 @@ and
 the https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Exchange.html#HTTP_METHOD[HTTP_METHOD] and
 let the producer use the http centric client API by using the URI option
 *httpClientAPI* or by setting the message header
-https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apache/camel/component/cxf/common/message/CxfConstants.html#CAMEL_CXF_RS_USING_HTTP_API[CxfConstants.CAMEL_CXF_RS_USING_HTTP_API].
+`CamelCxfRsUsingHttpAPI`.
 You can turn the response object to the type class specified with the
 message
-header https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apache/camel/component/cxf/common/message/CxfConstants.html#CAMEL_CXF_RS_RESPONSE_CLASS[CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS].
+header `CamelCxfRsResponseClass`.
 
 ._Java-only: Java test API (ProducerTemplate with inline Processor)_
 [source,java]
 ----
-Exchange exchange = template.send("direct://http", new Processor() {
-    public void process(Exchange exchange) throws Exception {
-        exchange.setPattern(ExchangePattern.InOut)
-        Message inMessage = exchange.getIn();
-        // using the http central client API
-        inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
-        // set the Http method
-        inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
-        // set the relative path
-        inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
-        // Specify the response class, cxfrs will use InputStream as the response object type
-        inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
-        // set a customer header
-        inMessage.setHeader("key", "value");
-        // since we use the Get method, so we don't need to set the message body
-        inMessage.setBody(null);
-    }
+Exchange exchange = template.send("direct://http", ex -> {
+    ex.setPattern(ExchangePattern.InOut);
+    Message inMessage = ex.getIn();
+    inMessage.setHeader("CamelCxfRsUsingHttpAPI", Boolean.TRUE);
+    inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+    inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
+    inMessage.setHeader("CamelCxfRsResponseClass", Customer.class);
+    inMessage.setHeader("key", "value");
+    inMessage.setBody(null);
 });
 ----
 We also support to specify the query parameters from
@@ -467,7 +449,7 @@ cxfrs URI for the CXFRS http centric client.
 Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpClientAPI=true&q1=12&q2=13"
 ----
 To support the Dynamical routing, you can override the URI's query
-parameters by using the https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apache/camel/component/cxf/common/message/CxfConstants.html#CAMEL_CXF_RS_QUERY_MAP[CxfConstants.CAMEL_CXF_RS_QUERY_MAP]
+parameters by using the `CamelCxfRsQueryMap`
 header to set the parameter map for it.
 
 ._Java-only: Java collection API_
@@ -476,8 +458,5 @@ header to set the parameter map for it.
 Map<String, String> queryMap = new LinkedHashMap<>();
 queryMap.put("q1", "new");
 queryMap.put("q2", "world");
-inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, queryMap);
+inMessage.setHeader("CamelCxfRsQueryMap", queryMap);
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

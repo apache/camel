@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-bigquery
 
 *Since Camel {since}*
 
@@ -134,4 +133,3 @@ If the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
 be ignored. In that case use the query parameter `useAsInsertId`.
 
 
-include::spring-boot:partial$starter.adoc[]

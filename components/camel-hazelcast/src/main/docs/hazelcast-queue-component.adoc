@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Hazelcast
-:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -23,7 +22,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
 
 
 == Queue producer – to(“hazelcast-queue:foo”)
@@ -678,4 +676,3 @@ YAML::
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

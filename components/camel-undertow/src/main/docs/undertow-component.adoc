@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: undertow
 
 *Since Camel {since}*
 
@@ -51,7 +49,6 @@ undertow:https://hostname[:port][/resourceUri][?options]
 undertow:ws://hostname[:port][/resourceUri][?options]
 undertow:wss://hostname[:port][/resourceUri][?options]
 ----
-
 
 
 // component options: START
@@ -459,5 +456,3 @@ YAML::
             uri: undertow:ws://localhost:8080/myapp/mysocket
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

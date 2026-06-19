@@ -52,6 +52,12 @@ previous tool's argument headers. Each tool route starts from the original incom
 its own declared arguments as headers. Routes that (intentionally or accidentally) relied on this leaked state
 between tools must be adjusted to carry such data explicitly.
 
+=== Component documentation
+
+The Spring Boot auto-configuration tables have been removed from individual component documentation pages.
+Spring Boot auto-configuration options are now documented in the Camel Spring Boot documentation site,
+with a dedicated page per starter.
+
 === camel-core
 
 ==== Simple language: internal builder classes reorganized
@@ -378,6 +384,13 @@ See xref:components:others:yaml-dsl.adoc[YAML DSL] for details.
 A new `camel-a2a` component has been added providing support for the Agent-to-Agent (A2A) protocol.
 The component scheme is `a2a`. As a consumer, it exposes Camel routes as A2A-compliant agents;
 as a producer, it calls remote A2A agents. This component has **Preview** support level.
+The component also provides an `a2aSubTask` route step for scoped progress updates around nested route steps in Camel's model-based DSLs.
+This is a generated Camel route model step available to DSLs such as Java, XML, and YAML; it is not a component-provided YAML deserializer extension.
+Routes that use it need `camel-a2a` on the classpath for runtime processor creation.
+The progress expressions are route semantics, so expression evaluation failures fail the route.
+Failures while storing or notifying the resulting progress event are best-effort and do not replace the route outcome.
+Progress emission outside an active A2A task context is a no-op by default; set `failIfNoTaskContext=true` on
+`a2aSubTask` when such use should fail route processing.
 
 Consumer routes require an HTTP server component on the classpath. Use `camel-platform-http-vertx` for JSON-RPC agents, or use `camel-undertow` / `camel-jetty` when serving REST custom-method routes such as `/message:send` or real-time SSE streaming. The default Vert.x/platform-http transport treats colons as path-parameter delimiters and buffers `InputStream` streaming responses.
 
@@ -1014,6 +1027,14 @@ aligning the component with the rest of the Camel component catalog (`camel-kafk
 `camel-coap`, `camel-google-pubsub`, ...). Routes that relied on passing through these header
 names from NATS messages can supply a custom `headerFilterStrategy` to restore the previous
 behaviour.
+
+=== camel-as2
+
+The AS2 server consumer now logs a warning when it delivers an inbound signed message without verifying
+its signature because no `validateSigningCertificateChain` is configured. A new opt-in
+`signatureVerificationRequired` option (server only, default `false`) can be set to reject such
+unverifiable signed messages with an `insufficient-message-security` error instead of delivering them
+unverified. The default behaviour is otherwise unchanged.
 
 === camel-oauth
 
@@ -1987,7 +2008,7 @@ As a consequence, the generated Endpoint DSL header accessors on
 
 **Header Override Options (Hardening)**
 
-Added new configuration options to `camel-mail` to provide finer control over message header overrides for security and hardening purposes. 
+Added new configuration options to `camel-mail` to provide finer control over message header overrides for security and hardening purposes.
 
 The following options have been added to the mail endpoint:
 
@@ -2153,6 +2174,13 @@ for the embedded HTTP server:
 
 Both default to unset. When both are unset, JWT validation behaviour is unchanged (signature plus the
 default `exp` / `nbf` checks).
+
+Additionally, when `authenticationEnabled=true` but neither a basic-auth properties file
+(`basicPropertiesFile`) nor a JWT keystore (`jwtKeystoreType`) is configured, the embedded HTTP server now
+logs a clear warning at startup that it is starting without authentication. Previously this
+misconfiguration started an unprotected server silently. The server still starts and the behaviour is
+otherwise unchanged; configure an authentication mechanism or set `authenticationEnabled=false` to remove
+the warning.
 
 === camel-test
 
@@ -2530,3 +2558,18 @@ or `Comparable`).
 This only affects routes that enable polymorphic / default typing on an unsafe base type; ordinary
 marshalling and unmarshalling are unchanged. If you rely on that behaviour, supply your own `ObjectMapper`
 (via the `objectMapper` option or the registry) configured without this feature.
+
+=== camel-diagram: Embeddable web component
+
+A new `<camel-route-diagram>` web component is now bundled inside `camel-diagram.jar`
+at `META-INF/resources/camel/diagram/camel-route-diagram.js`.
+Any Servlet 3 container (including Quarkus and Spring Boot) serving the JAR automatically
+exposes the script as a static resource.
+
+The component consumes the existing `route-structure` dev console JSON endpoint and renders
+routes as interactive SVG diagrams with optional per-processor metric overlays and configurable
+periodic refresh.
+It is theme-agnostic, respects `prefers-color-scheme` for automatic dark/light mode, and
+exposes CSS custom properties for full visual control.
+
+See the `camel-diagram` component documentation for usage instructions and theming options.

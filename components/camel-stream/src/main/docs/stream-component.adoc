@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: stream
 
 *Since Camel {since}*
 
@@ -235,6 +233,3 @@ YAML::
             uri: log:input
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

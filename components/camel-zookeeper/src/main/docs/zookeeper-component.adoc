@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: zookeeper
 
 *Since Camel {since}*
 
@@ -45,7 +43,6 @@ zookeeper://zookeeper-server[:port][/path][?options]
 
 The path from the URI specifies the node in the ZooKeeper server (a.k.a.
 _znode_) that will be the target of the endpoint:
-
 
 
 // component options: START
@@ -341,7 +338,3 @@ ZooKeeper is byte-based.
 Object testPayload = ...
 template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZooKeeperCreateMode", "PERSISTENT");
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

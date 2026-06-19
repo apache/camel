@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud
-:camel-spring-boot-name: huaweicloud-smn
 
 *Since Camel {since}*
 
@@ -161,7 +160,6 @@ YAML::
 ====
 
 
-
 === publishAsTemplatedMessage
 
 ._Java-only: requires Java Map variable for template tags_
@@ -203,4 +201,3 @@ from("direct:triggerRoute")
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

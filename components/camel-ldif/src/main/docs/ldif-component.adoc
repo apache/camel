@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: ldif
 
 *Since Camel {since}*
 
@@ -132,6 +130,3 @@ if (results.size() > 0) {
   }
 }
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -86,18 +85,13 @@ This operation returns a list of deployment configs from your cluster
 
 - `listDeploymentConfigsByLabels`: this operation lists the deployment configs by labels on an Openshift cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesDeploymentsLabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesDeploymentsLabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigsByLabels")
     .to("mock:result");
@@ -152,4 +146,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` + `labelKey` + `labelValue` - Watch DeploymentConfigs with the specified label in the given namespace.
 
 
-include::spring-boot:partial$starter.adoc[]

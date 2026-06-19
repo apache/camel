@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: xchange
 
 *Since Camel {since}*
 
@@ -37,7 +35,6 @@ for this component:
 ---------------------------------
 xchange://exchange?options
 ---------------------------------
-
 
 
 // component options: START
@@ -107,6 +104,3 @@ YAML::
               currencyPair: BTC/USDT
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

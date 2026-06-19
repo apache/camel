@@ -37,6 +37,7 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -447,11 +448,12 @@ class EndpointsTab implements MonitorTab {
                 Span.raw(String.format(" out:%-4d msg/s", curOut)));
 
         Rect rightArea = hSplit.get(1);
-        frame.renderWidget(MirroredSparkline.builder()
+        frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
+                .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED)
@@ -556,11 +558,12 @@ class EndpointsTab implements MonitorTab {
                 Span.styled("▬", Style.EMPTY.fg(Color.CYAN)),
                 Span.raw(String.format(" out:%-4d msg/s", curOut)));
 
-        frame.renderWidget(MirroredSparkline.builder()
+        frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Style.EMPTY.fg(Color.ansi(AnsiColor.BRIGHT_GREEN)))
                 .bottomStyle(Style.EMPTY.fg(Color.CYAN))
+                .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED)
@@ -594,12 +597,12 @@ class EndpointsTab implements MonitorTab {
                 Span.styled("▬", Style.EMPTY.fg(Color.MAGENTA)),
                 Span.raw(String.format(" out:%-8s avg body", sizeToString(curOut))));
 
-        frame.renderWidget(MirroredSparkline.builder()
+        frame.renderWidget(DualSparkline.builder()
                 .topData(inArr)
                 .bottomData(outArr)
                 .topStyle(Style.EMPTY.fg(Color.YELLOW))
                 .bottomStyle(Style.EMPTY.fg(Color.MAGENTA))
-                .yLabelFormatter(EndpointsTab::sizeToYLabel)
+                .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED)
@@ -609,21 +612,6 @@ class EndpointsTab implements MonitorTab {
 
     private static long unbox(Long value) {
         return value != null ? value : 0L;
-    }
-
-    private static String sizeToYLabel(long size) {
-        if (size <= 0) {
-            return "0 B";
-        }
-        if (size < 1024) {
-            return size + "B";
-        } else if (size < 1024 * 1024) {
-            long kb = size / 1024;
-            return kb + "KB";
-        } else {
-            long mb = size / (1024 * 1024);
-            return mb + "MB";
-        }
     }
 
     static String sizeToString(long size) {

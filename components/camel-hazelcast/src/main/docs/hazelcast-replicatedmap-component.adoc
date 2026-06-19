@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Hazelcast
-:camel-spring-boot-name: hazelcast
 
 *Since Camel {since}*
 
@@ -224,4 +223,3 @@ Header Variables inside the response message:
 |=======================================================================
 
 
-include::spring-boot:partial$starter.adoc[]

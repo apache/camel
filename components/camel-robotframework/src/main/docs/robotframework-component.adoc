@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: robotframework
 
 *Since Camel {since}*
 
@@ -167,6 +165,3 @@ And the `template.robot` file:
 
 Please note that when you pass values through Camel Exchange to test cases,
 they will be available as case-sensitive ``body``, ``headers.[yourHeaderName]`` and ``properties.[yourPropertyName]``
-
-
-include::spring-boot:partial$starter.adoc[]

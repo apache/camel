@@ -124,6 +124,4 @@ functions that load the property values from Kubernetes _ConfigMaps_ or _Secrets
 
 For more information, see xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder].
 
-:camel-spring-boot-name: kubernetes
 
-include::spring-boot:partial$starter.adoc[]

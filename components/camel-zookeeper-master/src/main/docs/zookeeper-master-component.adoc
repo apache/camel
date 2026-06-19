@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: zookeeper-master
 
 *Since Camel {since}*
 
@@ -71,13 +69,11 @@ zookeeper-master:name:endpoint[?options]
 Where endpoint is any Camel endpoint, you want to run in master/slave mode.
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
 
 
 == Examples
@@ -169,7 +165,3 @@ from("file:target/inbox?delete=true").noAutoStartup()
     .log(name + " - Done file:     ${file:name}")
     .to("file:target/outbox");
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

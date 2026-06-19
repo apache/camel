@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-ws
 
 *Since Camel {since}*
 
@@ -701,5 +700,3 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 ----
 
 
-
-include::spring-boot:partial$starter.adoc[]

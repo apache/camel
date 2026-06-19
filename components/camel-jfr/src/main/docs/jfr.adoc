@@ -6,8 +6,6 @@
 :since: 3.8
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: jfr
 
 *Since Camel {since}*
 
@@ -30,5 +28,3 @@ JFR recordings can be started at:
 - When starting Camel by setting `camel.main.startup-recorder-recording=true`.
 
 See the `flight-recorder` from the Camel Examples.
-
-include::spring-boot:partial$starter.adoc[]

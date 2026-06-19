@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: opentelemetry-metrics
 
 *Since Camel {since}*
 
@@ -803,5 +801,3 @@ java -javaagent:path/to/opentelemetry-javaagent.jar \
 When you use `camel-opentelemetry-metrics-starter` with Spring Boot, then Spring Boot autoconfiguration will automatically enable metrics capture if a `io.opentelemetry.api.metrics.Meter` is available.
 
 See the following table for options to specify what metrics to capture, or to turn it off.
-
-include::spring-boot:partial$starter.adoc[]

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: netty-http
 
 *Since Camel {since}*
 
@@ -705,7 +703,3 @@ void processResponse(final Exchange exchange) {
     ByteBufUtil.writeUtf8(buf, string.toUpperCase(Locale.US));
 }
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: webhook
 
 *Since Camel {since}*
 
@@ -45,7 +43,6 @@ webhook:endpoint[?options]
 ----
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
@@ -53,10 +50,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
 == Examples
 
 Examples of the webhook component are provided in the documentation of the delegate components that support it.
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: quartz
 
 *Since Camel {since}*
 
@@ -506,6 +504,3 @@ YAML::
             uri: activemq:Totally.Rocks
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

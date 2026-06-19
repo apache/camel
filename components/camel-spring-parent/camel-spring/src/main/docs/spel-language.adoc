@@ -6,8 +6,6 @@
 :since: 2.7
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: spring
 
 *Since Camel {since}*
 
@@ -168,7 +166,3 @@ e.g., to refer to a file on the classpath you can do:
 ----
 .setHeader("myHeader").spel("resource:classpath:myspel.txt")
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: metrics
 
 *Since Camel {since}*
 
@@ -59,62 +57,6 @@ This default registry can be replaced with a custom one by providing
 a `MetricRegistry` bean. If multiple `MetricRegistry` beans exist in the
 application, the one with name `metricRegistry` is used.
 
-For example:
-
-[tabs]
-====
-
-Java (Spring)::
-+
-[source,java]
-----
-@Configuration
-public static class MyConfig extends SingleRouteCamelConfiguration {
-
-    @Bean
-    @Override
-    public RouteBuilder route() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // define Camel routes here
-            }
-        };
-    }
-
-    @Bean(name = MetricsComponent.METRIC_REGISTRY_NAME)
-    public MetricRegistry getMetricRegistry() {
-        MetricRegistry registry = ...;
-        return registry;
-    }
-}
-----
-
-Java (CDI)::
-+
-[source,java]
-----
-class MyBean extends RouteBuilder {
-
-    @Override
-    public void configure() {
-      from("...")
-          // Register the 'my-meter' meter in the MetricRegistry below
-          .to("metrics:meter:my-meter");
-    }
-
-    @Produces
-    // If multiple MetricRegistry beans
-    // @Named(MetricsComponent.METRIC_REGISTRY_NAME)
-    MetricRegistry registry() {
-        MetricRegistry registry = new MetricRegistry();
-        // ...
-        return registry;
-    }
-}
-----
-
-====
 
 == Usage
 
@@ -1040,7 +982,6 @@ is the name of the route. And `###type###` is the value of responses.
 |=======================================================================
 
 
-
 From Java code you can get hold of
 the `com.codahale.metrics.MetricRegistry` from the
 `org.apache.camel.component.metrics.routepolicy.MetricsRegistryService`
@@ -1137,6 +1078,3 @@ with `name=MetricsMessageHistoryService`.
 This factory allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from the inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
-
-
-include::spring-boot:partial$starter.adoc[]

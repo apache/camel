@@ -6,8 +6,6 @@
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -254,11 +252,9 @@ from("direct:key-in-header-encrypt")
     .removeHeader(CryptoDataFormat.KEY)
     .to("mock:encrypted");
 
-from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Processor() {
-    public void process(Exchange exchange) throws Exception {
-        exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
-        exchange.getMessage().copyFrom(exchange.getIn());
-    }
+from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(exchange -> {
+    exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
+    exchange.getMessage().copyFrom(exchange.getIn());
 }).to("mock:unencrypted");
 ----
 
@@ -285,7 +281,3 @@ need to add the following dependency to your pom.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

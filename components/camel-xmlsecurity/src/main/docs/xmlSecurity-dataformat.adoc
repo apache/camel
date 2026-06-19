@@ -6,8 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: xmlsecurity
 
 *Since Camel {since}*
 
@@ -318,6 +316,3 @@ YAML::
 == Dependencies
 
 This data format is provided within the *camel-xmlsecurity* component.
-
-
-include::spring-boot:partial$starter.adoc[]

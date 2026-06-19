@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -146,5 +144,3 @@ explicitly through the *method* parameter) and how parameter values are construc
 These are used throughout all the various xref:manual::bean-integration.adoc[Bean Integration] mechanisms in Camel.
 
 See also related xref:languages:bean-language.adoc[Bean Language].
-
-include::spring-boot:partial$starter.adoc[]

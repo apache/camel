@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: dfdl
 
 *Since Camel {since}*
 
@@ -124,5 +122,3 @@ YAML::
               parseDirection: UNPARSE
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

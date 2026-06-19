@@ -1,0 +1,26 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "a2aSubTask",
+    "title": "A2A Sub Task",
+    "description": "Groups route steps and emits A2A progress events before, after, or when the grouped work fails.",
+    "deprecated": false,
+    "firstVersion": "4.21.0",
+    "label": "eip,routing,ai",
+    "javaType": "org.apache.camel.model.A2ASubTaskDefinition",
+    "abstract": false,
+    "input": true,
+    "output": true
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Disables this EIP from the route." },
+    "emitBefore": { "index": 4, "kind": "attribute", "displayName": "Emit Before", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Simple expression template to emit before the nested steps run" },
+    "emitAfter": { "index": 5, "kind": "attribute", "displayName": "Emit After", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Simple expression template to emit after the nested steps complete successfully" },
+    "emitOnError": { "index": 6, "kind": "attribute", "displayName": "Emit On Error", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Simple expression template to emit when the nested steps fail" },
+    "failIfNoTaskContext": { "index": 7, "kind": "attribute", "displayName": "Fail If No Task Context", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to fail if the current Exchange does not have an active A2A task context" },
+    "outputs": { "index": 8, "kind": "element", "displayName": "Outputs", "group": "common", "required": true, "type": "array", "javaType": "java.util.List", "oneOf": [ "a2aSubTask", "aggregate", "bean", "choice", "circuitBreaker", "claimCheck", "convertBodyTo", "convertHeaderTo", "convertVariableTo", "delay", "doCatch", "doFinally", "doTry", "dynamicRouter", "enrich", "filter", "idempotentConsumer", "intercept", "interceptFrom", "interceptSendToEndpoint", "kamelet", "loadBalance", "log", "loop", "marshal", "multicast", "onCompletion", "onException", "pausable", "pipeline", "policy", "poll", "pollEnrich", "process", "recipientList", "removeHeader", "removeHeaders", "removeProperties", "removeProperty", "removeVariable", "resequence", "resumable", "rollback", "routingSlip", "saga", "sample", "script", "setBody", "setExchangePattern", "setHeader", "setHeaders", "setProperty", "setVariable", "setVariables", "sort", "split", "step", "stop", "threads", "throttle", "throwException", "to", "toD", "tokenizer", "transacted", "transform", "transformDataType", "unmarshal", "validate", "wireTap" ], "deprecated": false, "autowired": false, "secret": false }
+  }
+}

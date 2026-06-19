@@ -6,8 +6,6 @@
 :since: 4.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: opentelemetry2
 
 *Since Camel {since}*
 
@@ -375,12 +373,9 @@ For this reason, whenever you need to provide custom telemetry information, it i
                         .setProperty("CamelBaggage_myValue", constant("1234"))
                         .routeId("start")
                         .log("A message")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                // Baggage is available via the OpenTelemetry API
-                                String val = Baggage.current().getEntryValue("myValue");
-                            }
+                        .process(exchange -> {
+                            // Baggage is available via the OpenTelemetry API
+                            String val = Baggage.current().getEntryValue("myValue");
                         })
                         .to("log:info");
 ----

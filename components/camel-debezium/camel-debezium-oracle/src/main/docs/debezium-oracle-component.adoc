@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Debezium
-:camel-spring-boot-name: debezium-oracle
 
 *Since Camel {since}*
 
@@ -173,4 +172,3 @@ Therefore, before using this component in production, you need to understand how
 This is especially true in regard to https://debezium.io/documentation/reference/1.9/operations/embedded.html#_handling_failures[handling failures].
 ====
 
-include::spring-boot:partial$starter.adoc[]

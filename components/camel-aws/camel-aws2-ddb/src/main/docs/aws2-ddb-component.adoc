@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-ddb
 
 *Since Camel {since}*
 
@@ -78,25 +77,15 @@ URI:
 ._Java-only: programmatic `DynamoDbClient` configuration and registry binding_
 [source,java]
 ----
-public class MyRouteBuilder extends RouteBuilder {
+DynamoDbClient client = DynamoDbClient.builder()
+    .region(Region.AP_SOUTHEAST_2)
+    .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
+    .build();
 
-    private String accessKey = "myaccessKey";
-    private String secretKey = "secretKey";
+getCamelContext().getRegistry().bind("client", client);
 
-    @Override
-    public void configure() throws Exception {
-
-        DynamoDbClient client = DynamoDbClient.builder()
-        .region(Region.AP_SOUTHEAST_2)
-        .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
-        .build();
-
-        getCamelContext().getRegistry().bind("client", client);
-
-    	from("direct:start")
-        .to("aws2-ddb://domainName?amazonDDBClient=#client");
-    }
-}
+from("direct:start")
+    .to("aws2-ddb://domainName?amazonDDBClient=#client");
 ----
 
 The `#client` refers to a `DynamoDbClient` in the
@@ -195,7 +184,7 @@ from("direct:get")
       exchange.getIn().setHeader("CamelAwsDdbAttributeNames", constant(List.of("table-key", "message")));
       exchange.getIn().setHeader("CamelAwsDdbKey", keyMap);
   })
-  .toF("aws2-ddb://%s?amazonDDBClient=#client&consistentRead=true", tableName);
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client&consistentRead=true");
 ----
 
 - DeleteItem: this operation will delete an entry from DynamoDB
@@ -211,7 +200,7 @@ from("direct:delete")
       exchange.getIn().setHeader("CamelAwsDdbOperation", "DeleteItem");
       exchange.getIn().setHeader("CamelAwsDdbKey", keyMap);
   })
-  .toF("aws2-ddb://%s?amazonDDBClient=#client&consistentRead=true", tableName);
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client&consistentRead=true");
 ----
 
 
@@ -229,7 +218,7 @@ from("direct:partiql")
           List.of(AttributeValue.builder().s("myKeyValue").build()));
       exchange.getIn().setHeader("CamelAwsDdbConsistentRead", true);
   })
-  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
 ----
 
 - BatchExecuteStatement (PartiQL batch): this operation runs multiple PartiQL statements in a batch
@@ -248,7 +237,7 @@ from("direct:batchPartiql")
               .statement("INSERT INTO \"MyTable\" VALUE {'key': 'k2', 'data': 'v2'}")
               .build()));
   })
-  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
 ----
 
 - TransactWriteItems: this operation performs a transactional write across one or more tables
@@ -268,7 +257,7 @@ from("direct:transactWrite")
               .put(Put.builder().tableName("MyTable").item(item).build())
               .build()));
   })
-  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
 ----
 
 - TransactGetItems: this operation performs a transactional read across one or more tables
@@ -287,7 +276,7 @@ from("direct:transactGet")
               .get(Get.builder().tableName("MyTable").key(key).build())
               .build()));
   })
-  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
 ----
 
 - BatchWriteItems: this operation puts or deletes multiple items in one or more tables in a single batch
@@ -310,8 +299,7 @@ from("direct:batchWrite")
       exchange.getIn().setHeader("CamelAwsDdbOperation", "BatchWriteItems");
       exchange.getIn().setHeader("CamelAwsDdbBatchWriteItems", requestItems);
   })
-  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+  .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

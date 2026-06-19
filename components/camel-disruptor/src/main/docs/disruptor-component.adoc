@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: disruptor
 
 *Since Camel {since}*
 
@@ -300,5 +298,3 @@ int size = disruptor.getBufferSize();
 ----
 
 // shared with disruptor-vm
-
-include::spring-boot:partial$starter.adoc[]

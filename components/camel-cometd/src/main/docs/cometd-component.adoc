@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: cometd
 
 *Since Camel {since}*
 
@@ -49,7 +47,6 @@ cometds://localhost:8443/service/mychannel
 ------------------------------------------
 
 where `cometds:` represents an SSL configured endpoint.
-
 
 
 // component options: START
@@ -139,6 +136,3 @@ Spring XML::
 ----
 
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

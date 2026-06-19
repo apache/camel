@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: ssh
 
 *Since Camel {since}*
 
@@ -35,7 +33,6 @@ for this component:
 -----------------------------------------------
 ssh:[username[:password]@]host[:port][?options]
 -----------------------------------------------
-
 
 
 // component options: START
@@ -194,7 +191,3 @@ The component uses `sshd-core` library which is based on either `bouncycastle` o
   <version>1.71</version>
 </dependency>
 -----------------------------------------
-
-
-
-include::spring-boot:partial$starter.adoc[]

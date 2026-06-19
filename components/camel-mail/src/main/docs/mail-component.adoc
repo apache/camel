@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: mail
 
 *Since Camel {since}*
 
@@ -909,6 +907,3 @@ messages from untrusted producers) an attacker could weaken transport security (
 the option when these headers are set exclusively by trusted route logic, and strip the namespace
 with `removeHeaders("mail.smtp.*", "mail.smtps.*")` before the producer when bridging an untrusted
 source. See the xref:manual::security-model.adoc[Camel Security Model] for the general pattern.
-
-
-include::spring-boot:partial$starter.adoc[]

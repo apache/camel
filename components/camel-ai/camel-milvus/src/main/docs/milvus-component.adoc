@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: milvus
 
 *Since Camel {since}*
 
@@ -214,4 +213,3 @@ The transformer only supports insert/upsert objects, so the only operation you c
 otherwise the transformer will fail with an error log.
 
 
-include::spring-boot:partial$starter.adoc[]

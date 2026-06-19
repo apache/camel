@@ -6,8 +6,6 @@
 :since: 2.16
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: tarfile
 
 *Since Camel {since}*
 
@@ -281,6 +279,3 @@ the download page for the latest versions).
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

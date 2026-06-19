@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: pdf
 
 *Since Camel {since}*
 
@@ -99,5 +97,3 @@ which saves the trouble of converting the byte-array to a document.
 
 NOTE: this only works for unprotected PDF files. For password-protected, the files still need to be converted
 manually.
-
-include::spring-boot:partial$starter.adoc[]

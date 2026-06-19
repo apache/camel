@@ -6,8 +6,6 @@
 :since: 2.14
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: avro
 
 *Since Camel {since}*
 
@@ -122,6 +120,3 @@ reference it from your route.
 ----
 
 In the same manner, you can unmarshal using the avro data format.
-
-
-include::spring-boot:partial$starter.adoc[]

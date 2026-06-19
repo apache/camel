@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: drill
 
 *Since Camel {since}*
 
@@ -51,7 +49,3 @@ include::partial$component-endpoint-headers.adoc[]
 === Drill Producer
 
 The producer executes a query using the *CamelDrillQuery* header and puts the results into the body.
-
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: jsch
 
 *Since Camel {since}*
 
@@ -70,6 +68,3 @@ See the xref:sftp-component.adoc[SFTP component] documentation for more details 
 Currently, camel-jsch only supports a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
 (i.e., copy files to another host).
-
-
-include::spring-boot:partial$starter.adoc[]

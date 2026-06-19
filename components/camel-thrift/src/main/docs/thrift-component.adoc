@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: thrift
 
 *Since Camel {since}*
 
@@ -35,7 +33,6 @@ for this component:
 ----
 thrift://service[?options]
 ----
-
 
 
 // component options: START
@@ -154,7 +151,3 @@ It's possible to automate Java code generation for .thrift files using *thrift-m
 
 https://github.com/apache/thrift/[Thrift project GitHub]
 https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
-
-
-
-include::spring-boot:partial$starter.adoc[]

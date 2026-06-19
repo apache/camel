@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: master
 
 *Since Camel {since}*
 
@@ -166,6 +164,3 @@ Camel provides the following ClusterService implementations:
 - camel-jgroups
 - camel-kubernetes
 - camel-zookeeper
-
-
-include::spring-boot:partial$starter.adoc[]

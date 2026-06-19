@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: log
 
 *Since Camel {since}*
 
@@ -408,7 +406,3 @@ options:
 
 <to uri="log:bar?param1=bar&amp;param2=200"/>
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

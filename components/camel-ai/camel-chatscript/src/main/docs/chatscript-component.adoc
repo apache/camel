@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: chatscript
 
 *Since Camel {since}*
 
@@ -42,4 +41,3 @@ This component expects a JSON with the following fields:
 }
 ----
 
-include::spring-boot:partial$starter.adoc[]

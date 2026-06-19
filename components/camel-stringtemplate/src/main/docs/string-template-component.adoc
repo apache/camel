@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: stringtemplate
 
 *Since Camel {since}*
 
@@ -40,7 +38,6 @@ string-template:templateName[?options]
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template.
-
 
 
 // component options: START
@@ -168,5 +165,3 @@ Thanks for the order of <headers.item>.
 Regards Camel Riders Bookstore
 <body>
 ----
-
-include::spring-boot:partial$starter.adoc[]

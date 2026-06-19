@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: ldap
 
 *Since Camel {since}*
 
@@ -434,5 +432,3 @@ public class CustomSocketFactory extends SSLSocketFactory {
 }
 ----
 ====
-
-include::spring-boot:partial$starter.adoc[]

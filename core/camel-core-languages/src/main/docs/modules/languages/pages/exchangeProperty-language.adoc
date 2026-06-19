@@ -6,9 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: core
-:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -68,4 +65,3 @@ In this case, the list of recipients are contained in the property
 == Dependencies
 
 The ExchangeProperty language is part of *camel-core*.
-

@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: browse
 
 *Since Camel {since}*
 
@@ -92,7 +90,3 @@ public void inspectReceivedOrders() {
     }
 }
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

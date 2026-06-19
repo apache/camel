@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: stitch
 
 *Since Camel {since}*
 
@@ -240,7 +238,3 @@ mvn verify -Dtoken=stitchToken
 ----
 
 Whereby `token` is your Stitch token generated for Stitch Import API integration.
-
-
-
-include::spring-boot:partial$starter.adoc[]

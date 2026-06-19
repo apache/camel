@@ -7,8 +7,6 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: opentelemetry
 
 *Since Camel {since}*
 
@@ -115,8 +113,6 @@ java -javaagent:path/to/opentelemetry-javaagent.jar \
      -Dotel.traces.exporter=otlp \
      -jar myapp.jar
 ----
-
-include::spring-boot:partial$starter.adoc[]
 
 
 === Spring Boot's Actuator

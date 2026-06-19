@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: IBM
-:camel-spring-boot-name: ibm-watsonx-data
 
 *Since Camel {since}*
 

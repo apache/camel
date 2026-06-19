@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -87,18 +86,13 @@ This operation returns a List of Nodes from your cluster
 
 - `listNodesByLabels`: this operation lists the nodes by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesNodeLabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesNodeLabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels")
     .to("mock:result");
@@ -151,4 +145,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `resourceName` - Watch the Nodes with the specified name.
 
 
-include::spring-boot:partial$starter.adoc[]

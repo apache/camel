@@ -6,8 +6,6 @@
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: openapi-java
 
 *Since Camel {since}*
 
@@ -188,5 +186,3 @@ restConfiguration().component("netty-http")
     .host("localhost")
     .port(8080);
 ----
-
-include::spring-boot:partial$starter.adoc[]

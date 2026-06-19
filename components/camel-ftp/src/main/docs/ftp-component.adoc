@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: ftp
 
 *Since Camel {since}*
 
@@ -72,7 +70,6 @@ SFTP uses http://www.jcraft.com/jsch/[JCraft JSCH].
 FTPS, also known as FTP Secure, is an extension to FTP that adds
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
-
 
 
 // component options: START
@@ -961,5 +958,3 @@ ftp://publicftpserver.com/download
 This component is an extension of the xref:file-component.adoc[File component].
 
 You can find additional samples and details on the File component page.
-
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: spring-ai-chat
 
 *Since Camel {since}*
 
@@ -1390,4 +1389,3 @@ logging.level.org.springframework.ai.chat.client.advisor=DEBUG
 * xref:spring-ai-vector-store-component.adoc[Spring AI VectorStore Component]
 * xref:spring-ai-image-component.adoc[Spring AI Image Component]
 
-include::spring-boot:partial$starter.adoc[]

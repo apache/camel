@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: langchain4j-agent
 
 *Since Camel {since}*
 
@@ -126,29 +125,20 @@ The langchain4j-agent component accepts a pre-built `Agent` or `ChatModel` bean 
 ._Java-only: programmatic `ChatModel` bean registration with `OAuthHelper`_
 [source,java]
 ----
-import org.apache.camel.support.OAuthHelper;
+String token = OAuthHelper.resolveOAuthToken(getContext(), "azure");
 
-public class MyRouteBuilder extends RouteBuilder {
-    @Override
-    public void configure() throws Exception {
-        String token = OAuthHelper.resolveOAuthToken(getContext(), "azure");
+ChatModel chatModel = OpenAiChatModel.builder()
+        .apiKey(token)
+        .modelName("gpt-4")
+        .build();
 
-        ChatModel chatModel = OpenAiChatModel.builder()
-                .apiKey(token)
-                .modelName("gpt-4")
-                .build();
+getContext().getRegistry().bind("myChatModel", chatModel);
 
-        getContext().getRegistry().bind("myChatModel", chatModel);
-
-        from("direct:agent")
-            .to("langchain4j-agent:myAgent");
-    }
-}
+from("direct:agent")
+    .to("langchain4j-agent:myAgent");
 ----
 
 NOTE: In Quarkus or Spring Boot, configure the ChatModel via the framework's own properties and dependency injection instead of programmatic bean registration.
-
-include::spring-boot:partial$starter.adoc[]
 
 
 == Usage
@@ -1785,46 +1775,31 @@ WordCountGuardrail custom = WordCountGuardrail.builder()
 ._Java-only: `RouteBuilder` class with `AgentConfiguration`, guardrails, memory, and `doTry`/`doCatch`_
 [source,java]
 ----
-import org.apache.camel.component.langchain4j.agent.api.*;
-import org.apache.camel.component.langchain4j.agent.api.guardrails.*;
-import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+ChatModel chatModel = OpenAiChatModel.builder()
+    .apiKey("{{openai.api.key}}")
+    .modelName("gpt-4o")
+    .build();
 
-public class SecureAgentRoute extends RouteBuilder {
+ChatMemoryProvider memoryProvider = memoryId ->
+    MessageWindowChatMemory.withMaxMessages(20);
 
-    @Override
-    public void configure() throws Exception {
-        // Create chat model
-        ChatModel chatModel = OpenAiChatModel.builder()
-            .apiKey("{{openai.api.key}}")
-            .modelName("gpt-4o")
-            .build();
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withChatMemoryProvider(memoryProvider)
+    .withInputGuardrailClasses(Guardrails.defaultInputGuardrails())
+    .withOutputGuardrailClasses(Guardrails.defaultOutputGuardrails());
 
-        // Create memory provider
-        ChatMemoryProvider memoryProvider = memoryId ->
-            MessageWindowChatMemory.withMaxMessages(20);
+Agent secureAgent = new AgentWithMemory(configuration);
+getContext().getRegistry().bind("secureAgent", secureAgent);
 
-        // Create secure agent configuration
-        AgentConfiguration configuration = new AgentConfiguration()
-            .withChatModel(chatModel)
-            .withChatMemoryProvider(memoryProvider)
-            .withInputGuardrailClasses(Guardrails.defaultInputGuardrails())
-            .withOutputGuardrailClasses(Guardrails.defaultOutputGuardrails());
-
-        Agent secureAgent = new AgentWithMemory(configuration);
-        getContext().getRegistry().bind("secureAgent", secureAgent);
-
-        // Secure chat route with error handling
-        from("direct:chat")
-            .setHeader("CamelLangChain4jAgentMemoryId", simple("${header.userId}"))
-            .doTry()
-                .to("langchain4j-agent:chat?agent=#secureAgent")
-            .doCatch(dev.langchain4j.service.guardrail.GuardrailException.class)
-                .log("Guardrail blocked request: ${exception.message}")
-                .setBody(constant("Your message was blocked due to security policies."))
-            .end();
-    }
-}
+from("direct:chat")
+    .setHeader("CamelLangChain4jAgentMemoryId", simple("${header.userId}"))
+    .doTry()
+        .to("langchain4j-agent:chat?agent=#secureAgent")
+    .doCatch(dev.langchain4j.service.guardrail.GuardrailException.class)
+        .log("Guardrail blocked request: ${exception.message}")
+        .setBody(constant("Your message was blocked due to security policies."))
+    .end();
 ----
 
 ==== Spring Boot Configuration Example
@@ -2083,7 +2058,6 @@ The `jsonSchema` option accepts:
 * File paths: `jsonSchema=file:///path/to/schema.json`
 * Inline JSON: `jsonSchema={"type":"object","properties":{"name":{"type":"string"}}}`
 * Property placeholders: `jsonSchema=resource:classpath:${schema.location}`
-
 
 
 ==== Using the outputClass endpoint option (Java Class-based Schema)

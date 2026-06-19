@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-batch
 
 *Since Camel {since}*
 
@@ -46,7 +45,6 @@ to locate the job instead.
 WARNING: This component can only be used to define producer endpoints, which
 means that you cannot use the Spring Batch component in a `from()`
 statement.
-
 
 
 // component options: START
@@ -299,4 +297,3 @@ JMS queue.
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

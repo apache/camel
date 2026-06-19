@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: web3j
 
 *Since Camel {since}*
 
@@ -41,7 +39,6 @@ for this component:
 ----
 web3j://<local/remote host:port or local IPC path>[?options]
 ----
-
 
 
 // component options: START
@@ -174,6 +171,3 @@ YAML::
               atBlock: 10
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

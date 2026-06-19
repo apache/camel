@@ -145,6 +145,32 @@ class A2AConsumerHttpIntegrationTest {
     }
 
     @Test
+    void sendMessageViaRestProvidesTaskContextToSubTask() throws Exception {
+        context = createContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("a2a:test-agent?name=StrictAgent&version=1.0.0&validateAuth=false")
+                        .a2aSubTask()
+                        .failIfNoTaskContext(true)
+                        .emitBefore("Working on ${body}")
+                        .setBody(simple("Strict ${body}"))
+                        .end();
+            }
+        });
+        context.start();
+
+        HttpResponse<String> response = post("/message:send",
+                "{\"message\":{\"messageId\":\"msg-strict\",\"role\":\"user\",\"parts\":[{\"text\":\"Hello\"}]}}");
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        JsonNode task = MAPPER.readTree(response.body()).get("task");
+        assertThat(task.get("id").asText()).isNotEmpty();
+        assertThat(task.get("status").get("state").asText()).isEqualTo("TASK_STATE_COMPLETED");
+        assertThat(task.get("status").get("message").get("parts").get(0).get("text").asText()).isEqualTo("Strict Hello");
+    }
+
+    @Test
     void getTaskViaRest() throws Exception {
         context = createContext();
         context.addRoutes(new RouteBuilder() {

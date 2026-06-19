@@ -6,8 +6,6 @@
 :since: 2.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: hl7
 
 *Since Camel {since}*
 
@@ -157,6 +155,3 @@ import ca.uhn.hl7v2.ErrorCode;
 exchange.setProperty("CamelMllpAcknowledgement",
   ack(AcknowledgmentCode.AR, "Server didn't accept this message", ErrorCode.UNKNOWN_KEY_IDENTIFIER).evaluate(exchange, Object.class)
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

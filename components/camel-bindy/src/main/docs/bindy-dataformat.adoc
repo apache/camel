@@ -6,8 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: bindy
 
 *Since Camel {since}*
 
@@ -1937,12 +1935,10 @@ the following:
 from("file://inbox")
     .unmarshal(bindy)
     .split(body())
-        .process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                Map<String, Object> modelMap = (Map<String, Object>) in.getBody();
-                in.setBody(modelMap.get(Order.class.getCanonicalName()));
-            }
+        .process(exchange -> {
+            Message in = exchange.getIn();
+            Map<String, Object> modelMap = (Map<String, Object>) in.getBody();
+            in.setBody(modelMap.get(Order.class.getCanonicalName()));
         })
         .to("direct:handleSingleOrder")
     .end();
@@ -2051,6 +2047,3 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

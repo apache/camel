@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: quickfix
 
 *Since Camel {since}*
 
@@ -452,7 +450,3 @@ correlation criteria, and is then routed to a quickfix endpoint. The
 response is then converted to a
 JSON-formatted string and sent back to the HTTP server endpoint to be
 provided as the web response.
-
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -41,6 +41,13 @@ import org.apache.camel.model.validator.*;
 @SuppressWarnings({"deprecation","rawtypes"})
 public class JavaDslModelWriter extends JavaDslModelWriterSupport {
 
+    public String writeA2ASubTaskDefinition(A2ASubTaskDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "a2aSubTask", def);
+        doWriteA2ASubTaskDefinition(sb, def);
+        return sb.toString();
+    }
     public String writeAggregateDefinition(AggregateDefinition def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1707,6 +1714,14 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         return sb.toString();
     }
 
+    protected void doWriteA2ASubTaskDefinition(StringBuilder sb, A2ASubTaskDefinition def) {
+        doWriteProcessorDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "emitBefore", def.getEmitBefore(), null);
+        doWriteAttribute(sb, "emitAfter", def.getEmitAfter(), null);
+        doWriteAttribute(sb, "emitOnError", def.getEmitOnError(), null);
+        doWriteAttribute(sb, "failIfNoTaskContext", def.getFailIfNoTaskContext(), "false");
+        doWriteOutputs(sb, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+    }
     protected void doWriteAggregateDefinition(StringBuilder sb, AggregateDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "parallelProcessing", def.getParallelProcessing(), null);
@@ -3991,6 +4006,11 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteOptionalIdentifiedDefinitionRef(StringBuilder sb, OptionalIdentifiedDefinition v) {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> {
+                    beginStep(sb, "a2aSubTask", v);
+                    doWriteA2ASubTaskDefinition(sb, (A2ASubTaskDefinition) v);
+                    endStep(sb, "a2aSubTask", v);
+                }
                 case "AggregateDefinition" -> {
                     AggregateDefinition _d = (AggregateDefinition) v;
                     handledAttributes.clear();
@@ -5117,6 +5137,11 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteProcessorDefinitionRef(StringBuilder sb, ProcessorDefinition v) {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
+                case "A2ASubTaskDefinition" -> {
+                    beginStep(sb, "a2aSubTask", v);
+                    doWriteA2ASubTaskDefinition(sb, (A2ASubTaskDefinition) v);
+                    endStep(sb, "a2aSubTask", v);
+                }
                 case "AggregateDefinition" -> {
                     AggregateDefinition _d = (AggregateDefinition) v;
                     handledAttributes.clear();

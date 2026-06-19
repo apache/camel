@@ -265,7 +265,6 @@ public class CamelMonitor extends CamelCommand {
 
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
-        TuiHelper.preloadClasses(classLoader);
 
         // Create shared context and tab instances
         ctx = new MonitorContext(data, infraData);

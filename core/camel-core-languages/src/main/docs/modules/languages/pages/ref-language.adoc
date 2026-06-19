@@ -6,9 +6,6 @@
 :since: 2.8
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: core
-:starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
 
@@ -79,4 +76,3 @@ xref:manual:ROOT:registry.adoc[Registry].
 == Dependencies
 
 The Ref language is part of *camel-core*.
-

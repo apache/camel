@@ -35,6 +35,129 @@ public final class SimpleConstants {
                       "param=msg:String:optional::The error message if the assertion fails" })
     public static final String ASSERT = "assert(exp,msg)";
 
+    @Metadata(description = "Emits an A2A task progress update with WORKING state. Requires the camel-a2a component on the classpath and an active A2A task context.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Emit Progress",
+              examples = { "${a2a:emit('Searching documents')}" },
+              annotations = {
+                      "param=message:String:required::The progress message. The message may contain nested Simple expressions" })
+    public static final String A2A_EMIT = "a2a:emit(message)";
+
+    @Metadata(description = "Emits an A2A task progress update with the given task state. Requires the camel-a2a component on the classpath and an active A2A task context.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Emit Progress State",
+              examples = { "${a2a:emit(INPUT_REQUIRED, 'Please provide your address')}" },
+              annotations = {
+                      "param=state:String:required::The A2A task state, such as WORKING, INPUT_REQUIRED, COMPLETED, FAILED, CANCELED, REJECTED, or AUTH_REQUIRED",
+                      "param=message:String:required::The progress message. The message may contain nested Simple expressions" })
+    public static final String A2A_EMIT_STATE = "a2a:emit(state,message)";
+
+    @Metadata(description = "Extracts TextPart content from an A2A Task or Message in the message body.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Text",
+              examples = { "${a2a:text}" })
+    public static final String A2A_TEXT = "a2a:text";
+
+    @Metadata(description = "Extracts TextPart content from an A2A Task or Message returned by the expression.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Text Expression",
+              examples = { "${a2a:text(${body})}" },
+              annotations = { "param=expression:Object:required::The expression that returns an A2A Task or Message" })
+    public static final String A2A_TEXT_EXPRESSION = "a2a:text(expression)";
+
+    @Metadata(description = "Extracts DataPart content as a JSON string from an A2A Task or Message in the message body.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Data",
+              examples = { "${a2a:data}" })
+    public static final String A2A_DATA = "a2a:data";
+
+    @Metadata(description = "Extracts DataPart content as a JSON string from an A2A Task or Message returned by the expression.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Data Expression",
+              examples = { "${a2a:data(${body})}" },
+              annotations = { "param=expression:Object:required::The expression that returns an A2A Task or Message" })
+    public static final String A2A_DATA_EXPRESSION = "a2a:data(expression)";
+
+    @Metadata(description = "Extracts FilePart content from an A2A Task or Message in the message body.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A File",
+              examples = { "${a2a:file}" })
+    public static final String A2A_FILE = "a2a:file";
+
+    @Metadata(description = "Extracts FilePart content from an A2A Task or Message returned by the expression.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A File Expression",
+              examples = { "${a2a:file(${body})}" },
+              annotations = { "param=expression:Object:required::The expression that returns an A2A Task or Message" })
+    public static final String A2A_FILE_EXPRESSION = "a2a:file(expression)";
+
+    @Metadata(description = "Returns the resolved A2A agent card as a JSON string.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card",
+              examples = { "${a2a:card}" })
+    public static final String A2A_CARD = "a2a:card";
+
+    @Metadata(description = "Returns the resolved A2A agent card name.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Name",
+              examples = { "${a2a:card.name}" })
+    public static final String A2A_CARD_NAME = "a2a:card.name";
+
+    @Metadata(description = "Returns the resolved A2A agent card description.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Description",
+              examples = { "${a2a:card.description}" })
+    public static final String A2A_CARD_DESCRIPTION = "a2a:card.description";
+
+    @Metadata(description = "Returns the resolved A2A agent card URL.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card URL",
+              examples = { "${a2a:card.url}" })
+    public static final String A2A_CARD_URL = "a2a:card.url";
+
+    @Metadata(description = "Returns the resolved A2A agent card version.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Version",
+              examples = { "${a2a:card.version}" })
+    public static final String A2A_CARD_VERSION = "a2a:card.version";
+
+    @Metadata(description = "Returns the resolved A2A agent card skills as human-readable text.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Skills",
+              examples = { "${a2a:card.skills}" })
+    public static final String A2A_CARD_SKILLS = "a2a:card.skills";
+
+    @Metadata(description = "Returns the resolved A2A agent card skills as a JSON array string.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Skills JSON",
+              examples = { "${a2a:card.skills.json}" })
+    public static final String A2A_CARD_SKILLS_JSON = "a2a:card.skills.json";
+
+    @Metadata(description = "Returns the resolved A2A agent card icon URL.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Icon URL",
+              examples = { "${a2a:card.iconUrl}" })
+    public static final String A2A_CARD_ICON_URL = "a2a:card.iconUrl";
+
+    @Metadata(description = "Returns the resolved A2A agent card documentation URL.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Documentation URL",
+              examples = { "${a2a:card.documentationUrl}" })
+    public static final String A2A_CARD_DOCUMENTATION_URL = "a2a:card.documentationUrl";
+
+    @Metadata(description = "Returns the resolved A2A agent card provider as a JSON string.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Provider",
+              examples = { "${a2a:card.provider}" })
+    public static final String A2A_CARD_PROVIDER = "a2a:card.provider";
+
+    @Metadata(description = "Returns the resolved A2A agent card capabilities as a JSON string.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Capabilities",
+              examples = { "${a2a:card.capabilities}" })
+    public static final String A2A_CARD_CAPABILITIES = "a2a:card.capabilities";
+
+    @Metadata(description = "Returns the resolved A2A agent card supported interfaces as a JSON array string.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Supported Interfaces",
+              examples = { "${a2a:card.supportedInterfaces}" })
+    public static final String A2A_CARD_SUPPORTED_INTERFACES = "a2a:card.supportedInterfaces";
+
+    @Metadata(description = "Returns the resolved A2A agent card security schemes as a JSON object string.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Security Schemes",
+              examples = { "${a2a:card.securitySchemes}" })
+    public static final String A2A_CARD_SECURITY_SCHEMES = "a2a:card.securitySchemes";
+
+    @Metadata(description = "Returns the resolved A2A agent card security requirements as a JSON array string.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Security Requirements",
+              examples = { "${a2a:card.securityRequirements}" })
+    public static final String A2A_CARD_SECURITY_REQUIREMENTS = "a2a:card.securityRequirements";
+
+    @Metadata(description = "Returns the resolved A2A agent card legacy security field as a JSON array string.",
+              javaType = "String", label = "a2a,ai", displayName = "A2A Agent Card Security",
+              examples = { "${a2a:card.security}" })
+    public static final String A2A_CARD_SECURITY = "a2a:card.security";
+
     @Metadata(description = "The DataHandler for the given attachment.", javaType = "jakarta.activation.DataHandler",
               label = "attachment,ognl")
     public static final String ATTACHMENT = "attachment.name";

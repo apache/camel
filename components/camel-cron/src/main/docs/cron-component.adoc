@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: cron
 
 *Since Camel {since}*
 
@@ -116,5 +114,3 @@ Other valid examples of schedule expressions are:
 
 - `0/2 * * * ?` (Five parts, an event every two minutes)
 - `0 0/2 * * * MON-FRI 2030` (Seven parts, an event every two minutes only in the year 2030)
-
-include::spring-boot:partial$starter.adoc[]

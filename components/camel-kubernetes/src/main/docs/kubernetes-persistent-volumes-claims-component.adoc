@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -87,18 +86,13 @@ This operation returns a list of PVC from your cluster
 
 - `listPersistentVolumesClaimsByLabels`: this operation lists the PVCs by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesPersistentVolumesClaimsLabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesPersistentVolumesClaimsLabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaimsByLabels")
     .to("mock:result");
@@ -107,5 +101,3 @@ from("direct:listByLabels")
 This operation returns a list of PVCs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 
-
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-lambda
 
 *Since Camel {since}*
 
@@ -159,24 +158,20 @@ and by sending
 
 [source,java]
 ----
-        template.send("direct:createFunction", ExchangePattern.InOut, new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Lambda2Constants.RUNTIME, "nodejs6.10");
-                exchange.getIn().setHeader(Lambda2Constants.HANDLER, "GetHelloWithName.handler");
-                exchange.getIn().setHeader(Lambda2Constants.DESCRIPTION, "Hello with node.js on Lambda");
-                exchange.getIn().setHeader(Lambda2Constants.ROLE,
-                        "arn:aws:iam::643534317684:role/lambda-execution-role");
+template.send("direct:createFunction", ExchangePattern.InOut, exchange -> {
+    exchange.getIn().setHeader("CamelAwsLambdaRuntime", "nodejs6.10");
+    exchange.getIn().setHeader("CamelAwsLambdaHandler", "GetHelloWithName.handler");
+    exchange.getIn().setHeader("CamelAwsLambdaDescription", "Hello with node.js on Lambda");
+    exchange.getIn().setHeader("CamelAwsLambdaRole",
+            "arn:aws:iam::643534317684:role/lambda-execution-role");
 
-                ClassLoader classLoader = getClass().getClassLoader();
-                File file = new File(
-                        classLoader
-                                .getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
-                                .getFile());
-                FileInputStream inputStream = new FileInputStream(file);
-                exchange.getIn().setBody(inputStream);
-            }
-        });
+    ClassLoader classLoader = getClass().getClassLoader();
+    File file = new File(
+            classLoader
+                    .getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
+                    .getFile());
+    exchange.getIn().setBody(new FileInputStream(file));
+});
 ----
 
 === Function URL Operations
@@ -816,13 +811,13 @@ You can also configure CORS settings for function URLs:
 from("direct:createFunctionUrlWithCors")
     .process(exchange -> {
         exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlAuthType", "NONE");
-        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_ALLOW_ORIGINS,
-            Arrays.asList("https://example.com"));
-        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_ALLOW_METHODS,
-            Arrays.asList("GET", "POST"));
-        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_ALLOW_HEADERS,
-            Arrays.asList("Content-Type", "Authorization"));
-        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_MAX_AGE, 3600);
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlCorsAllowOrigins",
+            List.of("https://example.com"));
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlCorsAllowMethods",
+            List.of("GET", "POST"));
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlCorsAllowHeaders",
+            List.of("Content-Type", "Authorization"));
+        exchange.getIn().setHeader("CamelAwsLambdaFunctionUrlCorsMaxAge", 3600);
     })
     .to("aws2-lambda://myFunction?operation=createFunctionUrlConfig")
     .to("mock:result");
@@ -863,5 +858,3 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
-
-include::spring-boot:partial$starter.adoc[]

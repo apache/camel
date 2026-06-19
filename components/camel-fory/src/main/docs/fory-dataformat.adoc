@@ -6,8 +6,6 @@
 :since: 4.9
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: fory 
 
 *Since Camel {since}*
 
@@ -42,6 +40,3 @@ substituting the version number for the latest and greatest release.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]

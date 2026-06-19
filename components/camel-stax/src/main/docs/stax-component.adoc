@@ -7,8 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
-:camel-spring-boot-name: stax
 
 *Since Camel {since}*
 
@@ -52,7 +50,6 @@ stax:#myHandler
 ----
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
@@ -73,12 +70,9 @@ Here is an example:
 from("file:target/in")
   .to("stax:org.superbiz.handler.CountingHandler") 
   // CountingHandler implements org.xml.sax.ContentHandler or extends org.xml.sax.helpers.DefaultHandler
-  .process(new Processor() {
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        CountingHandler handler = exchange.getIn().getBody(CountingHandler.class);
-        // do some great work with the handler
-    }
+  .process(exchange -> {
+      CountingHandler handler = exchange.getIn().getBody(CountingHandler.class);
+      // do some great work with the handler
   });
 ----
 
@@ -216,7 +210,3 @@ Alternatively, the example above could be implemented as follows in Spring XML
     </route>
   </camelContext>
 ----
-
-
-
-include::spring-boot:partial$starter.adoc[]

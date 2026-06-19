@@ -8,8 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
-:camel-spring-boot-name: file
 
 *Since Camel {since}*
 
@@ -1777,11 +1775,9 @@ outputdir/sub/bar.txt
 
 [source,java]
 ----
-from("file://inputdir/").process(new Processor() {
-  public void process(Exchange exchange) throws Exception {
+from("file://inputdir/").process(exchange -> {
     Object body = exchange.getIn().getBody();
     // do some business logic with the input body
-  }
 });
 ----
 
@@ -1828,6 +1824,3 @@ YAML::
 ====
 
 See xref:languages:file-language.adoc[File Language] for more samples.
-
-
-include::spring-boot:partial$starter.adoc[]

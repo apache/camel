@@ -6,8 +6,6 @@
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: grok
 
 *Since Camel {since}*
 
@@ -160,6 +158,3 @@ In Spring XML, you register the custom pattern as a bean:
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-
-include::spring-boot:partial$starter.adoc[]

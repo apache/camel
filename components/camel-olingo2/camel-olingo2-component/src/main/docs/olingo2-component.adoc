@@ -8,8 +8,6 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
-:camel-spring-boot-name: olingo2
 
 *Since Camel {since}*
 
@@ -225,6 +223,3 @@ YAML::
           uri: bean:blah
 ----
 ====
-
-
-include::spring-boot:partial$starter.adoc[]

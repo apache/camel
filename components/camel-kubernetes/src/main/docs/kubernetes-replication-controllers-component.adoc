@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -89,18 +88,13 @@ This operation returns a list of RCs from your cluster
 
 - `listReplicationControllersByLabels`: this operation lists the RCs by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesReplicationControllersLabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesReplicationControllersLabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllersByLabels")
     .to("mock:result");
@@ -155,4 +149,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` + `labelKey` + `labelValue` - Watch Replication Controllers with the specified label in the given namespace.
 
 
-include::spring-boot:partial$starter.adoc[]

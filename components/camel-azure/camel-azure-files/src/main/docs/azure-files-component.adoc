@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
-:camel-spring-boot-name: azure-files
 
 *Since Camel {since}*
 
@@ -75,7 +74,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
 
 
 === Endpoint URI Examples

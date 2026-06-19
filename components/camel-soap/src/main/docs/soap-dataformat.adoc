@@ -6,8 +6,6 @@
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: soap
 
 *Since Camel {since}*
 
@@ -26,7 +24,6 @@ prefix mappings when marshalling using SOAP data format.
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
 
 
 == ElementNameStrategy
@@ -273,6 +270,3 @@ following dependency to your `pom.xml`.
   <version>x.y.z</version>
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

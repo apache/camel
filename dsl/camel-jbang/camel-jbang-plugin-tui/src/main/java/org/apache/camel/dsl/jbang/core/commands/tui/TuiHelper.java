@@ -31,7 +31,6 @@ import dev.tamboui.text.Span;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -41,18 +40,6 @@ import org.apache.camel.util.json.Jsoner;
 final class TuiHelper {
 
     private TuiHelper() {
-    }
-
-    /**
-     * Eagerly load classes used by the TUI input reader daemon thread and picocli post-processing. Without this, during
-     * JVM shutdown the classloader may already be closing while the input reader thread is still trying to load these
-     * classes lazily — causing ClassNotFoundException stack traces on exit.
-     */
-    static void preloadClasses(ClassLoader cl) {
-        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyModifiers", cl);
-        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyEvent", cl);
-        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyCode", cl);
-        ObjectHelper.loadClass("picocli.CommandLine$IExitCodeGenerator", cl);
     }
 
     /**

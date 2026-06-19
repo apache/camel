@@ -6,8 +6,6 @@
 :since: 2.17
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: mail
 
 *Since Camel {since}*
 
@@ -189,6 +187,3 @@ If you use Maven, you can add the following to your pom.xml:
   <version>x.x.x</version> <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-include::spring-boot:partial$starter.adoc[]

@@ -6,8 +6,6 @@
 :since: 4.18
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
-:camel-spring-boot-name: ocsf
 
 *Since Camel {since}*
 
@@ -523,5 +521,3 @@ The generated schemas use:
 * https://schema.ocsf.io/[OCSF Schema Browser]
 * https://github.com/ocsf/ocsf-schema[OCSF Schema GitHub]
 * https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-ocsf.html[AWS Security Hub OCSF Documentation]
-
-include::spring-boot:partial$starter.adoc[]
