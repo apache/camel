@@ -6,7 +6,6 @@
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -126,5 +125,3 @@ YAML::
    <version>x.x.x</version>
 </dependency>
 -------------------------------------
-
-

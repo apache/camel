@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -195,5 +194,3 @@ And to get the weather at the current location, then:
 ----
 String json = template.requestBodyAndHeader("direct:start", "", "CamelWeatherLocation", "current&appid=APIKEY", String.class);
 ----
-
-

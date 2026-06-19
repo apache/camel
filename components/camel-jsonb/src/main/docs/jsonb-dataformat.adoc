@@ -6,7 +6,6 @@
 :since: 3.7
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -89,5 +88,3 @@ If you want to add the Johnzon implementation, and you are using maven, add foll
   <version>x.x.x</version>  
 </dependency>
 ----------------------------------------------------------
-
-

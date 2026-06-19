@@ -6,7 +6,6 @@
 :since: 2.8
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -233,4 +232,3 @@ The camel context id which you want to inject into the camel conduit
 This example shows how to use the camel load balancing feature in CXF.
 You need to load the configuration file in CXF and publish the endpoints
 on the address "camel://direct:EndpointA" and "camel://direct:EndpointB"
-

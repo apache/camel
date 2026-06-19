@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -745,4 +744,3 @@ in particular, autoconfigured beans from mybatis-spring-boot-starter can be used
 #application.properties
 camel.component.mybatis.sql-session-factory = #sqlSessionFactory
 ----
-

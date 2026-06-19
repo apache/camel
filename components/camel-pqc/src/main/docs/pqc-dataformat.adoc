@@ -6,7 +6,6 @@
 :since: 4.16
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -17,5 +16,3 @@ The PQC data format supports encrypting and decrypting payload using Post Quantu
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-
-

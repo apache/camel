@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -106,4 +105,3 @@ YAML::
 ====
 
 In this way, you'll work always on the same cache in the registry.
-

@@ -6,7 +6,6 @@
 :since: 2.8
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -77,4 +76,3 @@ xref:manual:ROOT:registry.adoc[Registry].
 == Dependencies
 
 The Ref language is part of *camel-core*.
-

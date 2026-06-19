@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -88,6 +87,3 @@ YAML::
 
 For more information on the endpoints and options see Braintree
 references at https://developers.braintreepayments.com/reference/overview[https://developers.braintreepayments.com/reference/overview]
-
-
-

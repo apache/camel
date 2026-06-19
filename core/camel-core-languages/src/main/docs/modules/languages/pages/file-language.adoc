@@ -6,7 +6,6 @@
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -221,4 +220,3 @@ is pretty powerful for those common file path patterns.
 == Dependencies
 
 The File language is part of *camel-core*.
-

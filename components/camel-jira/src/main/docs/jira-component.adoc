@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -236,6 +235,3 @@ All messages also contain the following headers that add additional info about t
 * `issueKey`: Key of the updated issue
 * `changed`: name of the updated field (i.e., Status)
 * `watchedIssues`: list of all issue keys that are watched in the time of update
-
-
-

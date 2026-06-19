@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -722,5 +721,3 @@ Maven users will need to add the following dependency to their `pom.xml`.
 ----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-

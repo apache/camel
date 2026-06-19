@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -314,6 +313,3 @@ Currently, the only correlation strategy is to use the `JMSCorrelationId`.
 The _InOut_ Consumer uses this strategy as well ensuring that all
 response messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
-
-
-

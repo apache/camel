@@ -6,7 +6,6 @@
 :since: 2.21
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -19,4 +18,3 @@ JSON parser to parse to/from JSON format to/from a HAPI-FHIR's `IBaseResource`.
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-

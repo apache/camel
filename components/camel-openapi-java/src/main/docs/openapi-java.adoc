@@ -6,7 +6,6 @@
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -187,4 +186,3 @@ restConfiguration().component("netty-http")
     .host("localhost")
     .port(8080);
 ----
-

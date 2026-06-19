@@ -8,7 +8,6 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -160,5 +159,3 @@ You can specify the destination in the following header:
 |Header |Type |Description
 |`CamelIrcSendTo` |`String` |The channel (or the person) name.
 |=====================================================================
-
-

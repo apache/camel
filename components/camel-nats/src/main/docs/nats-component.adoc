@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -293,5 +292,3 @@ from("nats:mytopic?jetstreamEnabled=true&jetstreamName=mystream&durableName=myco
 
 If the route completes without calling any NatsManualAck method, the message remains unacknowledged
 and NATS will redeliver it after `ackWait` expires (default 30 seconds).
-
-

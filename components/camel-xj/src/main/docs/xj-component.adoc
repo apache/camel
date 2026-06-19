@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -551,5 +550,3 @@ This is required when you want to generate key names that contain chars that are
 | `boolean` | Generate a JSON boolean
 | `null` | Generate an empty value using the word null
 |===
-
-

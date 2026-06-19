@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -234,5 +233,3 @@ In this sample, we want to filter only good blogs we like to a SEDA
 queue.
 The sample also shows how to set up Camel standalone, not running
 in any Container or using Spring.
-
-

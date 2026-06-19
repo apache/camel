@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -93,5 +92,3 @@ you must install the https://github.com/WP-API/Basic-Auth[Basic-Auth WordPress p
 `from("direct:deletePost").to("wordpress:post:delete?id=9&user=ben&password=password123").to("mock:resultDelete");`
 
 **It's not recommended to use Basic Authentication in production without TLS!!**
-
-

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -193,6 +192,3 @@ The component uses `sshd-core` library which is based on either `bouncycastle` o
   <version>1.71</version>
 </dependency>
 -----------------------------------------
-
-
-

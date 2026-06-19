@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -124,4 +123,3 @@ To resolve this, either:
 
 * Change the volume security style to NTFS so that NTFS ACLs are evaluated, or
 * Ensure the UNIX file ownership and mode bits grant the SMB user delete access on the files and their parent directory.
-

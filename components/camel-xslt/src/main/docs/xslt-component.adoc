@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -406,6 +405,3 @@ xsl:message.
 
 The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
-
-
-

@@ -6,7 +6,6 @@
 :since: 4.11
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -99,4 +98,3 @@ YAML::
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
-

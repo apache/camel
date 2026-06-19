@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -202,6 +201,3 @@ Arrays.asList("davsclaus", "Claus", "Ibsen");
 ----
 
 The same approach can be used for updating or querying the table.
-
-
-

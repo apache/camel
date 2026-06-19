@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -505,5 +504,3 @@ YAML::
             uri: activemq:Totally.Rocks
 ----
 ====
-
-

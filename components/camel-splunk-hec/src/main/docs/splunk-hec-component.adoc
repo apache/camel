@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -139,6 +138,3 @@ YAML::
             uri: "splunk-hec://localhost:8080?token=token&time=${headers[kafka.HEADERS].lastKey('TIME')}"
 ----
 ====
-
-
-

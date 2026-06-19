@@ -6,7 +6,6 @@
 :since: 3.8
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -29,4 +28,3 @@ JFR recordings can be started at:
 - When starting Camel by setting `camel.main.startup-recorder-recording=true`.
 
 See the `flight-recorder` from the Camel Examples.
-

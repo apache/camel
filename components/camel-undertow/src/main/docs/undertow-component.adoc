@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -458,4 +457,3 @@ YAML::
             uri: undertow:ws://localhost:8080/myapp/mysocket
 ----
 ====
-

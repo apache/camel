@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -132,5 +131,3 @@ To use a JTE template to formulate a response to the REST get call:
 
 The item ${model.header("id")} is being processed.
 ----
-
-

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -35,5 +34,3 @@ cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=DefaultSender&defaultMaxNumberOfPa
 ----
 
 You can try https://github.com/oalles/camel-cm-sample[this project] to see how camel-cm-sms can be integrated in a camel route.
-
-

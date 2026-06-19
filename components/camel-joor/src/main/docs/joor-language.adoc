@@ -7,7 +7,6 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -414,4 +413,3 @@ If you use Maven you could add the following to your `pom.xml`, substituting the
   <version>x.x.x</version>
 </dependency>
 ----
-

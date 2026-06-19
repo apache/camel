@@ -6,7 +6,6 @@
 :since: 2.15
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -293,5 +292,3 @@ YAML::
             uri: mock:result
 ----
 ====
-
-

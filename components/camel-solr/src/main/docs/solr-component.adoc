@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -186,6 +185,3 @@ template.sendBody("direct:search", "id:1234");
 For more information:
 
 https://solr.apache.org/guide/solr/latest/[Apache Solr Reference Guide]
-
-
-

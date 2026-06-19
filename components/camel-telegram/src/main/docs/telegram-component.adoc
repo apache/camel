@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -501,5 +500,3 @@ You need to ensure that your server is exposed to the internet and to pass the r
 *camel.component.webhook.configuration.webhook-external-url* property.
 
 Refer to the *camel-webhook* component documentation for instructions on how to set it.
-
-

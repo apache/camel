@@ -6,7 +6,6 @@
 :since: 2.5
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -250,4 +249,3 @@ Jasypt.
 </camelContext>
 ----
 ====
-

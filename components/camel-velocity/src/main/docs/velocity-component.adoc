@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -434,5 +433,3 @@ And the java code (from an unit test):
         .to("velocity:org/apache/camel/component/velocity/letter.vm")
         .to("mock:result");
 ----
-
-

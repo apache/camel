@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -145,5 +144,3 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 -------------------------------------
-
-

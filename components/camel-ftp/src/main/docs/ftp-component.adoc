@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -960,4 +959,3 @@ ftp://publicftpserver.com/download
 This component is an extension of the xref:file-component.adoc[File component].
 
 You can find additional samples and details on the File component page.
-

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -226,4 +225,3 @@ Originally, you would get the newest first and consume backward (`message 3 -> m
 
 IMPORTANT: The channel / conversation doesn't need to be public to read the history and messages.
 Use the `conversationType` option to specify the type of the conversation (`PUBLIC_CHANNEL`,`PRIVATE_CHANNEL`, `MPIM`, `IM`).
-

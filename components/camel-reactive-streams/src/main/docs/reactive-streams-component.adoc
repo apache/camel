@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -590,6 +589,3 @@ is always lower than `10`. Messages are processed by a single thread in the Came
 The number of concurrent consumers (threads) can also be set as endpoint option (`concurrentConsumers`).
 When using 1 consumer (the default), the order of items in the source stream is maintained.
 When this value is increased, items will be processed concurrently by multiple threads (so not preserving the order).
-
-
-

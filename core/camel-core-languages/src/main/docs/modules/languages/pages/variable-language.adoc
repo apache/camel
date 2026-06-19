@@ -6,7 +6,6 @@
 :since: 4.4
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -66,4 +65,3 @@ In this case, the list of recipients are contained in the variable
 == Dependencies
 
 The Header language is part of *camel-core*.
-

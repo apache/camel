@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -108,6 +107,3 @@ YAML::
 ====
 
 See also samples from the xref:seda-component.adoc[SEDA] component, how they can be used together.
-
-
-

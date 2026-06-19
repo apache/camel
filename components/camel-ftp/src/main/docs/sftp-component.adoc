@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -315,5 +314,3 @@ As of Camel 3.18.1, these values can also be set on SFTP endpoints by setting th
 == More Information
 
 For more information, you can look at the xref:ftp-component.adoc[FTP component].
-
-

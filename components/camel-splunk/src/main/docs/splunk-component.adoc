@@ -8,7 +8,6 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -325,6 +324,3 @@ Splunk comes with a variety of options for leveraging machine generated
 data with prebuilt apps for analyzing and displaying this.
 For example, the jmx app could be used to publish jmx attributes, e.g.,
 route and jvm metrics to Splunk, and display this on a dashboard.
-
-
-

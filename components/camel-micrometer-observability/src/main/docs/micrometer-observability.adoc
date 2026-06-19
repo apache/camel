@@ -6,7 +6,6 @@
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -197,4 +196,3 @@ Any span executed after the `setProperty` will include a baggage variable named 
 NOTE: an important thing to do is to include a `BaggageManager` specifying the baggage properties to include during context propagation. You may require to configure those baggages fields you want to propagate across the boards.
 
 Any baggage setting defined externally (i.e., calling the Camel process into another external process where you're setting some baggage) is normally going to be propagated in Camel logic.
-

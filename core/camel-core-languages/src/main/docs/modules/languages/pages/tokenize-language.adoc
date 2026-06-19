@@ -6,7 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -88,4 +87,3 @@ For more examples see xref:eips:split-eip.adoc[Split] EIP.
 == Dependencies
 
 The Tokenize language is part of *camel-core*.
-

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -461,5 +460,3 @@ queryMap.put("q1", "new");
 queryMap.put("q2", "world");
 inMessage.setHeader("CamelCxfRsQueryMap", queryMap);
 ----
-
-

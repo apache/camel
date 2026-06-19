@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -55,4 +54,3 @@ include::partial$component-endpoint-headers.adoc[]
 Using the driver provided by PostgreSQL itself (`jdbc:postgresql:/...`) when using a DataSource to connect to a PostgreSQL database does not work.
 
 Please use the pgjdbc-ng driver (`jdbc:pgsql:/...`) instead.
-

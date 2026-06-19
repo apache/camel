@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -243,5 +242,3 @@ to get you started on Schematron.
 * http://www.schematron.com[Schematron official site]. This contains
 links to other resources
 ====
-
-

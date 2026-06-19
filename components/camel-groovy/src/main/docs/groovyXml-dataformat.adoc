@@ -6,7 +6,6 @@
 :since: 4.15
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -92,4 +91,3 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ----------------------------------------
-

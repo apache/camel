@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 
 
@@ -606,6 +605,3 @@ the XML signer endpoint).
 `CommitmentTypeIndication` element is not supported.
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
-
-
-

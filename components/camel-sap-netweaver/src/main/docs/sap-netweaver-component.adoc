@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -168,6 +167,3 @@ Departure airport: JFK
 Destination city: SAN FRANCISCO
 Destination airport: SFO
 ----
-
-
-

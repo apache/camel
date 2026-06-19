@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -161,5 +160,3 @@ component to use `topic://` as topic prefix, as shown below:
 
 Keep in mind that the factory methods `AMQPComponent#amqpComponent(String)` and `AMQPComponent#amqpComponent(String, String, String)` configure
 the Topic prefix as `topic://` by default, so you don't have to configure it explicitly.
-
-

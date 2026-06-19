@@ -6,7 +6,6 @@
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -272,5 +271,3 @@ following dependency to your `pom.xml`.
   <version>x.y.z</version>
 </dependency>
 ----
-
-

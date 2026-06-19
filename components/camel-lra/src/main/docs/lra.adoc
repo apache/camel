@@ -6,7 +6,6 @@
 :since: 2.21
 :supportlevel: Preview
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -24,6 +23,3 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-
-
-

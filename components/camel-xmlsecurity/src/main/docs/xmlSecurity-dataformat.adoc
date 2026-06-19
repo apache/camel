@@ -6,7 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -317,5 +316,3 @@ YAML::
 == Dependencies
 
 This data format is provided within the *camel-xmlsecurity* component.
-
-

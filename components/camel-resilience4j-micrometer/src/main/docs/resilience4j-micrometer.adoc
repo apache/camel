@@ -6,7 +6,6 @@
 :since: 4.15
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 

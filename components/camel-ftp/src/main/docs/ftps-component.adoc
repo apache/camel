@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -40,5 +39,3 @@ include::partial$component-endpoint-headers.adoc[]
 == More Information
 
 For more information, you can look at xref:ftp-component.adoc[FTP component].
-
-

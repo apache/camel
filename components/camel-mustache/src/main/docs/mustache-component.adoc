@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -222,6 +221,3 @@ Thanks for the order of {{headers.item}}.
 Regards Camel Riders Bookstore
 {{body}}
 -------------------------------------------------
-
-
-

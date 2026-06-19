@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only consumer is supported
 :core:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -132,5 +131,3 @@ YAML::
 The above route will generate an event and then invoke the
 `someMethodName` method on the bean called `myBean` in the
 Registry such as JNDI or Spring.
-
-

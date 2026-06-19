@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -1080,5 +1079,3 @@ with `name=MetricsMessageHistoryService`.
 This factory allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from the inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
-
-

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -575,6 +574,3 @@ See these resources:
 
 - https://www.grpc.io/[gRPC project site]
 - https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
-
-
-

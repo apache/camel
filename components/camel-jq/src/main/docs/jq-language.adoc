@@ -6,7 +6,6 @@
 :since: 3.18
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -220,4 +219,3 @@ If you use Maven you could just add the following to your `pom.xml`, substitutin
   <version>x.x.x</version>
 </dependency>
 ----
-

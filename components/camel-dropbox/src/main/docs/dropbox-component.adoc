@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -775,4 +774,3 @@ The following objects are set on message body result:
 |`List<com.dropbox.core.v2.files.SearchMatchV2>` |list of the file path found. For more information on this object, refer to
 https://javadoc.io/doc/com.dropbox.core/dropbox-core-sdk/latest/com/dropbox/core/v2/files/SearchMatchV2.html[Dropbox documentation].
 |===
-

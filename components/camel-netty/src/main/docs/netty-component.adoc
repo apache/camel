@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -751,4 +750,3 @@ enriches the Camel Message with headers having
 details about the client certificate. For example, the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
 ====
-

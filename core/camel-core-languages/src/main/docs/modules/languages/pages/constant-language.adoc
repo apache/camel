@@ -6,7 +6,6 @@
 :since: 1.5
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -136,4 +135,3 @@ eg to refer to a file on the classpath you can do:
 == Dependencies
 
 The Constant language is part of *camel-core*.
-

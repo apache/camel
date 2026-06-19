@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 :core:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -100,6 +99,3 @@ method], your test case will perform the necessary assertions.
 
 To see how you can set other expectations on the test endpoint, see the
 xref:mock-component.adoc[Mock] component.
-
-
-

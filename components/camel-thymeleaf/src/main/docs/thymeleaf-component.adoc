@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -431,5 +430,3 @@ And the java code (from a unit test):
         .to("thymeleaf:org/apache/camel/component/thymeleaf/letter.txt")
         .to("mock:result");
 ----
-
-

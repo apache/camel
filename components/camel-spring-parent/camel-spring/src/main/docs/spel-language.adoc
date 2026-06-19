@@ -6,7 +6,6 @@
 :since: 2.7
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -167,6 +166,3 @@ e.g., to refer to a file on the classpath you can do:
 ----
 .setHeader("myHeader").spel("resource:classpath:myspel.txt")
 ----
-
-
-

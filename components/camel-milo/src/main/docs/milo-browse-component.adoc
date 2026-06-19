@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -93,4 +92,3 @@ Be aware that this is potentially a very expensive operation.
 With Milo 1.0.5, the browse API remains largely compatible, but shares the same security-related
 changes as the client and server components. Please refer to the xref:milo-client-component.adoc[Milo Client]
 documentation for details on security configuration changes.
-

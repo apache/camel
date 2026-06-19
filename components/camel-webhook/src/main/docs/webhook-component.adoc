@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -56,5 +55,3 @@ include::partial$component-endpoint-headers.adoc[]
 == Examples
 
 Examples of the webhook component are provided in the documentation of the delegate components that support it.
-
-

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -60,6 +59,3 @@ VertxComponent vertxComponent = new VertxComponent();
 vertxComponent.setVertx(vertx);
 camelContext.addComponent("vertx", vertxComponent);
 ----
-
-
-

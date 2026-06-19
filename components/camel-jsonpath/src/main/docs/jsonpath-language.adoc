@@ -6,7 +6,6 @@
 :since: 2.13
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -455,4 +454,3 @@ also make it XML or plain text based:
     <location>${jsonpath($.customer.address.country)}</location>
 </customer>
 ----
-

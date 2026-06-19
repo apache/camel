@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -218,5 +217,3 @@ from("direct:next")
     .to("bean:searchResultProcessor")
     .to("mock:searchResult");
 ----
-
-

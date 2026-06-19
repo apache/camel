@@ -6,7 +6,6 @@
 :since: 3.20
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -59,5 +58,3 @@ substituting the version number for the latest & greatest release.
   <version>x.x.x</version>
 </dependency>
 -------------------------------------
-
-

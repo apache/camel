@@ -6,7 +6,6 @@
 :since: 2.6
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -215,6 +214,3 @@ YAML::
             uri: mina:udp://remotehost:10514
 ----
 ====
-
-
-

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -197,5 +196,3 @@ With Milo 1.0.5, several security-related API changes were introduced:
 * The `ServerCertificateValidator` class has been replaced with `CertificateValidator` in the core security package
 * Certificate validation now uses `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`
 * When configuring custom certificate validators, ensure you're using the updated API
-
-

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -212,6 +211,3 @@ Alternatively, the example above could be implemented as follows in Spring XML
     </route>
   </camelContext>
 ----
-
-
-

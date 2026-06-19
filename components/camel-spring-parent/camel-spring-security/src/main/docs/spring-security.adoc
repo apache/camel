@@ -6,7 +6,6 @@
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -278,4 +277,3 @@ YAML::
                     constant: "You do not have ROLE_ADMIN access!"
 ----
 ====
-

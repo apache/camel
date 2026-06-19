@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -1825,5 +1824,3 @@ YAML::
 ====
 
 See xref:languages:file-language.adoc[File Language] for more samples.
-
-

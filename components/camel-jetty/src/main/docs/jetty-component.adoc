@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -847,5 +846,3 @@ running another instance of Jetty outside of the Camel context and
 sharing the same MBeanServer between the instances, you can provide both
 instances with a reference to the same MBeanContainer to avoid
 name collisions when registering Jetty MBeans.
-
-

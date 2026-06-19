@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -239,6 +238,3 @@ mvn verify -Dtoken=stitchToken
 ----
 
 Whereby `token` is your Stitch token generated for Stitch Import API integration.
-
-
-

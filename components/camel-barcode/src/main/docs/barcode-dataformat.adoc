@@ -6,7 +6,6 @@
 :since: 2.14
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -137,5 +136,3 @@ You can find the ORIENTATION as header variable:
 |ORIENTATION |Integer	 |rotate value in degrees .
 |=======================================================================
  
-
-

@@ -6,7 +6,6 @@
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:
-//Manually maintained attributes
 
 *Since Camel {since}*
 
@@ -496,5 +495,3 @@ versions 2.4 and 2.5, then the following dependencies must be added:
     <!-- use the same version as your hapi-base version -->
 </dependency>
 ----
-
-
