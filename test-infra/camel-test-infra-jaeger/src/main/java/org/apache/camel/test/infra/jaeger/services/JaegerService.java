@@ -20,7 +20,10 @@ import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
- * Test infra service for Jaeger
+ * JUnit 5 extension-facing service for Jaeger; combines the infra endpoint contract with the TestService lifecycle
+ * (BeforeAllCallback / AfterAllCallback) so it can be used directly with {@code @RegisterExtension}.
+ *
+ * @since 4.21
  */
 public interface JaegerService extends TestService, JaegerInfraService, ContainerTestService {
 }

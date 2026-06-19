@@ -18,6 +18,9 @@ package org.apache.camel.test.infra.jaeger.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
+/**
+ * @since 4.21
+ */
 public final class JaegerServiceFactory {
     private JaegerServiceFactory() {
     }

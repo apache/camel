@@ -30,6 +30,11 @@
     <artifactId>camel-test-infra-jaeger</artifactId>
     <name>Camel :: Test Infra :: Jaeger</name>
 
+    <properties>
+        <!-- ITs require Docker; skip by default, opt in with -Djaeger-it-test -->
+        <skipITs>true</skipITs>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -58,6 +63,43 @@
             <artifactId>opentelemetry-exporter-otlp</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>jaeger-it-test</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>jaeger-it-test</name>
+                </property>
+            </activation>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
