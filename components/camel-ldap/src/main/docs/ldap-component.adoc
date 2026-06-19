@@ -175,31 +175,7 @@ props.setProperty(Context.SECURITY_CREDENTIALS, "secret");
 DefaultRegistry reg = new DefaultRegistry();
 reg.bind("myldap", new InitialLdapContext(props, null));
 
-CamelContext context = new DefaultCamelContext(reg);
-context.addRoutes(
-    new RouteBuilder() {
-        @Override
-        public void configure() throws Exception { 
-            from("direct:start").to("ldap:myldap?base=ou=test");
-        }
-    }
-);
-context.start();
-
-ProducerTemplate template = context.createProducerTemplate();
-
-Endpoint endpoint = context.getEndpoint("direct:start");
-Exchange exchange = endpoint.createExchange();
-exchange.getIn().setBody("(uid=test)");
-Exchange out = template.send(endpoint, exchange);
-
-Collection<SearchResult> data = out.getMessage().getBody(Collection.class);
-assert data != null;
-assert !data.isEmpty();
-
-System.out.println(out.getMessage().getBody());
-
-context.stop();
+from("direct:start").to("ldap:myldap?base=ou=test");
 ----
 
 == Configuring SSL

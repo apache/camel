@@ -83,18 +83,46 @@ Lucene usage samples.
 
 === Example 1: Creating a Lucene index
 
-._Java-only: RouteBuilder class definition_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-       from("direct:start").
-           to("lucene:whitespaceQuotesIndex:insert?
-               analyzer=#whitespaceAnalyzer&indexDir=#whitespace&srcDir=#load_dir").
-           to("mock:result");
-    }
-};
+from("direct:start")
+    .to("lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&srcDir=#load_dir")
+    .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="lucene:whitespaceQuotesIndex:insert?analyzer=#whitespaceAnalyzer&amp;indexDir=#whitespace&amp;srcDir=#load_dir"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: lucene:whitespaceQuotesIndex:insert
+          parameters:
+            analyzer: "#whitespaceAnalyzer"
+            indexDir: "#whitespace"
+            srcDir: "#load_dir"
+      - to:
+          uri: mock:result
+----
+====
 
 === Example 2: Loading properties into the JNDI registry in the Camel Context
 
@@ -110,69 +138,86 @@ registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
 
 === Example 2: Performing searches using a Query Producer
 
-._Java-only: RouteBuilder with inline Processor and Java constants_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-       from("direct:start").
-          setHeader("CamelLuceneQuery", constant("Seinfeld")).
-          to("lucene:searchIndex:query?
-             analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20").
-          to("direct:next");
+from("direct:start")
+    .setHeader("CamelLuceneQuery", constant("Seinfeld"))
+    .to("lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20")
+    .to("direct:next");
 
-       from("direct:next").process(new Processor() {
-          public void process(Exchange exchange) throws Exception {
-             Hits hits = exchange.getIn().getBody(Hits.class);
-             printResults(hits);
-          }
-
-          private void printResults(Hits hits) {
-              LOG.debug("Number of hits: " + hits.getNumberOfHits());
-              for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                 LOG.debug("Hit " + i + " Index Location:" + hits.getHit().get(i).getHitLocation());
-                 LOG.debug("Hit " + i + " Score:" + hits.getHit().get(i).getScore());
-                 LOG.debug("Hit " + i + " Data:" + hits.getHit().get(i).getData());
-              }
-           }
-       }).to("mock:searchResult");
-   }
-};
+from("direct:next")
+    .to("bean:searchResultProcessor")
+    .to("mock:searchResult");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelLuceneQuery">
+    <constant>Seinfeld</constant>
+  </setHeader>
+  <to uri="lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&amp;indexDir=#whitespace&amp;maxHits=20"/>
+  <to uri="direct:next"/>
+</route>
+
+<route>
+  <from uri="direct:next"/>
+  <to uri="bean:searchResultProcessor"/>
+  <to uri="mock:searchResult"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - setHeader:
+          name: CamelLuceneQuery
+          constant: Seinfeld
+      - to:
+          uri: lucene:searchIndex:query
+          parameters:
+            analyzer: "#whitespaceAnalyzer"
+            indexDir: "#whitespace"
+            maxHits: 20
+      - to:
+          uri: direct:next
+
+- route:
+    from:
+      uri: direct:next
+    steps:
+      - to:
+          uri: bean:searchResultProcessor
+      - to:
+          uri: mock:searchResult
+----
+====
 
 === Example 3: Performing searches using a Query Processor
 
-._Java-only: RouteBuilder with LuceneQueryProcessor and inline Processor_
+._Java-only: uses LuceneQueryProcessor_
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        try {
-            from("direct:start").
-                setHeader("CamelLuceneQuery", constant("Rodney Dangerfield")).
-                process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20)).
-                to("direct:next");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+from("direct:start")
+    .setHeader("CamelLuceneQuery", constant("Rodney Dangerfield"))
+    .process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20))
+    .to("direct:next");
 
-        from("direct:next").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Hits hits = exchange.getIn().getBody(Hits.class);
-                printResults(hits);
-            }
-
-            private void printResults(Hits hits) {
-                LOG.debug("Number of hits: " + hits.getNumberOfHits());
-                for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                    LOG.debug("Hit " + i + " Index Location:" + hits.getHit().get(i).getHitLocation());
-                    LOG.debug("Hit " + i + " Score:" + hits.getHit().get(i).getScore());
-                    LOG.debug("Hit " + i + " Data:" + hits.getHit().get(i).getData());
-                }
-            }
-       }).to("mock:searchResult");
-   }
-};
+from("direct:next")
+    .to("bean:searchResultProcessor")
+    .to("mock:searchResult");
 ----
 
 

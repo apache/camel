@@ -219,15 +219,10 @@ protected RoutesBuilder createRouteBuilder() throws Exception {
         }
     });
 
-    return new RouteBuilder() {
-        @Override
-        public void configure() throws Exception {
-            from("timer://mytimer?fixedRate=false&period=60&synchronous=true")
-                .to("http://feeds.aps.org/rss/recent/prstper.xml?httpClientConfigurer=myHttpClientConfigurer")
-                .unmarshal(new RssDataFormat()) // Convert raw response to structured RSS
-                .to("mock:result");
-        }
-    };
+    from("timer://mytimer?fixedRate=false&period=60&synchronous=true")
+        .to("http://feeds.aps.org/rss/recent/prstper.xml?httpClientConfigurer=myHttpClientConfigurer")
+        .unmarshal(new RssDataFormat())
+        .to("mock:result");
 }
 ----
 

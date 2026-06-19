@@ -107,17 +107,50 @@ library `BEATLES` on a system named `LIVERPOOL`.  +
  Another user connects to the same data queue to receive the information
 from the data queue and forward it to the `mock:ringo` endpoint.
 
-._Java-only: RouteBuilder class definition_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-public class Jt400RouteBuilder extends RouteBuilder {
-    @Override
-    public void configure() throws Exception {
-       from(“direct:george”).to(“jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”);
-       from(“jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”).to(“mock:ringo”);
-    }
-}
+from(“direct:george”).to(“jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”);
+from(“jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”).to(“mock:ringo”);
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri=”direct:george”/>
+  <to uri=”jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”/>
+</route>
+
+<route>
+  <from uri=”jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”/>
+  <to uri=”mock:ringo”/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:george
+    steps:
+      - to:
+          uri: jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
+
+- route:
+    from:
+      uri: jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
+    steps:
+      - to:
+          uri: mock:ringo
+----
+====
 
 === Program call examples
 
@@ -127,42 +160,64 @@ program “compute” in the library “assets”. This program will write the
 output values in the second and third parameters. All the parameters will be
 sent to the direct:play endpoint.
 
-._Java-only: RouteBuilder class definition_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-public class Jt400RouteBuilder extends RouteBuilder {
-    @Override
-    public void configure() throws Exception {
-       from(“direct:work”).to(“jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3”).to(“direct:play”);
-    }
-}
+from(“direct:work”).to(“jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3”).to(“direct:play”);
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri=”direct:work”/>
+  <to uri=”jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&amp;ouputFieldsIdx=2,3”/>
+  <to uri=”direct:play”/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:work
+    steps:
+      - to:
+          uri: jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM
+          parameters:
+            fieldsLength: “10,10,512”
+            ouputFieldsIdx: “2,3”
+      - to:
+          uri: direct:play
+----
+====
 
 In this example, the camel route will call the QUSRTVUS API to retrieve
 16 bytes from data area “MYUSRSPACE” in the “MYLIB” library.
 
-._Java-only: RouteBuilder class definition with lambda expression_
+._Java-only: uses lambda Processor to set program call parameters_
 [source,java]
 ----
-public class Jt400RouteBuilder extends RouteBuilder {
-    @Override
-    public void configure() throws Exception {
-        from(“timer://foo?period=60000”)
-        .process( exchange -> {
-            String usrSpc = “MYUSRSPACEMYLIB     “;
-            Object[] parms = new Object[] {
-                usrSpc, // Qualified user space name
-                1,      // starting position
-                16,     // length of data
-                “” // output
-            };
-            exchange.getIn().setBody(parms);
-        })
-        .to(“jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3”)
-        .setBody(simple(“${body[3]}”))
-        .to(“direct:foo”);
-    }
-}
+from(“timer://foo?period=60000”)
+    .process( exchange -> {
+        String usrSpc = “MYUSRSPACEMYLIB     “;
+        Object[] parms = new Object[] {
+            usrSpc, // Qualified user space name
+            1,      // starting position
+            16,     // length of data
+            “” // output
+        };
+        exchange.getIn().setBody(parms);
+    })
+    .to(“jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3”)
+    .setBody(simple(“${body[3]}”))
+    .to(“direct:foo”);
 ----
 
 === Writing to keyed data queues

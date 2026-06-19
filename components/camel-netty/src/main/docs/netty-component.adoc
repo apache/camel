@@ -310,20 +310,50 @@ value.
 For instance, the example below will close the channel after it has
 written the bye message back to the client:
 
-._Java-only: inline Processor implementation_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("netty:tcp://0.0.0.0:8080").process(new Processor() {
-    public void process(Exchange exchange) throws Exception {
-        String body = exchange.getIn().getBody(String.class);
-        exchange.getOut().setBody("Bye " + body);
-        // some condition that determines if we should close
-        if (close) {
-            exchange.getOut().setHeader("CamelNettyCloseChannelWhenComplete", true);
-        }
-    }
-});
+from("netty:tcp://0.0.0.0:8080")
+    .setBody(simple("Bye ${body}"))
+    // set the CamelNettyCloseChannelWhenComplete header to true to close the channel
+    .setHeader("CamelNettyCloseChannelWhenComplete", constant(true));
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty:tcp://0.0.0.0:8080"/>
+  <setBody>
+    <simple>Bye ${body}</simple>
+  </setBody>
+  <!-- set the CamelNettyCloseChannelWhenComplete header to true to close the channel -->
+  <setHeader name="CamelNettyCloseChannelWhenComplete">
+    <constant>true</constant>
+  </setHeader>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+# set the CamelNettyCloseChannelWhenComplete header to true to close the channel
+- route:
+    from:
+      uri: netty:tcp://0.0.0.0:8080
+      steps:
+        - setBody:
+            simple: "Bye ${body}"
+        - setHeader:
+            name: CamelNettyCloseChannelWhenComplete
+            constant: true
+----
+====
 
 [[Netty-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
 Adding custom channel pipeline factories to gain complete control over a created pipeline
@@ -382,22 +412,8 @@ and instantiated/utilized on a Camel route in the following way
 Registry registry = camelContext.getRegistry();
 ServerInitializerFactory factory = new TestServerInitializerFactory();
 registry.bind("spf", factory);
-context.addRoutes(new RouteBuilder() {
-  public void configure() {
-      String netty_ssl_endpoint =
-         "netty:tcp://0.0.0.0:5150?serverInitializerFactory=#spf"
-      String return_string =
-         "When You Go Home, Tell Them Of Us And Say,"
-         + "For Your Tomorrow, We Gave Our Today.";
-
-      from(netty_ssl_endpoint)
-       .process(new Processor() {
-          public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(return_string);
-          }
-       }
-  }
-});
+from("netty:tcp://0.0.0.0:5150?serverInitializerFactory=#spf")
+    .setBody(constant("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today."));
 ----
 
 === Reusing Netty boss and worker thread pools
@@ -604,32 +620,44 @@ public ChannelHandler getDecoder() throws Exception {
     };
 }
 
-RouteBuilder builder = new RouteBuilder() {
-  public void configure() {
-    from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
-      .process(new Processor() {
-         public void process(Exchange exchange) throws Exception {
-           Poetry poetry = (Poetry) exchange.getIn().getBody();
-           // Process poetry in some way
-           exchange.getOut().setBody("Message received);
-         }
-       }
-    }
-};
+from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
+    .to("bean:poetryProcessor");
 ----
 
 === A TCP-based Netty consumer endpoint using One-way communication
 
-._Java-only: Java RouteBuilder class_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-RouteBuilder builder = new RouteBuilder() {
-  public void configure() {
-       from("netty:tcp://0.0.0.0:5150")
-           .to("mock:result");
-  }
-};
+from("netty:tcp://0.0.0.0:5150")
+    .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="netty:tcp://0.0.0.0:5150"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: netty:tcp://0.0.0.0:5150
+    steps:
+      - to:
+          uri: mock:result
+----
+====
 
 === An SSL/TCP-based Netty consumer endpoint using Request-Reply communication
 
@@ -686,26 +714,11 @@ Spring DSL based configuration of endpoint
 [[Netty-UsingBasicSSLTLSconfigurationontheJettyComponent]]
 Using Basic SSL/TLS configuration on the Jetty Component
 
-._Java-only: Java programmatic SSL route configuration_
+._Java-only: SSL route configuration_
 [source,java]
 ----
-context.addRoutes(new RouteBuilder() {
-  public void configure() {
-      String netty_ssl_endpoint =
-         "netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=changeit"
-         + "&keyStoreResource=file:src/test/resources/keystore.jks&trustStoreResource=file:src/test/resources/keystore.jks";
-      String return_string =
-         "When You Go Home, Tell Them Of Us And Say,"
-         + "For Your Tomorrow, We Gave Our Today.";
-
-      from(netty_ssl_endpoint)
-       .process(new Processor() {
-          public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(return_string);
-          }
-       }
-  }
-});
+from("netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=changeit&keyStoreResource=file:src/test/resources/keystore.jks&trustStoreResource=file:src/test/resources/keystore.jks")
+    .setBody(constant("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today."));
 ----
 
 [[Netty-GettingaccesstoSSLSessionandtheclientcertificate]]

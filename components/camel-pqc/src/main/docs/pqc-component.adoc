@@ -165,7 +165,7 @@ With the following beans registered in the Registry
 
 ._Java-only: registering ML-DSA KeyPair and Signature beans_
 [source,java]
---------------------------------------------------------------------------------
+----
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
@@ -179,7 +179,7 @@ With the following beans registered in the Registry
         Signature mlDsa = Signature.getInstance("ML-DSA");
         return mlDsa;
     }
---------------------------------------------------------------------------------
+----
 
 This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
 
@@ -288,7 +288,7 @@ With the following beans registered in the Registry
 
 ._Java-only: registering SLH-DSA KeyPair and Signature beans_
 [source,java]
---------------------------------------------------------------------------------
+----
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance("SLH-DSA", "BC");
@@ -302,7 +302,7 @@ With the following beans registered in the Registry
         Signature slhDsa = Signature.getInstance("SLH-DSA");
         return slhDsa;
     }
---------------------------------------------------------------------------------
+----
 
 This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
 
@@ -411,7 +411,7 @@ With the following beans registered in the Registry
 
 ._Java-only: registering LMS KeyPair and Signature beans_
 [source,java]
---------------------------------------------------------------------------------
+----
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance("LMS", "BC");
@@ -425,7 +425,7 @@ With the following beans registered in the Registry
         Signature lms = Signature.getInstance("LMS");
         return lms;
     }
---------------------------------------------------------------------------------
+----
 
 This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
 
@@ -534,7 +534,7 @@ With the following beans registered in the Registry
 
 ._Java-only: registering XMSS KeyPair and Signature beans_
 [source,java]
---------------------------------------------------------------------------------
+----
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance("XMSS", "BCPQC");
@@ -548,7 +548,7 @@ With the following beans registered in the Registry
         Signature xmss = Signature.getInstance("XMSS");
         return xmss;
     }
---------------------------------------------------------------------------------
+----
 
 This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
 
@@ -702,7 +702,7 @@ With the following beans registered in the Registry
 
 ._Java-only: registering ML-KEM KeyPair and KeyGenerator beans_
 [source,java]
---------------------------------------------------------------------------------
+----
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
@@ -719,7 +719,7 @@ With the following beans registered in the Registry
                 PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
         return kg;
     }
---------------------------------------------------------------------------------
+----
 
 This could be done even without the Registry beans, by specifying the `symmetricKeyAlgorithm` and `keyEncapsulationAlgorithm` parameters in the following way
 
@@ -790,26 +790,23 @@ As example you could use the secret key to dynamically instruct the CryptoDataFo
 
 ._Java-only: extracting secret key from encapsulation for downstream CryptoDataFormat usage_
 [source,java]
---------------------------------------------------------------------------------
-        CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES", null);
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
-                        .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
-                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES")
-                        .setHeader(CryptoDataFormat.KEY, body())
-                        .setBody(constant("Hello"))
-                        .marshal(cryptoFormat)
-                        .log("Encrypted ${body}")
-                        .to("mock:encrypted")
-                        .unmarshal(cryptoFormat)
-                        .log("Unencrypted ${body}")
-                        .to("mock:unencrypted");
-                ;
-            }
---------------------------------------------------------------------------------
+----
+CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES", null);
+
+from("direct:encapsulate")
+    .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+    .to("mock:encapsulate")
+    .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+    .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES")
+    .setHeader(CryptoDataFormat.KEY, body())
+    .setBody(constant("Hello"))
+    .marshal(cryptoFormat)
+    .log("Encrypted ${body}")
+    .to("mock:encrypted")
+    .unmarshal(cryptoFormat)
+    .log("Unencrypted ${body}")
+    .to("mock:unencrypted");
+----
 
 This could be used to generate a secret key, protect it through Encapsulation and KEM approach and re-use it once extracted.
 
@@ -859,7 +856,7 @@ A production-ready implementation that persists keys and metadata to disk.
 
 ._Java-only: FileBasedKeyLifecycleManager usage_
 [source,java]
---------------------------------------------------------------------------------
+----
 KeyLifecycleManager keyManager = new FileBasedKeyLifecycleManager("/secure/keys");
 
 // Generate a new Dilithium key
@@ -869,7 +866,7 @@ KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
 // Use the key
 KeyMetadata metadata = keyManager.getKeyMetadata("app-signing-key");
 logger.info("Key created: {}", metadata);
---------------------------------------------------------------------------------
+----
 
 ==== InMemoryKeyLifecycleManager
 
@@ -894,7 +891,7 @@ A lightweight implementation that stores keys in memory only.
 
 ._Java-only: InMemoryKeyLifecycleManager usage_
 [source,java]
---------------------------------------------------------------------------------
+----
 InMemoryKeyLifecycleManager keyManager = new InMemoryKeyLifecycleManager();
 
 // Generate a test key
@@ -902,7 +899,7 @@ KeyPair keyPair = keyManager.generateKeyPair("FALCON", "test-key");
 
 // Clean up after testing
 keyManager.clear();
---------------------------------------------------------------------------------
+----
 
 ==== HashicorpVaultKeyLifecycleManager
 
@@ -951,19 +948,19 @@ This implementation uses industry-standard cryptographic key formats and separat
 To use HashicorpVaultKeyLifecycleManager, add the following optional dependency:
 
 [source,xml]
---------------------------------------------------------------------------------
+----
 <dependency>
     <groupId>org.springframework.vault</groupId>
     <artifactId>spring-vault-core</artifactId>
     <version>${spring-vault-core-version}</version>
 </dependency>
---------------------------------------------------------------------------------
+----
 
 **Example with VaultTemplate:**
 
 ._Java-only: HashicorpVaultKeyLifecycleManager with VaultTemplate_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Option 1: Using existing VaultTemplate (recommended when using camel-hashicorp-vault)
 @BindToRegistry("vaultTemplate")
 public VaultTemplate createVaultTemplate() {
@@ -989,13 +986,13 @@ KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
     DilithiumParameterSpec.dilithium2);
 
 // Key is stored in Vault at: secret/data/pqc/keys/app-signing-key
---------------------------------------------------------------------------------
+----
 
 **Example with Direct Configuration:**
 
 ._Java-only: HashicorpVaultKeyLifecycleManager with direct configuration_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Option 2: Direct configuration with connection parameters
 HashicorpVaultKeyLifecycleManager keyManager =
     new HashicorpVaultKeyLifecycleManager(
@@ -1010,13 +1007,13 @@ HashicorpVaultKeyLifecycleManager keyManager =
 // Generate and store key in Vault
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "vault-key",
     DilithiumParameterSpec.dilithium2);
---------------------------------------------------------------------------------
+----
 
 **Example with HashiCorp Cloud Platform (HCP) Vault:**
 
 ._Java-only: HashicorpVaultKeyLifecycleManager with HCP Vault_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Option 3: Configuration for HCP Vault with namespace
 HashicorpVaultKeyLifecycleManager keyManager =
     new HashicorpVaultKeyLifecycleManager(
@@ -1035,12 +1032,12 @@ KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "hcp-key",
     DilithiumParameterSpec.dilithium2);
 
 // Key is stored in HCP Vault at: admin/secret/data/pqc/keys/hcp-key
---------------------------------------------------------------------------------
+----
 
 **YAML Configuration:**
 
 [source,yaml]
---------------------------------------------------------------------------------
+----
 camel:
   beans:
     # Create VaultTemplate
@@ -1071,12 +1068,12 @@ camel:
         - "pqc/keys"
         - false              # cloud
         - null               # namespace
---------------------------------------------------------------------------------
+----
 
 **YAML Configuration for HCP Vault:**
 
 [source,yaml]
---------------------------------------------------------------------------------
+----
 camel:
   beans:
     # Create VaultTemplate for HCP
@@ -1107,7 +1104,7 @@ camel:
         - "pqc/keys"
         - true               # cloud=true for HCP Vault
         - "admin"            # namespace (required for HCP)
---------------------------------------------------------------------------------
+----
 
 **Vault Storage Structure:**
 
@@ -1116,7 +1113,7 @@ Keys are stored in Vault's KV v2 secrets engine with separate paths for private 
 *On-Premise Vault:*
 
 [source,text]
---------------------------------------------------------------------------------
+----
 secret/                                    # Secrets engine
 ├── data/
 │   └── pqc/
@@ -1143,12 +1140,12 @@ secret/                                    # Secrets engine
         └── keys/
             ├── app-signing-key/           # Vault metadata entry
             └── app-signing-key-v2/
---------------------------------------------------------------------------------
+----
 
 *HCP Vault (with namespace):*
 
 [source,text]
---------------------------------------------------------------------------------
+----
 admin/                                     # Namespace
 └── secret/                                # Secrets engine
     ├── data/
@@ -1167,7 +1164,7 @@ admin/                                     # Namespace
             └── keys/
                 ├── app-signing-key/
                 └── app-signing-key-v2/
---------------------------------------------------------------------------------
+----
 
 **Integration with camel-hashicorp-vault:**
 
@@ -1175,7 +1172,7 @@ HashicorpVaultKeyLifecycleManager can share the same VaultTemplate with the came
 
 ._Java-only: reusing VaultTemplate from camel-hashicorp-vault_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Reuse VaultTemplate from camel-hashicorp-vault
 @BindToRegistry("keyLifecycleManager")
 public HashicorpVaultKeyLifecycleManager createKeyManager() {
@@ -1188,7 +1185,7 @@ public HashicorpVaultKeyLifecycleManager createKeyManager() {
         "pqc/keys"
     );
 }
---------------------------------------------------------------------------------
+----
 
 **Vault Setup and Security Policies:**
 
@@ -1197,7 +1194,7 @@ To use HashicorpVaultKeyLifecycleManager, configure Vault with appropriate polic
 **Basic Policy (Full Access - Development/Testing):**
 
 [source,bash]
---------------------------------------------------------------------------------
+----
 # Enable KV v2 secrets engine (usually enabled by default)
 vault secrets enable -path=secret kv-v2
 
@@ -1229,12 +1226,12 @@ vault policy write pqc-keys-full pqc-policy-full.hcl
 
 # Create token with policy
 vault token create -policy=pqc-keys-full
---------------------------------------------------------------------------------
+----
 
 **Production Policies (Fine-Grained Access Control):**
 
 [source,bash]
---------------------------------------------------------------------------------
+----
 # POLICY 1: Admin Policy (Key Management Service)
 # Full access to generate, rotate, and manage keys
 cat > pqc-policy-admin.hcl <<EOF
@@ -1329,7 +1326,7 @@ vault token create -policy=pqc-admin        # For key management service
 vault token create -policy=pqc-signing      # For signing service
 vault token create -policy=pqc-app          # For applications (verification only)
 vault token create -policy=pqc-app-signing-key  # For specific key access
---------------------------------------------------------------------------------
+----
 
 ==== AwsSecretsManagerKeyLifecycleManager
 
@@ -1378,19 +1375,19 @@ This implementation uses industry-standard cryptographic key formats and separat
 To use AwsSecretsManagerKeyLifecycleManager, add the following optional dependency:
 
 [source,xml]
---------------------------------------------------------------------------------
+----
 <dependency>
     <groupId>software.amazon.awssdk</groupId>
     <artifactId>secretsmanager</artifactId>
     <version>${aws-java-sdk2-version}</version>
 </dependency>
---------------------------------------------------------------------------------
+----
 
 **Example with SecretsManagerClient:**
 
 ._Java-only: AwsSecretsManagerKeyLifecycleManager with SecretsManagerClient_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Option 1: Using existing SecretsManagerClient (recommended when using camel-aws-secrets-manager)
 @BindToRegistry("secretsManagerClient")
 public SecretsManagerClient createSecretsManagerClient() {
@@ -1412,13 +1409,13 @@ KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
     DilithiumParameterSpec.dilithium2);
 
 // Keys are stored as: pqc/keys/app-signing-key/private, /public, /metadata
---------------------------------------------------------------------------------
+----
 
 **Example with Direct Configuration:**
 
 ._Java-only: AwsSecretsManagerKeyLifecycleManager with direct configuration_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Option 2: Direct configuration with AWS credentials
 AwsSecretsManagerKeyLifecycleManager keyManager =
     new AwsSecretsManagerKeyLifecycleManager(
@@ -1431,13 +1428,13 @@ AwsSecretsManagerKeyLifecycleManager keyManager =
 // Generate and store key in AWS Secrets Manager
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "aws-key",
     DilithiumParameterSpec.dilithium2);
---------------------------------------------------------------------------------
+----
 
 **Example with LocalStack (Testing):**
 
 ._Java-only: AwsSecretsManagerKeyLifecycleManager with LocalStack_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Option 3: Configuration for LocalStack testing
 AwsSecretsManagerKeyLifecycleManager keyManager =
     new AwsSecretsManagerKeyLifecycleManager(
@@ -1451,12 +1448,12 @@ AwsSecretsManagerKeyLifecycleManager keyManager =
 // Generate and store key in LocalStack
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "test-key",
     DilithiumParameterSpec.dilithium2);
---------------------------------------------------------------------------------
+----
 
 **YAML Configuration:**
 
 [source,yaml]
---------------------------------------------------------------------------------
+----
 camel:
   beans:
     # Create SecretsManagerClient using default credentials
@@ -1475,12 +1472,12 @@ camel:
       constructorArgs:
         - "#bean:secretsManagerClient"
         - "pqc/keys"
---------------------------------------------------------------------------------
+----
 
 **YAML Configuration with Explicit Credentials:**
 
 [source,yaml]
---------------------------------------------------------------------------------
+----
 camel:
   beans:
     # Create AwsSecretsManagerKeyLifecycleManager with explicit configuration
@@ -1492,7 +1489,7 @@ camel:
         - "${AWS_SECRET_KEY}"   # secret key from environment
         - "pqc/keys"            # key prefix
         - null                  # endpoint override (null for production)
---------------------------------------------------------------------------------
+----
 
 **AWS Secrets Storage Structure:**
 
@@ -1501,7 +1498,7 @@ Keys are stored in AWS Secrets Manager with separate secrets for private keys, p
 Each key creates three secrets:
 
 [source,text]
---------------------------------------------------------------------------------
+----
 pqc/keys/app-signing-key/private     # PKCS#8 private key (STRICT IAM POLICY)
   {
     "key": "MIIEvQIBADANBg...",        # Base64-encoded PKCS#8 private key
@@ -1525,7 +1522,7 @@ pqc/keys/app-signing-key/metadata    # Key metadata
     "algorithm": "DILITHIUM"
   }
   Tags: ManagedBy=camel-pqc
---------------------------------------------------------------------------------
+----
 
 **AWS Setup and IAM Policies:**
 
@@ -1534,7 +1531,7 @@ To use AwsSecretsManagerKeyLifecycleManager, configure IAM policies for appropri
 **Basic Policy (Full Access - Development/Testing):**
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -1569,7 +1566,7 @@ To use AwsSecretsManagerKeyLifecycleManager, configure IAM policies for appropri
     }
   ]
 }
---------------------------------------------------------------------------------
+----
 
 **Production Policies (Fine-Grained Access Control):**
 
@@ -1578,7 +1575,7 @@ To use AwsSecretsManagerKeyLifecycleManager, configure IAM policies for appropri
 Full access to generate, rotate, and manage keys:
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -1610,14 +1607,14 @@ Full access to generate, rotate, and manage keys:
     }
   ]
 }
---------------------------------------------------------------------------------
+----
 
 **POLICY 2: Signing Service Policy (Read Private Keys for Signing)**
 
 Read-only access to specific private keys for signing operations:
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -1653,14 +1650,14 @@ Read-only access to specific private keys for signing operations:
     }
   ]
 }
---------------------------------------------------------------------------------
+----
 
 **POLICY 3: Application Policy (Public Keys Only)**
 
 Read-only access to public keys for signature verification:
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -1696,14 +1693,14 @@ Read-only access to public keys for signature verification:
     }
   ]
 }
---------------------------------------------------------------------------------
+----
 
 **POLICY 4: Specific Key Access (Production Best Practice)**
 
 Limit access to specific key IDs only:
 
 [source,json]
---------------------------------------------------------------------------------
+----
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -1728,7 +1725,7 @@ Limit access to specific key IDs only:
     }
   ]
 }
---------------------------------------------------------------------------------
+----
 
 **Integration with camel-aws-secrets-manager:**
 
@@ -1736,7 +1733,7 @@ AwsSecretsManagerKeyLifecycleManager can share the same SecretsManagerClient wit
 
 ._Java-only: reusing SecretsManagerClient from camel-aws-secrets-manager_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Reuse SecretsManagerClient from camel-aws-secrets-manager
 @BindToRegistry("keyLifecycleManager")
 public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
@@ -1748,7 +1745,7 @@ public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
         "pqc/keys"
     );
 }
---------------------------------------------------------------------------------
+----
 
 **Comparison of Implementations:**
 
@@ -1837,7 +1834,7 @@ The key lifecycle manager supports all PQC algorithms with sensible default para
 
 ._Java-only: generating key pairs for various PQC signature algorithms_
 [source,java]
---------------------------------------------------------------------------------
+----
 // ML-DSA (uses default ML-DSA-65)
 KeyPair mldsaKey = keyManager.generateKeyPair("MLDSA", "mldsa-key");
 
@@ -1856,13 +1853,13 @@ KeyPair xmssmtKey = keyManager.generateKeyPair("XMSSMT", "xmssmt-key");
 
 // LMS/HSS (uses default LMS-SHA256-N32-H10)
 KeyPair lmsKey = keyManager.generateKeyPair("LMS", "lms-key");
---------------------------------------------------------------------------------
+----
 
 ==== Key Encapsulation Algorithms
 
 ._Java-only: generating key pairs for various PQC KEM algorithms_
 [source,java]
---------------------------------------------------------------------------------
+----
 // ML-KEM (uses default)
 KeyPair mlkemKey = keyManager.generateKeyPair("MLKEM", "mlkem-key");
 
@@ -1874,7 +1871,7 @@ KeyPair sntrupKey = keyManager.generateKeyPair("SNTRUPrime", "sntrup-key");
 
 // BIKE (uses default bike128)
 KeyPair bikeKey = keyManager.generateKeyPair("BIKE", "bike-key");
---------------------------------------------------------------------------------
+----
 
 === Key Metadata
 
@@ -1882,7 +1879,7 @@ Each key is associated with metadata that tracks its lifecycle:
 
 ._Java-only: retrieving and inspecting key metadata_
 [source,java]
---------------------------------------------------------------------------------
+----
 KeyMetadata metadata = keyManager.getKeyMetadata("my-key");
 
 System.out.println("Key ID: " + metadata.getKeyId());
@@ -1893,7 +1890,7 @@ System.out.println("Age (days): " + metadata.getAgeInDays());
 System.out.println("Usage count: " + metadata.getUsageCount());
 System.out.println("Expires at: " + metadata.getExpiresAt());
 System.out.println("Next rotation: " + metadata.getNextRotationAt());
---------------------------------------------------------------------------------
+----
 
 **Key Status Values:**
 
@@ -1909,7 +1906,7 @@ Key rotation is essential for maintaining security. The lifecycle manager suppor
 
 ._Java-only: checking rotation need and rotating a key_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Check if key needs rotation
 boolean needsRotation = keyManager.needsRotation("old-key",
     Duration.ofDays(90),  // Max age: 90 days
@@ -1923,7 +1920,7 @@ if (needsRotation) {
     // New key is ACTIVE
     logger.info("Key rotated successfully");
 }
---------------------------------------------------------------------------------
+----
 
 === Key Export and Import
 
@@ -1940,7 +1937,7 @@ Keys can be exported and imported in multiple formats:
 
 ._Java-only: exporting keys in PEM and DER formats_
 [source,java]
---------------------------------------------------------------------------------
+----
 KeyPair keyPair = keyManager.getKey("my-key");
 
 // Export public key as PEM
@@ -1957,13 +1954,13 @@ byte[] keyPairPem = keyManager.exportKey(keyPair, KeyFormat.PEM, false);
 
 // Export with private key (USE WITH CAUTION)
 byte[] fullExport = keyManager.exportKey(keyPair, KeyFormat.DER, true);
---------------------------------------------------------------------------------
+----
 
 **Import Example:**
 
 ._Java-only: importing a key from PEM format_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Import from PEM format
 byte[] pemData = Files.readAllBytes(Paths.get("public-key.pem"));
 KeyPair imported = keyManager.importKey(pemData, KeyFormat.PEM, "DILITHIUM");
@@ -1971,7 +1968,7 @@ KeyPair imported = keyManager.importKey(pemData, KeyFormat.PEM, "DILITHIUM");
 // Store the imported key
 KeyMetadata metadata = new KeyMetadata("imported-key", "DILITHIUM");
 keyManager.storeKey("imported-key", imported, metadata);
---------------------------------------------------------------------------------
+----
 
 === Key Expiration and Revocation
 
@@ -1979,7 +1976,7 @@ keyManager.storeKey("imported-key", imported, metadata);
 
 ._Java-only: setting expiration and manually expiring a key_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Set expiration time
 KeyMetadata metadata = keyManager.getKeyMetadata("my-key");
 metadata.setExpiresAt(Instant.now().plus(Duration.ofDays(365)));
@@ -1992,26 +1989,26 @@ keyManager.expireKey("my-key");
 if (metadata.isExpired()) {
     logger.warn("Key {} has expired", metadata.getKeyId());
 }
---------------------------------------------------------------------------------
+----
 
 **Revoke a Key:**
 
 ._Java-only: revoking a compromised key_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Revoke a compromised key
 keyManager.revokeKey("compromised-key", "Private key exposed in log file");
 
 KeyMetadata metadata = keyManager.getKeyMetadata("compromised-key");
 assert metadata.getStatus() == KeyMetadata.KeyStatus.REVOKED;
 assert metadata.getDescription().contains("Revoked: Private key exposed");
---------------------------------------------------------------------------------
+----
 
 === Listing and Managing Keys
 
 ._Java-only: listing, filtering, and deleting keys_
 [source,java]
---------------------------------------------------------------------------------
+----
 // List all keys
 List<KeyMetadata> allKeys = keyManager.listKeys();
 
@@ -2035,7 +2032,7 @@ for (KeyMetadata metadata : allKeys) {
         logger.info("Deleted old deprecated key: {}", metadata.getKeyId());
     }
 }
---------------------------------------------------------------------------------
+----
 
 === Integration with Camel Routes
 
@@ -2168,7 +2165,7 @@ Implement automated key rotation policies:
 
 ._Java-only: automated key rotation policy_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Rotate keys every 90 days or after 10,000 uses
 Duration maxAge = Duration.ofDays(90);
 long maxUsage = 10000;
@@ -2176,7 +2173,7 @@ long maxUsage = 10000;
 if (keyManager.needsRotation(keyId, maxAge, maxUsage)) {
     keyManager.rotateKey(keyId, keyId + "-new", algorithm);
 }
---------------------------------------------------------------------------------
+----
 
 **2. Secure Storage**
 
@@ -2193,11 +2190,11 @@ Always update metadata when using keys:
 
 ._Java-only: updating key usage metadata_
 [source,java]
---------------------------------------------------------------------------------
+----
 KeyMetadata metadata = keyManager.getKeyMetadata(keyId);
 metadata.updateLastUsed(); // Increments usage count
 keyManager.updateKeyMetadata(keyId, metadata);
---------------------------------------------------------------------------------
+----
 
 **4. Handle Stateful Signatures Carefully**
 
@@ -2223,7 +2220,7 @@ Use InMemoryKeyLifecycleManager for tests:
 
 ._Java-only: test setup and cleanup with InMemoryKeyLifecycleManager_
 [source,java]
---------------------------------------------------------------------------------
+----
 @BeforeEach
 public void setup() {
     keyManager = new InMemoryKeyLifecycleManager();
@@ -2233,7 +2230,7 @@ public void setup() {
 public void cleanup() {
     keyManager.clear();
 }
---------------------------------------------------------------------------------
+----
 
 === Thread Safety
 
@@ -2246,7 +2243,7 @@ Concurrent key operations are safe:
 
 ._Java-only: concurrent key generation with thread pool_
 [source,java]
---------------------------------------------------------------------------------
+----
 ExecutorService executor = Executors.newFixedThreadPool(10);
 
 for (int i = 0; i < 100; i++) {
@@ -2263,7 +2260,7 @@ for (int i = 0; i < 100; i++) {
 
 executor.shutdown();
 executor.awaitTermination(1, TimeUnit.MINUTES);
---------------------------------------------------------------------------------
+----
 
 === Migration Between Implementations
 
@@ -2271,7 +2268,7 @@ To migrate from InMemoryKeyLifecycleManager to FileBasedKeyLifecycleManager:
 
 ._Java-only: migrating keys between lifecycle manager implementations_
 [source,java]
---------------------------------------------------------------------------------
+----
 InMemoryKeyLifecycleManager memoryManager = new InMemoryKeyLifecycleManager();
 FileBasedKeyLifecycleManager fileManager = new FileBasedKeyLifecycleManager("/secure/keys");
 
@@ -2283,7 +2280,7 @@ for (KeyMetadata metadata : keys) {
 }
 
 logger.info("Migrated {} keys to file-based storage", keys.size());
---------------------------------------------------------------------------------
+----
 
 == Hybrid Cryptography
 
@@ -2700,7 +2697,7 @@ The `PQCAlgorithmId` enum maps every supported algorithm — classical signature
 
 ._Java-only: resolving PQCAlgorithmId from JCA algorithm names_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Resolve from a JCA algorithm string (case-insensitive)
 PQCAlgorithmId algId = PQCAlgorithmId.fromJcaName("ML-DSA");   // ML_DSA (0x0201)
 PQCAlgorithmId kemId = PQCAlgorithmId.fromJcaName("ML-KEM");   // ML_KEM (0x0401)
@@ -2708,24 +2705,24 @@ PQCAlgorithmId aesId = PQCAlgorithmId.fromJcaName("AES");      // AES    (0x0501
 
 // Returns UNKNOWN (0x0000) for unrecognized names
 PQCAlgorithmId unknown = PQCAlgorithmId.fromJcaName("FutureAlg"); // UNKNOWN
---------------------------------------------------------------------------------
+----
 
 **Lookup by wire format ID:**
 
 ._Java-only: resolving PQCAlgorithmId from wire format identifier_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Resolve from a 16-bit identifier read from the wire
 PQCAlgorithmId alg = PQCAlgorithmId.fromId(0x0201);  // ML_DSA
 int id = alg.getId();           // 0x0201
 String jca = alg.getJcaName();  // "ML-DSA"
---------------------------------------------------------------------------------
+----
 
 **Inspecting algorithm metadata from a parsed hybrid output:**
 
 ._Java-only: parsing and inspecting v2 hybrid signature components_
 [source,java]
---------------------------------------------------------------------------------
+----
 // After parsing a v2 hybrid signature
 HybridSignature.HybridSignatureComponents components = HybridSignature.parse(hybridSig);
 
@@ -2735,14 +2732,14 @@ PQCAlgorithmId pqc       = components.pqcAlgorithmId();       // e.g. ML_DSA
 int version              = components.version();              // 2
 
 // v1 components (backward-compatible) return null algorithm IDs and version 1
---------------------------------------------------------------------------------
+----
 
 === Wire Format v2 Layout
 
 All three output types (hybrid signature, hybrid KEM, PQC DataFormat) share the same 8-byte header:
 
 [source,text]
---------------------------------------------------------------------------------
+----
 [2 bytes: magic 0x50 0x51 ("PQ")]
 [1 byte:  version — 0x02]
 [1 byte:  format type]
@@ -2751,7 +2748,7 @@ All three output types (hybrid signature, hybrid KEM, PQC DataFormat) share the 
 [4 bytes: first payload length]
 [N bytes: first payload]
 [M bytes: second payload]
---------------------------------------------------------------------------------
+----
 
 **Format types:**
 
@@ -2811,11 +2808,11 @@ Since Camel 4.19, the PQC DataFormat uses wire format v2 which includes magic by
 The v2 encrypted message format is:
 
 [source,text]
---------------------------------------------------------------------------------
+----
 [2 bytes: magic "PQ"] [1 byte: version] [1 byte: format type]
 [2 bytes: KEM algorithm ID] [2 bytes: symmetric algorithm ID]
 [4 bytes: encapsulation length] [N bytes: encapsulation] [M bytes: encrypted data]
---------------------------------------------------------------------------------
+----
 
 This format allows the receiver to identify the algorithms used, extract the encapsulation, decapsulate the shared secret using their private key, and decrypt the data.
 
@@ -2825,7 +2822,7 @@ This format allows the receiver to identify the algorithms used, extract the enc
 
 ._Java-only: PQC DataFormat basic encrypt and decrypt routes_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Create PQC DataFormat
 PQCDataFormat pqcFormat = new PQCDataFormat();
 pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
@@ -2839,12 +2836,12 @@ from("direct:encrypt")
 from("file:encrypted")
     .unmarshal(pqcFormat)
     .to("direct:decrypted");
---------------------------------------------------------------------------------
+----
 
 ==== YAML DSL
 
 [source,yaml]
---------------------------------------------------------------------------------
+----
 - route:
     id: encrypt-route
     from:
@@ -2870,7 +2867,7 @@ from("file:encrypted")
             symmetricKeyLength: 256
       - to:
           uri: direct:decrypted
---------------------------------------------------------------------------------
+----
 
 === Configuration Options
 
@@ -2926,7 +2923,7 @@ The DataFormat requires a KeyPair to be available either:
 
 ._Java-only: registering ML-KEM KeyPair in Camel registry_
 [source,java]
---------------------------------------------------------------------------------
+----
 @BindToRegistry("pqcKeyPair")
 public KeyPair createMLKEMKeyPair() throws Exception {
     KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BCPQC");
@@ -2938,13 +2935,13 @@ public KeyPair createMLKEMKeyPair() throws Exception {
 PQCDataFormat pqcFormat = new PQCDataFormat();
 pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
 pqcFormat.setSymmetricKeyAlgorithm("AES");
---------------------------------------------------------------------------------
+----
 
 ==== Option 2: Direct Configuration
 
 ._Java-only: configuring PQCDataFormat with KeyPair directly_
 [source,java]
---------------------------------------------------------------------------------
+----
 KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BCPQC");
 kpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
 KeyPair keyPair = kpg.generateKeyPair();
@@ -2953,18 +2950,18 @@ PQCDataFormat pqcFormat = new PQCDataFormat();
 pqcFormat.setKeyPair(keyPair);
 pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
 pqcFormat.setSymmetricKeyAlgorithm("AES");
---------------------------------------------------------------------------------
+----
 
 ==== Option 3: Header-based Configuration
 
 ._Java-only: providing KeyPair via message header_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:encrypt")
     .setHeader(PQCDataFormat.KEY_PAIR, () -> generateKeyPair())
     .marshal(pqcFormat)
     .to("direct:encrypted");
---------------------------------------------------------------------------------
+----
 
 === Supported Algorithms
 
@@ -3007,7 +3004,7 @@ from("direct:encrypt")
 
 ._Java-only: PQC DataFormat for secure file encrypt and decrypt_
 [source,java]
---------------------------------------------------------------------------------
+----
 PQCDataFormat pqcFormat = new PQCDataFormat();
 pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
 pqcFormat.setSymmetricKeyAlgorithm("AES");
@@ -3024,13 +3021,13 @@ from("file:encrypted?noop=true")
     .unmarshal(pqcFormat)
     .to("file:decrypted")
     .log("File decrypted successfully");
---------------------------------------------------------------------------------
+----
 
 ==== API Message Encryption
 
 ._Java-only: PQC DataFormat for API message encrypt and decrypt_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:secure-api")
     .marshal().json()  // Convert to JSON
     .marshal(pqcFormat)  // Encrypt with PQC
@@ -3039,13 +3036,13 @@ from("direct:secure-api")
     .unmarshal(pqcFormat)  // Decrypt response
     .unmarshal().json()  // Parse JSON response
     .to("direct:result");
---------------------------------------------------------------------------------
+----
 
 ==== Multiple Algorithm Support
 
 ._Java-only: PQC DataFormat with multiple security levels_
 [source,java]
---------------------------------------------------------------------------------
+----
 // Different algorithms for different security levels
 PQCDataFormat highSecurity = new PQCDataFormat();
 highSecurity.setKeyEncapsulationAlgorithm("MLKEM");
@@ -3067,13 +3064,13 @@ from("direct:classify")
             .log("No encryption for low security")
     .end()
     .to("direct:output");
---------------------------------------------------------------------------------
+----
 
 ==== Dynamic Algorithm Selection via Headers
 
 ._Java-only: PQC DataFormat with dynamic algorithm selection_
 [source,java]
---------------------------------------------------------------------------------
+----
 PQCDataFormat pqcFormat = new PQCDataFormat();
 
 from("direct:dynamic-encrypt")
@@ -3081,7 +3078,7 @@ from("direct:dynamic-encrypt")
     .setHeader(PQCDataFormat.SYMMETRIC_ALGORITHM, constant("AES"))
     .marshal(pqcFormat)
     .to("direct:encrypted");
---------------------------------------------------------------------------------
+----
 
 === Integration with Key Lifecycle Management
 
@@ -3089,7 +3086,7 @@ The PQC DataFormat can be integrated with the Key Lifecycle Manager for automate
 
 ._Java-only: integrating PQC DataFormat with Key Lifecycle Manager_
 [source,java]
---------------------------------------------------------------------------------
+----
 @BindToRegistry("keyLifecycleManager")
 public KeyLifecycleManager createKeyManager() {
     return new FileBasedKeyLifecycleManager("/secure/keys");
@@ -3116,7 +3113,7 @@ public KeyPair createKeyPair() throws Exception {
 
     return keyPair;
 }
---------------------------------------------------------------------------------
+----
 
 === Comparison with Manual KEM Operations
 
@@ -3124,7 +3121,7 @@ public KeyPair createKeyPair() throws Exception {
 
 ._Java-only: manual KEM encrypt with multiple endpoint steps_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:manual-encrypt")
     .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
     .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
@@ -3133,18 +3130,18 @@ from("direct:manual-encrypt")
     .setBody(constant("Hello"))
     .marshal(new CryptoDataFormat("AES", null))
     .to("direct:encrypted");
---------------------------------------------------------------------------------
+----
 
 **DataFormat Approach (simplified):**
 
 ._Java-only: simplified encrypt using PQCDataFormat_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("direct:dataformat-encrypt")
     .setBody(constant("Hello"))
     .marshal(new PQCDataFormat("MLKEM", "AES", keyPair))
     .to("direct:encrypted");
---------------------------------------------------------------------------------
+----
 
 The DataFormat approach is significantly simpler and handles all KEM operations internally.
 
@@ -3184,10 +3181,10 @@ Adjust bufferSize based on message size:
 
 ._Java-only: configuring PQCDataFormat buffer size_
 [source,java]
---------------------------------------------------------------------------------
+----
 PQCDataFormat pqcFormat = new PQCDataFormat();
 pqcFormat.setBufferSize(8192);  // Larger buffer for big files
---------------------------------------------------------------------------------
+----
 
 **2. Caching KeyGenerator**
 
@@ -3195,7 +3192,7 @@ Configure a KeyGenerator once to avoid repeated initialization:
 
 ._Java-only: caching a KeyGenerator to avoid repeated initialization_
 [source,java]
---------------------------------------------------------------------------------
+----
 @BindToRegistry("kemKeyGenerator")
 public KeyGenerator createKeyGenerator() throws Exception {
     return KeyGenerator.getInstance("ML-KEM", "BCPQC");
@@ -3203,7 +3200,7 @@ public KeyGenerator createKeyGenerator() throws Exception {
 
 PQCDataFormat pqcFormat = new PQCDataFormat();
 pqcFormat.setKeyGenerator(kemKeyGenerator);
---------------------------------------------------------------------------------
+----
 
 **3. Streaming**
 
@@ -3211,12 +3208,12 @@ The DataFormat supports streaming for large payloads, avoiding memory issues:
 
 ._Java-only: streaming large files with PQCDataFormat_
 [source,java]
---------------------------------------------------------------------------------
+----
 from("file:large-files?noop=true")
     .streamCache(true)  // Enable stream caching if needed
     .marshal(pqcFormat)
     .to("file:encrypted");
---------------------------------------------------------------------------------
+----
 
 === Testing
 
@@ -3224,7 +3221,7 @@ Example test demonstrating round-trip encryption/decryption:
 
 ._Java-only: JUnit 5 test for PQC DataFormat round-trip encryption_
 [source,java]
---------------------------------------------------------------------------------
+----
 @Test
 void testPQCDataFormatRoundTrip() throws Exception {
     // Setup
@@ -3240,35 +3237,12 @@ void testPQCDataFormatRoundTrip() throws Exception {
     pqcFormat.setKeyEncapsulationAlgorithm("MLKEM");
     pqcFormat.setSymmetricKeyAlgorithm("AES");
 
-    // Create route
-    context.addRoutes(new RouteBuilder() {
-        @Override
-        public void configure() {
-            from("direct:start")
-                .marshal(pqcFormat)
-                .to("mock:encrypted")
-                .unmarshal(pqcFormat)
-                .to("mock:decrypted");
-        }
-    });
-
-    // Test
-    String original = "Sensitive data";
-    template.sendBody("direct:start", original);
-
-    MockEndpoint encrypted = getMockEndpoint("mock:encrypted");
-    MockEndpoint decrypted = getMockEndpoint("mock:decrypted");
-
-    encrypted.assertIsSatisfied();
-    decrypted.assertIsSatisfied();
-
-    byte[] encryptedBody = encrypted.getExchanges().get(0).getMessage().getBody(byte[].class);
-    assertNotEquals(original, new String(encryptedBody));
-
-    String decryptedBody = decrypted.getExchanges().get(0).getMessage().getBody(String.class);
-    assertEquals(original, decryptedBody);
-}
---------------------------------------------------------------------------------
+    from("direct:start")
+        .marshal(pqcFormat)
+        .to("mock:encrypted")
+        .unmarshal(pqcFormat)
+        .to("mock:decrypted");
+----
 
 === Troubleshooting
 
@@ -3282,10 +3256,10 @@ void testPQCDataFormatRoundTrip() throws Exception {
 +
 ._Java-only: adding Bouncy Castle security providers_
 [source,java]
---------------------------------------------------------------------------------
+----
 Security.addProvider(new BouncyCastleProvider());
 Security.addProvider(new BouncyCastlePQCProvider());
---------------------------------------------------------------------------------
+----
 
 **Issue**: Decryption fails with corrupted data
 
@@ -3298,18 +3272,18 @@ Security.addProvider(new BouncyCastlePQCProvider());
 +
 ._Java-only: increasing buffer size or enabling stream caching_
 [source,java]
---------------------------------------------------------------------------------
+----
 pqcFormat.setBufferSize(16384);
 // or
 from("file:large-files?noop=true").streamCache(true).marshal(pqcFormat)...
---------------------------------------------------------------------------------
+----
 
 === Dependencies
 
 The PQC DataFormat is included in the camel-pqc component. Ensure you have:
 
 [source,xml]
---------------------------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-pqc</artifactId>
@@ -3332,6 +3306,6 @@ The PQC DataFormat is included in the camel-pqc component. Ensure you have:
     <artifactId>bcpqc-jdk18on</artifactId>
     <version>${bouncycastle.version}</version>
 </dependency>
---------------------------------------------------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

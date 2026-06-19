@@ -42,13 +42,45 @@ include::partial$component-endpoint-headers.adoc[]
 
 - `listNamespaces`: this operation lists the namespaces on a kubernetes cluster
 
-._Java-only: uses toF() for endpoint URI formatting_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("direct:list").
-    toF("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces").
-    to("mock:result");
+from("direct:list")
+    .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces")
+    .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:list"/>
+  <to uri="kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&amp;operation=listNamespaces"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:list
+    steps:
+      - to:
+          uri: kubernetes-namespaces:///
+          parameters:
+            kubernetesClient: "#kubernetesClient"
+            operation: listNamespaces
+      - to:
+          uri: mock:result
+----
+====
 
 This operation returns a list of namespaces from your cluster
 
@@ -57,38 +89,58 @@ This operation returns a list of namespaces from your cluster
 ._Java-only: uses inline Processor with HashMap_
 [source,java]
 ----
-from("direct:listByLabels").process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader("CamelKubernetesNamespaceLabels", labels);
-            }
-        });
-    toF("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespacesByLabels").
-    to("mock:result");
+from("direct:listByLabels")
+    .process(new Processor() {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader("CamelKubernetesNamespaceLabels", labels);
+        }
+    })
+    .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespacesByLabels")
+    .to("mock:result");
 ----
 
 This operation returns a list of namespaces from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
 === Kubernetes Namespaces Consumer Example
 
-._Java-only: uses fromF(), inline Processor class, and string concatenation_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-fromF("kubernetes-namespaces://%s?oauthToken=%s", host, authToken)
-    .process(new KubernetesProcessor()).to("mock:result");
-
-    public class KubernetesProcessor implements Processor {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Message in = exchange.getIn();
-            Namespace ns = exchange.getIn().getBody(Namespace.class);
-            log.info("Got event with namespace name: " + ns.getMetadata().getName() + " and action " + in.getHeader("CamelKubernetesEventAction"));
-        }
-    }
+from("kubernetes-namespaces://{{kubernetes-host}}?oauthToken={{kubernetes-token}}")
+    .to("log:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="kubernetes-namespaces://{{kubernetes-host}}?oauthToken={{kubernetes-token}}"/>
+  <to uri="log:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kubernetes-namespaces://{{kubernetes-host}}
+      parameters:
+        oauthToken: "{{kubernetes-token}}"
+    steps:
+      - to:
+          uri: log:result
+----
+====
 
 This consumer returns a message per event received for all Namespaces in the cluster.
 

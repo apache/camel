@@ -409,11 +409,21 @@ Java::
 [source,java]
 ----
 from("camunda://worker?jobType=myJobType&timeout=20")
-    .process(exchange -> {
-        Map<String, Object> result = new HashMap<>();
-        result.put("approved", true);
-        exchange.getIn().setBody(result);
-    });
+    .setBody(simple("${map('approved',true)}"))
+    .to("camunda://completeJob");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
+  <setBody>
+    <simple>${map('approved',true)}</simple>
+  </setBody>
+  <to uri="camunda://completeJob"/>
+</route>
 ----
 
 YAML::
@@ -426,21 +436,11 @@ YAML::
       parameters:
         jobType: myJobType
         timeout: 20
-      steps:
-        - setBody:
-            constant:
-              resultType: "java.util.Map"
-              expression: ""
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
-  <process ref="myJobProcessor"/>
-</route>
+    steps:
+      - setBody:
+          simple: "${map('approved',true)}"
+      - to:
+          uri: camunda://completeJob
 ----
 ====
 
@@ -459,10 +459,8 @@ Java::
 [source,java]
 ----
 from("camunda://worker?jobType=myJobType&timeout=20")
-    .process(exchange -> {
-        exchange.getIn().setHeader("CamelCamundaErrorCode", "INVALID_DATA");
-        exchange.getIn().setHeader("CamelCamundaErrorMessage", "Data validation failed");
-    })
+    .setHeader("CamelCamundaErrorCode", constant("INVALID_DATA"))
+    .setHeader("CamelCamundaErrorMessage", constant("Data validation failed"))
     .to("camunda://throwError");
 ----
 
@@ -479,10 +477,10 @@ YAML::
       steps:
         - setHeader:
             name: CamelCamundaErrorCode
-            simple: "INVALID_DATA"
+            constant: INVALID_DATA
         - setHeader:
             name: CamelCamundaErrorMessage
-            simple: "Data validation failed"
+            constant: "Data validation failed"
         - to:
             uri: camunda://throwError
 ----
@@ -494,10 +492,10 @@ XML::
 <route>
   <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
   <setHeader name="CamelCamundaErrorCode">
-    <simple>INVALID_DATA</simple>
+    <constant>INVALID_DATA</constant>
   </setHeader>
   <setHeader name="CamelCamundaErrorMessage">
-    <simple>Data validation failed</simple>
+    <constant>Data validation failed</constant>
   </setHeader>
   <to uri="camunda://throwError"/>
 </route>
