@@ -31,6 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class GenericFileConverterTest extends ContextTestSupport {
 
     public static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
@@ -56,7 +58,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        mock.await(10, TimeUnit.SECONDS);
+        assertTrue(mock.await(10, TimeUnit.SECONDS), "Timed out waiting for mock endpoint");
         assertMockEndpointsSatisfied();
     }
 
@@ -77,7 +79,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        mock.await(10, TimeUnit.SECONDS);
+        assertTrue(mock.await(10, TimeUnit.SECONDS), "Timed out waiting for mock endpoint");
         assertMockEndpointsSatisfied();
     }
 
@@ -98,7 +100,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        mock.await(10, TimeUnit.SECONDS);
+        assertTrue(mock.await(10, TimeUnit.SECONDS), "Timed out waiting for mock endpoint");
         assertMockEndpointsSatisfied();
     }
 
@@ -119,7 +121,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        mock.await(10, TimeUnit.SECONDS);
+        assertTrue(mock.await(10, TimeUnit.SECONDS), "Timed out waiting for mock endpoint");
         assertMockEndpointsSatisfied();
     }
 
@@ -140,7 +142,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        mock.await(10, TimeUnit.SECONDS);
+        assertTrue(mock.await(10, TimeUnit.SECONDS), "Timed out waiting for mock endpoint");
         assertMockEndpointsSatisfied();
     }
 
@@ -167,7 +169,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        mock.await(10, TimeUnit.SECONDS);
+        assertTrue(mock.await(10, TimeUnit.SECONDS), "Timed out waiting for mock endpoint");
         assertMockEndpointsSatisfied();
     }
 
@@ -199,7 +201,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        mock.await(10, TimeUnit.SECONDS);
+        assertTrue(mock.await(10, TimeUnit.SECONDS), "Timed out waiting for mock endpoint");
         assertMockEndpointsSatisfied();
     }
 

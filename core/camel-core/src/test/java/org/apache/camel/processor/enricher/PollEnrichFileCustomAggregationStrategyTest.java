@@ -25,6 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupport {
 
     @Test
@@ -41,7 +43,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
 
         context.getRouteController().startAllRoutes();
 
-        getMockEndpoint("mock:start").await(10, TimeUnit.SECONDS);
+        assertTrue(getMockEndpoint("mock:start").await(10, TimeUnit.SECONDS), "Timed out waiting for mock:start");
         log.info("mock:start satisfied, writing enrichdata file");
         template.sendBodyAndHeader(fileUri("enrichdata"), "Big file",
                 Exchange.FILE_NAME, "AAA.dat");
