@@ -194,7 +194,12 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                             assertTrue(s.tryAcquire(), "'direct:a' too many requests");
                             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
-                                public void onDone(Exchange ex) {
+                                public void onComplete(Exchange ex) {
+                                    s.release();
+                                }
+
+                                @Override
+                                public void onFailure(Exchange ex) {
                                     s.release();
                                 }
                             });
@@ -208,11 +213,17 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                             assertTrue(s.tryAcquire(), "'direct:expressionConstant' too many requests");
                             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
-                                public void onDone(Exchange ex) {
+                                public void onComplete(Exchange ex) {
+                                    s.release();
+                                }
+
+                                @Override
+                                public void onFailure(Exchange ex) {
                                     s.release();
                                 }
                             });
                         })
+                        .delay(100)
                         .to("log:result", "mock:result");
 
                 from("direct:expressionHeader").throttle(header("throttleValue")).concurrentRequestsMode()
@@ -221,7 +232,12 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                             assertTrue(s.tryAcquire(), "'direct:expressionHeader' too many requests");
                             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
-                                public void onDone(Exchange ex) {
+                                public void onComplete(Exchange ex) {
+                                    s.release();
+                                }
+
+                                @Override
+                                public void onFailure(Exchange ex) {
                                     s.release();
                                 }
                             });
