@@ -16,10 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.lang.reflect.Constructor;
-
 import dev.tamboui.backend.jline3.JLineBackend;
-import dev.tamboui.terminal.Backend;
 import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -33,23 +30,9 @@ final class TuiBackendHelper {
     static TuiRunner createTuiRunner() throws Exception {
         Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
         if (activeTerminal != null) {
-            Backend backend = createBackendForTerminal(activeTerminal);
-            if (backend != null) {
-                return TuiRunner.create(TuiConfig.builder().backend(backend).mouseCapture(true).build());
-            }
+            JLineBackend backend = new JLineBackend(activeTerminal);
+            return TuiRunner.create(TuiConfig.builder().backend(backend).mouseCapture(true).build());
         }
         return TuiRunner.create(TuiConfig.builder().mouseCapture(true).build());
-    }
-
-    private static Backend createBackendForTerminal(Terminal terminal) {
-        try {
-            Constructor<JLineBackend> ctor = JLineBackend.class.getDeclaredConstructor(Terminal.class);
-            return ctor.newInstance(terminal);
-        } catch (NoSuchMethodException e) {
-            // JLineBackend(Terminal) not available in this version, fall back
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
     }
 }
