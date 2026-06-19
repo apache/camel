@@ -28,9 +28,13 @@ import org.apache.camel.main.MainHttpServerFactory;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.TempDirHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @JdkService(MainConstants.PLATFORM_HTTP_SERVER)
 public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttpServerFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultMainHttpServerFactory.class);
 
     private static final String DEFAULT_UPLOAD_DIR = "${java.io.tmpdir}/camel/camel-tmp-#uuid#/";
 
@@ -118,6 +122,11 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             ObjectHelper.notNull(configuration.getJwtKeystorePassword(), "jwtKeyStorePassword");
             JWTAuthenticationConfigurer auth = new JWTAuthenticationConfigurer();
             auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
+        } else {
+            LOG.warn("Authentication is enabled (authenticationEnabled=true) but no authentication mechanism is"
+                     + " configured: neither a basic-auth properties file (basicPropertiesFile) nor a JWT keystore"
+                     + " (jwtKeystoreType) is set. The HTTP server will start WITHOUT authentication. Configure an"
+                     + " authentication mechanism, or set authenticationEnabled=false to disable authentication.");
         }
     }
 
@@ -131,6 +140,12 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             ObjectHelper.notNull(configuration.getJwtKeystorePassword(), "jwtKeyStorePassword");
             JWTAuthenticationConfigurer auth = new JWTAuthenticationConfigurer();
             auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
+        } else {
+            LOG.warn("Authentication is enabled (authenticationEnabled=true) but no authentication mechanism is"
+                     + " configured: neither a basic-auth properties file (basicPropertiesFile) nor a JWT keystore"
+                     + " (jwtKeystoreType) is set. The HTTP management server will start WITHOUT authentication."
+                     + " Configure an authentication mechanism, or set authenticationEnabled=false to disable"
+                     + " authentication.");
         }
     }
 
