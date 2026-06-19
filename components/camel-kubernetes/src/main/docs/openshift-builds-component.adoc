@@ -84,18 +84,13 @@ This operation returns a List of Builds from your Openshift cluster
 
 - `listBuildsByLabels`: this operation lists the builds by labels on an Openshift cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesBuildsLabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesBuildsLabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("openshift-builds:///?kubernetesClient=#kubernetesClient&operation=listBuildsByLabels")
     .to("mock:result");

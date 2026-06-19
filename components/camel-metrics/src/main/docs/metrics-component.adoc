@@ -59,62 +59,6 @@ This default registry can be replaced with a custom one by providing
 a `MetricRegistry` bean. If multiple `MetricRegistry` beans exist in the
 application, the one with name `metricRegistry` is used.
 
-For example:
-
-[tabs]
-====
-
-Java (Spring)::
-+
-[source,java]
-----
-@Configuration
-public static class MyConfig extends SingleRouteCamelConfiguration {
-
-    @Bean
-    @Override
-    public RouteBuilder route() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // define Camel routes here
-            }
-        };
-    }
-
-    @Bean(name = MetricsComponent.METRIC_REGISTRY_NAME)
-    public MetricRegistry getMetricRegistry() {
-        MetricRegistry registry = ...;
-        return registry;
-    }
-}
-----
-
-Java (CDI)::
-+
-[source,java]
-----
-class MyBean extends RouteBuilder {
-
-    @Override
-    public void configure() {
-      from("...")
-          // Register the 'my-meter' meter in the MetricRegistry below
-          .to("metrics:meter:my-meter");
-    }
-
-    @Produces
-    // If multiple MetricRegistry beans
-    // @Named(MetricsComponent.METRIC_REGISTRY_NAME)
-    MetricRegistry registry() {
-        MetricRegistry registry = new MetricRegistry();
-        // ...
-        return registry;
-    }
-}
-----
-
-====
 
 == Usage
 

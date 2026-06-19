@@ -254,11 +254,9 @@ from("direct:key-in-header-encrypt")
     .removeHeader(CryptoDataFormat.KEY)
     .to("mock:encrypted");
 
-from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Processor() {
-    public void process(Exchange exchange) throws Exception {
-        exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
-        exchange.getMessage().copyFrom(exchange.getIn());
-    }
+from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(exchange -> {
+    exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
+    exchange.getMessage().copyFrom(exchange.getIn());
 }).to("mock:unencrypted");
 ----
 

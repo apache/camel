@@ -84,18 +84,13 @@ This operation returns a list of PVs from your cluster
 
 - `listPersistentVolumesByLabels`: this operation lists the PVs by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesPersistentVolumesLabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesPersistentVolumesLabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels")
     .to("mock:result");

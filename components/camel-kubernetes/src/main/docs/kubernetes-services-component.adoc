@@ -86,18 +86,13 @@ This operation returns a List of services from your cluster
 
 - `listServicesByLabels`: this operation lists the deployments by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesServiceLabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesServiceLabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels")
     .to("mock:result");

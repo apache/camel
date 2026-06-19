@@ -96,10 +96,10 @@ Java::
 [source,java]
 ----
 from("direct:createAndRun")
-     .setHeader(EC2Constants.IMAGE_ID, constant("ami-fd65ba94"))
-     .setHeader(EC2Constants.INSTANCE_TYPE, constant(InstanceType.T2_MICRO))
-     .setHeader(EC2Constants.INSTANCE_MIN_COUNT, constant("1"))
-     .setHeader(EC2Constants.INSTANCE_MAX_COUNT, constant("1"))
+     .setHeader("CamelAwsEC2ImageId", constant("ami-fd65ba94"))
+     .setHeader("CamelAwsEC2InstanceType", constant(InstanceType.T2_MICRO))
+     .setHeader("CamelAwsEC2InstanceMinCount", constant("1"))
+     .setHeader("CamelAwsEC2InstanceMaxCount", constant("1"))
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
 ----
 
@@ -156,52 +156,37 @@ YAML::
 
 - startInstances: this operation will start a list of EC2 instances
 
-._Java-only: using a Processor to set the instance IDs collection_
+._Java-only: sets a collection header for instance IDs_
 [source,java]
 ----
 from("direct:start")
-     .process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Collection<String> l = new ArrayList<>();
-                l.add("myinstance");
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
-            }
-        })
+     .process(exchange -> {
+         exchange.getIn().setHeader("CamelAwsEC2InstancesIds", List.of("myinstance"));
+     })
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
 ----
 
 - stopInstances: this operation will stop a list of EC2 instances
 
-._Java-only: using a Processor to set the instance IDs collection_
+._Java-only: sets a collection header for instance IDs_
 [source,java]
 ----
 from("direct:stop")
-     .process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Collection<String> l = new ArrayList<>();
-                l.add("myinstance");
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
-            }
-        })
+     .process(exchange -> {
+         exchange.getIn().setHeader("CamelAwsEC2InstancesIds", List.of("myinstance"));
+     })
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=stopInstances");
 ----
 
 - terminateInstances: this operation will terminate a list of EC2 instances
 
-._Java-only: using a Processor to set the instance IDs collection_
+._Java-only: sets a collection header for instance IDs_
 [source,java]
 ----
-from("direct:stop")
-     .process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Collection<String> l = new ArrayList<>();
-                l.add("myinstance");
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
-            }
-        })
+from("direct:terminate")
+     .process(exchange -> {
+         exchange.getIn().setHeader("CamelAwsEC2InstancesIds", List.of("myinstance"));
+     })
      .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
 ----
 
