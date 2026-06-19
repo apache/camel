@@ -20,6 +20,8 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 /**
  * Test infra service for Jaeger distributed tracing
+ *
+ * @since 4.21
  */
 public interface JaegerInfraService extends InfrastructureService {
 
@@ -31,6 +33,7 @@ public interface JaegerInfraService extends InfrastructureService {
 
     int queryUiPort();
 
+    // OTLP gRPC exporters expect an http(s):// URL per the OTel spec, not a grpc:// scheme.
     default String collectorGrpcEndpoint() {
         return String.format("http://%s:%d", host(), collectorGrpcPort());
     }
