@@ -2008,7 +2008,7 @@ As a consequence, the generated Endpoint DSL header accessors on
 
 **Header Override Options (Hardening)**
 
-Added new configuration options to `camel-mail` to provide finer control over message header overrides for security and hardening purposes. 
+Added new configuration options to `camel-mail` to provide finer control over message header overrides for security and hardening purposes.
 
 The following options have been added to the mail endpoint:
 
@@ -2546,3 +2546,18 @@ resolved from the classpath via the component's `URIResolver` and are therefore 
 If your Schematron rules legitimately reference an external DTD, external entity, or external stylesheet,
 those references will no longer be resolved and rule compilation will fail; inline the referenced content
 instead.
+
+=== camel-diagram: Embeddable web component
+
+A new `<camel-route-diagram>` web component is now bundled inside `camel-diagram.jar`
+at `META-INF/resources/camel/diagram/camel-route-diagram.js`.
+Any Servlet 3 container (including Quarkus and Spring Boot) serving the JAR automatically
+exposes the script as a static resource.
+
+The component consumes the existing `route-structure` dev console JSON endpoint and renders
+routes as interactive SVG diagrams with optional per-processor metric overlays and configurable
+periodic refresh.
+It is theme-agnostic, respects `prefers-color-scheme` for automatic dark/light mode, and
+exposes CSS custom properties for full visual control.
+
+See the `camel-diagram` component documentation for usage instructions and theming options.
