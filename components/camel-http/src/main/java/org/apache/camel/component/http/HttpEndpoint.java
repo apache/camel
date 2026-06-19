@@ -151,7 +151,7 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     private int maxTotalConnections;
     @UriParam(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
     private int connectionsPerRoute;
-    @UriParam(label = "security",
+    @UriParam(label = "security", security = "insecure:ssl",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
     @UriParam(label = "security", defaultValue = "CLIENT", enums = "CLIENT,BUILTIN,BOTH",

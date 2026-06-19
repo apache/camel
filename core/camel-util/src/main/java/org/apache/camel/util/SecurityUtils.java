@@ -76,6 +76,7 @@ public final class SecurityUtils {
         map.put("usejavamailsessionpropertiesfromheaders", new SecurityOption(INSECURE_SSL, "true"));
         map.put("validateauth", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("validatecertificates", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
+        map.put("x509hostnameverifier", new SecurityOption(INSECURE_SSL, ""));
         // SECURITY-OPTIONS: END
         SECURITY_OPTIONS = Collections.unmodifiableMap(map);
     }
