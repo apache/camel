@@ -383,7 +383,7 @@
         <microprofile-config-version>3.1.1</microprofile-config-version>
         <milo-version>1.1.4</milo-version>
         <milvus-client-version>2.6.21</milvus-client-version>
-        <mina-version>2.2.8</mina-version>
+        <mina-version>2.2.9</mina-version>
         <minio-version>8.6.0</minio-version>
         <mockito-version>5.23.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
