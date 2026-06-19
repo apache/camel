@@ -35,6 +35,7 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.sparkline.DualSparkline;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -376,11 +377,12 @@ class CircuitBreakerTab implements MonitorTab {
                 Span.raw(String.format(" ok:%-4d ", curSuccess)),
                 Span.styled("▬", Style.EMPTY.fg(Color.LIGHT_RED)),
                 Span.raw(String.format(" fail:%-4d msg/s", curFail)));
-        frame.renderWidget(MirroredSparkline.builder()
+        frame.renderWidget(DualSparkline.builder()
                 .topData(successArr)
                 .bottomData(failArr)
                 .topStyle(Style.EMPTY.fg(Color.GREEN))
                 .bottomStyle(Style.EMPTY.fg(Color.LIGHT_RED))
+                .showYAxis(true)
                 .xLabels("-60s", "-45s", "-30s", "-15s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(Title.from(chartTitle)).build())
