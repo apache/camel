@@ -73,12 +73,9 @@ Here is an example:
 from("file:target/in")
   .to("stax:org.superbiz.handler.CountingHandler") 
   // CountingHandler implements org.xml.sax.ContentHandler or extends org.xml.sax.helpers.DefaultHandler
-  .process(new Processor() {
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        CountingHandler handler = exchange.getIn().getBody(CountingHandler.class);
-        // do some great work with the handler
-    }
+  .process(exchange -> {
+      CountingHandler handler = exchange.getIn().getBody(CountingHandler.class);
+      // do some great work with the handler
   });
 ----
 

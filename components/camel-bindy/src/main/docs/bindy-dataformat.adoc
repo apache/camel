@@ -1937,12 +1937,10 @@ the following:
 from("file://inbox")
     .unmarshal(bindy)
     .split(body())
-        .process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                Map<String, Object> modelMap = (Map<String, Object>) in.getBody();
-                in.setBody(modelMap.get(Order.class.getCanonicalName()));
-            }
+        .process(exchange -> {
+            Message in = exchange.getIn();
+            Map<String, Object> modelMap = (Map<String, Object>) in.getBody();
+            in.setBody(modelMap.get(Order.class.getCanonicalName()));
         })
         .to("direct:handleSingleOrder")
     .end();

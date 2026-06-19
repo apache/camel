@@ -85,18 +85,13 @@ This operation returns a list of HPAs from your cluster
 
 - `listDeploymentsByLabels`: this operation lists the HPAs by labels on a kubernetes cluster
 
-._Java-only: uses inline Processor with HashMap_
+._Java-only: sets a Map header for label selection_
 [source,java]
 ----
 from("direct:listByLabels")
-    .process(new Processor() {
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
-            exchange.getIn().setHeader("CamelKubernetesHPALabels", labels);
-        }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelKubernetesHPALabels",
+            Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels")
     .to("mock:result");

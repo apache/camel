@@ -115,21 +115,18 @@ YAML::
 
 - createCluster: this operation will create an MSK Cluster in AWS
 
-._Java-only: creating an MSK Cluster with a Processor and MSK2Constants_
+._Java-only: uses AWS SDK `BrokerNodeGroupInfo` builder_
 [source,java]
 ----
 from("direct:createCluster")
-    .process(new Processor() {
-       @Override
-       public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSK2Constants.CLUSTER_NAME, "test-kafka");
-                exchange.getIn().setHeader(MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1");
-                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_NUMBER, 2);
-                BrokerNodeGroupInfo groupInfo = BrokerNodeGroupInfo.builder().build();
-                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);
-       }
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelAwsMSKClusterName", "test-kafka");
+        exchange.getIn().setHeader("CamelAwsMSKClusterKafkaVersion", "2.1.1");
+        exchange.getIn().setHeader("CamelAwsMSKBrokerNodesNumber", 2);
+        exchange.getIn().setHeader("CamelAwsMSKBrokerNodesGroupInfo",
+            BrokerNodeGroupInfo.builder().build());
     })
-    .to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster")
+    .to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster");
 ----
 
 - deleteCluster: this operation will delete an MSK Cluster in AWS
@@ -141,7 +138,7 @@ Java::
 [source,java]
 ----
 from("direct:deleteCluster")
-    .setHeader(MSK2Constants.CLUSTER_ARN, constant("test-kafka"))
+    .setHeader("CamelAwsMSKClusterArn", constant("test-kafka"))
     .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster");
 ----
 
@@ -177,21 +174,18 @@ YAML::
 ----
 ====
 
-._Java-only: deleting an MSK Cluster with a Processor and MSK2Constants_
+._Java-only: uses AWS SDK `BrokerNodeGroupInfo` builder_
 [source,java]
 ----
-from("direct:createCluster")
-    .process(new Processor() {
-       @Override
-       public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSK2Constants.CLUSTER_NAME, "test-kafka");
-                exchange.getIn().setHeader(MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1");
-                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_NUMBER, 2);
-                BrokerNodeGroupInfo groupInfo = BrokerNodeGroupInfo.builder().build();
-                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);
-       }
+from("direct:deleteCluster")
+    .process(exchange -> {
+        exchange.getIn().setHeader("CamelAwsMSKClusterName", "test-kafka");
+        exchange.getIn().setHeader("CamelAwsMSKClusterKafkaVersion", "2.1.1");
+        exchange.getIn().setHeader("CamelAwsMSKBrokerNodesNumber", 2);
+        exchange.getIn().setHeader("CamelAwsMSKBrokerNodesGroupInfo",
+            BrokerNodeGroupInfo.builder().build());
     })
-    .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster")
+    .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster");
 ----
 
 === Using a POJO as body

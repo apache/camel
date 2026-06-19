@@ -1777,11 +1777,9 @@ outputdir/sub/bar.txt
 
 [source,java]
 ----
-from("file://inputdir/").process(new Processor() {
-  public void process(Exchange exchange) throws Exception {
+from("file://inputdir/").process(exchange -> {
     Object body = exchange.getIn().getBody();
     // do some business logic with the input body
-  }
 });
 ----
 
