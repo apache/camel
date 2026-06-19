@@ -13,6 +13,18 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.1 to 4.18.3
 
+=== camel-jackson - potential breaking change
+
+The `camel-jackson` data format now creates its default `ObjectMapper` with
+`MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES` enabled, consistent with the mapper used by the
+component's JSON data-type transformer. This is defense-in-depth against gadget-chain deserialization: when
+polymorphic / default typing is enabled, Jackson refuses unsafe base types (such as `Object`, `Serializable`
+or `Comparable`).
+
+This only affects routes that enable polymorphic / default typing on an unsafe base type; ordinary
+marshalling and unmarshalling are unchanged. If you rely on that behaviour, supply your own `ObjectMapper`
+(via the `objectMapper` option or the registry) configured without this feature.
+
 === camel-oauth
 
 `UserProfile` token verification now fails closed when no JWK set is available: a signed token can no

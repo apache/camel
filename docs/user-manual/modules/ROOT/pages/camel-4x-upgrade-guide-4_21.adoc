@@ -2547,6 +2547,18 @@ If your Schematron rules legitimately reference an external DTD, external entity
 those references will no longer be resolved and rule compilation will fail; inline the referenced content
 instead.
 
+=== camel-jackson - potential breaking change
+
+The `camel-jackson` data format now creates its default `ObjectMapper` with
+`MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES` enabled, consistent with the mapper used by the
+component's JSON data-type transformer. This is defense-in-depth against gadget-chain deserialization: when
+polymorphic / default typing is enabled, Jackson refuses unsafe base types (such as `Object`, `Serializable`
+or `Comparable`).
+
+This only affects routes that enable polymorphic / default typing on an unsafe base type; ordinary
+marshalling and unmarshalling are unchanged. If you rely on that behaviour, supply your own `ObjectMapper`
+(via the `objectMapper` option or the registry) configured without this feature.
+
 === camel-diagram: Embeddable web component
 
 A new `<camel-route-diagram>` web component is now bundled inside `camel-diagram.jar`
