@@ -1021,6 +1021,14 @@ aligning the component with the rest of the Camel component catalog (`camel-kafk
 names from NATS messages can supply a custom `headerFilterStrategy` to restore the previous
 behaviour.
 
+=== camel-as2
+
+The AS2 server consumer now logs a warning when it delivers an inbound signed message without verifying
+its signature because no `validateSigningCertificateChain` is configured. A new opt-in
+`signatureVerificationRequired` option (server only, default `false`) can be set to reject such
+unverifiable signed messages with an `insufficient-message-security` error instead of delivering them
+unverified. The default behaviour is otherwise unchanged.
+
 === camel-oauth
 
 `OAuthTokenRequest.refreshTokenGrant(...)` now sends the RFC 6749 `refresh_token` form parameter for
