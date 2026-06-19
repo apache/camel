@@ -294,30 +294,23 @@ public class SimpleTokenizer {
     }
 
     private static boolean evalBinary(SimpleTokenType token, String text, String expression, int index) {
-        int len = token.getValue().length();
-        // The binary operator must be used in the format of "exp1 op exp2"
-        if (index < 2 || len >= text.length() - 1) {
-            return false;
-        }
-        String previousOne = expression.substring(index - 1, index);
-        String afterOne = text.substring(len, len + 1);
-        return " ".equals(previousOne) && " ".equals(afterOne) && text.substring(0, len).equals(token.getValue());
+        return evalSurroundedBySpace(token, text, expression, index);
     }
 
     private static boolean evalOther(SimpleTokenType token, String text, String expression, int index) {
-        int len = token.getValue().length();
-        // The other operator must be used in the format of "exp1 op exp2"
-        if (index < 2 || len >= text.length() - 1) {
-            return false;
-        }
-        String previousOne = expression.substring(index - 1, index);
-        String afterOne = text.substring(len, len + 1);
-        return " ".equals(previousOne) && " ".equals(afterOne) && text.substring(0, len).equals(token.getValue());
+        return evalSurroundedBySpace(token, text, expression, index);
     }
 
     private static boolean evalTernary(SimpleTokenType token, String text, String expression, int index) {
+        return evalSurroundedBySpace(token, text, expression, index);
+    }
+
+    /**
+     * Checks that the token appears surrounded by spaces: "exp1 op exp2". Used by all infix operators (binary, other,
+     * ternary).
+     */
+    private static boolean evalSurroundedBySpace(SimpleTokenType token, String text, String expression, int index) {
         int len = token.getValue().length();
-        // The ternary operator must be used in the format of "exp1 ? exp2 : exp3"
         if (index < 2 || len >= text.length() - 1) {
             return false;
         }
