@@ -95,6 +95,7 @@ public class MainHttpServerUtil {
                     @Override
                     public boolean isEnabled(CamelEvent event) {
                         return event instanceof CamelEvent.CamelContextStartedEvent
+                                || event instanceof CamelEvent.CamelContextRoutesStartedEvent
                                 || event instanceof CamelEvent.RouteReloadedEvent;
                     }
 
