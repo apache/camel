@@ -2168,6 +2168,13 @@ for the embedded HTTP server:
 Both default to unset. When both are unset, JWT validation behaviour is unchanged (signature plus the
 default `exp` / `nbf` checks).
 
+Additionally, when `authenticationEnabled=true` but neither a basic-auth properties file
+(`basicPropertiesFile`) nor a JWT keystore (`jwtKeystoreType`) is configured, the embedded HTTP server now
+logs a clear warning at startup that it is starting without authentication. Previously this
+misconfiguration started an unprotected server silently. The server still starts and the behaviour is
+otherwise unchanged; configure an authentication mechanism or set `authenticationEnabled=false` to remove
+the warning.
+
 === camel-test
 
 `org.apache.camel.test.AvailablePortFinder.Port` now also implements
