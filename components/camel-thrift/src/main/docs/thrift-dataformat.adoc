@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: thrift
 
 *Since Camel {since}*
 
@@ -214,4 +213,3 @@ To use Thrift in your Camel routes, you need to add a dependency on
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

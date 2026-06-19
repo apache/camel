@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: langchain4j-tools
 
 *Since Camel {since}*
 
@@ -51,7 +50,6 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-include::spring-boot:partial$starter.adoc[]
 
 == Usage
 

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: mapstruct
 
 *Since Camel {since}*
 
@@ -99,4 +98,3 @@ NOTE: Camel does not support mapper methods defined with a `void` return type su
 WARNING: If you define multiple mapping methods for the same from / to types, then the implementation chosen by
 Camel to do its type conversion is potentially non-deterministic.
 
-include::spring-boot:partial$starter.adoc[]

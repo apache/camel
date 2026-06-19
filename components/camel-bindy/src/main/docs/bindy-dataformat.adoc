@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: bindy
 
 *Since Camel {since}*
 
@@ -2051,4 +2050,3 @@ the download page for the latest versions).
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

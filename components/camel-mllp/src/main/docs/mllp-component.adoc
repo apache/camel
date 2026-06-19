@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: mllp
 
 *Since Camel {since}*
 
@@ -113,4 +112,3 @@ The state of the TCP Socket can be controlled by these properties on the Camel e
 |====================================
 
 
-include::spring-boot:partial$starter.adoc[]

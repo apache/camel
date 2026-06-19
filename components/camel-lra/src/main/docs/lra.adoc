@@ -7,7 +7,6 @@
 :supportlevel: Preview
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: lra
 
 *Since Camel {since}*
 
@@ -28,4 +27,3 @@ for this component:
 
 
 
-include::spring-boot:partial$starter.adoc[]

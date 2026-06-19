@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: arangodb
 
 *Since Camel {since}*
 
@@ -145,4 +144,3 @@ Exchange result = template.request("direct:query", exchange -> {
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

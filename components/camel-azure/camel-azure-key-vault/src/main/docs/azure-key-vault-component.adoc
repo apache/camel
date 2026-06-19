@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Azure
-:camel-spring-boot-name: azure-key-vault
 
 *Since Camel {since}*
 
@@ -790,7 +789,6 @@ YAML::
 ----
 ====
 
-include::spring-boot:partial$starter.adoc[]
 
 === Using Azure Key Vault Property Function in Spring Boot for Early resolving properties
 

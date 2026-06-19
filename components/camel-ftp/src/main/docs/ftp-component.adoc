@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: ftp
 
 *Since Camel {since}*
 
@@ -962,4 +961,3 @@ This component is an extension of the xref:file-component.adoc[File component].
 
 You can find additional samples and details on the File component page.
 
-include::spring-boot:partial$starter.adoc[]

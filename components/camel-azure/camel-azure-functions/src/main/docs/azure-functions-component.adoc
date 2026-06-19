@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Azure
-:camel-spring-boot-name: azure-functions
 
 *Since Camel {since}*
 
@@ -453,4 +452,3 @@ YAML::
 ----
 ====
 
-include::spring-boot:partial$starter.adoc[]

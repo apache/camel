@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
-:camel-spring-boot-name: azure-eventhubs
 
 *Since Camel {since}*
 
@@ -217,4 +216,3 @@ Whereby `blobAccountName` is your Azure account name and `blobAccessKey` is the 
 
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-firestore
 
 *Since Camel {since}*
 
@@ -1176,4 +1175,3 @@ The component uses the following headers:
 |===
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-speech-to-text
 
 *Since Camel {since}*
 
@@ -347,4 +346,3 @@ YAML::
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

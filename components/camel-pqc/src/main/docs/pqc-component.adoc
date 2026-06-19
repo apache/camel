@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: pqc
 
 *Since Camel {since}*
 
@@ -3308,4 +3307,3 @@ The PQC DataFormat is included in the camel-pqc component. Ensure you have:
 </dependency>
 ----
 
-include::spring-boot:partial$starter.adoc[]

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: servlet
 
 *Since Camel {since}*
 
@@ -357,4 +356,3 @@ But it is *strongly advised* to use unique `servlet-name` for each Camel
 application to avoid this duplication clash, as well any unforeseen
 side effects.
 
-include::spring-boot:partial$starter.adoc[]

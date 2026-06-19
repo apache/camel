@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: cassandraql
 
 *Since Camel {since}*
 
@@ -206,4 +205,3 @@ The same approach can be used for updating or querying the table.
 
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: crypto-pgp
 
 *Since Camel {since}*
 
@@ -350,4 +349,3 @@ need to add the following dependency to your pom.
 
 
 
-include::spring-boot:partial$starter.adoc[]

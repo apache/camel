@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: dataset
 
 *Since Camel {since}*
 
@@ -104,4 +103,3 @@ xref:mock-component.adoc[Mock] component.
 
 
 
-include::spring-boot:partial$starter.adoc[]

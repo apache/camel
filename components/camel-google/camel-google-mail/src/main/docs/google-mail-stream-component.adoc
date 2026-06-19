@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-mail
 
 *Since Camel {since}*
 
@@ -66,4 +65,3 @@ include::partial$component-endpoint-headers.adoc[]
 
 
 
-include::spring-boot:partial$starter.adoc[]

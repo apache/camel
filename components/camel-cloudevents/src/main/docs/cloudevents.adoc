@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: cloudevents
 
 *Since Camel {since}*
 

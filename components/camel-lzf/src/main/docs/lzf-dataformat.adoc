@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: lzf
 
 *Since Camel {since}*
 
@@ -127,4 +126,3 @@ substituting the version number for the latest release.
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

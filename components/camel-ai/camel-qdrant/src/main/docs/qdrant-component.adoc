@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: qdrant
 
 *Since Camel {since}*
 
@@ -173,4 +172,3 @@ from("direct:in")
 
 
 
-include::spring-boot:partial$starter.adoc[]

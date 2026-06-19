@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: undertow-spring-security
 
 *Since Camel {since}*
 
@@ -32,4 +31,3 @@ Each exchange created by Undertow endpoint with spring security contains header 
 name of header is provided as a constant `SpringSecurityProvider.PRINCIPAL_NAME_HEADER`) with current authorized identity
 as value  or header is not present in case of rejected requests.
 
-include::spring-boot:partial$starter.adoc[]

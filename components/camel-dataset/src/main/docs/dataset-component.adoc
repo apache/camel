@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: dataset
 
 *Since Camel {since}*
 
@@ -216,4 +215,3 @@ Then you create a `DataSet` implementation, such as using the
 `SimpleDataSet` as described below, configuring things like how big the
 data set is and what the messages look like etc.
 
-include::spring-boot:partial$starter.adoc[]

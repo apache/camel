@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -145,4 +144,3 @@ from("activemq:topic:OrdersTopic")
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

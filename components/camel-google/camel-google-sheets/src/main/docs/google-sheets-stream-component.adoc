@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-sheets
 
 *Since Camel {since}*
 
@@ -84,4 +83,3 @@ at: https://developers.google.com/sheets/api/reference/rest/[https://developers.
 
 
 
-include::spring-boot:partial$starter.adoc[]

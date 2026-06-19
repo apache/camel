@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: dropbox
 
 *Since Camel {since}*
 
@@ -777,4 +776,3 @@ The following objects are set on message body result:
 https://javadoc.io/doc/com.dropbox.core/dropbox-core-sdk/latest/com/dropbox/core/v2/files/SearchMatchV2.html[Dropbox documentation].
 |===
 
-include::spring-boot:partial$starter.adoc[]

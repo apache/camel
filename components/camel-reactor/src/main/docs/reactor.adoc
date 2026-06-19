@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: reactor
 
 *Since Camel {since}*
 
@@ -24,4 +23,3 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-ldap
 
 *Since Camel {since}*
 
@@ -114,4 +113,3 @@ in `org.apache.camel.springldap.SpringLdapProducer`:
 * `public static final String REQUEST = "request";`
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: as2
 
 *Since Camel {since}*
 
@@ -58,4 +57,3 @@ override the API call. See xref:manual::security-model.adoc[the Camel security m
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: file
 
 *Since Camel {since}*
 
@@ -1828,4 +1827,3 @@ YAML::
 See xref:languages:file-language.adoc[File Language] for more samples.
 
 
-include::spring-boot:partial$starter.adoc[]

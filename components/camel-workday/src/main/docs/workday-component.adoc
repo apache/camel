@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: workday
 
 *Since Camel {since}*
 
@@ -41,4 +40,3 @@ include::partial$component-endpoint-headers.adoc[]
 
 
 
-include::spring-boot:partial$starter.adoc[]

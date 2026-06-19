@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -103,4 +102,3 @@ This operation returns a list of PVCs from your cluster using a label selector (
 
 
 
-include::spring-boot:partial$starter.adoc[]

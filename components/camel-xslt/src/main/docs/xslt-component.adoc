@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: xslt
 
 *Since Camel {since}*
 
@@ -410,4 +409,3 @@ key `Exchange.XSLT_WARNING.`
 
 
 
-include::spring-boot:partial$starter.adoc[]

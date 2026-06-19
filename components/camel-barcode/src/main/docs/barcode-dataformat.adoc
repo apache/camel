@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: barcode
 
 *Since Camel {since}*
 
@@ -140,4 +139,3 @@ You can find the ORIENTATION as header variable:
  
 
 
-include::spring-boot:partial$starter.adoc[]

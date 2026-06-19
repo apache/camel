@@ -7,8 +7,6 @@
 :since: 3.14
 //:supportlevel: Stable
 //Manually maintained attributes
-:camel-spring-boot-name: springdoc
-:starter-artifactid: camel-springdoc-starter
 
 *Since Camel {since}*
 
@@ -17,4 +15,3 @@ It supplies support for using the Springdoc Swagger UI with openapi-java.
 
 //Should the same options etc as openapi-java appear here??
 
-include::spring-boot:partial$starter.adoc[]

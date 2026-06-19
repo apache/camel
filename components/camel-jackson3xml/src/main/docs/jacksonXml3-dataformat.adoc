@@ -7,7 +7,6 @@
 :supportlevel: Preview
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: jackson3xml
 
 *Since Camel {since}*
 
@@ -458,4 +457,3 @@ substituting the version number for the latest & greatest release.
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

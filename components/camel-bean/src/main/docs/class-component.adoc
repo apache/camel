@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -219,4 +218,3 @@ component works in much the same way.
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

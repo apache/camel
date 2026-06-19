@@ -9,7 +9,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: splunk
 
 *Since Camel {since}*
 
@@ -329,4 +328,3 @@ route and jvm metrics to Splunk, and display this on a dashboard.
 
 
 
-include::spring-boot:partial$starter.adoc[]

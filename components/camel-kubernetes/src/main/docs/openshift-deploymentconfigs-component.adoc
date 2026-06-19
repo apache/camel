@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
-:camel-spring-boot-name: kubernetes
 
 *Since Camel {since}*
 
@@ -147,4 +146,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` + `labelKey` + `labelValue` - Watch DeploymentConfigs with the specified label in the given namespace.
 
 
-include::spring-boot:partial$starter.adoc[]

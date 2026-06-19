@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: bean
 
 *Since Camel {since}*
 
@@ -147,4 +146,3 @@ These are used throughout all the various xref:manual::bean-integration.adoc[Bea
 
 See also related xref:languages:bean-language.adoc[Bean Language].
 
-include::spring-boot:partial$starter.adoc[]

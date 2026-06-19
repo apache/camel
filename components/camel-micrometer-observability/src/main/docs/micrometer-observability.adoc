@@ -7,7 +7,6 @@
 :supportlevel: Preview
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: micrometer-observability
 
 *Since Camel {since}*
 
@@ -36,7 +35,6 @@ The configuration properties for the component are:
 |`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
-include::spring-boot:partial$starter.adoc[]
 
 === Spring Boot context propagation
 

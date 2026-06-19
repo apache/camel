@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: jsonata
 
 *Since Camel {since}*
 
@@ -188,4 +187,3 @@ public class CustomJsonataFrameBinding implements JsonataFrameBinding {
 }
 ----
 
-include::spring-boot:partial$starter.adoc[]

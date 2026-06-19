@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: spring-ai-image
 
 *Since Camel {since}*
 
@@ -267,4 +266,3 @@ The component registers automatic type converters for `Image` objects:
 * https://docs.spring.io/spring-ai/reference/api/image.html[Spring AI Image API]
 * xref:spring-ai-chat-component.adoc[Spring AI Chat Component]
 
-include::spring-boot:partial$starter.adoc[]

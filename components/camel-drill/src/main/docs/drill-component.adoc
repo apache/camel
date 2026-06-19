@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: drill
 
 *Since Camel {since}*
 
@@ -54,4 +53,3 @@ The producer executes a query using the *CamelDrillQuery* header and puts the re
 
 
 
-include::spring-boot:partial$starter.adoc[]

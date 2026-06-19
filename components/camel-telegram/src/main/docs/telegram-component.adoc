@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: telegram
 
 *Since Camel {since}*
 
@@ -504,4 +503,3 @@ You need to ensure that your server is exposed to the internet and to pass the r
 Refer to the *camel-webhook* component documentation for instructions on how to set it.
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: stax
 
 *Since Camel {since}*
 
@@ -216,4 +215,3 @@ Alternatively, the example above could be implemented as follows in Spring XML
 
 
 
-include::spring-boot:partial$starter.adoc[]

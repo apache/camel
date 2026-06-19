@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: langchain4j-agent
 
 *Since Camel {since}*
 
@@ -141,7 +140,6 @@ from("direct:agent")
 
 NOTE: In Quarkus or Spring Boot, configure the ChatModel via the framework's own properties and dependency injection instead of programmatic bean registration.
 
-include::spring-boot:partial$starter.adoc[]
 
 
 == Usage

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: groovy
 
 *Since Camel {since}*
 
@@ -200,4 +199,3 @@ then you can use groovy and Java together and follow best practices for this, su
 using the joint-compilation via Maven / Gradle plugins during build.
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: hl7
 
 *Since Camel {since}*
 
@@ -499,4 +498,3 @@ versions 2.4 and 2.5, then the following dependencies must be added:
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

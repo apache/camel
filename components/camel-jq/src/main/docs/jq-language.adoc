@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: jq
 
 *Since Camel {since}*
 
@@ -222,4 +221,3 @@ If you use Maven you could just add the following to your `pom.xml`, substitutin
 </dependency>
 ----
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: ref
 
 *Since Camel {since}*
 
@@ -116,4 +115,3 @@ YAML::
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: vertx-http
 
 *Since Camel {since}*
 
@@ -204,4 +203,3 @@ Session management can be enabled via the `sessionManagement` URI option. When e
 This can be overridden by providing a custom `CookieStore` via the `cookieStore` URI option.
 
 
-include::spring-boot:partial$starter.adoc[]

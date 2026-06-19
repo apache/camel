@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: micrometer
 
 *Since Camel {since}*
 
@@ -988,4 +987,3 @@ For example, to capture data with Prometheus, you can add the following dependen
 
 See the following table for options to specify what metrics to capture, or to turn it off.
 
-include::spring-boot:partial$starter.adoc[]

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: sql
 
 *Since Camel {since}*
 
@@ -1086,4 +1085,3 @@ You should also include the specific database driver, if needed.
 
 
 
-include::spring-boot:partial$starter.adoc[]

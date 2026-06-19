@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: sap-netweaver
 
 *Since Camel {since}*
 
@@ -172,4 +171,3 @@ Destination airport: SFO
 
 
 
-include::spring-boot:partial$starter.adoc[]

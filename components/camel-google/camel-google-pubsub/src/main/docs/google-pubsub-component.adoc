@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-pubsub
 
 *Since Camel {since}*
 
@@ -214,7 +213,6 @@ endpoint.setImpersonatedServiceAccount("my-sa@my-project.iam.gserviceaccount.com
 
 NOTE: Workload Identity Federation support is available in all Google components (PubSub, Storage, BigQuery, Firestore, Sheets, Calendar, Drive, Mail, Functions, Secret Manager, Vision, Vertex AI, Speech-to-Text, Text-to-Speech) through the common `GoogleCommonConfiguration` interface.
 
-include::spring-boot:partial$starter.adoc[]
 
 === Manual Acknowledgement
 

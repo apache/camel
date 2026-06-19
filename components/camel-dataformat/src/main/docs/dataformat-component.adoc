@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: dataformat
 
 *Since Camel {since}*
 
@@ -84,4 +83,3 @@ YAML::
 ----
 ====
 
-include::spring-boot:partial$starter.adoc[]

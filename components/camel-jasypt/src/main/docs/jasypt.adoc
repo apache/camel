@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: jasypt
 
 *Since Camel {since}*
 
@@ -252,4 +251,3 @@ Jasypt.
 ----
 ====
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-storage
 
 *Since Camel {since}*
 
@@ -636,4 +635,3 @@ YAML::
 In this case, the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
 
 
-include::spring-boot:partial$starter.adoc[]

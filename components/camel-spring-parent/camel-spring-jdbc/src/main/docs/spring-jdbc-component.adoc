@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-jdbc
 
 *Since Camel {since}*
 
@@ -43,4 +42,3 @@ include::partial$component-endpoint-headers.adoc[]
 
 
 
-include::spring-boot:partial$starter.adoc[]

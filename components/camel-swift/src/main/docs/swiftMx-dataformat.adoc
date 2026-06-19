@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: swift
 
 *Since Camel {since}*
 
@@ -220,4 +219,3 @@ If you use Maven, you can add the following to your pom.xml:
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

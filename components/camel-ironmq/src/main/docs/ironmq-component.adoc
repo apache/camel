@@ -9,7 +9,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: ironmq
 
 *Since Camel {since}*
 
@@ -143,4 +142,3 @@ YAML::
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

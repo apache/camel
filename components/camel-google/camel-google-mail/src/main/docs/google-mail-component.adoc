@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-mail
 
 *Since Camel {since}*
 
@@ -316,4 +315,3 @@ at: https://developers.google.com/gmail/api/v1/reference/[https://developers.goo
 
 
 
-include::spring-boot:partial$starter.adoc[]

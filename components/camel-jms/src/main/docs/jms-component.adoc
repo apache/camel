@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: jms
 
 *Since Camel {since}*
 
@@ -1524,4 +1523,3 @@ wmq.setDestinationResolver((session, destinationName, pubSubDomain) -> {
 
 
 
-include::spring-boot:partial$starter.adoc[]

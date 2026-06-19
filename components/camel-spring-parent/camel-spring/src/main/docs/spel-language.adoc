@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: spring
 
 *Since Camel {since}*
 
@@ -171,4 +170,3 @@ e.g., to refer to a file on the classpath you can do:
 
 
 
-include::spring-boot:partial$starter.adoc[]

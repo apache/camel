@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: kudu
 
 *Since Camel {since}*
 
@@ -58,4 +57,3 @@ The output body format will be a `java.util.List<java.util.Map<String, Object>>`
 Each element of the list will be a different row of the table.
 Each row is a `Map<String, Object>` whose elements will be each pair of column name and column value for that row.
 
-include::spring-boot:partial$starter.adoc[]

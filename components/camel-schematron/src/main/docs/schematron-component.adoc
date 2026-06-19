@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: schematron
 
 *Since Camel {since}*
 
@@ -246,4 +245,3 @@ links to other resources
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

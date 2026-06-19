@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: milo
 
 *Since Camel {since}*
 
@@ -95,4 +94,3 @@ With Milo 1.0.5, the browse API remains largely compatible, but shares the same 
 changes as the client and server components. Please refer to the xref:milo-client-component.adoc[Milo Client]
 documentation for details on security configuration changes.
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: kamelet
 
 *Since Camel {since}*
 
@@ -235,4 +234,3 @@ from("direct:template")
 
 ----
 
-include::spring-boot:partial$starter.adoc[]

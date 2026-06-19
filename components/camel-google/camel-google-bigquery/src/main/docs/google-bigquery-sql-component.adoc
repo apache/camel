@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Google
-:camel-spring-boot-name: google-bigquery
 
 *Since Camel {since}*
 
@@ -217,4 +216,3 @@ BigQuery result types are mapped to Java types:
 |===
 
 
-include::spring-boot:partial$starter.adoc[]

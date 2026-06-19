@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: protobuf
 
 *Since Camel {since}*
 
@@ -254,4 +253,3 @@ To use Protobuf in your Camel routes, you need to add the dependency on
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

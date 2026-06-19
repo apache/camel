@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: opentelemetry-metrics
 
 *Since Camel {since}*
 
@@ -804,4 +803,3 @@ When you use `camel-opentelemetry-metrics-starter` with Spring Boot, then Spring
 
 See the following table for options to specify what metrics to capture, or to turn it off.
 
-include::spring-boot:partial$starter.adoc[]

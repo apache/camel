@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: soap
 
 *Since Camel {since}*
 
@@ -275,4 +274,3 @@ following dependency to your `pom.xml`.
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: pubnub
 
 *Since Camel {since}*
 
@@ -293,4 +292,3 @@ The example illustrates the PubNub component subscribing to an infinite stream o
 
 
 
-include::spring-boot:partial$starter.adoc[]

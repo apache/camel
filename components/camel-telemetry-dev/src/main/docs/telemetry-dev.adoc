@@ -7,7 +7,6 @@
 :supportlevel: Preview
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: telemetry-dev
 
 *Since Camel {since}*
 

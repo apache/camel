@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: json-validator
 
 *Since Camel {since}*
 
@@ -138,4 +137,3 @@ If you use the default schema loader, it will try to determine the schema versio
 If your schema is local to your application (e.g. a classpath location as opposed to URL), your schema can also contain `$ref` links to a relative subschema in the classpath.  Per the JSON schema spec, your schema must not have an $id identifier property for this to work properly.  See the https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/java/org/apache/camel/component/jsonvalidator/LocalRefSchemaTest.java[unit test] and https://github.com/apache/camel/blob/main/components/camel-json-validator/src/test/resources/org/apache/camel/component/jsonvalidator/Order.json[schema] for an example.
 
 
-include::spring-boot:partial$starter.adoc[]

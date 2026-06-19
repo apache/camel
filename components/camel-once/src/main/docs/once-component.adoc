@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: once
 
 *Since Camel {since}*
 
@@ -263,4 +262,3 @@ YAML::
 In this way, the timer will fire messages immediately.
 
 
-include::spring-boot:partial$starter.adoc[]

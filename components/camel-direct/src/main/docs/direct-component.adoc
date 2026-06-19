@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: direct
 
 *Since Camel {since}*
 
@@ -112,4 +111,3 @@ See also samples from the xref:seda-component.adoc[SEDA] component, how they can
 
 
 
-include::spring-boot:partial$starter.adoc[]

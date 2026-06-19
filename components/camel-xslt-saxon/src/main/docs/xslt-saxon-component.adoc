@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: xslt-saxon
 
 *Since Camel {since}*
 
@@ -516,4 +515,3 @@ XSLT 3.0 XML representation of JSON is
 </map>
 ----
 
-include::spring-boot:partial$starter.adoc[]

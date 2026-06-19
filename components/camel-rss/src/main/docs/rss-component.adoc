@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: rss
 
 *Since Camel {since}*
 
@@ -226,4 +225,3 @@ protected RoutesBuilder createRouteBuilder() throws Exception {
 }
 ----
 
-include::spring-boot:partial$starter.adoc[]

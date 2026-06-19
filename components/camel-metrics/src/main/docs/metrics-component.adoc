@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: metrics
 
 *Since Camel {since}*
 
@@ -1083,4 +1082,3 @@ which collects information from the inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
 
 
-include::spring-boot:partial$starter.adoc[]

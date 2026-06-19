@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-rabbitmq
 
 *Since Camel {since}*
 
@@ -360,4 +359,3 @@ from("spring-rabbitmq:%s?queues=%s&acknowledgeMode=MANUAL")
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

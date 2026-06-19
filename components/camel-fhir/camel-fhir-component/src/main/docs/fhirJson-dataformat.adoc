@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: fhir
 
 *Since Camel {since}*
 
@@ -21,4 +20,3 @@ JSON parser to parse to/from JSON format to/from a HAPI-FHIR's `IBaseResource`.
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Only consumer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: scheduler
 
 *Since Camel {since}*
 
@@ -135,4 +134,3 @@ The above route will generate an event and then invoke the
 Registry such as JNDI or Spring.
 
 
-include::spring-boot:partial$starter.adoc[]

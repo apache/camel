@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: pqc
 
 *Since Camel {since}*
 
@@ -20,4 +19,3 @@ include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 
-include::spring-boot:partial$starter.adoc[]

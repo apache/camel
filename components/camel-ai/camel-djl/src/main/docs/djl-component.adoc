@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: djl
 
 *Since Camel {since}*
 
@@ -574,4 +573,3 @@ from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator");
 ----
 
-include::spring-boot:partial$starter.adoc[]

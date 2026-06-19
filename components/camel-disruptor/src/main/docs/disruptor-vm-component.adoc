@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: disruptor
 
 *Since Camel {since}*
 
@@ -94,4 +93,3 @@ See the xref:disruptor-component.adoc[Disruptor] component for more information.
 
 // shared with disruptor
 
-include::spring-boot:partial$starter.adoc[]

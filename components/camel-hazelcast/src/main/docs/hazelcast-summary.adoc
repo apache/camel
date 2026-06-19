@@ -136,6 +136,4 @@ In the example above we set up this for the hazelcast map component and setup ha
 </bean>
 ------------------------------------------------------------------------------
 
-:camel-spring-boot-name: hazelcast
 
-include::spring-boot:partial$starter.adoc[]

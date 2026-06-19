@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Spring
-:camel-spring-boot-name: spring-batch
 
 *Since Camel {since}*
 
@@ -299,4 +298,3 @@ JMS queue.
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

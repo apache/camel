@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: resilience4j
 
 *Since Camel {since}*
 
@@ -28,4 +27,3 @@ for this component:
 </dependency>
 ----
 
-include::spring-boot:partial$starter.adoc[]

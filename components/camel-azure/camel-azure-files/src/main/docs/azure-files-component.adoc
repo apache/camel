@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
-:camel-spring-boot-name: azure-files
 
 *Since Camel {since}*
 

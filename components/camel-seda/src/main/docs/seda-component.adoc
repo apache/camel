@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: seda
 
 *Since Camel {since}*
 
@@ -356,4 +355,3 @@ int size = seda.getExchanges().size();
 
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: oaipmh
 
 *Since Camel {since}*
 
@@ -128,4 +127,3 @@ YAML::
 
 For more details see the http://www.openarchives.org/pmh/[OAI-PMH documentation].
 
-include::spring-boot:partial$starter.adoc[]

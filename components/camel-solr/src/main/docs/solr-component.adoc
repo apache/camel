@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: solr
 
 *Since Camel {since}*
 
@@ -190,4 +189,3 @@ https://solr.apache.org/guide/solr/latest/[Apache Solr Reference Guide]
 
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
-:camel-spring-boot-name: azure-storage-blob
 
 *Since Camel {since}*
 
@@ -1955,4 +1954,3 @@ Whereby `accountName` is your Azure account name and `accessKey` is the access k
 
 
 
-include::spring-boot:partial$starter.adoc[]

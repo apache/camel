@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: kserve
 
 *Since Camel {since}*
 
@@ -480,4 +479,3 @@ YAML::
 ----
 ====
 
-include::spring-boot:partial$starter.adoc[]

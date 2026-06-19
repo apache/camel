@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: controlbus
 
 *Since Camel {since}*
 
@@ -152,4 +151,3 @@ You can also use other languages such as xref:languages:groovy-language.adoc[Gro
 ====
 
 
-include::spring-boot:partial$starter.adoc[]

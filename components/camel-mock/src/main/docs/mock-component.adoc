@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: mock
 
 *Since Camel {since}*
 
@@ -559,4 +558,3 @@ In the example above we use `seconds` as the time unit, but Camel offers
 
 
 
-include::spring-boot:partial$starter.adoc[]

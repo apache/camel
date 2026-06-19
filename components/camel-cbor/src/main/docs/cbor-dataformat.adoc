@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: cbor
 
 *Since Camel {since}*
 
@@ -129,4 +128,3 @@ YAML::
 -------------------------------------
 
 
-include::spring-boot:partial$starter.adoc[]

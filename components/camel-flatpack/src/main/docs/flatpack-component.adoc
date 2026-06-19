@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: flatpack
 
 *Since Camel {since}*
 
@@ -269,4 +268,3 @@ substituting the version number for the latest release.
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

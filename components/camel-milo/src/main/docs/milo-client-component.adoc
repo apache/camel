@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: milo
 
 *Since Camel {since}*
 
@@ -200,4 +199,3 @@ With Milo 1.0.5, several security-related API changes were introduced:
 * When configuring custom certificate validators, ensure you're using the updated API
 
 
-include::spring-boot:partial$starter.adoc[]

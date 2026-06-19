@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: stub
 
 *Since Camel {since}*
 
@@ -59,4 +58,3 @@ stub:http://somehost.bar.com/something
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

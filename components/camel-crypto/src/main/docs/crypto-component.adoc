@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: crypto
 
 *Since Camel {since}*
 
@@ -694,4 +693,3 @@ For new implementations, the PQC component's hybrid operations are recommended a
 | New PQC-focused implementations
 |===
 
-include::spring-boot:partial$starter.adoc[]

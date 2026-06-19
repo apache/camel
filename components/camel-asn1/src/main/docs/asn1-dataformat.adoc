@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: asn1
 
 *Since Camel {since}*
 
@@ -83,4 +82,3 @@ the download page for the latest versions).
 ----
 
 
-include::spring-boot:partial$starter.adoc[]

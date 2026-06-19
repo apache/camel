@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: mustache
 
 *Since Camel {since}*
 
@@ -226,4 +225,3 @@ Regards Camel Riders Bookstore
 
 
 
-include::spring-boot:partial$starter.adoc[]

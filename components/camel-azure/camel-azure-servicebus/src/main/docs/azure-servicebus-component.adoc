@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
-:camel-spring-boot-name: azure-servicebus
 
 *Since Camel {since}*
 
@@ -225,4 +224,3 @@ YAML::
 ----
 ====
 
-include::spring-boot:partial$starter.adoc[]

@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: platform-http
 
 *Since Camel {since}*
 
@@ -215,4 +214,3 @@ Since Apache Camel 4.10, multipart file uploads are easier and harmonized across
 
 In case of multiple uploads, the header "CamelAttachmentsSize" contains the number of files uploaded.
 
-include::spring-boot:partial$starter.adoc[]

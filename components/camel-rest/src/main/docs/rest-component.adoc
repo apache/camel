@@ -9,7 +9,6 @@
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: rest
 
 *Since Camel {since}*
 
@@ -375,4 +374,3 @@ containers.
 
 
 
-include::spring-boot:partial$starter.adoc[]

@@ -7,7 +7,6 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: jsonpath
 
 *Since Camel {since}*
 
@@ -457,4 +456,3 @@ also make it XML or plain text based:
 </customer>
 ----
 
-include::spring-boot:partial$starter.adoc[]

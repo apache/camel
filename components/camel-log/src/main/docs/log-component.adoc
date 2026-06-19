@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes
-:camel-spring-boot-name: log
 
 *Since Camel {since}*
 
@@ -411,4 +410,3 @@ options:
 
 
 
-include::spring-boot:partial$starter.adoc[]
