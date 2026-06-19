@@ -24,8 +24,6 @@ include::partial$language-options.adoc[]
 // language options: END
 
 
-
-
 == Variables
 
 [width="100%",cols="10%,10%,80%",options="header",]

@@ -147,7 +147,6 @@ from("direct:in")
 ====
 
 
-
 ==== Delete
 
 In the route below, we use the qdrant component to delete points from the collection named `myCollection` according to a criteria:
@@ -166,9 +165,5 @@ from("direct:in")
     .to("qdrant:myCollection");
 ----
 ====
-
-
-
-
 
 

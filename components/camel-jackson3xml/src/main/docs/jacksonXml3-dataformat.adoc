@@ -72,7 +72,6 @@ YAML::
 == JacksonXML Options
 
 
-
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END

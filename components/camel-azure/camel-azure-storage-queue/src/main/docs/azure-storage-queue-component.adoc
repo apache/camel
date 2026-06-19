@@ -656,4 +656,3 @@ mvn verify -DaccountName=myacc -DaccessKey=mykey
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
 
 
-

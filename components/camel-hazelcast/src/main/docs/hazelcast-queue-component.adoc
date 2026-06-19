@@ -24,7 +24,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
 == Queue producer – to(“hazelcast-queue:foo”)
 
 The queue producer provides 12 operations:

@@ -65,7 +65,6 @@ a `MeterRegistry` bean. Micrometer registries primarily determine the backend mo
 to be used. A `CompositeMeterRegistry` can be used to address more than one monitoring target.
 
 
-
 === Default Camel Metrics
 
 Some Camel specific metrics are available out of the box.

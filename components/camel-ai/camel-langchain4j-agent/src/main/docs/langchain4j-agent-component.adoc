@@ -141,7 +141,6 @@ from("direct:agent")
 NOTE: In Quarkus or Spring Boot, configure the ChatModel via the framework's own properties and dependency injection instead of programmatic bean registration.
 
 
-
 == Usage
 
 === Creating Custom Agents
@@ -2059,7 +2058,6 @@ The `jsonSchema` option accepts:
 * File paths: `jsonSchema=file:///path/to/schema.json`
 * Inline JSON: `jsonSchema={"type":"object","properties":{"name":{"type":"string"}}}`
 * Property placeholders: `jsonSchema=resource:classpath:${schema.location}`
-
 
 
 ==== Using the outputClass endpoint option (Java Class-based Schema)

@@ -215,4 +215,3 @@ mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key
 Whereby `blobAccountName` is your Azure account name and `blobAccessKey` is the access key being generated from Azure portal and `connectionString` is the eventHub connection string.
 
 
-

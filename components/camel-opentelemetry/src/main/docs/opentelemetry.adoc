@@ -115,7 +115,6 @@ java -javaagent:path/to/opentelemetry-javaagent.jar \
 ----
 
 
-
 === Spring Boot's Actuator
 
 To have Spring Boot's Actuator configure OpenTelemetry, you need to add

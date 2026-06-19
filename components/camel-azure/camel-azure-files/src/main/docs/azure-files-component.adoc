@@ -76,7 +76,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
 === Endpoint URI Examples
 
 ----

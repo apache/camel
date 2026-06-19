@@ -890,4 +890,3 @@ mvn clean install -Dendpoint={{dbaddress}} -DaccessKey={{accessKey}}
 Whereby `endpoint` is your Azure CosmosDB endpoint name and `accessKey` is the access key being generated from Azure CosmosDB portal.
 
 
-

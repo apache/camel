@@ -52,7 +52,6 @@ include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 
-
 == Marshalling usages
 
 The marshalling accepts either:

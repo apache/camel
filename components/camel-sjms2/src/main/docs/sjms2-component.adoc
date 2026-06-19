@@ -59,7 +59,6 @@ You append query options to the URI using the following format,
 `?option=value&option=value&...`
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]

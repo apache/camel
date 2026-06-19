@@ -475,7 +475,6 @@ It will automatically determine the appropriate jars for your system based on th
 More information about https://docs.djl.ai/engines/mxnet/index.html[MXNet engine installation]
 
 
-
 == Examples
 
 .MNIST image classification from file

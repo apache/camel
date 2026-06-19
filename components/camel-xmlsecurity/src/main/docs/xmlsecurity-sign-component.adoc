@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 
 
-
 *Since Camel {since}*
 
 *{component-header}*

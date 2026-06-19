@@ -32,9 +32,6 @@ To use this component, add the following dependency to your `pom.xml`:
 ----
 
 
-
-
-
 == Initializing the Ignite component
 
 Each instance of the Ignite component is associated with an underlying `org.apache.ignite.Ignite` instance.

@@ -160,7 +160,6 @@ YAML::
 ====
 
 
-
 === publishAsTemplatedMessage
 
 ._Java-only: requires Java Map variable for template tags_

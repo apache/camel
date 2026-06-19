@@ -55,7 +55,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
 == Message Body
 
 The response from MyBatis will only be set as the body if it's a

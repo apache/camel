@@ -700,4 +700,3 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 ----
 
 
-

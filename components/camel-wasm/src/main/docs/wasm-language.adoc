@@ -138,7 +138,6 @@ from("direct:in")
 ----
 
 
-
 == Dependencies
 
 If you use Maven you could add the following to your `pom.xml`,

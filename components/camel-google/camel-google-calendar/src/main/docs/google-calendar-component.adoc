@@ -64,4 +64,3 @@ override the API call. See xref:manual::security-model.adoc[the Camel security m
 ====
 
 
-

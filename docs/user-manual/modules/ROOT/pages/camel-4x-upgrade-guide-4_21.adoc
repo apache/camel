@@ -52,6 +52,12 @@ previous tool's argument headers. Each tool route starts from the original incom
 its own declared arguments as headers. Routes that (intentionally or accidentally) relied on this leaked state
 between tools must be adjusted to carry such data explicitly.
 
+=== Component documentation
+
+The Spring Boot auto-configuration tables have been removed from individual component documentation pages.
+Spring Boot auto-configuration options are now documented in the Camel Spring Boot documentation site,
+with a dedicated page per starter.
+
 === camel-core
 
 ==== Simple language: internal builder classes reorganized

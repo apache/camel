@@ -9,7 +9,6 @@
 :component-header: Only producer is supported
 
 
-
 *Since Camel {since}*
 
 *{component-header}*
@@ -70,8 +69,6 @@ successful, then the original content is extracted from the XML
 signature and set to the body of the out-message.
 * The `name` part in the URI can be chosen by the user to distinguish
 between different signer/verifier endpoints within the camel context.
-
-
 
 
 // component options: START

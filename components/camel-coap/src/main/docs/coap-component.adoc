@@ -67,7 +67,6 @@ The following rules determine which request method the CoAP producer will use to
  4. `GET` otherwise.
 
 
-
 == Configuring COAP Server
 
 The COAP server has many configuration options, and this can be configured from a properties file such as `Californium3.properties`.

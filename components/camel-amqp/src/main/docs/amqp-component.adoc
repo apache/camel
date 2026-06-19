@@ -44,7 +44,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
 == Usage
 
 As AMQP component is inherited from JMS component, the usage of the

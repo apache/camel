@@ -982,7 +982,6 @@ is the name of the route. And `###type###` is the value of responses.
 |=======================================================================
 
 
-
 From Java code you can get hold of
 the `com.codahale.metrics.MetricRegistry` from the
 `org.apache.camel.component.metrics.routepolicy.MetricsRegistryService`

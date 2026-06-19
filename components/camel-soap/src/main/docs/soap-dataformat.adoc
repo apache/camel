@@ -26,7 +26,6 @@ include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
 
-
 == ElementNameStrategy
 
 An element name strategy is used for two purposes. The first is to find

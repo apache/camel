@@ -82,4 +82,3 @@ For more information on the endpoints and options see API documentation
 at: https://developers.google.com/sheets/api/reference/rest/[https://developers.google.com/sheets/api/reference/rest/]
 
 
-

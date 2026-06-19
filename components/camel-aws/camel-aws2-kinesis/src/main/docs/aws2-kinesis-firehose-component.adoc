@@ -45,18 +45,6 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 Required Kinesis Firehose component options
 
 You have to provide the FirehoseClient in the
@@ -179,6 +167,5 @@ Maven users will need to add the following dependency to their pom.xml.
 ----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
 
 

@@ -40,7 +40,6 @@ from XMPP or send messages to XMPP). Consumer mode supports rooms
 starting.
 
 
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
