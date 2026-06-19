@@ -194,12 +194,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                             assertTrue(s.tryAcquire(), "'direct:a' too many requests");
                             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
-                                public void onComplete(Exchange ex) {
-                                    s.release();
-                                }
-
-                                @Override
-                                public void onFailure(Exchange ex) {
+                                public void onDone(Exchange ex) {
                                     s.release();
                                 }
                             });
@@ -213,12 +208,11 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                             assertTrue(s.tryAcquire(), "'direct:expressionConstant' too many requests");
                             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
-                            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                                @Override
                                 public void onDone(Exchange ex) {
                                     s.release();
                                 }
                             });
+                        })
                         .to("log:result", "mock:result");
 
                 from("direct:expressionHeader").throttle(header("throttleValue")).concurrentRequestsMode()
@@ -227,12 +221,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                             assertTrue(s.tryAcquire(), "'direct:expressionHeader' too many requests");
                             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
-                                public void onComplete(Exchange ex) {
-                                    s.release();
-                                }
-
-                                @Override
-                                public void onFailure(Exchange ex) {
+                                public void onDone(Exchange ex) {
                                     s.release();
                                 }
                             });
