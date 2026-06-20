@@ -39,7 +39,7 @@ This approach provides **defense-in-depth**: even if the symmetric algorithm is 
 
 == Wire Format
 
-Since Camel 4.19, the PQC DataFormat uses wire format v2 which includes magic bytes, version, and algorithm identifiers (see xref:others:pqc-hybrid.adoc#wire-format-v2-and-algorithm-identification[Wire Format v2 and Algorithm Identification]). The v1 format `[4 bytes: encapsulation length][N bytes: encapsulation][M bytes: encrypted data]` is still accepted on input for backward compatibility.
+Since Camel 4.19, the PQC DataFormat uses wire format v2 which includes magic bytes, version, and algorithm identifiers (see xref:others:pqc-hybrid.adoc#_wire_format_v2_and_algorithm_identification[Wire Format v2 and Algorithm Identification]). The v1 format `[4 bytes: encapsulation length][N bytes: encapsulation][M bytes: encrypted data]` is still accepted on input for backward compatibility.
 
 The v2 encrypted message format is:
 
