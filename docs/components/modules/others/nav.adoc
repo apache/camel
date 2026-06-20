@@ -3,6 +3,9 @@
 
 * xref:others:index.adoc[Miscellaneous Components]
 ** xref:attachments.adoc[Attachments]
+** xref:aws2-s3-consumer-examples.adoc[AWS S3 - Consumer Examples]
+** xref:aws2-s3-producer-operations.adoc[AWS S3 - Producer Operations]
+** xref:aws2-s3-streaming.adoc[AWS S3 - Streaming Upload]
 *** xref:azure-schema-registry.adoc[Azure Schema Registry]
 ** xref:camel-yaml-dsl-validator-maven-plugin.adoc[Camel YAML DSL Validator Maven Plugin]
 ** xref:cli-connector.adoc[CLI Connector]
