@@ -1,0 +1,346 @@
+= LangChain4j Agent - MCP Tools Integration
+:tabs-sync-option:
+
+xref:ROOT:langchain4j-agent-component.adoc[Back to LangChain4j Agent Component]
+
+== MCP (Model Context Protocol) Tools
+
+The LangChain4j Agent component supports integration with MCP (Model Context Protocol) tools, allowing agents to interact with external systems and services through standardized protocols.
+
+=== Configuring MCP Clients
+
+To use MCP tools with your agent, you need to configure MCP clients in your `AgentConfiguration`:
+
+._Java-only: LangChain4j MCP transport and client configuration_
+[source,java]
+----
+// Create MCP transport for filesystem server
+McpTransport filesystemTransport = new StdioMcpTransport.Builder()
+    .command(Arrays.asList("npx", "-y", "@modelcontextprotocol/server-filesystem", "/path/to/directory"))
+    .logEvents(true)
+    .build();
+
+// Create MCP client
+McpClient filesystemClient = new DefaultMcpClient.Builder()
+    .transport(filesystemTransport)
+    .build();
+
+// Create agent configuration with MCP clients
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withMcpClients(Arrays.asList(filesystemClient));
+
+// Create agent
+Agent agent = new AgentWithoutMemory(config);
+----
+
+=== MCP Tool Filtering
+
+You can apply filters to control which MCP tools are available to your agent:
+
+._Java-only: `BiPredicate` filter with LangChain4j `ToolSpecification`_
+[source,java]
+----
+// Create security filter to only allow read operations
+BiPredicate<McpClient, ToolSpecification> securityFilter = (client, toolSpec) -> {
+    String toolName = toolSpec.name().toLowerCase();
+    // Only allow read operations for safety
+    return toolName.contains("read") || toolName.contains("list") || toolName.contains("get");
+};
+
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withMcpClients(Arrays.asList(filesystemClient))
+    .withMcpToolProviderFilter(securityFilter);
+----
+
+=== Complete MCP Example
+
+Here's a complete example showing how to use MCP tools with an agent:
+
+._Java-only: LangChain4j MCP client setup and bean registration_
+[source,java]
+----
+// Create MCP client for filesystem access
+McpTransport transport = new StdioMcpTransport.Builder()
+    .command(Arrays.asList("npx", "-y", "@modelcontextprotocol/server-filesystem", "/tmp"))
+    .logEvents(true)
+    .build();
+
+McpClient mcpClient = new DefaultMcpClient.Builder()
+    .transport(transport)
+    .build();
+
+// Create agent with MCP tools
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withMcpClient(mcpClient);
+
+Agent agent = new AgentWithoutMemory(config);
+
+// Register agent in Camel context
+context.getRegistry().bind("mcpAgent", agent);
+----
+
+=== Route Configuration with MCP Tools
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#mcpAgent")
+    .to("mock:agent-response");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#mcpAgent"/>
+  <to uri="mock:agent-response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#mcpAgent"
+        - to:
+            uri: mock:agent-response
+----
+====
+
+=== Usage Example with MCP Tools
+
+._Java-only: ProducerTemplate test API_
+[source,java]
+----
+String response = template.requestBody("direct:chat",
+    "Can you list the files in the current directory and read the content of file.txt?", String.class);
+----
+
+=== Endpoint-Level MCP Configuration
+
+MCP servers can also be configured directly on the endpoint, without setting them on the `AgentConfiguration`. This is useful for declarative route definitions and allows MCP tools to coexist with Camel route tools (via `tags`).
+
+==== Bean References
+
+Register pre-built `McpClient` beans and reference them via the `mcpClients` endpoint parameter:
+
+._Java-only: LangChain4j `McpClient` bean registration_
+[source,java]
+----
+// Register MCP clients as beans
+McpClient timeClient = new DefaultMcpClient.Builder()
+    .key("time")
+    .transport(new StdioMcpTransport.Builder()
+        .command(Arrays.asList("docker", "run", "-i", "--rm", "mcp/time"))
+        .build())
+    .build();
+context.getRegistry().bind("timeMcpClient", timeClient);
+----
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users&mcpClients=#timeMcpClient")
+    .to("mock:response");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#myAgent&amp;tags=users&amp;mcpClients=#timeMcpClient"/>
+  <to uri="mock:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#myAgent"
+              tags: users
+              mcpClients: "#timeMcpClient"
+        - to:
+            uri: mock:response
+----
+====
+
+==== Inline URI Configuration
+
+MCP servers can be defined inline on the endpoint URI using the `mcpServer.<name>.<property>` pattern. The component creates and manages the MCP client lifecycle automatically.
+
+Supported properties:
+
+[cols="1,1,3"]
+|===
+| Property | Default | Description
+
+| `transportType` | `stdio` | Transport type: `stdio`, `http` or `streamableHttp` (Streamable HTTP), or `sse` (legacy SSE)
+| `command` | | Comma-separated command for stdio transport (e.g., `docker,run,-i,--rm,mcp/time`)
+| `url` | | Server URL for `http` or `sse` transport
+| `environment.<key>` | | Environment variables for stdio transport
+| `timeout` | `60` | Timeout in seconds
+| `logRequests` | `false` | Log requests sent to the MCP server
+| `logResponses` | `false` | Log responses from the MCP server
+| `oauthProfile` | | OAuth profile name for HTTP transport auth (Client Credentials grant, requires `camel-oauth`)
+|===
+
+Example with two MCP servers configured inline:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users&mcpServer.everything.transportType=http&mcpServer.everything.url=http://localhost:3001/mcp&mcpServer.time.transportType=stdio&mcpServer.time.command=docker,run,-i,--rm,mcp/time")
+    .to("mock:response");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-agent:assistant?agent=#myAgent&amp;tags=users&amp;mcpServer.everything.transportType=http&amp;mcpServer.everything.url=http://localhost:3001/mcp&amp;mcpServer.time.transportType=stdio&amp;mcpServer.time.command=docker,run,-i,--rm,mcp/time"/>
+  <to uri="mock:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#myAgent"
+              tags: users
+              mcpServer.everything.transportType: http
+              mcpServer.everything.url: "http://localhost:3001/mcp"
+              mcpServer.time.transportType: stdio
+              mcpServer.time.command: "docker,run,-i,--rm,mcp/time"
+        - to:
+            uri: mock:response
+----
+====
+
+Both `mcpClients` (bean references) and `mcpServer` (inline) can be used together on the same endpoint. All tool sources -- Camel route tools, endpoint-level MCP tools, and agent-level MCP tools -- are automatically composed into a single tool provider.
+
+=== Dynamic Tool Exclusion via Headers
+
+Tools can be dynamically excluded on a per-message basis using Camel headers. This allows routes to control which tools are available based on business logic, user roles, or message content.
+
+[cols="1,3"]
+|===
+| Header | Description
+
+| `CamelLangChain4jAgentExcludeTags` | Comma-separated list of Camel tool tags to exclude
+| `CamelLangChain4jAgentExcludeMcpServers` | Comma-separated list of MCP server names (keys) to exclude
+|===
+
+Example -- exclude specific tools based on a condition:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .choice()
+        .when(header("userRole").isEqualTo("readonly"))
+            .setHeader("CamelLangChain4jAgentExcludeTags", constant("admin-tools"))
+            .setHeader("CamelLangChain4jAgentExcludeMcpServers", constant("filesystem"))
+    .end()
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users,admin-tools&mcpClients=#fsMcpClient,#timeMcpClient")
+    .to("mock:response");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <choice>
+    <when>
+      <simple>${header.userRole} == 'readonly'</simple>
+      <setHeader name="CamelLangChain4jAgentExcludeTags">
+        <constant>admin-tools</constant>
+      </setHeader>
+      <setHeader name="CamelLangChain4jAgentExcludeMcpServers">
+        <constant>filesystem</constant>
+      </setHeader>
+    </when>
+  </choice>
+  <to uri="langchain4j-agent:assistant?agent=#myAgent&amp;tags=users,admin-tools&amp;mcpClients=#fsMcpClient,#timeMcpClient"/>
+  <to uri="mock:response"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - choice:
+            when:
+              - simple: "${header.userRole} == 'readonly'"
+                steps:
+                  - setHeader:
+                      name: CamelLangChain4jAgentExcludeTags
+                      constant: admin-tools
+                  - setHeader:
+                      name: CamelLangChain4jAgentExcludeMcpServers
+                      constant: filesystem
+        - to:
+            uri: langchain4j-agent:assistant
+            parameters:
+              agent: "#myAgent"
+              tags: users,admin-tools
+              mcpClients: "#fsMcpClient,#timeMcpClient"
+        - to:
+            uri: mock:response
+----
+====
+
+MCP servers are matched by their key, which is set via `DefaultMcpClient.Builder.key(name)` or automatically from the server name in inline `mcpServer.<name>` configuration. MCP clients without a key are never excluded.
