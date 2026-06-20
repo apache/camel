@@ -346,7 +346,7 @@ Before the Kubernetes property placeholder functions can be used they need to be
 
 Camel will first use _mount paths_ (if configured) to lookup, and then fallback to use the `KubernetesClient`.
 
-==== Configuring mount paths for ConfigMaps and Secrets
+=== Configuring mount paths for ConfigMaps and Secrets
 
 The configuration of the _mount path_ are used by the given order:
 
@@ -362,7 +362,7 @@ camel.kubernetes-config.mount-path-configmaps = /etc/camel/myconfig/
 camel.kubernetes-config.mount-path-secrets = /etc/camel/mysecrets/
 ----
 
-==== Configuring Kubernetes Client
+=== Configuring Kubernetes Client
 
 Camel will autowire the `KubernetesClient` if a single instance of the client exists in the running application (lookup via the xref:registry.adoc[Registry]).
 Otherwise, a new `KubernetesClient` is created. The client can be configured from either
@@ -396,7 +396,7 @@ would not need to explicit configure the `KubernetesClient` and can rely on defa
 TIP: If you use Camel Quarkus, then it is recommended to use their https://quarkus.io/guides/kubernetes-config
 which automatic pre-configure the `KubernetesClient` which Camel then will reuse.
 
-==== Using configmap with Kubernetes
+=== Using configmap with Kubernetes
 
 Given a configmap named `myconfig` in Kubernetes that has two entries:
 
@@ -486,7 +486,7 @@ YAML::
 ----
 ====
 
-==== Using secrets with Kubernetes
+=== Using secrets with Kubernetes
 
 Camel reads ConfigMaps from the Kubernetes API Server. And when RBAC is enabled on the cluster,
 the ServiceAccount that is used to run the application needs to have the proper permissions for such access.
@@ -630,7 +630,7 @@ YAML::
 ----
 ====
 
-==== Using configmap or secrets in local-mode
+=== Using configmap or secrets in local-mode
 
 During development, you may want to run in _local mode_ where you do not need acces to a Kubernetes cluster, to lookup the configmap.
 In the local mode, then Camel will lookup the configmap _keys_ from local properties, eg:
