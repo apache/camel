@@ -69,6 +69,12 @@ public class DiagramDevConsole extends AbstractDevConsole {
      */
     public static final String MODE = "mode";
 
+    /**
+     * Output format for the HTML rendering: html (default, interactive web component) or png (legacy inline image).
+     * Only applies to image themes; ascii/unicode themes always render as text.
+     */
+    public static final String FORMAT = "format";
+
     public DiagramDevConsole() {
         super("camel", "route-diagram", "Route Diagram", "Visual route diagrams");
     }
@@ -87,6 +93,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
         String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
         boolean metric = "true".equalsIgnoreCase((String) options.getOrDefault(METRIC, "true"));
         boolean refresh = "true".equalsIgnoreCase((String) options.getOrDefault(AUTO_REFRESH, "true"));
+        String format = (String) options.getOrDefault(FORMAT, "html");
 
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
@@ -97,7 +104,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
                         RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
                         nodeWidth, isUnicodeTheme(theme));
                 sj.add(text);
-            } else {
+            } else if ("png".equalsIgnoreCase(format)) {
                 BufferedImage image = dumper.dumpRoutesAsImage(filter,
                         RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
                         metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
@@ -110,6 +117,8 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 }
                 html = "<html>\n" + html + "</html>\n";
                 sj.add(html);
+            } else {
+                sj.add(buildRouteWebComponentHtml(filter, refresh));
             }
         } catch (Exception e) {
             // ignore
@@ -194,6 +203,25 @@ public class DiagramDevConsole extends AbstractDevConsole {
             }
         }
         return root;
+    }
+
+    private static String buildRouteWebComponentHtml(String filter, boolean refresh) {
+        String f = filter == null ? "*" : filter;
+        String refreshAttr = refresh ? " refresh=\"5000\"" : "";
+        // script path + route-structure src assume the dev console and static resources share an origin
+        return "<html>\n"
+               + "  <head>\n"
+               + "    <script type=\"module\" src=\"/camel/diagram/camel-route-diagram.js\"></script>\n"
+               + "  </head>\n"
+               + "  <body>\n"
+               + String.format("    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s></camel-route-diagram>%n",
+                       escapeAttr(f), refreshAttr)
+               + "  </body>\n"
+               + "</html>\n";
+    }
+
+    private static String escapeAttr(String s) {
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
     }
 
     private static boolean isTextTheme(String theme) {
