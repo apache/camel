@@ -10,7 +10,7 @@ The Pub/Sub API allows you to publish and subscribe to platform events, includin
 monitoring events, and change data capture events. This API is based on gRPC and HTTP/2, and event
 payloads are delivered in Apache Avro format.
 
-=== Publishing Events
+== Publishing Events
 
 The URI format for publishing events is:
 ----
@@ -23,7 +23,7 @@ For example:
 ----
 
 [[pubSubPublish]]
-=== Publish an Event
+== Publish an Event
 
 `pubSubPublish`
 
@@ -57,7 +57,7 @@ Type: `List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult>`
 
 The order of the items in the returned `List` correlates to the order of the items in the input `List`.
 
-=== Subscribing
+== Subscribing
 The URI format for subscribing to a Pub/Sub topic is:
 ----
 salesforce:pubSubSubscribe:<topic_name>
@@ -97,7 +97,7 @@ mechanism for receiving events in near real time. The Streaming API subscription
 multiple types of events, including PushTopic events, generic events, platform events, and Change
 Data Capture events.
 
-=== Push Topics
+== Push Topics
 
 The URI format for consuming Push Topics is:
 ----
@@ -200,7 +200,7 @@ YAML::
 
 |===
 
-=== Parallel processing received events
+== Parallel processing received events
 
 You can turn on `consumerWorkerPoolEnabled=true` on the salesforce endpoint to let Camel use a thread-pool to process
 the received events, which allows to process these events in parallel.
@@ -213,7 +213,7 @@ can help with this. See more in https://issues.apache.org/jira/browse/CAMEL-2233
 
 Type: Class passed via `sObjectName` parameter
 
-=== Platform Events
+== Platform Events
 
 To emit a platform event use the xref:others:salesforce-rest-api.adoc#createSObject[createSObject] operation, passing an instance of a platform event, e.g. `Order_Event__e`.
 
@@ -270,7 +270,7 @@ YAML::
 
 Type: `PlatformEvent` or `org.cometd.bayeux.Message`
 
-=== Change Data Capture Events
+== Change Data Capture Events
 
 Change Data Capture (CDC) allows you to receive near-real-time changes of Salesforce records, and synchronize corresponding records in an external data store. Change Data Capture publishes change events, which represent changes to Salesforce records. Changes include the creation of a new record, updates to an existing record, deletion of a record, and undeletion of a record.
 

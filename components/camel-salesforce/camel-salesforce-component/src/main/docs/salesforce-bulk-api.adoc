@@ -30,7 +30,7 @@ is v41.0. The minimum API version for Bulk Queries is v47.0. DTO classes mention
 * <<bulk2GetAllQueryJobs,bulk2GetAllQueryJobs>> - Gets all query jobs.
 
 [[bulk2CreateJob]]
-=== Create a Job
+== Create a Job
 
 `bulk2CreateJob`
 Creates a bulk ingest job.
@@ -46,7 +46,7 @@ Creates a bulk ingest job.
 Type: `Job`
 
 [[bulk2CreateBatch]]
-=== Upload a Batch of Job Data
+== Upload a Batch of Job Data
 
 `bulk2CreateBatch`
 
@@ -60,7 +60,7 @@ Adds a batch of data to an ingest job.
 |===
 
 [[bulk2CloseJob]]
-=== Close a Job
+== Close a Job
 
 `bulk2CloseJob`
 
@@ -78,7 +78,7 @@ aborted/deleted.
 Type: `Job`
 
 [[bulk2AbortJob]]
-=== Abort a Job
+== Abort a Job
 
 `bulk2AbortJob`
 
@@ -95,7 +95,7 @@ Aborts an ingest job.
 Type: `Job`
 
 [[bulk2DeleteJob]]
-=== Delete a Job
+== Delete a Job
 
 `bulk2DeleteJob`
 
@@ -108,7 +108,7 @@ Deletes an ingest job.
 |===
 
 [[bulk2GetSuccessfulResults]]
-=== Get Job Successful Record Results
+== Get Job Successful Record Results
 
 `bulk2GetSuccessfulResults`
 
@@ -126,7 +126,7 @@ Type: `InputStream` +
 Contents: CSV data
 
 [[bulk2GetFailedResults]]
-=== Get Job Failed Record Results
+== Get Job Failed Record Results
 
 `bulk2GetFailedResults`
 
@@ -144,7 +144,7 @@ Type: `InputStream` +
 Contents: CSV data
 
 [[bulk2GetUnprocessedRecords]]
-=== Get Job Unprocessed Record Results
+== Get Job Unprocessed Record Results
 
 `bulk2GetUnprocessedRecords`
 
@@ -162,7 +162,7 @@ Type: `InputStream`
 Contents: CSV data
 
 [[bulk2GetJob]]
-=== Get Job Info
+== Get Job Info
 
 `bulk2GetJob`
 
@@ -180,7 +180,7 @@ Gets an ingest Job.
 Type: `Job`
 
 [[bulk2GetAllJobs]]
-=== Get All Jobs
+== Get All Jobs
 
 `bulk2GetAllJobs`
 
@@ -201,7 +201,7 @@ is false, there are additional pages to fetch, and the `nextRecordsUrl` property
 to be set in the `queryLocator` parameter on subsequent calls.
 
 [[bulk2CreateQueryJob]]
-=== Create a Query Job
+== Create a Query Job
 
 `bulk2CreateQueryJob`
 
@@ -218,7 +218,7 @@ Gets a query job.
 Type: `QueryJob`
 
 [[bulk2GetQueryJobResults]]
-=== Get Results for a Query Job
+== Get Results for a Query Job
 
 `bulk2GetQueryJobResults`
 
@@ -244,7 +244,7 @@ Response message headers include `Sforce-NumberOfRecords` and
 `locator` parameter.
 
 [[bulk2AbortQueryJob]]
-=== Abort a Query Job
+== Abort a Query Job
 
 `bulk2AbortQueryJob`
 
@@ -261,7 +261,7 @@ Aborts a query job.
 Type: `QueryJob`
 
 [[bulk2DeleteQueryJob]]
-=== Delete a Query Job
+== Delete a Query Job
 
 `bulk2DeleteQueryJob`
 
@@ -274,7 +274,7 @@ Deletes a query job.
 |===
 
 [[bulk2GetQueryJob]]
-=== Get Information About a Query Job
+== Get Information About a Query Job
 
 `bulk2GetQueryJob`
 
@@ -291,7 +291,7 @@ Gets a query job.
 Type: `QueryJob`
 
 [[bulk2GetAllQueryJobs]]
-=== Get Information About All Query Jobs
+== Get Information About All Query Jobs
 
 `bulk2GetAllQueryJobs`
 
@@ -337,7 +337,7 @@ The following operations are supported:
 * <<getQueryResult,getQueryResult>> - Gets results for a Result Id
 
 [[createJob]]
-=== Create a Job
+== Create a Job
 
 `createJob`
 
@@ -360,7 +360,7 @@ is supported via the pkChunking* options. See an explanation https://developer.s
 Type: `JobInfo`
 
 [[getJob]]
-=== Get Job Details
+== Get Job Details
 
 `getJob`
 
@@ -378,7 +378,7 @@ Gets a Job
 Type: `JobInfo`
 
 [[closeJob]]
-=== Close a Job
+== Close a Job
 
 `closeJob`
 
@@ -396,7 +396,7 @@ Closes a Job
 Type: `JobInfo`
 
 [[abortJob]]
-=== Abort a Job
+== Abort a Job
 
 `abortJob`
 
@@ -414,7 +414,7 @@ Aborts a Job
 Type: `JobInfo`
 
 [[createBatch]]
-=== Add a Batch to a Job
+== Add a Batch to a Job
 
 `createBatch`
 
@@ -433,7 +433,7 @@ Submits a Batch within a Bulk Job
 Type: `BatchInfo`
 
 [[getBatch]]
-=== Get Information for a Batch
+== Get Information for a Batch
 
 `getBatch`
 
@@ -452,7 +452,7 @@ Get a Batch
 Type: `BatchInfo`
 
 [[getAllBatches]]
-=== Get Information for All Batches in a Job
+== Get Information for All Batches in a Job
 
 `getAllBatches`
 
@@ -470,7 +470,7 @@ Gets all Batches for a Bulk Job Id
 Type: `List<JobInfo>`
 
 [[getRequest]]
-=== Get a Batch Request
+== Get a Batch Request
 
 `getRequest`
 
@@ -490,7 +490,7 @@ Type: `InputStream`
 
 
 [[getResults]]
-=== Get Batch Results
+== Get Batch Results
 
 `getResults`
 
@@ -509,7 +509,7 @@ Gets the results of the Batch when it's complete
 Type: `InputStream`
 
 [[createBatchQuery]]
-=== Create Bulk Query Batch
+== Create Bulk Query Batch
 
 `createBatchQuery`
 
@@ -529,7 +529,7 @@ Creates a Batch from an SOQL query
 Type: `BatchInfo`
 
 [[getQueryResultIds]]
-=== Get Batch Results
+== Get Batch Results
 
 `getQueryResultIds`
 
@@ -549,7 +549,7 @@ Type: `List<String>`
 
 
 [[getQueryResult]]
-=== Get Bulk Query Results
+== Get Bulk Query Results
 
 `getQueryResult`
 

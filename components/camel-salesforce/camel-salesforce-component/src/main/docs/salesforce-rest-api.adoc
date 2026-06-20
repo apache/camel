@@ -42,7 +42,7 @@ request as the input to a subsequent request.
 Unless otherwise specified, DTO types for the following options are from  `org.apache.camel.component.salesforce.api.dto` or one if its sub-packages.
 
 [[getVersions]]
-=== Versions
+== Versions
 
 `getVersions`
 
@@ -53,7 +53,7 @@ Lists summary information about each Salesforce version currently available, inc
 Type:  `List<Version>`
 
 [[getResources]]
-=== Resources by Version
+== Resources by Version
 
 `getResources`
 
@@ -64,7 +64,7 @@ Lists available resources for the current API version, including resource name a
 Type: `Map<String, String>`
 
 [[limits]]
-=== Limits
+== Limits
 
 `limits`
 
@@ -151,7 +151,7 @@ YAML::
 ====
 
 [[recent]]
-=== Recently Viewed Items
+== Recently Viewed Items
 
 `recent`
 
@@ -223,7 +223,7 @@ YAML::
 ====
 
 [[getGlobalObjects]]
-=== Describe Global
+== Describe Global
 
 `getGlobalObjects`
 
@@ -235,7 +235,7 @@ as well as the maximum batch size permitted in queries.
 Type: `GlobalObjects`
 
 [[getBasicInfo]]
-=== sObject Basic Information
+== sObject Basic Information
 
 `getBasicInfo`
 
@@ -252,7 +252,7 @@ Describes the individual metadata for the specified object.
 Type: `SObjectBasicInfo`
 
 [[getDescription]]
-=== sObject Describe
+== sObject Describe
 
 `getDescription`
 
@@ -269,7 +269,7 @@ Completely describes the individual metadata at all levels for the specified obj
 Type: `SObjectDescription`
 
 [[getSObject]]
-=== Retrieve SObject
+== Retrieve SObject
 
 `getSObject`
 
@@ -290,7 +290,7 @@ overrides `sObjectName` and `sObjectId` parameters.  | |
 Type: Subclass of `AbstractSObjectBase`
 
 [[getSObjectWithId]]
-=== Retrieve SObject by External Id
+== Retrieve SObject by External Id
 
 `getSObjectWithId`
 
@@ -311,7 +311,7 @@ overrides `sObjectName` and `sObjectIdValue` parameters.  | |
 Type: Subclass of `AbstractSObjectBase`
 
 [[getBlobField]]
-=== sObject Blob Retrieve
+== sObject Blob Retrieve
 
 `getBlobField`
 
@@ -333,7 +333,7 @@ and `sObjectName` are not supplied
 Type: `InputStream`
 
 [[createSObject]]
-=== Create SObject
+== Create SObject
 
 `createSObject`
 
@@ -355,7 +355,7 @@ Type: `CreateSObjectResult`
 When creating records with blob/binary fields, you can use the automatic https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_insert_update_blob.htm[multipart encoding] feature by populating binary fields in your DTO. See <<BinaryFields,Binary Fields and Multipart Requests>> for details.
 
 [[updateSObject]]
-=== Update SObject
+== Update SObject
 
 `updateSObject`
 
@@ -374,7 +374,7 @@ Updates a record in salesforce.
 When updating records with blob/binary fields, you can use the automatic https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_insert_update_blob.htm[multipart encoding] feature by populating binary fields in your DTO. See <<BinaryFields,Binary Fields and Multipart Requests>> for details.
 
 [[upsertSObject]]
-=== Upsert SObject
+== Upsert SObject
 
 `upsertSObject`
 
@@ -394,7 +394,7 @@ Upserts a record by External ID.
 Type: `UpsertSObjectResult`
 
 [[deleteSObject]]
-=== Delete SObject
+== Delete SObject
 
 `deleteSObject`
 
@@ -409,7 +409,7 @@ Deletes a record in salesforce.
 |===
 
 [[deleteSObjectWithId]]
-=== Delete SObject by External Id
+== Delete SObject by External Id
 
 `deleteSObjectWithId`
 
@@ -425,7 +425,7 @@ Deletes a record in salesforce by External ID.
 |===
 
 [[query]]
-=== Query
+== Query
 
 `query`
 
@@ -446,7 +446,7 @@ the correct `AbstractQueryRecordsBase` sublcass based on the response.
 Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` if `streamQueryResult` is true. If `streamQueryResult` is true, the header `CamelSalesforceQueryResultTotalSize` is set to the number of records that matched the query.
 
 [[queryMore]]
-=== Query More
+== Query More
 
 `queryMore`
 
@@ -468,7 +468,7 @@ operations. If neither `sObjectClass` nor `sObjectName` are set, Camel will atte
 Type: Instance of class supplied in `sObjectClass`
 
 [[queryAll]]
-=== Query All
+== Query All
 
 `queryAll`
 
@@ -491,7 +491,7 @@ response.
 Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` if `streamQueryResult` is true.
 
 [[sosl_search]]
-=== Search
+== Search
 
 `search`
 
@@ -508,7 +508,7 @@ Runs a Salesforce SOSL search
 Type: `SearchResult2`
 
 [[approval]]
-=== Submit Approval
+== Submit Approval
 
 `approval`
 
@@ -612,7 +612,7 @@ final ApprovalResult result = template.requestBody("direct:example1", body, Appr
 ----
 
 [[approvals]]
-=== Get Approvals
+== Get Approvals
 
 `approvals`
 
@@ -623,7 +623,7 @@ Returns a list of all approval processes.
 Type: `Approvals`
 
 [[composite]]
-=== Composite
+== Composite
 
 `composite`
 
@@ -724,7 +724,7 @@ With this approach, you have complete control on the Salesforce request.
 other available composite resources.
 
 [[composite-tree]]
-=== Composite Tree
+== Composite Tree
 
 `composite-tree`
 
@@ -782,7 +782,7 @@ final String firstId = succeeded.get(0).getId();
 ----
 
 [[composite-batch]]
-=== Composite Batch
+== Composite Batch
 
 `composite-batch`
 
@@ -854,7 +854,7 @@ final Object updateResultData = deleteResult.getResult(); // probably null
 ----
 
 [[compositeRetrieveSObjectCollections]]
-=== Retrieve Multiple Records with Fewer Round-Trips
+== Retrieve Multiple Records with Fewer Round-Trips
 
 `compositeRetrieveSObjectCollections`
 
@@ -875,7 +875,7 @@ Type: `List` of class determined by `sObjectName` or `sObjectClass` header
 
 
 [[compositeCreateSObjectCollections]]
-=== Create SObject Collections
+== Create SObject Collections
 
 `compositeCreateSObjectCollections`
 
@@ -892,7 +892,7 @@ Add up to 200 records. Mixed SObject types is supported.
 Type: `List<SaveSObjectResult>`
 
 [[compositeUpdateSObjectCollections]]
-=== Update SObject Collections
+== Update SObject Collections
 
 `compositeUpdateSObjectCollections`
 
@@ -909,7 +909,7 @@ Update up to 200 records. Mixed SObject types is supported.
 Type: `List<SaveSObjectResult>`
 
 [[compositeUpsertSObjectCollections]]
-=== Upsert SObject Collections
+== Upsert SObject Collections
 
 `compositeUpsertSObjectCollections`
 
@@ -928,7 +928,7 @@ Create or update (upsert) up to 200 records based on an external ID field. Mixed
 Type: `List<UpsertSObjectResult>`
 
 [[compositeDeleteSObjectCollections]]
-=== Delete SObject Collections
+== Delete SObject Collections
 
 `compositeDeleteSObjectCollections`
 
@@ -947,7 +947,7 @@ Type: `List<DeleteSObjectResult>`
 
 
 [[getEventSchema]]
-=== Get Event Schema
+== Get Event Schema
 
 `getEventSchema`
 
@@ -970,7 +970,7 @@ Type: `InputStream`
 
 The Salesforce component provides automatic support for handling binary fields (blob fields) in SObjects without requiring manual base64 encoding. This feature works with both `createSObject` and `updateSObject` operations.
 
-=== Binary Field Pattern
+== Binary Field Pattern
 
 For any SObject with blob fields, you can use binary fields that follow the naming pattern `pass:[***]Binary`, where `pass:[***]` is the original field name. For example:
 
@@ -978,11 +978,11 @@ For any SObject with blob fields, you can use binary fields that follow the nami
 * `Body` field -> `BodyBinary` field
 * `ContentData` field -> `ContentDataBinary` field
 
-=== Automatic Multipart Detection
+== Automatic Multipart Detection
 
 When you populate a `pass:[***]Binary` field with an `InputStream`, the component automatically detects this and switches to multipart encoding for the request. This means that the binary data is sent directly as a stream, avoiding the overhead of base64 encoding.:
 
-=== Usage Examples
+== Usage Examples
 
 *Creating a ContentVersion with binary data:*
 
@@ -1020,7 +1020,7 @@ doc.setBodyBinary(content);  // Automatically triggers multipart request
 template.requestBody("salesforce:updateSObject", doc);
 ----
 
-=== DTO Generation
+== DTO Generation
 
 When using the xref:ROOT:salesforce-component.adoc#MavenPlugin[Camel Salesforce Maven Plugin], binary fields are automatically generated for blob fields:
 
@@ -1041,7 +1041,7 @@ public class ContentVersion extends AbstractSObjectBase {
 }
 ----
 
-=== Field Priority
+== Field Priority
 
 When both the standard field and binary field are populated:
 
@@ -1049,7 +1049,7 @@ When both the standard field and binary field are populated:
 * **Standard field is ignored** - The base64 string field is not sent in the multipart request
 * **Automatic cleanup** - Binary field names are automatically removed from the JSON payload
 
-=== Performance Benefits
+== Performance Benefits
 
 Using binary fields provides significant performance improvements:
 
@@ -1059,7 +1059,7 @@ Using binary fields provides significant performance improvements:
 * **Faster upload times** especially for large documents
 * **Higher salesforce limits** for multipart requests compared to base64 strings. Salesforce limits base64 strings to 50 MB of text data or 37.5 MB of base64-encoded data. Multipart uploads can handle 2 GB for ContentVersion records, and 500 MB for all other objects.
 
-=== Backward Compatibility
+== Backward Compatibility
 
 The existing base64 string approach continues to work:
 
