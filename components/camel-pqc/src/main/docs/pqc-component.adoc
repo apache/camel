@@ -86,7 +86,7 @@ The component supports the following operations:
 - hybridExtractSecretKeyEncapsulation - Extract the shared secret from a hybrid encapsulation
 - hybridExtractSecretKeyFromEncapsulation - Extract the secret key from a hybrid encapsulation
 
-See xref:pqc-hybrid.adoc[PQC Hybrid Cryptography] for configuration details and examples.
+See xref:others:pqc-hybrid.adoc[PQC Hybrid Cryptography] for configuration details and examples.
 
 **Key Lifecycle Operations:**
 
@@ -99,15 +99,15 @@ See xref:pqc-hybrid.adoc[PQC Hybrid Cryptography] for configuration details and 
 - expireKey - Mark a key as expired
 - revokeKey - Revoke a compromised key
 
-See xref:pqc-key-lifecycle.adoc[PQC Key Lifecycle Management] for full details.
+See xref:others:pqc-key-lifecycle.adoc[PQC Key Lifecycle Management] for full details.
 
 == Sub-Pages
 
 The PQC component documentation is split into focused sub-pages:
 
-* xref:pqc-key-lifecycle.adoc[Key Lifecycle Management] - Key generation, storage, rotation, expiration, revocation, and format conversion with FileBasedKeyLifecycleManager, InMemoryKeyLifecycleManager, HashiCorp Vault, and AWS Secrets Manager implementations
-* xref:pqc-hybrid.adoc[Hybrid Cryptography] - Combining classical and post-quantum algorithms for defense-in-depth, including wire format v2
-* xref:pqc-dataformat.adoc[PQC DataFormat] - DataFormat for quantum-resistant encryption/decryption using KEM
+* xref:others:pqc-key-lifecycle.adoc[Key Lifecycle Management] - Key generation, storage, rotation, expiration, revocation, and format conversion with FileBasedKeyLifecycleManager, InMemoryKeyLifecycleManager, HashiCorp Vault, and AWS Secrets Manager implementations
+* xref:others:pqc-hybrid.adoc[Hybrid Cryptography] - Combining classical and post-quantum algorithms for defense-in-depth, including wire format v2
+* xref:dataformats:pqc-dataformat.adoc[PQC DataFormat] - DataFormat for quantum-resistant encryption/decryption using KEM
 
 == Signature and Verification
 
@@ -117,7 +117,7 @@ In case the KeyPair and the Signature Objects are not in the registry, it will p
 
 This will be true for standardized algorithms and for experimental ones.
 
-TIP: To combine a classical signature (ECDSA, Ed25519, RSA) with a PQC signature for defense-in-depth during the post-quantum transition, use the hybrid signature operations described in xref:pqc-hybrid.adoc[Hybrid Cryptography].
+TIP: To combine a classical signature (ECDSA, Ed25519, RSA) with a PQC signature for defense-in-depth during the post-quantum transition, use the hybrid signature operations described in xref:others:pqc-hybrid.adoc[Hybrid Cryptography].
 
 == Examples
 
@@ -358,7 +358,7 @@ In case the KeyPair and the KeyGenerator Objects are not in the registry, it wil
 
 This will be true for standardized algorithms and for experimental ones.
 
-TIP: To combine a classical key agreement (X25519, ECDH) with a PQC KEM (ML-KEM) for defense-in-depth, use the hybrid KEM operations described in xref:pqc-hybrid.adoc[Hybrid Cryptography].
+TIP: To combine a classical key agreement (X25519, ECDH) with a PQC KEM (ML-KEM) for defense-in-depth, use the hybrid KEM operations described in xref:others:pqc-hybrid.adoc[Hybrid Cryptography].
 
 A possible flow of the operation could be the following:
 
@@ -525,4 +525,4 @@ from("direct:encapsulate")
 
 This could be used to generate a secret key, protect it through Encapsulation and KEM approach and re-use it once extracted.
 
-TIP: For a simplified approach to KEM-based encryption, consider using the xref:pqc-dataformat.adoc[PQC DataFormat] which handles all KEM operations internally with a single marshal/unmarshal call.
+TIP: For a simplified approach to KEM-based encryption, consider using the xref:dataformats:pqc-dataformat.adoc[PQC DataFormat] which handles all KEM operations internally with a single marshal/unmarshal call.

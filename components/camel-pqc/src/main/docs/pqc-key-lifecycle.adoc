@@ -1,7 +1,7 @@
 = PQC Key Lifecycle Management
 :tabs-sync-option:
 
-xref:pqc-component.adoc[Back to PQC Component]
+xref:ROOT:pqc-component.adoc[Back to PQC Component]
 
 The PQC component provides comprehensive key lifecycle management capabilities for Post-Quantum Cryptography keys. This includes key generation, storage, rotation, expiration, revocation, and format conversion.
 

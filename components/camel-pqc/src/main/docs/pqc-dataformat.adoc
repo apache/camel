@@ -11,7 +11,7 @@
 
 The PQC data format supports encrypting and decrypting payload using Post Quantum Cryptography algorithms.
 
-xref:pqc-component.adoc[Back to PQC Component]
+xref:ROOT:pqc-component.adoc[Back to PQC Component]
 
 == PGC DataFormat Options
 
@@ -39,7 +39,7 @@ This approach provides **defense-in-depth**: even if the symmetric algorithm is 
 
 == Wire Format
 
-Since Camel 4.19, the PQC DataFormat uses wire format v2 which includes magic bytes, version, and algorithm identifiers (see xref:pqc-hybrid.adoc#wire-format-v2-and-algorithm-identification[Wire Format v2 and Algorithm Identification]). The v1 format `[4 bytes: encapsulation length][N bytes: encapsulation][M bytes: encrypted data]` is still accepted on input for backward compatibility.
+Since Camel 4.19, the PQC DataFormat uses wire format v2 which includes magic bytes, version, and algorithm identifiers (see xref:others:pqc-hybrid.adoc#wire-format-v2-and-algorithm-identification[Wire Format v2 and Algorithm Identification]). The v1 format `[4 bytes: encapsulation length][N bytes: encapsulation][M bytes: encrypted data]` is still accepted on input for backward compatibility.
 
 The v2 encrypted message format is:
 
@@ -318,7 +318,7 @@ from("direct:dynamic-encrypt")
 
 == Integration with Key Lifecycle Management
 
-The PQC DataFormat can be integrated with the xref:pqc-key-lifecycle.adoc[Key Lifecycle Manager] for automated key management:
+The PQC DataFormat can be integrated with the xref:others:pqc-key-lifecycle.adoc[Key Lifecycle Manager] for automated key management:
 
 ._Java-only: integrating PQC DataFormat with Key Lifecycle Manager_
 [source,java]
@@ -390,7 +390,7 @@ The DataFormat approach is significantly simpler and handles all KEM operations 
   - Secure key storage (FileBasedKeyLifecycleManager with encrypted filesystem)
   - Cloud key management services (HashicorpVaultKeyLifecycleManager, AwsSecretsManagerKeyLifecycleManager)
 
-* **Key Rotation**: Regularly rotate keys using the xref:pqc-key-lifecycle.adoc[Key Lifecycle Manager]
+* **Key Rotation**: Regularly rotate keys using the xref:others:pqc-key-lifecycle.adoc[Key Lifecycle Manager]
 
 **2. Algorithm Selection**
 

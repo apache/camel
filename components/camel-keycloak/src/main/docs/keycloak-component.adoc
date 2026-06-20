@@ -18,9 +18,9 @@ The Keycloak component supports running operations on Keycloak instance and poli
 
 The Keycloak component provides three main functionalities:
 
-1. **xref:keycloak-producer.adoc[Producer Operations]** - Manage Keycloak instances via the Admin API (realms, users, roles, clients, groups, sessions, tokens, and more)
-2. **xref:keycloak-consumer.adoc[Consumer Operations]** - Poll and consume user events and admin events from Keycloak for monitoring, auditing, and event-driven workflows
-3. **xref:keycloak-security.adoc[Security Policies]** - Route-level authorization using Keycloak authentication and authorization services, including role-based access, permission-based access, and OAuth 2.0 token introspection
+1. **xref:others:keycloak-producer.adoc[Producer Operations]** - Manage Keycloak instances via the Admin API (realms, users, roles, clients, groups, sessions, tokens, and more)
+2. **xref:others:keycloak-consumer.adoc[Consumer Operations]** - Poll and consume user events and admin events from Keycloak for monitoring, auditing, and event-driven workflows
+3. **xref:others:keycloak-security.adoc[Security Policies]** - Route-level authorization using Keycloak authentication and authorization services, including role-based access, permission-based access, and OAuth 2.0 token introspection
 
 
 == URI Format
@@ -46,19 +46,19 @@ include::partial$component-endpoint-headers.adoc[]
 
 The producer supports a comprehensive set of administrative operations on Keycloak via the Admin API, including user management, role management, client management, group management, session management, token management, identity providers, organizations, authorization services, and bulk operations.
 
-See xref:keycloak-producer.adoc[Keycloak Producer Operations] for the full list of supported operations, configuration details, and examples.
+See xref:others:keycloak-producer.adoc[Keycloak Producer Operations] for the full list of supported operations, configuration details, and examples.
 
 === Consumer
 
 The consumer allows you to poll Keycloak for user events (logins, logouts, registrations) and admin events (resource creates, updates, deletes). It supports filtering by event type, operation type, date range, user, client, and IP address, with built-in fingerprint-based deduplication.
 
-See xref:keycloak-consumer.adoc[Keycloak Consumer Operations] for configuration, event processing patterns, and examples.
+See xref:others:keycloak-consumer.adoc[Keycloak Consumer Operations] for configuration, event processing patterns, and examples.
 
 === Security Policies
 
 The security policy provides route-level authorization by validating Keycloak access tokens. It supports role-based and permission-based authorization, local JWT parsing and OAuth 2.0 token introspection (RFC 7662) with pluggable cache implementations.
 
-See xref:keycloak-security.adoc[Keycloak Security Policies] for configuration, token introspection setup, and examples.
+See xref:others:keycloak-security.adoc[Keycloak Security Policies] for configuration, token introspection setup, and examples.
 
 == Usage
 

@@ -3,7 +3,7 @@
 
 The Keycloak producer supports administrative operations on Keycloak instances via the Admin API.
 
-For an overview of the Keycloak component, see xref:keycloak-component.adoc[Keycloak Component].
+For an overview of the Keycloak component, see xref:ROOT:keycloak-component.adoc[Keycloak Component].
 
 == Configuration
 

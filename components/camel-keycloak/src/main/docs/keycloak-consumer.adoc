@@ -3,7 +3,7 @@
 
 The Keycloak consumer allows you to poll and consume events from a Keycloak instance. This is useful for monitoring user activities, admin actions, and implementing event-driven workflows based on Keycloak events.
 
-For an overview of the Keycloak component, see xref:keycloak-component.adoc[Keycloak Component].
+For an overview of the Keycloak component, see xref:ROOT:keycloak-component.adoc[Keycloak Component].
 
 == Overview
 

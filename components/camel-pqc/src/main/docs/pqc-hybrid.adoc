@@ -1,7 +1,7 @@
 = PQC Hybrid Cryptography
 :tabs-sync-option:
 
-xref:pqc-component.adoc[Back to PQC Component]
+xref:ROOT:pqc-component.adoc[Back to PQC Component]
 
 Hybrid cryptography combines classical (pre-quantum) algorithms with post-quantum algorithms to provide defense-in-depth during the transition to quantum-resistant cryptography. This approach is recommended by NIST and other security organizations because:
 
@@ -288,7 +288,7 @@ Based on NIST recommendations for the transition period:
 
 == Wire Format v2 and Algorithm Identification
 
-Starting with Camel 4.19, the hybrid signature, hybrid KEM, and xref:pqc-dataformat.adoc[PQC DataFormat] wire formats include self-describing algorithm metadata. This makes the binary output portable and verifiable without out-of-band knowledge of which algorithms were used.
+Starting with Camel 4.19, the hybrid signature, hybrid KEM, and xref:dataformats:pqc-dataformat.adoc[PQC DataFormat] wire formats include self-describing algorithm metadata. This makes the binary output portable and verifiable without out-of-band knowledge of which algorithms were used.
 
 === PQCAlgorithmId
 

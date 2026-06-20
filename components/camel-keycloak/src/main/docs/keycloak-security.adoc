@@ -3,7 +3,7 @@
 
 The Keycloak security policy provides route-level authorization using Keycloak authentication and authorization services.
 
-For an overview of the Keycloak component, see xref:keycloak-component.adoc[Keycloak Component].
+For an overview of the Keycloak component, see xref:ROOT:keycloak-component.adoc[Keycloak Component].
 
 == Features
 
