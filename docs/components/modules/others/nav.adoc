@@ -7,6 +7,8 @@
 ** xref:aws2-s3-producer-operations.adoc[AWS S3 - Producer Operations]
 ** xref:aws2-s3-streaming.adoc[AWS S3 - Streaming Upload]
 *** xref:azure-schema-registry.adoc[Azure Schema Registry]
+** xref:azure-storage-blob-consumer.adoc[Azure Storage Blob - Consumer Examples]
+** xref:azure-storage-blob-operations.adoc[Azure Storage Blob - Producer Operations]
 ** xref:camel-yaml-dsl-validator-maven-plugin.adoc[Camel YAML DSL Validator Maven Plugin]
 ** xref:cli-connector.adoc[CLI Connector]
 ** xref:cli-debug.adoc[CLI Debug]
