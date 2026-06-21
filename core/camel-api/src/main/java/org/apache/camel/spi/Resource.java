@@ -44,17 +44,23 @@ import org.jspecify.annotations.Nullable;
 public interface Resource {
 
     /**
-     * The scheme of the resource such as file, classpath, http
+     * The scheme of the resource such as file, classpath, or http.
+     *
+     * @return the scheme
      */
     String getScheme();
 
     /**
      * The location of the resource.
+     *
+     * @return the location
      */
     String getLocation();
 
     /**
      * Whether this resource exists.
+     *
+     * @return <tt>true</tt> if the resource exists
      */
     boolean exists();
 

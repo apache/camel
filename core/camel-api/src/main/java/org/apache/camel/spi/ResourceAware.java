@@ -43,12 +43,16 @@ public interface ResourceAware {
 
     /**
      * Gets the {@link Resource}.
+     *
+     * @return the resource, or <tt>null</tt> if none is set
      */
     @Nullable
     Resource getResource();
 
     /**
      * Sets the {@link Resource}.
+     *
+     * @param resource the resource
      */
     void setResource(Resource resource);
 }
