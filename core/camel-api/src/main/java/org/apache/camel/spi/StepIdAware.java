@@ -19,10 +19,12 @@ package org.apache.camel.spi;
 import org.jspecify.annotations.Nullable;
 
 /**
- * To allow objects to be injected with the step id
+ * Marker for an object whose owning step id can be injected.
  * <p/>
- * This allows access to the step id at runtime, to know which step its associated with.
+ * This gives access to the step id at runtime, so a processor knows which step (the Step EIP) it is associated with.
  *
+ * @see   IdAware
+ * @see   RouteIdAware
  * @since 4.21
  */
 public interface StepIdAware {

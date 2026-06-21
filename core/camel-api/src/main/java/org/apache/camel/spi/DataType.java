@@ -37,6 +37,8 @@ import org.jspecify.annotations.Nullable;
  * `http:cloud-events` and `aws-s3:cloud-events` where the scheme relates to the respective component's scheme. This
  * information could be leveraged to detect required {@link Transformer} and {@link Validator} implementations provided
  * as part of these components.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/transformer.html">Transformer</a> in the Camel user manual.
  *
  * @see DataTypeAware
  * @see Transformer

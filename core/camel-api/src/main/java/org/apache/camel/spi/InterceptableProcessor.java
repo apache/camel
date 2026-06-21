@@ -19,10 +19,12 @@ package org.apache.camel.spi;
 import org.apache.camel.Processor;
 
 /**
- * To control whether a {@link Processor} can be intercepted via {@link InterceptStrategy}.
+ * Implemented by a {@link Processor} to control whether it may be wrapped by an {@link InterceptStrategy}.
+ * <p/>
+ * Most processors are interceptable, but some EIPs (such as try/catch/finally) cannot be intercepted safely;
+ * {@link #canIntercept()} returns {@code false} for those so Camel skips wrapping them.
  *
- * Some EIPs such as try/catch/finally cannot be intercepted.
- *
+ * @see   InterceptStrategy
  * @since 4.7
  */
 public interface InterceptableProcessor {
