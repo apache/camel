@@ -26,7 +26,20 @@ import org.apache.camel.util.function.ThrowingConsumer;
 import org.jspecify.annotations.Nullable;
 
 /**
- * To apply custom configurations to {@link Language} instances.
+ * Strategy for applying custom configuration to {@link Language} instances as they are created.
+ * <p/>
+ * Customizers are discovered from the {@link Registry} and applied to each language during bootstrap, with
+ * {@link #isEnabled(String, Language)} (and an optional {@link Policy}) deciding whether a given language is
+ * customized, and {@link Ordered} controlling the order. Use the {@link #builder()} /
+ * {@link #forType(Class, ThrowingConsumer)} helpers to target a concrete language type. This is the language-level
+ * counterpart to {@link CamelContextCustomizer}.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/camelcontext-autoconfigure.html">CamelContext auto-configuration</a> in
+ * the Camel user manual.
+ *
+ * @see CamelContextCustomizer
+ * @see ComponentCustomizer
+ * @see DataFormatCustomizer
  */
 @FunctionalInterface
 public interface LanguageCustomizer extends Ordered {
