@@ -22,8 +22,25 @@ import org.apache.camel.BindToRegistry;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Bean post processor.
+ * Processes beans as they are created or registered, applying Camel's annotation-based dependency injection.
+ * <p/>
+ * For every bean it inspects, the post processor wires up the Camel injection annotations such as
+ * {@link org.apache.camel.EndpointInject}, {@link org.apache.camel.Produce}, {@link org.apache.camel.Consume},
+ * {@link org.apache.camel.BeanInject}, and {@link org.apache.camel.PropertyInject}, and binds
+ * {@link org.apache.camel.BindToRegistry} beans into the {@link Registry}. Processing runs in two phases,
+ * {@link #postProcessBeforeInitialization(Object, String)} and {@link #postProcessAfterInitialization(Object, String)},
+ * mirroring the well-known Spring BeanPostProcessor lifecycle so a bean can be enriched both before and after its own
+ * init callbacks. Runtimes that already perform their own injection (Spring, Quarkus, CDI) supply their own
+ * implementations, while the default runtime uses reflection. Custom injection for 3rd-party annotations can be plugged
+ * in via {@link CamelBeanPostProcessorInjector}, and {@link CamelDependencyInjectionAnnotationFactory} controls how
+ * {@link org.apache.camel.BindToRegistry} beans are bound. Bean post processing can be disabled via
+ * {@link #setEnabled(boolean)} for runtimes that do not use these Camel features.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/bean-injection.html">Bean Injection</a> in the Camel user manual.
  *
+ * @see   CamelBeanPostProcessorInjector
+ * @see   CamelDependencyInjectionAnnotationFactory
+ * @see   Injector
  * @since 3.0
  */
 public interface CamelBeanPostProcessor {
