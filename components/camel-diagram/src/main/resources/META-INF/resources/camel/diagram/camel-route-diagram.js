@@ -372,7 +372,11 @@ class CamelRouteDiagram extends HTMLElement {
             const url = new URL(src, location.href);
             if (this.#filter) url.searchParams.set('filter', this.#filter);
             url.searchParams.set('metric', 'true');
-            const res = await fetch(url, { signal: this.#controller.signal });
+            // Ask for JSON explicitly; the dev console serves plain text for a default */* Accept.
+            const res = await fetch(url, {
+                signal: this.#controller.signal,
+                headers: { 'Accept': 'application/json' },
+            });
             if (!res.ok) {
                 this.#error = `HTTP ${res.status} ${res.statusText}`;
                 this.#render();

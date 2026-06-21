@@ -17,6 +17,7 @@
 package org.apache.camel.diagram;
 
 import java.util.Base64;
+import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsole;
@@ -68,9 +69,22 @@ class DiagramDevConsoleTest extends CamelTestSupport {
         DevConsole console = resolveConsole();
         String text = (String) console.call(DevConsole.MediaType.TEXT);
         assertThat(text).isNotNull();
-        // default theme renders HTML with inline image
+        assertThat(text).contains("<html>");
+        assertThat(text).contains("<camel-route-diagram");
+        assertThat(text).contains("src=\"route-structure\"");
+        assertThat(text).contains("camel-route-diagram.js");
+        assertThat(text).doesNotContain("data:image/png;base64,");
+    }
+
+    @Test
+    void testTextOutputPngFormat() {
+        System.setProperty("java.awt.headless", "true");
+        DevConsole console = resolveConsole();
+        String text = (String) console.call(DevConsole.MediaType.TEXT, Map.of(DiagramDevConsole.FORMAT, "png"));
+        assertThat(text).isNotNull();
         assertThat(text).contains("<html>");
         assertThat(text).contains("data:image/png;base64,");
+        assertThat(text).doesNotContain("<camel-route-diagram");
     }
 
     @Test
