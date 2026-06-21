@@ -19,9 +19,10 @@ package org.apache.camel.spi;
 import java.io.Closeable;
 
 /**
- * A marker interface for a service, or other kind of process that is only used during bootstrapping Camel. After the
- * bootstrap is complete the {@link #close()} method is invoked which allows to do some cleanup processes such as
- * clearing internal caches, maps etc to clear up memory etc.
+ * Marker for a service (or other process) that is only needed while Camel is bootstrapping.
+ * <p/>
+ * Once bootstrap completes, Camel invokes {@link #close()} so the implementation can release bootstrap-only state, for
+ * example clearing internal caches and maps to free memory that is not needed at runtime.
  *
  * @since 3.7
  */
