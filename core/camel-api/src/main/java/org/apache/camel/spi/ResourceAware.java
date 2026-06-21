@@ -19,8 +19,13 @@ package org.apache.camel.spi;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An interface to represent an object which wishes to be injected with the {@link Resource}
+ * Implemented by objects that want the {@link Resource} they originate from to be injected into them.
+ * <p/>
+ * When Camel creates an object from a resource (for example a route loaded from a file), it sets the originating
+ * {@link Resource} on the object if it implements this interface, so the object can later refer back to where it came
+ * from. The {@link #trySetResource(Object, Resource)} helper performs this injection conditionally.
  *
+ * @see   Resource
  * @since 3.17
  */
 public interface ResourceAware {

@@ -21,8 +21,15 @@ import org.apache.camel.StaticService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * SPI for loading resources.
+ * SPI for resolving a {@link Resource} for a specific URI scheme.
+ * <p/>
+ * Each resolver handles a single {@link #getSupportedScheme() scheme} (such as file, classpath, http) and turns a
+ * location into a {@link Resource}, or returns {@code null} if it cannot. The {@link ResourceLoader} dispatches to the
+ * matching resolver; scheme-specific resolvers are discovered from {@value #FACTORY_PATH}, with an optional
+ * {@link #FALLBACK_RESOURCE_RESOLVER fallback} used when no scheme matches.
  *
+ * @see   Resource
+ * @see   ResourceLoader
  * @since 3.9
  */
 public interface ResourceResolver extends StaticService, CamelContextAware {
