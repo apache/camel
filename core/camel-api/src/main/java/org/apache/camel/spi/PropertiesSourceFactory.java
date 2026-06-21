@@ -17,8 +17,17 @@
 package org.apache.camel.spi;
 
 /**
- * Factory for creating out of the box {@link PropertiesSource}.
+ * Factory for creating the built-in {@link PropertiesSource} implementations used by the {@link PropertiesComponent}.
+ * <p/>
+ * Given a property location, the factory produces the appropriate source: file-based, classpath-based, or one backed by
+ * a {@link java.util.Properties} bean looked up by reference in the {@link Registry}. The properties component uses
+ * this to turn configured locations into active sources during initialization.
+ * <p/>
+ * See <a href="https://camel.apache.org/manual/using-propertyplaceholder.html">Using PropertyPlaceholder</a> in the
+ * Camel user manual.
  *
+ * @see   PropertiesSource
+ * @see   PropertiesComponent
  * @since 4.0
  */
 public interface PropertiesSourceFactory {
