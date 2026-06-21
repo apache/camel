@@ -19,8 +19,14 @@ package org.apache.camel.spi;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A simple marker interface for an object which has belongs to a group Group which is useful for group related
- * operation such as clustering, JMX style API
+ * Marker for an object that belongs to a named group, useful for group-related operations such as clustering and JMX
+ * APIs.
+ * <p/>
+ * Grouping lets related objects be addressed or managed together. {@link GroupAware} extends this to also allow the
+ * group to be set.
+ *
+ * @see GroupAware
+ * @see HasId
  */
 public interface HasGroup {
 
