@@ -382,7 +382,11 @@ class CamelRouteDiagram extends HTMLElement {
                 this.#render();
                 return;
             }
-            const data = await res.json();
+            let data = await res.json();
+            // the dev console nests each console's payload under its id, e.g. {"route-structure": {"routes": [...]}}
+            if (data && !Array.isArray(data.routes) && data['route-structure']) {
+                data = data['route-structure'];
+            }
             if (!Array.isArray(data?.routes)) {
                 this.#error = 'Unexpected response: missing routes array';
                 this.#render();
