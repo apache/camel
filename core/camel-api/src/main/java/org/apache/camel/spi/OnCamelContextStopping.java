@@ -32,5 +32,11 @@ import org.apache.camel.CamelContext;
  */
 @FunctionalInterface
 public interface OnCamelContextStopping extends OnCamelContextEvent {
+
+    /**
+     * Callback invoked while the {@link CamelContext} is stopping.
+     *
+     * @param context the camel context
+     */
     void onContextStopping(CamelContext context);
 }

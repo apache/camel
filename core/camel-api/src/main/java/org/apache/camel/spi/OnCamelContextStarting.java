@@ -32,5 +32,11 @@ import org.apache.camel.CamelContext;
  */
 @FunctionalInterface
 public interface OnCamelContextStarting extends OnCamelContextEvent {
+
+    /**
+     * Callback invoked while the {@link CamelContext} is starting.
+     *
+     * @param context the camel context
+     */
     void onContextStarting(CamelContext context);
 }
