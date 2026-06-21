@@ -88,10 +88,18 @@ public interface CamelBeanPostProcessor {
         // noop
     }
 
+    /**
+     * Whether bean post processing is enabled.
+     */
     default boolean isEnabled() {
         return true;
     }
 
+    /**
+     * Sets whether to unbind any existing beans before binding a bean to the registry.
+     *
+     * @see #isUnbindEnabled()
+     */
     default void setUnbindEnabled(boolean unbindEnabled) {
         // noop
     }
