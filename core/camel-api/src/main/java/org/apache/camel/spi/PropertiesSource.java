@@ -39,7 +39,9 @@ import org.jspecify.annotations.Nullable;
 public interface PropertiesSource {
 
     /**
-     * Name of properties source
+     * The name of this properties source.
+     *
+     * @return the source name
      */
     String getName();
 

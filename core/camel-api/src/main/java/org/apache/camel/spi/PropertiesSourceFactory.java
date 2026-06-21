@@ -33,23 +33,26 @@ package org.apache.camel.spi;
 public interface PropertiesSourceFactory {
 
     /**
-     * New file based {@link PropertiesSource}
+     * Creates a new file based {@link PropertiesSource}.
      *
-     * @param location location of the file
+     * @param  location location of the file
+     * @return          the properties source
      */
     PropertiesSource newFilePropertiesSource(String location);
 
     /**
-     * New classpath based {@link PropertiesSource}
+     * Creates a new classpath based {@link PropertiesSource}.
      *
-     * @param location location of the file in the classpath
+     * @param  location location of the file in the classpath
+     * @return          the properties source
      */
     PropertiesSource newClasspathPropertiesSource(String location);
 
     /**
-     * New ref based {@link PropertiesSource}
+     * Creates a new ref based {@link PropertiesSource}.
      *
-     * @param ref id for the {@link java.util.Properties} bean.
+     * @param  ref id for the {@link java.util.Properties} bean
+     * @return     the properties source
      */
     PropertiesSource newRefPropertiesSource(String ref);
 }
