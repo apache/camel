@@ -38,8 +38,9 @@ public interface PropertyConfigurerGetter {
     /**
      * Gets the option class type.
      *
-     * @param  name the property name
-     * @return      the class type, or <tt>null</tt> if no option exists with the name
+     * @param  name       the property name
+     * @param  ignoreCase whether to ignore case for matching the property name
+     * @return            the class type, or <tt>null</tt> if no option exists with the name
      */
     @Nullable
     Class<?> getOptionType(String name, boolean ignoreCase);

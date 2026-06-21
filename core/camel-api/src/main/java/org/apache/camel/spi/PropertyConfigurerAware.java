@@ -33,9 +33,10 @@ import org.jspecify.annotations.Nullable;
 public interface PropertyConfigurerAware {
 
     /**
-     * Gets the configurer.
+     * Gets the {@link PropertyConfigurer} for the given bean instance.
      *
-     * @param instance the bean instance
+     * @param  instance the bean instance
+     * @return          the configurer, or <tt>null</tt> if none is available
      */
     @Nullable
     PropertyConfigurer getPropertyConfigurer(Object instance);
