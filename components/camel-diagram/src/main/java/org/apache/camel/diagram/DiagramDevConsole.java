@@ -17,6 +17,9 @@
 package org.apache.camel.diagram;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -205,19 +208,31 @@ public class DiagramDevConsole extends AbstractDevConsole {
         return root;
     }
 
+    private static final String WEB_COMPONENT_JS = loadWebComponentJs();
+
     private static String buildRouteWebComponentHtml(String filter, boolean refresh) {
         String f = filter == null ? "*" : filter;
         String refreshAttr = refresh ? " refresh=\"5000\"" : "";
-        // script path + route-structure src assume the dev console and static resources share an origin
+        // inline the web component script: static resource serving is not available when only the developer
+        // console is enabled (camel run --console). route-structure is a sibling console on the same origin.
         return "<html>\n"
                + "  <head>\n"
-               + "    <script type=\"module\" src=\"/camel/diagram/camel-route-diagram.js\"></script>\n"
+               + "    <script type=\"module\">\n" + WEB_COMPONENT_JS + "\n    </script>\n"
                + "  </head>\n"
                + "  <body>\n"
                + String.format("    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s></camel-route-diagram>%n",
                        escapeAttr(f), refreshAttr)
                + "  </body>\n"
                + "</html>\n";
+    }
+
+    private static String loadWebComponentJs() {
+        try (InputStream is = DiagramDevConsole.class.getResourceAsStream(
+                "/META-INF/resources/camel/diagram/camel-route-diagram.js")) {
+            return is != null ? new String(is.readAllBytes(), StandardCharsets.UTF_8) : "";
+        } catch (IOException e) {
+            return "";
+        }
     }
 
     private static String escapeAttr(String s) {

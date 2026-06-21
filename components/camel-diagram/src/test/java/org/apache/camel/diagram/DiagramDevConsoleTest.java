@@ -72,7 +72,8 @@ class DiagramDevConsoleTest extends CamelTestSupport {
         assertThat(text).contains("<html>");
         assertThat(text).contains("<camel-route-diagram");
         assertThat(text).contains("src=\"route-structure\"");
-        assertThat(text).contains("camel-route-diagram.js");
+        assertThat(text).contains("customElements.define");
+        assertThat(text).doesNotContain("src=\"/camel/diagram/");
         assertThat(text).doesNotContain("data:image/png;base64,");
     }
 
