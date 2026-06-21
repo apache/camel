@@ -944,7 +944,7 @@ from("azure-storage-blob://mycontainer?prefix=documents/")
 
 Text classification operations allow you to classify documents using IBM watsonx.ai's document processing capabilities. These operations require Cloud Object Storage (COS) configuration.
 
-IMPORTANT: The COS connection in your watsonx.ai project must be configured with HMAC credentials (access_key_id and secret_access_key), not just IAM Service Credentials. See <<cos-connection-setup>> for details.
+IMPORTANT: The COS connection in your watsonx.ai project must be configured with HMAC credentials (access_key_id and secret_access_key), not just IAM Service Credentials. See xref:ROOT:ibm-watsonx-ai-component.adoc#cos-connection-setup[COS Connection Setup] for details.
 
 ==== Classify Documents from Cloud Object Storage
 

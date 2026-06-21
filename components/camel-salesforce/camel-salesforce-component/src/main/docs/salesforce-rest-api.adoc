@@ -25,7 +25,7 @@ The following operations are supported:
 results) using the result link returned from the 'query' API.
 * <<queryAll,queryAll>> - Runs a SOQL query. Unlike the query operation, queryAll returns records that are deleted because of a merge or delete. queryAll also returns information about archived task and event records.
 * <<sosl_search,search>> - Runs a Salesforce SOSL query.
-* <<apexCall,apexCall>> - Executes a user defined APEX REST API call.
+* xref:ROOT:salesforce-component.adoc#apexCall[apexCall] - Executes a user defined APEX REST API call.
 * <<approval,approval>> - Submits a record or records (batch) for approval process.
 * <<approvals,approvals>> - Fetches a list of all approval processes.
 * <<composite,composite>> - Executes up to 25 REST API requests in a single call. You can use the output of one
