@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.micrometer.json;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -24,6 +23,7 @@ import java.util.function.Predicate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
@@ -169,14 +169,13 @@ public class AbstractMicrometerService extends ServiceSupport {
                 // If not other runtime is available, we assume we're on Camel main
                 rt = Optional.of(new RuntimeInfo(RuntimeInfo.MAIN, getCamelContext().getVersion()));
             }
-            meterRegistry.gaugeCollectionSize(
-                    APP_INFO_METER_NAME,
-                    Tags.of(
+            Gauge.builder(APP_INFO_METER_NAME, () -> 0.0)
+                    .tags(Tags.of(
                             "camel.version", getCamelContext().getVersion(),
                             "camel.context", getCamelContext().getName(),
                             "camel.runtime.provider", rt.get().runtimeProvider,
-                            "camel.runtime.version", rt.get().runtimeVersion),
-                    new ArrayList<String>());
+                            "camel.runtime.version", rt.get().runtimeVersion))
+                    .register(meterRegistry);
         }
     }
 
