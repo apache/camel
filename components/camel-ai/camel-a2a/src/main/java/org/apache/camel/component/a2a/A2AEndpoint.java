@@ -161,7 +161,7 @@ public class A2AEndpoint extends DefaultEndpoint {
                     taskStore = new GuardedTaskStore(taskStore, configuration.isAllowLocalWebhookUrls());
                     taskStoreOwned = false;
                 } else {
-                    LOG.info("No A2ATaskStore found in registry, creating InMemoryTaskStore");
+                    LOG.debug("No A2ATaskStore found in registry, creating InMemoryTaskStore");
                     InMemoryTaskStore memStore = new InMemoryTaskStore();
                     memStore.setCompletedTaskTtlMs(configuration.getCompletedTaskTtl());
                     memStore.setAllowLocalWebhookUrls(configuration.isAllowLocalWebhookUrls());
@@ -305,7 +305,7 @@ public class A2AEndpoint extends DefaultEndpoint {
             String uri = handler.extensionUri();
             if (uri != null && !uri.isBlank()) {
                 handlerMap.put(uri, handler);
-                LOG.info("Registered custom A2AExtensionHandler for extension URI: {}", uri);
+                LOG.debug("Registered custom A2AExtensionHandler for extension URI: {}", uri);
             }
         }
         return handlerMap;
