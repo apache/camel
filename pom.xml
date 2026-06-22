@@ -130,7 +130,7 @@
             components/camel-jackson3/**,components/camel-jackson3xml/**,components/camel-test/camel-test-junit6/**
         </sonar.cpd.exclusions>
 
-        <cyclonedx-maven-plugin-version>2.9.1</cyclonedx-maven-plugin-version>
+        <cyclonedx-maven-plugin-version>2.9.2</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.7.3</flatten-maven-plugin-version>
         <jacoco-version>0.8.15</jacoco-version>
         <license-maven-plugin-version>5.0.0</license-maven-plugin-version>
