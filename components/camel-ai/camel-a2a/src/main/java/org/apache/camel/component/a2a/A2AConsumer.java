@@ -134,7 +134,7 @@ public class A2AConsumer extends DefaultConsumer {
 
         AgentCard card = getEndpoint().getResolvedCard();
         String agentName = card != null ? card.getName() : "unknown";
-        LOG.info("A2A Consumer starting for agent: {}", agentName);
+        LOG.debug("A2A Consumer starting for agent: {}", agentName);
 
         RestConsumerFactory factory = A2AHttpTransportSupport.resolveRestConsumerFactory(getEndpoint(), LOG);
         if (factory == null) {
@@ -224,7 +224,7 @@ public class A2AConsumer extends DefaultConsumer {
                 ServiceHelper.startService(consumer);
             }
 
-            LOG.info("A2A Consumer registered {} HTTP endpoint(s) for agent '{}'",
+            LOG.debug("A2A Consumer registered {} HTTP endpoint(s) for agent '{}'",
                     httpConsumers.size(), agentName);
         } catch (Exception e) {
             cleanupConsumerResources(true);
