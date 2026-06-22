@@ -117,7 +117,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.21.0-SNAPSHOT",
-  "serviceVersion" : "8.2.1"
+  "serviceVersion" : "8.3.0"
 }, {
   "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
   "description" : "NATS is a high-performance messaging system for cloud native applications",
