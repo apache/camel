@@ -203,4 +203,25 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     public void setOmitNullValues(boolean omitNullValues) {
         this.omitNullValues = omitNullValues;
     }
+
+
+    public String getUsername() {
+        return configuration != null ? configuration.getUsername() : null;
+    }
+
+    public void setUsername(String username) {
+        if (configuration != null) {
+            configuration.setUsername(username);
+        }
+    }
+
+    public String getPassword() {
+        return configuration != null ? configuration.getPassword() : null;
+    }
+
+    public void setPassword(String password) {
+        if (configuration != null) {
+            configuration.setPassword(password);
+        }
+    }
 }

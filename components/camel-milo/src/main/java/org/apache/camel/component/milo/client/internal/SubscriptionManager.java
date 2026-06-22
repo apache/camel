@@ -694,18 +694,15 @@ public class SubscriptionManager {
     private Connected performConnect() throws Exception {
 
         // eval endpoint
-
         String discoveryUri = getEndpointDiscoveryUri();
 
         final URI uri = URI.create(getEndpointDiscoveryUri());
 
-        // milo library doesn't allow user info as a part of the uri, it has to
-        // be
-        // removed before sending to milo
+        // Extracting/removing user:password string from the full URL is error-prone with special characters,
+        // because of that the discovery URL is rebuilt from URI parts.
+        discoveryUri = new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(), uri.getFragment()).toString();
         final String user = uri.getUserInfo();
-        if (user != null && !user.isEmpty()) {
-            discoveryUri = discoveryUri.replaceFirst(user + "@", "");
-        }
+
         LOG.debug("Discovering endpoints from: {}", discoveryUri);
 
         final EndpointDescription endpoint = DiscoveryClient.getEndpoints(discoveryUri).thenApply(endpoints -> {
@@ -728,14 +725,21 @@ public class SubscriptionManager {
         // set identity providers
         final List<IdentityProvider> providers = new LinkedList<>();
 
-        if (user != null && !user.isEmpty()) {
+        // prefer explicit username/password parameters over URI-embedded credentials
+        // to avoid issues with special characters in the URI
+        final String explicitUsername = this.configuration.getUsername();
+        final String explicitPassword = this.configuration.getPassword();
+        if (explicitUsername != null && !explicitUsername.isEmpty()) {
+            LOG.debug("Enable username/password provider (explicit parameter): {}", explicitUsername);
+            providers.add(new UsernameProvider(explicitUsername, explicitPassword != null ? explicitPassword : ""));
+        } else if (user != null && !user.isEmpty()) {
             final String[] creds = user.split(":", 2);
             if (creds != null) {
                 if (creds.length == 2) {
                     LOG.debug("Enable username/password provider: {}", creds[0]);
                 }
 
-                providers.add(new UsernameProvider(creds[0], creds[1]));
+                providers.add(new UsernameProvider(creds[0], creds.length == 2 ? creds[1] : ""));
             }
         }
 
