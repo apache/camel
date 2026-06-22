@@ -25,6 +25,17 @@ This only affects routes that enable polymorphic / default typing on an unsafe b
 marshalling and unmarshalling are unchanged. If you rely on that behaviour, supply your own `ObjectMapper`
 (via the `objectMapper` option or the registry) configured without this feature.
 
+=== camel-jacksonxml - potential breaking change
+
+The `camel-jacksonxml` data format now creates its default `XmlMapper` with
+`MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES` enabled, mirroring the same hardening applied to
+`camel-jackson`. This is defense-in-depth against gadget-chain deserialization: when polymorphic / default
+typing is enabled, Jackson refuses unsafe base types (such as `Object`, `Serializable` or `Comparable`).
+
+This only affects routes that enable polymorphic / default typing on an unsafe base type; ordinary
+marshalling and unmarshalling are unchanged. If you rely on that behaviour, supply your own `XmlMapper`
+(via the `xmlMapper` option) configured without this feature.
+
 === camel-oauth
 
 `UserProfile` token verification now fails closed when no JWK set is available: a signed token can no

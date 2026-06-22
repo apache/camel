@@ -542,7 +542,11 @@ public class JacksonXMLDataFormat extends ServiceSupport
     }
 
     protected XmlMapper createNewXmlMapper() {
-        XmlMapper xm = new XmlMapper();
+        // Enable BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES by default as defense-in-depth against gadget-chain
+        // deserialization when polymorphic typing is enabled, consistent with camel-jackson (CAMEL-23786).
+        XmlMapper xm = XmlMapper.builder()
+                .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
+                .build();
         int len = getMaxStringLength();
         if (len > 0) {
             LOG.debug("Creating XmlMapper with maxStringLength: {}", len);
