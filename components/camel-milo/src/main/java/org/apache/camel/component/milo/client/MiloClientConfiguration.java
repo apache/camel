@@ -116,7 +116,7 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "security")
     private String username;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
 
     public MiloClientConfiguration() {
