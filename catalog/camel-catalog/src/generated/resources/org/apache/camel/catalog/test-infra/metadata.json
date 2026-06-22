@@ -657,7 +657,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-fhir",
   "version" : "4.21.0-SNAPSHOT",
-  "serviceVersion" : "v8.10.0-1"
+  "serviceVersion" : "v8.10.0-2"
 }, {
   "service" : "org.apache.camel.test.infra.pinecone.services.PineconeInfraService",
   "description" : "Pinecone is a vector database for machine learning applications",
