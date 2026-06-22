@@ -59,36 +59,30 @@ camel sbom --sbom-output-format=xml
 
 See the xref:jbang-commands/camel-jbang-sbom.adoc[camel sbom command reference] for all available options.
 
-=== Camel Spring Boot and Camel Quarkus (Maven projects)
+=== Camel Spring Boot
 
-For Maven-based projects (Camel Spring Boot or Camel Quarkus), add the
-https://github.com/CycloneDX/cyclonedx-maven-plugin[CycloneDX Maven Plugin] to your `pom.xml`:
+Spring Boot 3.3+ has https://spring.io/blog/2024/05/24/sbom-support-in-spring-boot-3-3/[built-in SBOM support]:
+it generates a CycloneDX SBOM during the build, packages it inside the uber jar at
+`META-INF/sbom/application.cdx.json`, and can expose it via an actuator endpoint. Since Camel Spring Boot
+runs on top of Spring Boot, this automatically covers Camel and all its transitive dependencies — no extra
+plugin or Camel-specific configuration needed.
+
+=== Camel Quarkus
+
+Quarkus has its own dependency resolver that differs from standard Maven resolution, which means the generic
+CycloneDX Maven plugin will not capture the full dependency graph. Instead, use the native
+https://quarkus.io/guides/cyclonedx[Quarkus CycloneDX extension]. Add it to your project:
 
 [source,xml]
 ----
-<plugin>
-    <groupId>org.cyclonedx</groupId>
-    <artifactId>cyclonedx-maven-plugin</artifactId>
-    <version>2.9.1</version>
-    <executions>
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>makeBom</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-cyclonedx</artifactId>
+</dependency>
 ----
 
-Running `mvn package` will then produce a CycloneDX SBOM alongside your application artifact.
-
-This is a standard Maven plugin and works identically for both Camel Spring Boot and Camel Quarkus projects.
-Nothing Camel-specific is required.
-
-TIP: Check https://github.com/CycloneDX/cyclonedx-maven-plugin[the plugin's repository] for the latest
-version, and see the plugin documentation for options such as output format (JSON or XML), output directory,
-and component scope filtering.
+This generates a distribution SBOM automatically every time you build. You can also generate a dependency
+SBOM before building with `mvn quarkus:dependency-sbom`.
 
 == Analyzing SBOMs
 
