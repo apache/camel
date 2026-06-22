@@ -70,6 +70,7 @@ class DiagramDevConsoleTest extends CamelTestSupport {
         String text = (String) console.call(DevConsole.MediaType.TEXT);
         assertThat(text).isNotNull();
         assertThat(text).contains("<html>");
+        assertThat(text).contains("<meta charset=\"utf-8\">");
         assertThat(text).contains("<camel-route-diagram");
         assertThat(text).contains("src=\"route-structure\"");
         assertThat(text).contains("customElements.define");

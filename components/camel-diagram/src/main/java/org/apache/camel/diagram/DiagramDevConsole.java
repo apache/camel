@@ -73,8 +73,8 @@ public class DiagramDevConsole extends AbstractDevConsole {
     public static final String MODE = "mode";
 
     /**
-     * Output format for the HTML rendering: html (default, interactive web component) or png (legacy inline image).
-     * Only applies to image themes; ascii/unicode themes always render as text.
+     * Output format: html (default, interactive web component), png (inline image), text or ascii (ASCII art), unicode
+     * (box-drawing characters).
      */
     public static final String FORMAT = "format";
 
@@ -100,12 +100,14 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
+            boolean textFormat = isTextFormat(format);
             if ("topology".equalsIgnoreCase(mode)) {
                 sj.add(doCallTopologyText(dumper, theme, nodeWidth, metric, fontSize, refresh));
-            } else if (isTextTheme(theme)) {
+            } else if (isTextTheme(theme) || textFormat) {
+                boolean unicode = isUnicodeTheme(theme) || "unicode".equalsIgnoreCase(format);
                 String text = dumper.dumpRoutesAsAsciiArt(filter,
                         RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
-                        nodeWidth, isUnicodeTheme(theme));
+                        nodeWidth, unicode);
                 sj.add(text);
             } else if ("png".equalsIgnoreCase(format)) {
                 BufferedImage image = dumper.dumpRoutesAsImage(filter,
@@ -121,7 +123,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 html = "<html>\n" + html + "</html>\n";
                 sj.add(html);
             } else {
-                sj.add(buildRouteWebComponentHtml(filter, refresh));
+                sj.add(buildRouteWebComponentHtml(filter, metric, refresh));
             }
         } catch (Exception e) {
             // ignore
@@ -210,18 +212,21 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
     private static final String WEB_COMPONENT_JS = loadWebComponentJs();
 
-    private static String buildRouteWebComponentHtml(String filter, boolean refresh) {
+    private static String buildRouteWebComponentHtml(String filter, boolean metric, boolean refresh) {
         String f = filter == null ? "*" : filter;
+        String metricAttr = metric ? "" : " metric=\"false\"";
         String refreshAttr = refresh ? " refresh=\"5000\"" : "";
         // inline the web component script: static resource serving is not available when only the developer
         // console is enabled (camel run --console). route-structure is a sibling console on the same origin.
         return "<html>\n"
                + "  <head>\n"
+               + "    <meta charset=\"utf-8\">\n"
                + "    <script type=\"module\">\n" + WEB_COMPONENT_JS + "\n    </script>\n"
                + "  </head>\n"
                + "  <body>\n"
-               + String.format("    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s></camel-route-diagram>%n",
-                       escapeAttr(f), refreshAttr)
+               + String.format(
+                       "    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s%s></camel-route-diagram>%n",
+                       escapeAttr(f), metricAttr, refreshAttr)
                + "  </body>\n"
                + "</html>\n";
     }
@@ -245,6 +250,10 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
     private static boolean isUnicodeTheme(String theme) {
         return "unicode".equalsIgnoreCase(theme);
+    }
+
+    private static boolean isTextFormat(String format) {
+        return "text".equalsIgnoreCase(format) || "ascii".equalsIgnoreCase(format) || "unicode".equalsIgnoreCase(format);
     }
 
 }

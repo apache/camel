@@ -22,6 +22,7 @@ const NODE_H = 36;
 const H_GAP = NODE_W / 2;
 const V_GAP = 40;
 const PADDING = 30;
+const PADDING_TOP = 0;
 const ARROW_SIZE = 6;
 
 const BRANCHING_EIPS = new Set([
@@ -148,16 +149,16 @@ function assignPositions(node, x, y, parentWidth, positions) {
 }
 
 function layoutRoute(route) {
-    const nodes = route.code ?? [];
+    const nodes = (route.code ?? []).filter(n => n.type !== 'route');
     if (!nodes.length) {
-        return { positions: {}, width: NODE_W + PADDING * 2, height: NODE_H + PADDING * 2 };
+        return { positions: {}, width: NODE_W + PADDING * 2, height: NODE_H + PADDING_TOP + PADDING };
     }
 
     const tree = buildTree(nodes);
     computeSubtreeWidth(tree);
 
     const positions = {};
-    assignPositions(tree, PADDING, PADDING, tree.subtreeWidth, positions);
+    assignPositions(tree, PADDING, PADDING_TOP, tree.subtreeWidth, positions);
 
     let maxX = 0;
     let maxYVal = 0;
@@ -221,14 +222,14 @@ function nodeColor(type) {
 function truncate(text, maxLen = 28) {
     if (!text) return '';
     const clean = text.replace(/^\.+/, '');
-    return clean.length > maxLen ? clean.slice(0, maxLen - 1) + '…' : clean;
+    return clean.length > maxLen ? clean.slice(0, maxLen - 1) + '\u2026' : clean;
 }
 
 function formatStat(stats) {
     if (!stats) return null;
     const total = stats.exchangesTotal ?? 0;
     const failed = stats.exchangesFailed ?? 0;
-    return `✓${total} ✗${failed}`;
+    return { total, failed };
 }
 
 function esc(s) {
@@ -286,6 +287,7 @@ const COMPONENT_STYLE = `
     font-size: 0.9em;
     padding: 4px 0 2px 0;
     opacity: .8;
+    text-align: center;
   }
   svg { display: block; overflow: visible; }
 `;
@@ -305,11 +307,12 @@ const COMPONENT_STYLE = `
  * @since 4.21
  */
 class CamelRouteDiagram extends HTMLElement {
-    static observedAttributes = ['src', 'refresh', 'filter'];
+    static observedAttributes = ['src', 'refresh', 'filter', 'metric'];
 
     #src = '';
     #refresh = 0;
     #filter = '';
+    #metric = true;
     #timer = null;
     #uid = Math.random().toString(36).slice(2);
     #controller = null;
@@ -347,6 +350,10 @@ class CamelRouteDiagram extends HTMLElement {
                 this.#filter = newValue ?? '';
                 if (this.isConnected) this.#doFetch();
                 break;
+            case 'metric':
+                this.#metric = newValue !== 'false';
+                if (this.isConnected) this.#doFetch();
+                break;
             case 'refresh':
                 this.#refresh = Number(newValue) || 0;
                 if (this.isConnected) this.#scheduleRefresh();
@@ -371,7 +378,7 @@ class CamelRouteDiagram extends HTMLElement {
         try {
             const url = new URL(src, location.href);
             if (this.#filter) url.searchParams.set('filter', this.#filter);
-            url.searchParams.set('metric', 'true');
+            url.searchParams.set('metric', String(this.#metric));
             // Ask for JSON explicitly; the dev console serves plain text for a default */* Accept.
             const res = await fetch(url, {
                 signal: this.#controller.signal,
@@ -409,8 +416,8 @@ class CamelRouteDiagram extends HTMLElement {
 
     #buildHTML() {
         const style = `<style>${COMPONENT_STYLE}</style>`;
-        if (this.#error) return `${style}<div class="wrap"><p class="error">⚠ ${esc(this.#error)}</p></div>`;
-        if (!this.#data) return `${style}<div class="wrap"><p class="loading">Loading diagram…</p></div>`;
+        if (this.#error) return `${style}<div class="wrap"><p class="error">\u26A0 ${esc(this.#error)}</p></div>`;
+        if (!this.#data) return `${style}<div class="wrap"><p class="loading">Loading diagram\u2026</p></div>`;
         return style + `<div class="wrap">${this.#data.routes.map((r, i) => this.#routeHTML(r, i)).join('')}</div>`;
     }
 
@@ -484,9 +491,10 @@ class CamelRouteDiagram extends HTMLElement {
         </text>
         ${stat ? `
         <text x="${textX}" y="${pos.y + NODE_H - 3}"
-              text-anchor="start" fill="var(--crd-stat, #64748b)" font-size="9"
+              text-anchor="start" font-size="9"
               clip-path="url(#${clipId})">
-          ${esc(stat)}
+          <tspan fill="#22c55e">${stat.total}</tspan>${stat.failed > 0
+            ? `<tspan dx="6" fill="#ef4444">${stat.failed}</tspan>` : ''}
         </text>` : ''}
         <g transform="translate(${pos.x + 12},${pos.y + (NODE_H - 14) / 2}) scale(0.5833)"
               fill="none" stroke="${fill}" stroke-width="2.4"
