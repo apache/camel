@@ -32,6 +32,7 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.task.BlockingTask;
@@ -525,8 +526,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
 
+            File localWorkDir = local;
             temp = new File(local, relativeName + ".inprogress");
             local = new File(local, relativeName);
+
+            // ensure the local work file stays within the local work directory (CAMEL-23765)
+            if (endpoint.isJailStartingDirectory()) {
+                GenericFileHelper.jailToLocalWorkDirectory(temp, localWorkDir);
+                GenericFileHelper.jailToLocalWorkDirectory(local, localWorkDir);
+            }
 
             // create directory to local work file
             boolean result = local.mkdirs();
