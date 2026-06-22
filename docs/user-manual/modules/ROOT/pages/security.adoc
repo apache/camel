@@ -10,6 +10,10 @@ This page describes the security *features* Camel offers to route authors and
 operators. For the project's *security model* - who is trusted, where the
 trust boundaries sit, what counts as a framework vulnerability, and what is
 operator responsibility - see xref:security-model.adoc[Security Model].
+
+Camel also includes a xref:security-policy.adoc[Security Policy Enforcement] mechanism
+that detects insecure configuration (plain-text secrets, disabled SSL verification,
+unsafe deserialization, dev features in production) at startup time.
 ====
 
 The broad categories offered are:

@@ -48,6 +48,7 @@
 ** xref:camel-4x-upgrade-guide.adoc[Camel 4.x Upgrade Guide]
 * Security
 ** xref:security.adoc[Security]
+** xref:security-policy.adoc[Security Policy Enforcement]
 ** xref:security-model.adoc[Security Model]
 * xref:architecture.adoc[Architecture]
 ** xref:backlog-debugger.adoc[Backlog debugger]
