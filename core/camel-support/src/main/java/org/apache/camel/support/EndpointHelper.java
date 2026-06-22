@@ -164,6 +164,13 @@ public final class EndpointHelper {
                 if (s.startsWith(prefix)) {
                     continue;
                 }
+                // the value may be wrapped in RAW() for secret parameters
+                if (s.startsWith("RAW(") && s.endsWith(")")) {
+                    String inner = s.substring(4, s.length() - 1);
+                    if (inner.startsWith(prefix)) {
+                        continue;
+                    }
+                }
                 // okay the value may use a resource loader with a scheme prefix
                 int dot = s.indexOf(':');
                 if (dot > 0 && dot < s.length() - 1) {
