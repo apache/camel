@@ -37,6 +37,7 @@
 ** xref:rest-dsl.adoc[Working with REST and Rest DSL]
 *** xref:rest-dsl-openapi.adoc[Rest DSL contract first]
 ** xref:writing-components.adoc[Writing Components]
+** xref:sbom.adoc[Generating SBOMs]
 ** xref:release-guide.adoc[Release guide]
 *** xref:release-guide-website.adoc[Adding doc versions to the website]
 ** xref:improving-the-documentation.adoc[Improving the Documentation]
