@@ -265,7 +265,7 @@
         <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javapoet-version>0.16.0</javapoet-version>
-        <javassist-version>3.31.0-GA</javassist-version>
+        <javassist-version>3.32.0-GA</javassist-version>
         <jakarta-el-api-version>6.0.1</jakarta-el-api-version>
         <jakarta-el-expressly-version>6.0.0</jakarta-el-expressly-version>
         <jakarta-activation-version>2.1.4</jakarta-activation-version>
