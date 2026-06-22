@@ -451,6 +451,16 @@ defense-in-depth only. The primary mitigation should be configured at the messag
 * ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
 * ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property
 
+=== camel-kamelet
+
+Kamelet endpoint URIs constructed from YAML DSL `parameters:` blocks are no longer URL-encoded at runtime.
+Previously, property values containing special characters (such as `/`) were incorrectly URL-encoded
+(e.g., `application/json` became `application%2Fjson`), which caused issues because the Kamelet component
+uses raw URIs and does not decode them. This fix aligns the YAML DSL `parameters:` handling with how
+inline kamelet URIs (e.g., `kamelet:myKamelet?key=value`) already work.
+
+If you have workarounds in place to deal with encoded kamelet property values, they can be removed.
+
 === camel-jms
 
 JMS `ObjectMessage` support is now disabled by default. Java object serialization is a recurring source
