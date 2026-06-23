@@ -37,10 +37,11 @@ import org.apache.camel.spi.Metadata;
 public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTypeDefinition> {
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The output type URN, such as java:fully.qualified.ClassName or json:SchemaName.")
     private String urn;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether to validate the output type.")
     private String validate;
 
     public OutputTypeDefinition() {

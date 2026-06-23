@@ -34,6 +34,7 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(description = "Name of the exchange property to remove.")
     private String name;
 
     public RemovePropertyDefinition() {

@@ -38,6 +38,7 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
     private Object defaultInstance;
 
     @XmlAttribute
+    @Metadata(description = "Name of class to use when unmarshalling.")
     private String instanceClass;
     @XmlAttribute
     @Metadata(label = "advanced",
@@ -55,20 +56,28 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
     @Metadata(defaultValue = "GoogleProtobuf", description = "Which Protobuf library to use.")
     private ProtobufLibrary library = ProtobufLibrary.GoogleProtobuf;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class name of the java type to use when unmarshalling.")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;
     @XmlAttribute(name = "jsonView")
+    @Metadata(description = "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output."
+                            + " With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations.")
     private String jsonViewTypeName;
     @XmlTransient
     private Class<?> jsonView;
     @XmlAttribute
+    @Metadata(description = "If you want to marshal a pojo to JSON, and the pojo has some fields with null values."
+                            + " And you want to skip these null values, you can set this option to NON_NULL.")
     private String include;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
               description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.")
     private String allowJmsType;
     @XmlAttribute(name = "collectionType")
+    @Metadata(label = "advanced",
+              description = "Refers to a custom collection type to lookup in the registry to use."
+                            + " This option should rarely be used, but allows using different collection types than java.util.Collection based as default.")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
@@ -84,8 +93,12 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
               description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.")
     private String moduleRefs;
     @XmlAttribute
+    @Metadata(description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+                            + " Multiple features can be separated by comma.")
     private String enableFeatures;
     @XmlAttribute
+    @Metadata(description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+                            + " Multiple features can be separated by comma.")
     private String disableFeatures;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",

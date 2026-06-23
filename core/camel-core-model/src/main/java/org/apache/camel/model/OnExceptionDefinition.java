@@ -60,6 +60,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     @XmlElement(name = "exception", required = true)
     @DslArg(renderType = "classList")
+    @Metadata(description = "A list of exception class names to catch and handle.")
     private List<String> exceptions = new ArrayList<>();
     @Metadata(description = "To use an expression to only trigger this in specific situations")
     @XmlElement
@@ -72,6 +73,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
                             + " Redelivery continues as long as the predicate evaluates to true.")
     private ExpressionSubElementDefinition retryWhile;
     @XmlElement(name = "redeliveryPolicy")
+    @Metadata(description = "Configures redelivery options such as maximum redeliveries, delays, and logging behavior.")
     private RedeliveryPolicyDefinition redeliveryPolicyType;
     @XmlAttribute(name = "redeliveryPolicyRef")
     @Metadata(label = "advanced",

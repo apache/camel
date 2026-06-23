@@ -46,6 +46,7 @@ public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<Temp
     private Resource resource;
 
     @XmlElementRef
+    @Metadata(description = "The templated routes.")
     private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
 
     public TemplatedRoutesDefinition() {

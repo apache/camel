@@ -40,6 +40,8 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(required = true,
+              description = "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive).")
     private String pattern;
     @XmlAttribute
     @Metadata(label = "advanced",

@@ -32,8 +32,10 @@ import org.apache.camel.spi.Metadata;
 public class RestPropertyDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Property key.", required = true)
     private String key;
     @XmlAttribute(required = true)
+    @Metadata(description = "Property value.", required = true)
     private String value;
 
     public RestPropertyDefinition() {

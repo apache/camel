@@ -59,6 +59,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
               description = "A byte[] used as passPhrase to encrypt/decrypt content.")
     private byte[] passPhraseByte;
     @XmlAttribute
+    @Metadata(description = "The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted.")
     private String secureTag;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",
@@ -70,6 +71,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
               description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key.")
     private String keyCipherAlgorithm;
     @XmlAttribute
+    @Metadata(description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.")
     private String recipientKeyAlias;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.support.jsse.KeyStoreParameters",
@@ -77,6 +79,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
                             + " loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.")
     private String keyOrTrustStoreParameters;
     @XmlAttribute
+    @Metadata(security = "secret",
+              description = "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.")
     private String keyPassword;
     @XmlAttribute
     @Metadata(defaultValue = "SHA1", enums = "SHA1,SHA256,SHA512",

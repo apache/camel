@@ -37,9 +37,10 @@ import org.apache.camel.spi.Metadata;
 public class PropertyExpressionDefinition implements HasExpressionType {
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "The property key.")
     private String key;
     @XmlElementRef
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The property value as an expression.")
     private ExpressionDefinition expression;
 
     public PropertyExpressionDefinition() {

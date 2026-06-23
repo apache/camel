@@ -54,8 +54,10 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     private Set<String> responseHeaders;
 
     @XmlAttribute
+    @Metadata(description = "The content type the REST service accepts (consumes) as input, such as application/xml or application/json.")
     private String consumes;
     @XmlAttribute
+    @Metadata(description = "The content type the REST service produces (uses for output), such as application/xml or application/json.")
     private String produces;
     @XmlAttribute
     @Metadata(description = "Sets the binding mode to use.",

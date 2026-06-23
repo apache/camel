@@ -31,10 +31,13 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
     private Object transactedPolicy;
 
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.spi.TransactedPolicy")
+    @Metadata(javaType = "org.apache.camel.spi.TransactedPolicy",
+              description = "The transacted policy to use that is configured for either Spring or JTA based transactions."
+                            + " If no policy has been configured then Camel will attempt to auto-discover.")
     private String transactedPolicyRef;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "The logging level to use for logging transactional rollback. Default is WARN.")
     private String rollbackLoggingLevel;
 
     protected TransactionErrorHandlerDefinition() {

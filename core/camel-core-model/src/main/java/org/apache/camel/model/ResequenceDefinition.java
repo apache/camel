@@ -52,6 +52,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     @XmlElements({
             @XmlElement(name = "batchConfig", type = BatchResequencerConfig.class),
             @XmlElement(name = "streamConfig", type = StreamResequencerConfig.class) })
+    @Metadata(description = "Resequencer configuration using either batch or stream mode. Defaults to batch mode.")
     private ResequencerConfig resequencerConfig;
     @XmlElementRef
     @Metadata(required = true,

@@ -32,8 +32,10 @@ import org.apache.camel.spi.Metadata;
 public class PropertyDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "The name of the property.")
     private String key;
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "The property value.")
     private String value;
 
     public PropertyDefinition() {

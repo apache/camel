@@ -72,6 +72,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     private Resource resource;
 
     @XmlElementRef
+    @Metadata(description = "The Camel routes.")
     private List<RouteDefinition> routes = new ArrayList<>();
 
     public RoutesDefinition() {

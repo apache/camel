@@ -49,6 +49,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
               description = "Sets the throttling mode to one of the available modes enumerated in ThrottlingMode.")
     private String mode;
     @XmlElement(name = "correlationExpression")
+    @Metadata(description = "The correlation expression to use for throttle grouping. Exchanges with the same correlation key are throttled together.")
     private ExpressionSubElementDefinition correlationExpression;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",

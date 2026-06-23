@@ -37,10 +37,11 @@ import org.apache.camel.spi.Metadata;
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The input type URN.")
     private String urn;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether validation is required for this input type.")
     private String validate;
 
     public InputTypeDefinition() {

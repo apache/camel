@@ -36,6 +36,7 @@ public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
     @XmlValue
     private String name;
     @XmlAttribute
+    @Metadata(description = "Header length.")
     private String length;
 
     public UniVocityHeader() {

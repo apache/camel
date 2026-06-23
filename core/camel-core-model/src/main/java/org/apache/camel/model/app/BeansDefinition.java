@@ -69,11 +69,13 @@ public class BeansDefinition {
     // This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods
 
     @XmlElement(name = "component-scan")
+    @Metadata(description = "Component scanning that can auto-discover Camel route builders from the classpath.")
     private List<ComponentScanDefinition> componentScanning = new ArrayList<>();
 
     // this is a place for <bean> element definition, without conflicting with <bean> elements referring
     // to "bean processors"
     @XmlElement(name = "bean")
+    @Metadata(description = "List of bean definitions to be registered in the Camel registry.")
     private List<BeanFactoryDefinition> beans = new ArrayList<>();
 
     // support for legacy spring <beans> and blueprint <bean> files to be parsed and loaded
@@ -95,24 +97,32 @@ public class BeansDefinition {
     // org.apache.camel.dsl.xml.io.XmlRoutesBuilderLoader in camel-xml-io-dsl
 
     @XmlElement(name = "sslContextParameters")
+    @Metadata(description = "SSL/TLS context parameters configuration.")
     private List<SSLContextParametersDefinition> sslContextParameters = new ArrayList<>();
 
     @XmlElementWrapper(name = "dataFormats")
     @XmlElement(name = "dataFormat")
     @DslProperty(name = "dataFormats") // yaml-dsl
     @Description("Camel data formats")
+    @Metadata(description = "Camel data formats.")
     private List<DataFormatDefinition> dataFormats;
     @XmlElement(name = "restConfiguration")
+    @Metadata(description = "Camel Rest DSL configuration.")
     private List<RestConfigurationDefinition> restConfigurations = new ArrayList<>();
     @XmlElement(name = "rest")
+    @Metadata(description = "Camel Rest DSL services.")
     private List<RestDefinition> rests = new ArrayList<>();
     @XmlElement(name = "routeConfiguration")
+    @Metadata(description = "Camel route configurations.")
     private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
     @XmlElement(name = "routeTemplate")
+    @Metadata(description = "Camel route templates.")
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
     @XmlElement(name = "templatedRoute")
+    @Metadata(description = "Camel routes to be created from route templates.")
     private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
     @XmlElement(name = "route")
+    @Metadata(description = "Camel routes.")
     private List<RouteDefinition> routes = new ArrayList<>();
 
     public List<ComponentScanDefinition> getComponentScanning() {

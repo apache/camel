@@ -45,6 +45,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "SnakeYAML", description = "Which yaml library to use. By default it is SnakeYAML.")
     private YAMLLibrary library;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class name of the java type to use when unmarshalling.")
     private String unmarshalTypeName;
     @XmlAttribute
     @Metadata(label = "advanced", description = "BaseConstructor to construct incoming documents.")

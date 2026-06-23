@@ -92,6 +92,7 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
+    @Metadata(description = "The configured data formats.")
     private List<DataFormatDefinition> dataFormats;
     @XmlTransient
     private Resource resource;

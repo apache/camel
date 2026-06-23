@@ -33,8 +33,10 @@ import org.apache.camel.spi.Transformer;
 public class CustomTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Reference to a custom Transformer bean in the registry.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "Fully qualified class name of the custom Transformer implementation.")
     private String className;
 
     public CustomTransformerDefinition() {

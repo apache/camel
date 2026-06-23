@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 public class SwiftMtDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to marshal messages in JSON format.")
     private String writeInJson;
 
     public SwiftMtDataFormat() {

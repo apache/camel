@@ -40,6 +40,8 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(required = true,
+              description = "Reference to the Processor to lookup in the registry to use. Can use prefixes such as #bean:, #class:, or #type: to control how the processor is obtained.")
     private String ref;
 
     public ProcessDefinition() {

@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 public class BearerTokenDefinition extends RestSecurityDefinition {
 
     @XmlAttribute
+    @Metadata(description = "A hint to the client to identify how the bearer token is formatted.")
     private String format;
 
     @SuppressWarnings("unused")

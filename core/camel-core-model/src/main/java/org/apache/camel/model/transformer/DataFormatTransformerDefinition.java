@@ -132,6 +132,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
+    @Metadata(description = "The data format to be used for transformation.")
     private DataFormatDefinition dataFormatType;
 
     public DataFormatTransformerDefinition() {

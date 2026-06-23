@@ -37,10 +37,13 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     private RestDefinition rest;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Path to the OpenAPI specification file.", required = true)
     private String specification;
     @XmlAttribute
+    @Metadata(description = "Context path for exposing the OpenAPI specification file as a REST endpoint, allowing clients to obtain the specification from the running application.")
     private String apiContextPath;
     @XmlAttribute
+    @Metadata(description = "The route id.")
     private String routeId;
     @XmlAttribute
     @Metadata(description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",

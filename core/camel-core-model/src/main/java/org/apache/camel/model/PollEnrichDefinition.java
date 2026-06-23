@@ -43,6 +43,8 @@ public class PollEnrichDefinition extends ExpressionNode
     private AggregationStrategy aggregationStrategyBean;
 
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers)."
+                            + " This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.AggregationStrategy",

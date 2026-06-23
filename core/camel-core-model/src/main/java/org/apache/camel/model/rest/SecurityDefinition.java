@@ -36,6 +36,7 @@ public class SecurityDefinition {
               required = true)
     private String key;
     @XmlAttribute
+    @Metadata(description = "The scopes to allow (separate multiple scopes by comma).")
     private String scopes;
 
     public String getKey() {

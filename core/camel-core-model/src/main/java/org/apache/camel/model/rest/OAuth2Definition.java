@@ -36,16 +36,20 @@ import org.apache.camel.spi.Metadata;
 public class OAuth2Definition extends RestSecurityDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The authorization URL to use for this flow. Required for implicit and access code flows.")
     private String authorizationUrl;
     @XmlAttribute
+    @Metadata(description = "The token URL to use for this flow. Required for password, application, and access code flows.")
     private String tokenUrl;
     @XmlAttribute
+    @Metadata(description = "The URL to use for obtaining refresh tokens.")
     private String refreshUrl;
     @XmlAttribute
     @Metadata(description = "The flow used by the OAuth2 security scheme. Valid values are implicit, password, application or accessCode.",
               enums = "implicit,password,application,clientCredentials,accessCode,authorizationCode")
     private String flow;
     @XmlElement(name = "scopes")
+    @Metadata(description = "The available scopes for the OAuth2 security scheme.")
     private List<RestPropertyDefinition> scopes = new ArrayList<>();
 
     public OAuth2Definition() {

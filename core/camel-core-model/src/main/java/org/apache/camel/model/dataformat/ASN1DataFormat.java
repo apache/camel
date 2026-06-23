@@ -38,6 +38,7 @@ public class ASN1DataFormat extends DataFormatDefinition {
     private Class<?> unmarshalType;
 
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class to use when unmarshalling.")
     private String unmarshalTypeName;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",

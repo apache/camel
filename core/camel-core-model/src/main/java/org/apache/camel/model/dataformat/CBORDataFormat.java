@@ -48,6 +48,7 @@ public class CBORDataFormat extends DataFormatDefinition {
               description = "Whether to lookup and use default Jackson CBOR ObjectMapper from the registry.")
     private String useDefaultObjectMapper;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class name of the java type to use when unmarshalling.")
     private String unmarshalTypeName;
     @XmlAttribute(name = "collectionType")
     @Metadata(label = "advanced",
@@ -70,8 +71,12 @@ public class CBORDataFormat extends DataFormatDefinition {
               description = "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.")
     private String allowJmsType;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma.")
     private String enableFeatures;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma.")
     private String disableFeatures;
 
     public CBORDataFormat() {

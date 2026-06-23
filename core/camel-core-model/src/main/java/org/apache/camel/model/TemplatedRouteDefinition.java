@@ -51,8 +51,10 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
     private Resource resource;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The id of the route template to use to build the route.")
     private String routeTemplateRef;
     @XmlAttribute
+    @Metadata(description = "The id of the route built from the route template.")
     private String routeId;
     @XmlAttribute
     @Metadata(label = "advanced",

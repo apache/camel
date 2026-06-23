@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class JsonDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
 
     @XmlAttribute
+    @Metadata(description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.")
     private String objectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
@@ -57,6 +58,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
                             + "characters. This should be preferred when using 4-byte characters such as Japanese.")
     private String combineUnicodeSurrogates;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class name of the java type to use when unmarshalling.")
     private String unmarshalTypeName;
     @XmlTransient
     private Class<?> unmarshalType;

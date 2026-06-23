@@ -33,8 +33,10 @@ import org.apache.camel.spi.Metadata;
 public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as the token to support dynamic tokens.")
     private String token;
     @XmlAttribute
+    @Metadata(description = "The end token to use as tokenizer if using start/end token pairs. You can use simple language as the token to support dynamic tokens.")
     private String endToken;
     @XmlAttribute
     @Metadata(label = "advanced",

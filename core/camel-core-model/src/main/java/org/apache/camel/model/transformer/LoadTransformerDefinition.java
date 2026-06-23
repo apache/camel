@@ -32,9 +32,11 @@ import org.apache.camel.spi.Metadata;
 public class LoadTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The classpath location to scan for annotated transformers.")
     private String packageScan;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether to enable loading of default transformers.")
     private String defaults;
 
     public LoadTransformerDefinition() {

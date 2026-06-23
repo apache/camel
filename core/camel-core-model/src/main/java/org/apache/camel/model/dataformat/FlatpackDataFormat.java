@@ -36,6 +36,7 @@ import org.apache.camel.spi.Metadata;
 public class FlatpackDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.")
     private String definition;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", description = "Delimited or fixed. Is by default false = delimited.")

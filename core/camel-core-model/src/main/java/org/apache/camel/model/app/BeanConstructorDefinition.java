@@ -32,8 +32,10 @@ import org.apache.camel.spi.Metadata;
 public class BeanConstructorDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Constructor argument index. The first argument must use index 0.")
     private Integer index;
     @XmlAttribute(required = true)
+    @Metadata(description = "The argument value for the constructor.")
     private String value;
 
     public Integer getIndex() {

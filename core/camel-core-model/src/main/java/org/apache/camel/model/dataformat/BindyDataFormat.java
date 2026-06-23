@@ -44,6 +44,7 @@ public class BindyDataFormat extends DataFormatDefinition {
               description = "Whether to use Csv, Fixed, or KeyValue.")
     private String type;
     @XmlAttribute(name = "classType")
+    @Metadata(description = "Name of model class to use.")
     private String classTypeAsString;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",

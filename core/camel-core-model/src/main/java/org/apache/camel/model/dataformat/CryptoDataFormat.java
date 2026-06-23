@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class CryptoDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The JCE algorithm name indicating the cryptographic algorithm that will be used.")
     private String algorithm;
     @XmlAttribute
     @Metadata(javaType = "java.security.Key", description = "Refers to the secret key to lookup from the register to use.")

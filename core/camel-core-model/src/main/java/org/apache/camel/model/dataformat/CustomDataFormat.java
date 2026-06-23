@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class CustomDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "Reference to the custom DataFormat to lookup from the Camel registry.")
     private String ref;
 
     public CustomDataFormat() {

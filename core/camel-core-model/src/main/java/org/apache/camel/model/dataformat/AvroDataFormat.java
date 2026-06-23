@@ -44,6 +44,7 @@ public class AvroDataFormat extends DataFormatDefinition {
     private Object schema;
 
     @XmlAttribute
+    @Metadata(description = "Class name to use for marshal and unmarshalling.")
     private String instanceClassName;
     @XmlAttribute
     @Metadata(defaultValue = "avroJackson", description = "Which Avro library to use.")
@@ -57,10 +58,16 @@ public class AvroDataFormat extends DataFormatDefinition {
               description = "Whether to lookup and use default Jackson ObjectMapper from the registry.")
     private String useDefaultObjectMapper;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class name of the java type to use when unmarshalling.")
     private String unmarshalTypeName;
     @XmlAttribute(name = "jsonView")
+    @Metadata(label = "advanced",
+              description = "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output."
+                            + " With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations.")
     private String jsonViewTypeName;
     @XmlAttribute
+    @Metadata(description = "If you want to marshal a pojo to JSON, and the pojo has some fields with null values."
+                            + " And you want to skip these null values, you can set this option to NON_NULL.")
     private String include;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
@@ -82,8 +89,12 @@ public class AvroDataFormat extends DataFormatDefinition {
               description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.")
     private String moduleRefs;
     @XmlAttribute
+    @Metadata(description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+                            + " Multiple features can be separated by comma.")
     private String enableFeatures;
     @XmlAttribute
+    @Metadata(description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+                            + " Multiple features can be separated by comma.")
     private String disableFeatures;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",

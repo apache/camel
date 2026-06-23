@@ -37,11 +37,14 @@ import org.apache.camel.spi.Metadata;
 public class ContextScanDefinition {
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to include non-singleton beans (prototypes). By default only singleton beans are included in the context scan.")
     private String includeNonSingletons;
     @XmlElement(name = "excludes")
+    @Metadata(description = "Exclude finding route builder from these java package names.")
     private List<String> excludes = new ArrayList<>();
     @XmlElement(name = "includes")
+    @Metadata(description = "Include finding route builder from these java package names.")
     private List<String> includes = new ArrayList<>();
 
     public ContextScanDefinition() {

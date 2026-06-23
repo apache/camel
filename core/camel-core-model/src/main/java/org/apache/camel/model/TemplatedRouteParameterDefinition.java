@@ -32,8 +32,10 @@ import org.apache.camel.spi.Metadata;
 public class TemplatedRouteParameterDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The name of the parameter.")
     private String name;
     @XmlAttribute(required = true)
+    @Metadata(description = "The value of the parameter.")
     private String value;
 
     public TemplatedRouteParameterDefinition() {

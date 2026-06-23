@@ -45,6 +45,7 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(required = true, description = "Reference to the policy to lookup in the registry.")
     private String ref;
 
     public PolicyDefinition() {

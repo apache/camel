@@ -43,9 +43,11 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
     @XmlTransient
     private ProcessorDefinition<?> parent;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid exhausting the main thread-pool.")
     private String fallbackViaNetwork;
     @XmlElementRef
+    @Metadata(description = "The processing steps to execute as fallback.")
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public OnFallbackDefinition() {

@@ -35,9 +35,11 @@ public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDat
 
     @XmlAttribute
     @DslArg(position = 0)
+    @Metadata(description = "The source data type for the transformation.")
     private String fromType;
     @XmlAttribute(required = true)
     @DslArg(position = 1)
+    @Metadata(required = true, description = "The target data type for the transformation.")
     private String toType;
 
     public TransformDataTypeDefinition() {

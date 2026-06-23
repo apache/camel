@@ -34,6 +34,7 @@ public class RemoveVariableDefinition extends NoOutputDefinition<RemoveVariableD
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(description = "Name of the variable to remove.")
     private String name;
 
     public RemoveVariableDefinition() {

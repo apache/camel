@@ -48,6 +48,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     @Metadata(label = "advanced", description = "Sets the comment marker of the reference format.")
     private String commentMarker;
     @XmlAttribute
+    @Metadata(description = "The delimiter to use. The default value is , (comma).")
     private String delimiter;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
@@ -60,6 +61,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean", description = "Whether to disable headers.")
     private String headerDisabled;
     @XmlAttribute
+    @Metadata(description = "To configure the CSV headers. Multiple headers can be separated by comma.")
     private String header;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", description = "Whether to allow missing column names.")
@@ -81,10 +83,14 @@ public class CsvDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean", description = "Whether to disable quoting.")
     private String quoteDisabled;
     @XmlAttribute
+    @Metadata(description = "The quote character to use. The default is double-quote character.")
     private String quote;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to disable the record separator.")
     private String recordSeparatorDisabled;
     @XmlAttribute
+    @Metadata(description = "The record separator (aka new line) which by default is new line characters (CRLF).")
     private String recordSeparator;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", description = "Whether to skip the header record in the output.")

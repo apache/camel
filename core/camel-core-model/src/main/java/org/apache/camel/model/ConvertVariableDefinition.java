@@ -38,11 +38,14 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
 
     @XmlAttribute(required = true)
     @DslArg(position = 0)
+    @Metadata(description = "Name of variable to convert its value. The simple language can be used to define a dynamic evaluated variable name.")
     private String name;
     @XmlAttribute(required = true)
     @DslArg(position = 1, renderType = "class")
+    @Metadata(description = "The java type to convert to.")
     private String type;
     @XmlAttribute
+    @Metadata(description = "To use another variable to store the result. By default, the result is stored in the same variable.")
     private String toName;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",

@@ -41,18 +41,31 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     private List<Class<?>> exceptionTypes = new ArrayList<>();
 
     @XmlElement(name = "exception")
+    @Metadata(description = "A list of class names for specific exceptions to monitor."
+                            + " If no exceptions are configured then all exceptions are monitored.")
     private List<String> exceptions = new ArrayList<>();
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to use round robin mode. If enabled, the load balancer keeps state"
+                            + " and continues with the next endpoint in a round robin fashion."
+                            + " If not, it always starts from the first endpoint for every message.")
     private String roundRobin;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to use sticky mode. If enabled, the load balancer keeps state"
+                            + " and continues with the last known good endpoint.")
     private String sticky;
     @XmlAttribute
-    @Metadata(defaultValue = "-1")
+    @Metadata(defaultValue = "-1",
+              description = "A value to indicate after X failover attempts we should exhaust (give up)."
+                            + " Use -1 to indicate never give up and continuously try to failover."
+                            + " Use 0 to never failover. Use e.g. 3 to failover at most 3 times before giving up.")
     private String maximumFailoverAttempts;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether to inherit the error handler."
+                            + " If turned off, the load balancer will fail over immediately on an error"
+                            + " instead of waiting for Camel error handler to exhaust retries.")
     private Boolean inheritErrorHandler;
 
     public FailoverLoadBalancerDefinition() {

@@ -35,8 +35,11 @@ import org.apache.camel.spi.Metadata;
 public class BeanioDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(required = true,
+              description = "The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file.")
     private String mapping;
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "The name of the stream to use.")
     private String streamName;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", description = "Whether to ignore unidentified records.")

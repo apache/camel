@@ -46,6 +46,7 @@ public class RouteConfigurationsDefinition extends OptionalIdentifiedDefinition<
     private Resource resource;
 
     @XmlElementRef
+    @Metadata(description = "The route configurations.")
     private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
 
     public RouteConfigurationsDefinition() {

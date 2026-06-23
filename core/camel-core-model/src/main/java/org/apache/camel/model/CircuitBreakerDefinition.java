@@ -38,16 +38,22 @@ import org.apache.camel.spi.Metadata;
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlAttribute
+    @Metadata(description = "Refers to a circuit breaker configuration to use for configuring the circuit breaker EIP.")
     private String configuration;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
               description = "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.")
     private Boolean inheritErrorHandler;
     @XmlElement
+    @Metadata(label = "advanced",
+              description = "Configures the circuit breaker to use Resilience4j with the given configuration.")
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlElement
+    @Metadata(label = "advanced",
+              description = "Configures the circuit breaker to use MicroProfile Fault Tolerance with the given configuration.")
     private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
     @XmlElement
+    @Metadata(description = "The fallback route path to execute when the circuit breaker triggers.")
     private OnFallbackDefinition onFallback;
 
     public CircuitBreakerDefinition() {

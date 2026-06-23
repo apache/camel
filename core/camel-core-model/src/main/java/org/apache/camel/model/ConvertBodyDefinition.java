@@ -38,6 +38,7 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     @XmlAttribute(required = true)
     @DslArg(renderType = "class")
+    @Metadata(description = "The java type to convert to.")
     private String type;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",

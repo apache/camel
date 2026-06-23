@@ -35,18 +35,23 @@ import org.apache.camel.spi.Metadata;
 public class MimeMultipartDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "mixed")
+    @Metadata(defaultValue = "mixed",
+              description = "Specify the subtype of the MIME Multipart.")
     private String multipartSubType = "mixed";
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether a message without attachment is also marshaled into a MIME Multipart (with only one body part).")
     private String multipartWithoutAttachment;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false).")
     private String headersInline;
     @XmlAttribute
+    @Metadata(description = "A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This only works if headersInline is set to true.")
     private String includeHeaders;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false).")
     private String binaryContent;
 
     public MimeMultipartDataFormat() {

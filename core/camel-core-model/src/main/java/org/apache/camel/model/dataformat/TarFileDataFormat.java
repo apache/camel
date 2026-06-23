@@ -35,16 +35,20 @@ import org.apache.camel.spi.Metadata;
 public class TarFileDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to use an iterator to split tar entries when the tar file has more than one entry, for use with the splitter EIP in streaming mode.")
     private String usingIterator;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to allow getting the iterator even if the directory is empty, when the tar file has more than one entry.")
     private String allowEmptyDirectory;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to preserve path elements when the file name contains path elements in the tar file.")
     private String preservePathElements;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Long", defaultValue = "1073741824")
+    @Metadata(label = "advanced", javaType = "java.lang.Long", defaultValue = "1073741824",
+              description = "The maximum decompressed size of a tar file (in bytes). An IOException is thrown if the decompressed size exceeds this amount. Set to -1 to disable.")
     private String maxDecompressedSize;
 
     public TarFileDataFormat() {

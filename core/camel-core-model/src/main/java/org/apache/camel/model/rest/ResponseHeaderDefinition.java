@@ -45,8 +45,10 @@ public class ResponseHeaderDefinition {
     private ResponseMessageDefinition response;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Name of the response header.", required = true)
     private String name;
     @XmlAttribute
+    @Metadata(description = "Description of the response header.")
     private String description;
     @XmlAttribute
     @Metadata(description = "Sets the parameter collection format.",
@@ -61,12 +63,15 @@ public class ResponseHeaderDefinition {
               defaultValue = "string")
     private String dataType;
     @XmlAttribute
+    @Metadata(description = "The data format of the header such as binary, date, date-time, or password.")
     private String dataFormat;
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value") // name = value due to camel-spring-xml
     @DslProperty(name = "allowableValues") // yaml-dsl
+    @Metadata(description = "List of allowable values for the header (enum).")
     private List<ValueDefinition> allowableValues;
     @XmlAttribute
+    @Metadata(description = "An example value of this response header.")
     private String example;
 
     public ResponseHeaderDefinition(ResponseMessageDefinition response) {

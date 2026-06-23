@@ -29,6 +29,7 @@ import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DslArg;
 
 /**
@@ -44,6 +45,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
 
     @XmlElementRef
     @DslArg
+    @Metadata(description = "Expression to evaluate.")
     private ExpressionDefinition expression;
 
     protected ExpressionNode() {

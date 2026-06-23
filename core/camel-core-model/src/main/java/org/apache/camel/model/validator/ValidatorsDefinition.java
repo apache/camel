@@ -39,6 +39,7 @@ public class ValidatorsDefinition {
             @XmlElement(name = "endpointValidator", type = EndpointValidatorDefinition.class),
             @XmlElement(name = "predicateValidator", type = PredicateValidatorDefinition.class),
             @XmlElement(name = "customValidator", type = CustomValidatorDefinition.class) })
+    @Metadata(description = "The configured validators.")
     private List<ValidatorDefinition> validators;
 
     public ValidatorsDefinition() {

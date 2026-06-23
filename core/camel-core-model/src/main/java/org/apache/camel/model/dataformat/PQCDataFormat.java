@@ -35,26 +35,33 @@ import org.apache.camel.spi.Metadata;
 public class PQCDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "MLKEM", enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER")
+    @Metadata(defaultValue = "MLKEM", enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER",
+              description = "The Post-Quantum KEM algorithm to use for key encapsulation.")
     private String keyEncapsulationAlgorithm;
     @XmlAttribute
     @Metadata(defaultValue = "AES",
-              enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
+              enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE",
+              description = "The symmetric encryption algorithm to use with the shared secret.")
     private String symmetricKeyAlgorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "128")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "128",
+              description = "The length (in bits) of the symmetric key.")
     private String symmetricKeyLength;
     @XmlAttribute
-    @Metadata(javaType = "java.security.KeyPair")
+    @Metadata(javaType = "java.security.KeyPair",
+              description = "Refers to the KeyPair to lookup from the registry to use for KEM operations.")
     private String keyPair;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "4096")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "4096",
+              description = "The size of the buffer used for streaming encryption/decryption.")
     private String bufferSize;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The JCE security provider to use.")
     private String provider;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "javax.crypto.KeyGenerator")
+    @Metadata(label = "advanced", javaType = "javax.crypto.KeyGenerator",
+              description = "Refers to a custom KeyGenerator to lookup from the registry for KEM operations.")
     private String keyGenerator;
 
     public PQCDataFormat() {

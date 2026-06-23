@@ -38,6 +38,9 @@ import org.apache.camel.spi.Metadata;
 public abstract class ValidatorDefinition implements CopyableDefinition<ValidatorDefinition> {
 
     @XmlAttribute
+    @Metadata(description = "The data type name to validate."
+                            + " If you specify 'xml:XYZ', the validator is picked up when message type is 'xml:XYZ'."
+                            + " If you specify just 'xml', the validator matches all xml message types.")
     private String type;
 
     public String getType() {

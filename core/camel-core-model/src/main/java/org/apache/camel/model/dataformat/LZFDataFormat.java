@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 public class LZFDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to enable encoding (compress) using multiple processing cores.")
     private String usingParallelCompression;
 
     public LZFDataFormat() {

@@ -41,6 +41,7 @@ public class KameletDefinition extends OutputDefinition<KameletDefinition> {
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(description = "Name of the Kamelet (templateId/routeId) to call. Options for the kamelet can be specified using uri syntax, eg myname?count=4&type=gold.")
     private String name;
 
     public KameletDefinition() {

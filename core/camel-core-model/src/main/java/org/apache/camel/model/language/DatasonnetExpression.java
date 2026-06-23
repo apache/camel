@@ -34,8 +34,10 @@ import org.apache.camel.spi.Metadata;
 public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute(name = "bodyMediaType")
+    @Metadata(description = "The media type of the message body, such as application/json.")
     private String bodyMediaType;
     @XmlAttribute(name = "outputMediaType")
+    @Metadata(description = "The media type to use for the output result.")
     private String outputMediaType;
 
     public DatasonnetExpression() {

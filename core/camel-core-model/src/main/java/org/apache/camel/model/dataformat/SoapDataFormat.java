@@ -38,8 +38,10 @@ public class SoapDataFormat extends DataFormatDefinition {
     private Object elementNameStrategyObject;
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "Package name where your JAXB classes are located.")
     private String contextPath;
     @XmlAttribute
+    @Metadata(description = "To overrule and use a specific encoding.")
     private String encoding;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.dataformat.soap.name.ElementNameStrategy",
@@ -55,6 +57,9 @@ public class SoapDataFormat extends DataFormatDefinition {
                             + " To control this mapping, Camel allows you to refer to a map which contains the desired mapping.")
     private String namespacePrefix;
     @XmlAttribute
+    @Metadata(description = "To validate against an existing schema."
+                            + " You can use the prefix classpath:, file: or http: to specify how the resource should be resolved."
+                            + " You can separate multiple schema files by using the ',' character.")
     private String schema;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",

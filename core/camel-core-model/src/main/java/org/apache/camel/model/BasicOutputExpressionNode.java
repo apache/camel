@@ -28,6 +28,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.Metadata;
 
 /**
  * A basic {@link BasicOutputExpressionNode} which support outputs.
@@ -41,6 +42,7 @@ public abstract class BasicOutputExpressionNode extends BasicExpressionNode<Basi
         implements Block, OutputNode {
 
     @XmlElementRef
+    @Metadata(description = "The processing steps to execute when the expression matches.")
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     protected BasicOutputExpressionNode() {

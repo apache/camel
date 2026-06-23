@@ -47,12 +47,21 @@ import org.apache.camel.spi.Metadata;
 public abstract class TransformerDefinition implements CopyableDefinition<TransformerDefinition> {
 
     @XmlAttribute
+    @Metadata(description = "Scheme name supported by the transformer."
+                            + " If specified, the transformer will be picked up for all from/to transformation of this scheme."
+                            + " Scheme matching is performed only when no exactly matched transformer exists.")
     private String scheme;
     @XmlAttribute
+    @Metadata(description = "Name under which the transformer gets referenced when specifying input/output data type on routes."
+                            + " If the name matches a data type scheme, the transformer will be picked up as a fallback.")
     private String name;
     @XmlAttribute
+    @Metadata(description = "The source (from) data type name. If you specify 'xml:XYZ', the transformer is picked up"
+                            + " when source type matches. If you specify just 'xml', it matches all xml source types.")
     private String fromType;
     @XmlAttribute
+    @Metadata(description = "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up"
+                            + " when destination type matches. If you specify just 'json', it matches all json destination types.")
     private String toType;
 
     protected TransformerDefinition() {

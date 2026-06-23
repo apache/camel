@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class RouteContextRefDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Reference to the routes in the xml-dsl.")
     private String ref;
 
     public RouteContextRefDefinition() {

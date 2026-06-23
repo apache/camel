@@ -70,10 +70,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlAttribute
     @DslArg
+    @Metadata(description = "Path of the rest service, such as /foo.")
     private String path;
     @XmlAttribute
+    @Metadata(description = "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level.")
     private String consumes;
     @XmlAttribute
+    @Metadata(description = "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level.")
     private String produces;
     @XmlAttribute
     @Metadata(description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
@@ -112,6 +115,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
               label = "advanced")
     private String tag;
     @XmlElement
+    @Metadata(description = "To use an existing OpenAPI specification as contract-first for Camel Rest DSL.")
     private OpenApiDefinition openApi;
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
     @Metadata(description = "Sets the security definitions such as Basic, OAuth2 etc.",
@@ -122,6 +126,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
               label = "security")
     private List<SecurityDefinition> securityRequirements = new ArrayList<>();
     @XmlElementRef
+    @Metadata(description = "The HTTP verb operations (GET, POST, PUT, DELETE, PATCH, HEAD) this REST service accepts and uses.")
     private List<VerbDefinition> verbs = new ArrayList<>();
     @XmlTransient
     private Resource resource;

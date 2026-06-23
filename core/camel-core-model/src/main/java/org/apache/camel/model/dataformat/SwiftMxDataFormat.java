@@ -40,16 +40,21 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
     private Object readConfigObject;
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to marshal messages in JSON format.")
     private String writeInJson;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.MxId")
+    @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.MxId",
+              description = "The type of MX message to produce when unmarshalling an input stream."
+                            + " If not set, it will be automatically detected from the namespace used.")
     private String readMessageId;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.mx.MxReadConfiguration")
+    @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.mx.MxReadConfiguration",
+              description = "Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.")
     private String readConfig;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.mx.MxWriteConfiguration")
+    @Metadata(label = "advanced", javaType = "com.prowidesoftware.swift.model.mx.MxWriteConfiguration",
+              description = "Refers to a specific configuration to use when marshalling a message to lookup from the registry.")
     private String writeConfig;
 
     public SwiftMxDataFormat() {

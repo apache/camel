@@ -39,10 +39,13 @@ public class MethodCallExpression extends TypedExpressionDefinition {
     private Object instance;
 
     @XmlAttribute
+    @Metadata(description = "Reference to an existing bean (bean id) to lookup in the registry.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "Name of method to call.")
     private String method;
     @XmlAttribute(name = "beanType")
+    @Metadata(description = "Class name (fully qualified) of the bean to use. Will lookup in registry and if there is a single instance of the same type, then the existing bean is used, otherwise a new bean is created (requires a default no-arg constructor).")
     private String beanTypeName;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype",

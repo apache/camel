@@ -41,6 +41,7 @@ public class TransformersDefinition implements CopyableDefinition<TransformersDe
             @XmlElement(name = "endpointTransformer", type = EndpointTransformerDefinition.class),
             @XmlElement(name = "loadTransformer", type = LoadTransformerDefinition.class),
             @XmlElement(name = "customTransformer", type = CustomTransformerDefinition.class) })
+    @Metadata(description = "The configured transformers.")
     private List<TransformerDefinition> transformers;
 
     public TransformersDefinition() {

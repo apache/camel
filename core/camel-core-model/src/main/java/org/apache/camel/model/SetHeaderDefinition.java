@@ -36,6 +36,7 @@ import org.apache.camel.spi.annotations.DslArg;
 public class SetHeaderDefinition extends ExpressionNode {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Name of message header to set a new value. The simple language can be used to define a dynamic evaluated header name. Otherwise a constant name will be used.")
     @DslArg
     private String name;
 

@@ -33,12 +33,15 @@ import org.apache.camel.spi.Metadata;
 public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
 
     @XmlAttribute
+    @Metadata(description = "The padding character. The default value is a space.")
     private String padding;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to skip trailing characters until a new line is found.")
     private String skipTrailingCharsUntilNewline;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the record ends on a new line.")
     private String recordEndsOnNewline;
 
     public UniVocityFixedDataFormat() {

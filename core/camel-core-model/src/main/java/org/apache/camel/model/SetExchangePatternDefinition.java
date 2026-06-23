@@ -34,7 +34,8 @@ import org.apache.camel.spi.annotations.DslArg;
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
+    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut",
+              description = "The new exchange pattern to use from this point forward.")
     @DslArg(renderType = "enumString", typeName = "ExchangePattern")
     private String pattern;
 

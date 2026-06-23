@@ -42,18 +42,24 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private RestDefinition rest;
 
     @XmlElementRef
+    @Metadata(description = "The REST operation parameters such as query, path, header, or body parameters.")
     private List<ParamDefinition> params = new ArrayList<>();
     @XmlElementRef
+    @Metadata(description = "The response messages with HTTP status codes and descriptions for this operation.")
     private List<ResponseMessageDefinition> responseMsgs = new ArrayList<>();
     @XmlElementRef
+    @Metadata(description = "The security requirements for this operation.", label = "security")
     private List<SecurityDefinition> security = new ArrayList<>();
 
     @XmlAttribute
     @DslArg
+    @Metadata(description = "The path mapping URIs of this REST operation such as /{id}.")
     private String path;
     @XmlAttribute
+    @Metadata(description = "The content type the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level.")
     private String consumes;
     @XmlAttribute
+    @Metadata(description = "The content type the REST service produces (uses for output), such as application/xml or application/json. This option will override what may be configured on a parent level.")
     private String produces;
     @XmlAttribute
     @Metadata(description = "Whether to disable this REST service from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.",
@@ -108,8 +114,11 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
               label = "advanced", javaType = "java.lang.Boolean")
     private String streamCache;
     @XmlAttribute
+    @Metadata(description = "The route id this REST service will refer to.")
     private String routeId;
     @XmlElement(required = true)
+    @Metadata(description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.",
+              required = true)
     private ToDefinition to;
 
     @Override

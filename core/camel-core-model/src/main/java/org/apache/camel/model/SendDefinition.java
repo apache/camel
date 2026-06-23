@@ -42,7 +42,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     protected EndpointProducerBuilder endpointProducerBuilder;
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The uri of the endpoint to send to.")
     @DslArg(position = 1)
     protected String uri;
 

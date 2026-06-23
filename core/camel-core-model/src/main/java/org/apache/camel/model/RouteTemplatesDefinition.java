@@ -48,6 +48,7 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
     private Resource resource;
 
     @XmlElementRef
+    @Metadata(description = "The route templates.")
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
 
     public RouteTemplatesDefinition() {

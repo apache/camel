@@ -70,6 +70,9 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     @XmlElement(name = "correlationExpression", required = true)
     @DslArg
+    @Metadata(description = "The expression used to calculate the correlation key to use for aggregation."
+                            + " Exchanges with the same correlation key are aggregated together."
+                            + " If the correlation key cannot be evaluated an Exception is thrown.")
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
     @AsPredicate

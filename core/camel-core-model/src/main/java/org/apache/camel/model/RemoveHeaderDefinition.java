@@ -34,6 +34,7 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(required = true, description = "Name of header to remove.")
     private String name;
 
     public RemoveHeaderDefinition() {

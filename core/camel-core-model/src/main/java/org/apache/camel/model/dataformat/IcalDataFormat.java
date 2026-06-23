@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 public class IcalDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(description = "Whether to validate the iCal document.",
+            javaType = "java.lang.Boolean")
     private String validating;
 
     public IcalDataFormat() {

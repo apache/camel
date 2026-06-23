@@ -32,8 +32,10 @@ import org.apache.camel.spi.Metadata;
 public class EndpointValidatorDefinition extends ValidatorDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Reference of the Endpoint used for validation.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "URI of the Endpoint used for validation.")
     private String uri;
 
     public EndpointValidatorDefinition() {

@@ -36,18 +36,25 @@ import org.apache.camel.spi.Metadata;
 public class PGPDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID.")
     private String keyUserid;
     @XmlAttribute
+    @Metadata(description = "User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during decryption).")
     private String signatureKeyUserid;
     @XmlAttribute
+    @Metadata(description = "Password used when opening the private key (not used for encryption).")
     private String password;
     @XmlAttribute
+    @Metadata(description = "Password used when opening the private key used for signing (during encryption).")
     private String signaturePassword;
     @XmlAttribute
+    @Metadata(description = "Filename of the keyring; must be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).")
     private String keyFileName;
     @XmlAttribute
+    @Metadata(description = "Filename of the keyring to use for signing (during encryption) or for signature verification (during decryption); must be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).")
     private String signatureKeyFileName;
     @XmlAttribute
+    @Metadata(description = "Keyring used for signing/verifying as byte array. You cannot set the signatureKeyFileName and signatureKeyRing at the same time.")
     private String signatureKeyRing;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
@@ -58,6 +65,7 @@ public class PGPDataFormat extends DataFormatDefinition {
               description = "Adds an integrity check/sign into the encryption file.")
     private String integrity;
     @XmlAttribute
+    @Metadata(description = "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider.")
     private String provider;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer",
@@ -75,6 +83,7 @@ public class PGPDataFormat extends DataFormatDefinition {
                             + " Only relevant for signing.")
     private String hashAlgorithm;
     @XmlAttribute
+    @Metadata(description = "Controls the behavior for verifying the signature during unmarshaling. Possible values: optional, required, ignore, no_signature_allowed.")
     private String signatureVerificationOption;
 
     public PGPDataFormat() {

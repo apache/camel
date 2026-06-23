@@ -62,6 +62,7 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
 
     // commonly used should be first
     @XmlElement
+    @Metadata(description = "The redelivery settings for configuring retry attempts and delays when message processing fails.")
     private RedeliveryPolicyDefinition redeliveryPolicy;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",

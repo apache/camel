@@ -40,8 +40,11 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(description = "Intercept sending to the uri or uri pattern.")
     private String uri;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to skip sending the message to the original endpoint. By default, the message is both intercepted and then sent to the original endpoint.")
     private String skipSendToOriginalEndpoint;
     @XmlAttribute
     @Metadata(label = "advanced",

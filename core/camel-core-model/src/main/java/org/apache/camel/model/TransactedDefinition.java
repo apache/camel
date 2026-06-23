@@ -49,6 +49,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     private Policy policy;
 
     @XmlAttribute
+    @Metadata(description = "Reference to lookup a transacted policy in the registry.")
     private String ref;
 
     public TransactedDefinition() {

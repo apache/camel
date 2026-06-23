@@ -53,10 +53,13 @@ public class RestConfigurationDefinition {
               label = "producer,advanced", enums = "vertx-http,http,undertow,netty-http")
     private String producerComponent;
     @XmlAttribute
+    @Metadata(description = "The scheme to use for exposing the REST service. Usually http or https is supported.")
     private String scheme;
     @XmlAttribute
+    @Metadata(description = "The hostname to use for exposing the REST service.")
     private String host;
     @XmlAttribute
+    @Metadata(description = "The port number to use for exposing the REST service.")
     private String port;
     @XmlAttribute
     @Metadata(description = "To use a specific hostname for the API documentation (such as swagger or openapi). This can be used to override the generated host with this configured hostname.",

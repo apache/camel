@@ -38,11 +38,14 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
 
     @XmlAttribute(required = true)
     @DslArg(position = 0)
+    @Metadata(description = "Name of message header to convert its value. The simple language can be used to define a dynamic evaluated header name.")
     private String name;
     @XmlAttribute(required = true)
     @DslArg(position = 1, renderType = "class")
+    @Metadata(description = "The java type to convert to.")
     private String type;
     @XmlAttribute
+    @Metadata(description = "To use another header to store the result. By default, the result is stored in the same header.")
     private String toName;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",

@@ -36,10 +36,12 @@ import org.apache.camel.spi.Metadata;
 public class JsonApiDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The classes to take into account for the marshalling. Multiple classes can be separated by comma.")
     private String dataFormatTypes;
     @XmlTransient
     private Class<?>[] dataFormatTypeClasses;
     @XmlAttribute
+    @Metadata(description = "The class to take into account while unmarshalling.")
     private String mainFormatType;
     @XmlTransient
     private Class<?> mainFormatTypeClass;

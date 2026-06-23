@@ -39,6 +39,7 @@ import org.apache.camel.spi.ResourceAware;
 public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer, ResourceAware {
 
     @XmlElementRef
+    @Metadata(description = "The rest services defined using the rest-dsl.")
     private List<RestDefinition> rests = new ArrayList<>();
     @XmlTransient
     private Resource resource;

@@ -42,11 +42,14 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
 
     @XmlAttribute
     @DslArg(position = 0)
+    @Metadata(description = "A reference to an existing bean to use, which is looked up from the registry.")
     private String ref;
     @XmlAttribute
     @DslArg(position = 1)
+    @Metadata(description = "The method name on the bean to invoke.")
     private String method;
     @XmlAttribute
+    @Metadata(description = "The class name (fully qualified) of the bean to use.")
     private String beanType;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype",

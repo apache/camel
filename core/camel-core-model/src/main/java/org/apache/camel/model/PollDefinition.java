@@ -44,6 +44,7 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
     protected EndpointConsumerBuilder endpointConsumerBuilder;
 
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
     @Metadata(required = true, description = "Sets the uri of the endpoint to poll from.")

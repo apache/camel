@@ -42,6 +42,7 @@ public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefi
 
     /** This is provided to support XML and YAML DSL */
     @XmlElementRef(name = "variables")
+    @Metadata(description = "The variables to set on the exchange.")
     private List<SetVariableDefinition> variables = new ArrayList<>();
 
     public SetVariablesDefinition() {

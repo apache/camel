@@ -62,6 +62,7 @@ public class ExpressionDefinition
 
     @XmlAttribute
     @XmlID
+    @Metadata(description = "The id of this node.")
     private String id;
     @XmlValue
     @Metadata(required = true, description = "The expression value in your chosen language syntax.")

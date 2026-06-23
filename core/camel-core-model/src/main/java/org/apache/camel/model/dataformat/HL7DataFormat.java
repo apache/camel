@@ -35,13 +35,16 @@ import org.apache.camel.spi.Metadata;
 public class HL7DataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "ca.uhn.hl7v2.parser.Parser")
+    @Metadata(description = "To use a custom HL7 parser.",
+            label = "advanced", javaType = "ca.uhn.hl7v2.parser.Parser")
     private String parser;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(description = "Whether to validate the HL7 message.",
+            defaultValue = "true", javaType = "java.lang.Boolean")
     private String validate;
     @XmlAttribute
-    @Metadata(enums = "XML")
+    @Metadata(description = "The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7 and unmarshal returns a HAPI Message object. If set to XML, marshal encodes to HL7 XML and unmarshal returns an XML DOM Document.",
+            enums = "XML")
     private String targetFormat;
 
     public HL7DataFormat() {

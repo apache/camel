@@ -55,6 +55,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
               description = "Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header.")
     protected String headersDisabled;
     @XmlElementRef
+    @Metadata(description = "The headers to use.")
     protected List<UniVocityHeader> headers;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",

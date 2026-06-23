@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 public class PropertyDefinitions {
 
     @XmlElement(name = "property")
+    @Metadata(description = "A list of properties as key value pairs.")
     private List<PropertyDefinition> properties = new ArrayList<>();
 
     public List<PropertyDefinition> getProperties() {

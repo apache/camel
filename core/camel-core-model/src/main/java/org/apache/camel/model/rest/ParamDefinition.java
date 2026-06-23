@@ -45,14 +45,17 @@ public class ParamDefinition {
     private VerbDefinition verb;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The parameter name.", required = true)
     private String name;
     @XmlAttribute(required = true)
     @Metadata(description = "Sets the parameter type such as body, form, header, path, or query.",
               defaultValue = "path")
     private RestParamType type;
     @XmlAttribute
+    @Metadata(description = "Description of the parameter.")
     private String description;
     @XmlAttribute
+    @Metadata(description = "The default value of the parameter.")
     private String defaultValue;
     @XmlAttribute
     @Metadata(description = "Sets the parameter required flag.",
@@ -71,12 +74,15 @@ public class ParamDefinition {
               defaultValue = "string")
     private String dataType;
     @XmlAttribute
+    @Metadata(description = "The data format of the parameter such as binary, date, date-time, or password.")
     private String dataFormat;
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value") // name = value due to camel-spring-xml
     @DslProperty(name = "allowableValues") // yaml-dsl
+    @Metadata(description = "List of allowable values for the parameter (enum).")
     private List<ValueDefinition> allowableValues;
     @XmlElement(name = "examples")
+    @Metadata(description = "Examples of the parameter.")
     private List<RestPropertyDefinition> examples;
 
     public ParamDefinition() {

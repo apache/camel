@@ -33,8 +33,10 @@ import org.apache.camel.spi.Validator;
 public class CustomValidatorDefinition extends ValidatorDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Reference to a custom Validator bean in the registry.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "Fully qualified class name of the custom Validator implementation.")
     private String className;
 
     public CustomValidatorDefinition() {

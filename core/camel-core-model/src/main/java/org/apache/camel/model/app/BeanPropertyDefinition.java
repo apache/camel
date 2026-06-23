@@ -33,10 +33,13 @@ import org.apache.camel.spi.Metadata;
 public class BeanPropertyDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The name of the property.")
     private String key;
     @XmlAttribute
+    @Metadata(description = "The property value.")
     private String value;
     @XmlElement(name = "properties")
+    @Metadata(description = "Optional nested properties.")
     private BeanPropertiesDefinition properties;
 
     public String getKey() {

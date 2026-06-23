@@ -34,6 +34,7 @@ public class InterceptFromDefinition extends InterceptDefinition {
 
     @XmlAttribute
     @DslArg
+    @Metadata(description = "Intercept incoming messages from the uri or uri pattern. If not configured, then all incoming messages are intercepted.")
     protected String uri;
 
     public InterceptFromDefinition() {

@@ -35,12 +35,15 @@ import org.apache.camel.spi.Metadata;
 public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "Package name where your JAXB classes are located.")
     private String contextPath;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean",
               description = "This can be set to true to mark that the contextPath is referring to a classname and not a package name.")
     private String contextPathIsClassName;
     @XmlAttribute
+    @Metadata(description = "To validate against an existing schema. You can use the prefix classpath:, file: or http: to specify how the resource should be resolved."
+                            + " You can separate multiple schema files by using the comma character.")
     private String schema;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0",
@@ -69,6 +72,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
               description = "To ignore non xml characters and replace them with an empty space.")
     private String filterNonXmlChars;
     @XmlAttribute
+    @Metadata(description = "To overrule and use a specific encoding.")
     private String encoding;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
@@ -91,6 +95,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced", description = "To use a custom xml stream writer.")
     private String xmlStreamWriterWrapper;
     @XmlAttribute
+    @Metadata(description = "To define the location of the schema.")
     private String schemaLocation;
     @XmlAttribute
     @Metadata(label = "advanced", description = "To define the location of the namespaceless schema.")

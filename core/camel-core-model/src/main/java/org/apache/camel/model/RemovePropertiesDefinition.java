@@ -40,6 +40,7 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(description = "Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive).")
     private String pattern;
     @XmlAttribute
     @Metadata(label = "advanced",

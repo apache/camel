@@ -46,6 +46,7 @@ public class RestSecuritiesDefinition {
             @XmlElement(name = "oauth2", type = OAuth2Definition.class),
             @XmlElement(name = "openIdConnect", type = OpenIdConnectDefinition.class),
             @XmlElement(name = "mutualTLS", type = MutualTLSDefinition.class) })
+    @Metadata(description = "The configured security definitions (apiKey, basicAuth, bearerToken, oauth2, openIdConnect, mutualTLS).")
     private List<RestSecurityDefinition> securityDefinitions = new ArrayList<>();
 
     public RestSecuritiesDefinition() {

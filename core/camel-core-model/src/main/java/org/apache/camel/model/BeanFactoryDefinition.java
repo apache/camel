@@ -53,18 +53,30 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The name of the bean (bean id).")
     private String name;
     @XmlAttribute(required = true)
+    @Metadata(description = "The class name (fully qualified) of the bean.")
     private String type;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "The name of the custom initialization method to invoke after setting bean properties. The method must have no arguments, but may throw any exception.")
     private String initMethod;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method must have no arguments, but may throw any exception.")
     private String destroyMethod;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "Name of method to invoke when creating the bean via a factory bean.")
     private String factoryMethod;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "Name of factory bean (bean id) to use for creating the bean.")
     private String factoryBean;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use the properties values to configure the bean.")
     private String builderClass;
     @XmlAttribute
     @Metadata(defaultValue = "build",
@@ -80,9 +92,11 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     private String scriptPropertyPlaceholders;
     @XmlElement(name = "constructors")
     @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
+    @Metadata(description = "Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor argument list, starting from zero.")
     private Map<Integer, Object> constructors;
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
+    @Metadata(description = "Optional properties to set on the created bean.")
     private Map<String, Object> properties;
     @XmlElement(name = "script")
     @Metadata(label = "advanced",

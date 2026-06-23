@@ -38,19 +38,24 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
 
     @XmlAttribute(required = true)
     @Metadata(javaType = "org.apache.camel.model.tokenizer.TokenizerType", required = true,
-              enums = "OPEN_AI,AZURE,QWEN")
+              enums = "OPEN_AI,AZURE,QWEN",
+              description = "The tokenizer type. Must be one of OPEN_AI, AZURE or QWEN.")
     private String tokenizerType;
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "java.lang.Integer", required = true)
+    @Metadata(javaType = "java.lang.Integer", required = true,
+              description = "The maximum number of tokens on each segment.")
     private String maxTokens;
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "java.lang.Integer", required = true)
+    @Metadata(javaType = "java.lang.Integer", required = true,
+              description = "The maximum number of tokens that can overlap in each segment.")
     private String maxOverlap;
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "java.lang.String", required = false)
+    @Metadata(javaType = "java.lang.String", required = false,
+              description = "The underlying model name used by the tokenizer."
+                            + " Providing this switches to computing segment sizes in terms of tokens.")
     private String modelName;
 
     public LangChain4jTokenizerDefinition() {
