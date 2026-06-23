@@ -93,6 +93,16 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
     }
 
     /**
+     * Writes a message-history file for the given pid. Unlike the action/output round trip, {@code CamelHistoryAction}
+     * reads this pre-existing {@code <pid>-history.json} file (one JSON object per line) directly, so no responder
+     * thread is needed: write the fixture, then run with {@link #callWithSingleProcess}.
+     */
+    protected static void writeMessageHistoryFile(long pid, JsonObject line) throws Exception {
+        Path f = CommandLineHelper.getCamelDir().resolve(pid + "-history.json");
+        Files.writeString(f, line.toJson());
+    }
+
+    /**
      * Reads back the action file an action command wrote for the given pid.
      *
      * @return the deserialized action JSON, or {@code null} if no action file exists
