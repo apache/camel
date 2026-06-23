@@ -32,7 +32,8 @@ public class TimestampRouter {
 
     public void process(
             @ExchangeProperty("topicFormat") String topicFormat, @ExchangeProperty("timestampFormat") String timestampFormat,
-            @ExchangeProperty("timestampHeaderName") String timestampHeaderName, Exchange ex) {
+            @ExchangeProperty("timestampHeaderName") String timestampHeaderName,
+            @ExchangeProperty("topicHeaderName") String topicHeaderName, Exchange ex) {
         final Pattern TOPIC = Pattern.compile("$[topic]", Pattern.LITERAL);
 
         final Pattern TIMESTAMP = Pattern.compile("$[timestamp]", Pattern.LITERAL);
@@ -41,7 +42,12 @@ public class TimestampRouter {
         fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Long timestamp = null;
-        String topicName = ex.getMessage().getHeader(KafkaConstants.TOPIC, String.class);
+        String topicName;
+        if (ObjectHelper.isNotEmpty(topicHeaderName)) {
+            topicName = ex.getMessage().getHeader(topicHeaderName, String.class);
+        } else {
+            topicName = ex.getMessage().getHeader(KafkaConstants.TOPIC, String.class);
+        }
         Object rawTimestamp = ex.getMessage().getHeader(timestampHeaderName);
         if (rawTimestamp instanceof Long longValue) {
             timestamp = longValue;
