@@ -36,7 +36,9 @@ import org.apache.camel.spi.Metadata;
 public class FilterDefinition extends OutputExpressionNode {
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Name of an exchange property to store whether the filter predicate matched or not."
+                            + " The value is stored as a boolean.")
     private String statusPropertyName;
 
     public FilterDefinition() {

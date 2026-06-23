@@ -39,21 +39,27 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     @XmlAttribute(required = true)
     @DslArg(position = 1)
+    @Metadata(description = "The log message to output. Supports simple language expressions.")
     private String message;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "The logging level to use. Default is INFO.")
     @DslArg(position = 0, renderType = "enumString", typeName = "LoggingLevel")
     private String loggingLevel;
     @XmlAttribute
+    @Metadata(description = "The logger name to use. By default the route id is used.")
     private String logName;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "An optional SLF4J marker to use with the log statement.")
     private String marker;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.slf4j.Logger")
+    @Metadata(label = "advanced", javaType = "org.slf4j.Logger",
+              description = "Reference to a custom SLF4J logger instance to use.")
     private String logger;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The language to use for evaluating the log message, such as simple, groovy, or ognl.")
     private String logLanguage;
 
     public LogDefinition() {

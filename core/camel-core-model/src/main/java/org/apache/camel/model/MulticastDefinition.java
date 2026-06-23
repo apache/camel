@@ -49,41 +49,64 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     private Processor onPrepareProcessor;
 
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy",
+              description = "Reference to the AggregationStrategy to assemble the replies from the multicasts"
+                            + " into a single outgoing message. By default Camel uses the last reply as the outgoing message.")
     private String aggregationStrategy;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The method name to use when using a POJO as the AggregationStrategy.")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If true then null is used as the oldExchange when there is no data to aggregate,"
+                            + " when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodAllowNull;
     @Deprecated(since = "4.7.0")
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then sending messages to the multicasts occurs concurrently."
+                            + " The caller thread still waits until all messages are fully processed before it continues.")
     private String parallelProcessing;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "When enabled then the same thread is used to continue routing after the multicast is complete,"
+                            + " even if parallel processing is enabled.")
     private String synchronous;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then Camel will process replies out-of-order, in the order they come back."
+                            + " If disabled, Camel will process replies in the same order as defined by the multicast.")
     private String streaming;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then stops further multicast processing if an exception or failure occurred"
+                            + " during processing of an exchange, and the caused exception will be thrown."
+                            + " The default behavior is to not stop but continue processing till the end.")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0")
+    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0",
+              description = "Total timeout in millis when using parallel processing."
+                            + " If the multicast has not been able to process all replies within the given timeframe,"
+                            + " then the timeout triggers and the multicast breaks out and continues.")
     private String timeout;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Reference to a custom thread pool to use for parallel processing."
+                            + " Setting this option implies parallel processing.")
     private String executorService;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Reference to a processor for preparing the exchange to be sent."
+                            + " Can be used to deep-clone messages that should be sent.")
     private String onPrepare;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Shares the unit of work with the parent and each of the multicast exchanges."
+                            + " By default each multicast exchange has its own individual unit of work.")
     private String shareUnitOfWork;
 
     public MulticastDefinition() {

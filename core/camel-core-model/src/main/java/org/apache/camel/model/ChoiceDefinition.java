@@ -54,7 +54,10 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
     @Metadata(description = "Sets the otherwise node")
     private OtherwiseDefinition otherwise;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "If enabled then the choice is evaluated at route initialization time (precondition)."
+                            + " Only when predicates with property placeholders or simple expressions using only"
+                            + " property placeholders are supported.")
     private String precondition;
 
     public ChoiceDefinition() {

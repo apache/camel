@@ -73,86 +73,138 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
     @AsPredicate
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "A predicate to indicate when an aggregated exchange is complete."
+                            + " If not specified and the AggregationStrategy implements Predicate, it will be used as the completionPredicate.")
     private ExpressionSubElementDefinition completionPredicate;
     @XmlElement(name = "completionTimeoutExpression")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Time in millis that an aggregated exchange should be inactive before its complete (timeout),"
+                            + " evaluated as an expression allowing dynamic timeout values.")
     private ExpressionSubElementDefinition completionTimeoutExpression;
     @XmlElement(name = "completionSizeExpression")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Number of messages aggregated before the aggregation is complete,"
+                            + " evaluated as an expression allowing dynamic size values.")
     private ExpressionSubElementDefinition completionSizeExpression;
     @XmlElement(name = "optimisticLockRetryPolicy")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Configures retry settings when using optimistic locking.")
     private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "When completed exchanges are sent out of the aggregator, this option indicates whether"
+                            + " Camel should use a thread pool with multiple threads for concurrency.")
     private String parallelProcessing;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Turns on optimistic locking, which requires the aggregation repository"
+                            + " to implement OptimisticLockingAggregationRepository.")
     private String optimisticLocking;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "When optimistic locking is enabled, retries happen synchronously in the same thread"
+                            + " instead of being scheduled on a background thread."
+                            + " This preserves transaction context for repositories that require single-thread transactional guarantees.")
     private String optimisticLockingSyncRetry;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Reference to a custom thread pool to use for parallel processing"
+                            + " and sending out aggregated exchanges.")
     private String executorService;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService",
+              description = "Reference to a custom thread pool for the background completion timeout checker.")
     private String timeoutCheckerExecutorService;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.aggregate.AggregateController")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.aggregate.AggregateController",
+              description = "Reference to an AggregateController to allow external sources to control this aggregator.")
     private String aggregateController;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.spi.AggregationRepository")
+    @Metadata(javaType = "org.apache.camel.spi.AggregationRepository",
+              description = "Reference to the AggregationRepository to use."
+                            + " By default uses MemoryAggregationRepository.")
     private String aggregationRepository;
     @XmlAttribute(required = true)
-    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy",
+              description = "The AggregationStrategy to use. Required. Merges each incoming exchange with the existing"
+                            + " already merged exchanges. At first call the oldExchange parameter is null.")
     private String aggregationStrategy;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The method name to use when using a POJO as the AggregationStrategy.")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If true then null is used as the oldExchange at the very first aggregation,"
+                            + " when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Number of messages aggregated before the aggregation is complete."
+                            + " Can also be set as an expression via completionSizeExpression.")
     private String completionSize;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration")
+    @Metadata(javaType = "java.time.Duration",
+              description = "A repeating period by which the aggregator will complete all current aggregated exchanges."
+                            + " Cannot be used together with completionTimeout.")
     private String completionInterval;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration")
+    @Metadata(javaType = "java.time.Duration",
+              description = "Time that an aggregated exchange should be inactive before its complete (timeout)."
+                            + " Cannot be used together with completionInterval.")
     private String completionTimeout;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration",
+              description = "Interval in millis for the background task that checks for completion timeouts."
+                            + " Default is 1000 (1 second).")
     private String completionTimeoutCheckerInterval;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Enables batch completion mode where aggregation completes based on the total number"
+                            + " of exchanges reported by a batch consumer. Cannot be used together with discardOnAggregationFailure.")
     private String completionFromBatchConsumer;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Enables completion on all previous groups when a new incoming correlation group starts."
+                            + " Only one correlation group can be in progress at a time.")
     private String completionOnNewCorrelationGroup;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then the completion predicate evaluates against the incoming exchange."
+                            + " Otherwise it evaluates against the aggregated exchange.")
     private String eagerCheckCompletion;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then a correlation key that cannot be evaluated is logged and ignored,"
+                            + " instead of throwing an exception.")
     private String ignoreInvalidCorrelationKeys;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "Closes a correlation key when its complete. Late arriving exchanges with a closed"
+                            + " correlation key will throw a ClosedCorrelationKeyException."
+                            + " The value is the maximum cache size of closed keys. Use 0 for unbounded.")
     private String closeCorrelationKeyOnCompletion;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then the aggregated message is discarded (dropped) on completion timeout"
+                            + " instead of being sent out of the aggregator.")
     private String discardOnCompletionTimeout;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then the partly aggregated message is discarded when aggregation failed"
+                            + " (an exception was thrown from AggregationStrategy)."
+                            + " Cannot be used together with completionFromBatchConsumer.")
     private String discardOnAggregationFailure;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then all current aggregated exchanges are completed when the context is stopped.")
     private String forceCompletionOnStop;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then waits to complete all current and partial (pending) aggregated exchanges"
+                            + " when the context is stopped, ensuring the aggregation repository is empty before shutdown.")
     private String completeAllOnStop;
 
     public AggregateDefinition() {
