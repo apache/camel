@@ -20,6 +20,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Expression for which a result type can be provided along with the source of the input (body, header or property).
@@ -27,6 +28,7 @@ import org.apache.camel.Expression;
 public abstract class SingleInputTypedExpressionDefinition extends TypedExpressionDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.")
     private String source;
 
     protected SingleInputTypedExpressionDefinition() {
@@ -54,11 +56,6 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
         return source;
     }
 
-    /**
-     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
-     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
-     * message body.
-     */
     public void setSource(String source) {
         this.source = source;
     }

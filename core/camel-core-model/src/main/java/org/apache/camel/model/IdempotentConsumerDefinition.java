@@ -39,19 +39,24 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     private IdempotentRepository idempotentRepositoryBean;
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "org.apache.camel.spi.IdempotentRepository")
+    @Metadata(javaType = "org.apache.camel.spi.IdempotentRepository",
+              description = "Sets the reference name of the message id repository")
     private String idempotentRepository;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Sets whether to eagerly add the key to the idempotent repository or wait until the exchange is complete. Eager is default enabled.")
     private String eager;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Sets whether to complete the idempotent consumer eager or when the exchange is done.")
     private String completionEager;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Sets whether to skip duplicates or not. The default behavior is to skip duplicates.")
     private String skipDuplicate;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Sets whether to remove or keep the key on failure. The default behavior is to remove the key on failure.")
     private String removeOnFailure;
 
     public IdempotentConsumerDefinition() {
@@ -179,10 +184,6 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
         return this;
     }
 
-    /**
-     * Expression used to calculate the correlation key to use for duplicate check. The Exchange which has the same
-     * correlation key is regarded as a duplicate and will be rejected.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

@@ -35,12 +35,13 @@ import org.apache.camel.spi.Metadata;
 public class PackageScanDefinition {
 
     @XmlElement(name = "package", required = true)
+    @Metadata(description = "Java package names to use for scanning for route builder classes.")
     private List<String> packages = new ArrayList<>();
     @XmlElement
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Exclude finding route builder from these java package names.")
     private List<String> excludes = new ArrayList<>();
     @XmlElement
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Include finding route builder from these java package names.")
     private List<String> includes = new ArrayList<>();
 
     public PackageScanDefinition() {
@@ -58,23 +59,14 @@ public class PackageScanDefinition {
         return packages;
     }
 
-    /**
-     * Sets the java package names to use for scanning for route builder classes
-     */
     public void setPackages(List<String> packages) {
         this.packages = packages;
     }
 
-    /**
-     * Exclude finding route builder from these java package names.
-     */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
     }
 
-    /**
-     * Include finding route builder from these java package names.
-     */
     public void setIncludes(List<String> includes) {
         this.includes = includes;
     }

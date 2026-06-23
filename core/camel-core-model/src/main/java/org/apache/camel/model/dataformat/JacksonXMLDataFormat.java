@@ -42,44 +42,65 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     private Class<?> collectionType;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Lookup and use the existing XmlMapper with the given id.")
     private String xmlMapper;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to enable pretty printing output nicely formatted. Is by default false.")
     private String prettyPrint;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class name of the java type to use when unmarshalling.")
     private String unmarshalTypeName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to allow Jackson to use the CamelJacksonUnmarshalType header during unmarshalling. Should only be enabled when desired.")
     private String allowUnmarshallType;
     @XmlAttribute(name = "jsonView")
+    @Metadata(description = "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output."
+                            + " With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations.")
     private String jsonViewTypeName;
     @XmlAttribute
+    @Metadata(description = "If you want to marshal a POJO to JSON, and the POJO has some fields with null values."
+                            + " And you want to skip these null values, you can set this option to NON_NULL.")
     private String include;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.")
     private String allowJmsType;
     @XmlAttribute(name = "collectionType")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to a custom collection type to lookup in the registry to use."
+                            + " This option should rarely be used, but allows using different collection types than java.util.Collection based as default.")
     private String collectionTypeName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to unmarshal to a List of Map or a List of Pojo.")
     private String useList;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling.")
     private String timezone;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to enable the JAXB annotations module when using Jackson. When enabled then JAXB annotations can be used by Jackson.")
     private String enableJaxbAnnotationModule;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names."
+                            + " Multiple classes can be separated by comma.")
     private String moduleClassNames;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.")
     private String moduleRefs;
     @XmlAttribute
+    @Metadata(description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+                            + " The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature."
+                            + " Multiple features can be separated by comma.")
     private String enableFeatures;
     @XmlAttribute
+    @Metadata(description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+                            + " The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, or MapperFeature."
+                            + " Multiple features can be separated by comma.")
     private String disableFeatures;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
@@ -87,7 +108,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "Maximum allowed string length when deserializing (in chars or bytes, depending on input context). The default is 20,000,000.")
     private String maxStringLength;
 
     public JacksonXMLDataFormat() {
@@ -151,9 +173,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return xmlMapper;
     }
 
-    /**
-     * Lookup and use the existing XmlMapper with the given id.
-     */
     public void setXmlMapper(String xmlMapper) {
         this.xmlMapper = xmlMapper;
     }
@@ -162,11 +181,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return prettyPrint;
     }
 
-    /**
-     * To enable pretty printing output nicely formatted.
-     * <p/>
-     * Is by default false.
-     */
     public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
@@ -175,9 +189,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return unmarshalTypeName;
     }
 
-    /**
-     * Class name of the java type to use when unmarshalling
-     */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
     }
@@ -186,9 +197,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return unmarshalType;
     }
 
-    /**
-     * Class of the java type to use when unmarshalling
-     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
@@ -197,10 +205,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return jsonViewTypeName;
     }
 
-    /**
-     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
-     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
-     */
     public void setJsonViewTypeName(String jsonViewTypeName) {
         this.jsonViewTypeName = jsonViewTypeName;
     }
@@ -209,10 +213,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return jsonView;
     }
 
-    /**
-     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
-     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
-     */
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
     }
@@ -221,10 +221,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return include;
     }
 
-    /**
-     * If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these
-     * null values, you can set this option to <tt>NON_NULL</tt>
-     */
     public void setInclude(String include) {
         this.include = include;
     }
@@ -233,10 +229,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return allowJmsType;
     }
 
-    /**
-     * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal
-     * to.
-     */
     public void setAllowJmsType(String allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
@@ -245,10 +237,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return collectionTypeName;
     }
 
-    /**
-     * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
-     * allows to use different collection types than java.util.Collection based as default.
-     */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
     }
@@ -265,9 +253,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return useList;
     }
 
-    /**
-     * To unmarshal to a List of Map or a List of Pojo.
-     */
     public void setUseList(String useList) {
         this.useList = useList;
     }
@@ -276,10 +261,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return enableJaxbAnnotationModule;
     }
 
-    /**
-     * Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used
-     * by Jackson.
-     */
     public void setEnableJaxbAnnotationModule(String enableJaxbAnnotationModule) {
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
@@ -288,10 +269,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return moduleClassNames;
     }
 
-    /**
-     * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names.
-     * Multiple classes can be separated by comma.
-     */
     public void setModuleClassNames(String moduleClassNames) {
         this.moduleClassNames = moduleClassNames;
     }
@@ -300,9 +277,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return moduleRefs;
     }
 
-    /**
-     * To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
-     */
     public void setModuleRefs(String moduleRefs) {
         this.moduleRefs = moduleRefs;
     }
@@ -311,16 +285,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return enableFeatures;
     }
 
-    /**
-     * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
     public void setEnableFeatures(String enableFeatures) {
         this.enableFeatures = enableFeatures;
     }
@@ -329,16 +293,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return disableFeatures;
     }
 
-    /**
-     * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
     }
@@ -347,12 +301,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return allowUnmarshallType;
     }
 
-    /**
-     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
-     * unmarshalling.
-     * <p/>
-     * This should only be enabled when desired to be used.
-     */
     public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }
@@ -369,9 +317,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return timezone;
     }
 
-    /**
-     * If set then Jackson will use the Timezone when marshalling/unmarshalling.
-     */
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }
@@ -380,12 +325,6 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         return maxStringLength;
     }
 
-    /**
-     * Sets the maximum string length (in chars or bytes, depending on input context). The default is 20,000,000. This
-     * limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at
-     * sizes greater than this limit. Some text values that are a little bigger than the limit may be treated as valid
-     * but no text values with sizes less than or equal to this limit will be treated as invalid.
-     */
     public void setMaxStringLength(String maxStringLength) {
         this.maxStringLength = maxStringLength;
     }

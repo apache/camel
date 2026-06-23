@@ -39,6 +39,7 @@ public class ValidatorsDefinition {
             @XmlElement(name = "endpointValidator", type = EndpointValidatorDefinition.class),
             @XmlElement(name = "predicateValidator", type = PredicateValidatorDefinition.class),
             @XmlElement(name = "customValidator", type = CustomValidatorDefinition.class) })
+    @Metadata(description = "The configured validators.")
     private List<ValidatorDefinition> validators;
 
     public ValidatorsDefinition() {
@@ -48,9 +49,6 @@ public class ValidatorsDefinition {
         this.validators = ProcessorDefinitionHelper.deepCopyDefinitions(source.validators);
     }
 
-    /**
-     * The configured validators
-     */
     public void setValidators(List<ValidatorDefinition> validators) {
         this.validators = validators;
     }

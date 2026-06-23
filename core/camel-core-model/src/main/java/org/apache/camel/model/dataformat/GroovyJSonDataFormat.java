@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 public class GroovyJSonDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(description = "Whether to pretty print output nicely formatted.",
+              javaType = "java.lang.Boolean", defaultValue = "true")
     private String prettyPrint;
 
     public GroovyJSonDataFormat() {
@@ -61,11 +62,6 @@ public class GroovyJSonDataFormat extends DataFormatDefinition {
         return prettyPrint;
     }
 
-    /**
-     * To pretty printing output nicely formatted.
-     * <p/>
-     * Is by default true.
-     */
     public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }

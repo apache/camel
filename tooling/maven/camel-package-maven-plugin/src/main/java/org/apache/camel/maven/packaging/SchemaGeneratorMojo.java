@@ -69,7 +69,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.jandex.AnnotationTarget.Kind;
@@ -1468,6 +1467,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private String findJavaDoc(
             Field fieldElement, String fieldName, String name, Class<?> classElement, boolean builderPattern) {
+        // prefer @Metadata(description) on the field
         if (fieldElement != null) {
             Metadata md = fieldElement.getAnnotation(Metadata.class);
             if (md != null) {
@@ -1478,44 +1478,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
 
-        JavaClassSource source = javaClassSource(classElement.getName());
-        FieldSource<JavaClassSource> field = source.getField(fieldName);
-        if (field != null) {
-            String doc = field.getJavaDoc().getFullText();
-            if (!Strings.isNullOrEmpty(doc)) {
-                return doc;
-            }
-        }
-
-        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-
-        // special for mdcLoggingKeysPattern
-        if ("setMdcLoggingKeysPattern".equals(setterName)) {
-            setterName = "setMDCLoggingKeysPattern";
-        }
-
-        for (MethodSource<JavaClassSource> setter : source.getMethods()) {
-            if (setter.getParameters().size() == 1
-                    && setter.getName().equals(setterName)) {
-                String doc = setter.getJavaDoc().getFullText();
-                if (!Strings.isNullOrEmpty(doc)) {
-                    return doc;
-                }
-            }
-        }
-
-        String getterName = "get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-        for (MethodSource<JavaClassSource> setter : source.getMethods()) {
-            if (setter.getParameters().isEmpty()
-                    && setter.getName().equals(getterName)) {
-                String doc = setter.getJavaDoc().getFullText();
-                if (!Strings.isNullOrEmpty(doc)) {
-                    return doc;
-                }
-            }
-        }
-
+        // fallback to fluent builder javadoc (used by RouteDefinition properties that have no field)
         if (builderPattern) {
+            JavaClassSource source = javaClassSource(classElement.getName());
             if (name != null && !name.equals(fieldName)) {
                 String doc = getDoc(source, name);
                 if (doc != null) {

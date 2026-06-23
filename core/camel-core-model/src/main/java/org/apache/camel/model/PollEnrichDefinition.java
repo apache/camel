@@ -43,33 +43,44 @@ public class PollEnrichDefinition extends ExpressionNode
     private AggregationStrategy aggregationStrategyBean;
 
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers)."
+                            + " This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy",
+              description = "Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message. By default Camel will use the reply from the external service as outgoing message.")
     private String aggregationStrategy;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "This option can be used to explicitly declare the method name to use, when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method.")
     private String aggregateOnException;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration", defaultValue = "-1")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "-1",
+              description = "Timeout in millis when polling from the external service. A negative value waits until a message is available (could block indefinitely). Zero attempts to receive immediately without waiting. A positive value waits up to the given timeout.")
     private String timeout;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "Sets the maximum size used by the ConsumerCache which is used to cache and reuse consumers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.")
     private String cacheSize;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to ignore an invalid endpoint URI when trying to create a consumer with that endpoint.")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to allow components to optimise if they are PollDynamicAware.")
     private String allowOptimisedComponents;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to auto startup components when poll enricher is starting up.")
     private String autoStartComponents;
 
     public PollEnrichDefinition() {
@@ -315,9 +326,6 @@ public class PollEnrichDefinition extends ExpressionNode
     // Properties
     // -------------------------------------------------------------------------
 
-    /**
-     * Expression that computes the endpoint uri to use as the resource endpoint to enrich from
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

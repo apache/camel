@@ -42,7 +42,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     protected EndpointProducerBuilder endpointProducerBuilder;
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "The uri of the endpoint to send to.")
     @DslArg(position = 1)
     protected String uri;
 
@@ -76,24 +76,11 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         return uri;
     }
 
-    /**
-     * Sets the uri of the endpoint to send to.
-     *
-     * @param uri the uri of the endpoint
-     */
     public void setUri(String uri) {
         clear();
         this.uri = uri;
     }
 
-    /**
-     * Gets the endpoint if an {@link Endpoint} instance was set.
-     * <p/>
-     * This implementation may return <tt>null</tt> which means you need to use {@link #getEndpointUri()} to get
-     * information about the endpoint.
-     *
-     * @return the endpoint instance, or <tt>null</tt>
-     */
     public Endpoint getEndpoint() {
         return endpoint;
     }

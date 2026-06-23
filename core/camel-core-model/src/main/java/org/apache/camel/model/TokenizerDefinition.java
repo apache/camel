@@ -70,23 +70,14 @@ public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition>
         return tokenizerName;
     }
 
-    /**
-     * Sets the tokenizer name
-     */
     public void setTokenizerName(String tokenizerName) {
         this.tokenizerName = tokenizerName;
     }
 
-    /**
-     * Gets the tokenizer implementation
-     */
     public TokenizerImplementationDefinition getTokenizerImplementation() {
         return tokenizerImplementation;
     }
 
-    /**
-     * Sets the tokenizer implementation
-     */
     public void setTokenizerImplementation(TokenizerImplementationDefinition tokenizerImplementation) {
         this.tokenizerImplementation = tokenizerImplementation;
     }

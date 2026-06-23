@@ -35,30 +35,35 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<ThreadPoolProfileDefinition> {
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether this profile is the default thread pool profile")
     private String defaultProfile;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer", description = "Sets the core pool size")
     private String poolSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer", description = "Sets the maximum pool size")
     private String maxPoolSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.lang.Long", description = "Sets the keep alive time for idle threads in the pool")
     private String keepAliveTime;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.TimeUnit",
-              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS",
+              description = "Sets the time unit to use for keep alive time. By default SECONDS is used.")
     private String timeUnit;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer",
+              description = "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue.")
     private String maxQueueSize;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-              enums = "Abort,CallerRuns,Block")
+              enums = "Abort,CallerRuns,Block",
+              description = "Sets the handler for tasks which cannot be executed by the thread pool")
     private String rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {
@@ -142,9 +147,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return defaultProfile;
     }
 
-    /**
-     * Whether this profile is the default thread pool profile
-     */
     public void setDefaultProfile(String defaultProfile) {
         this.defaultProfile = defaultProfile;
     }
@@ -153,9 +155,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return poolSize;
     }
 
-    /**
-     * Sets the core pool size
-     */
     public void setPoolSize(String poolSize) {
         this.poolSize = poolSize;
     }
@@ -164,9 +163,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return maxPoolSize;
     }
 
-    /**
-     * Sets the maximum pool size
-     */
     public void setMaxPoolSize(String maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
@@ -175,9 +171,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return keepAliveTime;
     }
 
-    /**
-     * Sets the keep alive time for idle threads in the pool
-     */
     public void setKeepAliveTime(String keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
@@ -186,11 +179,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return maxQueueSize;
     }
 
-    /**
-     * Sets the maximum number of tasks in the work queue.
-     * <p/>
-     * Use <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt> for an unbounded queue
-     */
     public void setMaxQueueSize(String maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
     }
@@ -199,11 +187,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return allowCoreThreadTimeOut;
     }
 
-    /**
-     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
-     * <p/>
-     * Is by default <tt>true</tt>
-     */
     public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
@@ -212,9 +195,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return timeUnit;
     }
 
-    /**
-     * Sets the time unit to use for keep alive time By default SECONDS is used.
-     */
     public void setTimeUnit(String timeUnit) {
         this.timeUnit = timeUnit;
     }
@@ -223,9 +203,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         return rejectedPolicy;
     }
 
-    /**
-     * Sets the handler for tasks which cannot be executed by the thread pool.
-     */
     public void setRejectedPolicy(String rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }

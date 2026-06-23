@@ -49,22 +49,28 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
-              enums = "AfterConsumer,BeforeConsumer")
+              enums = "AfterConsumer,BeforeConsumer",
+              description = "Sets the on completion mode. The default value is AfterConsumer.")
     private String mode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Will only synchronize when the Exchange completed successfully (no errors)")
     private String onCompleteOnly;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Will only synchronize when the Exchange ended with failure (exception or FAULT message)")
     private String onFailureOnly;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then the on completion process will run asynchronously by a separate thread from a thread pool. By default this is false, meaning the on completion process will run synchronously using the same caller thread as from the route.")
     private String parallelProcessing;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel processing is automatically implied, and you do not have to enable that option as well.")
     private String executorService;
     @XmlAttribute(name = "useOriginalMessage")
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Will use the original input message when an Exchange for this on completion. By default this feature is off.")
     private String useOriginalMessage;
     @Metadata(description = "To use an expression to only trigger routing this completion steps in specific situations")
     @XmlElement
@@ -359,11 +365,6 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         return mode;
     }
 
-    /**
-     * Sets the on completion mode.
-     * <p/>
-     * The default value is AfterConsumer
-     */
     public void setMode(String mode) {
         this.mode = mode;
     }
@@ -396,30 +397,6 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         return useOriginalMessage;
     }
 
-    /**
-     * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
-     * <p/>
-     * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
-     * original route), to ensure the body can be read when the original message is being used later. If the body is
-     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
-     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
-     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
-     * later.
-     * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current
-     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
-     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
-     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
-     * for the messages in their sub-route (eg the split message); however these EIPs have an option named
-     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
-     * therefore use the parent original message.
-     * <p/>
-     * By default this feature is off.
-     *
-     * @return the builder
-     */
     public void setUseOriginalMessage(String useOriginalMessage) {
         this.useOriginalMessage = useOriginalMessage;
     }

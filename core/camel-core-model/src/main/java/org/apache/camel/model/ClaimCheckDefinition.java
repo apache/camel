@@ -39,20 +39,27 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     private AggregationStrategy aggregationStrategyBean;
 
     @XmlAttribute(required = true)
-    @Metadata(enums = "Get,GetAndRemove,Set,Push,Pop", javaType = "org.apache.camel.model.ClaimCheckOperation")
+    @Metadata(enums = "Get,GetAndRemove,Set,Push,Pop", javaType = "org.apache.camel.model.ClaimCheckOperation",
+              description = "The claim check operation to use. Get=retrieve, GetAndRemove=retrieve and remove,"
+                            + " Set=store with key, Push=store on stack, Pop=retrieve from stack.")
     @DslArg(position = 0, renderType = "enumString", typeName = "ClaimCheckOperation")
     private String operation;
     @XmlAttribute
     @DslArg(position = 1)
+    @Metadata(description = "The unique claim check key to use for Get, GetAndRemove, and Set operations.")
     private String key;
     @XmlAttribute
     @DslArg(position = 2)
+    @Metadata(description = "Specifies a filter to control what data gets merged back when using Get or Pop operations."
+                            + " Use body, headers, header:pattern to include only matching data.")
     private String filter;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.AggregationStrategy")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.AggregationStrategy",
+              description = "Reference to a custom AggregationStrategy to use for merging data back from the claim check repository.")
     private String aggregationStrategy;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The method name to use when using a POJO as the AggregationStrategy.")
     private String aggregationStrategyMethodName;
 
     public ClaimCheckDefinition() {

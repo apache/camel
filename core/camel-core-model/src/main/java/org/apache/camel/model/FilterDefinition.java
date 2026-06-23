@@ -36,7 +36,9 @@ import org.apache.camel.spi.Metadata;
 public class FilterDefinition extends OutputExpressionNode {
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Name of an exchange property to store whether the filter predicate matched or not."
+                            + " The value is stored as a boolean.")
     private String statusPropertyName;
 
     public FilterDefinition() {
@@ -83,10 +85,6 @@ public class FilterDefinition extends OutputExpressionNode {
         this.statusPropertyName = statusPropertyName;
     }
 
-    /**
-     * Expression to determine if the message should be filtered or not. If the expression returns an empty value or
-     * <tt>false</tt> then the message is filtered (dropped), otherwise the message is continued being routed.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

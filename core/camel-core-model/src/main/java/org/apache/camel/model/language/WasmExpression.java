@@ -33,7 +33,8 @@ import org.apache.camel.spi.Metadata;
 public class WasmExpression extends TypedExpressionDefinition {
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true,
+              description = "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function.")
     private String module;
 
     public WasmExpression() {
@@ -67,10 +68,6 @@ public class WasmExpression extends TypedExpressionDefinition {
         return module;
     }
 
-    /**
-     * Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides
-     * the expression function.
-     */
     public void setModule(String module) {
         this.module = module;
     }

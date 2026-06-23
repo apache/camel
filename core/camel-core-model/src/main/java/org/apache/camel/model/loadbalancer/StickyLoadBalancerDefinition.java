@@ -37,6 +37,7 @@ import org.apache.camel.spi.Metadata;
 public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @XmlElement(name = "correlationExpression", required = true)
+    @Metadata(description = "The correlation expression to use to calculate the correlation key.")
     private ExpressionSubElementDefinition correlationExpression;
 
     public StickyLoadBalancerDefinition() {
@@ -57,9 +58,6 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
         return correlationExpression;
     }
 
-    /**
-     * The correlation expression to use to calculate the correlation key
-     */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;
     }

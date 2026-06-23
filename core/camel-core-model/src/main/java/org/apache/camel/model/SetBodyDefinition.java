@@ -63,9 +63,6 @@ public class SetBodyDefinition extends ExpressionNode {
         return "setBody[" + getExpression() + "]";
     }
 
-    /**
-     * Expression that returns the new body to use
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

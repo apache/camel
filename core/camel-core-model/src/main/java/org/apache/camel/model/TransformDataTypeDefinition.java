@@ -35,9 +35,11 @@ public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDat
 
     @XmlAttribute
     @DslArg(position = 0)
+    @Metadata(description = "The source data type for the transformation.")
     private String fromType;
     @XmlAttribute(required = true)
     @DslArg(position = 1)
+    @Metadata(required = true, description = "The target data type for the transformation.")
     private String toType;
 
     public TransformDataTypeDefinition() {
@@ -82,9 +84,6 @@ public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDat
         }
     }
 
-    /**
-     * From type used in data type transformation.
-     */
     public void setFromType(String fromType) {
         this.fromType = fromType;
     }
@@ -93,9 +92,6 @@ public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDat
         return fromType;
     }
 
-    /**
-     * To type used as a target data type in the transformation.
-     */
     public void setToType(String toType) {
         this.toType = toType;
     }

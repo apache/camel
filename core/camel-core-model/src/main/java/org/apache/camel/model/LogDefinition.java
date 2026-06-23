@@ -39,21 +39,27 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     @XmlAttribute(required = true)
     @DslArg(position = 1)
+    @Metadata(description = "The log message to output. Supports simple language expressions.")
     private String message;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "The logging level to use. Default is INFO.")
     @DslArg(position = 0, renderType = "enumString", typeName = "LoggingLevel")
     private String loggingLevel;
     @XmlAttribute
+    @Metadata(description = "The logger name to use. By default the route id is used.")
     private String logName;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "An optional SLF4J marker to use with the log statement.")
     private String marker;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.slf4j.Logger")
+    @Metadata(label = "advanced", javaType = "org.slf4j.Logger",
+              description = "Reference to a custom SLF4J logger instance to use.")
     private String logger;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The language to use for evaluating the log message, such as simple, groovy, or ognl.")
     private String logLanguage;
 
     public LogDefinition() {
@@ -107,11 +113,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return loggingLevel;
     }
 
-    /**
-     * Sets the logging level.
-     * <p/>
-     * The default value is INFO
-     */
     public void setLoggingLevel(String loggingLevel) {
         this.loggingLevel = loggingLevel;
     }
@@ -120,9 +121,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return message;
     }
 
-    /**
-     * Sets the log message (uses simple language)
-     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -131,25 +129,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return logName;
     }
 
-    /**
-     * Sets the name of the logger.
-     *
-     * The name is default the routeId or the source:line if source location is enabled. You can also specify the name
-     * using tokens:
-     *
-     * <br/>
-     * ${class} - the logger class name (org.apache.camel.processor.LogProcessor) <br/>
-     * ${contextId} - the camel context id <br/>
-     * ${routeId} - the route id <br/>
-     * ${groupId} - the route group id <br/>
-     * ${nodeId} - the node id <br/>
-     * ${nodePrefixId} - the node prefix id <br/>
-     * ${source} - the source:line (source location must be enabled) <br/>
-     * ${source.name} - the source filename (source location must be enabled) <br/>
-     * ${source.line} - the source line number (source location must be enabled)
-     *
-     * For example to use the route and node id you can specify the name as: ${routeId}/${nodeId}
-     */
     public void setLogName(String logName) {
         this.logName = logName;
     }
@@ -158,23 +137,14 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return marker;
     }
 
-    /**
-     * To use slf4j marker
-     */
     public void setMarker(String marker) {
         this.marker = marker;
     }
 
-    /**
-     * To refer to a custom logger instance to lookup from the registry.
-     */
     public void setLogger(String logger) {
         this.logger = logger;
     }
 
-    /**
-     * To use a custom logger instance
-     */
     public void setLogger(Logger logger) {
         this.loggerBean = logger;
     }
@@ -187,10 +157,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return logLanguage;
     }
 
-    /**
-     * To configure the language to use. By default, the simple language is used. However, Camel also supports other
-     * languages such as groovy.
-     */
     public void setLogLanguage(String logLanguage) {
         this.logLanguage = logLanguage;
     }

@@ -40,21 +40,27 @@ public class BindyDataFormat extends DataFormatDefinition {
     private Class<?> classType;
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.model.dataformat.BindyType", enums = "Csv,Fixed,KeyValue")
+    @Metadata(required = true, javaType = "org.apache.camel.model.dataformat.BindyType", enums = "Csv,Fixed,KeyValue",
+              description = "Whether to use Csv, Fixed, or KeyValue.")
     private String type;
     @XmlAttribute(name = "classType")
+    @Metadata(description = "Name of model class to use.")
     private String classTypeAsString;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "To change the default value for string types to be null instead of an empty string.")
     private String defaultValueStringAsNull;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided.")
     private String allowEmptyStream;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List.")
     private String unwrapSingleInstance;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default.")
     private String locale;
 
     public BindyDataFormat() {
@@ -92,9 +98,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         return type;
     }
 
-    /**
-     * Whether to use Csv, Fixed, or KeyValue.
-     */
     public void setType(String type) {
         this.type = type;
     }
@@ -103,9 +106,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         return classTypeAsString;
     }
 
-    /**
-     * Name of model class to use.
-     */
     public void setClassTypeAsString(String classType) {
         this.classTypeAsString = classType;
     }
@@ -121,9 +121,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         }
     }
 
-    /**
-     * Name of model class to use.
-     */
     public void setClassType(Class<?> classType) {
         this.classType = classType;
     }
@@ -136,11 +133,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         return locale;
     }
 
-    /**
-     * To configure a default locale to use, such as <tt>us</tt> for united states.
-     * <p/>
-     * To use the JVM platform default locale then use the name <tt>default</tt>
-     */
     public void setLocale(String locale) {
         this.locale = locale;
     }
@@ -149,9 +141,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         return defaultValueStringAsNull;
     }
 
-    /**
-     * To change the default value for string types to be null instead of an empty string.
-     */
     public void setDefaultValueStringAsNull(String defaultValueStringAsNull) {
         this.defaultValueStringAsNull = defaultValueStringAsNull;
     }
@@ -160,10 +149,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         return unwrapSingleInstance;
     }
 
-    /**
-     * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
-     * <tt>java.util.List</tt>.
-     */
     public void setUnwrapSingleInstance(String unwrapSingleInstance) {
         this.unwrapSingleInstance = unwrapSingleInstance;
     }
@@ -172,10 +157,6 @@ public class BindyDataFormat extends DataFormatDefinition {
         return allowEmptyStream;
     }
 
-    /**
-     * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without
-     * records is provided.
-     */
     public void setAllowEmptyStream(String allowEmptyStream) {
         this.allowEmptyStream = allowEmptyStream;
     }

@@ -35,13 +35,16 @@ import org.apache.camel.spi.Metadata;
 public class Base64DataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "76", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "76", javaType = "java.lang.Integer",
+              description = "To specific a maximum line length for the encoded data. By default 76 is used.")
     private String lineLength;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The line separators to use. By default \\r\\n is used.")
     private String lineSeparator;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Instead of emitting + and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.")
     private String urlSafe;
 
     public Base64DataFormat() {
@@ -71,11 +74,6 @@ public class Base64DataFormat extends DataFormatDefinition {
         return lineLength;
     }
 
-    /**
-     * To specific a maximum line length for the encoded data.
-     * <p/>
-     * By default 76 is used.
-     */
     public void setLineLength(String lineLength) {
         this.lineLength = lineLength;
     }
@@ -84,11 +82,6 @@ public class Base64DataFormat extends DataFormatDefinition {
         return lineSeparator;
     }
 
-    /**
-     * The line separators to use.
-     * <p/>
-     * Uses new line characters (CRLF) by default.
-     */
     public void setLineSeparator(String lineSeparator) {
         this.lineSeparator = lineSeparator;
     }
@@ -97,10 +90,6 @@ public class Base64DataFormat extends DataFormatDefinition {
         return urlSafe;
     }
 
-    /**
-     * Instead of emitting '+' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations.
-     * Decoding seamlessly handles both modes. Is by default false.
-     */
     public void setUrlSafe(String urlSafe) {
         this.urlSafe = urlSafe;
     }

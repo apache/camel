@@ -40,11 +40,15 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(description = "Intercept sending to the uri or uri pattern.")
     private String uri;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to skip sending the message to the original endpoint. By default, the message is both intercepted and then sent to the original endpoint.")
     private String skipSendToOriginalEndpoint;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "After sending to the endpoint then send the message to this uri which allows to process its result.")
     private String afterUri;
     @Metadata(description = "To use an expression to only trigger intercepting sending to an endpoint in specific situations")
     @XmlElement
@@ -176,10 +180,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         return skipSendToOriginalEndpoint;
     }
 
-    /**
-     * If set to true then the message is not sent to the original endpoint. By default (false) the message is both
-     * intercepted and then sent to the original endpoint.
-     */
     public void setSkipSendToOriginalEndpoint(String skipSendToOriginalEndpoint) {
         this.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint;
     }
@@ -188,9 +188,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         return uri;
     }
 
-    /**
-     * Intercept sending to the uri or uri pattern.
-     */
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -199,9 +196,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         return afterUri;
     }
 
-    /**
-     * After sending to the endpoint then send the message to this uri which allows to process its result.
-     */
     public void setAfterUri(String afterProcessor) {
         this.afterUri = afterProcessor;
     }

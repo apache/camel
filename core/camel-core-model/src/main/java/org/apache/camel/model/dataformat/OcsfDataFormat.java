@@ -40,24 +40,31 @@ public class OcsfDataFormat extends DataFormatDefinition {
     private Class<?> unmarshalType;
 
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.")
     private String objectMapper;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to lookup and use default Jackson ObjectMapper from the registry.")
     private String useDefaultObjectMapper;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEvent.")
     private String unmarshalTypeName;
     @XmlAttribute(name = "collectionType")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default.")
     private String collectionTypeName;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to unmarshal to a List of OCSF events.")
     private String useList;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to allow the unmarshal type to be specified via the CamelOcsfUnmarshalType header.")
     private String allowUnmarshallType;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether to enable pretty printing output nicely formatted.")
     private String prettyPrint;
 
     public OcsfDataFormat() {
@@ -107,9 +114,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         return objectMapper;
     }
 
-    /**
-     * Lookup and use the existing ObjectMapper with the given id when using Jackson.
-     */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
     }
@@ -118,9 +122,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         return useDefaultObjectMapper;
     }
 
-    /**
-     * Whether to lookup and use default Jackson ObjectMapper from the registry.
-     */
     public void setUseDefaultObjectMapper(String useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
@@ -129,9 +130,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         return unmarshalTypeName;
     }
 
-    /**
-     * Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEvent.
-     */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
     }
@@ -140,9 +138,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         return unmarshalType;
     }
 
-    /**
-     * Class of the OCSF event type to use when unmarshalling.
-     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
@@ -151,11 +146,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         return prettyPrint;
     }
 
-    /**
-     * To enable pretty printing output nicely formatted.
-     * <p/>
-     * Is by default false.
-     */
     public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
@@ -164,10 +154,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         return collectionTypeName;
     }
 
-    /**
-     * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
-     * allows to use different collection types than java.util.Collection based as default.
-     */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
     }
@@ -184,9 +170,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         return useList;
     }
 
-    /**
-     * To unmarshal to a List of OCSF events.
-     */
     public void setUseList(String useList) {
         this.useList = useList;
     }
@@ -195,11 +178,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         return allowUnmarshallType;
     }
 
-    /**
-     * If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header.
-     * <p/>
-     * This should only be enabled when desired to be used.
-     */
     public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }

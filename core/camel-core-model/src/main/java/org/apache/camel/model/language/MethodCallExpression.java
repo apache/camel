@@ -39,16 +39,21 @@ public class MethodCallExpression extends TypedExpressionDefinition {
     private Object instance;
 
     @XmlAttribute
+    @Metadata(description = "Reference to an existing bean (bean id) to lookup in the registry.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "Name of method to call.")
     private String method;
     @XmlAttribute(name = "beanType")
+    @Metadata(description = "Class name (fully qualified) of the bean to use. Will lookup in registry and if there is a single instance of the same type, then the existing bean is used, otherwise a new bean is created (requires a default no-arg constructor).")
     private String beanTypeName;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype",
+              description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.")
     private String scope;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to validate the bean has the configured method.")
     private String validate;
 
     public MethodCallExpression() {
@@ -127,9 +132,6 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         return ref;
     }
 
-    /**
-     * Reference to an existing bean (bean id) to lookup in the registry
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -138,9 +140,6 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         return method;
     }
 
-    /**
-     * Name of method to call
-     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -158,12 +157,6 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         return beanTypeName;
     }
 
-    /**
-     * Class name (fully qualified) of the bean to use
-     *
-     * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
-     * otherwise a new bean is created (requires a default no-arg constructor).
-     */
     public void setBeanTypeName(String beanTypeName) {
         this.beanTypeName = beanTypeName;
     }
@@ -172,19 +165,6 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         return scope;
     }
 
-    /**
-     * Scope of bean.
-     *
-     * When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of
-     * the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time.
-     * When using request scope the bean is created or looked up once per request (exchange). This can be used if you
-     * want to store state on a bean while processing a request and you want to call the same bean instance multiple
-     * times while processing the request. The bean does not have to be thread-safe as the instance is only called from
-     * the same request. When using prototype scope, then the bean will be looked up or created per call. However in
-     * case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on
-     * their configuration can act as either singleton or prototype scope. So when using prototype scope then this
-     * depends on the bean registry implementation.
-     */
     public void setScope(String scope) {
         this.scope = scope;
     }
@@ -193,9 +173,6 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         return validate;
     }
 
-    /**
-     * Whether to validate the bean has the configured method.
-     */
     public void setValidate(String validate) {
         this.validate = validate;
     }

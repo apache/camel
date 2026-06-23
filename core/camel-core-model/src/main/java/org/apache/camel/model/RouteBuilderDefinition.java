@@ -37,6 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 public class RouteBuilderDefinition extends IdentifiedType {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Reference to the RouteBuilder instance.")
     private String ref;
 
     public RouteBuilderDefinition() {
@@ -55,9 +56,6 @@ public class RouteBuilderDefinition extends IdentifiedType {
         return ref;
     }
 
-    /**
-     * Reference to the route builder instance
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class SmooksDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "Path to the Smooks configuration file.")
     private String smooksConfig;
 
     public SmooksDataFormat() {
@@ -57,9 +57,6 @@ public class SmooksDataFormat extends DataFormatDefinition {
         return new SmooksDataFormat(this);
     }
 
-    /**
-     * Path to the Smooks configuration file.
-     */
     public void setSmooksConfig(String smooksConfig) {
         this.smooksConfig = smooksConfig;
     }

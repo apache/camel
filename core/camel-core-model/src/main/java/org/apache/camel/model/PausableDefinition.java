@@ -42,10 +42,12 @@ public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
     private Predicate<?> untilCheckBean;
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.resume.ConsumerListener")
+    @Metadata(required = true, javaType = "org.apache.camel.resume.ConsumerListener",
+              description = "The consumer listener to use for pausing and resuming the consumer.")
     private String consumerListener;
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "java.util.function.Predicate")
+    @Metadata(required = true, javaType = "java.util.function.Predicate",
+              description = "Predicate to evaluate whether the processing can resume. Returns true if consumption can resume, or false otherwise.")
     private String untilCheck;
 
     public PausableDefinition() {

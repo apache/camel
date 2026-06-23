@@ -41,17 +41,23 @@ public class ResponseMessageDefinition {
     private VerbDefinition verb;
 
     @XmlAttribute
-    @Metadata(defaultValue = "200")
+    @Metadata(description = "The response code such as a HTTP status code.",
+              defaultValue = "200")
     private String code;
     @XmlAttribute
+    @Metadata(description = "The response content type such as application/json.")
     private String contentType;
     @XmlAttribute(required = true)
+    @Metadata(description = "The response message (description).", required = true)
     private String message;
     @XmlAttribute
+    @Metadata(description = "The response model (class name).")
     private String responseModel;
     @XmlElement(name = "header")
+    @Metadata(description = "The response headers.")
     private List<ResponseHeaderDefinition> headers;
     @XmlElement(name = "examples")
+    @Metadata(description = "Examples of response messages.")
     private List<RestPropertyDefinition> examples;
 
     public ResponseMessageDefinition(VerbDefinition verb) {
@@ -108,9 +114,6 @@ public class ResponseMessageDefinition {
         return examples;
     }
 
-    /**
-     * Examples of response messages
-     */
     public void setExamples(List<RestPropertyDefinition> examples) {
         this.examples = examples;
     }

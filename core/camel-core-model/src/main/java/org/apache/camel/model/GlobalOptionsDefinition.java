@@ -37,14 +37,12 @@ import org.apache.camel.spi.Metadata;
 public class GlobalOptionsDefinition {
 
     @XmlElement(name = "globalOption")
+    @Metadata(description = "A series of global options as key value pairs.")
     private List<GlobalOptionDefinition> globalOptions;
 
     public GlobalOptionsDefinition() {
     }
 
-    /**
-     * A series of global options as key value pairs
-     */
     public void setGlobalOptions(List<GlobalOptionDefinition> globalOptions) {
         this.globalOptions = globalOptions;
     }

@@ -45,19 +45,26 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
     @XmlTransient
     private Resource resource;
     @XmlElement
+    @Metadata(description = "Error handler to use for routes that have not already been configured with an error handler.")
     private ErrorHandlerDefinition errorHandler;
     @XmlElement(name = "intercept")
+    @Metadata(description = "Interceptors that intercept every processing step.")
     private List<InterceptDefinition> intercepts = new ArrayList<>();
     @XmlElement(name = "interceptFrom")
+    @Metadata(description = "Interceptors that intercept incoming messages on route inputs.")
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<>();
     @XmlElement(name = "interceptSendToEndpoint")
+    @Metadata(description = "Interceptors that intercept messages being sent to an endpoint.")
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<>();
     @XmlElement(name = "onException")
+    @Metadata(description = "Exception clauses for catching and handling certain exceptions.")
     private List<OnExceptionDefinition> onExceptions = new ArrayList<>();
     @XmlElement(name = "onCompletion")
+    @Metadata(description = "On completion callbacks for custom routing when the exchange is complete.")
     private List<OnCompletionDefinition> onCompletions = new ArrayList<>();
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Predicate in simple language to evaluate whether this route configuration should be included or not.")
     private String precondition;
 
     public RouteConfigurationDefinition() {
@@ -136,19 +143,11 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
         this.interceptSendTos = interceptSendTos;
     }
 
-    /**
-     * The predicate of the precondition in simple language to evaluate in order to determine if this route
-     * configuration should be included or not.
-     */
     @Override
     public String getPrecondition() {
         return precondition;
     }
 
-    /**
-     * The predicate of the precondition in simple language to evaluate in order to determine if this route
-     * configuration should be included or not.
-     */
     @Override
     public void setPrecondition(String precondition) {
         this.precondition = precondition;

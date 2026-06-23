@@ -22,7 +22,6 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Validator;
 
 /**
  * To use a custom validator on the route level.
@@ -33,8 +32,10 @@ import org.apache.camel.spi.Validator;
 public class CustomValidatorDefinition extends ValidatorDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Reference to a custom Validator bean in the registry.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "Fully qualified class name of the custom Validator implementation.")
     private String className;
 
     public CustomValidatorDefinition() {
@@ -55,9 +56,6 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
         return ref;
     }
 
-    /**
-     * Set a bean reference of the {@link Validator}
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -66,9 +64,6 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
         return className;
     }
 
-    /**
-     * Set a class name of the {@link Validator}
-     */
     public void setClassName(String className) {
         this.className = className;
     }

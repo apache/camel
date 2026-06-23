@@ -52,9 +52,11 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     @XmlElements({
             @XmlElement(name = "batchConfig", type = BatchResequencerConfig.class),
             @XmlElement(name = "streamConfig", type = StreamResequencerConfig.class) })
+    @Metadata(description = "Resequencer configuration using either batch or stream mode. Defaults to batch mode.")
     private ResequencerConfig resequencerConfig;
     @XmlElementRef
-    @Metadata(required = true)
+    @Metadata(required = true,
+              description = "Expression to use for re-ordering the messages, such as a header with a sequence number.")
     private ExpressionDefinition expression;
 
     public ResequenceDefinition() {
@@ -324,10 +326,6 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         return resequencerConfig;
     }
 
-    /**
-     * To configure the resequencer in using either batch or stream configuration. Will by default use batch
-     * configuration.
-     */
     public void setResequencerConfig(ResequencerConfig resequencerConfig) {
         this.resequencerConfig = resequencerConfig;
     }
@@ -360,16 +358,10 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         return expression;
     }
 
-    /**
-     * Expression to use for re-ordering the messages, such as a header with a sequence number
-     */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }
 
-    /**
-     * Expression to use for re-ordering the messages, such as a header with a sequence number
-     */
     public void setExpression(Expression expression) {
         setExpression(new ExpressionDefinition(expression));
     }
@@ -379,9 +371,6 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         return getExpression();
     }
 
-    /**
-     * Expression to use for re-ordering the messages, such as a header with a sequence number
-     */
     @Override
     public void setExpressionType(ExpressionDefinition expressionType) {
         setExpression(expressionType);

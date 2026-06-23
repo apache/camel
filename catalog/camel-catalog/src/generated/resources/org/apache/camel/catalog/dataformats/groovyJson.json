@@ -17,6 +17,6 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "prettyPrint": { "index": 1, "kind": "attribute", "displayName": "Pretty Print", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "To pretty printing output nicely formatted. Is by default true." }
+    "prettyPrint": { "index": 1, "kind": "attribute", "displayName": "Pretty Print", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to pretty print output nicely formatted." }
   }
 }

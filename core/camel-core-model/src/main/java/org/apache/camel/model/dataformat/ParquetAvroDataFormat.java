@@ -35,14 +35,17 @@ import org.apache.camel.spi.Metadata;
 public class ParquetAvroDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "GZIP", enums = "UNCOMPRESSED,SNAPPY,GZIP,LZO,BROTLI,LZ4,ZSTD,LZ4_RAW")
+    @Metadata(defaultValue = "GZIP", enums = "UNCOMPRESSED,SNAPPY,GZIP,LZO,BROTLI,LZ4,ZSTD,LZ4_RAW",
+              description = "Compression codec to use when marshalling.")
     private String compressionCodecName;
     @XmlTransient
     private Class<?> unmarshalType;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class to use when (un)marshalling. If omitted, parquet files are converted into Avro GenericRecords for unmarshalling and input objects are assumed as GenericRecords for marshalling.")
     private String unmarshalTypeName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the unmarshalling should produce an iterator of records or read all the records at once.")
     private String lazyLoad;
 
     public ParquetAvroDataFormat() {
@@ -85,9 +88,6 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
         return new ParquetAvroDataFormat(this);
     }
 
-    /**
-     * Compression codec to use when marshalling.
-     */
     public void setCompressionCodecName(String compressionCodecName) {
         this.compressionCodecName = compressionCodecName;
     }
@@ -100,17 +100,10 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
         return unmarshalType;
     }
 
-    /**
-     * Class to use when unmarshalling.
-     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
 
-    /**
-     * Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for
-     * unmarshalling and input objects are assumed as GenericRecords for marshalling.
-     */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
     }
@@ -123,9 +116,6 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
         return lazyLoad;
     }
 
-    /**
-     * Whether the unmarshalling should produce an iterator of records or read all the records at once.
-     */
     public void setLazyLoad(String lazyLoad) {
         this.lazyLoad = lazyLoad;
     }

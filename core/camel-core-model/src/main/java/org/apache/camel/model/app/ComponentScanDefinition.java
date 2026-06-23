@@ -41,15 +41,13 @@ import org.apache.camel.support.DefaultRegistry;
 public class ComponentScanDefinition {
 
     @XmlAttribute(name = "base-package")
+    @Metadata(description = "Base package to use for scanning Spring beans.")
     private String basePackage;
 
     public String getBasePackage() {
         return basePackage;
     }
 
-    /**
-     * Base package to use for scanning Spring beans.
-     */
     public void setBasePackage(String basePackage) {
         this.basePackage = basePackage;
     }

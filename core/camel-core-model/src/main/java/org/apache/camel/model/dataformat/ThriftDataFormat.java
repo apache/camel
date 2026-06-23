@@ -38,9 +38,11 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
     private Object defaultInstance;
 
     @XmlAttribute
+    @Metadata(description = "Name of class to use when unmarshalling.")
     private String instanceClass;
     @XmlAttribute
-    @Metadata(enums = "binary,json,sjson", defaultValue = "binary")
+    @Metadata(enums = "binary,json,sjson", defaultValue = "binary",
+              description = "The content type format in which thrift message will be serialized/deserialized. The format can be native binary, json, or simple json.")
     private String contentTypeFormat;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
@@ -88,18 +90,10 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
         return instanceClass;
     }
 
-    /**
-     * Name of class to use when unmarshalling
-     */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }
 
-    /**
-     * Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The
-     * format can either be native or json for either native binary thrift, json or simple json fields representation.
-     * The default value is binary.
-     */
     public void setContentTypeFormat(String contentTypeFormat) {
         this.contentTypeFormat = contentTypeFormat;
     }

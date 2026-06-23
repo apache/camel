@@ -39,7 +39,8 @@ public class SortDefinition<T> extends ExpressionNode {
     @XmlTransient
     private Comparator<? super T> comparatorBean;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.Comparator")
+    @Metadata(label = "advanced", javaType = "java.util.Comparator",
+              description = "Sets a reference to lookup for the comparator to use for sorting.")
     private String comparator;
 
     public SortDefinition() {
@@ -80,9 +81,6 @@ public class SortDefinition<T> extends ExpressionNode {
         return "sort[" + getExpression() + "]";
     }
 
-    /**
-     * Optional expression to sort by something else than the message body
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

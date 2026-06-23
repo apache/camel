@@ -12,9 +12,9 @@
     "output": false
   },
   "properties": {
-    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "language": { "index": 1, "kind": "attribute", "displayName": "Language", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the language to use" },
-    "expression": { "index": 2, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
-    "trim": { "index": 3, "kind": "attribute", "displayName": "Trim", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end." }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
+    "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },
+    "language": { "index": 2, "kind": "attribute", "displayName": "Language", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the language to use." },
+    "trim": { "index": 3, "kind": "attribute", "displayName": "Trim", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the source code to remove leading and trailing whitespaces and line breaks." }
   }
 }

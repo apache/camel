@@ -46,44 +46,71 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     private Processor onPrepareProcessor;
 
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(defaultValue = ",",
+              description = "Delimiter used in splitting messages. Can be turned off using the value false."
+                            + " To force not splitting then the delimiter can be set to single to use the value as a single list."
+                            + " The default value is comma.")
     private String delimiter;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy",
+              description = "Reference to the AggregationStrategy to assemble the replies from the split messages"
+                            + " into a single outgoing message. By default Camel uses the original incoming message.")
     private String aggregationStrategy;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The method name to use when using a POJO as the AggregationStrategy.")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If true then null is used as the oldExchange when there is no data to aggregate,"
+                            + " when using POJOs as the AggregationStrategy.")
     private String aggregationStrategyMethodAllowNull;
     @Deprecated(since = "4.7.0")
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "If enabled then processing each split message occurs concurrently."
+                            + " The caller thread still waits until all messages are fully processed before it continues.")
     private String parallelProcessing;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "When enabled then the same thread is used to continue routing after the split is complete,"
+                            + " even if parallel processing is enabled.")
     private String synchronous;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "When enabled then the splitter splits the original message on-demand,"
+                            + " and each split message is processed one by one. This reduces memory usage"
+                            + " as the splitter does not split all messages first.")
     private String streaming;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If enabled then stops further split processing if an exception or failure occurred"
+                            + " during processing of a split message, and the caused exception will be thrown."
+                            + " The default behavior is to not stop but continue processing till the end.")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0")
+    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0",
+              description = "Total timeout in millis when using parallel processing."
+                            + " If the splitter has not been able to process all replies within the given timeframe,"
+                            + " then the timeout triggers and the splitter breaks out and continues.")
     private String timeout;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService",
+              description = "Reference to a custom thread pool to use for parallel processing."
+                            + " Setting this option implies parallel processing.")
     private String executorService;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor",
+              description = "Reference to a processor for preparing the exchange to be sent."
+                            + " Can be used to deep-clone messages that should be sent.")
     private String onPrepare;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Shares the unit of work with the parent and each of the split messages."
+                            + " By default each split exchange has its own individual unit of work.")
     private String shareUnitOfWork;
 
     public SplitDefinition() {
@@ -587,9 +614,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return executorService;
     }
 
-    /**
-     * Expression of how to split the message body, such as as-is, using a tokenizer, or using a xpath.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
@@ -650,20 +674,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategy;
     }
 
-    /**
-     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the split messages, into a
-     * single outgoing message from the Splitter. By default Camel will use the original incoming message to the
-     * splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    /**
-     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
-     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
-     * unchanged). You can also use a POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategyBean) {
         this.aggregationStrategyBean = aggregationStrategyBean;
     }
@@ -672,9 +686,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategyMethodName;
     }
 
-    /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
-     */
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
@@ -683,11 +694,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategyMethodAllowNull;
     }
 
-    /**
-     * If this option is false then the aggregate method is not used if there was no data to enrich. If this option is
-     * true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the
-     * AggregationStrategy
-     */
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }

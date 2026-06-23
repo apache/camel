@@ -49,6 +49,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     private Policy policy;
 
     @XmlAttribute
+    @Metadata(description = "Reference to lookup a transacted policy in the registry.")
     private String ref;
 
     public TransactedDefinition() {
@@ -149,17 +150,6 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         return type;
     }
 
-    /**
-     * Sets a policy type that this definition should scope within.
-     * <p/>
-     * Is used for convention over configuration situations where the policy should be automatic looked up in the
-     * registry and it should be based on this type. For instance a {@link org.apache.camel.spi.TransactedPolicy} can be
-     * set as type for easy transaction configuration.
-     * <p/>
-     * Will by default scope to the wide {@link Policy}
-     *
-     * @param type the policy type
-     */
     public void setType(Class<? extends Policy> type) {
         this.type = type;
     }

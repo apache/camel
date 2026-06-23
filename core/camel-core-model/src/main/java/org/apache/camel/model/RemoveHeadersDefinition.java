@@ -40,9 +40,12 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(required = true,
+              description = "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive).")
     private String pattern;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Name or pattern of headers to not remove. You can use comma to separate multiple patterns.")
     private String excludePattern;
 
     public RemoveHeadersDefinition() {
@@ -84,11 +87,6 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
         return "removeHeaders[" + getPattern() + "]";
     }
 
-    /**
-     * Name or pattern of headers to remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard
-     * (pattern ends with a * and the name starts with the pattern) 3 = regular expression (all of above is case
-     * in-sensitive).
-     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
@@ -101,11 +99,6 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
         return excludePatterns;
     }
 
-    /**
-     * Name or pattern of headers to not remove. The pattern is matched in the following order: 1 = exact match 2 =
-     * wildcard (pattern ends with a * and the name starts with the pattern) 3 = regular expression (all of above is
-     * case in-sensitive).
-     */
     public void setExcludePatterns(String[] excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
@@ -114,11 +107,6 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
         return excludePattern;
     }
 
-    /**
-     * Name or patter of headers to not remove. The pattern is matched in the following order: 1 = exact match 2 =
-     * wildcard (pattern ends with a * and the name starts with the pattern) 3 = regular expression (all of above is
-     * case in-sensitive).
-     */
     public void setExcludePattern(String excludePattern) {
         this.excludePattern = excludePattern;
     }

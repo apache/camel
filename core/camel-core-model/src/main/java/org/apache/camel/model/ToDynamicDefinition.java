@@ -41,27 +41,35 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     protected EndpointProducerBuilder endpointProducerBuilder;
 
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true,
+              description = "The uri of the endpoint to send to. The uri can be dynamic computed using the simple language.")
     @DslArg
     private String uri;
     @XmlAttribute
+    @Metadata(description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableSend;
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut",
+              description = "Sets the optional ExchangePattern used to invoke this endpoint.")
     private String pattern;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer",
+              description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.")
     private String cacheSize;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to ignore invalid endpoint URIs and skip sending the message.")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to allow components to optimise toD if they are SendDynamicAware.")
     private String allowOptimisedComponents;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether to auto startup components when toD is starting up.")
     private String autoStartComponents;
 
     public ToDynamicDefinition() {
@@ -260,10 +268,6 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         return uri;
     }
 
-    /**
-     * The uri of the endpoint to send to. The uri can be dynamic computed using the
-     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
-     */
     public void setUri(String uri) {
         this.uri = uri;
     }

@@ -32,8 +32,10 @@ import org.apache.camel.spi.Metadata;
 public class EndpointTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
+    @Metadata(description = "Reference of the Endpoint used for transformation.")
     private String ref;
     @XmlAttribute
+    @Metadata(description = "URI of the Endpoint used for transformation.")
     private String uri;
 
     public EndpointTransformerDefinition() {
@@ -54,9 +56,6 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
         return ref;
     }
 
-    /**
-     * Set the reference of the Endpoint.
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -65,9 +64,6 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
         return uri;
     }
 
-    /**
-     * Set the URI of the Endpoint.
-     */
     public void setUri(String uri) {
         this.uri = uri;
     }

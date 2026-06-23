@@ -36,16 +36,20 @@ public class BarcodeDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(enums = "AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION",
-              defaultValue = "QR_CODE")
+              defaultValue = "QR_CODE",
+              description = "Barcode format such as QR-Code.")
     private String barcodeFormat;
     @XmlAttribute
-    @Metadata(enums = "JPG,GIF,PNG", defaultValue = "PNG")
+    @Metadata(enums = "JPG,GIF,PNG", defaultValue = "PNG",
+              description = "Image type of the barcode such as png.")
     private String imageType;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "100")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "100",
+              description = "Width of the barcode.")
     private String width;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "100")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "100",
+              description = "Height of the barcode.")
     private String height;
 
     public BarcodeDataFormat() {
@@ -77,9 +81,6 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return width;
     }
 
-    /**
-     * Width of the barcode
-     */
     public void setWidth(String width) {
         this.width = width;
     }
@@ -88,9 +89,6 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return height;
     }
 
-    /**
-     * Height of the barcode
-     */
     public void setHeight(String height) {
         this.height = height;
     }
@@ -99,9 +97,6 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return imageType;
     }
 
-    /**
-     * Image type of the barcode such as png
-     */
     public void setImageType(String imageType) {
         this.imageType = imageType;
     }
@@ -110,9 +105,6 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         return barcodeFormat;
     }
 
-    /**
-     * Barcode format such as QR-Code
-     */
     public void setBarcodeFormat(String barcodeFormat) {
         this.barcodeFormat = barcodeFormat;
     }

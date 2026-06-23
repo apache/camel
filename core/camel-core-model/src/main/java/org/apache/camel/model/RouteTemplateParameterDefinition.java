@@ -58,9 +58,6 @@ public class RouteTemplateParameterDefinition {
         return name;
     }
 
-    /**
-     * The name of the parameter
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -69,10 +66,6 @@ public class RouteTemplateParameterDefinition {
         return required;
     }
 
-    /**
-     * Whether the parameter is required or not. A parameter is required unless this option is set to false or a default
-     * value has been configured.
-     */
     public void setRequired(Boolean required) {
         this.required = required;
     }
@@ -81,9 +74,6 @@ public class RouteTemplateParameterDefinition {
         return defaultValue;
     }
 
-    /**
-     * Default value of the parameter. If a default value is provided then the parameter is implied not to be required.
-     */
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
@@ -92,9 +82,6 @@ public class RouteTemplateParameterDefinition {
         return description;
     }
 
-    /**
-     * Description of the parameter
-     */
     public void setDescription(String description) {
         this.description = description;
     }

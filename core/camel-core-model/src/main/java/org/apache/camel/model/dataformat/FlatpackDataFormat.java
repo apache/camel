@@ -36,27 +36,33 @@ import org.apache.camel.spi.Metadata;
 public class FlatpackDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
+    @Metadata(description = "The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.")
     private String definition;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Delimited or fixed. Is by default false = delimited.")
     private String fixed;
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(defaultValue = ",", description = "The delimiter char (could be ; , or similar).")
     private String delimiter;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Whether the first line is ignored for delimited files (for the column headers). Is by default true.")
     private String ignoreFirstRecord;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Allows for lines to be shorter than expected and ignores the extra characters.")
     private String allowShortLines;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Allows for lines to be longer than expected and ignores the extra characters.")
     private String ignoreExtraColumns;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "If the text is qualified with a character. Uses quote character by default.")
     private String textQualifier;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "net.sf.flatpack.ParserFactory")
+    @Metadata(label = "advanced", javaType = "net.sf.flatpack.ParserFactory",
+              description = "References to a custom parser factory to lookup in the registry.")
     private String parserFactory;
 
     public FlatpackDataFormat() {
@@ -96,9 +102,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return definition;
     }
 
-    /**
-     * The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.
-     */
     public void setDefinition(String definition) {
         this.definition = definition;
     }
@@ -107,9 +110,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return fixed;
     }
 
-    /**
-     * Delimited or fixed. Is by default false = delimited
-     */
     public void setFixed(String fixed) {
         this.fixed = fixed;
     }
@@ -118,11 +118,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return ignoreFirstRecord;
     }
 
-    /**
-     * Whether the first line is ignored for delimited files (for the column headers).
-     * <p/>
-     * Is by default true.
-     */
     public void setIgnoreFirstRecord(String ignoreFirstRecord) {
         this.ignoreFirstRecord = ignoreFirstRecord;
     }
@@ -131,11 +126,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return textQualifier;
     }
 
-    /**
-     * If the text is qualified with a character.
-     * <p/>
-     * Uses quote character by default.
-     */
     public void setTextQualifier(String textQualifier) {
         this.textQualifier = textQualifier;
     }
@@ -144,9 +134,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return delimiter;
     }
 
-    /**
-     * The delimiter char (could be ; , or similar)
-     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
@@ -155,9 +142,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return allowShortLines;
     }
 
-    /**
-     * Allows for lines to be shorter than expected and ignores the extra characters
-     */
     public void setAllowShortLines(String allowShortLines) {
         this.allowShortLines = allowShortLines;
     }
@@ -166,9 +150,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return ignoreExtraColumns;
     }
 
-    /**
-     * Allows for lines to be longer than expected and ignores the extra characters.
-     */
     public void setIgnoreExtraColumns(String ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;
     }
@@ -177,9 +158,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return parserFactory;
     }
 
-    /**
-     * References to a custom parser factory to lookup in the registry
-     */
     public void setParserFactory(String parserFactory) {
         this.parserFactory = parserFactory;
     }

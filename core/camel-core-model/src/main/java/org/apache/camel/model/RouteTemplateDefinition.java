@@ -61,6 +61,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
     @Metadata(description = "Adds a local bean the route template uses")
     private List<BeanFactoryDefinition<RouteTemplateDefinition>> templateBeans;
     @XmlElement(name = "route", required = true)
+    @Metadata(description = "The route definition that this template uses to create routes.")
     private RouteDefinition route = new RouteDefinition();
     @XmlTransient
     private Resource resource;

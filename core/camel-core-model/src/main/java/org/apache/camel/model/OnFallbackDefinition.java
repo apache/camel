@@ -43,9 +43,11 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
     @XmlTransient
     private ProcessorDefinition<?> parent;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether the fallback goes over the network. If so, the fallback is executed on a separate thread-pool to avoid exhausting the main thread-pool.")
     private String fallbackViaNetwork;
     @XmlElementRef
+    @Metadata(description = "The processing steps to execute as fallback.")
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public OnFallbackDefinition() {
@@ -105,13 +107,6 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
         return fallbackViaNetwork;
     }
 
-    /**
-     * Whether the fallback goes over the network.
-     * <p/>
-     * If the fallback will go over the network it is another possible point of failure. It is important to execute the
-     * fallback command on a separate thread-pool, otherwise if the main command were to become latent and fill the
-     * thread-pool this would prevent the fallback from running if the two commands share the same pool.
-     */
     public void setFallbackViaNetwork(String fallbackViaNetwork) {
         this.fallbackViaNetwork = fallbackViaNetwork;
     }

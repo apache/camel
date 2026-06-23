@@ -53,45 +53,60 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The name of the bean (bean id).")
     private String name;
     @XmlAttribute(required = true)
+    @Metadata(description = "The class name (fully qualified) of the bean.")
     private String type;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "The name of the custom initialization method to invoke after setting bean properties. The method must have no arguments, but may throw any exception.")
     private String initMethod;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method must have no arguments, but may throw any exception.")
     private String destroyMethod;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "Name of method to invoke when creating the bean via a factory bean.")
     private String factoryMethod;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "Name of factory bean (bean id) to use for creating the bean.")
     private String factoryBean;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              description = "Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use the properties values to configure the bean.")
     private String builderClass;
     @XmlAttribute
-    @Metadata(defaultValue = "build")
+    @Metadata(defaultValue = "build",
+              description = "Name of method when using builder class. This method is invoked after configuring to create the actual bean. This method is often named build (used by default).")
     private String builderMethod;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.")
     private String scriptLanguage;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", label = "advanced", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", label = "advanced", defaultValue = "true",
+              description = "Whether the script should support using Camel property placeholder syntax {{ }}.")
     private String scriptPropertyPlaceholders;
     @XmlElement(name = "constructors")
     @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
+    @Metadata(description = "Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor argument list, starting from zero.")
     private Map<Integer, Object> constructors;
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
+    @Metadata(description = "Optional properties to set on the created bean.")
     private Map<String, Object> properties;
     @XmlElement(name = "script")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The script to execute that creates the bean when using scripting languages.")
     private String script;
 
     public void setParent(P parent) {
         this.parent = parent;
     }
 
-    /**
-     * To set the type (fully qualified class name) to use for creating the bean.
-     */
     public void setBeanType(Class<?> beanType) {
         this.beanClass = beanType;
     }
@@ -104,9 +119,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return beanSupplier;
     }
 
-    /**
-     * Bean supplier that uses lambda style to create the local bean
-     */
     public void setBeanSupplier(RouteTemplateContext.BeanSupplier<Object> beanSupplier) {
         this.beanSupplier = beanSupplier;
     }
@@ -115,9 +127,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return name;
     }
 
-    /**
-     * The name of the bean (bean id)
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -126,9 +135,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return type;
     }
 
-    /**
-     * The class name (fully qualified) of the bean
-     */
     public void setType(String type) {
         this.type = type;
     }
@@ -137,10 +143,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return initMethod;
     }
 
-    /**
-     * The name of the custom initialization method to invoke after setting bean properties. The method must have no
-     * arguments, but may throw any exception.
-     */
     public void setInitMethod(String initMethod) {
         this.initMethod = initMethod;
     }
@@ -149,10 +151,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return destroyMethod;
     }
 
-    /**
-     * The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method
-     * must have no arguments, but may throw any exception.
-     */
     public void setDestroyMethod(String destroyMethod) {
         this.destroyMethod = destroyMethod;
     }
@@ -161,9 +159,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return factoryMethod;
     }
 
-    /**
-     * Name of method to invoke when creating the bean via a factory bean.
-     */
     public void setFactoryMethod(String factoryMethod) {
         this.factoryMethod = factoryMethod;
     }
@@ -172,9 +167,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return factoryBean;
     }
 
-    /**
-     * Name of factory bean (bean id) to use for creating the bean.
-     */
     public void setFactoryBean(String factoryBean) {
         this.factoryBean = factoryBean;
     }
@@ -183,10 +175,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return builderClass;
     }
 
-    /**
-     * Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use
-     * the properties values to configure the bean.
-     */
     public void setBuilderClass(String builderClass) {
         this.builderClass = builderClass;
     }
@@ -195,10 +183,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return builderMethod;
     }
 
-    /**
-     * Name of method when using builder class. This method is invoked after configuring to create the actual bean. This
-     * method is often named build (used by default).
-     */
     public void setBuilderMethod(String builderMethod) {
         this.builderMethod = builderMethod;
     }
@@ -207,10 +191,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return constructors;
     }
 
-    /**
-     * Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor
-     * argument list, starting from zero.
-     */
     public void setConstructors(Map<Integer, Object> constructors) {
         this.constructors = constructors;
     }
@@ -219,9 +199,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return properties;
     }
 
-    /**
-     * Optional properties to set on the created bean.
-     */
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
@@ -230,9 +207,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return scriptLanguage;
     }
 
-    /**
-     * The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.
-     */
     public void setScriptLanguage(String scriptLanguage) {
         this.scriptLanguage = scriptLanguage;
     }
@@ -241,19 +215,10 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
         return scriptPropertyPlaceholders;
     }
 
-    /**
-     * Whether the script should support using Camel property placeholder syntax {{ }}.
-     */
     public void setScriptPropertyPlaceholders(String scriptPropertyPlaceholders) {
         this.scriptPropertyPlaceholders = scriptPropertyPlaceholders;
     }
 
-    /**
-     * The script to execute that creates the bean when using scripting languages.
-     *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
-     */
     public void setScript(String script) {
         this.script = script;
     }

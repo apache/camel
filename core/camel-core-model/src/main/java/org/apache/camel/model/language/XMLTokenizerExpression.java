@@ -34,10 +34,11 @@ import org.apache.camel.spi.Metadata;
 public class XMLTokenizerExpression extends NamespaceAwareExpression {
 
     @XmlAttribute
-    @Metadata(defaultValue = "i", enums = "i,w,u,t")
+    @Metadata(defaultValue = "i", enums = "i,w,u,t",
+              description = "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default), w - wrapping the extracted token in its ancestor context, u - unwrapping the extracted token to its child content, t - extracting the text content of the specified element.")
     private String mode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer", description = "To group N parts together.")
     private String group;
 
     public XMLTokenizerExpression() {
@@ -77,15 +78,6 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         return mode;
     }
 
-    /**
-     * The extraction mode. The available extraction modes are:
-     * <ul>
-     * <li>i - injecting the contextual namespace bindings into the extracted token (default)</li>
-     * <li>w - wrapping the extracted token in its ancestor context</li>
-     * <li>u - unwrapping the extracted token to its child content</li>
-     * <li>t - extracting the text content of the specified element</li>
-     * </ul>
-     */
     public void setMode(String mode) {
         this.mode = mode;
     }
@@ -94,9 +86,6 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         return group;
     }
 
-    /**
-     * To group N parts together
-     */
     public void setGroup(String group) {
         this.group = group;
     }

@@ -42,7 +42,8 @@ public class ValidateDefinition extends ExpressionNode {
     private PredicateExceptionFactory factory;
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.spi.PredicateExceptionFactory")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.spi.PredicateExceptionFactory",
+              description = "Reference to a custom PredicateExceptionFactory for creating the exception when validation fails.")
     private String predicateExceptionFactory;
 
     public ValidateDefinition() {
@@ -86,10 +87,6 @@ public class ValidateDefinition extends ExpressionNode {
         return "validate[" + getExpression() + "]";
     }
 
-    /**
-     * Expression to use for validation as a predicate. The expression should return either <tt>true</tt> or
-     * <tt>false</tt>. If returning <tt>false</tt> the message is invalid and an exception is thrown.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
@@ -104,12 +101,6 @@ public class ValidateDefinition extends ExpressionNode {
         return predicateExceptionFactory;
     }
 
-    /**
-     * The bean id of custom PredicateExceptionFactory to use for creating the exception when the validation fails.
-     *
-     * By default, Camel will throw PredicateValidationException. By using a custom factory you can control which
-     * exception to throw instead.
-     */
     public void setPredicateExceptionFactory(String predicateExceptionFactory) {
         this.predicateExceptionFactory = predicateExceptionFactory;
     }

@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class PredicateValidatorDefinition extends ValidatorDefinition {
 
     @XmlElementRef
+    @Metadata(description = "The predicate expression to use for validation.")
     private ExpressionDefinition expression;
 
     public PredicateValidatorDefinition() {
@@ -54,9 +55,6 @@ public class PredicateValidatorDefinition extends ValidatorDefinition {
         return expression;
     }
 
-    /**
-     * The predicate to use for validation.
-     */
     public void setExpression(ExpressionDefinition expression) {
         // favour using the helper to set the expression as it can unwrap some
         // unwanted builders when using Java DSL

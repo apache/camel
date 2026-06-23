@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 public class LanguageExpression extends ExpressionDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "The name of the language to use.")
     private String language;
 
     public LanguageExpression() {
@@ -63,9 +64,6 @@ public class LanguageExpression extends ExpressionDefinition {
         return language;
     }
 
-    /**
-     * The name of the language to use
-     */
     public void setLanguage(String language) {
         this.language = language;
     }

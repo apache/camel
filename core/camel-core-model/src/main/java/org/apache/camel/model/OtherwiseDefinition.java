@@ -45,6 +45,7 @@ public class OtherwiseDefinition extends OptionalIdentifiedDefinition<OtherwiseD
               description = "Disables this EIP from the route.")
     private String disabled;
     @XmlElementRef
+    @Metadata(description = "The processing steps to execute when all other choices evaluate to false.")
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public OtherwiseDefinition() {

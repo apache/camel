@@ -20,6 +20,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Expression for which a result type can be provided.
@@ -27,6 +28,7 @@ import org.apache.camel.Expression;
 public abstract class TypedExpressionDefinition extends ExpressionDefinition {
 
     @XmlAttribute(name = "resultType")
+    @Metadata(description = "The class of the result type (type from output).")
     private String resultTypeName;
     @XmlTransient
     private Class<?> resultType;
@@ -58,9 +60,6 @@ public abstract class TypedExpressionDefinition extends ExpressionDefinition {
         return resultTypeName;
     }
 
-    /**
-     * Sets the class of the result type (type from output)
-     */
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;
     }
@@ -69,9 +68,6 @@ public abstract class TypedExpressionDefinition extends ExpressionDefinition {
         return resultType;
     }
 
-    /**
-     * Sets the class name of the result type (type from output)
-     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }

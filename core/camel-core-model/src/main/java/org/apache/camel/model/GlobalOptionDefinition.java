@@ -32,16 +32,15 @@ import org.apache.camel.spi.Metadata;
 public class GlobalOptionDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Global option key")
     private String key;
     @XmlAttribute(required = true)
+    @Metadata(description = "Global option value")
     private String value;
 
     public GlobalOptionDefinition() {
     }
 
-    /**
-     * Global option key
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -50,9 +49,6 @@ public class GlobalOptionDefinition {
         return key;
     }
 
-    /**
-     * Global option value
-     */
     public void setValue(String value) {
         this.value = value;
     }

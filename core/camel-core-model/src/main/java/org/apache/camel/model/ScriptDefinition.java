@@ -63,9 +63,6 @@ public class ScriptDefinition extends ExpressionNode {
         return "script[" + getExpression() + "]";
     }
 
-    /**
-     * Script to be executed.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

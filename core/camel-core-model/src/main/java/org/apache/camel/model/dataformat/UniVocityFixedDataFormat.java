@@ -33,12 +33,15 @@ import org.apache.camel.spi.Metadata;
 public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
 
     @XmlAttribute
+    @Metadata(description = "The padding character. The default value is a space.")
     private String padding;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether to skip trailing characters until a new line is found.")
     private String skipTrailingCharsUntilNewline;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Whether the record ends on a new line.")
     private String recordEndsOnNewline;
 
     public UniVocityFixedDataFormat() {
@@ -68,11 +71,6 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
         return skipTrailingCharsUntilNewline;
     }
 
-    /**
-     * Whether or not the trailing characters until new line must be ignored.
-     * <p/>
-     * The default value is false
-     */
     public void setSkipTrailingCharsUntilNewline(String skipTrailingCharsUntilNewline) {
         this.skipTrailingCharsUntilNewline = skipTrailingCharsUntilNewline;
     }
@@ -81,11 +79,6 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
         return recordEndsOnNewline;
     }
 
-    /**
-     * Whether or not the record ends on new line.
-     * <p/>
-     * The default value is false
-     */
     public void setRecordEndsOnNewline(String recordEndsOnNewline) {
         this.recordEndsOnNewline = recordEndsOnNewline;
     }
@@ -94,11 +87,6 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
         return padding;
     }
 
-    /**
-     * The padding character.
-     * <p/>
-     * The default value is a space
-     */
     public void setPadding(String padding) {
         this.padding = padding;
     }

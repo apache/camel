@@ -34,6 +34,7 @@ public class RemoveVariableDefinition extends NoOutputDefinition<RemoveVariableD
 
     @XmlAttribute(required = true)
     @DslArg
+    @Metadata(description = "Name of the variable to remove.")
     private String name;
 
     public RemoveVariableDefinition() {
@@ -72,9 +73,6 @@ public class RemoveVariableDefinition extends NoOutputDefinition<RemoveVariableD
         return name;
     }
 
-    /**
-     * Name of variable to remove.
-     */
     public void setName(String name) {
         this.name = name;
     }

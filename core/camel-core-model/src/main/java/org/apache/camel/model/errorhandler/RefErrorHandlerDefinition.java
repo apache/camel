@@ -35,7 +35,8 @@ public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "org.apache.camel.ErrorHandlerFactory")
+    @Metadata(javaType = "org.apache.camel.ErrorHandlerFactory",
+              description = "Reference to an existing or custom error handler to lookup from the registry.")
     private String ref;
 
     public RefErrorHandlerDefinition() {
@@ -69,9 +70,6 @@ public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return ref;
     }
 
-    /**
-     * References to an existing or custom error handler.
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

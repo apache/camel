@@ -35,26 +35,33 @@ import org.apache.camel.spi.Metadata;
 public class PQCDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "MLKEM", enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER")
+    @Metadata(defaultValue = "MLKEM", enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER",
+              description = "The Post-Quantum KEM algorithm to use for key encapsulation.")
     private String keyEncapsulationAlgorithm;
     @XmlAttribute
     @Metadata(defaultValue = "AES",
-              enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
+              enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE",
+              description = "The symmetric encryption algorithm to use with the shared secret.")
     private String symmetricKeyAlgorithm;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "128")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "128",
+              description = "The length (in bits) of the symmetric key.")
     private String symmetricKeyLength;
     @XmlAttribute
-    @Metadata(javaType = "java.security.KeyPair")
+    @Metadata(javaType = "java.security.KeyPair",
+              description = "Refers to the KeyPair to lookup from the registry to use for KEM operations.")
     private String keyPair;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "4096")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "4096",
+              description = "The size of the buffer used for streaming encryption/decryption.")
     private String bufferSize;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The JCE security provider to use.")
     private String provider;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "javax.crypto.KeyGenerator")
+    @Metadata(label = "advanced", javaType = "javax.crypto.KeyGenerator",
+              description = "Refers to a custom KeyGenerator to lookup from the registry for KEM operations.")
     private String keyGenerator;
 
     public PQCDataFormat() {
@@ -92,10 +99,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyEncapsulationAlgorithm;
     }
 
-    /**
-     * The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER,
-     * FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER
-     */
     public void setKeyEncapsulationAlgorithm(String keyEncapsulationAlgorithm) {
         this.keyEncapsulationAlgorithm = keyEncapsulationAlgorithm;
     }
@@ -104,10 +107,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return symmetricKeyAlgorithm;
     }
 
-    /**
-     * The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5,
-     * CAMELLIA, CAST5, CAST6, CHACHA7539, etc.
-     */
     public void setSymmetricKeyAlgorithm(String symmetricKeyAlgorithm) {
         this.symmetricKeyAlgorithm = symmetricKeyAlgorithm;
     }
@@ -116,9 +115,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return symmetricKeyLength;
     }
 
-    /**
-     * The length (in bits) of the symmetric key.
-     */
     public void setSymmetricKeyLength(String symmetricKeyLength) {
         this.symmetricKeyLength = symmetricKeyLength;
     }
@@ -127,9 +123,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyPair;
     }
 
-    /**
-     * Refers to the KeyPair to lookup from the register to use for KEM operations.
-     */
     public void setKeyPair(String keyPair) {
         this.keyPair = keyPair;
     }
@@ -138,9 +131,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return bufferSize;
     }
 
-    /**
-     * The size of the buffer used for streaming encryption/decryption.
-     */
     public void setBufferSize(String bufferSize) {
         this.bufferSize = bufferSize;
     }
@@ -149,9 +139,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return provider;
     }
 
-    /**
-     * The JCE security provider to use.
-     */
     public void setProvider(String provider) {
         this.provider = provider;
     }
@@ -160,9 +147,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyGenerator;
     }
 
-    /**
-     * Refers to a custom KeyGenerator to lookup from the register for KEM operations.
-     */
     public void setKeyGenerator(String keyGenerator) {
         this.keyGenerator = keyGenerator;
     }

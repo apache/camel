@@ -46,8 +46,10 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
 
     @XmlElement(name = "exception")
     @DslArg(renderType = "classList")
+    @Metadata(description = "The exception class names (fully qualified) to catch.")
     private List<String> exceptions = new ArrayList<>();
-    @Metadata(description = "Used for triggering doCatch in specific situations")
+    @Metadata(description = "An additional predicate that must evaluate to true for this doCatch to trigger."
+                            + " Allows fine-grained control over which exceptions are caught based on the exchange state.")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;

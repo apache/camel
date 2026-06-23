@@ -38,22 +38,32 @@ public class SoapDataFormat extends DataFormatDefinition {
     private Object elementNameStrategyObject;
 
     @XmlAttribute(required = true)
+    @Metadata(required = true, description = "Package name where your JAXB classes are located.")
     private String contextPath;
     @XmlAttribute
+    @Metadata(description = "To overrule and use a specific encoding.")
     private String encoding;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.dataformat.soap.name.ElementNameStrategy")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.dataformat.soap.name.ElementNameStrategy",
+              description = "Refers to an element strategy to lookup from the registry.")
     private String elementNameStrategy;
     @XmlAttribute
-    @Metadata(defaultValue = "1.1", enums = "1.1,1.2")
+    @Metadata(defaultValue = "1.1", enums = "1.1,1.2",
+              description = "SOAP version should either be 1.1 or 1.2. Is by default 1.1.")
     private String version;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.Map")
+    @Metadata(label = "advanced", javaType = "java.util.Map",
+              description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes."
+                            + " To control this mapping, Camel allows you to refer to a map which contains the desired mapping.")
     private String namespacePrefix;
     @XmlAttribute
+    @Metadata(description = "To validate against an existing schema."
+                            + " You can use the prefix classpath:, file: or http: to specify how the resource should be resolved."
+                            + " You can separate multiple schema files by using the ',' character.")
     private String schema;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to ignore headers that were not unmarshalled.")
     private String ignoreUnmarshalledHeaders;
 
     public SoapDataFormat() {
@@ -106,9 +116,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         return new SoapDataFormat(this);
     }
 
-    /**
-     * Package name where your JAXB classes are located.
-     */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
@@ -117,9 +124,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         return contextPath;
     }
 
-    /**
-     * To overrule and use a specific encoding
-     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -128,25 +132,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         return encoding;
     }
 
-    /**
-     * Refers to an element strategy to lookup from the registry.
-     * <p/>
-     * An element name strategy is used for two purposes. The first is to find a xml element name for a given object and
-     * soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given
-     * soap fault name.
-     * <p/>
-     * The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName
-     * that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and
-     * namespace from the @XMLType annotation of the given type. If no namespace is set then package-info is used.
-     * Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to
-     * determine the type name and to find the exception class for a SOAP fault
-     * <p/>
-     * All three classes is located in the package name org.apache.camel.dataformat.soap.name
-     * <p/>
-     * If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to
-     * use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use
-     * QNameStrategy or TypeNameStrategy.
-     */
     public void setElementNameStrategy(String elementNameStrategy) {
         this.elementNameStrategy = elementNameStrategy;
     }
@@ -159,34 +144,10 @@ public class SoapDataFormat extends DataFormatDefinition {
         return version;
     }
 
-    /**
-     * SOAP version should either be 1.1 or 1.2.
-     * <p/>
-     * Is by default 1.1
-     */
     public void setVersion(String version) {
         this.version = version;
     }
 
-    /**
-     * Sets an element strategy instance to use.
-     * <p/>
-     * An element name strategy is used for two purposes. The first is to find a xml element name for a given object and
-     * soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given
-     * soap fault name.
-     * <p/>
-     * The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName
-     * that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and
-     * namespace from the @XMLType annotation of the given type. If no namespace is set then package-info is used.
-     * Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to
-     * determine the type name and to find the exception class for a SOAP fault
-     * <p/>
-     * All three classes is located in the package name org.apache.camel.dataformat.soap.name
-     * <p/>
-     * If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to
-     * use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use
-     * QNameStrategy or TypeNameStrategy.
-     */
     public void setElementNameStrategyObject(Object elementNameStrategyObject) {
         this.elementNameStrategyObject = elementNameStrategyObject;
     }
@@ -199,11 +160,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         return namespacePrefix;
     }
 
-    /**
-     * When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such
-     * as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired
-     * mapping.
-     */
     public void setNamespacePrefix(String namespacePrefix) {
         this.namespacePrefix = namespacePrefix;
     }
@@ -212,10 +168,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         return schema;
     }
 
-    /**
-     * To validate against an existing schema. Your can use the prefix classpath:, file:* or *http: to specify how the
-     * resource should be resolved. You can separate multiple schema files by using the ',' character.
-     */
     public void setSchema(String schema) {
         this.schema = schema;
     }
@@ -224,11 +176,6 @@ public class SoapDataFormat extends DataFormatDefinition {
         return ignoreUnmarshalledHeaders;
     }
 
-    /**
-     * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is
-     * recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any
-     * problematic header.
-     */
     public void setIgnoreUnmarshalledHeaders(String ignoreUnmarshalledHeaders) {
         this.ignoreUnmarshalledHeaders = ignoreUnmarshalledHeaders;
     }

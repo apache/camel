@@ -53,6 +53,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
             @XmlElement(name = "stickyLoadBalancer", type = StickyLoadBalancerDefinition.class),
             @XmlElement(name = "topicLoadBalancer", type = TopicLoadBalancerDefinition.class),
             @XmlElement(name = "weightedLoadBalancer", type = WeightedLoadBalancerDefinition.class) })
+    @Metadata(description = "The load balancer to be used.")
     private LoadBalancerDefinition loadBalancerType;
 
     public LoadBalanceDefinition() {
@@ -83,9 +84,6 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
         return loadBalancerType;
     }
 
-    /**
-     * The load balancer to be used
-     */
     public void setLoadBalancerType(LoadBalancerDefinition loadbalancer) {
         if (loadBalancerType != null) {
             throw new IllegalArgumentException(

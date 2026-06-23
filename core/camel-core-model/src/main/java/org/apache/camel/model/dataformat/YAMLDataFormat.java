@@ -42,39 +42,45 @@ public class YAMLDataFormat extends DataFormatDefinition {
     private Class<?> unmarshalType;
 
     @XmlAttribute
-    @Metadata(defaultValue = "SnakeYAML")
+    @Metadata(defaultValue = "SnakeYAML", description = "Which yaml library to use. By default it is SnakeYAML.")
     private YAMLLibrary library;
     @XmlAttribute(name = "unmarshalType")
+    @Metadata(description = "Class name of the java type to use when unmarshalling.")
     private String unmarshalTypeName;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "BaseConstructor to construct incoming documents.")
     private String constructor;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Representer to emit outgoing objects.")
     private String representer;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "DumperOptions to configure outgoing objects.")
     private String dumperOptions;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Resolver to detect implicit type.")
     private String resolver;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Use ApplicationContextClassLoader as custom ClassLoader.")
     private String useApplicationContextClassLoader;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Force the emitter to produce a pretty YAML document when using the flow style.")
     private String prettyFlow;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Allow any class to be un-marshaled.")
     private String allowAnyType;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma.")
     private String typeFilter;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "50")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "50",
+              description = "Set the maximum amount of aliases allowed for collections.")
     private String maxAliasesForCollections;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Set whether recursive keys are allowed.")
     private String allowRecursiveKeys;
 
     public YAMLDataFormat() {
@@ -143,11 +149,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return library;
     }
 
-    /**
-     * Which yaml library to use.
-     * <p/>
-     * By default it is SnakeYAML
-     */
     public void setLibrary(YAMLLibrary library) {
         this.library = library;
         setDataFormatName("yaml-" + library.name().toLowerCase());
@@ -157,9 +158,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return unmarshalType;
     }
 
-    /**
-     * Class of the object to be created
-     */
     public void setUnmarshalType(Class<?> type) {
         this.unmarshalType = type;
     }
@@ -168,9 +166,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return unmarshalTypeName;
     }
 
-    /**
-     * Class name of the java type to use when unmarshalling
-     */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
     }
@@ -179,9 +174,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return classLoader;
     }
 
-    /**
-     * Set a custom classloader
-     */
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
@@ -190,9 +182,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return constructor;
     }
 
-    /**
-     * BaseConstructor to construct incoming documents.
-     */
     public void setConstructor(String constructor) {
         this.constructor = constructor;
     }
@@ -201,9 +190,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return representer;
     }
 
-    /**
-     * Representer to emit outgoing objects.
-     */
     public void setRepresenter(String representer) {
         this.representer = representer;
     }
@@ -212,9 +198,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return dumperOptions;
     }
 
-    /**
-     * DumperOptions to configure outgoing objects.
-     */
     public void setDumperOptions(String dumperOptions) {
         this.dumperOptions = dumperOptions;
     }
@@ -223,9 +206,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return resolver;
     }
 
-    /**
-     * Resolver to detect implicit type
-     */
     public void setResolver(String resolver) {
         this.resolver = resolver;
     }
@@ -234,9 +214,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return useApplicationContextClassLoader;
     }
 
-    /**
-     * Use ApplicationContextClassLoader as custom ClassLoader
-     */
     public void setUseApplicationContextClassLoader(String useApplicationContextClassLoader) {
         this.useApplicationContextClassLoader = useApplicationContextClassLoader;
     }
@@ -245,9 +222,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return prettyFlow;
     }
 
-    /**
-     * Force the emitter to produce a pretty YAML document when using the flow style.
-     */
     public void setPrettyFlow(String prettyFlow) {
         this.prettyFlow = prettyFlow;
     }
@@ -256,9 +230,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return allowAnyType;
     }
 
-    /**
-     * Allow any class to be un-marshaled
-     */
     public void setAllowAnyType(String allowAnyType) {
         this.allowAnyType = allowAnyType;
     }
@@ -267,9 +238,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return typeFilter;
     }
 
-    /**
-     * Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma.
-     */
     public void setTypeFilter(String typeFilter) {
         this.typeFilter = typeFilter;
     }
@@ -278,9 +246,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return maxAliasesForCollections;
     }
 
-    /**
-     * Set the maximum amount of aliases allowed for collections.
-     */
     public void setMaxAliasesForCollections(String maxAliasesForCollections) {
         this.maxAliasesForCollections = maxAliasesForCollections;
     }
@@ -289,9 +254,6 @@ public class YAMLDataFormat extends DataFormatDefinition {
         return allowRecursiveKeys;
     }
 
-    /**
-     * Set whether recursive keys are allowed.
-     */
     public void setAllowRecursiveKeys(String allowRecursiveKeys) {
         this.allowRecursiveKeys = allowRecursiveKeys;
     }

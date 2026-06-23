@@ -41,16 +41,10 @@ public class ValueDefinition {
         this.value = value;
     }
 
-    /**
-     * Property value
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * Property value
-     */
     public void setValue(String value) {
         this.value = value;
     }

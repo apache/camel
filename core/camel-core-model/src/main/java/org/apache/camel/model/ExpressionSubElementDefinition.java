@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Represents an expression sub element
@@ -33,6 +34,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 public class ExpressionSubElementDefinition implements HasExpressionType {
 
     @XmlElementRef
+    @Metadata(description = "Expression to evaluate.")
     private ExpressionDefinition expressionType;
 
     public ExpressionSubElementDefinition() {

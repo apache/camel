@@ -36,6 +36,7 @@ import org.apache.camel.spi.annotations.DslArg;
 public class SetVariableDefinition extends ExpressionNode {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Name of variable to set a new value. The simple language can be used to define a dynamic evaluated variable name. Otherwise a constant name will be used.")
     @DslArg
     private String name;
 
@@ -82,21 +83,12 @@ public class SetVariableDefinition extends ExpressionNode {
         return "setVariable[" + getName() + "]";
     }
 
-    /**
-     * Expression to return the value of the variable
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
     }
 
-    /**
-     * Name of variable to set a new value
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated variable name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setName(String name) {
         this.name = name;
     }

@@ -44,6 +44,7 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
      * This is provided to support XML and YAML DSL
      */
     @XmlElementRef(name = "headers")
+    @Metadata(description = "The headers to set on the message.")
     private List<SetHeaderDefinition> headers = new ArrayList<>();
 
     public SetHeadersDefinition() {

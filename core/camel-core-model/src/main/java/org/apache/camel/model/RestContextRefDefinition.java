@@ -36,6 +36,7 @@ import org.apache.camel.spi.Metadata;
 public class RestContextRefDefinition {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Reference to the rest-dsl.")
     private String ref;
 
     public RestContextRefDefinition() {
@@ -54,9 +55,6 @@ public class RestContextRefDefinition {
         return ref;
     }
 
-    /**
-     * Reference to the rest-dsl
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

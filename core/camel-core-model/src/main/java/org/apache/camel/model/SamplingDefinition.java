@@ -36,10 +36,13 @@ import org.apache.camel.util.TimeUtils;
 public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration",
+              description = "The period between samples, using a time-based approach. Default is 1 second.")
     private String samplePeriod;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.lang.Long",
+              description = "The frequency of samples as a message count, using a message-frequency approach."
+                            + " For example, a value of 5 means every 5th message is sampled.")
     private String messageFrequency;
 
     public SamplingDefinition() {
@@ -162,9 +165,6 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         return samplePeriod;
     }
 
-    /**
-     * Sets the sample period during which only a single Exchange will pass through.
-     */
     public void setSamplePeriod(String samplePeriod) {
         this.samplePeriod = samplePeriod;
     }
@@ -181,9 +181,6 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         return messageFrequency;
     }
 
-    /**
-     * Sets the sample message count which only a single Exchange will pass through after this many received.
-     */
     public void setMessageFrequency(String messageFrequency) {
         this.messageFrequency = messageFrequency;
     }

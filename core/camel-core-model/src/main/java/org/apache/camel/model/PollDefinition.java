@@ -44,13 +44,15 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
     protected EndpointConsumerBuilder endpointConsumerBuilder;
 
     @XmlAttribute
+    @Metadata(description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
     private String variableReceive;
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "Sets the uri of the endpoint to poll from.")
     @DslArg
     private String uri;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "20000")
+    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "20000",
+              description = "Timeout in millis when polling from the external service. The default value is 20000 (20 seconds).")
     @DslArg(position = 1, renderType = "long")
     private String timeout;
 
@@ -96,13 +98,6 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
         return variableReceive;
     }
 
-    /**
-     * To use a variable to store the received message body (only body, not headers). This makes it handy to use
-     * variables for user data and to easily control what data to use for sending and receiving.
-     *
-     * Important: When using receive variable then the received body is stored only in this variable and not on the
-     * current message.
-     */
     public void setVariableReceive(String variableReceive) {
         this.variableReceive = variableReceive;
     }
@@ -115,24 +110,11 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
         return uri;
     }
 
-    /**
-     * Sets the uri of the endpoint to poll from.
-     *
-     * @param uri the uri of the endpoint
-     */
     public void setUri(String uri) {
         clear();
         this.uri = uri;
     }
 
-    /**
-     * Gets the endpoint if an {@link Endpoint} instance was set.
-     * <p/>
-     * This implementation may return <tt>null</tt> which means you need to use {@link #getEndpointUri()} to get
-     * information about the endpoint.
-     *
-     * @return the endpoint instance, or <tt>null</tt>
-     */
     public Endpoint getEndpoint() {
         return endpoint;
     }
@@ -147,20 +129,6 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
         return timeout;
     }
 
-    /**
-     * Timeout in millis when polling from the external service.
-     * <p/>
-     * The timeout has influence about the poll enrich behavior. It basically operations in three different modes:
-     * <ul>
-     * <li>negative value - Waits until a message is available and then returns it. Warning that this method could block
-     * indefinitely if no messages are available.</li>
-     * <li>0 - Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a
-     * message exchange is not available yet.</li>
-     * <li>positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a
-     * message is not yet available. Returns <tt>null</tt> if timed out</li>
-     * </ul>
-     * The default value is 20000 (20 seconds).
-     */
     public void setTimeout(String timeout) {
         this.timeout = timeout;
     }

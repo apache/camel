@@ -32,18 +32,17 @@ import org.apache.camel.spi.Metadata;
 public class SecurityDefinition {
 
     @XmlAttribute(required = true)
-    @Metadata(required = true)
+    @Metadata(description = "Key used to refer to this security definition.",
+              required = true)
     private String key;
     @XmlAttribute
+    @Metadata(description = "The scopes to allow (separate multiple scopes by comma).")
     private String scopes;
 
     public String getKey() {
         return key;
     }
 
-    /**
-     * Key used to refer to this security definition
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -52,9 +51,6 @@ public class SecurityDefinition {
         return scopes;
     }
 
-    /**
-     * The scopes to allow (separate multiple scopes by comma)
-     */
     public void setScopes(String scopes) {
         this.scopes = scopes;
     }
