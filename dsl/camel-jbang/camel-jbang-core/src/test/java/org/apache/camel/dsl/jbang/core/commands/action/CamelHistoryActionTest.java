@@ -29,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 class CamelHistoryActionTest extends ActionCommandTestSupport {
 
+    private static final long FIXED_TIMESTAMP = 1_700_000_000_000L;
+
     @Test
     void testRendersMessageHistoryFromHistoryFile() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
@@ -83,7 +85,7 @@ class CamelHistoryActionTest extends ActionCommandTestSupport {
         trace.put("nodeId", "to1");
         trace.put("nodeShortName", "to");
         trace.put("nodeLabel", "to[mock://out]");
-        trace.put("timestamp", System.currentTimeMillis());
+        trace.put("timestamp", FIXED_TIMESTAMP);
         trace.put("elapsed", 5);
         trace.put("failed", false);
         trace.put("done", true);

@@ -29,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 class CamelSendActionTest extends ActionCommandTestSupport {
 
+    private static final long FIXED_TIMESTAMP = 1_700_000_000_000L;
+
     @Test
     void testSendsToNamedIntegrationAndRendersStatus() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
@@ -70,7 +72,7 @@ class CamelSendActionTest extends ActionCommandTestSupport {
 
     private static JsonObject sentResponse() {
         JsonObject response = new JsonObject();
-        response.put("timestamp", System.currentTimeMillis());
+        response.put("timestamp", FIXED_TIMESTAMP);
         response.put("endpoint", "seda://foo");
         response.put("elapsed", 5);
         response.put("exchangeId", "E1");
