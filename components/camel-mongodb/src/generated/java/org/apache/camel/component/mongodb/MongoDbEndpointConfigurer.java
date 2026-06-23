@@ -29,6 +29,10 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "authSource": target.setAuthSource(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "changestreamtoken":
+        case "changeStreamToken": target.setChangeStreamToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "changestreamtokenrepository":
+        case "changeStreamTokenRepository": target.setChangeStreamTokenRepository(property(camelContext, org.apache.camel.spi.StateRepository.class, value)); return true;
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionindex":
         case "collectionIndex": target.setCollectionIndex(property(camelContext, java.lang.String.class, value)); return true;
@@ -139,6 +143,10 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "authSource": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "changestreamtoken":
+        case "changeStreamToken": return java.lang.String.class;
+        case "changestreamtokenrepository":
+        case "changeStreamTokenRepository": return org.apache.camel.spi.StateRepository.class;
         case "collection": return java.lang.String.class;
         case "collectionindex":
         case "collectionIndex": return java.lang.String.class;
@@ -250,6 +258,10 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "authSource": return target.getAuthSource();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "changestreamtoken":
+        case "changeStreamToken": return target.getChangeStreamToken();
+        case "changestreamtokenrepository":
+        case "changeStreamTokenRepository": return target.getChangeStreamTokenRepository();
         case "collection": return target.getCollection();
         case "collectionindex":
         case "collectionIndex": return target.getCollectionIndex();
@@ -347,6 +359,15 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "writeResultAsHeader": return target.isWriteResultAsHeader();
         case "zlibcompressionlevel":
         case "zlibCompressionLevel": return target.getZlibCompressionLevel();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "changestreamtokenrepository":
+        case "changeStreamTokenRepository": return java.lang.String.class;
         default: return null;
         }
     }

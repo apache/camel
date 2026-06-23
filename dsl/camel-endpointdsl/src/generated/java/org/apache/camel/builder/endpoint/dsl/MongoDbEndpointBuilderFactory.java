@@ -249,6 +249,52 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * A change stream token as a serialized BSON document JSON string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param changeStreamToken the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder changeStreamToken(String changeStreamToken) {
+            doSetProperty("changeStreamToken", changeStreamToken);
+            return this;
+        }
+        /**
+         * The repository to store change stream tokens.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.StateRepository&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param changeStreamTokenRepository the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder changeStreamTokenRepository(org.apache.camel.spi.StateRepository<java.lang.String, java.lang.String> changeStreamTokenRepository) {
+            doSetProperty("changeStreamTokenRepository", changeStreamTokenRepository);
+            return this;
+        }
+        /**
+         * The repository to store change stream tokens.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.StateRepository&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param changeStreamTokenRepository the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder changeStreamTokenRepository(String changeStreamTokenRepository) {
+            doSetProperty("changeStreamTokenRepository", changeStreamTokenRepository);
+            return this;
+        }
+        /**
          * Consumer type.
          * 
          * The option is a: <code>java.lang.String</code> type.
