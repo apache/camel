@@ -136,7 +136,8 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     @XmlAttribute
     private String variableReceive;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Indicates whether null is allowed as value of a body to unmarshall.")
     private String allowNullBody;
 
     public UnmarshalDefinition() {

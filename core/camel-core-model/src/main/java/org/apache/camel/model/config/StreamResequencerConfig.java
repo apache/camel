@@ -37,22 +37,28 @@ public class StreamResequencerConfig extends ResequencerConfig {
     private ExpressionResultComparator comparatorBean;
 
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "1000", javaType = "java.lang.Integer",
+              description = "Sets the capacity of the resequencer inbound queue.")
     private String capacity;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration",
+              description = "Sets the minimum time (milliseconds) to wait for missing elements (messages).")
     private String timeout;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration",
+              description = "Sets the interval in milliseconds the stream resequencer will at most wait while waiting for the condition of being able to deliver.")
     private String deliveryAttemptInterval;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Whether to ignore invalid exchanges.")
     private String ignoreInvalidExchanges;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "If true, throws an exception when messages older than the last delivered message are processed.")
     private String rejectOld;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.resequencer.ExpressionResultComparator")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.resequencer.ExpressionResultComparator",
+              description = "To use a custom comparator for ordering the sequence of messages.")
     private String comparator;
 
     /**

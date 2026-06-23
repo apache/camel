@@ -45,10 +45,12 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
     @XmlAttribute
     private String toName;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
+            description = "Whether the conversion is mandatory. If mandatory and conversion is not possible, a NoTypeConversionAvailableException is thrown."
+                          + " Setting this to false means null may be returned if conversion is not possible.")
     private String mandatory;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a specific charset when converting.")
     private String charset;
 
     public ConvertVariableDefinition() {

@@ -49,7 +49,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     @XmlAttribute
     private String beanType;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype",
+              description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.")
     private String scope;
 
     public BeanDefinition() {

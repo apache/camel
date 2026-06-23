@@ -1000,7 +1000,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * The group name for this route. Multiple routes can belong to the same group.
      */
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The group name for this route. Multiple routes can belong to the same group.")
     public void setGroup(String group) {
         this.group = group;
     }
@@ -1016,7 +1016,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Sets a prefix to use for all node ids (not route id).
      */
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Sets a prefix to use for all node ids (not route id).")
     public void setNodePrefixId(String nodePrefixId) {
         this.nodePrefixId = nodePrefixId;
     }
@@ -1032,7 +1032,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether stream caching is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether stream caching is enabled on this route.")
     public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
@@ -1048,7 +1048,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether tracing is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", description = "Whether tracing is enabled on this route.")
     public void setTrace(String trace) {
         this.trace = trace;
     }
@@ -1064,7 +1064,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether message history is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", description = "Whether message history is enabled on this route.")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
@@ -1080,7 +1080,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether security mask for Logging is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", description = "Whether security mask for logging is enabled on this route.")
     public void setLogMask(String logMask) {
         this.logMask = logMask;
     }
@@ -1096,7 +1096,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether to slow down processing messages by a given delay in msec.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Long")
+    @Metadata(label = "advanced", javaType = "java.lang.Long", description = "Whether to slow down processing messages by a given delay in msec.")
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
@@ -1112,7 +1112,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether to auto start this route
      */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true", description = "Whether to auto start this route.")
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
@@ -1131,7 +1131,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * included or not.
      */
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The predicate of the precondition in simple language to evaluate in order to determine if this route should be included or not.")
     @Override
     public void setPrecondition(String precondition) {
         this.precondition = precondition;
@@ -1148,7 +1148,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * To configure the ordering of the routes being started
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", description = "To configure the ordering of the routes being started.")
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }
@@ -1234,7 +1234,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRoute", defaultValue = "Default",
-              enums = "Default,Defer")
+              enums = "Default,Defer", description = "To control how to shutdown the route.")
     public void setShutdownRoute(String shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
@@ -1251,7 +1251,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly",
-              enums = "CompleteCurrentTaskOnly,CompleteAllTasks")
+              enums = "CompleteCurrentTaskOnly,CompleteAllTasks", description = "To control how to shut down the route.")
     public void setShutdownRunningTask(String shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
@@ -1346,7 +1346,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     @XmlElementRef(required = false)
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Declare the expected data type of the input message. If the actual message type is different at runtime, camel looks for a required Transformer and applies if exists.")
     public void setInputType(InputTypeDefinition inputType) {
         this.inputType = inputType;
     }
@@ -1356,7 +1356,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     @XmlElementRef(required = false)
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Declare the expected data type of the output message. If the actual message type is different at runtime, camel looks for a required Transformer and applies if exists.")
     public void setOutputType(OutputTypeDefinition outputType) {
         this.outputType = outputType;
     }
@@ -1373,7 +1373,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * To set metadata as properties on the route.
      */
     @XmlElement(name = "routeProperty")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To set metadata as properties on the route.")
     public void setRouteProperties(List<PropertyDefinition> routeProperties) {
         this.routeProperties = routeProperties;
     }

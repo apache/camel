@@ -67,13 +67,16 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     @XmlAttribute
     private String builderClass;
     @XmlAttribute
-    @Metadata(defaultValue = "build")
+    @Metadata(defaultValue = "build",
+              description = "Name of method when using builder class. This method is invoked after configuring to create the actual bean. This method is often named build (used by default).")
     private String builderMethod;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.")
     private String scriptLanguage;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", label = "advanced", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", label = "advanced", defaultValue = "true",
+              description = "Whether the script should support using Camel property placeholder syntax {{ }}.")
     private String scriptPropertyPlaceholders;
     @XmlElement(name = "constructors")
     @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
@@ -82,7 +85,8 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
     private Map<String, Object> properties;
     @XmlElement(name = "script")
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The script to execute that creates the bean when using scripting languages.")
     private String script;
 
     public void setParent(P parent) {

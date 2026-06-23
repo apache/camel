@@ -54,7 +54,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
             @XmlElement(name = "streamConfig", type = StreamResequencerConfig.class) })
     private ResequencerConfig resequencerConfig;
     @XmlElementRef
-    @Metadata(required = true)
+    @Metadata(required = true, description = "Expression to use for re-ordering the messages, such as a header with a sequence number.")
     private ExpressionDefinition expression;
 
     public ResequenceDefinition() {

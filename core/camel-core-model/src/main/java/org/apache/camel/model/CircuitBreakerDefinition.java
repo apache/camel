@@ -40,7 +40,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     @XmlAttribute
     private String configuration;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
+              description = "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.")
     private Boolean inheritErrorHandler;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;

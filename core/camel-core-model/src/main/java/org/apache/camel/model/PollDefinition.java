@@ -46,11 +46,12 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
     @XmlAttribute
     private String variableReceive;
     @XmlAttribute
-    @Metadata(required = true)
+    @Metadata(required = true, description = "Sets the uri of the endpoint to poll from.")
     @DslArg
     private String uri;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "20000")
+    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "20000",
+              description = "Timeout in millis when polling from the external service. The default value is 20000 (20 seconds).")
     @DslArg(position = 1, renderType = "long")
     private String timeout;
 

@@ -44,7 +44,8 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     @XmlAttribute
     private String skipSendToOriginalEndpoint;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "After sending to the endpoint then send the message to this uri which allows to process its result.")
     private String afterUri;
     @Metadata(description = "To use an expression to only trigger intercepting sending to an endpoint in specific situations")
     @XmlElement

@@ -42,7 +42,8 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
     @DslArg
     private String pattern;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+            description = "Name or pattern of headers to not remove. You can use comma to separate multiple patterns.")
     private String excludePattern;
 
     public RemoveHeadersDefinition() {
