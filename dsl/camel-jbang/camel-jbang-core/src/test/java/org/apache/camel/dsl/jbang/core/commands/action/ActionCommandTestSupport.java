@@ -17,11 +17,13 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
 
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -114,6 +117,37 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
             mocked.when(ProcessHandle::current).thenReturn(current);
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
             return command.doCall();
+        }
+    }
+
+    /**
+     * Runs a request/response reader command end to end. Mocks a single discoverable process (TEST_PID) and, in a
+     * background thread, simulates the running Camel writing {@code response} to its output file once the command has
+     * written its action request.
+     * <p>
+     * The reader commands delete any stale output file <em>before</em> writing the action file and only then poll for
+     * the output, so the responder waits for the action file to appear: that guarantees the response lands after the
+     * command's own delete and cannot be wiped out. No {@code Thread.sleep} is used; the wait is driven by Awaitility.
+     *
+     * @return the command exit code; rendered output can be asserted afterwards via {@code printer.getOutput()}
+     */
+    protected int callWithResponse(CamelCommand command, JsonObject response) throws Exception {
+        Path actionFile = CommandLineHelper.getCamelDir().resolve(TEST_PID + "-action.json");
+        Path outputFile = CommandLineHelper.getCamelDir().resolve(TEST_PID + "-output.json");
+        Thread responder = new Thread(() -> {
+            await().atMost(5, TimeUnit.SECONDS).until(() -> Files.exists(actionFile));
+            try {
+                Files.writeString(outputFile, response.toJson());
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }, "test-camel-responder");
+        responder.setDaemon(true);
+        responder.start();
+        try {
+            return callWithSingleProcess(command);
+        } finally {
+            responder.join(TimeUnit.SECONDS.toMillis(10));
         }
     }
 
