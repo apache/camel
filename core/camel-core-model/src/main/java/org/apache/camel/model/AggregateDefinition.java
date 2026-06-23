@@ -367,25 +367,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.aggregationRepositoryBean = aggregationRepository;
     }
 
-    /**
-     * The AggregationRepository to use.
-     * <p/>
-     * Sets the custom aggregate repository to use. Will by default use
-     * org.apache.camel.processor.aggregate.MemoryAggregationRepository
-     */
     public void setAggregationRepository(String aggregationRepository) {
         this.aggregationRepository = aggregationRepository;
     }
 
-    /**
-     * The AggregationStrategy to use.
-     * <p/>
-     * For example to lookup a bean with the name foo, the value is simply just #bean:foo.
-     * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
-     * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
-     * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
-     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategyBean = aggregationStrategy;
     }
@@ -394,15 +379,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         return aggregationStrategy;
     }
 
-    /**
-     * The AggregationStrategy to use.
-     * <p/>
-     * For example to lookup a bean with the name foo, the value is simply just #bean:foo.
-     * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
-     * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
-     * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
-     */
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
@@ -411,9 +387,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         return aggregationStrategyMethodName;
     }
 
-    /**
-     * This option can be used to explicit declare the method name to use, when using beans as the AggregationStrategy.
-     */
     public void setAggregationStrategyMethodName(String strategyMethodName) {
         this.aggregationStrategyMethodName = strategyMethodName;
     }
@@ -422,20 +395,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         return aggregationStrategyMethodAllowNull;
     }
 
-    /**
-     * If this option is false then the aggregate method is not used for the very first aggregation. If this option is
-     * true then null values is used as the oldExchange (at the very first aggregation), when using beans as the
-     * AggregationStrategy.
-     */
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
-    /**
-     * The expression used to calculate the correlation key to use for aggregation. The Exchange which has the same
-     * correlation key is aggregated together. If the correlation key could not be evaluated an Exception is thrown. You
-     * can disable this by using the ignoreBadCorrelationKeys option.
-     */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;
     }
@@ -505,19 +468,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         return completionTimeoutExpression;
     }
 
-    /**
-     * Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be
-     * set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use
-     * Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or
-     * 0. You cannot use this option together with completionInterval, only one of the two can be used.
-     * <p/>
-     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option to
-     * configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a
-     * timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or
-     * checker intervals.
-     *
-     * @param completionTimeoutExpression the timeout as an {@link Expression} which is evaluated as a {@link Long} type
-     */
     public void setCompletionTimeoutExpression(ExpressionSubElementDefinition completionTimeoutExpression) {
         this.completionTimeoutExpression = completionTimeoutExpression;
     }
@@ -526,14 +476,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         return completionSizeExpression;
     }
 
-    /**
-     * Number of messages aggregated before the aggregation is complete. This option can be set as either a fixed value
-     * or using an Expression which allows you to evaluate a size dynamically - will use Integer as result. If both are
-     * set Camel will fallback to use the fixed value if the Expression result was null or 0.
-     *
-     * @param completionSizeExpression the completion size as an {@link org.apache.camel.Expression} which is evaluated
-     *                                 as a {@link Integer} type
-     */
     public void setCompletionSizeExpression(ExpressionSubElementDefinition completionSizeExpression) {
         this.completionSizeExpression = completionSizeExpression;
     }
@@ -654,10 +596,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         return aggregateController;
     }
 
-    /**
-     * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
-     * this aggregator.
-     */
     public void setAggregateController(String aggregateController) {
         this.aggregateController = aggregateController;
     }

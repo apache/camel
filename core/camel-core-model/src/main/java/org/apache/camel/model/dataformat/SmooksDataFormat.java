@@ -57,9 +57,6 @@ public class SmooksDataFormat extends DataFormatDefinition {
         return new SmooksDataFormat(this);
     }
 
-    /**
-     * Path to the Smooks configuration file.
-     */
     public void setSmooksConfig(String smooksConfig) {
         this.smooksConfig = smooksConfig;
     }

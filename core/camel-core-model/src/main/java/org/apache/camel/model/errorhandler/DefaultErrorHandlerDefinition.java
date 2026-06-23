@@ -192,9 +192,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return loggerRef;
     }
 
-    /**
-     * References to a logger to use as logger for the error handler
-     */
     public void setLoggerRef(String loggerRef) {
         this.loggerRef = loggerRef;
     }
@@ -211,9 +208,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return level;
     }
 
-    /**
-     * Logging level to use by error handler
-     */
     public void setLevel(String level) {
         this.level = level;
     }
@@ -222,9 +216,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return logName;
     }
 
-    /**
-     * Name of the logger to use by the error handler
-     */
     public void setLogName(String logName) {
         this.logName = logName;
     }
@@ -233,43 +224,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return useOriginalMessage;
     }
 
-    /**
-     * Will use the original input {@link org.apache.camel.Message} (original body and headers) when an
-     * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
-     * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
-     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
-     * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
-     * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
-     * the original exchange store in the dead letter queue it might be easier to manually re submit the
-     * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
-     * able to send the {@link org.apache.camel.Exchange} to the same input.
-     * <p/>
-     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
-     * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
-     * with custom headers and include the original message body. The former wont let you do this, as its using the
-     * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
-     * <p/>
-     * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
-     * original route), to ensure the body can be read when the original message is being used later. If the body is
-     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
-     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
-     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
-     * later.
-     * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current
-     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
-     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
-     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
-     * for the messages in their sub-route (eg the splitted message); however these EIPs have an option named
-     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
-     * therefore use the parent original message.
-     * <p/>
-     * By default this feature is off.
-     */
     public void setUseOriginalMessage(String useOriginalMessage) {
         this.useOriginalMessage = useOriginalMessage;
     }
@@ -278,43 +232,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return useOriginalBody;
     }
 
-    /**
-     * Will use the original input {@link org.apache.camel.Message} body (original body only) when an
-     * {@link org.apache.camel.Exchange} is moved to the dead letter queue.
-     * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the
-     * {@link org.apache.camel.Exchange} is doomed for failure. <br/>
-     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original IN
-     * message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
-     * snapshot of the IN message. For instance if you route transform the IN body during routing and then failed. With
-     * the original exchange store in the dead letter queue it might be easier to manually re submit the
-     * {@link org.apache.camel.Exchange} again as the IN message is the same as when Camel received it. So you should be
-     * able to send the {@link org.apache.camel.Exchange} to the same input.
-     * <p/>
-     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original body
-     * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
-     * with custom headers and include the original message body. The former wont let you do this, as its using the
-     * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
-     * <p/>
-     * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the
-     * original route), to ensure the body can be read when the original message is being used later. If the body is
-     * converted to {@link org.apache.camel.StreamCache} then the message body on the current
-     * {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body. If the body is
-     * not converted to {@link org.apache.camel.StreamCache} then the body will not be able to re-read when accessed
-     * later.
-     * <p/>
-     * <b>Important:</b> The original input means the input message that are bounded by the current
-     * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
-     * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
-     * such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as
-     * the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary
-     * for the messages in their sub-route (eg the splitted message); however these EIPs have an option named
-     * <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in regard to error handling and
-     * therefore use the parent original message.
-     * <p/>
-     * By default this feature is off.
-     */
     public void setUseOriginalBody(String useOriginalBody) {
         this.useOriginalBody = useOriginalBody;
     }
@@ -323,11 +240,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return onRedeliveryRef;
     }
 
-    /**
-     * Sets a reference to a processor that should be processed <b>before</b> a redelivery attempt.
-     * <p/>
-     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
-     */
     public void setOnRedeliveryRef(String onRedeliveryRef) {
         this.onRedeliveryRef = onRedeliveryRef;
     }
@@ -336,11 +248,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return onRedeliveryProcessor;
     }
 
-    /**
-     * Sets a processor that should be processed <b>before</b> a redelivery attempt.
-     * <p/>
-     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
-     */
     public void setOnRedeliveryProcessor(Processor onRedeliveryProcessor) {
         this.onRedeliveryProcessor = onRedeliveryProcessor;
     }
@@ -349,12 +256,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return onExceptionOccurredRef;
     }
 
-    /**
-     * Sets a reference to a processor that should be processed <b>just after</b> an exception occurred. Can be used to
-     * perform custom logging about the occurred exception at the exact time it happened.
-     * <p/>
-     * Important: Any exception thrown from this processor will be ignored.
-     */
     public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
         this.onExceptionOccurredRef = onExceptionOccurredRef;
     }
@@ -363,12 +264,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return onExceptionOccurredProcessor;
     }
 
-    /**
-     * Sets a processor that should be processed <b>just after</b> an exception occurred. Can be used to perform custom
-     * logging about the occurred exception at the exact time it happened.
-     * <p/>
-     * Important: Any exception thrown from this processor will be ignored.
-     */
     public void setOnExceptionOccurredProcessor(Processor onExceptionOccurredProcessor) {
         this.onExceptionOccurredProcessor = onExceptionOccurredProcessor;
     }
@@ -377,11 +272,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return onPrepareFailureRef;
     }
 
-    /**
-     * Sets a reference to a processor to prepare the {@link org.apache.camel.Exchange} before handled by the failure
-     * processor / dead letter channel. This allows for example to enrich the message before sending to a dead letter
-     * queue.
-     */
     public void setOnPrepareFailureRef(String onPrepareFailureRef) {
         this.onPrepareFailureRef = onPrepareFailureRef;
     }
@@ -390,10 +280,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return onPrepareFailureProcessor;
     }
 
-    /**
-     * Sets a processor to prepare the {@link org.apache.camel.Exchange} before handled by the failure processor / dead
-     * letter channel. This allows for example to enrich the message before sending to a dead letter queue.
-     */
     public void setOnPrepareFailureProcessor(Processor onPrepareFailureProcessor) {
         this.onPrepareFailureProcessor = onPrepareFailureProcessor;
     }
@@ -402,11 +288,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return retryWhileRef;
     }
 
-    /**
-     * Sets a retry while predicate.
-     *
-     * Will continue retrying until the predicate evaluates to false.
-     */
     public void setRetryWhileRef(String retryWhileRef) {
         this.retryWhileRef = retryWhileRef;
     }
@@ -415,9 +296,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return redeliveryPolicyRef;
     }
 
-    /**
-     * Sets a reference to a {@link RedeliveryPolicy} to be used for redelivery settings.
-     */
     public void setRedeliveryPolicyRef(String redeliveryPolicyRef) {
         this.redeliveryPolicyRef = redeliveryPolicyRef;
     }
@@ -426,9 +304,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return executorServiceRef;
     }
 
-    /**
-     * Sets a reference to a thread pool to be used by the error handler
-     */
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
     }
@@ -437,9 +312,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return executorServiceBean;
     }
 
-    /**
-     * Sets a thread pool to be used by the error handler
-     */
     public void setExecutorServiceBean(ScheduledExecutorService executorServiceBean) {
         this.executorServiceBean = executorServiceBean;
     }
@@ -448,11 +320,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return retryWhilePredicate;
     }
 
-    /**
-     * Sets a retry while predicate.
-     *
-     * Will continue retrying until the predicate evaluates to false.
-     */
     public void setRetryWhilePredicate(Predicate retryWhilePredicate) {
         this.retryWhilePredicate = retryWhilePredicate;
     }
@@ -468,9 +335,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return redeliveryPolicy != null;
     }
 
-    /**
-     * Sets the redelivery settings
-     */
     public void setRedeliveryPolicy(RedeliveryPolicyDefinition redeliveryPolicy) {
         this.redeliveryPolicy = redeliveryPolicy;
     }

@@ -59,9 +59,6 @@ public abstract class RestSecurityDefinition {
         return key;
     }
 
-    /**
-     * Key used to refer to this security definition
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -70,9 +67,6 @@ public abstract class RestSecurityDefinition {
         return description;
     }
 
-    /**
-     * A short description for security scheme.
-     */
     public void setDescription(String description) {
         this.description = description;
     }

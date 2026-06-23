@@ -124,9 +124,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return objectMapper;
     }
 
-    /**
-     * Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson.
-     */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
     }
@@ -135,9 +132,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return useDefaultObjectMapper;
     }
 
-    /**
-     * Whether to lookup and use default Jackson CBOR ObjectMapper from the registry.
-     */
     public void setUseDefaultObjectMapper(String useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
@@ -146,9 +140,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return unmarshalTypeName;
     }
 
-    /**
-     * Class name of the java type to use when unmarshalling
-     */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
     }
@@ -161,11 +152,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return prettyPrint;
     }
 
-    /**
-     * To enable pretty printing output nicely formatted.
-     * <p/>
-     * Is by default false.
-     */
     public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
@@ -174,17 +160,10 @@ public class CBORDataFormat extends DataFormatDefinition {
         return allowJmsType;
     }
 
-    /**
-     * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal
-     * to.
-     */
     public void setAllowJmsType(String allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
 
-    /**
-     * Class of the java type to use when unmarshalling
-     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
@@ -193,10 +172,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return collectionTypeName;
     }
 
-    /**
-     * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
-     * allows to use different collection types than java.util.Collection based as default.
-     */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
     }
@@ -213,9 +188,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return useList;
     }
 
-    /**
-     * To unmarshal to a List of Map or a List of Pojo.
-     */
     public void setUseList(String useList) {
         this.useList = useList;
     }
@@ -224,12 +196,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return allowUnmarshallType;
     }
 
-    /**
-     * If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the
-     * unmarshalling.
-     * <p/>
-     * This should only be enabled when desired to be used.
-     */
     public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }
@@ -238,16 +204,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return enableFeatures;
     }
 
-    /**
-     * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
     public void setEnableFeatures(String enableFeatures) {
         this.enableFeatures = enableFeatures;
     }
@@ -256,16 +212,6 @@ public class CBORDataFormat extends DataFormatDefinition {
         return disableFeatures;
     }
 
-    /**
-     * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
     }

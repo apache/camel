@@ -321,9 +321,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         return super.getUri();
     }
 
-    /**
-     * The uri of the endpoint to wiretap to. The uri can be dynamic computed using the simple language.
-     */
     @Override
     public void setUri(String uri) {
         super.setUri(uri);

@@ -99,10 +99,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyEncapsulationAlgorithm;
     }
 
-    /**
-     * The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER,
-     * FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER
-     */
     public void setKeyEncapsulationAlgorithm(String keyEncapsulationAlgorithm) {
         this.keyEncapsulationAlgorithm = keyEncapsulationAlgorithm;
     }
@@ -111,10 +107,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return symmetricKeyAlgorithm;
     }
 
-    /**
-     * The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5,
-     * CAMELLIA, CAST5, CAST6, CHACHA7539, etc.
-     */
     public void setSymmetricKeyAlgorithm(String symmetricKeyAlgorithm) {
         this.symmetricKeyAlgorithm = symmetricKeyAlgorithm;
     }
@@ -123,9 +115,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return symmetricKeyLength;
     }
 
-    /**
-     * The length (in bits) of the symmetric key.
-     */
     public void setSymmetricKeyLength(String symmetricKeyLength) {
         this.symmetricKeyLength = symmetricKeyLength;
     }
@@ -134,9 +123,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyPair;
     }
 
-    /**
-     * Refers to the KeyPair to lookup from the register to use for KEM operations.
-     */
     public void setKeyPair(String keyPair) {
         this.keyPair = keyPair;
     }
@@ -145,9 +131,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return bufferSize;
     }
 
-    /**
-     * The size of the buffer used for streaming encryption/decryption.
-     */
     public void setBufferSize(String bufferSize) {
         this.bufferSize = bufferSize;
     }
@@ -156,9 +139,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return provider;
     }
 
-    /**
-     * The JCE security provider to use.
-     */
     public void setProvider(String provider) {
         this.provider = provider;
     }
@@ -167,9 +147,6 @@ public class PQCDataFormat extends DataFormatDefinition {
         return keyGenerator;
     }
 
-    /**
-     * Refers to a custom KeyGenerator to lookup from the register for KEM operations.
-     */
     public void setKeyGenerator(String keyGenerator) {
         this.keyGenerator = keyGenerator;
     }

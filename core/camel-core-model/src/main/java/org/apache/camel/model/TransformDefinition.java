@@ -63,9 +63,6 @@ public class TransformDefinition extends ExpressionNode {
         return "transform[" + getExpression() + "]";
     }
 
-    /**
-     * Expression to return the transformed message body (the new message body to use)
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

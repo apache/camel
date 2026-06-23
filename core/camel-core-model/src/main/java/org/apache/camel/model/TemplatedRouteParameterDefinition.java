@@ -50,9 +50,6 @@ public class TemplatedRouteParameterDefinition {
         return name;
     }
 
-    /**
-     * The name of the parameter
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -61,9 +58,6 @@ public class TemplatedRouteParameterDefinition {
         return value;
     }
 
-    /**
-     * The value of the parameter.
-     */
     public void setValue(String value) {
         this.value = value;
     }

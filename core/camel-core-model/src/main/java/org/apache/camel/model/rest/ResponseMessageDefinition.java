@@ -114,9 +114,6 @@ public class ResponseMessageDefinition {
         return examples;
     }
 
-    /**
-     * Examples of response messages
-     */
     public void setExamples(List<RestPropertyDefinition> examples) {
         this.examples = examples;
     }

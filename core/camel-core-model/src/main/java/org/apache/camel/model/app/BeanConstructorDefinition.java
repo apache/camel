@@ -42,9 +42,6 @@ public class BeanConstructorDefinition {
         return index;
     }
 
-    /**
-     * Constructor argument index. The first argument must use index 0.
-     */
     public void setIndex(Integer index) {
         this.index = index;
     }
@@ -53,9 +50,6 @@ public class BeanConstructorDefinition {
         return value;
     }
 
-    /**
-     * The argument value for the constructor.
-     */
     public void setValue(String value) {
         this.value = value;
     }

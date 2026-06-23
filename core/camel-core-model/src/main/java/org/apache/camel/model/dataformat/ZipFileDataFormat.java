@@ -94,37 +94,18 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         return maxDecompressedSize;
     }
 
-    /**
-     * If the zip file has more than one entry, the setting this option to true, allows working with the splitter EIP,
-     * to split the data using an iterator in a streaming mode.
-     */
     public void setUsingIterator(String usingIterator) {
         this.usingIterator = usingIterator;
     }
 
-    /**
-     * If the zip file has more than one entry, setting this option to true, allows to get the iterator even if the
-     * directory is empty
-     */
     public void setAllowEmptyDirectory(String allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
-    /**
-     * If the file name contains path elements, setting this option to true, allows the path to be maintained in the zip
-     * file.
-     */
     public void setPreservePathElements(String preservePathElements) {
         this.preservePathElements = preservePathElements;
     }
 
-    /**
-     * Set the maximum decompressed size of a zip file (in bytes). The default value if not specified corresponds to 1
-     * gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable
-     * setting a maximum decompressed size.
-     *
-     * @param maxDecompressedSize the maximum decompressed size of a zip file (in bytes)
-     */
     public void setMaxDecompressedSize(String maxDecompressedSize) {
         this.maxDecompressedSize = maxDecompressedSize;
     }

@@ -56,9 +56,6 @@ public class TransformersDefinition implements CopyableDefinition<TransformersDe
         return new TransformersDefinition(this);
     }
 
-    /**
-     * The configured transformers
-     */
     public void setTransformers(List<TransformerDefinition> transformers) {
         this.transformers = transformers;
     }

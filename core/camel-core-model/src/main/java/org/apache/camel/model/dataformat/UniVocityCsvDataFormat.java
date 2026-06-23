@@ -75,9 +75,6 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         return quoteAllFields;
     }
 
-    /**
-     * Whether or not all values must be quoted when writing them.
-     */
     public void setQuoteAllFields(String quoteAllFields) {
         this.quoteAllFields = quoteAllFields;
     }
@@ -86,9 +83,6 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         return quote;
     }
 
-    /**
-     * The quote symbol.
-     */
     public void setQuote(String quote) {
         this.quote = quote;
     }
@@ -97,9 +91,6 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         return quoteEscape;
     }
 
-    /**
-     * The quote escape symbol
-     */
     public void setQuoteEscape(String quoteEscape) {
         this.quoteEscape = quoteEscape;
     }
@@ -108,9 +99,6 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         return delimiter;
     }
 
-    /**
-     * The delimiter of values
-     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }

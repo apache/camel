@@ -73,9 +73,6 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
         return name;
     }
 
-    /**
-     * Name of header to remove
-     */
     public void setName(String name) {
         this.name = name;
     }

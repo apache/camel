@@ -70,9 +70,6 @@ public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return ref;
     }
 
-    /**
-     * References to an existing or custom error handler.
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

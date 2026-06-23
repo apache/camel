@@ -326,10 +326,6 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         return resequencerConfig;
     }
 
-    /**
-     * To configure the resequencer in using either batch or stream configuration. Will by default use batch
-     * configuration.
-     */
     public void setResequencerConfig(ResequencerConfig resequencerConfig) {
         this.resequencerConfig = resequencerConfig;
     }
@@ -362,16 +358,10 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         return expression;
     }
 
-    /**
-     * Expression to use for re-ordering the messages, such as a header with a sequence number
-     */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }
 
-    /**
-     * Expression to use for re-ordering the messages, such as a header with a sequence number
-     */
     public void setExpression(Expression expression) {
         setExpression(new ExpressionDefinition(expression));
     }
@@ -381,9 +371,6 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         return getExpression();
     }
 
-    /**
-     * Expression to use for re-ordering the messages, such as a header with a sequence number
-     */
     @Override
     public void setExpressionType(ExpressionDefinition expressionType) {
         setExpression(expressionType);

@@ -111,11 +111,6 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         return Collections.emptyList();
     }
 
-    /**
-     * Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.
-     * Notice the expression is evaluated once, if you want a more dynamic style, then the dynamic router eip is a
-     * better choice.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

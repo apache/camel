@@ -86,11 +86,6 @@ public class KameletDefinition extends OutputDefinition<KameletDefinition> {
         return name;
     }
 
-    /**
-     * Name of the Kamelet (templateId/routeId) to call.
-     *
-     * Options for the kamelet can be specified using uri syntax, eg myname?count=4&type=gold.
-     */
     public void setName(String name) {
         this.name = name;
     }

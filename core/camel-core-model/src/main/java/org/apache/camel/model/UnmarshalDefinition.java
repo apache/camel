@@ -191,9 +191,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return dataFormatType;
     }
 
-    /**
-     * The data format to be used
-     */
     @Override
     public void setDataFormatType(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
@@ -219,9 +216,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return allowNullBody;
     }
 
-    /**
-     * Indicates whether {@code null} is allowed as value of a body to unmarshall.
-     */
     public void setAllowNullBody(String allowNullBody) {
         this.allowNullBody = allowNullBody;
     }

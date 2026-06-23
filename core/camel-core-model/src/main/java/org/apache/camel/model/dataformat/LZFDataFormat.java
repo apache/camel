@@ -62,9 +62,6 @@ public class LZFDataFormat extends DataFormatDefinition {
         return usingParallelCompression;
     }
 
-    /**
-     * Enable encoding (compress) using multiple processing cores.
-     */
     public void setUsingParallelCompression(String usingParallelCompression) {
         this.usingParallelCompression = usingParallelCompression;
     }

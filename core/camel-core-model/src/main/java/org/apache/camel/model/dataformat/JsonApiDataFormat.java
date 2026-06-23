@@ -75,9 +75,6 @@ public class JsonApiDataFormat extends DataFormatDefinition {
         return dataFormatTypes;
     }
 
-    /**
-     * The classes to take into account for the marshalling. Multiple classes can be separated by comma.
-     */
     public void setDataFormatTypes(String dataFormatTypes) {
         this.dataFormatTypes = dataFormatTypes;
     }
@@ -86,9 +83,6 @@ public class JsonApiDataFormat extends DataFormatDefinition {
         return dataFormatTypeClasses;
     }
 
-    /**
-     * The classes to take into account for the marshalling.
-     */
     public void setDataFormatTypeClasses(Class<?>[] dataFormatTypeClasses) {
         this.dataFormatTypeClasses = dataFormatTypeClasses;
     }
@@ -97,9 +91,6 @@ public class JsonApiDataFormat extends DataFormatDefinition {
         return mainFormatType;
     }
 
-    /**
-     * The class to take into account while unmarshalling.
-     */
     public void setMainFormatType(String mainFormatType) {
         this.mainFormatType = mainFormatType;
     }
@@ -108,9 +99,6 @@ public class JsonApiDataFormat extends DataFormatDefinition {
         return mainFormatTypeClass;
     }
 
-    /**
-     * The classes to take into account while unmarshalling.
-     */
     public void setMainFormatTypeClass(Class<?> mainFormatTypeClass) {
         this.mainFormatTypeClass = mainFormatTypeClass;
     }

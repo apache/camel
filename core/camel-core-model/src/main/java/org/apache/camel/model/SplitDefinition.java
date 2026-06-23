@@ -614,9 +614,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return executorService;
     }
 
-    /**
-     * Expression of how to split the message body, such as as-is, using a tokenizer, or using a xpath.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
@@ -677,20 +674,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategy;
     }
 
-    /**
-     * Sets a reference to the AggregationStrategy to be used to assemble the replies from the split messages, into a
-     * single outgoing message from the Splitter. By default Camel will use the original incoming message to the
-     * splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    /**
-     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
-     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
-     * unchanged). You can also use a POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategyBean) {
         this.aggregationStrategyBean = aggregationStrategyBean;
     }
@@ -699,9 +686,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategyMethodName;
     }
 
-    /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
-     */
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
@@ -710,11 +694,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return aggregationStrategyMethodAllowNull;
     }
 
-    /**
-     * If this option is false then the aggregate method is not used if there was no data to enrich. If this option is
-     * true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the
-     * AggregationStrategy
-     */
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }

@@ -77,9 +77,6 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
         return routeTemplates;
     }
 
-    /**
-     * The route templates
-     */
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
     }

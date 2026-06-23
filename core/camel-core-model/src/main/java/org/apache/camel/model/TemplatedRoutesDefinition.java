@@ -85,9 +85,6 @@ public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<Temp
         return templatedRoutes;
     }
 
-    /**
-     * The templated routes
-     */
     @Override
     public void setTemplatedRoutes(List<TemplatedRouteDefinition> templatedRoutes) {
         this.templatedRoutes = templatedRoutes;

@@ -313,9 +313,6 @@ public class EnrichDefinition extends ExpressionNode
         return aggregationStrategy;
     }
 
-    /**
-     * Expression that computes the endpoint uri to use as the resource endpoint to enrich from
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

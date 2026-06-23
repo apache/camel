@@ -46,9 +46,6 @@ public class BeanPropertyDefinition {
         return key;
     }
 
-    /**
-     * The name of the property
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -57,9 +54,6 @@ public class BeanPropertyDefinition {
         return value;
     }
 
-    /**
-     * The property value
-     */
     public void setValue(String value) {
         this.value = value;
     }
@@ -68,9 +62,6 @@ public class BeanPropertyDefinition {
         return properties;
     }
 
-    /**
-     * Optional nested properties.
-     */
     public void setProperties(BeanPropertiesDefinition properties) {
         this.properties = properties;
     }

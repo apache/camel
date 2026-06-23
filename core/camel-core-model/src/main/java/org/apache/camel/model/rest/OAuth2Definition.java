@@ -63,10 +63,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return authorizationUrl;
     }
 
-    /**
-     * The authorization URL to be used for this flow. This SHOULD be in the form of a URL. Required for implicit and
-     * access code flows
-     */
     public void setAuthorizationUrl(String authorizationUrl) {
         this.authorizationUrl = authorizationUrl;
     }
@@ -75,10 +71,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return tokenUrl;
     }
 
-    /**
-     * The token URL to be used for this flow. This SHOULD be in the form of a URL. Required for password, application,
-     * and access code flows.
-     */
     public void setTokenUrl(String tokenUrl) {
         this.tokenUrl = tokenUrl;
     }
@@ -87,9 +79,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return refreshUrl;
     }
 
-    /**
-     * The URL to be used for obtaining refresh tokens. This MUST be in the form of a URL.
-     */
     public void setRefreshUrl(String refreshUrl) {
         this.refreshUrl = refreshUrl;
     }
@@ -98,10 +87,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return flow;
     }
 
-    /**
-     * The flow used by the OAuth2 security scheme. Valid values are "implicit", "password", "application" or
-     * "accessCode".
-     */
     public void setFlow(String flow) {
         this.flow = flow;
     }
@@ -110,9 +95,6 @@ public class OAuth2Definition extends RestSecurityDefinition {
         return scopes;
     }
 
-    /**
-     * The available scopes for an OAuth2 security scheme
-     */
     public void setScopes(List<RestPropertyDefinition> scopes) {
         this.scopes = scopes;
     }

@@ -114,10 +114,6 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         return token;
     }
 
-    /**
-     * The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as
-     * the token to support dynamic tokens.
-     */
     public void setToken(String token) {
         this.token = token;
     }
@@ -126,19 +122,10 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         return endToken;
     }
 
-    /**
-     * The end token to use as tokenizer if using start/end token pairs. You can use simple language as the token to
-     * support dynamic tokens.
-     */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
     }
 
-    /**
-     * If the token is a regular expression pattern.
-     * <p/>
-     * The default value is false
-     */
     public void setRegex(String regex) {
         this.regex = regex;
     }
@@ -151,10 +138,6 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         return inheritNamespaceTagName;
     }
 
-    /**
-     * To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name to
-     * support dynamic names.
-     */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;
     }
@@ -163,9 +146,6 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         return xml;
     }
 
-    /**
-     * Whether the input is XML messages. This option must be set to true if working with XML payloads.
-     */
     public void setXml(String xml) {
         this.xml = xml;
     }
@@ -174,12 +154,6 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         return includeTokens;
     }
 
-    /**
-     * Whether to include the tokens in the parts when using pairs. When including tokens then the endToken property
-     * must also be configured (to use pair mode).
-     * <p/>
-     * The default value is false
-     */
     public void setIncludeTokens(String includeTokens) {
         this.includeTokens = includeTokens;
     }
@@ -188,10 +162,6 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         return group;
     }
 
-    /**
-     * To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple language
-     * as the group to support dynamic group sizes.
-     */
     public void setGroup(String group) {
         this.group = group;
     }
@@ -200,9 +170,6 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         return groupDelimiter;
     }
 
-    /**
-     * Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter.
-     */
     public void setGroupDelimiter(String groupDelimiter) {
         this.groupDelimiter = groupDelimiter;
     }
@@ -211,9 +178,6 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         return skipFirst;
     }
 
-    /**
-     * To skip the very first element
-     */
     public void setSkipFirst(String skipFirst) {
         this.skipFirst = skipFirst;
     }

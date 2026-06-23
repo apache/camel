@@ -74,11 +74,6 @@ public class HL7DataFormat extends DataFormatDefinition {
         return validate;
     }
 
-    /**
-     * Whether to validate the HL7 message
-     * <p/>
-     * Is by default true.
-     */
     public void setValidate(String validate) {
         this.validate = validate;
     }
@@ -87,9 +82,6 @@ public class HL7DataFormat extends DataFormatDefinition {
         return parser;
     }
 
-    /**
-     * To use a custom HL7 parser
-     */
     public void setParser(String parser) {
         this.parser = parser;
     }
@@ -98,11 +90,6 @@ public class HL7DataFormat extends DataFormatDefinition {
         return targetFormat;
     }
 
-    /**
-     * The target format for marshal output and unmarshal result type. By default, marshal encodes to HL7 ER7, and
-     * unmarshal returns a HAPI Message object. If this is set to XML, marshal encodes to HL7 XML, and unmarshal returns
-     * an XML DOM Document.
-     */
     public void setTargetFormat(String targetFormat) {
         this.targetFormat = targetFormat;
     }

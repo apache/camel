@@ -242,9 +242,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return objectMapper;
     }
 
-    /**
-     * Lookup and use the existing ObjectMapper with the given id when using Jackson.
-     */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
     }
@@ -253,9 +250,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return useDefaultObjectMapper;
     }
 
-    /**
-     * Whether to lookup and use default Jackson ObjectMapper from the registry.
-     */
     public void setUseDefaultObjectMapper(String useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
@@ -264,11 +258,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return prettyPrint;
     }
 
-    /**
-     * To enable pretty printing output nicely formatted.
-     * <p/>
-     * Is by default false.
-     */
     public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
@@ -277,10 +266,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return combineUnicodeSurrogates;
     }
 
-    /**
-     * Force generator that outputs JSON content to combine surrogate pairs (if any) into 4-byte characters. This should
-     * be preferred when using 4-byte characters such as Japanese.
-     */
     public void setCombineUnicodeSurrogates(String combineUnicodeSurrogates) {
         this.combineUnicodeSurrogates = combineUnicodeSurrogates;
     }
@@ -289,9 +274,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return unmarshalTypeName;
     }
 
-    /**
-     * Class name of the java type to use when unmarshalling
-     */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
     }
@@ -300,9 +282,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return unmarshalType;
     }
 
-    /**
-     * Class of the java type to use when unmarshalling
-     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
@@ -311,9 +290,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return library;
     }
 
-    /**
-     * Which json library to use.
-     */
     public void setLibrary(JsonLibrary library) {
         this.library = library;
     }
@@ -322,10 +298,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return jsonViewTypeName;
     }
 
-    /**
-     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
-     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
-     */
     public void setJsonViewTypeName(String jsonViewTypeName) {
         this.jsonViewTypeName = jsonViewTypeName;
     }
@@ -334,10 +306,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return jsonView;
     }
 
-    /**
-     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
-     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
-     */
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
     }
@@ -346,10 +314,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return include;
     }
 
-    /**
-     * If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these
-     * null values, you can set this option to <tt>NON_NULL</tt>
-     */
     public void setInclude(String include) {
         this.include = include;
     }
@@ -358,10 +322,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return allowJmsType;
     }
 
-    /**
-     * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal
-     * to.
-     */
     public void setAllowJmsType(String allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
@@ -370,10 +330,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return collectionTypeName;
     }
 
-    /**
-     * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
-     * allows using different collection types than java.util.Collection based as default.
-     */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
     }
@@ -390,9 +346,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return useList;
     }
 
-    /**
-     * To unmarshal to a List of Map or a List of Pojo.
-     */
     public void setUseList(String useList) {
         this.useList = useList;
     }
@@ -401,10 +354,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return moduleClassNames;
     }
 
-    /**
-     * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names.
-     * Multiple classes can be separated by comma.
-     */
     public void setModuleClassNames(String moduleClassNames) {
         this.moduleClassNames = moduleClassNames;
     }
@@ -413,9 +362,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return moduleRefs;
     }
 
-    /**
-     * To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
-     */
     public void setModuleRefs(String moduleRefs) {
         this.moduleRefs = moduleRefs;
     }
@@ -424,16 +370,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return enableFeatures;
     }
 
-    /**
-     * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
     public void setEnableFeatures(String enableFeatures) {
         this.enableFeatures = enableFeatures;
     }
@@ -442,16 +378,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return disableFeatures;
     }
 
-    /**
-     * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
     }
@@ -460,12 +386,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return allowUnmarshallType;
     }
 
-    /**
-     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
-     * unmarshalling.
-     * <p/>
-     * This should only be enabled when desired to be used.
-     */
     public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }
@@ -474,10 +394,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return timezone;
     }
 
-    /**
-     * If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the
-     * others Json DataFormat, like gson and fastjson.
-     */
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }
@@ -486,16 +402,10 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return autoDiscoverObjectMapper;
     }
 
-    /**
-     * If set to true then Jackson will look for an objectMapper to use from the registry
-     */
     public void setAutoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
     }
 
-    /**
-     * Optional schema resolver used to lookup schemas for the data in transit.
-     */
     public void setSchemaResolver(String schemaResolver) {
         this.schemaResolver = schemaResolver;
     }
@@ -508,9 +418,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return autoDiscoverSchemaResolver;
     }
 
-    /**
-     * When not disabled, the SchemaResolver will be looked up into the registry
-     */
     public void setAutoDiscoverSchemaResolver(String autoDiscoverSchemaResolver) {
         this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
     }
@@ -519,10 +426,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return namingStrategy;
     }
 
-    /**
-     * If set then Jackson will use the the defined Property Naming Strategy. Possible values are: LOWER_CAMEL_CASE,
-     * LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE
-     */
     public void setNamingStrategy(String namingStrategy) {
         this.namingStrategy = namingStrategy;
     }
@@ -531,12 +434,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return maxStringLength;
     }
 
-    /**
-     * Jackson. Sets the maximum string length (in chars or bytes, depending on input context). The default is
-     * 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception
-     * will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be
-     * treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.
-     */
     public void setMaxStringLength(String maxStringLength) {
         this.maxStringLength = maxStringLength;
     }

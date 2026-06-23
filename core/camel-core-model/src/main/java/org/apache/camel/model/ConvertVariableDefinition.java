@@ -122,12 +122,6 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
         return "convertVariableTo[" + getType() + "]";
     }
 
-    /**
-     * Name of variable to convert its value
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -140,13 +134,6 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
         return toName;
     }
 
-    /**
-     * To use another variable to store the result. By default, the result is stored in the same variable. This option
-     * allows to use another variable.
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated variable name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setToName(String toName) {
         this.toName = toName;
     }
@@ -155,9 +142,6 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
         return type;
     }
 
-    /**
-     * The java type to convert to
-     */
     public void setType(String type) {
         this.type = type;
     }
@@ -174,9 +158,6 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
         return charset;
     }
 
-    /**
-     * To use a specific charset when converting
-     */
     public void setCharset(String charset) {
         this.charset = charset;
     }
@@ -185,11 +166,6 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
         return mandatory;
     }
 
-    /**
-     * When mandatory then the conversion must return a value (cannot be null), if this is not possible then
-     * NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the
-     * value is null.
-     */
     public void setMandatory(String mandatory) {
         this.mandatory = mandatory;
     }

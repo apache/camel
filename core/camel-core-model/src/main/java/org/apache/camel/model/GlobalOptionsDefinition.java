@@ -43,9 +43,6 @@ public class GlobalOptionsDefinition {
     public GlobalOptionsDefinition() {
     }
 
-    /**
-     * A series of global options as key value pairs
-     */
     public void setGlobalOptions(List<GlobalOptionDefinition> globalOptions) {
         this.globalOptions = globalOptions;
     }

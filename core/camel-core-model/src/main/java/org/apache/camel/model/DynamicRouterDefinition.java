@@ -91,12 +91,6 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
         return Collections.emptyList();
     }
 
-    /**
-     * Expression to call that returns the endpoint(s) to route to in the dynamic routing.
-     * <p/>
-     * <b>Important:</b> The expression will be called in a while loop fashion, until the expression returns
-     * <tt>null</tt> which means the dynamic router is finished.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

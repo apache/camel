@@ -121,12 +121,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return "convertHeaderTo[" + getType() + "]";
     }
 
-    /**
-     * Name of message header to convert its value
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -139,13 +133,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return toName;
     }
 
-    /**
-     * To use another header to store the result. By default, the result is stored in the same header. This option
-     * allows to use another header.
-     * <p/>
-     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used. Otherwise a
-     * constant name will be used.
-     */
     public void setToName(String toName) {
         this.toName = toName;
     }
@@ -154,9 +141,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return type;
     }
 
-    /**
-     * The java type to convert to
-     */
     public void setType(String type) {
         this.type = type;
     }
@@ -173,9 +157,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return charset;
     }
 
-    /**
-     * To use a specific charset when converting
-     */
     public void setCharset(String charset) {
         this.charset = charset;
     }
@@ -184,11 +165,6 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
         return mandatory;
     }
 
-    /**
-     * When mandatory then the conversion must return a value (cannot be null), if this is not possible then
-     * NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the
-     * value is null.
-     */
     public void setMandatory(String mandatory) {
         this.mandatory = mandatory;
     }

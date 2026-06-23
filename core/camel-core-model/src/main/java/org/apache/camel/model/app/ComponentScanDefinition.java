@@ -48,9 +48,6 @@ public class ComponentScanDefinition {
         return basePackage;
     }
 
-    /**
-     * Base package to use for scanning Spring beans.
-     */
     public void setBasePackage(String basePackage) {
         this.basePackage = basePackage;
     }

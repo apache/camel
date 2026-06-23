@@ -81,9 +81,6 @@ public class SortDefinition<T> extends ExpressionNode {
         return "sort[" + getExpression() + "]";
     }
 
-    /**
-     * Optional expression to sort by something else than the message body
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

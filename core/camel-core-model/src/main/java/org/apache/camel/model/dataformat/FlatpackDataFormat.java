@@ -102,9 +102,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return definition;
     }
 
-    /**
-     * The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.
-     */
     public void setDefinition(String definition) {
         this.definition = definition;
     }
@@ -113,9 +110,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return fixed;
     }
 
-    /**
-     * Delimited or fixed. Is by default false = delimited
-     */
     public void setFixed(String fixed) {
         this.fixed = fixed;
     }
@@ -124,11 +118,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return ignoreFirstRecord;
     }
 
-    /**
-     * Whether the first line is ignored for delimited files (for the column headers).
-     * <p/>
-     * Is by default true.
-     */
     public void setIgnoreFirstRecord(String ignoreFirstRecord) {
         this.ignoreFirstRecord = ignoreFirstRecord;
     }
@@ -137,11 +126,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return textQualifier;
     }
 
-    /**
-     * If the text is qualified with a character.
-     * <p/>
-     * Uses quote character by default.
-     */
     public void setTextQualifier(String textQualifier) {
         this.textQualifier = textQualifier;
     }
@@ -150,9 +134,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return delimiter;
     }
 
-    /**
-     * The delimiter char (could be ; , or similar)
-     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
@@ -161,9 +142,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return allowShortLines;
     }
 
-    /**
-     * Allows for lines to be shorter than expected and ignores the extra characters
-     */
     public void setAllowShortLines(String allowShortLines) {
         this.allowShortLines = allowShortLines;
     }
@@ -172,9 +150,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return ignoreExtraColumns;
     }
 
-    /**
-     * Allows for lines to be longer than expected and ignores the extra characters.
-     */
     public void setIgnoreExtraColumns(String ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;
     }
@@ -183,9 +158,6 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         return parserFactory;
     }
 
-    /**
-     * References to a custom parser factory to lookup in the registry
-     */
     public void setParserFactory(String parserFactory) {
         this.parserFactory = parserFactory;
     }

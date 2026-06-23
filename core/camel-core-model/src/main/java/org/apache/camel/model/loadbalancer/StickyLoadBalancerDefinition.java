@@ -58,9 +58,6 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
         return correlationExpression;
     }
 
-    /**
-     * The correlation expression to use to calculate the correlation key
-     */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;
     }

@@ -62,11 +62,6 @@ public class GroovyJSonDataFormat extends DataFormatDefinition {
         return prettyPrint;
     }
 
-    /**
-     * To pretty printing output nicely formatted.
-     * <p/>
-     * Is by default true.
-     */
     public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }

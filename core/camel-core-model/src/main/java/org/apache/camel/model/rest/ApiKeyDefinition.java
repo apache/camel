@@ -59,9 +59,6 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
         return name;
     }
 
-    /**
-     * The name of the header or query parameter to be used.
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -70,9 +67,6 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
         return inHeader;
     }
 
-    /**
-     * To use header as the location of the API key.
-     */
     public void setInHeader(String inHeader) {
         this.inHeader = inHeader;
     }
@@ -81,9 +75,6 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
         return inQuery;
     }
 
-    /**
-     * To use query parameter as the location of the API key.
-     */
     public void setInQuery(String inQuery) {
         this.inQuery = inQuery;
     }
@@ -92,9 +83,6 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
         return inCookie;
     }
 
-    /**
-     * To use a cookie as the location of the API key.
-     */
     public void setInCookie(String inCookie) {
         this.inCookie = inCookie;
     }

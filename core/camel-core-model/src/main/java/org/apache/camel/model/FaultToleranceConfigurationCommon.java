@@ -104,10 +104,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return typedGuard;
     }
 
-    /**
-     * Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry.
-     * When using this, then any other TypedGuard circuit breaker options are not in use.
-     */
     public void setTypedGuard(String typedGuard) {
         this.typedGuard = typedGuard;
     }
@@ -116,9 +112,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return delay;
     }
 
-    /**
-     * Control how long the circuit breaker stays open. The default is 5 seconds.
-     */
     public void setDelay(String delay) {
         this.delay = delay;
     }
@@ -127,9 +120,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return successThreshold;
     }
 
-    /**
-     * Controls the number of trial calls which are allowed when the circuit breaker is half-open
-     */
     public void setSuccessThreshold(String successThreshold) {
         this.successThreshold = successThreshold;
     }
@@ -138,9 +128,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return requestVolumeThreshold;
     }
 
-    /**
-     * Controls the size of the rolling window used when the circuit breaker is closed
-     */
     public void setRequestVolumeThreshold(String requestVolumeThreshold) {
         this.requestVolumeThreshold = requestVolumeThreshold;
     }
@@ -149,12 +136,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return failureRatio;
     }
 
-    /**
-     * Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold
-     * the CircuitBreaker transitions to open and starts short-circuiting calls.
-     * <p>
-     * The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.
-     */
     public void setFailureRatio(String failureRatio) {
         this.failureRatio = failureRatio;
     }
@@ -163,9 +144,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return timeoutEnabled;
     }
 
-    /**
-     * Whether timeout is enabled or not on the circuit breaker. Default is false.
-     */
     public void setTimeoutEnabled(String timeoutEnabled) {
         this.timeoutEnabled = timeoutEnabled;
     }
@@ -174,9 +152,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return timeoutDuration;
     }
 
-    /**
-     * Configures the thread execution timeout. Default value is 1 second.
-     */
     public void setTimeoutDuration(String timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
     }
@@ -185,9 +160,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return timeoutPoolSize;
     }
 
-    /**
-     * Configures the pool size of the thread pool when timeout is enabled. Default value is 10.
-     */
     public void setTimeoutPoolSize(String timeoutPoolSize) {
         this.timeoutPoolSize = timeoutPoolSize;
     }
@@ -196,9 +168,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return bulkheadEnabled;
     }
 
-    /**
-     * Whether bulkhead is enabled or not on the circuit breaker. Default is false.
-     */
     public void setBulkheadEnabled(String bulkheadEnabled) {
         this.bulkheadEnabled = bulkheadEnabled;
     }
@@ -207,9 +176,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return bulkheadMaxConcurrentCalls;
     }
 
-    /**
-     * Configures the max amount of concurrent calls the bulkhead will support.
-     */
     public void setBulkheadMaxConcurrentCalls(String bulkheadMaxConcurrentCalls) {
         this.bulkheadMaxConcurrentCalls = bulkheadMaxConcurrentCalls;
     }
@@ -218,9 +184,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return bulkheadWaitingTaskQueue;
     }
 
-    /**
-     * Configures the task queue size for holding waiting tasks to be processed by the bulkhead.
-     */
     public void setBulkheadWaitingTaskQueue(String bulkheadWaitingTaskQueue) {
         this.bulkheadWaitingTaskQueue = bulkheadWaitingTaskQueue;
     }
@@ -229,9 +192,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         return threadOffloadExecutorService;
     }
 
-    /**
-     * References a custom thread pool to use when offloading a guarded action to another thread.
-     */
     public void setThreadOffloadExecutorService(String threadOffloadExecutorService) {
         this.threadOffloadExecutorService = threadOffloadExecutorService;
     }

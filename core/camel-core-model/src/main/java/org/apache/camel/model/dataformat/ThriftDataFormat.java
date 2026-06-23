@@ -90,18 +90,10 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
         return instanceClass;
     }
 
-    /**
-     * Name of class to use when unmarshalling
-     */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }
 
-    /**
-     * Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The
-     * format can either be native or json for either native binary thrift, json or simple json fields representation.
-     * The default value is binary.
-     */
     public void setContentTypeFormat(String contentTypeFormat) {
         this.contentTypeFormat = contentTypeFormat;
     }

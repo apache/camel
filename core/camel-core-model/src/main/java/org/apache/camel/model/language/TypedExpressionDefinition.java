@@ -60,9 +60,6 @@ public abstract class TypedExpressionDefinition extends ExpressionDefinition {
         return resultTypeName;
     }
 
-    /**
-     * Sets the class of the result type (type from output)
-     */
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;
     }
@@ -71,9 +68,6 @@ public abstract class TypedExpressionDefinition extends ExpressionDefinition {
         return resultType;
     }
 
-    /**
-     * Sets the class name of the result type (type from output)
-     */
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }

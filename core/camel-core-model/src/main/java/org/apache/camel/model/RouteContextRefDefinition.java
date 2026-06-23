@@ -54,9 +54,6 @@ public class RouteContextRefDefinition {
         return ref;
     }
 
-    /**
-     * Reference to the routes in the xml dsl
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

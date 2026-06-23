@@ -55,9 +55,6 @@ public class RestContextRefDefinition {
         return ref;
     }
 
-    /**
-     * Reference to the rest-dsl
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

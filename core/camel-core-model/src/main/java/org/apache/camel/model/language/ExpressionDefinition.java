@@ -145,9 +145,6 @@ public class ExpressionDefinition
         return expression;
     }
 
-    /**
-     * The expression value in your chosen language syntax
-     */
     public void setExpression(String expression) {
         this.expression = expression;
     }
@@ -156,9 +153,6 @@ public class ExpressionDefinition
         return id;
     }
 
-    /**
-     * Sets the id of this node
-     */
     public void setId(String value) {
         this.id = value;
     }
@@ -180,10 +174,6 @@ public class ExpressionDefinition
         return expressionType;
     }
 
-    /**
-     * Allows derived classes and DSLs to set a lazily created expressionType instance such as if using the
-     * {@link org.apache.camel.builder.ExpressionClause}
-     */
     @Override
     public void setExpressionType(ExpressionDefinition expressionType) {
         this.expressionType = expressionType;
@@ -193,19 +183,10 @@ public class ExpressionDefinition
         return trim;
     }
 
-    /**
-     * Whether to trim the source code to remove leading and trailing whitespaces and line breaks.
-     *
-     * For example when using DSLs where the source will span across multiple lines and there may be additional line
-     * breaks at both the beginning and end.
-     */
     public void setTrim(String trim) {
         this.trim = trim;
     }
 
-    /**
-     * Returns some descriptive text to describe this node
-     */
     public String getLabel() {
         Predicate predicate = getPredicate();
         if (predicate != null) {

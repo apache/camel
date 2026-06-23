@@ -130,11 +130,6 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         return uri;
     }
 
-    /**
-     * Sets the URI of the endpoint to use
-     *
-     * @param uri the endpoint URI to use
-     */
     public void setUri(String uri) {
         clear();
         this.uri = uri;
@@ -144,22 +139,10 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         return variableReceive;
     }
 
-    /**
-     * To use a variable to store a copy of the received message body (only body, not headers). This is handy for easy
-     * access to the received message body via variables.
-     */
     public void setVariableReceive(String variableReceive) {
         this.variableReceive = variableReceive;
     }
 
-    /**
-     * Gets tne endpoint if an {@link Endpoint} instance was set.
-     * <p/>
-     * This implementation may return <tt>null</tt> which means you need to use {@link #getEndpointUri()} to get
-     * information about the endpoint.
-     *
-     * @return the endpoint instance, or <tt>null</tt>
-     */
     public Endpoint getEndpoint() {
         return endpoint;
     }

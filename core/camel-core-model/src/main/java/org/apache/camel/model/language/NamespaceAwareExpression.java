@@ -70,11 +70,6 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
         return getNamespaceAsMap();
     }
 
-    /**
-     * Injects the XML Namespaces of prefix -> uri mappings
-     *
-     * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
-     */
     @Override
     public void setNamespaces(Map<String, String> namespaces) {
         this.namespaces = namespaces;
@@ -88,9 +83,6 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
         return namespace;
     }
 
-    /**
-     * Injects the XML Namespaces of prefix -> uri mappings
-     */
     public void setNamespace(List<PropertyDefinition> namespace) {
         this.namespace = namespace;
     }

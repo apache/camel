@@ -113,11 +113,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return loggingLevel;
     }
 
-    /**
-     * Sets the logging level.
-     * <p/>
-     * The default value is INFO
-     */
     public void setLoggingLevel(String loggingLevel) {
         this.loggingLevel = loggingLevel;
     }
@@ -126,9 +121,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return message;
     }
 
-    /**
-     * Sets the log message (uses simple language)
-     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -137,25 +129,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return logName;
     }
 
-    /**
-     * Sets the name of the logger.
-     *
-     * The name is default the routeId or the source:line if source location is enabled. You can also specify the name
-     * using tokens:
-     *
-     * <br/>
-     * ${class} - the logger class name (org.apache.camel.processor.LogProcessor) <br/>
-     * ${contextId} - the camel context id <br/>
-     * ${routeId} - the route id <br/>
-     * ${groupId} - the route group id <br/>
-     * ${nodeId} - the node id <br/>
-     * ${nodePrefixId} - the node prefix id <br/>
-     * ${source} - the source:line (source location must be enabled) <br/>
-     * ${source.name} - the source filename (source location must be enabled) <br/>
-     * ${source.line} - the source line number (source location must be enabled)
-     *
-     * For example to use the route and node id you can specify the name as: ${routeId}/${nodeId}
-     */
     public void setLogName(String logName) {
         this.logName = logName;
     }
@@ -164,23 +137,14 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return marker;
     }
 
-    /**
-     * To use slf4j marker
-     */
     public void setMarker(String marker) {
         this.marker = marker;
     }
 
-    /**
-     * To refer to a custom logger instance to lookup from the registry.
-     */
     public void setLogger(String logger) {
         this.logger = logger;
     }
 
-    /**
-     * To use a custom logger instance
-     */
     public void setLogger(Logger logger) {
         this.loggerBean = logger;
     }
@@ -193,10 +157,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return logLanguage;
     }
 
-    /**
-     * To configure the language to use. By default, the simple language is used. However, Camel also supports other
-     * languages such as groovy.
-     */
     public void setLogLanguage(String logLanguage) {
         this.logLanguage = logLanguage;
     }

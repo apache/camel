@@ -78,13 +78,6 @@ public abstract class TransformerDefinition implements CopyableDefinition<Transf
         return scheme;
     }
 
-    /**
-     * Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all
-     * of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched
-     * transformer exists.
-     *
-     * @param scheme the supported data type scheme
-     */
     public void setScheme(String scheme) {
         this.scheme = scheme;
     }
@@ -93,14 +86,6 @@ public abstract class TransformerDefinition implements CopyableDefinition<Transf
         return name;
     }
 
-    /**
-     * Set the transformer name under which the transformer gets referenced when specifying the input/output data type
-     * on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be
-     * picked up for all of 'csv:*' from/to Java transformation. Note that the scheme matching is performed only when no
-     * exactly matched transformer exists.
-     *
-     * @param name transformer name
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -109,22 +94,10 @@ public abstract class TransformerDefinition implements CopyableDefinition<Transf
         return fromType;
     }
 
-    /**
-     * Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is
-     * 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or
-     * 'xml:DEF'.
-     *
-     * @param from 'from' data type name
-     */
     public void setFromType(String from) {
         this.fromType = from;
     }
 
-    /**
-     * Set the 'from' data type using Java class.
-     *
-     * @param clazz 'from' Java class
-     */
     public void setFromType(Class<?> clazz) {
         this.fromType = new DataType(clazz).toString();
     }
@@ -133,22 +106,10 @@ public abstract class TransformerDefinition implements CopyableDefinition<Transf
         return toType;
     }
 
-    /**
-     * Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is
-     * 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like
-     * 'json:ABC' or 'json:DEF'.
-     *
-     * @param to 'to' data type name
-     */
     public void setToType(String to) {
         this.toType = to;
     }
 
-    /**
-     * Set the 'to' data type using Java class.
-     *
-     * @param clazz 'to' Java class
-     */
     public void setToType(Class<?> clazz) {
         this.toType = new DataType(clazz).toString();
     }

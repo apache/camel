@@ -92,9 +92,6 @@ public class A2ASubTaskDefinition extends OutputDefinition<A2ASubTaskDefinition>
         return emitBefore;
     }
 
-    /**
-     * Simple expression template to emit before the nested steps run.
-     */
     public void setEmitBefore(String emitBefore) {
         this.emitBefore = emitBefore;
     }
@@ -103,9 +100,6 @@ public class A2ASubTaskDefinition extends OutputDefinition<A2ASubTaskDefinition>
         return emitAfter;
     }
 
-    /**
-     * Simple expression template to emit after the nested steps complete successfully.
-     */
     public void setEmitAfter(String emitAfter) {
         this.emitAfter = emitAfter;
     }
@@ -114,9 +108,6 @@ public class A2ASubTaskDefinition extends OutputDefinition<A2ASubTaskDefinition>
         return emitOnError;
     }
 
-    /**
-     * Simple expression template to emit when the nested steps fail.
-     */
     public void setEmitOnError(String emitOnError) {
         this.emitOnError = emitOnError;
     }
@@ -125,9 +116,6 @@ public class A2ASubTaskDefinition extends OutputDefinition<A2ASubTaskDefinition>
         return failIfNoTaskContext;
     }
 
-    /**
-     * Whether to fail if the current Exchange does not have an active A2A task context.
-     */
     public void setFailIfNoTaskContext(String failIfNoTaskContext) {
         this.failIfNoTaskContext = failIfNoTaskContext;
     }

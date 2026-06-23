@@ -165,9 +165,6 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         return samplePeriod;
     }
 
-    /**
-     * Sets the sample period during which only a single Exchange will pass through.
-     */
     public void setSamplePeriod(String samplePeriod) {
         this.samplePeriod = samplePeriod;
     }
@@ -184,9 +181,6 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         return messageFrequency;
     }
 
-    /**
-     * Sets the sample message count which only a single Exchange will pass through after this many received.
-     */
     public void setMessageFrequency(String messageFrequency) {
         this.messageFrequency = messageFrequency;
     }

@@ -121,9 +121,6 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         return writeConfigObject;
     }
 
-    /**
-     * The specific configuration to use when marshalling a message.
-     */
     public void setWriteConfigObject(Object writeConfigObject) {
         this.writeConfigObject = writeConfigObject;
     }
@@ -132,11 +129,6 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         return writeInJson;
     }
 
-    /**
-     * The flag indicating that messages must be marshalled in a JSON format.
-     *
-     * @param writeInJson {@code true} if messages must be marshalled in a JSON format, {@code false} otherwise.
-     */
     public void setWriteInJson(String writeInJson) {
         this.writeInJson = writeInJson;
     }
@@ -145,10 +137,6 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         return readMessageId;
     }
 
-    /**
-     * The type of MX message to produce when unmarshalling an input stream. If not set, it will be automatically
-     * detected from the namespace used.
-     */
     public void setReadMessageId(String readMessageId) {
         this.readMessageId = readMessageId;
     }
@@ -157,9 +145,6 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         return readConfigObject;
     }
 
-    /**
-     * The specific configuration to use when unmarshalling an input stream.
-     */
     public void setReadConfigObject(Object readConfigObject) {
         this.readConfigObject = readConfigObject;
     }
@@ -168,9 +153,6 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         return writeConfig;
     }
 
-    /**
-     * Refers to a specific configuration to use when marshalling a message to lookup from the registry.
-     */
     public void setWriteConfig(String writeConfig) {
         this.writeConfig = writeConfig;
     }
@@ -179,9 +161,6 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         return readConfig;
     }
 
-    /**
-     * Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.
-     */
     public void setReadConfig(String readConfig) {
         this.readConfig = readConfig;
     }

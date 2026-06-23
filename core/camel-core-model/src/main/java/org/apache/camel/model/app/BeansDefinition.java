@@ -129,9 +129,6 @@ public class BeansDefinition {
         return componentScanning;
     }
 
-    /**
-     * Component scanning that can auto-discover Camel route builders from the classpath.
-     */
     public void setComponentScanning(List<ComponentScanDefinition> componentScanning) {
         this.componentScanning = componentScanning;
     }
@@ -140,9 +137,6 @@ public class BeansDefinition {
         return beans;
     }
 
-    /**
-     * List of bean
-     */
     public void setBeans(List<BeanFactoryDefinition> beans) {
         this.beans = beans;
     }
@@ -151,10 +145,6 @@ public class BeansDefinition {
         return springOrBlueprintBeans;
     }
 
-    /**
-     * Support for legacy Spring beans and Blueprint bean files to be parsed and loaded for migration and tooling
-     * effort.
-     */
     public void setSpringOrBlueprintBeans(List<Element> springOrBlueprintBeans) {
         this.springOrBlueprintBeans = springOrBlueprintBeans;
     }
@@ -163,9 +153,6 @@ public class BeansDefinition {
         return sslContextParameters;
     }
 
-    /**
-     * SSL/TLS context parameters configuration
-     */
     public void setSslContextParameters(List<SSLContextParametersDefinition> sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -174,9 +161,6 @@ public class BeansDefinition {
         return restConfigurations;
     }
 
-    /**
-     * Camel Rest DSL Configuration
-     */
     public void setRestConfigurations(List<RestConfigurationDefinition> restConfigs) {
         this.restConfigurations = restConfigs;
     }
@@ -185,9 +169,6 @@ public class BeansDefinition {
         return rests;
     }
 
-    /**
-     * Camel Rest DSL
-     */
     public void setRests(List<RestDefinition> rests) {
         this.rests = rests;
     }
@@ -196,9 +177,6 @@ public class BeansDefinition {
         return routeConfigurations;
     }
 
-    /**
-     * Camel route configurations
-     */
     public void setRouteConfigurations(List<RouteConfigurationDefinition> routeConfigurations) {
         this.routeConfigurations = routeConfigurations;
     }
@@ -207,9 +185,6 @@ public class BeansDefinition {
         return routeTemplates;
     }
 
-    /**
-     * Camel route templates
-     */
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
     }
@@ -218,9 +193,6 @@ public class BeansDefinition {
         return templatedRoutes;
     }
 
-    /**
-     * Camel routes to be created from template
-     */
     public void setTemplatedRoutes(List<TemplatedRouteDefinition> templatedRoutes) {
         this.templatedRoutes = templatedRoutes;
     }
@@ -229,9 +201,6 @@ public class BeansDefinition {
         return routes;
     }
 
-    /**
-     * Camel routes
-     */
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
     }
@@ -240,9 +209,6 @@ public class BeansDefinition {
         return dataFormats;
     }
 
-    /**
-     * Camel data formats
-     */
     public void setDataFormats(List<DataFormatDefinition> dataFormats) {
         this.dataFormats = dataFormats;
     }

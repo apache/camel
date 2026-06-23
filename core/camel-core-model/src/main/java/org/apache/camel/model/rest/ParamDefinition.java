@@ -96,9 +96,6 @@ public class ParamDefinition {
         return type != null ? type : RestParamType.path;
     }
 
-    /**
-     * Sets the parameter type.
-     */
     public void setType(RestParamType type) {
         this.type = type;
     }
@@ -107,9 +104,6 @@ public class ParamDefinition {
         return name;
     }
 
-    /**
-     * Sets the parameter name.
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -118,16 +112,10 @@ public class ParamDefinition {
         return description;
     }
 
-    /**
-     * Sets the parameter description.
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Sets the parameter default value.
-     */
     public String getDefaultValue() {
         return defaultValue;
     }
@@ -140,9 +128,6 @@ public class ParamDefinition {
         return required != null ? required : true;
     }
 
-    /**
-     * Sets the parameter required flag.
-     */
     public void setRequired(Boolean required) {
         this.required = required;
     }
@@ -151,9 +136,6 @@ public class ParamDefinition {
         return collectionFormat;
     }
 
-    /**
-     * Sets the parameter collection format.
-     */
     public void setCollectionFormat(CollectionFormat collectionFormat) {
         this.collectionFormat = collectionFormat;
     }
@@ -162,9 +144,6 @@ public class ParamDefinition {
         return arrayType;
     }
 
-    /**
-     * Sets the parameter array type. Required if data type is "array". Describes the type of items in the array.
-     */
     public void setArrayType(String arrayType) {
         this.arrayType = arrayType;
     }
@@ -173,9 +152,6 @@ public class ParamDefinition {
         return dataType;
     }
 
-    /**
-     * Sets the parameter data type.
-     */
     public void setDataType(String dataType) {
         this.dataType = dataType;
     }
@@ -184,9 +160,6 @@ public class ParamDefinition {
         return dataFormat;
     }
 
-    /**
-     * Sets the parameter data format.
-     */
     public void setDataFormat(String dataFormat) {
         this.dataFormat = dataFormat;
     }
@@ -195,9 +168,6 @@ public class ParamDefinition {
         return allowableValues;
     }
 
-    /**
-     * Sets the parameter list of allowable values (enum).
-     */
     public void setAllowableValues(List<ValueDefinition> allowableValues) {
         this.allowableValues = allowableValues;
     }
@@ -206,9 +176,6 @@ public class ParamDefinition {
         return examples;
     }
 
-    /**
-     * Sets the parameter examples.
-     */
     public void setExamples(List<RestPropertyDefinition> examples) {
         this.examples = examples;
     }

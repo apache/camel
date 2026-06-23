@@ -66,16 +66,10 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
         return urn;
     }
 
-    /**
-     * Set output type URN.
-     */
     public void setUrn(String urn) {
         this.urn = urn;
     }
 
-    /**
-     * Set output type via Java Class.
-     */
     public void setJavaClass(Class<?> clazz) {
         this.urn = "java:" + clazz.getName();
     }
@@ -84,9 +78,6 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
         return this.validate;
     }
 
-    /**
-     * Whether if validation is required for this output type.
-     */
     public void setValidate(String validate) {
         this.validate = validate;
     }

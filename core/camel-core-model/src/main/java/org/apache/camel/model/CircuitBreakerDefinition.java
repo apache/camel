@@ -130,10 +130,6 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         return configuration;
     }
 
-    /**
-     * Refers to a circuit breaker configuration (such as resillience4j, or microprofile-fault-tolerance) to use for
-     * configuring the circuit breaker EIP.
-     */
     public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }

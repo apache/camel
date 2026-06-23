@@ -65,11 +65,6 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return roundRobin;
     }
 
-    /**
-     * To enable round robin mode. By default the weighted distribution mode is used.
-     * <p/>
-     * The default value is false.
-     */
     public void setRoundRobin(String roundRobin) {
         this.roundRobin = roundRobin;
     }
@@ -78,11 +73,6 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return distributionRatio;
     }
 
-    /**
-     * The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example
-     * "2,3,5". The distributionRatio must match the number of endpoints and/or processors specified in the load
-     * balancer list.
-     */
     public void setDistributionRatio(String distributionRatio) {
         this.distributionRatio = distributionRatio;
     }
@@ -91,11 +81,6 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         return distributionRatioDelimiter == null ? "," : distributionRatioDelimiter;
     }
 
-    /**
-     * Delimiter used to specify the distribution ratio.
-     * <p/>
-     * The default value is , (comma)
-     */
     public void setDistributionRatioDelimiter(String distributionRatioDelimiter) {
         this.distributionRatioDelimiter = distributionRatioDelimiter;
     }

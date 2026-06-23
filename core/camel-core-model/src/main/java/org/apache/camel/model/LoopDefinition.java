@@ -130,19 +130,10 @@ public class LoopDefinition extends OutputExpressionNode {
         return doWhile;
     }
 
-    /**
-     * Enables the while loop that loops until the predicate evaluates to false or null.
-     */
     public void setDoWhile(String doWhile) {
         this.doWhile = doWhile;
     }
 
-    /**
-     * If the copy attribute is true, a copy of the input Exchange is used for each iteration. That means each iteration
-     * will start from a copy of the same message.
-     * <p/>
-     * By default loop will loop the same exchange all over, so each iteration may have different message content.
-     */
     public void setCopy(String copy) {
         this.copy = copy;
     }
@@ -152,10 +143,6 @@ public class LoopDefinition extends OutputExpressionNode {
         return this;
     }
 
-    /**
-     * If the breakOnShutdown attribute is true, then the loop will not iterate until it reaches the end when Camel is
-     * shut down.
-     */
     public void setBreakOnShutdown(String breakOnShutdown) {
         this.breakOnShutdown = breakOnShutdown;
     }
@@ -187,11 +174,6 @@ public class LoopDefinition extends OutputExpressionNode {
         return "loop[" + getExpression() + "]";
     }
 
-    /**
-     * Expression to define how many times we should loop. Notice the expression is only evaluated once, and should
-     * return a number as how many times to loop. A value of zero or negative means no looping. The loop is like a
-     * for-loop fashion, if you want a while loop, then the dynamic router may be a better choice.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

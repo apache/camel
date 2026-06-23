@@ -54,9 +54,6 @@ public class RouteTemplateContextRefDefinition {
         return ref;
     }
 
-    /**
-     * Reference to the route templates in the xml dsl
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

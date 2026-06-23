@@ -57,9 +57,6 @@ public class LoadTransformerDefinition extends TransformerDefinition {
         return defaults;
     }
 
-    /**
-     * Enable loading of default transformers.
-     */
     public void setDefaults(String defaults) {
         this.defaults = defaults;
     }
@@ -68,9 +65,6 @@ public class LoadTransformerDefinition extends TransformerDefinition {
         return packageScan;
     }
 
-    /**
-     * Set the classpath location to scan for annotated transformers.
-     */
     public void setPackageScan(String packageScan) {
         this.packageScan = packageScan;
     }

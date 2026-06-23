@@ -41,9 +41,6 @@ public class BeanConstructorsDefinition {
         return constructors;
     }
 
-    /**
-     * Constructor arguments
-     */
     public void setConstructors(List<BeanConstructorDefinition> constructors) {
         this.constructors = constructors;
     }

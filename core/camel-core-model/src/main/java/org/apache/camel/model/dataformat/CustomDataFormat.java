@@ -60,16 +60,10 @@ public class CustomDataFormat extends DataFormatDefinition {
         return new CustomDataFormat(this);
     }
 
-    /**
-     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
-     */
     public String getRef() {
         return ref;
     }
 
-    /**
-     * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }

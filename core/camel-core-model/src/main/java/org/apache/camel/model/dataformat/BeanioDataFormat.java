@@ -100,10 +100,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return mapping;
     }
 
-    /**
-     * The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath:
-     * to denote from where to load the mapping file.
-     */
     public void setMapping(String mapping) {
         this.mapping = mapping;
     }
@@ -112,9 +108,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return streamName;
     }
 
-    /**
-     * The name of the stream to use.
-     */
     public void setStreamName(String streamName) {
         this.streamName = streamName;
     }
@@ -123,9 +116,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreUnidentifiedRecords;
     }
 
-    /**
-     * Whether to ignore unidentified records.
-     */
     public void setIgnoreUnidentifiedRecords(String ignoreUnidentifiedRecords) {
         this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
     }
@@ -134,9 +124,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreUnexpectedRecords;
     }
 
-    /**
-     * Whether to ignore unexpected records.
-     */
     public void setIgnoreUnexpectedRecords(String ignoreUnexpectedRecords) {
         this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
     }
@@ -145,9 +132,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreInvalidRecords;
     }
 
-    /**
-     * Whether to ignore invalid records.
-     */
     public void setIgnoreInvalidRecords(String ignoreInvalidRecords) {
         this.ignoreInvalidRecords = ignoreInvalidRecords;
     }
@@ -156,11 +140,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return encoding;
     }
 
-    /**
-     * The charset to use.
-     * <p/>
-     * Is by default the JVM platform default charset.
-     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -169,11 +148,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return beanReaderErrorHandlerType;
     }
 
-    /**
-     * To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure
-     * the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords,
-     * ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when you use a custom error handler.
-     */
     public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
         this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
     }
@@ -182,11 +156,6 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return unmarshalSingleObject;
     }
 
-    /**
-     * This options controls whether to unmarshal as a list of objects or as a single object only. The former is the
-     * default mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a
-     * single POJO bean.
-     */
     public void setUnmarshalSingleObject(String unmarshalSingleObject) {
         this.unmarshalSingleObject = unmarshalSingleObject;
     }

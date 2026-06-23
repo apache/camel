@@ -84,9 +84,6 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
         return loadBalancerType;
     }
 
-    /**
-     * The load balancer to be used
-     */
     public void setLoadBalancerType(LoadBalancerDefinition loadbalancer) {
         if (loadBalancerType != null) {
             throw new IllegalArgumentException(

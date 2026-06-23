@@ -77,9 +77,6 @@ public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
         return bodyMediaType;
     }
 
-    /**
-     * The String representation of the message's body MediaType
-     */
     public void setBodyMediaType(String bodyMediaType) {
         this.bodyMediaType = bodyMediaType;
     }
@@ -88,9 +85,6 @@ public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
         return outputMediaType;
     }
 
-    /**
-     * The String representation of the MediaType to output
-     */
     public void setOutputMediaType(String outputMediaType) {
         this.outputMediaType = outputMediaType;
     }

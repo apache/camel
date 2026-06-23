@@ -151,9 +151,6 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return capacity;
     }
 
-    /**
-     * Sets the capacity of the resequencer inbound queue.
-     */
     public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
@@ -162,9 +159,6 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return timeout;
     }
 
-    /**
-     * Sets minimum time (milliseconds) to wait for missing elements (messages).
-     */
     public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
@@ -173,10 +167,6 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return deliveryAttemptInterval;
     }
 
-    /**
-     * Sets the interval in milliseconds the stream resequencer will at most wait while waiting for condition of being
-     * able to deliver.
-     */
     public void setDeliveryAttemptInterval(String deliveryAttemptInterval) {
         this.deliveryAttemptInterval = deliveryAttemptInterval;
     }
@@ -185,9 +175,6 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return ignoreInvalidExchanges;
     }
 
-    /**
-     * Whether to ignore invalid exchanges
-     */
     public void setIgnoreInvalidExchanges(String ignoreInvalidExchanges) {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }
@@ -196,9 +183,6 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return comparatorBean;
     }
 
-    /**
-     * To use a custom comparator
-     */
     public void setComparatorBean(ExpressionResultComparator comparatorBean) {
         this.comparatorBean = comparatorBean;
     }
@@ -207,16 +191,10 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return comparator;
     }
 
-    /**
-     * To use a custom comparator as a org.apache.camel.processor.resequencer.ExpressionResultComparator type.
-     */
     public void setComparator(String comparator) {
         this.comparator = comparator;
     }
 
-    /**
-     * If true, throws an exception when messages older than the last delivered message are processed
-     */
     public void setRejectOld(String value) {
         this.rejectOld = value;
     }

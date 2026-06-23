@@ -47,9 +47,6 @@ public class OpenIdConnectDefinition extends RestSecurityDefinition {
         return url;
     }
 
-    /**
-     * OpenId Connect URL to discover OAuth2 configuration values.
-     */
     public void setUrl(String url) {
         this.url = url;
     }

@@ -73,9 +73,6 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
         return name;
     }
 
-    /**
-     * Name of property to remove.
-     */
     public void setName(String name) {
         this.name = name;
     }

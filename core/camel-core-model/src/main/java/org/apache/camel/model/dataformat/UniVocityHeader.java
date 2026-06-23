@@ -56,9 +56,6 @@ public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
         return name;
     }
 
-    /**
-     * Header name
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -67,9 +64,6 @@ public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
         return length;
     }
 
-    /**
-     * Header length
-     */
     public void setLength(String length) {
         this.length = length;
     }

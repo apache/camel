@@ -62,9 +62,6 @@ public class PropertyExpressionDefinition implements HasExpressionType {
         return new PropertyExpressionDefinition(this);
     }
 
-    /**
-     * Property key
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -77,9 +74,6 @@ public class PropertyExpressionDefinition implements HasExpressionType {
         return expression;
     }
 
-    /**
-     * Property values as an expression
-     */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }

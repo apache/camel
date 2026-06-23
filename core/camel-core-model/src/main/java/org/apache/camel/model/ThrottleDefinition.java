@@ -360,9 +360,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         return executorService;
     }
 
-    /**
-     * Expression to configure the maximum number of messages to throttle per request
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
@@ -401,10 +398,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         this.rejectExecution = rejectExecution;
     }
 
-    /**
-     * The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the
-     * same correlation key is throttled together.
-     */
     public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;
     }
@@ -425,13 +418,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         return mode;
     }
 
-    /**
-     * Sets the throttling mode to one of the available modes enumerated in ThrottlingMode
-     *
-     * @param mode The throttling mode as a string parameter. It currently accepts one of 'TotalRequests' or
-     *             `ConcurrentRequests`
-     * @see        ThrottlingMode
-     */
     public void setMode(String mode) {
         this.mode = mode;
     }

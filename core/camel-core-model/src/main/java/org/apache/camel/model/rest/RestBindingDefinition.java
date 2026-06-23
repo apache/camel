@@ -224,9 +224,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return allowedValues;
     }
 
-    /**
-     * Sets the component name that this definition will apply to
-     */
     public void setComponent(String component) {
         this.component = component;
     }
@@ -235,10 +232,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return component;
     }
 
-    /**
-     * To define the content type what the REST service consumes (accept as input), such as application/xml or
-     * application/json
-     */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
     }
@@ -247,10 +240,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return produces;
     }
 
-    /**
-     * To define the content type what the REST service produces (uses for output), such as application/xml or
-     * application/json
-     */
     public void setProduces(String produces) {
         this.produces = produces;
     }
@@ -259,11 +248,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return bindingMode;
     }
 
-    /**
-     * Sets the binding mode to use.
-     * <p/>
-     * The default value is off
-     */
     public void setBindingMode(String bindingMode) {
         this.bindingMode = bindingMode;
     }
@@ -272,12 +256,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return type;
     }
 
-    /**
-     * Sets the class name to use for binding from input to POJO for the incoming data
-     * <p/>
-     * The name of the class of the input data. Append a [] to the end of the name if you want the input to be an array
-     * type.
-     */
     public void setType(String type) {
         this.type = type;
     }
@@ -286,9 +264,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return typeClass;
     }
 
-    /**
-     * Sets the class to use for binding from input to POJO for the incoming data
-     */
     public void setTypeClass(Class<?> typeClass) {
         this.typeClass = typeClass;
     }
@@ -297,12 +272,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return outType;
     }
 
-    /**
-     * Sets the class name to use for binding from POJO to output for the outgoing data
-     * <p/>
-     * The name of the class of the input data. Append a [] to the end of the name if you want the input to be an array
-     * type.
-     */
     public void setOutType(String outType) {
         this.outType = outType;
     }
@@ -311,9 +280,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return outTypeClass;
     }
 
-    /**
-     * Sets the class name to use for binding from POJO to output for the outgoing data
-     */
     public void setOutTypeClass(Class<?> outTypeClass) {
         this.outTypeClass = outTypeClass;
     }
@@ -322,10 +288,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return skipBindingOnErrorCode;
     }
 
-    /**
-     * Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
-     * messages that do not bind to json / xml etc, as success messages otherwise will do.
-     */
     public void setSkipBindingOnErrorCode(String skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
@@ -334,14 +296,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return clientRequestValidation;
     }
 
-    /**
-     * Whether to enable validation of the client request to check:
-     *
-     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
-     * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
-     * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
-     * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
-     */
     public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
     }
@@ -350,13 +304,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return clientResponseValidation;
     }
 
-    /**
-     * Whether to check what Camel is returning as response to the client:
-     *
-     * 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included
-     * according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid
-     * JSon. Returns 500 if validation error detected.
-     */
     public void setClientResponseValidation(String clientResponseValidation) {
         this.clientResponseValidation = clientResponseValidation;
     }
@@ -365,11 +312,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return enableCORS;
     }
 
-    /**
-     * Whether to enable CORS headers in the HTTP response.
-     * <p/>
-     * The default value is false.
-     */
     public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
     }
@@ -378,11 +320,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         return enableNoContentResponse;
     }
 
-    /**
-     * Whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object.
-     * <p/>
-     * The default value is false.
-     */
     public void setEnableNoContentResponse(String enableNoContentResponse) {
         this.enableNoContentResponse = enableNoContentResponse;
     }

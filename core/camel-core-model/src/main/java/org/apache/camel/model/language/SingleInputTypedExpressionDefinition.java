@@ -56,11 +56,6 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
         return source;
     }
 
-    /**
-     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
-     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
-     * message body.
-     */
     public void setSource(String source) {
         this.source = source;
     }

@@ -112,9 +112,6 @@ public class ResponseHeaderDefinition {
         return collectionFormat;
     }
 
-    /**
-     * Sets the parameter collection format.
-     */
     public void setCollectionFormat(CollectionFormat collectionFormat) {
         this.collectionFormat = collectionFormat;
     }
@@ -123,9 +120,6 @@ public class ResponseHeaderDefinition {
         return arrayType;
     }
 
-    /**
-     * Sets the parameter array type. Required if data type is "array". Describes the type of items in the array.
-     */
     public void setArrayType(String arrayType) {
         this.arrayType = arrayType;
     }
@@ -134,9 +128,6 @@ public class ResponseHeaderDefinition {
         return dataType;
     }
 
-    /**
-     * Sets the header data type.
-     */
     public void setDataType(String dataType) {
         this.dataType = dataType;
     }
@@ -145,9 +136,6 @@ public class ResponseHeaderDefinition {
         return dataFormat;
     }
 
-    /**
-     * Sets the parameter data format.
-     */
     public void setDataFormat(String dataFormat) {
         this.dataFormat = dataFormat;
     }
@@ -160,16 +148,10 @@ public class ResponseHeaderDefinition {
         return example;
     }
 
-    /**
-     * Sets the example
-     */
     public void setExample(String example) {
         this.example = example;
     }
 
-    /**
-     * Sets the parameter list of allowable values.
-     */
     public void setAllowableValues(List<ValueDefinition> allowableValues) {
         this.allowableValues = allowableValues;
     }

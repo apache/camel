@@ -864,9 +864,6 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         return exceptions;
     }
 
-    /**
-     * A set of exceptions to react upon.
-     */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
     }
@@ -875,9 +872,6 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         return redeliveryPolicyType;
     }
 
-    /**
-     * Used for configuring redelivery options
-     */
     public void setRedeliveryPolicyType(RedeliveryPolicyDefinition redeliveryPolicyType) {
         this.redeliveryPolicyType = redeliveryPolicyType;
     }

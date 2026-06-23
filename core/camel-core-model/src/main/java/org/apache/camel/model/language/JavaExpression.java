@@ -74,10 +74,6 @@ public class JavaExpression extends TypedExpressionDefinition {
         return preCompile;
     }
 
-    /**
-     * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the
-     * expression is reloaded and compiled on each evaluation.
-     */
     public void setPreCompile(String preCompile) {
         this.preCompile = preCompile;
     }
@@ -86,10 +82,6 @@ public class JavaExpression extends TypedExpressionDefinition {
         return singleQuotes;
     }
 
-    /**
-     * Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with
-     * strings inside strings.
-     */
     public void setSingleQuotes(String singleQuotes) {
         this.singleQuotes = singleQuotes;
     }

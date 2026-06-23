@@ -182,9 +182,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
         return dataFormatType;
     }
 
-    /**
-     * The data format to be used
-     */
     @Override
     public void setDataFormatType(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;

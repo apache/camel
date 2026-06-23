@@ -73,9 +73,6 @@ public class RemoveVariableDefinition extends NoOutputDefinition<RemoveVariableD
         return name;
     }
 
-    /**
-     * Name of variable to remove.
-     */
     public void setName(String name) {
         this.name = name;
     }

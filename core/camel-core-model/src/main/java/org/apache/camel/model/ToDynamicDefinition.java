@@ -268,10 +268,6 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         return uri;
     }
 
-    /**
-     * The uri of the endpoint to send to. The uri can be dynamic computed using the
-     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
-     */
     public void setUri(String uri) {
         this.uri = uri;
     }

@@ -109,9 +109,6 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
         return new DataFormatsDefinition(this);
     }
 
-    /**
-     * A list holding the configured data formats
-     */
     public void setDataFormats(List<DataFormatDefinition> dataFormats) {
         this.dataFormats = dataFormats;
     }

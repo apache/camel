@@ -43,9 +43,6 @@ public class SecurityDefinition {
         return key;
     }
 
-    /**
-     * Key used to refer to this security definition
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -54,9 +51,6 @@ public class SecurityDefinition {
         return scopes;
     }
 
-    /**
-     * The scopes to allow (separate multiple scopes by comma)
-     */
     public void setScopes(String scopes) {
         this.scopes = scopes;
     }

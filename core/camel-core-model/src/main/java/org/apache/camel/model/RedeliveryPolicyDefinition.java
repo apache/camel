@@ -811,9 +811,6 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
         return disableRedelivery;
     }
 
-    /**
-     * Disables redelivery (same as setting maximum redeliveries to 0)
-     */
     public void setDisableRedelivery(String disableRedelivery) {
         this.disableRedelivery = disableRedelivery;
     }

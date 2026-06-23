@@ -102,9 +102,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return allowSimple;
     }
 
-    /**
-     * Whether to allow in inlined Simple exceptions in the JSONPath expression
-     */
     public void setAllowSimple(String allowSimple) {
         this.allowSimple = allowSimple;
     }
@@ -113,16 +110,10 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return allowEasyPredicate;
     }
 
-    /**
-     * Whether to allow using the easy predicate parser to pre-parse predicates.
-     */
     public void setAllowEasyPredicate(String allowEasyPredicate) {
         this.allowEasyPredicate = allowEasyPredicate;
     }
 
-    /**
-     * Whether to suppress exceptions such as PathNotFoundException.
-     */
     public void setSuppressExceptions(String suppressExceptions) {
         this.suppressExceptions = suppressExceptions;
     }
@@ -131,9 +122,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return writeAsString;
     }
 
-    /**
-     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
-     */
     public void setWriteAsString(String writeAsString) {
         this.writeAsString = writeAsString;
     }
@@ -142,9 +130,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return unpackArray;
     }
 
-    /**
-     * Whether to unpack a single element json-array into an object.
-     */
     public void setUnpackArray(String unpackArray) {
         this.unpackArray = unpackArray;
     }
@@ -153,9 +138,6 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         return option;
     }
 
-    /**
-     * To configure additional options on JSONPath. Multiple values can be separated by comma.
-     */
     public void setOption(String option) {
         this.option = option;
     }

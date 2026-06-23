@@ -551,20 +551,10 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return aggregationStrategy;
     }
 
-    /**
-     * Refers to an AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing
-     * message from the Multicast. By default Camel will use the last reply as the outgoing message. You can also use a
-     * POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    /**
-     * Refers to an AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing
-     * message from the Multicast. By default Camel will use the last reply as the outgoing message. You can also use a
-     * POJO as the AggregationStrategy
-     */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategyBean = aggregationStrategy;
     }
@@ -573,9 +563,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return aggregationStrategyMethodName;
     }
 
-    /**
-     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
-     */
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
@@ -584,11 +571,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return aggregationStrategyMethodAllowNull;
     }
 
-    /**
-     * If this option is false then the aggregate method is not used if there was no data to enrich. If this option is
-     * true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the
-     * AggregationStrategy
-     */
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
@@ -597,10 +579,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return executorService;
     }
 
-    /**
-     * Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
-     * processing is automatic implied, and you do not have to enable that option as well.
-     */
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
     }

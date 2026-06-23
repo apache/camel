@@ -105,9 +105,6 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return type;
     }
 
-    /**
-     * The java type to convert to
-     */
     public void setType(String type) {
         this.type = type;
     }
@@ -124,9 +121,6 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return charset;
     }
 
-    /**
-     * To use a specific charset when converting
-     */
     public void setCharset(String charset) {
         this.charset = charset;
     }
@@ -135,11 +129,6 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return mandatory;
     }
 
-    /**
-     * When mandatory then the conversion must return a value (cannot be null), if this is not possible then
-     * NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the
-     * value is null.
-     */
     public void setMandatory(String mandatory) {
         this.mandatory = mandatory;
     }

@@ -143,19 +143,11 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
         this.interceptSendTos = interceptSendTos;
     }
 
-    /**
-     * The predicate of the precondition in simple language to evaluate in order to determine if this route
-     * configuration should be included or not.
-     */
     @Override
     public String getPrecondition() {
         return precondition;
     }
 
-    /**
-     * The predicate of the precondition in simple language to evaluate in order to determine if this route
-     * configuration should be included or not.
-     */
     @Override
     public void setPrecondition(String precondition) {
         this.precondition = precondition;

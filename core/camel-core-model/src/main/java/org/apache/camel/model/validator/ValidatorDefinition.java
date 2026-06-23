@@ -54,17 +54,10 @@ public abstract class ValidatorDefinition implements CopyableDefinition<Validato
         this.type = source.type;
     }
 
-    /**
-     * Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'.
-     * If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'.
-     */
     public void setType(String type) {
         this.type = type;
     }
 
-    /**
-     * Set the data type using Java class.
-     */
     public void setType(Class<?> clazz) {
         this.type = new DataType(clazz).toString();
     }

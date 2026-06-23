@@ -67,11 +67,6 @@ public class SwiftMtDataFormat extends DataFormatDefinition {
         return writeInJson;
     }
 
-    /**
-     * The flag indicating that messages must be marshalled in a JSON format.
-     *
-     * @param writeInJson {@code true} if messages must be marshalled in a JSON format, {@code false} otherwise.
-     */
     public void setWriteInJson(String writeInJson) {
         this.writeInJson = writeInJson;
     }

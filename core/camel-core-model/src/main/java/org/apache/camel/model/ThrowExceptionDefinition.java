@@ -97,9 +97,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return ref;
     }
 
-    /**
-     * Reference to the exception instance to lookup from the registry to throw
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -116,9 +113,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return message;
     }
 
-    /**
-     * To create a new exception instance and use the given message as caused message (supports simple language)
-     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -127,11 +121,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return exceptionType;
     }
 
-    /**
-     * The class of the exception to create using the message.
-     *
-     * @see #setMessage(String)
-     */
     public void setExceptionType(String exceptionType) {
         this.exceptionType = exceptionType;
     }
@@ -140,11 +129,6 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
         return exceptionClass;
     }
 
-    /**
-     * The class of the exception to create using the message.
-     *
-     * @see #setMessage(String)
-     */
     public void setExceptionClass(Class<? extends Exception> exceptionClass) {
         this.exceptionClass = exceptionClass;
     }

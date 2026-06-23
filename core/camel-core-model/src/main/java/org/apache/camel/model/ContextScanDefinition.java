@@ -54,11 +54,6 @@ public class ContextScanDefinition {
         return includeNonSingletons;
     }
 
-    /**
-     * Whether to include non-singleton beans (prototypes)
-     * <p/>
-     * By default only singleton beans is included in the context scan
-     */
     public void setIncludeNonSingletons(String includeNonSingletons) {
         this.includeNonSingletons = includeNonSingletons;
     }
@@ -67,9 +62,6 @@ public class ContextScanDefinition {
         return excludes;
     }
 
-    /**
-     * Exclude finding route builder from these java package names.
-     */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
     }
@@ -78,9 +70,6 @@ public class ContextScanDefinition {
         return includes;
     }
 
-    /**
-     * Include finding route builder from these java package names.
-     */
     public void setIncludes(List<String> includes) {
         this.includes = includes;
     }

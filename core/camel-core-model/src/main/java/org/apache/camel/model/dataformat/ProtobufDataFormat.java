@@ -218,18 +218,10 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return instanceClass;
     }
 
-    /**
-     * Name of class to use when unmarshalling
-     */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }
 
-    /**
-     * Defines a content type format in which protobuf message will be serialized/deserialized from(to) the Java been.
-     * The format can either be native or json for either native protobuf or json fields representation. The default
-     * value is native.
-     */
     public void setContentTypeFormat(String contentTypeFormat) {
         this.contentTypeFormat = contentTypeFormat;
     }
@@ -258,9 +250,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return library;
     }
 
-    /**
-     * Which Protobuf library to use.
-     */
     public void setLibrary(ProtobufLibrary library) {
         this.library = library;
     }
@@ -269,9 +258,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return objectMapper;
     }
 
-    /**
-     * Lookup and use the existing ObjectMapper with the given id when using Jackson.
-     */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
     }
@@ -280,9 +266,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return useDefaultObjectMapper;
     }
 
-    /**
-     * Whether to lookup and use default Jackson ObjectMapper from the registry.
-     */
     public void setUseDefaultObjectMapper(String useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
@@ -291,9 +274,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return unmarshalTypeName;
     }
 
-    /**
-     * Class name of the java type to use when unmarshalling
-     */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
     }
@@ -302,9 +282,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return unmarshalType;
     }
 
-    /**
-     * Class of the java type to use when unmarshalling
-     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
@@ -313,10 +290,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return jsonViewTypeName;
     }
 
-    /**
-     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
-     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
-     */
     public void setJsonViewTypeName(String jsonViewTypeName) {
         this.jsonViewTypeName = jsonViewTypeName;
     }
@@ -325,10 +298,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return jsonView;
     }
 
-    /**
-     * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you
-     * can use JSON views to accomplish this. This option is to refer to the class which has @JsonView annotations
-     */
     public void setJsonView(Class<?> jsonView) {
         this.jsonView = jsonView;
     }
@@ -337,10 +306,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return include;
     }
 
-    /**
-     * If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these
-     * null values, you can set this option to <tt>NON_NULL</tt>
-     */
     public void setInclude(String include) {
         this.include = include;
     }
@@ -349,10 +314,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return allowJmsType;
     }
 
-    /**
-     * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal
-     * to.
-     */
     public void setAllowJmsType(String allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
@@ -361,10 +322,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return collectionTypeName;
     }
 
-    /**
-     * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
-     * allows to use different collection types than java.util.Collection based as default.
-     */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
     }
@@ -381,9 +338,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return useList;
     }
 
-    /**
-     * To unmarshal to a List of Map or a List of Pojo.
-     */
     public void setUseList(String useList) {
         this.useList = useList;
     }
@@ -392,10 +346,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return moduleClassNames;
     }
 
-    /**
-     * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names.
-     * Multiple classes can be separated by comma.
-     */
     public void setModuleClassNames(String moduleClassNames) {
         this.moduleClassNames = moduleClassNames;
     }
@@ -404,9 +354,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return moduleRefs;
     }
 
-    /**
-     * To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
-     */
     public void setModuleRefs(String moduleRefs) {
         this.moduleRefs = moduleRefs;
     }
@@ -415,16 +362,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return enableFeatures;
     }
 
-    /**
-     * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
     public void setEnableFeatures(String enableFeatures) {
         this.enableFeatures = enableFeatures;
     }
@@ -433,16 +370,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return disableFeatures;
     }
 
-    /**
-     * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
     }
@@ -451,12 +378,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return allowUnmarshallType;
     }
 
-    /**
-     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
-     * unmarshalling.
-     * <p/>
-     * This should only be enabled when desired to be used.
-     */
     public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }
@@ -465,9 +386,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return timezone;
     }
 
-    /**
-     * If set then Jackson will use the Timezone when marshalling/unmarshalling.
-     */
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }
@@ -476,16 +394,10 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return autoDiscoverObjectMapper;
     }
 
-    /**
-     * If set to true then Jackson will lookup for an objectMapper into the registry
-     */
     public void setAutoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
     }
 
-    /**
-     * Optional schema resolver used to lookup schemas for the data in transit.
-     */
     public void setSchemaResolver(String schemaResolver) {
         this.schemaResolver = schemaResolver;
     }
@@ -498,9 +410,6 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         return autoDiscoverSchemaResolver;
     }
 
-    /**
-     * When not disabled, the SchemaResolver will be looked up into the registry
-     */
     public void setAutoDiscoverSchemaResolver(String autoDiscoverSchemaResolver) {
         this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
     }

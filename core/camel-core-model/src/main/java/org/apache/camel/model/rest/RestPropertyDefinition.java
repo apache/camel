@@ -46,9 +46,6 @@ public class RestPropertyDefinition {
         this.value = value;
     }
 
-    /**
-     * Property key
-     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -57,9 +54,6 @@ public class RestPropertyDefinition {
         return key;
     }
 
-    /**
-     * Property value
-     */
     public void setValue(String value) {
         this.value = value;
     }

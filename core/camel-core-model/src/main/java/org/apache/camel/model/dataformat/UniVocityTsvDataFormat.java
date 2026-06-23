@@ -59,9 +59,6 @@ public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
         return escapeChar;
     }
 
-    /**
-     * The escape character.
-     */
     public void setEscapeChar(String escapeChar) {
         this.escapeChar = escapeChar;
     }

@@ -84,10 +84,6 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         return precondition;
     }
 
-    /**
-     * Indicates whether this Choice EIP is in precondition mode or not. If so its branches (when/otherwise) are
-     * evaluated during startup to keep at runtime only the branch that matched.
-     */
     public void setPrecondition(String precondition) {
         this.precondition = precondition;
     }
@@ -327,9 +323,6 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         return whenClauses;
     }
 
-    /**
-     * Sets the when nodes
-     */
     public void setWhenClauses(List<WhenDefinition> whenClauses) {
         this.whenClauses = whenClauses;
     }

@@ -49,9 +49,6 @@ public class ValidatorsDefinition {
         this.validators = ProcessorDefinitionHelper.deepCopyDefinitions(source.validators);
     }
 
-    /**
-     * The configured validators
-     */
     public void setValidators(List<ValidatorDefinition> validators) {
         this.validators = validators;
     }

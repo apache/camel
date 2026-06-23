@@ -84,10 +84,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return apiContextPath;
     }
 
-    /**
-     * Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to
-     * obtain the specification from the running Camel application.
-     */
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
     }
@@ -96,10 +92,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return disabled;
     }
 
-    /**
-     * Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST
-     * service has been disabled then it cannot be enabled later at runtime.
-     */
     public void setDisabled(String disabled) {
         this.disabled = disabled;
     }
@@ -108,10 +100,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return missingOperation;
     }
 
-    /**
-     * Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding
-     * route.
-     */
     public void setMissingOperation(String missingOperation) {
         this.missingOperation = missingOperation;
     }
@@ -120,10 +108,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return mockIncludePattern;
     }
 
-    /**
-     * Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple
-     * patterns can be specified separated by comma.
-     */
     public void setMockIncludePattern(String mockIncludePattern) {
         this.mockIncludePattern = mockIncludePattern;
     }
@@ -132,9 +116,6 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return routeId;
     }
 
-    /**
-     * Sets the id of the route
-     */
     public void setRouteId(String routeId) {
         this.routeId = routeId;
     }

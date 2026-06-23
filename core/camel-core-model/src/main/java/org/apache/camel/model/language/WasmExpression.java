@@ -68,10 +68,6 @@ public class WasmExpression extends TypedExpressionDefinition {
         return module;
     }
 
-    /**
-     * Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides
-     * the expression function.
-     */
     public void setModule(String module) {
         this.module = module;
     }

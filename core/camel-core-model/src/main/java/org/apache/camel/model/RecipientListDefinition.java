@@ -559,10 +559,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         return executorService;
     }
 
-    /**
-     * Expression that returns which endpoints (url) to send the message to (the recipients). If the expression return
-     * an empty value then the message is not sent to any recipients.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

@@ -184,10 +184,6 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
         return this;
     }
 
-    /**
-     * Expression used to calculate the correlation key to use for duplicate check. The Exchange which has the same
-     * correlation key is regarded as a duplicate and will be rejected.
-     */
     @Override
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for

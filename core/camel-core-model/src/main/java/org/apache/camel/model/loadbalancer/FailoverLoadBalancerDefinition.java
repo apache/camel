@@ -90,10 +90,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         return exceptions;
     }
 
-    /**
-     * A list of class names for specific exceptions to monitor. If no exceptions are configured then all exceptions are
-     * monitored
-     */
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
     }
@@ -102,9 +98,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         return exceptionTypes;
     }
 
-    /**
-     * A list of specific exceptions to monitor. If no exceptions are configured then all exceptions are monitored
-     */
     public void setExceptionTypes(List<Class<?>> exceptionTypes) {
         this.exceptionTypes = exceptionTypes;
     }
@@ -113,15 +106,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         return roundRobin;
     }
 
-    /**
-     * Whether or not the failover load balancer should operate in round robin mode or not. If not, then it will always
-     * start from the first endpoint when a new message is to be processed. In other words it restart from the top for
-     * every message. If round robin is enabled, then it keeps state and will continue with the next endpoint in a round
-     * robin fashion.
-     * <p/>
-     * You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint
-     * to use when starting the load balancing (instead of using the next when starting).
-     */
     public void setRoundRobin(String roundRobin) {
         this.roundRobin = roundRobin;
     }
@@ -130,14 +114,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         return sticky;
     }
 
-    /**
-     * Whether or not the failover load balancer should operate in sticky mode or not. If not, then it will always start
-     * from the first endpoint when a new message is to be processed. In other words it restart from the top for every
-     * message. If sticky is enabled, then it keeps state and will continue with the last known good endpoint.
-     * <p/>
-     * You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint
-     * to use when starting the load balancing (instead of using the next when starting).
-     */
     public void setSticky(String sticky) {
         this.sticky = sticky;
     }
@@ -146,11 +122,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         return maximumFailoverAttempts;
     }
 
-    /**
-     * A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and
-     * continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving
-     * up. This option can be used whether roundRobin is enabled or not.
-     */
     public void setMaximumFailoverAttempts(String maximumFailoverAttempts) {
         this.maximumFailoverAttempts = maximumFailoverAttempts;
     }
@@ -159,14 +130,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         return inheritErrorHandler;
     }
 
-    /**
-     * To turn off Camel error handling during load balancing.
-     * <p/>
-     * By default, Camel error handler will attempt calling a service, which means you can specify retires and other
-     * fine-grained settings. And only when Camel error handler have failed all attempts, then this load balancer will
-     * fail over to the next endpoint and try again. You can turn this off, and then this load balancer will fail over
-     * immediately on an error.
-     */
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }

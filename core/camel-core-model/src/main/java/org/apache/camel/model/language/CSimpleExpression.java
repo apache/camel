@@ -76,14 +76,6 @@ public class CSimpleExpression extends TypedExpressionDefinition {
         return trimResult;
     }
 
-    /**
-     * Whether to trim the returned values when this language are in use.
-     *
-     * For example the output result may contain unwanted line breaks at the beginning and end such as when using Java
-     * DSL with multi-line blocks.
-     *
-     * Is default false to be backwards compatible with existing behavior.
-     */
     public void setTrimResult(String trimResult) {
         this.trimResult = trimResult;
     }
@@ -92,9 +84,6 @@ public class CSimpleExpression extends TypedExpressionDefinition {
         return pretty;
     }
 
-    /**
-     * To pretty format the output (only JSon or XML supported)
-     */
     public void setPretty(String pretty) {
         this.pretty = pretty;
     }

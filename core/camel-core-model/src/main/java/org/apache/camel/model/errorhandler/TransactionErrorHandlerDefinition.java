@@ -65,9 +65,6 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
         return transactedPolicy;
     }
 
-    /**
-     * The transacted policy to use that is configured for either Spring or JTA based transactions.
-     */
     public void setTransactedPolicy(Object transactedPolicy) {
         this.transactedPolicy = transactedPolicy;
     }
@@ -76,10 +73,6 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
         return transactedPolicyRef;
     }
 
-    /**
-     * The transacted policy to use that is configured for either Spring or JTA based transactions. If no policy has
-     * been configured then Camel will attempt to auto-discover.
-     */
     public void setTransactedPolicyRef(String transactedPolicyRef) {
         this.transactedPolicyRef = transactedPolicyRef;
     }
@@ -88,11 +81,6 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
         return rollbackLoggingLevel;
     }
 
-    /**
-     * Sets the logging level to use for logging transactional rollback.
-     * <p/>
-     * This option is default WARN.
-     */
     public void setRollbackLoggingLevel(String rollbackLoggingLevel) {
         this.rollbackLoggingLevel = rollbackLoggingLevel;
     }

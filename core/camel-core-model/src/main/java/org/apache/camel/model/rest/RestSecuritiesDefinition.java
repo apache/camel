@@ -60,9 +60,6 @@ public class RestSecuritiesDefinition {
         return securityDefinitions;
     }
 
-    /**
-     * Security definitions
-     */
     public void setSecurityDefinitions(List<RestSecurityDefinition> securityDefinitions) {
         this.securityDefinitions = securityDefinitions;
     }
